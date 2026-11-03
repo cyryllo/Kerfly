@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:06+0100\n"
+"POT-Creation-Date: 2026-11-03 22:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -140,9 +140,6 @@ msgstr ""
 msgid "Add design"
 msgstr ""
 
-msgid "Add…"
-msgstr ""
-
 #, python-format
 msgid "Adjusting image darkness: %s%%"
 msgstr ""
@@ -151,6 +148,10 @@ msgid "Advanced"
 msgstr ""
 
 msgid "All files"
+msgstr ""
+
+msgctxt "toolbar group"
+msgid "Arrange"
 msgstr ""
 
 msgid "Bed height"
@@ -188,10 +189,6 @@ msgid "Centre the selected element, or the whole design, on the bed"
 msgstr ""
 
 msgid "Click an element on the bed to select it."
-msgstr ""
-
-msgctxt "toolbar"
-msgid "Connect"
 msgstr ""
 
 msgid "Controller board"
@@ -286,11 +283,19 @@ msgstr ""
 msgid "EGV files (*.egv *.EGV);;All files (*)"
 msgstr ""
 
+msgctxt "toolbar group"
+msgid "Edit"
+msgstr ""
+
 msgid "Engrave bottom to top"
 msgstr ""
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
+msgstr ""
+
+msgctxt "toolbar group"
+msgid "File"
 msgstr ""
 
 msgid "Fire the laser briefly (M3 boards)"
@@ -342,10 +347,6 @@ msgstr ""
 msgid "Height:"
 msgstr ""
 
-msgid "Home"
-msgstr ""
-
-msgctxt "toolbar"
 msgid "Home"
 msgstr ""
 
@@ -463,6 +464,11 @@ msgstr ""
 msgid "Move head to design"
 msgstr ""
 
+msgid ""
+"Move the head around the outline of the design (laser off unless set in "
+"Settings), to check where it will be cut"
+msgstr ""
+
 msgid "Move the head to the centre of the design"
 msgstr ""
 
@@ -523,9 +529,6 @@ msgstr ""
 msgid "Opening %s"
 msgstr ""
 
-msgid "Open…"
-msgstr ""
-
 msgid "Operations"
 msgstr ""
 
@@ -545,9 +548,6 @@ msgid "Pause or stop the running job"
 msgstr ""
 
 msgid "Place design at the &head"
-msgstr ""
-
-msgid "Place design at the head"
 msgstr ""
 
 msgid "Power"
@@ -603,9 +603,6 @@ msgid "Reduced memory use (500 dpi raster)"
 msgstr ""
 
 msgid "Release USB"
-msgstr ""
-
-msgid "Reload"
 msgstr ""
 
 msgctxt "toolbar"
@@ -665,10 +662,6 @@ msgstr ""
 msgid "Save &EGV file…"
 msgstr ""
 
-msgctxt "toolbar"
-msgid "Save EGV"
-msgstr ""
-
 msgid "Save EGV file"
 msgstr ""
 
@@ -725,10 +718,6 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-msgctxt "toolbar"
-msgid "Start"
-msgstr ""
-
 msgid "Start selected operations"
 msgstr ""
 
@@ -738,10 +727,6 @@ msgstr ""
 msgid "Step:"
 msgstr ""
 
-msgid "Stop"
-msgstr ""
-
-msgctxt "toolbar"
 msgid "Stop"
 msgstr ""
 
@@ -825,13 +810,6 @@ msgctxt "toolbar"
 msgid "To head"
 msgstr ""
 
-msgid "Trace"
-msgstr ""
-
-msgctxt "toolbar"
-msgid "Trace"
-msgstr ""
-
 msgid "Trace boundary"
 msgstr ""
 
@@ -875,10 +853,6 @@ msgstr ""
 msgid "Unlock"
 msgstr ""
 
-msgctxt "toolbar"
-msgid "Unlock"
-msgstr ""
-
 msgid "Unlock rail after a job"
 msgstr ""
 
@@ -904,6 +878,10 @@ msgid "Vector engrave"
 msgstr ""
 
 msgid "Vector engrave: determining order…"
+msgstr ""
+
+msgctxt "toolbar group"
+msgid "View"
 msgstr ""
 
 msgid "W"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:06+0100\n"
+"POT-Creation-Date: 2026-11-03 22:29+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -147,9 +147,6 @@ msgstr "Eine weitere Datei auf die Arbeitsfläche legen"
 msgid "Add design"
 msgstr "Entwurf hinzufügen"
 
-msgid "Add…"
-msgstr "Hinzufügen…"
-
 #, python-format
 msgid "Adjusting image darkness: %s%%"
 msgstr "Bildhelligkeit wird angepasst: %s%%"
@@ -159,6 +156,10 @@ msgstr "Erweitert"
 
 msgid "All files"
 msgstr "Alle Dateien"
+
+msgctxt "toolbar group"
+msgid "Arrange"
+msgstr "Anordnen"
 
 msgid "Bed height"
 msgstr "Höhe der Arbeitsfläche"
@@ -198,10 +199,6 @@ msgstr ""
 
 msgid "Click an element on the bed to select it."
 msgstr "Klicken Sie auf ein Element, um es auszuwählen."
-
-msgctxt "toolbar"
-msgid "Connect"
-msgstr "Verbinden"
 
 msgid "Controller board"
 msgstr "Steuerplatine"
@@ -299,12 +296,20 @@ msgstr "EGV-Dateien (*.EGV *.egv)"
 msgid "EGV files (*.egv *.EGV);;All files (*)"
 msgstr "EGV-Dateien (*.egv *.EGV);;Alle Dateien (*)"
 
+msgctxt "toolbar group"
+msgid "Edit"
+msgstr "Bearbeiten"
+
 msgid "Engrave bottom to top"
 msgstr "Von unten nach oben gravieren"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
 msgstr "Geschätzte Gesamtzeit: <b>%s</b>"
+
+msgctxt "toolbar group"
+msgid "File"
+msgstr "Datei"
 
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Laser kurz auslösen (M3-Platinen)"
@@ -357,10 +362,6 @@ msgstr "Höhe:"
 
 msgid "Home"
 msgstr "Referenzfahrt"
-
-msgctxt "toolbar"
-msgid "Home"
-msgstr "Referenz"
 
 msgid "Home is in the upper right corner"
 msgstr "Referenzpunkt oben rechts"
@@ -476,6 +477,13 @@ msgstr "Den Umriss des Entwurfs abfahren"
 msgid "Move head to design"
 msgstr "Kopf zum Entwurf fahren"
 
+msgid ""
+"Move the head around the outline of the design (laser off unless set in "
+"Settings), to check where it will be cut"
+msgstr ""
+"Den Kopf um den Umriss des Entwurfs fahren (Laser aus, außer in den "
+"Einstellungen anders gewählt), um zu prüfen, wo geschnitten wird"
+
 msgid "Move the head to the centre of the design"
 msgstr "Kopf zur Mitte des Entwurfs fahren"
 
@@ -536,9 +544,6 @@ msgstr "%s geöffnet"
 msgid "Opening %s"
 msgstr "%s wird geöffnet"
 
-msgid "Open…"
-msgstr "Öffnen…"
-
 msgid "Operations"
 msgstr "Vorgänge"
 
@@ -561,9 +566,6 @@ msgstr "Laufenden Auftrag anhalten oder beenden"
 
 msgid "Place design at the &head"
 msgstr "Entwurf am &Laserkopf platzieren"
-
-msgid "Place design at the head"
-msgstr "Entwurf am Laserkopf platzieren"
 
 msgid "Power"
 msgstr "Leistung"
@@ -621,9 +623,6 @@ msgstr "Weniger Speicherverbrauch (Raster 500 dpi)"
 
 msgid "Release USB"
 msgstr "USB freigeben"
-
-msgid "Reload"
-msgstr "Neu laden"
 
 msgctxt "toolbar"
 msgid "Reload"
@@ -688,12 +687,6 @@ msgstr "SVG-Importmaßstab"
 msgid "Save &EGV file…"
 msgstr "&EGV-Datei speichern…"
 
-msgctxt "toolbar"
-msgid "Save EGV"
-msgstr ""
-"EGV\n"
-"speichern"
-
 msgid "Save EGV file"
 msgstr "EGV-Datei speichern"
 
@@ -754,10 +747,6 @@ msgstr "Geschw. (%s)"
 msgid "Start"
 msgstr "Start"
 
-msgctxt "toolbar"
-msgid "Start"
-msgstr "Start"
-
 msgid "Start selected operations"
 msgstr "Ausgewählte Vorgänge starten"
 
@@ -767,10 +756,6 @@ msgstr "Ausgewählte Vorgänge starten"
 msgid "Step:"
 msgstr "Schritt:"
 
-msgid "Stop"
-msgstr "Stopp"
-
-msgctxt "toolbar"
 msgid "Stop"
 msgstr "Stopp"
 
@@ -870,13 +855,6 @@ msgstr ""
 "Zum\n"
 "Kopf"
 
-msgid "Trace"
-msgstr "Umriss"
-
-msgctxt "toolbar"
-msgid "Trace"
-msgstr "Umriss"
-
 msgid "Trace boundary"
 msgstr "Umriss abfahren"
 
@@ -922,10 +900,6 @@ msgstr "Unbekannter USB-Fehler: %s"
 msgid "Unlock"
 msgstr "Freigeben"
 
-msgctxt "toolbar"
-msgid "Unlock"
-msgstr "Freigeben"
-
 msgid "Unlock rail after a job"
 msgstr "Achsen nach dem Auftrag freigeben"
 
@@ -952,6 +926,10 @@ msgstr "Vektorgravur"
 
 msgid "Vector engrave: determining order…"
 msgstr "Vektorgravur: Reihenfolge wird ermittelt…"
+
+msgctxt "toolbar group"
+msgid "View"
+msgstr "Ansicht"
 
 msgid "W"
 msgstr "B"

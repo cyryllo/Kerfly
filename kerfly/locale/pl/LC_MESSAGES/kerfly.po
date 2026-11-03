@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:06+0100\n"
+"POT-Creation-Date: 2026-11-03 22:29+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -149,9 +149,6 @@ msgstr "Dodaj kolejny plik na stół lasera"
 msgid "Add design"
 msgstr "Dodaj projekt"
 
-msgid "Add…"
-msgstr "Dodaj…"
-
 #, python-format
 msgid "Adjusting image darkness: %s%%"
 msgstr "Dopasowywanie jasności obrazu: %s%%"
@@ -161,6 +158,10 @@ msgstr "Zaawansowane"
 
 msgid "All files"
 msgstr "Wszystkie pliki"
+
+msgctxt "toolbar group"
+msgid "Arrange"
+msgstr "Układ"
 
 msgid "Bed height"
 msgstr "Wysokość stołu"
@@ -198,10 +199,6 @@ msgstr "Wyśrodkuj zaznaczony element albo cały projekt na stole"
 
 msgid "Click an element on the bed to select it."
 msgstr "Kliknij element na stole, aby go zaznaczyć."
-
-msgctxt "toolbar"
-msgid "Connect"
-msgstr "Połącz"
 
 msgid "Controller board"
 msgstr "Płyta sterująca"
@@ -297,12 +294,20 @@ msgstr "Pliki EGV (*.EGV *.egv)"
 msgid "EGV files (*.egv *.EGV);;All files (*)"
 msgstr "Pliki EGV (*.egv *.EGV);;Wszystkie pliki (*)"
 
+msgctxt "toolbar group"
+msgid "Edit"
+msgstr "Edycja"
+
 msgid "Engrave bottom to top"
 msgstr "Graweruj od dołu do góry"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
 msgstr "Szacowany czas: <b>%s</b>"
+
+msgctxt "toolbar group"
+msgid "File"
+msgstr "Plik"
 
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Krótko odpal laser (płyty M3)"
@@ -355,10 +360,6 @@ msgstr "Wysokość:"
 
 msgid "Home"
 msgstr "Bazowanie"
-
-msgctxt "toolbar"
-msgid "Home"
-msgstr "Bazuj"
 
 msgid "Home is in the upper right corner"
 msgstr "Pozycja bazowa w prawym górnym rogu"
@@ -474,6 +475,13 @@ msgstr "Objedź kontur projektu"
 msgid "Move head to design"
 msgstr "Przesuń głowicę do projektu"
 
+msgid ""
+"Move the head around the outline of the design (laser off unless set in "
+"Settings), to check where it will be cut"
+msgstr ""
+"Objedź głowicą dookoła obrysu projektu (z wyłączonym laserem, chyba że w "
+"Ustawieniach zaznaczono inaczej), aby sprawdzić, gdzie zostanie wycięty"
+
 msgid "Move the head to the centre of the design"
 msgstr "Przesuń głowicę na środek projektu"
 
@@ -534,9 +542,6 @@ msgstr "Otwarto %s"
 msgid "Opening %s"
 msgstr "Otwieranie %s"
 
-msgid "Open…"
-msgstr "Otwórz…"
-
 msgid "Operations"
 msgstr "Operacje"
 
@@ -557,9 +562,6 @@ msgstr "Wstrzymaj lub zatrzymaj trwające zadanie"
 
 msgid "Place design at the &head"
 msgstr "Ustaw projekt przy &głowicy"
-
-msgid "Place design at the head"
-msgstr "Ustaw projekt przy głowicy"
 
 msgid "Power"
 msgstr "Moc"
@@ -615,9 +617,6 @@ msgstr "Mniejsze zużycie pamięci (raster 500 dpi)"
 
 msgid "Release USB"
 msgstr "Zwolnij USB"
-
-msgid "Reload"
-msgstr "Wczytaj ponownie"
 
 msgctxt "toolbar"
 msgid "Reload"
@@ -682,12 +681,6 @@ msgstr "Skala importu SVG"
 msgid "Save &EGV file…"
 msgstr "Zapisz plik &EGV…"
 
-msgctxt "toolbar"
-msgid "Save EGV"
-msgstr ""
-"Zapisz\n"
-"EGV"
-
 msgid "Save EGV file"
 msgstr "Zapisz plik EGV"
 
@@ -746,10 +739,6 @@ msgstr "Prędkość (%s)"
 msgid "Start"
 msgstr "Start"
 
-msgctxt "toolbar"
-msgid "Start"
-msgstr "Start"
-
 msgid "Start selected operations"
 msgstr "Uruchom zaznaczone operacje"
 
@@ -759,10 +748,6 @@ msgstr "Uruchom zaznaczone operacje"
 msgid "Step:"
 msgstr "Krok:"
 
-msgid "Stop"
-msgstr "Stop"
-
-msgctxt "toolbar"
 msgid "Stop"
 msgstr "Stop"
 
@@ -862,13 +847,6 @@ msgstr ""
 "Do\n"
 "głowicy"
 
-msgid "Trace"
-msgstr "Kontur"
-
-msgctxt "toolbar"
-msgid "Trace"
-msgstr "Kontur"
-
 msgid "Trace boundary"
 msgstr "Objazd konturu"
 
@@ -912,10 +890,6 @@ msgstr "Nieznany błąd USB: %s"
 msgid "Unlock"
 msgstr "Odblokuj"
 
-msgctxt "toolbar"
-msgid "Unlock"
-msgstr "Odblokuj"
-
 msgid "Unlock rail after a job"
 msgstr "Odblokuj osie po zadaniu"
 
@@ -942,6 +916,10 @@ msgstr "Grawerowanie wektorowe"
 
 msgid "Vector engrave: determining order…"
 msgstr "Grawerowanie wektorowe: ustalanie kolejności…"
+
+msgctxt "toolbar group"
+msgid "View"
+msgstr "Widok"
 
 msgid "W"
 msgstr "Szer."

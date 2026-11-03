@@ -13,8 +13,8 @@ from PySide6.QtGui import QActionGroup
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QDoubleSpinBox, QFileDialog,
                                QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
                                QListWidget, QListWidgetItem, QMainWindow, QMessageBox, QProgressBar,
-                               QPushButton, QScrollArea, QSpinBox, QTabWidget, QToolBar, QVBoxLayout,
-                               QWidget)
+                               QPushButton, QScrollArea, QSpinBox, QTabWidget, QToolBar, QToolButton,
+                               QVBoxLayout, QWidget, QFrame)
 
 from kerfly import __version__
 from kerfly.core import config, egvfile, job, loaders
@@ -100,7 +100,8 @@ class MainWindow(QMainWindow):
         return act
 
     def _build_actions(self):
-        self.act_open = self._action(_("&Open design\u2026"), self.open_design, "Ctrl+O")
+        self.act_open = self._action(_("&Open design\u2026"), self.open_design, "Ctrl+O",
+                                     _("Open a file, replacing everything on the bed"))
         self.act_reload = self._action(_("&Reload design"), self.reload_design, "F5")
         self.act_add = self._action(_("&Add design…"), self.add_design, "Ctrl+Shift+O",
                                     _("Add another file to the laser bed"))
@@ -160,6 +161,7 @@ class MainWindow(QMainWindow):
                   self.act_rot_left, self.act_rot_right, None, self.act_center, self.act_place_head):
             m.addSeparator() if a is None else m.addAction(a)
         m = mb.addMenu(_("&Laser"))
+        self.laser_menu = m
         for a in (self.act_connect, self.act_release, None, self.act_home, self.act_unlock,
                   self.act_unfreeze, None, self.act_goto):
             m.addSeparator() if a is None else m.addAction(a)
@@ -181,57 +183,78 @@ class MainWindow(QMainWindow):
         self._build_toolbar()
 
     def _build_toolbar(self):
-        """MeerK40t-style toolbar: icons with short labels, grouped by function."""
+        """Toolbar in labelled groups, like the MeerK40t ribbon. Machine control
+        (connect, home, start, stop, ...) is in the left panel, not here."""
         self.act_start = self._action(_("Start"), lambda: self.start_job(), "F9",
                                       _("Start the selected operations"))
         self.act_stop = self._action(_("Stop"), self.stop_job, "Esc", _("Pause or stop the running job"))
         self.act_stop.setEnabled(False)
-        self.act_trace = self._action(_("Trace"), lambda: self.start_job(trace=True), None,
+        self.act_trace = self._action(_("Trace boundary"), lambda: self.start_job(trace=True), None,
                                       _("Move around the outline of the design"))
-        icons_short = [
-            # (action, tabler icon, short label for the toolbar)
-            (self.act_open, "folder-open", C_("toolbar", "Open")),
-            (self.act_add, "file-plus", C_("toolbar", "Add")),
-            (self.act_reload, "refresh", C_("toolbar", "Reload")),
-            (self.act_save_egv, "device-floppy", C_("toolbar", "Save EGV")),
-            None,
-            (self.act_undo, "arrow-back-up", C_("toolbar", "Undo")),
-            (self.act_redo, "arrow-forward-up", C_("toolbar", "Redo")),
-            (self.act_duplicate, "copy", C_("toolbar", "Duplicate")),
-            (self.act_delete, "trash", C_("toolbar", "Delete")),
-            (self.act_rot_left, "rotate-2", C_("toolbar", "Rotate left")),
-            (self.act_rot_right, "rotate-clockwise-2", C_("toolbar", "Rotate right")),
-            (self.act_center, "focus-centered", C_("toolbar", "Centre")),
-            (self.act_place_head, "current-location", C_("toolbar", "To head")),
-            None,
-            (self.act_connect, "plug-connected", C_("toolbar", "Connect")),
-            (self.act_home, "home", C_("toolbar", "Home")),
-            (self.act_unlock, "lock-open", C_("toolbar", "Unlock")),
-            (self.act_trace, "route", C_("toolbar", "Trace")),
-            (self.act_start, "player-play", C_("toolbar", "Start")),
-            (self.act_stop, "player-stop", C_("toolbar", "Stop")),
-            None,
-            (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
-            (self.act_snap, "grid-dots", C_("toolbar", "Grid")),
-            (self.act_settings, "settings", C_("toolbar", "Settings")),
+        self.laser_menu.addSeparator()
+        for a in (self.act_trace, self.act_start, self.act_stop):
+            self.laser_menu.addAction(a)
+        self.act_trace.setIcon(icons.trace_icon())
+        self.act_start.setIcon(icons.tabler("player-play", "#2e7d32"))
+        self.act_stop.setIcon(icons.tabler("player-stop", "#c62828"))
+
+        groups = [
+            (C_("toolbar group", "File"), [
+                (self.act_open, "folder-open", C_("toolbar", "Open")),
+                (self.act_add, "file-plus", C_("toolbar", "Add")),
+                (self.act_reload, "refresh", C_("toolbar", "Reload")),
+            ]),
+            (C_("toolbar group", "Edit"), [
+                (self.act_undo, "arrow-back-up", C_("toolbar", "Undo")),
+                (self.act_redo, "arrow-forward-up", C_("toolbar", "Redo")),
+                (self.act_duplicate, "copy", C_("toolbar", "Duplicate")),
+                (self.act_delete, "trash", C_("toolbar", "Delete")),
+            ]),
+            (C_("toolbar group", "Arrange"), [
+                (self.act_rot_left, "rotate-2", C_("toolbar", "Rotate left")),
+                (self.act_rot_right, "rotate-clockwise-2", C_("toolbar", "Rotate right")),
+                (self.act_center, "focus-centered", C_("toolbar", "Centre")),
+                (self.act_place_head, "current-location", C_("toolbar", "To head")),
+            ]),
+            (C_("toolbar group", "View"), [
+                (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
+                (self.act_snap, "grid-dots", C_("toolbar", "Grid")),
+                (self.act_settings, "settings", C_("toolbar", "Settings")),
+            ]),
         ]
         tb = QToolBar(_("Main toolbar"))
         tb.setObjectName("main_toolbar")
         tb.setMovable(False)
-        tb.setIconSize(QSize(24, 24))
-        tb.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-        for entry in icons_short:
-            if entry is None:
-                tb.addSeparator()
-                continue
-            action, icon, short = entry
-            action.setIcon(icons.tabler(icon))
-            action.setIconText(short)
-            if not action.toolTip() or action.toolTip() == action.iconText():
-                action.setToolTip(action.text().replace("&", ""))
-            tb.addAction(action)
-        self.act_start.setIcon(icons.tabler("player-play", "#2e7d32"))
-        self.act_stop.setIcon(icons.tabler("player-stop", "#c62828"))
+        for i, (title, entries) in enumerate(groups):
+            if i:
+                line = QFrame()
+                line.setFrameShape(QFrame.VLine)
+                line.setObjectName("ribbon_separator")
+                tb.addWidget(line)
+            group = QWidget()
+            v = QVBoxLayout(group)
+            v.setContentsMargins(4, 2, 4, 0)
+            v.setSpacing(0)
+            row = QHBoxLayout()
+            row.setSpacing(1)
+            for action, icon, short in entries:
+                action.setIcon(icons.tabler(icon))
+                action.setIconText(short)
+                if not action.toolTip() or action.toolTip() == action.iconText():
+                    action.setToolTip(action.text().replace("&", ""))
+                button = QToolButton()
+                button.setDefaultAction(action)
+                button.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+                button.setIconSize(QSize(24, 24))
+                button.setAutoRaise(True)
+                button.setFixedHeight(62)        # same height for one- and two-line labels
+                row.addWidget(button, 0, Qt.AlignTop)
+            v.addLayout(row)
+            caption = QLabel(title)
+            caption.setObjectName("ribbon_caption")
+            caption.setAlignment(Qt.AlignHCenter)
+            v.addWidget(caption)
+            tb.addWidget(group)
         self.addToolBar(tb)
 
     def _spin(self, key, kind, lo, hi, decimals=1):
@@ -283,23 +306,6 @@ class MainWindow(QMainWindow):
         self.element_list.itemChanged.connect(self._element_item_changed)
         self.element_list.currentRowChanged.connect(self._element_row_selected)
         v.addWidget(self.element_list)
-        row = QHBoxLayout()
-        b = QPushButton(_("Open\u2026"))
-        b.setToolTip(_("Open a file, replacing everything on the bed"))
-        b.clicked.connect(self.open_design)
-        row.addWidget(b)
-        self.btn_add = QPushButton(_("Add\u2026"))
-        self.btn_add.setToolTip(_("Add another file to the laser bed"))
-        self.btn_add.clicked.connect(self.add_design)
-        row.addWidget(self.btn_add)
-        b = QPushButton(_("Reload"))
-        b.clicked.connect(self.reload_design)
-        row.addWidget(b)
-        v.addLayout(row)
-        self.btn_place_head = QPushButton(_("Place design at the head"))
-        self.btn_place_head.setToolTip(_("Move all elements so the design starts at the laser head"))
-        self.btn_place_head.clicked.connect(self.place_at_head)
-        v.addWidget(self.btn_place_head)
         design_layout.addWidget(box)
 
         # --- selected element
@@ -531,20 +537,26 @@ class MainWindow(QMainWindow):
         self.btn_start = QPushButton(_("Start selected operations"))
         self.btn_start.setObjectName("start")
         self.btn_start.setMinimumHeight(40)
+        self.btn_start.setIcon(icons.tabler("player-play", "#ffffff"))
+        self.btn_start.setIconSize(QSize(20, 20))
         self.btn_start.clicked.connect(lambda: self.start_job())
         v.addWidget(self.btn_start)
         row = QHBoxLayout()
         self.btn_trace = QPushButton(_("Trace boundary"))
-        self.btn_trace.setToolTip(_("Move around the outline of the design"))
+        self.btn_trace.setToolTip(_("Move the head around the outline of the design (laser off unless "
+                                    "set in Settings), to check where it will be cut"))
+        self.btn_trace.setIcon(icons.trace_icon())
         self.btn_trace.clicked.connect(lambda: self.start_job(trace=True))
         row.addWidget(self.btn_trace)
         self.btn_egv = QPushButton(_("Save EGV\u2026"))
+        self.btn_egv.setIcon(icons.tabler("device-floppy"))
         self.btn_egv.clicked.connect(self.save_egv)
         row.addWidget(self.btn_egv)
         v.addLayout(row)
         self.btn_stop = QPushButton(_("Stop"))
         self.btn_stop.setObjectName("stop")
         self.btn_stop.setMinimumHeight(34)
+        self.btn_stop.setIcon(icons.tabler("player-stop", "#ffffff"))
         self.btn_stop.setEnabled(False)
         self.btn_stop.clicked.connect(self.stop_job)
         v.addWidget(self.btn_stop)
@@ -1000,8 +1012,7 @@ class MainWindow(QMainWindow):
 
     def set_busy(self, busy):
         for w in [self.btn_start, self.btn_trace, self.btn_egv, self.btn_connect, self.btn_goto,
-                  self.btn_test_fire, self.btn_calc_time, self.btn_add, self.btn_place_head,
-                  self.selection_box] + self.corner_buttons:
+                  self.btn_test_fire, self.btn_calc_time, self.selection_box] + self.corner_buttons:
             w.setEnabled(not busy)
         for a in [self.act_open, self.act_reload, self.act_save_egv, self.act_send_egv,
                   self.act_connect, self.act_release, self.act_home, self.act_unlock,

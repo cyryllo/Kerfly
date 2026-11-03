@@ -96,6 +96,31 @@ def centre_icon():
     return QIcon(pm)
 
 
+def trace_icon(color="#2b2f36"):
+    """Boundary trace: a dashed outline around a shape, with an arrow showing
+    the head travelling along it."""
+    pm, p = _canvas()
+    ink = QColor(color)
+    # the design: a small solid shape in the middle
+    p.setPen(Qt.NoPen)
+    p.setBrush(QBrush(ink))
+    shape = QPainterPath()
+    shape.addRoundedRect(22, 24, 20, 16, 3, 3)
+    p.drawPath(shape)
+    # dashed outline around it
+    pen = QPen(ink, 3.0, Qt.CustomDashLine, Qt.RoundCap, Qt.RoundJoin)
+    pen.setDashPattern([2.2, 1.8])
+    p.setPen(pen)
+    p.setBrush(Qt.NoBrush)
+    p.drawRoundedRect(8, 10, 48, 44, 6, 6)
+    # travel arrow on the top edge
+    p.setPen(Qt.NoPen)
+    p.setBrush(QBrush(ink))
+    p.drawPolygon(QPolygonF([QPointF(44, 3), QPointF(56, 10), QPointF(44, 17)]))
+    p.end()
+    return QIcon(pm)
+
+
 # ---- toolbar icons from Tabler Icons (MIT licence, see icons/tabler/LICENSE) ----
 import os as _os
 

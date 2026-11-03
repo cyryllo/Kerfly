@@ -28,6 +28,8 @@ QPushButton#corner { font-size:17px; }
 QGroupBox { font-weight:bold; }
 QToolBar#main_toolbar { spacing: 1px; padding: 2px; }
 QToolBar#main_toolbar QToolButton { padding: 2px 1px; font-size: 11px; min-width: 40px; }
+QLabel#ribbon_caption { color: #6b7280; font-size: 10px; padding-bottom: 1px; }
+QFrame#ribbon_separator { color: #c4c9d0; margin: 4px 3px; }
 QGroupBox QLabel, QGroupBox QCheckBox { font-weight:normal; }
 """
 

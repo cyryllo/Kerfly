@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:06+0100\n"
+"POT-Creation-Date: 2026-11-03 22:29+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -147,9 +147,6 @@ msgstr "Ajouter un autre fichier sur le plateau"
 msgid "Add design"
 msgstr "Ajouter un dessin"
 
-msgid "Add…"
-msgstr "Ajouter…"
-
 #, python-format
 msgid "Adjusting image darkness: %s%%"
 msgstr "Ajustement de la luminosité de l'image : %s%%"
@@ -159,6 +156,10 @@ msgstr "Avancé"
 
 msgid "All files"
 msgstr "Tous les fichiers"
+
+msgctxt "toolbar group"
+msgid "Arrange"
+msgstr "Disposition"
 
 msgid "Bed height"
 msgstr "Hauteur du plateau"
@@ -196,10 +197,6 @@ msgstr "Centrer l'élément sélectionné ou tout le dessin sur le plateau"
 
 msgid "Click an element on the bed to select it."
 msgstr "Cliquez sur un élément pour le sélectionner."
-
-msgctxt "toolbar"
-msgid "Connect"
-msgstr "Connecter"
 
 msgid "Controller board"
 msgstr "Carte de contrôle"
@@ -297,12 +294,20 @@ msgstr "Fichiers EGV (*.EGV *.egv)"
 msgid "EGV files (*.egv *.EGV);;All files (*)"
 msgstr "Fichiers EGV (*.egv *.EGV);;Tous les fichiers (*)"
 
+msgctxt "toolbar group"
+msgid "Edit"
+msgstr "Édition"
+
 msgid "Engrave bottom to top"
 msgstr "Graver de bas en haut"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
 msgstr "Durée totale estimée : <b>%s</b>"
+
+msgctxt "toolbar group"
+msgid "File"
+msgstr "Fichier"
 
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Déclencher brièvement le laser (cartes M3)"
@@ -353,10 +358,6 @@ msgstr "Tête : X %s  Y %s %s"
 msgid "Height:"
 msgstr "Hauteur :"
 
-msgid "Home"
-msgstr "Origine"
-
-msgctxt "toolbar"
 msgid "Home"
 msgstr "Origine"
 
@@ -474,6 +475,13 @@ msgstr "Parcourir le contour du dessin"
 msgid "Move head to design"
 msgstr "Déplacer la tête vers le dessin"
 
+msgid ""
+"Move the head around the outline of the design (laser off unless set in "
+"Settings), to check where it will be cut"
+msgstr ""
+"Faire le tour du dessin avec la tête (laser éteint, sauf réglage "
+"contraire dans les Paramètres) pour vérifier où il sera découpé"
+
 msgid "Move the head to the centre of the design"
 msgstr "Déplacer la tête au centre du dessin"
 
@@ -534,9 +542,6 @@ msgstr "%s ouvert"
 msgid "Opening %s"
 msgstr "Ouverture de %s"
 
-msgid "Open…"
-msgstr "Ouvrir…"
-
 msgid "Operations"
 msgstr "Opérations"
 
@@ -557,9 +562,6 @@ msgstr "Mettre en pause ou arrêter la tâche en cours"
 
 msgid "Place design at the &head"
 msgstr "Placer le dessin à la &tête"
-
-msgid "Place design at the head"
-msgstr "Placer le dessin à la tête"
 
 msgid "Power"
 msgstr "Puissance"
@@ -615,9 +617,6 @@ msgstr "Utilisation réduite de la mémoire (raster 500 ppp)"
 
 msgid "Release USB"
 msgstr "Libérer l'USB"
-
-msgid "Reload"
-msgstr "Recharger"
 
 msgctxt "toolbar"
 msgid "Reload"
@@ -680,12 +679,6 @@ msgstr "Échelle d'import SVG"
 msgid "Save &EGV file…"
 msgstr "Enregistrer le fichier &EGV…"
 
-msgctxt "toolbar"
-msgid "Save EGV"
-msgstr ""
-"Enreg.\n"
-"EGV"
-
 msgid "Save EGV file"
 msgstr "Enregistrer le fichier EGV"
 
@@ -744,10 +737,6 @@ msgstr "Vitesse (%s)"
 msgid "Start"
 msgstr "Démarrer"
 
-msgctxt "toolbar"
-msgid "Start"
-msgstr "Démarrer"
-
 msgid "Start selected operations"
 msgstr "Lancer les opérations sélectionnées"
 
@@ -757,10 +746,6 @@ msgstr "Lancer les opérations sélectionnées"
 msgid "Step:"
 msgstr "Pas :"
 
-msgid "Stop"
-msgstr "Arrêt"
-
-msgctxt "toolbar"
 msgid "Stop"
 msgstr "Arrêt"
 
@@ -862,13 +847,6 @@ msgstr ""
 "À la\n"
 "tête"
 
-msgid "Trace"
-msgstr "Contour"
-
-msgctxt "toolbar"
-msgid "Trace"
-msgstr "Contour"
-
 msgid "Trace boundary"
 msgstr "Parcourir le contour"
 
@@ -912,12 +890,6 @@ msgstr "Erreur USB inconnue : %s"
 msgid "Unlock"
 msgstr "Déverrouiller"
 
-msgctxt "toolbar"
-msgid "Unlock"
-msgstr ""
-"Déver-\n"
-"rouiller"
-
 msgid "Unlock rail after a job"
 msgstr "Déverrouiller les axes après la tâche"
 
@@ -944,6 +916,10 @@ msgstr "Gravure vectorielle"
 
 msgid "Vector engrave: determining order…"
 msgstr "Gravure vectorielle : calcul de l'ordre…"
+
+msgctxt "toolbar group"
+msgid "View"
+msgstr "Affichage"
 
 msgid "W"
 msgstr "L"

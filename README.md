@@ -19,8 +19,10 @@ Designs are placed on a picture of the laser bed. You can put several files
 on the bed, drag them with the mouse, scale and rotate them with handles, or
 type their position, size and angle. The editor has undo and redo, a snap
 grid, duplicate, centre on the bed and an element list where elements can be
-left out of the job. A toolbar gives one-click access to the main commands,
-in the style of MeerK40t. When a job starts, the laser head first
+left out of the job. A toolbar with labelled groups (File, Edit, Arrange,
+View), in the style of MeerK40t, gives one-click access to the editing
+commands. Machine control (connect, home, trace, start, stop) is in the panel
+on the left. When a job starts, the laser head first
 moves to the design. "Place design at the head" keeps the K40 Whisperer way of
 working, where the design starts where the head is.
 
