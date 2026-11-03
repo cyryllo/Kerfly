@@ -40,13 +40,36 @@ DXF_UNIT_SCALE = {
 DXF_UNITS = list(DXF_UNIT_SCALE)
 
 
+class _SvgReader(SVG_READER):
+    """SVG_READER that renders the raster part with a built-in renderer when
+    Inkscape is not available (or not wanted)."""
+    renderer = None          # callable(svg_bytes, width_px, height_px) -> PIL image
+
+    def Make_PNG(self):
+        if self.inkscape_exe is None and self.renderer is not None:
+            from io import BytesIO
+            buf = BytesIO()
+            self.document.write(buf)
+            w_mm, h_mm = self.SVG_Size[0], self.SVG_Size[1]
+            width = max(1, int(round(w_mm / 25.4 * self.image_dpi)))
+            height = max(1, int(round(h_mm / 25.4 * self.image_dpi)))
+            self.raster_PIL = self.renderer(buf.getvalue(), width, height).convert("L")
+            return
+        SVG_READER.Make_PNG(self)
+
+
 def load_svg(filename, design, inkscape_path="", inkscape_timeout_s=180,
-             reduced_memory=False, ask_pxpi=None, progress=_no_progress):
+             reduced_memory=False, ask_pxpi=None, progress=_no_progress,
+             svg_renderer=None, use_inkscape=True):
     """Load an SVG: red strokes -> vector cut, blue strokes -> vector engrave,
     everything else rendered by Inkscape into the raster image.
 
     ask_pxpi(svg_size, viewbox, inkscape_version) is called when the SVG does
     not define its physical size; it returns (pxpi, viewbox) or None to cancel.
+
+    svg_renderer(svg_bytes, width, height) renders the raster part when Inkscape
+    is not found (or use_inkscape is False). Without Inkscape, text that is
+    meant to be cut or engraved as lines cannot be converted to paths.
 
     Returns a list of warning strings. Raises LoadCancelled or an exception
     describing the error.
@@ -55,9 +78,12 @@ def load_svg(filename, design, inkscape_path="", inkscape_timeout_s=180,
     design.input_dpi = 500.0 if reduced_memory else 1000.0
 
     def new_reader():
-        r = SVG_READER()
+        r = _SvgReader()
         r.image_dpi = design.input_dpi
         r.set_inkscape_path(inkscape_path)
+        if not use_inkscape:
+            r.inkscape_exe = None
+        r.renderer = svg_renderer
         r.timout = int(inkscape_timeout_s)
         return r
 
@@ -81,6 +107,10 @@ def load_svg(filename, design, inkscape_path="", inkscape_timeout_s=180,
             svg_reader.make_paths()
     except SVG_TEXT_EXCEPTION:
         svg_reader = new_reader()
+        if svg_reader.inkscape_exe is None:
+            raise Exception(_("This SVG file has text that should be cut or engraved as lines. "
+                              "Convert the text to paths in your drawing program (in Inkscape: "
+                              "Path \u2192 Object to Path), or install Inkscape."))
         progress("Converting TEXT to PATHS.")
         svg_reader.parse_svg(filename)
         if pxpi is not None and viewbox is not None:

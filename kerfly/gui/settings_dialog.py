@@ -52,6 +52,7 @@ TABS = [
     ]),
     (N_("Advanced"), [
         ("language", N_("Language (applies after restart)"), "language", None),
+        ("use_inkscape", N_("Use Inkscape for SVG files when installed (otherwise built-in)"), "bool", None),
         ("inkscape_path", N_("Inkscape executable"), "path", None),
         ("ink_timeout", N_("Inkscape timeout (minutes)"), "float", (0.1, 60, 1, None)),
         ("reduced_mem", N_("Reduced memory use (500 dpi raster)"), "bool", None),
@@ -65,7 +66,7 @@ TABS = [
 # settings whose change invalidates the computed raster lines / path order
 RASTER_KEYS = {"halftone", "ht_size", "negate", "mirror", "rotate", "rast_step", "bezier_M1",
                "bezier_M2", "bezier_weight", "LaserXscale", "LaserYscale", "LaserRscale", "rotary"}
-RELOAD_KEYS = {"inside_first", "reduced_mem"}
+RELOAD_KEYS = {"inside_first", "reduced_mem", "use_inkscape"}
 
 
 class SettingsDialog(QDialog):

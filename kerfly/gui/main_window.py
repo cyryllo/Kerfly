@@ -31,6 +31,7 @@ from kerfly.core.layout import Element, compile_layout
 from kerfly.core.shapes import ShapeSpec, build_design
 from kerfly.gui import icons
 from kerfly.gui.image_dialog import ImageSizeDialog
+from kerfly.gui.svg_render import render_svg
 from kerfly.gui.text_shapes import update_text_spec
 from kerfly.gui.tool_options import (KIND_NAMES, NEW_KIND_TITLES, ToolOptionsBar, ribbon_section,
                                     ribbon_separator)
@@ -1615,7 +1616,8 @@ class MainWindow(QMainWindow):
                     filename, design,
                     inkscape_path=self.values.get("inkscape_path", ""),
                     inkscape_timeout_s=float(self.values.get("ink_timeout", 3)) * 60.0,
-                    reduced_memory=reduced, ask_pxpi=ask_pxpi, progress=progress)
+                    reduced_memory=reduced, ask_pxpi=ask_pxpi, progress=progress,
+                    svg_renderer=render_svg, use_inkscape=is_true(self.values.get("use_inkscape", "1")))
             elif ext == ".dxf":
                 warnings = loaders.load_dxf(filename, design, ask_units=ask_units)
             elif ext in loaders.IMAGE_EXTENSIONS:

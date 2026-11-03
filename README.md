@@ -75,7 +75,9 @@ python3 -m venv .venv
 .venv/bin/python k40_whisperer.py        # original K40 Whisperer window
 ```
 
-Inkscape is required: SVG files are rasterized through it.
+Inkscape is optional. It is used for SVG rasters when it is installed (as in
+K40 Whisperer), and it is needed for SVG text that is cut or engraved as an
+outline. Without it, Kerfly renders SVG rasters with its built-in renderer.
 
 USB access without root needs a udev rule. See [README_Linux.txt](README_Linux.txt).
 

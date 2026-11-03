@@ -469,6 +469,45 @@ def main():
           "(egv %d bytes, same %s, asked %s)" % (os.path.getsize(egv1), same, asked))
     os.remove(png2)
 
+    # 17. SVG without Inkscape: built-in renderer
+    w = make_window(use_inkscape="0")
+    w.load_design(os.path.join(FIX, "shapes.svg"))
+    out = tempfile.mktemp(suffix=".egv")
+    w.start_job(output_file=out)
+    run_until_idle(app, w)
+    # The built-in renderer anti-aliases edges slightly differently from Inkscape,
+    # so after halftoning a few dots move: compare closely, not byte for byte.
+    from PIL import ImageChops
+    from kerfly.core import loaders as _loaders
+    from kerfly.core.design import Design as _Design
+    import shutil as _shutil
+    ref = _Design()
+    _loaders.load_svg(os.path.join(FIX, "shapes.svg"), ref, inkscape_path=_shutil.which("inkscape"))
+    from kerfly.gui.svg_render import render_svg as _render_svg
+    built = _Design()                       # freshly loaded: a job reorders the cut paths in place
+    _loaders.load_svg(os.path.join(FIX, "shapes.svg"), built, svg_renderer=_render_svg, use_inkscape=False)
+    diff = ImageChops.difference(ref.raster.image, built.raster.image)
+    hist = diff.histogram()
+    changed = sum(hist[1:])
+    worst = max((v for v in range(256) if hist[v]), default=0)
+    vectors_same = (ref.vector_cut.ecoords == built.vector_cut.ecoords
+                    and ref.vector_engrave.ecoords == built.vector_engrave.ecoords)
+    size = os.path.getsize(out) if os.path.exists(out) else 0
+    ref_size = manifest["svg_raster_vector_cut"]["size"]
+    check("SVG without Inkscape: same vectors, raster within anti-aliasing tolerance",
+          vectors_same and worst <= 32 and changed < 0.001 * ref.raster.image.width * ref.raster.image.height
+          and abs(size - ref_size) < 0.01 * ref_size,
+          "(%d edge pixels differ, max %d/255; EGV %d vs %d bytes)" % (changed, worst, size, ref_size))
+    errors = []
+    QMessageBox.critical = staticmethod(lambda *a, **k: errors.append(a[2] if len(a) > 2 else ""))
+    red_text = tempfile.mktemp(suffix=".svg")
+    open(red_text, "w").write('<svg xmlns="http://www.w3.org/2000/svg" width="50mm" height="20mm" '
+                              'viewBox="0 0 50 20"><text x="2" y="15" fill="none" stroke="#ff0000">Hi</text></svg>')
+    w.load_design(red_text)
+    check("SVG without Inkscape: cut text gives a clear message",
+          len(errors) == 1 and "paths" in errors[0], "(%s)" % errors)
+    os.remove(red_text)
+
     print("\n%d check(s) failed." % failures if failures else "\nAll checks passed.")
     return 1 if failures else 0
 

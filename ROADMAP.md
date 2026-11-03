@@ -53,7 +53,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | LightBurn `.lbrn` / `.lbrn2` | `extra/lbrn.py` |
 | xTool `.xcs` | `extra/xcs_reader.py` |
 | EZCad `.ezd` | `extra/ezd.py` |
-| SVG parsing without Inkscape (`svgelements`) | `svgelements.py` (also on PyPI) |
+| ~~SVG without Inkscape~~ (done: raster with the built-in Qt renderer; Inkscape still needed to turn cut/engrave text into paths) | `svgelements.py` (also on PyPI) |
 
 ## Editor window (modelled on MeerK40t's interface)
 

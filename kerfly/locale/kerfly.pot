@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 23:39+0100\n"
+"POT-Creation-Date: 2026-11-03 23:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1027,6 +1027,12 @@ msgstr ""
 msgid "Thickness:"
 msgstr ""
 
+msgid ""
+"This SVG file has text that should be cut or engraved as lines. Convert "
+"the text to paths in your drawing program (in Inkscape: Path → Object to "
+"Path), or install Inkscape."
+msgstr ""
+
 msgid "Time"
 msgstr ""
 
@@ -1098,6 +1104,9 @@ msgid "Upper left corner"
 msgstr ""
 
 msgid "Upper right corner"
+msgstr ""
+
+msgid "Use Inkscape for SVG files when installed (otherwise built-in)"
 msgstr ""
 
 msgid "Used with M3 boards (power per layer)"

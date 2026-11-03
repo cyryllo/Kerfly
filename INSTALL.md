@@ -9,8 +9,10 @@ later. A Polish version of this guide is in [INSTALL_pl.md](INSTALL_pl.md).
    "Windows installer (64-bit)" of the latest 3.13 release). It is recommended
    because every library has ready-made packages for it. In the installer,
    tick **"Add python.exe to PATH"**.
-2. **Inkscape** from <https://inkscape.org/release/>. It is only needed for
-   SVG files. Images, DXF and G-code work without it.
+2. **Inkscape** (optional) from <https://inkscape.org/release/>. Kerfly
+   reads SVG files by itself. Inkscape is needed only for SVG text that is cut
+   or engraved as an outline, which Inkscape turns into paths. When it is
+   installed, Kerfly also uses it for rasters, as K40 Whisperer does.
 3. **USB driver** for the K40 board (M2 Nano, CH341 chip), once:
    - If K40 Whisperer already worked on this PC, the driver is installed.
    - Otherwise, use **Zadig** (<https://zadig.akeo.ie/>):

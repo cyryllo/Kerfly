@@ -13,11 +13,12 @@ Kerfly działa z kodu źródłowego, czyli przez Pythona. Gotowe instalatory
 2. W pierwszym oknie instalatora **zaznacz „Add python.exe to PATH”**, potem
    kliknij „Install Now”.
 
-### 2. Inkscape (potrzebny tylko do plików SVG)
+### 2. Inkscape (opcjonalnie)
 
-Pobierz i zainstaluj <https://inkscape.org/release/>. Kerfly sam go znajdzie w
-`C:\Program Files\Inkscape`. Obrazy (PNG, JPG…), DXF i G-code działają bez
-Inkscape.
+Kerfly otwiera pliki SVG sam. Inkscape (<https://inkscape.org/release/>) jest
+potrzebny tylko wtedy, gdy SVG zawiera **tekst do cięcia lub grawerowania
+konturu** (Kerfly zamienia go wtedy na ścieżki przez Inkscape). Jeśli Inkscape
+jest zainstalowany, Kerfly użyje go też do rastra, tak jak K40 Whisperer.
 
 ### 3. Sterownik USB lasera (jednorazowo)
 

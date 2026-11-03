@@ -56,6 +56,7 @@ SETTINGS_KEYS = [
     ("designfile", QUOTED), ("inkscape_path", QUOTED), ("batch_path", QUOTED),
     ("language", TEXT),      # Kerfly only; ignored by K40 Whisperer
     ("grid_mm", TEXT),       # Kerfly only: snap grid in mm, 0 = off
+    ("use_inkscape", BOOL),  # Kerfly only: render SVG rasters with Inkscape when installed
 ]
 SETTINGS_KINDS = dict(SETTINGS_KEYS)
 
@@ -84,6 +85,7 @@ DEFAULT_VALUES = {
     "designfile": "", "inkscape_path": "", "batch_path": "",
     "language": "",          # "" = system language
     "grid_mm": "0",
+    "use_inkscape": "1",
 }
 
 BOARD_NAMES = ["LASER-M2", "LASER-M1", "LASER-M", "LASER-B2", "LASER-B1", "LASER-B",
