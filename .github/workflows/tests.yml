@@ -31,8 +31,16 @@ jobs:
         run: .venv\Scripts\python tests\test_core.py
       - name: GUI tests
         if: always()
-        shell: cmd
-        run: .venv\Scripts\python tests\test_gui.py
+        shell: pwsh
+        run: |
+          .venv\Scripts\python -X faulthandler -u tests\test_gui.py *> gui.log
+          $rc = $LASTEXITCODE
+          Get-Content gui.log
+          if ($rc -ne 0) {
+            $tail = (Get-Content gui.log -Tail 40) -join '%0A'
+            Write-Output "::error title=test_gui log (exit $rc)::$tail"
+          }
+          exit $rc
       - name: Translations
         if: always()
         shell: cmd
