@@ -29,11 +29,11 @@ QPushButton#corner { font-size:17px; }
 QGroupBox { font-weight:bold; }
 QToolBar#main_toolbar { spacing: 1px; padding: 2px; }
 QToolBar#main_toolbar QToolButton { padding: 2px 1px; font-size: 11px; min-width: 40px; }
-QWidget#tool_options { background: #eef0f3; border-bottom: 1px solid #c4c9d0; }
+QWidget#top_bar { background: #eef0f3; border-bottom: 1px solid #c4c9d0; }
 QLabel#tool_options_title { font-weight: bold; }
 QLabel#tool_options_hint { color: #6b7280; }
 QLabel#ribbon_caption { color: #6b7280; font-size: 10px; padding-bottom: 1px; }
-QFrame#ribbon_separator { color: #c4c9d0; margin: 4px 3px; }
+QFrame#ribbon_separator { color: #c4c9d0; margin: 4px 1px; }
 QGroupBox QLabel, QGroupBox QCheckBox { font-weight:normal; }
 """
 

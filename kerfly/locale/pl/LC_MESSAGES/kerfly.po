@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:51+0100\n"
+"POT-Creation-Date: 2026-11-03 23:00+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -223,14 +223,17 @@ msgstr "Połącz z laserem"
 msgid "Connected. Click to connect again (re-initialize)."
 msgstr "Połączono. Kliknij, aby połączyć ponownie."
 
+msgid "Content"
+msgstr "Treść"
+
 msgid "Controller board"
 msgstr "Płyta sterująca"
 
 msgid "Converting text to paths."
 msgstr "Zamiana tekstu na ścieżki."
 
-msgid "Corner radius:"
-msgstr "Promień rogów:"
+msgid "Corner radius"
+msgstr "Promień rogów"
 
 #, python-format
 msgid "Could not open %s"
@@ -246,13 +249,6 @@ msgstr "Nie można odczytać %s: %s"
 #, python-format
 msgid "Could not save settings: %s"
 msgstr "Nie można zapisać ustawień: %s"
-
-msgid ""
-"Counter-clockwise. You can also drag the round handle above the element "
-"(hold Shift for 15° steps)."
-msgstr ""
-"Przeciwnie do ruchu wskazówek zegara. Możesz też przeciągnąć okrągły "
-"uchwyt nad elementem (z Shift co 15°)."
 
 msgid "Creating halftone image."
 msgstr "Tworzenie obrazu półtonowego."
@@ -287,9 +283,6 @@ msgstr "Zapisano dane do: %s"
 msgid "Data transmission (CRC) error #%s"
 msgstr "Błąd transmisji danych (CRC) nr %s"
 
-msgid "Delete"
-msgstr "Usuń"
-
 msgctxt "toolbar"
 msgid "Delete"
 msgstr "Usuń"
@@ -308,6 +301,9 @@ msgstr "Odległość w dół od pozycji bazowej"
 
 msgid "Distance moved by one arrow click"
 msgstr "Odległość ruchu po jednym kliknięciu strzałki"
+
+msgid "Distance right from home"
+msgstr "Odległość w prawo od pozycji bazowej"
 
 msgid "Drawing tools"
 msgstr "Narzędzia rysowania"
@@ -357,6 +353,9 @@ msgctxt "toolbar"
 msgid "Fit"
 msgstr "Dopasuj"
 
+msgid "Font"
+msgstr "Czcionka"
+
 msgid "G-code"
 msgstr "G-code"
 
@@ -383,9 +382,6 @@ msgstr "Siatka"
 msgid "Grid size"
 msgstr "Rozmiar siatki"
 
-msgid "H"
-msgstr "Wys."
-
 msgid "Halftone (dither) grayscale images"
 msgstr "Półtony (dithering) dla obrazów w odcieniach szarości"
 
@@ -395,6 +391,9 @@ msgstr "Rozdzielczość półtonów (dpi)"
 #, python-format
 msgid "Head: X %s  Y %s %s"
 msgstr "Głowica: X %s  Y %s %s"
+
+msgid "Height"
+msgstr "Wysokość"
 
 msgid "Height:"
 msgstr "Wysokość:"
@@ -448,9 +447,6 @@ msgstr "Zadanie zakończone w %s"
 
 msgid "Job running"
 msgstr "Zadanie w toku"
-
-msgid "Keep proportions"
-msgstr "Zachowaj proporcje"
 
 #, python-format
 msgid "Kerfly %s"
@@ -543,20 +539,20 @@ msgstr "Przesuń głowicę o jeden krok w prawo"
 msgid "Move the laser head up by one step"
 msgstr "Przesuń głowicę o jeden krok w górę"
 
-msgid "New ellipse:"
-msgstr "Nowa elipsa:"
+msgid "New ellipse"
+msgstr "Nowa elipsa"
 
-msgid "New line:"
-msgstr "Nowa linia:"
+msgid "New line"
+msgstr "Nowa linia"
 
-msgid "New polygon:"
-msgstr "Nowy wielokąt:"
+msgid "New polygon"
+msgstr "Nowy wielokąt"
 
-msgid "New rectangle:"
-msgstr "Nowy prostokąt:"
+msgid "New rectangle"
+msgstr "Nowy prostokąt"
 
-msgid "New text:"
-msgstr "Nowy tekst:"
+msgid "New text"
+msgstr "Nowy tekst"
 
 msgid "No design loaded"
 msgstr "Nie wczytano projektu"
@@ -594,8 +590,8 @@ msgstr "Otwarto %s"
 msgid "Opening %s"
 msgstr "Otwieranie %s"
 
-msgid "Operation:"
-msgstr "Operacja:"
+msgid "Operation"
+msgstr "Operacja"
 
 msgid "Operations"
 msgstr "Operacje"
@@ -632,6 +628,9 @@ msgstr "Ustaw projekt przy &głowicy"
 msgid "Polygon"
 msgstr "Wielokąt"
 
+msgid "Position and size"
+msgstr "Pozycja i rozmiar"
+
 msgid "Power"
 msgstr "Moc"
 
@@ -652,6 +651,12 @@ msgstr "Przygotowywanie rastra…"
 msgid "Preprocessing raster data: %s%%"
 msgstr "Wstępne przetwarzanie rastra: %s%%"
 
+msgid "Proportions are kept"
+msgstr "Proporcje są zachowane"
+
+msgid "Proportions are not kept: width and height change separately"
+msgstr "Proporcje nie są zachowane: szerokość i wysokość zmieniają się osobno"
+
 msgid "Rail unlocked"
 msgstr "Osie odblokowane"
 
@@ -663,7 +668,7 @@ msgid "Raster"
 msgstr "Raster"
 
 msgid "Raster engrave"
-msgstr "Grawerowanie rastrowe"
+msgstr "Grawer rastrowy"
 
 msgid "Raster prepared"
 msgstr "Raster przygotowany"
@@ -738,6 +743,13 @@ msgstr ""
 msgid "Rotation"
 msgstr "Obrót"
 
+msgid ""
+"Rotation, counter-clockwise. You can also drag the round handle above the"
+" element (hold Shift for 15° steps)."
+msgstr ""
+"Obrót przeciwnie do ruchu wskazówek zegara. Możesz też przeciągnąć "
+"okrągły uchwyt nad elementem (z Shift co 15°)."
+
 msgid "SVG files"
 msgstr "Pliki SVG"
 
@@ -764,9 +776,6 @@ msgstr "Odstęp linii skanowania (cale)"
 
 msgid "Select and move"
 msgstr "Zaznacz i przesuń"
-
-msgid "Selected element"
-msgstr "Zaznaczony element"
 
 msgid "Send EGV file"
 msgstr "Wyślij plik EGV"
@@ -801,8 +810,8 @@ msgstr ""
 msgid "Settings saved to %s"
 msgstr "Zapisano ustawienia w %s"
 
-msgid "Sides:"
-msgstr "Boki:"
+msgid "Sides"
+msgstr "Boki"
 
 msgid "Speed"
 msgstr "Prędkość"
@@ -844,6 +853,12 @@ msgstr "Strzał testowy: %.0f%% przez %d ms"
 
 msgid "Text"
 msgstr "Tekst"
+
+msgid "Text height"
+msgstr "Wysokość tekstu"
+
+msgid "Text; press Enter for a new line"
+msgstr "Tekst; Enter zaczyna nowy wiersz"
 
 msgid "That corner of the design is outside the laser bed."
 msgstr "Ten róg projektu leży poza stołem lasera."
@@ -989,7 +1004,7 @@ msgid "Vector cut: determining cut order…"
 msgstr "Cięcie wektorowe: ustalanie kolejności cięcia…"
 
 msgid "Vector engrave"
-msgstr "Grawerowanie wektorowe"
+msgstr "Grawer wektorowy"
 
 msgid "Vector engrave: determining order…"
 msgstr "Grawerowanie wektorowe: ustalanie kolejności…"
@@ -998,14 +1013,14 @@ msgctxt "toolbar group"
 msgid "View"
 msgstr "Widok"
 
-msgid "W"
-msgstr "Szer."
-
 msgid "Wait for the laser to finish"
 msgstr "Czekaj na zakończenie pracy lasera"
 
 msgid "Waiting for the laser to finish."
 msgstr "Oczekiwanie na zakończenie pracy lasera."
+
+msgid "Width"
+msgstr "Szerokość"
 
 msgid "Width:"
 msgstr "Szerokość:"

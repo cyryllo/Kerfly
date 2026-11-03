@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:51+0100\n"
+"POT-Creation-Date: 2026-11-03 23:00+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -221,14 +221,17 @@ msgstr "Conectar con el láser"
 msgid "Connected. Click to connect again (re-initialize)."
 msgstr "Conectado. Haga clic para volver a conectar."
 
+msgid "Content"
+msgstr "Contenido"
+
 msgid "Controller board"
 msgstr "Placa controladora"
 
 msgid "Converting text to paths."
 msgstr "Convirtiendo texto en trazados."
 
-msgid "Corner radius:"
-msgstr "Radio de esquina:"
+msgid "Corner radius"
+msgstr "Radio de esquina"
 
 #, python-format
 msgid "Could not open %s"
@@ -244,13 +247,6 @@ msgstr "No se pudo leer %s: %s"
 #, python-format
 msgid "Could not save settings: %s"
 msgstr "No se pudo guardar la configuración: %s"
-
-msgid ""
-"Counter-clockwise. You can also drag the round handle above the element "
-"(hold Shift for 15° steps)."
-msgstr ""
-"En sentido antihorario. También puede arrastrar el tirador redondo sobre "
-"el elemento (con Mayús, en pasos de 15°)."
 
 msgid "Creating halftone image."
 msgstr "Creando imagen de semitonos."
@@ -285,9 +281,6 @@ msgstr "Datos guardados en: %s"
 msgid "Data transmission (CRC) error #%s"
 msgstr "Error de transmisión de datos (CRC) n.º %s"
 
-msgid "Delete"
-msgstr "Eliminar"
-
 msgctxt "toolbar"
 msgid "Delete"
 msgstr "Eliminar"
@@ -306,6 +299,9 @@ msgstr "Distancia hacia abajo desde el origen"
 
 msgid "Distance moved by one arrow click"
 msgstr "Distancia por cada clic en una flecha"
+
+msgid "Distance right from home"
+msgstr "Distancia hacia la derecha desde el origen"
 
 msgid "Drawing tools"
 msgstr "Herramientas de dibujo"
@@ -355,6 +351,9 @@ msgctxt "toolbar"
 msgid "Fit"
 msgstr "Ajustar"
 
+msgid "Font"
+msgstr "Fuente"
+
 msgid "G-code"
 msgstr "Código G"
 
@@ -381,9 +380,6 @@ msgstr "Cuadrícula"
 msgid "Grid size"
 msgstr "Tamaño de la cuadrícula"
 
-msgid "H"
-msgstr "Al"
-
 msgid "Halftone (dither) grayscale images"
 msgstr "Semitonos (tramado) para imágenes en escala de grises"
 
@@ -393,6 +389,9 @@ msgstr "Resolución de semitonos (ppp)"
 #, python-format
 msgid "Head: X %s  Y %s %s"
 msgstr "Cabezal: X %s  Y %s %s"
+
+msgid "Height"
+msgstr "Alto"
 
 msgid "Height:"
 msgstr "Alto:"
@@ -446,9 +445,6 @@ msgstr "Trabajo terminado en %s"
 
 msgid "Job running"
 msgstr "Trabajo en curso"
-
-msgid "Keep proportions"
-msgstr "Mantener proporciones"
 
 #, python-format
 msgid "Kerfly %s"
@@ -541,20 +537,20 @@ msgstr "Mover el cabezal un paso a la derecha"
 msgid "Move the laser head up by one step"
 msgstr "Mover el cabezal un paso hacia arriba"
 
-msgid "New ellipse:"
-msgstr "Nueva elipse:"
+msgid "New ellipse"
+msgstr "Nueva elipse"
 
-msgid "New line:"
-msgstr "Nueva línea:"
+msgid "New line"
+msgstr "Nueva línea"
 
-msgid "New polygon:"
-msgstr "Nuevo polígono:"
+msgid "New polygon"
+msgstr "Nuevo polígono"
 
-msgid "New rectangle:"
-msgstr "Nuevo rectángulo:"
+msgid "New rectangle"
+msgstr "Nuevo rectángulo"
 
-msgid "New text:"
-msgstr "Nuevo texto:"
+msgid "New text"
+msgstr "Nuevo texto"
 
 msgid "No design loaded"
 msgstr "No hay ningún diseño cargado"
@@ -592,8 +588,8 @@ msgstr "Abierto %s"
 msgid "Opening %s"
 msgstr "Abriendo %s"
 
-msgid "Operation:"
-msgstr "Operación:"
+msgid "Operation"
+msgstr "Operación"
 
 msgid "Operations"
 msgstr "Operaciones"
@@ -632,6 +628,9 @@ msgstr "Colocar el diseño en el &cabezal"
 msgid "Polygon"
 msgstr "Polígono"
 
+msgid "Position and size"
+msgstr "Posición y tamaño"
+
 msgid "Power"
 msgstr "Potencia"
 
@@ -651,6 +650,12 @@ msgstr "Preparando el ráster…"
 #, python-format
 msgid "Preprocessing raster data: %s%%"
 msgstr "Preprocesando datos del ráster: %s%%"
+
+msgid "Proportions are kept"
+msgstr "Se mantienen las proporciones"
+
+msgid "Proportions are not kept: width and height change separately"
+msgstr "No se mantienen las proporciones: ancho y alto cambian por separado"
 
 msgid "Rail unlocked"
 msgstr "Ejes desbloqueados"
@@ -736,6 +741,13 @@ msgstr ""
 msgid "Rotation"
 msgstr "Rotación"
 
+msgid ""
+"Rotation, counter-clockwise. You can also drag the round handle above the"
+" element (hold Shift for 15° steps)."
+msgstr ""
+"Rotación en sentido antihorario. También puede arrastrar el tirador "
+"redondo sobre el elemento (con Mayús, en pasos de 15°)."
+
 msgid "SVG files"
 msgstr "Archivos SVG"
 
@@ -762,9 +774,6 @@ msgstr "Paso entre líneas (pulg.)"
 
 msgid "Select and move"
 msgstr "Seleccionar y mover"
-
-msgid "Selected element"
-msgstr "Elemento seleccionado"
 
 msgid "Send EGV file"
 msgstr "Enviar archivo EGV"
@@ -799,8 +808,8 @@ msgstr ""
 msgid "Settings saved to %s"
 msgstr "Configuración guardada en %s"
 
-msgid "Sides:"
-msgstr "Lados:"
+msgid "Sides"
+msgstr "Lados"
 
 msgid "Speed"
 msgstr "Velocidad"
@@ -842,6 +851,12 @@ msgstr "Disparo de prueba: %.0f%% durante %d ms"
 
 msgid "Text"
 msgstr "Texto"
+
+msgid "Text height"
+msgstr "Altura del texto"
+
+msgid "Text; press Enter for a new line"
+msgstr "Texto; Intro para una línea nueva"
 
 msgid "That corner of the design is outside the laser bed."
 msgstr "Esa esquina del diseño está fuera del área de trabajo."
@@ -999,14 +1014,14 @@ msgctxt "toolbar group"
 msgid "View"
 msgstr "Vista"
 
-msgid "W"
-msgstr "An"
-
 msgid "Wait for the laser to finish"
 msgstr "Esperar a que el láser termine"
 
 msgid "Waiting for the laser to finish."
 msgstr "Esperando a que el láser termine."
+
+msgid "Width"
+msgstr "Ancho"
 
 msgid "Width:"
 msgstr "Ancho:"

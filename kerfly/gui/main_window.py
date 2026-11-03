@@ -28,7 +28,8 @@ from kerfly.core.shapes import ShapeSpec, build_design
 from kerfly.gui import icons
 from kerfly.gui.image_dialog import ImageSizeDialog
 from kerfly.gui.text_shapes import update_text_spec
-from kerfly.gui.tool_options import KIND_NAMES, NEW_KIND_TITLES, ToolOptionsBar
+from kerfly.gui.tool_options import (KIND_NAMES, NEW_KIND_TITLES, ToolOptionsBar, ribbon_section,
+                                    ribbon_separator)
 from kerfly.gui.preview import PreviewView
 from kerfly.gui.settings_dialog import RASTER_KEYS, RELOAD_KEYS, SettingsDialog
 from kerfly.gui.worker import EgvSendWorker, JobWorker, RasterPrepareWorker
@@ -86,7 +87,15 @@ class MainWindow(QMainWindow):
         central_layout = QVBoxLayout(central)
         central_layout.setContentsMargins(0, 0, 0, 0)
         central_layout.setSpacing(0)
-        central_layout.addWidget(self.tool_options)
+        # bar above the bed view: position/size/rotation of the selection, then shape options
+        self.top_bar = QWidget()
+        self.top_bar.setObjectName("top_bar")
+        self.top_bar.setAttribute(Qt.WA_StyledBackground, True)
+        self.top_bar_layout = QHBoxLayout(self.top_bar)
+        self.top_bar_layout.setContentsMargins(6, 5, 6, 5)
+        self.top_bar_layout.setSpacing(6)
+        self.top_bar_layout.addWidget(self.tool_options, 1)
+        central_layout.addWidget(self.top_bar)
         central_layout.addWidget(self.preview, 1)
         self.setCentralWidget(central)
         self.shape_defaults = {kind: ShapeSpec(kind=kind, operation="fill" if kind == "text" else "cut",
@@ -319,7 +328,7 @@ class MainWindow(QMainWindow):
                     and getattr(self, "_options_element", None) is e:
                 return                   # already shown; rebuilding would interrupt typing
             self._options_target, self._options_element = "selected", e
-            self.tool_options.show_spec(e.shape, "%s:" % e.name)
+            self.tool_options.show_spec(e.shape, e.name)
         elif self.preview.tool != "select":
             self._options_target, self._options_element = self.preview.tool, None
             self.tool_options.show_spec(self.shape_defaults[self.preview.tool],
@@ -407,6 +416,11 @@ class MainWindow(QMainWindow):
         b.clicked.connect(slot)
         return b
 
+    def _update_lock_icon(self, locked):
+        self.sel_lock.setIcon(icons.tabler("link" if locked else "link-off"))
+        self.sel_lock.setToolTip(_("Proportions are kept") if locked
+                                 else _("Proportions are not kept: width and height change separately"))
+
     def _spin(self, key, kind, lo, hi, decimals=1):
         if kind == "int":
             w = QSpinBox()
@@ -458,52 +472,63 @@ class MainWindow(QMainWindow):
         v.addWidget(self.element_list)
         design_layout.addWidget(box)
 
-        # --- selected element
-        self.selection_box = QGroupBox(_("Selected element"))
-        g = QGridLayout(self.selection_box)
-        self.sel_name = QLabel()
-        self.sel_name.setWordWrap(True)
-        g.addWidget(self.sel_name, 0, 0, 1, 4)
+        # --- selected element: position, size, rotation (ribbon sections above the bed view)
+        self.selection_box = QWidget()
+        sb = QHBoxLayout(self.selection_box)
+        sb.setContentsMargins(0, 0, 0, 0)
+        sb.setSpacing(4)
+        pos = QGridLayout()
+        pos.setHorizontalSpacing(4)
+        pos.setVerticalSpacing(4)
         self.sel_fields = {}
-        for i, (key, label) in enumerate((("x", N_("X")), ("y", N_("Y")), ("w", N_("W")), ("h", N_("H")))):
+        for key, label, row, col, tip in (("x", N_("X"), 0, 0, N_("Distance right from home")),
+                                          ("y", N_("Y"), 0, 2, N_("Distance down from home")),
+                                          ("w", "\u2194", 1, 0, N_("Width")),
+                                          ("h", "\u2195", 1, 2, N_("Height"))):
             spin = QDoubleSpinBox()
             spin.setRange(-10000.0 if key in "xy" else 0.01, 10000.0)
             spin.setDecimals(2)
-            spin.setFixedWidth(104)
+            spin.setFixedWidth(88)
             spin.setKeyboardTracking(False)          # apply on Enter / focus out, not per digit
+            spin.setToolTip(_(tip))
             spin.valueChanged.connect(lambda _v, k=key: self._selection_field_changed(k))
-            g.addWidget(QLabel(_(label)), 1 + i // 2, (i % 2) * 2)
-            g.addWidget(spin, 1 + i // 2, (i % 2) * 2 + 1)
+            lbl = QLabel(_(label) if label in ("X", "Y") else label)
+            lbl.setToolTip(_(tip))
+            pos.addWidget(lbl, row, col)
+            pos.addWidget(spin, row, col + 1)
             self.sel_fields[key] = spin
-        self.sel_fields["y"].setToolTip(_("Distance down from home"))
-        g.setColumnStretch(4, 1)          # keep label/field pairs together on the left
-        g.setHorizontalSpacing(8)
-        self.sel_lock = QCheckBox(_("Keep proportions"))
+        self.sel_lock = QToolButton()
+        self.sel_lock.setCheckable(True)
         self.sel_lock.setChecked(True)
-        g.addWidget(self.sel_lock, 3, 0, 1, 4)
-        row = QHBoxLayout()
-        row.addWidget(QLabel(_("Rotation")))
+        self.sel_lock.setIconSize(QSize(18, 18))
+        self.sel_lock.toggled.connect(self._update_lock_icon)
+        self._update_lock_icon(True)
+        pos.addWidget(self.sel_lock, 1, 4)
+        sb.addWidget(ribbon_section(pos, _("Position and size")))
+        sb.addWidget(ribbon_separator())
+        rot = QVBoxLayout()
+        rot.setSpacing(4)
         self.sel_rotation = QDoubleSpinBox()
         self.sel_rotation.setRange(-360.0, 360.0)
         self.sel_rotation.setDecimals(1)
         self.sel_rotation.setSuffix("\u00b0")
-        self.sel_rotation.setFixedWidth(84)
+        self.sel_rotation.setFixedWidth(70)
         self.sel_rotation.setKeyboardTracking(False)
-        self.sel_rotation.setToolTip(_("Counter-clockwise. You can also drag the round handle above "
-                                       "the element (hold Shift for 15\u00b0 steps)."))
+        self.sel_rotation.setToolTip(_("Rotation, counter-clockwise. You can also drag the round handle "
+                                       "above the element (hold Shift for 15\u00b0 steps)."))
         self.sel_rotation.valueChanged.connect(lambda _v: self._selection_field_changed("rotation"))
-        row.addWidget(self.sel_rotation)
-        for icon, angle, tip in (("rotate-2", 90, N_("Rotate 90\u00b0 counter-clockwise")),
-                                 ("rotate-clockwise-2", -90, N_("Rotate 90\u00b0 clockwise"))):
-            row.addWidget(self._icon_button(icon, _(tip), lambda _c=False, a=angle: self.rotate_selected(a),
-                                            30, 18))
-        row.addStretch(1)
-        b = QPushButton(_("Delete"))
-        b.setIcon(icons.tabler("trash", "#c62828"))
-        b.clicked.connect(self.delete_selected)
-        row.addWidget(b)
-        g.addLayout(row, 4, 0, 1, 4)
-        design_layout.addWidget(self.selection_box)
+        rot.addWidget(self.sel_rotation)
+        buttons = QHBoxLayout()
+        buttons.setSpacing(2)
+        buttons.addWidget(self._icon_button("rotate-2", _("Rotate 90\u00b0 counter-clockwise"),
+                                            lambda: self.rotate_selected(90), 30, 18))
+        buttons.addWidget(self._icon_button("rotate-clockwise-2", _("Rotate 90\u00b0 clockwise"),
+                                            lambda: self.rotate_selected(-90), 30, 18))
+        buttons.addStretch(1)
+        rot.addLayout(buttons)
+        sb.addWidget(ribbon_section(rot, _("Rotation")))
+        self.top_bar_layout.insertWidget(0, self.selection_box)
+        self.top_bar_layout.insertWidget(1, ribbon_separator())
         design_layout.addStretch(1)
 
         # --- laser
@@ -724,13 +749,13 @@ class MainWindow(QMainWindow):
         row.addWidget(self.btn_pause)
         self.btn_stop = QPushButton(_("Stop"))
         self.btn_stop.setObjectName("stop")
-        self.btn_stop.setFixedSize(104, 46)
+        self.btn_stop.setFixedHeight(46)
         self.btn_stop.setIcon(icons.tabler("player-stop", "#ffffff"))
         self.btn_stop.setIconSize(QSize(22, 22))
         self.btn_stop.setToolTip(_("Stop the job now") + " (Esc)")
         self.btn_stop.setEnabled(False)
         self.btn_stop.clicked.connect(self.stop_job)
-        row.addWidget(self.btn_stop)
+        row.addWidget(self.btn_stop, 1)          # Start and Stop share the width equally
         layout.addWidget(run)
         layout.addStretch(1)
 
@@ -1008,9 +1033,9 @@ class MainWindow(QMainWindow):
             w, h = e.size
             values = {"x": e.x * k, "y": -e.y * k, "w": w * k, "h": h * k}
             rotation = e.rotation if e.rotation <= 180 else e.rotation - 360
-            self.sel_name.setText("<b>%s</b>" % e.name)
+            self.selection_box.setToolTip(e.name)
         else:
-            self.sel_name.setText(_("Click an element on the bed to select it."))
+            self.selection_box.setToolTip(_("Click an element on the bed to select it."))
         for key, spin in self.sel_fields.items():
             spin.blockSignals(True)
             spin.setValue(values[key])
@@ -1133,7 +1158,7 @@ class MainWindow(QMainWindow):
         panel = scroll.widget()
         panel.adjustSize()
         width = panel.sizeHint().width() + scroll.verticalScrollBar().sizeHint().width() + 4
-        scroll.setMinimumWidth(max(300, width))
+        scroll.setFixedWidth(max(300, width))       # exactly what the panel needs; the rest is the bed
         if self.isVisible():
             QTimer.singleShot(0, self._fit_window_height)
 
@@ -1157,6 +1182,7 @@ class MainWindow(QMainWindow):
         super().showEvent(event)
         if not getattr(self, "_shown_once", False):
             self._shown_once = True
+            QTimer.singleShot(0, self._fit_panel_width)     # layout is final only once shown
             QTimer.singleShot(0, self._fit_window_height)
 
     def _update_unit_suffixes(self):
