@@ -493,14 +493,15 @@ class MainWindow(QMainWindow):
         v = QVBoxLayout(box)
         self.design_label = QLabel(_("No design loaded"))
         self.design_label.setWordWrap(True)
-        v.addWidget(self.design_label)
+        v.addWidget(self.design_label, 0, Qt.AlignTop)
         self.element_list = QListWidget()
-        self.element_list.setMaximumHeight(96)
+        # fills the free height of the Design tab (as tall as the Laser tab)
+        self.element_list.setMinimumHeight(self.element_list.fontMetrics().lineSpacing() * 4 + 8)
         self.element_list.setToolTip(_("Untick an element to leave it out of the job"))
         self.element_list.itemChanged.connect(self._element_item_changed)
         self.element_list.currentRowChanged.connect(self._element_row_selected)
-        v.addWidget(self.element_list)
-        design_layout.addWidget(box)
+        v.addWidget(self.element_list, 1)
+        design_layout.addWidget(box, 1)
 
         # --- selected element: position, size, rotation (ribbon sections above the bed view)
         self.selection_box = QWidget()
@@ -571,7 +572,6 @@ class MainWindow(QMainWindow):
         sb.addWidget(self.layer_assign_section)
         self.top_bar_layout.insertWidget(0, self.selection_box)
         self.top_bar_layout.insertWidget(1, ribbon_separator())
-        design_layout.addStretch(1)
 
         # --- laser
         box = QGroupBox()
