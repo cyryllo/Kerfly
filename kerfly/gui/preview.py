@@ -101,8 +101,9 @@ class PreviewView(QGraphicsView):
         self._raster_pixmap = (QPixmap.fromImage(pil_to_qimage(im)), scale)
         return self._raster_pixmap
 
-    def show_design(self, design, settings, values, head, fit=False):
-        """Redraw everything. head = (x, y) of the laser head in inches (y <= 0)."""
+    def show_design(self, design, settings, values, head, fit=False, head_offset=(0.0, 0.0)):
+        """Redraw everything. head = design origin at the laser head, inches (y <= 0);
+        head_offset = temporary head offset from it (e.g. at a design corner), inches."""
         scene = self.scene()
         scene.clear()
         bed_w, bed_h = bed_size_inches(values)
@@ -160,11 +161,12 @@ class PreviewView(QGraphicsView):
             box.setZValue(-4)
 
         # laser head marker (fixed size on screen)
-        hx = (bed_w - head[0]) if settings.home_upper_right else head[0]
+        x_head = head[0] + head_offset[0]
+        hx = (bed_w - x_head) if settings.home_upper_right else x_head
         marker = QGraphicsEllipseItem(-6, -6, 12, 12)
         marker.setPen(_cosmetic_pen(COLORS["head"], 2))
         marker.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
-        marker.setPos(QPointF(hx * MM, -head[1] * MM))
+        marker.setPos(QPointF(hx * MM, -(head[1] + head_offset[1]) * MM))
         marker.setZValue(10)
         scene.addItem(marker)
         for dx, dy in ((-10, 0), (0, -10)):

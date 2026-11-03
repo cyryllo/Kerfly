@@ -21,7 +21,7 @@ TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(TESTS_DIR)
 sys.path.insert(0, ROOT_DIR)
 
-from PySide6.QtWidgets import QApplication, QMessageBox  # noqa: E402
+from PySide6.QtWidgets import QApplication, QFileDialog, QInputDialog, QMessageBox  # noqa: E402
 
 from kerfly.core import config  # noqa: E402
 from kerfly.gui.main_window import MainWindow  # noqa: E402
@@ -37,6 +37,8 @@ class FakeK40:
         self.timeout = 200
         self.n_timeouts = 30
         self.sent = []          # (power, bytes)
+        self.passes = []
+        self.moves = []         # rapid moves (dx, dy) in mils
         self.power = None
         self.calls = []
         self.slow = slow
@@ -54,7 +56,11 @@ class FakeK40:
             if self.slow:
                 time.sleep(0.02)
         self.sent.append((self.power, bytes(data)))
+        self.passes.append(passes)
         self.power = None
+
+    def rapid_move(self, dx, dy):
+        self.moves.append((dx, dy))
 
     def pause_un_pause(self):
         self.calls.append("pause")
@@ -171,6 +177,55 @@ def main():
     run_until_idle(app, w)
     check("gui pause -> resume", fake.calls.count("pause") == 2 and len(fake.sent) == 1,
           "(calls %s)" % fake.calls)
+
+    # 6. move head to a design corner, then a job first brings it back
+    w = make_window(include_Reng="0")
+    w.load_design(os.path.join(FIX, "shapes.svg"))      # 100 x 80 mm
+    fake = FakeK40()
+    w.laser.k40 = fake
+    w.move_to_corner("LR")
+    lr = list(fake.moves)
+    w.start_job()
+    run_until_idle(app, w)
+    check("move to corner LR and back before job",
+          lr == [(3937, -3150)] and fake.moves == [(3937, -3150), (-3937, 3150)]
+          and w.head_offset == (0, 0) and len(fake.sent) == 1, "(moves %s)" % fake.moves)
+
+    # 7. go to position: home, then move to X 20 mm, Y 10 mm down
+    w = make_window()
+    fake = FakeK40()
+    w.laser.k40 = fake
+    answers = iter([(20.0, True), (10.0, True)])
+    QInputDialog.getDouble = staticmethod(lambda *a, **k: next(answers))
+    w.goto_position()
+    check("go to position", "home_position" in fake.calls and fake.moves == [(787, -394)]
+          and w.head == (0.787, -0.394), "(moves %s, head %s)" % (fake.moves, w.head))
+
+    # 8. time estimate: raster unknown until calculated
+    w = make_window()
+    w.load_design(os.path.join(FIX, "shapes.svg"))
+    before = w.time_labels["Raster_Eng"].text()
+    vcut = w.time_labels["Vector_Cut"].text()
+    w.calculate_raster_time()
+    run_until_idle(app, w)
+    after = w.time_labels["Raster_Eng"].text()
+    check("time estimate", before == "?" and after not in ("", "?") and vcut.endswith("s")
+          and not w.btn_calc_time.isVisible(), "(raster %r -> %r, cut %r, total %r)"
+          % (before, after, vcut, w.total_time_label.text()))
+
+    # 9. send an EGV file (3 passes)
+    egv_path = os.path.join(BASE, "svg_vcut.egv")
+    w = make_window()
+    fake = FakeK40()
+    w.laser.k40 = fake
+    QFileDialog.getOpenFileName = staticmethod(lambda *a, **k: (egv_path, ""))
+    QInputDialog.getInt = staticmethod(lambda *a, **k: (3, True))
+    w.send_egv_file()
+    run_until_idle(app, w)
+    raw = open(egv_path, "rb").read()
+    payload = raw[raw.index(b"%0%0%0%0%") + 9:]
+    check("send EGV file", fake.sent == [(None, payload)] and fake.passes == [3] and fake.moves == [],
+          "(sent %d bytes, passes %s)" % (len(fake.sent[0][1]) if fake.sent else 0, fake.passes))
 
     print("\n%d check(s) failed." % failures if failures else "\nAll checks passed.")
     return 1 if failures else 0

@@ -143,7 +143,7 @@ class LaserController:
             k40.rapid_move(int(dxmils), int(dymils))
 
     def send(self, data, power=None, update_gui=None, stop=None, pre_process_crc=True,
-             wait_for_laser=True, timeout_ms=200, n_timeouts=30):
+             wait_for_laser=True, timeout_ms=200, n_timeouts=30, passes=1):
         """Send EGV data. power (percent) is set first when given (M3 boards).
         Returns the elapsed time in seconds. Raises when stopped or on USB errors."""
         k40 = self._require()
@@ -152,7 +152,7 @@ class LaserController:
         start = time()
         if power is not None:
             k40.set_PWM_register(power)
-        k40.send_data(data, update_gui, stop, 1, pre_process_crc, wait_for_laser=wait_for_laser)
+        k40.send_data(data, update_gui, stop, passes, pre_process_crc, wait_for_laser=wait_for_laser)
         return time() - start
 
     def test_fire(self, power, ms):
@@ -163,10 +163,12 @@ class LaserController:
             k40.pulse_laser(pct_power=power, ms=ms)
 
 
-def clamp_head_position(x, y, dx, dy, bed_w, bed_h, design_w=0.0, design_h=0.0):
-    """New head position after moving by (dx, dy) inches, kept on the bed so
-    the design (design_w x design_h, top-left at the head) stays inside it.
-    The bed spans x in [0, bed_w], y in [-bed_h, 0]."""
+def clamp_head_position(x, y, dx, dy, bed_w, bed_h, design_w=0.0, design_h=0.0,
+                        offset=(0.0, 0.0)):
+    """New design origin after moving by (dx, dy) inches, kept on the bed so
+    the design (design_w x design_h, top-left at the origin) stays inside it.
+    offset is the head's temporary offset from the origin in inches; the head
+    itself is kept on the bed too. The bed spans x in [0, bed_w], y in [-bed_h, 0]."""
     X = x + dx
     Y = y + dy
     if X < 0.0:
@@ -177,4 +179,49 @@ def clamp_head_position(x, y, dx, dy, bed_w, bed_h, design_w=0.0, design_h=0.0):
         Y = -bed_h + design_h
     if Y > 0.0:
         Y = 0.0
+    xo, yo = offset
+    if X + xo < 0.0:
+        X = X + (0.0 - (X + xo))
+    if X + xo > bed_w:
+        X = X - ((X + xo) - bed_w)
+    if Y + yo < -bed_h:
+        Y = Y + (-bed_h - (Y + yo))
+    if Y + yo > 0.0:
+        Y = Y - (Y + yo)
     return round(X, 3), round(Y, 3)
+
+
+# corner name -> (fraction of design width, fraction of design height)
+CORNERS = {"UL": (0.0, 0.0), "UR": (1.0, 0.0), "LR": (1.0, 1.0), "LL": (0.0, 1.0),
+           "CC": (0.5, 0.5)}
+
+
+def corner_offset(corner, bounds, home_upper_right, origin, bed_w, bed_h):
+    """Head offset in mils (dx, dy) from the design origin to a design corner
+    ("UL", "UR", "LR", "LL" or "CC"), or None if that point is off the bed.
+    bounds are the (rotated) design bounds; origin is the design origin."""
+    xmin, xmax, ymin, ymax = bounds
+    w, h = xmax - xmin, ymax - ymin
+    fx, fy = CORNERS[corner]
+    if home_upper_right and corner != "CC":
+        fx = 1.0 - fx          # x runs right-to-left from an upper-right home
+    if corner == "CC":
+        DX = round(w / 2.0 * 1000.0)
+        DY = round(h / 2.0 * 1000.0)
+    else:
+        DX = round(w * 1000.0) if fx else 0
+        DY = round(h * 1000.0) if fy else 0
+    x_new = origin[0] + fx * w
+    y_new = origin[1] - fy * h
+    if x_new > bed_w + .001 or y_new < -bed_h - .001:
+        return None
+    return DX, -DY
+
+
+def temporary_offset_target(origin, new_offset_mils, bed_w, bed_h):
+    """Clamp a requested head offset (mils) so the head stays on the bed;
+    returns the offset actually reachable, in mils."""
+    dx = round(new_offset_mils[0] / 1000.0, 3)
+    dy = round(new_offset_mils[1] / 1000.0, 3)
+    X, Y = clamp_head_position(origin[0], origin[1], dx, dy, bed_w, bed_h)
+    return round((X - origin[0]) * 1000.0), round((Y - origin[1]) * 1000.0)

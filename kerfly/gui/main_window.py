@@ -14,13 +14,15 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QDoubleSpin
                                QSpinBox, QToolBar, QVBoxLayout, QWidget)
 
 from kerfly import __version__
-from kerfly.core import config, job, loaders
+from kerfly.core import config, egvfile, job, loaders
 from kerfly.core.config import is_true
 from kerfly.core.design import Design
-from kerfly.core.laser import LaserController, LaserError, clamp_head_position
+from kerfly.core.estimate import estimate_times, format_time
+from kerfly.core.laser import (LaserController, LaserError, clamp_head_position, corner_offset,
+                               temporary_offset_target)
 from kerfly.gui.preview import PreviewView
 from kerfly.gui.settings_dialog import RASTER_KEYS, RELOAD_KEYS, SettingsDialog
-from kerfly.gui.worker import JobWorker
+from kerfly.gui.worker import EgvSendWorker, JobWorker, RasterPrepareWorker
 
 DESIGN_FILTERS = ("Design files (*.svg *.dxf *.ngc *.gcode *.nc *.g *.tap);;"
                   "SVG files (*.svg);;DXF files (*.dxf);;"
@@ -46,7 +48,8 @@ class MainWindow(QMainWindow):
         self.design = Design()
         self.design_file = ""
         self.laser = LaserController()
-        self.head = (0.0, 0.0)          # laser head position, inches (y <= 0)
+        self.head = (0.0, 0.0)          # design origin at the laser head, inches (y <= 0)
+        self.head_offset = (0, 0)       # temporary head offset from the origin, mils
         self.worker = None
         self._unit_widgets = []         # (spinbox, kind) to update when units change
 
@@ -72,11 +75,20 @@ class MainWindow(QMainWindow):
         return act
 
     def _build_actions(self):
-        self.act_open = self._action("&Open design…", self.open_design, "Ctrl+O")
+        self.act_open = self._action("&Open design\u2026", self.open_design, "Ctrl+O")
         self.act_reload = self._action("&Reload design", self.reload_design, "F5")
-        self.act_save_egv = self._action("Save &EGV file…", self.save_egv, "Ctrl+E",
+        self.act_save_egv = self._action("Save &EGV file\u2026", self.save_egv, "Ctrl+E",
                                          "Write the selected operations to an EGV file")
+        self.act_send_egv = self._action("Send EGV file to laser\u2026", self.send_egv_file, None,
+                                         "Send an existing EGV file to the laser")
         self.act_save_settings = self._action("Save settings as default", self.save_settings, "Ctrl+S")
+        self.act_goto = self._action("&Go to position\u2026", self.goto_position, "Ctrl+G")
+        self.act_corners = {}
+        for key, text, sc in (("UL", "Upper left", "Ctrl+7"), ("UR", "Upper right", "Ctrl+9"),
+                              ("CC", "Centre", "Ctrl+5"), ("LL", "Lower left", "Ctrl+1"),
+                              ("LR", "Lower right", "Ctrl+3")):
+            self.act_corners[key] = self._action(text, lambda _=False, k=key: self.move_to_corner(k), sc)
+        self.act_calc_time = self._action("Calculate raster time", self.calculate_raster_time)
         self.act_quit = self._action("&Quit", self.close, "Ctrl+Q")
         self.act_connect = self._action("&Initialize laser", self.connect_laser, "Ctrl+I")
         self.act_release = self._action("Release USB", self.release_laser)
@@ -84,18 +96,21 @@ class MainWindow(QMainWindow):
         self.act_unlock = self._action("&Unlock rail", self.unlock)
         self.act_unfreeze = self._action("Un&freeze laser", self.unfreeze)
         self.act_fit = self._action("&Fit to window", lambda: self.preview.fit_all(), "Ctrl+0")
-        self.act_settings = self._action("&Settings…", self.edit_settings, "Ctrl+,")
+        self.act_settings = self._action("&Settings\u2026", self.edit_settings, "Ctrl+,")
         self.act_about = self._action("&About Kerfly", self.about)
 
         mb = self.menuBar()
         m = mb.addMenu("&File")
-        for a in (self.act_open, self.act_reload, None, self.act_save_egv, None,
+        for a in (self.act_open, self.act_reload, None, self.act_save_egv, self.act_send_egv, None,
                   self.act_save_settings, None, self.act_quit):
             m.addSeparator() if a is None else m.addAction(a)
         m = mb.addMenu("&Laser")
         for a in (self.act_connect, self.act_release, None, self.act_home, self.act_unlock,
-                  self.act_unfreeze):
+                  self.act_unfreeze, None, self.act_goto):
             m.addSeparator() if a is None else m.addAction(a)
+        sub = m.addMenu("Move head to design")
+        for a in self.act_corners.values():
+            sub.addAction(a)
         m = mb.addMenu("&View")
         m.addAction(self.act_fit)
         m = mb.addMenu("&Settings")
@@ -146,7 +161,7 @@ class MainWindow(QMainWindow):
         self.design_label.setWordWrap(True)
         v.addWidget(self.design_label)
         row = QHBoxLayout()
-        b = QPushButton("Open…")
+        b = QPushButton("Open\u2026")
         b.clicked.connect(self.open_design)
         row.addWidget(b)
         b = QPushButton("Reload")
@@ -206,15 +221,51 @@ class MainWindow(QMainWindow):
         row.addWidget(self.jog_step)
         row.addStretch(1)
         v.addLayout(row)
+        row = QHBoxLayout()
+        row.addWidget(QLabel("Move to design:"))
+        self.corner_buttons = []
+        for key, text, tip in (("UL", "\u2196", "Upper left corner"), ("UR", "\u2197", "Upper right corner"),
+                               ("CC", "\u25ce", "Centre"), ("LL", "\u2199", "Lower left corner"),
+                               ("LR", "\u2198", "Lower right corner")):
+            b = QPushButton(text)
+            b.setFixedSize(38, 32)
+            b.setObjectName("corner")
+            b.setToolTip("Move the head to the %s of the design (does not move the design)" % tip.lower())
+            b.clicked.connect(lambda _=False, k=key: self.move_to_corner(k))
+            row.addWidget(b)
+            self.corner_buttons.append(b)
+        row.addStretch(1)
+        v.addLayout(row)
+        row = QHBoxLayout()
         self.head_label = QLabel()
-        v.addWidget(self.head_label)
+        row.addWidget(self.head_label, 1)
+        self.btn_goto = QPushButton("Go to\u2026")
+        self.btn_goto.clicked.connect(self.goto_position)
+        row.addWidget(self.btn_goto)
+        v.addLayout(row)
+
+        # test fire (M3 boards)
+        self.test_fire_row = QWidget()
+        row = QHBoxLayout(self.test_fire_row)
+        row.setContentsMargins(0, 0, 0, 0)
+        self.btn_test_fire = QPushButton("Test fire")
+        self.btn_test_fire.setToolTip("Fire the laser briefly (M3 boards)")
+        self.btn_test_fire.clicked.connect(self.test_fire)
+        row.addWidget(self.btn_test_fire)
+        row.addWidget(self._spin("test_power", "power", 0, 100, 0))
+        t = self._spin("test_time", "int", 0, 1000)
+        t.setSuffix(" ms")
+        t.setFixedWidth(80)
+        row.addWidget(t)
+        row.addStretch(1)
+        v.addWidget(self.test_fire_row)
         layout.addWidget(box)
 
         # --- operations
         box = QGroupBox("Operations")
         g = QGridLayout(box)
         self.speed_header = QLabel()
-        for col, text in enumerate(("", None, "Passes", "Power")):
+        for col, text in enumerate(("", None, "Passes", "Power", "Time")):
             if text is None:
                 g.addWidget(self.speed_header, 0, col)
             elif text:
@@ -223,6 +274,7 @@ class MainWindow(QMainWindow):
                 if text == "Power":
                     self.power_header = lbl
         self.power_widgets = {}
+        self.time_labels = {}
         self.include_checks = {}
         self.op_rows = {}          # operation -> widgets of its row
         for row, (label, inc, feed, passes, power, op) in enumerate(OPERATIONS, start=1):
@@ -244,10 +296,23 @@ class MainWindow(QMainWindow):
             pw = self._spin(power, "power", 0, 100, 0)
             g.addWidget(pw, row, 3)
             self.power_widgets[op] = pw
+            tl = QLabel("")
+            tl.setMinimumWidth(52)
+            g.addWidget(tl, row, 4)
+            self.time_labels[op] = tl
+            widgets.append(tl)
             self.op_rows[op] = widgets
         self.no_ops_label = QLabel("Open a design to see its operations.")
         self.no_ops_label.setStyleSheet("color:#757575;")
-        g.addWidget(self.no_ops_label, len(OPERATIONS) + 1, 0, 1, 4)
+        g.addWidget(self.no_ops_label, len(OPERATIONS) + 1, 0, 1, 5)
+        row = QHBoxLayout()
+        self.total_time_label = QLabel()
+        row.addWidget(self.total_time_label, 1)
+        self.btn_calc_time = QPushButton("Calculate raster time")
+        self.btn_calc_time.setToolTip("Prepare the raster now to estimate its engraving time")
+        self.btn_calc_time.clicked.connect(self.calculate_raster_time)
+        row.addWidget(self.btn_calc_time)
+        g.addLayout(row, len(OPERATIONS) + 2, 0, 1, 5)
         layout.addWidget(box)
 
         # --- run
@@ -263,7 +328,7 @@ class MainWindow(QMainWindow):
         self.btn_trace.setToolTip("Move around the outline of the design")
         self.btn_trace.clicked.connect(lambda: self.start_job(trace=True))
         row.addWidget(self.btn_trace)
-        self.btn_egv = QPushButton("Save EGV…")
+        self.btn_egv = QPushButton("Save EGV\u2026")
         self.btn_egv.clicked.connect(self.save_egv)
         row.addWidget(self.btn_egv)
         v.addLayout(row)
@@ -298,6 +363,33 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------ state
     def _set_value(self, key, val):
         self.values[key] = val
+        if key.endswith("_feed") or key.endswith("_passes") or key == "Gcde_passes":
+            self._update_times()
+
+    def _update_times(self):
+        if not hasattr(self, "total_time_label"):
+            return
+        has = self._design_has()
+        try:
+            times = estimate_times(self.design, self.job_settings())
+        except (ValueError, ZeroDivisionError):
+            times = {}
+        total, unknown = 0.0, False
+        for op, label in self.time_labels.items():
+            t = times.get(op)
+            label.setText(format_time(t) if has[op] else "")
+            if has[op] and self.include_checks[op].isChecked():
+                if t is None:
+                    unknown = True
+                else:
+                    total += t
+        raster_unknown = has[job.RASTER_ENG] and times.get(job.RASTER_ENG) is None
+        self.btn_calc_time.setVisible(raster_unknown)
+        if any(has.values()):
+            self.total_time_label.setText("Estimated total: <b>%s%s</b>"
+                                          % (format_time(total), " + raster" if unknown else ""))
+        else:
+            self.total_time_label.setText("")
 
     def power_per_stage(self):
         return (self.values.get("board_name") == "LASER-M3"
@@ -327,6 +419,8 @@ class MainWindow(QMainWindow):
         gcode_file = has[job.GCODE_CUT]
         self.power_header.setVisible(show_power)
         self.speed_header.setVisible(not gcode_file)
+        self.test_fire_row.setVisible(self.values.get("board_name") == "LASER-M3"
+                                      and is_true(self.values.get("show_test", "1")))
         for op, widgets in self.op_rows.items():
             visible = gcode_file if op == job.GCODE_CUT else not gcode_file
             for w in widgets:
@@ -335,6 +429,7 @@ class MainWindow(QMainWindow):
             self.power_widgets[op].setVisible(visible and show_power)
             self.power_widgets[op].setEnabled(has[op])
         self.no_ops_label.setVisible(not any(has.values()))
+        self._update_times()
         self._fit_panel_width()
 
     def _fit_panel_width(self):
@@ -379,16 +474,19 @@ class MainWindow(QMainWindow):
         else:
             self.laser_label.setText("<b style='color:#c62828'>Not connected</b>")
             self.btn_connect.setText("Initialize")
-        x, y = self.head
+        x = self.head[0] + self.head_offset[0] / 1000.0
+        y = self.head[1] + self.head_offset[1] / 1000.0
         scale = 25.4 if self.values.get("units") == "mm" else 1.0
         self.head_label.setText("Head: X %.1f  Y %.1f %s" % (x * scale + 0.0, -y * scale + 0.0,
                                                               self.values.get("units")))
 
     def set_busy(self, busy):
-        for w in (self.btn_start, self.btn_trace, self.btn_egv, self.btn_connect):
+        for w in [self.btn_start, self.btn_trace, self.btn_egv, self.btn_connect, self.btn_goto,
+                  self.btn_test_fire, self.btn_calc_time] + self.corner_buttons:
             w.setEnabled(not busy)
-        for a in (self.act_open, self.act_reload, self.act_save_egv, self.act_connect,
-                  self.act_release, self.act_home, self.act_unlock, self.act_settings):
+        for a in [self.act_open, self.act_reload, self.act_save_egv, self.act_send_egv,
+                  self.act_connect, self.act_release, self.act_home, self.act_unlock,
+                  self.act_settings, self.act_goto, self.act_calc_time] + list(self.act_corners.values()):
             a.setEnabled(not busy)
         self.btn_stop.setEnabled(busy)
         self.progress.setVisible(busy)
@@ -403,8 +501,11 @@ class MainWindow(QMainWindow):
         except ValueError as e:
             self.status(str(e), error=True)
             return
-        self.preview.show_design(self.design, settings, self.values, self.head, fit=fit)
+        self.preview.show_design(self.design, settings, self.values, self.head, fit=fit,
+                                 head_offset=(self.head_offset[0] / 1000.0,
+                                              self.head_offset[1] / 1000.0))
         self._update_laser_state()
+        self._update_times()
 
     # ------------------------------------------------------------ design files
     def open_design(self):
@@ -546,6 +647,7 @@ class MainWindow(QMainWindow):
         try:
             self.laser.connect(init_home=is_true(self.values.get("init_home", "1")))
             self.head = (0.0, 0.0)
+            self.head_offset = (0, 0)
             self.status("Laser initialized")
         except LaserError as e:
             self.status(str(e), error=True)
@@ -567,6 +669,7 @@ class MainWindow(QMainWindow):
         if self.laser.connected and not self._laser_call(self.laser.home, "Homed"):
             return
         self.head = (0.0, 0.0)
+        self.head_offset = (0, 0)
         self.refresh_preview()
 
     def unlock(self):
@@ -576,23 +679,33 @@ class MainWindow(QMainWindow):
         self._laser_call(self.laser.unfreeze, "Unfreeze complete")
 
     def jog(self, dirx, diry):
+        """Move by one jog step in the given direction (+y = up)."""
+        try:
+            step = float(self.values["jog_step"])
+        except ValueError as e:
+            self.status(str(e), error=True)
+            return
+        self.move_by(dirx * step, diry * step)
+
+    def move_by(self, dx_units, dy_units):
+        """Move the design origin and head by (dx, dy) in the current units (+y = up)."""
         if self.worker is not None:
             return
         try:
-            step = float(self.values["jog_step"])
             settings = self.job_settings()
             bed_w, bed_h = config.bed_size_inches(self.values)
         except ValueError as e:
             self.status(str(e), error=True)
             return
         f = 1.0 if self.values.get("units") == "in" else 1 / 25.4
-        dx = round(dirx * step * f, 3)
-        dy = round(diry * step * f, 3)
+        dx = round(dx_units * f, 3)
+        dy = round(dy_units * f, 3)
         if settings.home_upper_right:
             dx = -dx
         xmin, xmax, ymin, ymax = self.design.origin_bounds(settings)
         x, y = clamp_head_position(self.head[0], self.head[1], dx, dy, bed_w, bed_h,
-                                   xmax - xmin, ymax - ymin)
+                                   xmax - xmin, ymax - ymin,
+                                   offset=(self.head_offset[0] / 1000.0, self.head_offset[1] / 1000.0))
         if self.laser.connected:
             try:
                 self.laser.rapid_move((x - self.head[0]) * 1000.0, (y - self.head[1]) * 1000.0,
@@ -602,6 +715,135 @@ class MainWindow(QMainWindow):
                 return
         self.head = (x, y)
         self.refresh_preview()
+
+    def move_head_temporary(self, offset_mils):
+        """Move the head to origin + offset (mils) without moving the design origin."""
+        try:
+            settings = self.job_settings()
+            bed_w, bed_h = config.bed_size_inches(self.values)
+        except ValueError as e:
+            self.status(str(e), error=True)
+            return False
+        if settings.input_csys and self.design.raster.image is None:
+            target = (0, 0)
+        else:
+            target = temporary_offset_target(self.head, offset_mils, bed_w, bed_h)
+        dx = target[0] - self.head_offset[0]
+        dy = target[1] - self.head_offset[1]
+        if self.laser.connected and (dx or dy):
+            try:
+                self.laser.rapid_move(dx, dy, settings, self.send_options())
+            except Exception as e:
+                self.status("Rapid move failed: %s" % e, error=True)
+                return False
+        self.head_offset = target
+        self.refresh_preview()
+        return True
+
+    def move_to_corner(self, corner):
+        if self.worker is not None:
+            return
+        try:
+            settings = self.job_settings()
+            bed_w, bed_h = config.bed_size_inches(self.values)
+        except ValueError as e:
+            self.status(str(e), error=True)
+            return
+        bounds = self.design.get_bounds(settings.rotate)
+        offset = corner_offset(corner, bounds, settings.home_upper_right, self.head, bed_w, bed_h)
+        if offset is None:
+            self.status("That corner of the design is outside the laser bed.", error=True)
+            return
+        self.move_head_temporary(offset)
+
+    def goto_position(self):
+        """Home, then move to the X/Y given by the user (distance from home)."""
+        if self.worker is not None:
+            return
+        units = self.values.get("units", "mm")
+        try:
+            gx = float(self.values.get("gotoX") or 0)
+            gy = -float(self.values.get("gotoY") or 0)    # stored like K40 Whisperer (up = +)
+        except ValueError:
+            gx = gy = 0.0
+        x, ok = QInputDialog.getDouble(self, "Go to position", "X from home (%s):" % units,
+                                       gx, 0.0, 10000.0, 2)
+        if not ok:
+            return
+        y, ok = QInputDialog.getDouble(self, "Go to position", "Y from home, downwards (%s):" % units,
+                                       max(gy, 0.0), 0.0, 10000.0, 2)
+        if not ok:
+            return
+        self.values["gotoX"] = _num_text(x)
+        self.values["gotoY"] = _num_text(-y)
+        if self.laser.connected and not self._laser_call(self.laser.home, "Homed"):
+            return
+        self.head = (0.0, 0.0)
+        self.head_offset = (0, 0)
+        self.move_by(x, -y)
+
+    def test_fire(self):
+        if not self.laser.connected:
+            self.status("Laser is not initialized.", error=True)
+            return
+        try:
+            ms = int(float(self.values["test_time"]))
+            if ms > 1000:
+                ms = 0
+            fraction = float(self.values["test_power"])
+            if fraction > 1:
+                fraction = 0
+            power = fraction * float(self.values["max_power"])
+        except ValueError as e:
+            self.status(str(e), error=True)
+            return
+        self._laser_call(lambda: self.laser.test_fire(power, ms),
+                         "Test fire: %.0f%% for %d ms" % (power, ms))
+
+    def calculate_raster_time(self):
+        if self.worker is not None or self.design.raster.image is None:
+            return
+        try:
+            settings = self.job_settings()
+        except ValueError as e:
+            self.status(str(e), error=True)
+            return
+        self._run_worker(RasterPrepareWorker(self.design, settings, parent=self),
+                         "Preparing raster…")
+
+    def send_egv_file(self):
+        if self.worker is not None:
+            return
+        if not self.laser.connected:
+            self.status("Laser is not initialized.", error=True)
+            return
+        start = os.path.dirname(self.design_file) or os.path.expanduser("~")
+        name, _ = QFileDialog.getOpenFileName(self, "Send EGV file", start,
+                                              "EGV files (*.egv *.EGV);;All files (*)")
+        if not name:
+            return
+        try:
+            egv = egvfile.read_egv_file(name)
+            settings = self.job_settings()
+            send_options = self.send_options()
+        except (OSError, ValueError) as e:
+            self.status("Could not read %s: %s" % (os.path.basename(name), e), error=True)
+            return
+        passes = 1
+        if not egv.has_end_position:
+            passes, ok = QInputDialog.getInt(self, "Send EGV file", "Number of passes:", 1, 1, 100)
+            if not ok:
+                return
+        if self.head_offset != (0, 0) and not self.move_head_temporary((0, 0)):
+            return
+        # the loaded design is not what is being cut: clear it, as K40 Whisperer does
+        self.design.reset()
+        self.design_file = name
+        self._update_design_label()
+        self._update_power_visibility()
+        self.refresh_preview()
+        self._run_worker(EgvSendWorker(egv, passes, self.laser, settings, send_options, parent=self),
+                         "Sending %s…" % os.path.basename(name))
 
     # ------------------------------------------------------------ jobs
     def selected_operation(self):
@@ -627,15 +869,23 @@ class MainWindow(QMainWindow):
         except ValueError as e:
             self.status(str(e), error=True)
             return
-        self.worker = JobWorker(self.design, settings, op,
-                                laser=None if output_file else self.laser,
-                                output_file=output_file, send_options=send_options, parent=self)
-        self.worker.progress.connect(self.status)
-        self.worker.paused.connect(self._job_paused)
-        self.worker.finished_job.connect(self._job_finished)
+        if output_file is None and self.head_offset != (0, 0):
+            # the job starts at the design origin: bring the head back first
+            if not self.move_head_temporary((0, 0)):
+                return
+        self._run_worker(JobWorker(self.design, settings, op,
+                                   laser=None if output_file else self.laser,
+                                   output_file=output_file, send_options=send_options,
+                                   parent=self), "Preparing job\u2026")
+
+    def _run_worker(self, worker, message):
+        self.worker = worker
+        worker.progress.connect(self.status)
+        worker.paused.connect(self._job_paused)
+        worker.finished_job.connect(self._job_finished)
         self.set_busy(True)
-        self.status("Preparing job…")
-        self.worker.start()
+        self.status(message)
+        worker.start()
 
     def save_egv(self):
         base = os.path.splitext(self.design_file)[0] if self.design_file else os.path.expanduser("~/out")
@@ -645,7 +895,7 @@ class MainWindow(QMainWindow):
 
     def stop_job(self):
         if self.worker is not None:
-            self.status("Stopping…")
+            self.status("Stopping\u2026")
             self.worker.request_stop()
 
     def _job_paused(self):
@@ -659,7 +909,7 @@ class MainWindow(QMainWindow):
             self.worker.pause.terminate()
 
     def _job_finished(self, ok, message):
-        was_laser_job = self.worker.output_file is None
+        was_laser_job = isinstance(self.worker, (JobWorker, EgvSendWorker)) and self.worker.laser is not None
         self.worker.wait()
         self.worker = None
         self.set_busy(False)

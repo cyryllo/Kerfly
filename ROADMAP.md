@@ -24,12 +24,12 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 
 ## Next: complete the K40 Whisperer feature set in the new window
 
-- [ ] Move the head to the design corners and centre (temporary position)
-- [ ] Go to a given X/Y position
-- [ ] Test fire (M3)
-- [ ] Job time estimate
+- [x] Move the head to the design corners and centre (temporary position)
+- [x] Go to a given X/Y position
+- [x] Test fire (M3)
+- [x] Job time estimate
 - [ ] Batch mode and post-job actions (`post_disp`, `post_exec`)
-- [ ] Open and send EGV files
+- [x] Open and send EGV files
 - [ ] Rotary settings window parity
 
 ## Import more file types
