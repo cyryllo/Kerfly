@@ -110,6 +110,8 @@ def make_window(**overrides):
 
 def main():
     app = QApplication([])
+    # "save changes first?" when replacing a design: discard in tests
+    QMessageBox.question = staticmethod(lambda *a, **k: QMessageBox.Discard)
     manifest = json.load(open(os.path.join(BASE, "manifest.json")))["cases"]
     failures = 0
 
@@ -425,6 +427,47 @@ def main():
     check("materials: applying a material sets the layers", cut.speed == 8.0 and cut.passes == 1
           and w.values["Vcut_feed"] == "8" and abs(cut.power - 0.6) < 1e-9,
           "(cut speed %s, Vcut_feed %s)" % (cut.speed, w.values["Vcut_feed"]))
+
+    # 16. project file: save a layout and open it again in a new window
+    from kerfly.gui import image_dialog as _imgdlg
+    png2 = tempfile.mktemp(suffix=".png")
+    synthetic_image().save(png2, dpi=(300, 300))
+    w = make_window()
+    w.load_design(os.path.join(FIX, "shapes.svg"))
+    _imgdlg.ImageSizeDialog.exec = lambda self: True
+    w.head = (4.2, -0.2)
+    w.load_design(png2, add=True)
+    w._rotate(w.selected, 30)
+    w._preview_drawn("rectangle", QPointF(120, 100), QPointF(170, 130), False)
+    w.add_layer("cut")
+    extra_id = w.selected.layers["cut"]
+    w._preview_drawn("text", QPointF(20, 150), QPointF(20, 150), False)
+    spec = w.selected.shape.copy()
+    spec.text = "Kerfly"
+    w._tool_options_changed(spec)
+    title_dirty = w.windowTitle().startswith("*")
+    egv1 = tempfile.mktemp(suffix=".egv")
+    w.start_job(output_file=egv1)
+    run_until_idle(app, w)
+    proj = tempfile.mktemp(suffix=".kerfly")
+    saved = w._write_project(proj)
+    title_clean = not w.windowTitle().startswith("*")
+    asked = []
+    _imgdlg.ImageSizeDialog.exec = lambda self: (asked.append("image"), True)[1]
+    w2 = make_window()
+    w2.open_project(proj)
+    egv2 = tempfile.mktemp(suffix=".egv")
+    w2.start_job(output_file=egv2)
+    run_until_idle(app, w2)
+    same = open(egv1, "rb").read() == open(egv2, "rb").read()
+    layout_same = [(e.name, round(e.x, 9), round(e.y, 9), e.rotation) for e in w.elements] == \
+        [(e.name, round(e.x, 9), round(e.y, 9), e.rotation) for e in w2.elements]
+    extra2 = [l for l in w2.layers if l.kind == "cut"]
+    check("project: save and reopen gives the same layout and laser data",
+          saved and title_dirty and title_clean and same and layout_same and not asked
+          and len(extra2) == 2 and w2.elements[2].layers.get("cut") == extra2[1].id,
+          "(egv %d bytes, same %s, asked %s)" % (os.path.getsize(egv1), same, asked))
+    os.remove(png2)
 
     print("\n%d check(s) failed." % failures if failures else "\nAll checks passed.")
     return 1 if failures else 0

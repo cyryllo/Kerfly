@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 23:19+0100\n"
+"POT-Creation-Date: 2026-11-03 23:39+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -90,6 +90,9 @@ msgstr "&Rétablir"
 
 msgid "&Reload design"
 msgstr "&Recharger le dessin"
+
+msgid "&Save project"
+msgstr "&Enregistrer le projet"
 
 msgid "&Settings"
 msgstr "&Paramètres"
@@ -261,6 +264,9 @@ msgstr "Impossible d'ouvrir %s"
 msgid "Could not open design"
 msgstr "Impossible d'ouvrir le dessin"
 
+msgid "Could not open the project"
+msgstr "Impossible d'ouvrir le projet"
+
 #, python-format
 msgid "Could not read %s: %s"
 msgstr "Impossible de lire %s : %s"
@@ -272,6 +278,9 @@ msgstr "Impossible d'enregistrer les paramètres : %s"
 #, python-format
 msgid "Could not save the material library: %s"
 msgstr "Impossible d'enregistrer la bibliothèque de matériaux : %s"
+
+msgid "Could not save the project"
+msgstr "Impossible d'enregistrer le projet"
 
 msgid "Create a material from the speed, passes and power of the current layers"
 msgstr ""
@@ -325,9 +334,6 @@ msgstr "Supprimer ce calque (ses éléments reviennent au calque par défaut)"
 
 msgid "Design"
 msgstr "Dessin"
-
-msgid "Design files"
-msgstr "Fichiers de dessin"
 
 msgid "Design import"
 msgstr "Import du dessin"
@@ -497,9 +503,8 @@ msgstr "Tâche terminée en %s"
 msgid "Job running"
 msgstr "Tâche en cours"
 
-#, python-format
-msgid "Kerfly %s"
-msgstr "Kerfly %s"
+msgid "Kerfly projects"
+msgstr "Projets Kerfly"
 
 msgid "Language"
 msgstr "Langue"
@@ -762,6 +767,17 @@ msgstr "Préparation du raster…"
 msgid "Preprocessing raster data: %s%%"
 msgstr "Prétraitement des données raster : %s%%"
 
+#, python-format
+msgid "Project opened: %s"
+msgstr "Projet ouvert : %s"
+
+#, python-format
+msgid "Project saved: %s"
+msgstr "Projet enregistré : %s"
+
+msgid "Projects and designs"
+msgstr "Projets et dessins"
+
 msgid "Proportions are kept"
 msgstr "Les proportions sont conservées"
 
@@ -867,6 +883,10 @@ msgstr "Fichiers SVG"
 msgid "SVG import scale"
 msgstr "Échelle d'import SVG"
 
+msgctxt "toolbar"
+msgid "Save"
+msgstr "Enregistrer"
+
 msgid "Save &EGV file…"
 msgstr "Enregistrer le fichier &EGV…"
 
@@ -879,8 +899,22 @@ msgstr ""
 msgid "Save EGV file"
 msgstr "Enregistrer le fichier EGV"
 
+msgid "Save project"
+msgstr "Enregistrer le projet"
+
+msgid "Save project &as…"
+msgstr "Enregistrer le projet &sous…"
+
 msgid "Save settings as default"
 msgstr "Enregistrer les paramètres par défaut"
+
+msgid "Save the changes to the project first?"
+msgstr "Enregistrer d'abord les modifications du projet ?"
+
+msgid "Save the layout, layers and files in one .kerfly file"
+msgstr ""
+"Enregistrer la disposition, les calques et les fichiers dans un fichier "
+".kerfly"
 
 msgid "Scan line step (in)"
 msgstr "Pas entre les lignes (po)"
@@ -1107,8 +1141,14 @@ msgstr ""
 "Déverrouiller les axes : libérer les moteurs pour déplacer la tête à la "
 "main"
 
+msgid "Unsaved changes"
+msgstr "Modifications non enregistrées"
+
 msgid "Untick an element to leave it out of the job"
 msgstr "Décochez un élément pour l'exclure de la tâche"
+
+msgid "Untitled"
+msgstr "Sans titre"
 
 msgid "Upper left corner"
 msgstr "Coin supérieur gauche"
@@ -1181,6 +1221,9 @@ msgstr "détecté automatiquement"
 
 msgid "g-code"
 msgstr "g-code"
+
+msgid "project"
+msgstr "projet"
 
 msgid "raster"
 msgstr "raster"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 23:19+0100\n"
+"POT-Creation-Date: 2026-11-03 23:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -88,6 +88,9 @@ msgid "&Redo"
 msgstr ""
 
 msgid "&Reload design"
+msgstr ""
+
+msgid "&Save project"
 msgstr ""
 
 msgid "&Settings"
@@ -248,6 +251,9 @@ msgstr ""
 msgid "Could not open design"
 msgstr ""
 
+msgid "Could not open the project"
+msgstr ""
+
 #, python-format
 msgid "Could not read %s: %s"
 msgstr ""
@@ -258,6 +264,9 @@ msgstr ""
 
 #, python-format
 msgid "Could not save the material library: %s"
+msgstr ""
+
+msgid "Could not save the project"
 msgstr ""
 
 msgid "Create a material from the speed, passes and power of the current layers"
@@ -307,9 +316,6 @@ msgid "Delete this layer (its parts go back to the default layer)"
 msgstr ""
 
 msgid "Design"
-msgstr ""
-
-msgid "Design files"
 msgstr ""
 
 msgid "Design import"
@@ -478,8 +484,7 @@ msgstr ""
 msgid "Job running"
 msgstr ""
 
-#, python-format
-msgid "Kerfly %s"
+msgid "Kerfly projects"
 msgstr ""
 
 msgid "Language"
@@ -741,6 +746,17 @@ msgstr ""
 msgid "Preprocessing raster data: %s%%"
 msgstr ""
 
+#, python-format
+msgid "Project opened: %s"
+msgstr ""
+
+#, python-format
+msgid "Project saved: %s"
+msgstr ""
+
+msgid "Projects and designs"
+msgstr ""
+
 msgid "Proportions are kept"
 msgstr ""
 
@@ -838,6 +854,10 @@ msgstr ""
 msgid "SVG import scale"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Save"
+msgstr ""
+
 msgid "Save &EGV file…"
 msgstr ""
 
@@ -848,7 +868,19 @@ msgstr ""
 msgid "Save EGV file"
 msgstr ""
 
+msgid "Save project"
+msgstr ""
+
+msgid "Save project &as…"
+msgstr ""
+
 msgid "Save settings as default"
+msgstr ""
+
+msgid "Save the changes to the project first?"
+msgstr ""
+
+msgid "Save the layout, layers and files in one .kerfly file"
 msgstr ""
 
 msgid "Scan line step (in)"
@@ -1053,7 +1085,13 @@ msgstr ""
 msgid "Unlock rail: release the motors so the head can be moved by hand"
 msgstr ""
 
+msgid "Unsaved changes"
+msgstr ""
+
 msgid "Untick an element to leave it out of the job"
+msgstr ""
+
+msgid "Untitled"
 msgstr ""
 
 msgid "Upper left corner"
@@ -1123,6 +1161,9 @@ msgid "found automatically"
 msgstr ""
 
 msgid "g-code"
+msgstr ""
+
+msgid "project"
 msgstr ""
 
 msgid "raster"

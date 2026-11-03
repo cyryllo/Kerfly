@@ -28,6 +28,10 @@ and power (M3 boards) and colour, and every element's parts can be put on any
 layer of the right kind. A material library (for example "Plywood 3 mm")
 stores cut, outline and raster settings and sets all layers at once.
 
+A project (File → Save project, `.kerfly`) keeps the layout, layers, drawn
+shapes and copies of the source files in one file, so it can be moved to the
+computer at the laser.
+
 Designs are placed on a picture of the laser bed. You can put several files
 on the bed, drag them with the mouse, scale and rotate them with handles, or
 type their position, size and angle. The editor has undo and redo, a snap

@@ -24,6 +24,7 @@ from kerfly.core.design import Design
 from kerfly.core.estimate import format_time
 from kerfly.core.laser import LaserController, LaserError, clamp_head_position, corner_offset
 from kerfly.core import materials as material_lib
+from kerfly.core import project as project_io
 from kerfly.core.layers import (CUT, ENGRAVE, EXTRA_COLORS, GCODE, KINDS, RASTER, Layer, layer_of,
                                 layer_times, part_present)
 from kerfly.core.layout import Element, compile_layout
@@ -44,7 +45,9 @@ IMAGE_PATTERNS = " ".join("*" + e for e in loaders.IMAGE_EXTENSIONS)
 
 
 def design_filters():
-    return ";;".join([_("Design files") + " (*.svg *.dxf *.ngc *.gcode *.nc *.g *.tap %s)" % IMAGE_PATTERNS,
+    return ";;".join([_("Projects and designs") + " (*.kerfly *.svg *.dxf *.ngc *.gcode *.nc *.g *.tap %s)"
+                      % IMAGE_PATTERNS,
+                      _("Kerfly projects") + " (*.kerfly)",
                       _("SVG files") + " (*.svg)", _("DXF files") + " (*.dxf)",
                       _("Images") + " (%s)" % IMAGE_PATTERNS,
                       _("G-code files") + " (*.ngc *.gcode *.nc *.g *.tap)",
@@ -81,6 +84,8 @@ class MainWindow(QMainWindow):
         self._layer_cache = {}          # layer id -> compiled design (kept until the layout changes)
         self.materials = material_lib.load_library()
         self._init_layers()
+        self.project_file = ""          # current .kerfly file
+        self._dirty = False             # unsaved changes
         self._undo = []                 # layout snapshots for undo / redo
         self._redo = []
         self.design_file = ""           # last file opened (start folder for file dialogs)
@@ -90,7 +95,7 @@ class MainWindow(QMainWindow):
         self._paused = False
         self._unit_widgets = []         # (spinbox, kind, key, sign) to update when units change
 
-        self.setWindowTitle(_("Kerfly %s") % __version__)
+        self._update_title()
         self.resize(1200, 780)
         self.preview = PreviewView()
         self.tool_options = ToolOptionsBar()
@@ -170,7 +175,10 @@ class MainWindow(QMainWindow):
                                          _("Write the selected operations to an EGV file"))
         self.act_send_egv = self._action(_("Send EGV file to laser\u2026"), self.send_egv_file, None,
                                          _("Send an existing EGV file to the laser"))
-        self.act_save_settings = self._action(_("Save settings as default"), self.save_settings, "Ctrl+S")
+        self.act_save_settings = self._action(_("Save settings as default"), self.save_settings)
+        self.act_save_project = self._action(_("&Save project"), self.save_project, "Ctrl+S",
+                                             _("Save the layout, layers and files in one .kerfly file"))
+        self.act_save_project_as = self._action(_("Save project &as\u2026"), self.save_project_as, "Ctrl+Shift+S")
         self.act_goto = self._action(_("&Go to X/Y position"), self.goto_position, "Ctrl+G")
         self.act_corners = {}
         for key, text, sc in (("UL", N_("Upper left corner"), "Ctrl+7"),
@@ -191,7 +199,8 @@ class MainWindow(QMainWindow):
 
         mb = self.menuBar()
         m = mb.addMenu(_("&File"))
-        for a in (self.act_open, self.act_add, self.act_reload, None, self.act_save_egv,
+        for a in (self.act_open, self.act_add, self.act_reload, None, self.act_save_project,
+                  self.act_save_project_as, None, self.act_save_egv,
                   self.act_send_egv, None, self.act_save_settings, None, self.act_quit):
             m.addSeparator() if a is None else m.addAction(a)
         m = mb.addMenu(_("&Edit"))
@@ -241,7 +250,8 @@ class MainWindow(QMainWindow):
                 (self.act_open, "folder-open", C_("toolbar", "Open")),
                 (self.act_add, "file-plus", C_("toolbar", "Add")),
                 (self.act_reload, "refresh", C_("toolbar", "Reload")),
-                (self.act_save_egv, "device-floppy", C_("toolbar", "Save EGV")),
+                (self.act_save_project, "device-floppy", C_("toolbar", "Save")),
+                (self.act_save_egv, "file-export", C_("toolbar", "Save EGV")),
             ]),
             (C_("toolbar group", "Edit"), [
                 (self.act_undo, "arrow-back-up", C_("toolbar", "Undo")),
@@ -813,6 +823,7 @@ class MainWindow(QMainWindow):
 
     def _checkpoint(self):
         """Call before changing the layout."""
+        self._set_dirty(True)
         self._undo.append(self._snapshot())
         del self._undo[:-100]
         self._redo.clear()
@@ -1088,11 +1099,13 @@ class MainWindow(QMainWindow):
         self.values[power] = _num_text(layer.power)
 
     def _layer_changed(self, layer):
+        self._set_dirty(True)
         self._layer_to_values(layer)
         self._update_times()
         self.refresh_preview()
 
     def _layers_structure_changed(self):
+        self._set_dirty(True)
         self._layer_cache.clear()
         self._rebuild_layers_panel()
         self.refresh_preview()
@@ -1433,6 +1446,109 @@ class MainWindow(QMainWindow):
         self._layout_changed()
         self.status(_("Reloaded"))
 
+    # ------------------------------------------------------------ projects
+    def _set_dirty(self, dirty):
+        self._dirty = dirty
+        self._update_title()
+
+    def _update_title(self):
+        name = os.path.basename(self.project_file) if self.project_file else _("Untitled")
+        self.setWindowTitle("%s%s \u2013 Kerfly %s" % ("*" if self._dirty else "", name, __version__))
+
+    def _confirm_discard(self):
+        """Ask to save unsaved changes. Returns False if the user cancels."""
+        if not self._dirty or not self.elements:
+            return True
+        answer = QMessageBox.question(
+            self, _("Unsaved changes"), _("Save the changes to the project first?"),
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Save)
+        if answer == QMessageBox.Cancel:
+            return False
+        if answer == QMessageBox.Save:
+            return self.save_project()
+        return True
+
+    def save_project(self):
+        if not self.project_file:
+            return self.save_project_as()
+        return self._write_project(self.project_file)
+
+    def save_project_as(self):
+        start = self.project_file or os.path.join(
+            os.path.dirname(self.design_file) or os.path.expanduser("~"),
+            (os.path.splitext(os.path.basename(self.design_file))[0] or _("project")) + project_io.EXTENSION)
+        name, _unused = QFileDialog.getSaveFileName(self, _("Save project"), start,
+                                                    _("Kerfly projects") + " (*.kerfly)")
+        if not name:
+            return False
+        if not name.lower().endswith(project_io.EXTENSION):
+            name += project_io.EXTENSION
+        return self._write_project(name)
+
+    def _write_project(self, path):
+        try:
+            project_io.save_project(path, self.elements, self.layers)
+        except (OSError, project_io.ProjectError) as e:
+            QMessageBox.critical(self, _("Could not save the project"), str(e))
+            return False
+        self.project_file = path
+        self._set_dirty(False)
+        self.status(_("Project saved: %s") % path)
+        return True
+
+    def open_project(self, path):
+        if self.worker is not None or not self._confirm_discard():
+            return
+        try:
+            data, _folder = project_io.read_project(path)
+        except project_io.ProjectError as e:
+            QMessageBox.critical(self, _("Could not open the project"), str(e))
+            return
+        layers, by_id = project_io.layers_from_data(data)
+        for kind in KINDS:                       # every kind needs a default layer
+            if not any(layer.kind == kind for layer in layers):
+                from kerfly.core.layers import DEFAULT_COLORS
+                layers.append(Layer(kind, name=_(LAYER_KIND_NAMES[kind]), color=DEFAULT_COLORS[kind]))
+        elements = []
+        for item in data.get("elements", []):
+            shape = project_io.shape_from_item(item)
+            if shape is not None:
+                design = build_design(shape)
+                source, options = "", {}
+            else:
+                options = dict(item.get("load_options") or {})
+                source = item["path"]
+                design = self._load_file(source, options)
+                if design is None:
+                    return
+            e = Element(design, name=item.get("name", ""), source_file=source, load_options=options,
+                        shape=shape, x=float(item["x"]), y=float(item["y"]),
+                        scale_x=float(item.get("scale_x", 1)), scale_y=float(item.get("scale_y", 1)),
+                        rotation=float(item.get("rotation", 0)), visible=bool(item.get("visible", True)))
+            for kind, saved_id in (item.get("layers") or {}).items():
+                if saved_id in by_id:
+                    e.layers[kind] = by_id[saved_id].id
+            elements.append(e)
+        self.layers = layers
+        self._default_layer = {}
+        for layer in layers:
+            self._default_layer.setdefault(layer.kind, layer)
+        for layer in self._default_layer.values():
+            self._layer_to_values(layer)
+        self.elements = elements
+        self.selected = None
+        self._undo.clear()
+        self._redo.clear()
+        self._compiled = None
+        self._layer_cache.clear()
+        self.project_file = path
+        self.design_file = path
+        self._set_dirty(False)
+        self._update_design_label()
+        self._update_power_visibility()
+        self.refresh_preview(fit=True)
+        self.status(_("Project opened: %s") % path)
+
     def _ask_dxf_units(self):
         unit, ok = QInputDialog.getItem(self, _("DXF units"),
                                         _("The DXF file does not say which units it uses.\nUnits:"),
@@ -1476,15 +1592,32 @@ class MainWindow(QMainWindow):
             self.status(msg)
             QApplication.processEvents()
         reduced = is_true(self.values.get("reduced_mem", "0"))
+
+        def ask_pxpi(size, viewbox, version):        # answer remembered in the options
+            if "svg_scale" in options:
+                pxpi, vb = options["svg_scale"]
+                return pxpi, list(vb)
+            answer = self._ask_svg_scale(size, viewbox, version)
+            if answer is not None:
+                options["svg_scale"] = [answer[0], list(answer[1])]
+            return answer
+
+        def ask_units():
+            if "dxf_units" not in options:
+                unit = self._ask_dxf_units()
+                if unit is None:
+                    return None
+                options["dxf_units"] = unit
+            return options["dxf_units"]
         try:
             if ext == ".svg":
                 warnings = loaders.load_svg(
                     filename, design,
                     inkscape_path=self.values.get("inkscape_path", ""),
                     inkscape_timeout_s=float(self.values.get("ink_timeout", 3)) * 60.0,
-                    reduced_memory=reduced, ask_pxpi=self._ask_svg_scale, progress=progress)
+                    reduced_memory=reduced, ask_pxpi=ask_pxpi, progress=progress)
             elif ext == ".dxf":
-                warnings = loaders.load_dxf(filename, design, ask_units=self._ask_dxf_units)
+                warnings = loaders.load_dxf(filename, design, ask_units=ask_units)
             elif ext in loaders.IMAGE_EXTENSIONS:
                 warnings = loaders.load_image(filename, design, options["dpi"], reduced_memory=reduced)
             else:
@@ -1504,7 +1637,13 @@ class MainWindow(QMainWindow):
         return design
 
     def load_design(self, filename, add=False):
-        """Open a file as a new element at the laser head; replaces all elements unless add."""
+        """Open a file as a new element at the laser head; replaces all elements unless add.
+        A .kerfly file opens as a project."""
+        if filename.lower().endswith(project_io.EXTENSION):
+            self.open_project(filename)
+            return
+        if not add and not self._confirm_discard():
+            return
         options = {}
         if os.path.splitext(filename)[1].lower() in loaders.IMAGE_EXTENSIONS:
             dpi = self._ask_image_dpi(filename)
@@ -1894,6 +2033,9 @@ class MainWindow(QMainWindow):
             "<a href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>") % __version__)
 
     def closeEvent(self, event):
+        if self.worker is None and not self._confirm_discard():
+            event.ignore()
+            return
         if self.worker is not None:
             if QMessageBox.question(self, _("Job running"),
                                     _("A job is running. Stop it and quit?")) != QMessageBox.Yes:
