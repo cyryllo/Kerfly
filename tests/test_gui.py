@@ -129,6 +129,8 @@ def main():
     def check(name, ok, detail=""):
         nonlocal failures
         print("%-5s %s %s" % ("OK" if ok else "FAIL", name, detail))
+        if not ok and os.environ.get("GITHUB_ACTIONS"):
+            print("::error title=test_gui::%s %s" % (name, detail))     # shown as a CI annotation
         failures += 0 if ok else 1
 
     def skip(name):
@@ -552,6 +554,14 @@ def main():
 
 
 if __name__ == "__main__":
-    rc = main()
+    try:
+        rc = main()
+    except Exception:
+        import traceback
+        text = traceback.format_exc()
+        print(text)
+        if os.environ.get("GITHUB_ACTIONS"):
+            print("::error title=test_gui crashed::" + text.replace("%", "%25").replace("\n", "%0A"))
+        rc = 1
     sys.stdout.flush()
     os._exit(rc)
