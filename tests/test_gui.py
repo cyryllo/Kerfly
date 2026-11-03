@@ -549,6 +549,26 @@ def main():
           and "Test board 2 mm" in names and saved, "(%d materials)" % len(w.materials))
     os.remove(lib_file)
 
+    # Let every worker thread finish: a QThread still running when the process
+    # exits crashes it on Windows (access violation in exit).
+    import gc
+    from PySide6.QtCore import QThread
+    running = [t for t in gc.get_objects() if isinstance(t, QThread) and t.isRunning()]
+    for t in running:
+        t.wait(10000)
+    still = [type(t).__name__ for t in running if t.isRunning()]
+    check("all worker threads finished", not still, "(%d were running, still: %s)" % (len(running), still))
+
+    # close every window and let Qt delete them before the application goes away
+    for top in QApplication.topLevelWidgets():
+        if isinstance(top, MainWindow):
+            top._dirty = False
+        top.close()
+        top.deleteLater()
+    from PySide6.QtCore import QCoreApplication, QEvent
+    QCoreApplication.sendPostedEvents(None, QEvent.DeferredDelete)
+    app.processEvents()
+
     print("\n%d check(s) failed." % failures if failures else "\nAll checks passed.")
     return 1 if failures else 0
 
@@ -564,4 +584,4 @@ if __name__ == "__main__":
             print("::error title=test_gui crashed::" + text.replace("%", "%25").replace("\n", "%0A"))
         rc = 1
     sys.stdout.flush()
-    os._exit(rc)
+    sys.exit(rc)
