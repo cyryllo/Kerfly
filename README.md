@@ -19,12 +19,8 @@ terminate.
 The original K40 Whisperer window (`k40_whisperer.py`) is still included and
 uses the same core. Some of its features are not in the new window yet.
 
-Planned:
-
-- built-in drawing and editing tools
-- direct import of more file formats (PNG/JPG/BMP/TIFF/WebP, PDF, and others)
-- the remaining K40 Whisperer features (moving the head to the design
-  corners, batch mode, test fire, time estimate)
+Planned: the remaining K40 Whisperer features, more file formats, an editor
+window and drawing tools. See [ROADMAP.md](ROADMAP.md).
 
 The laser output (EGV data sent over USB) is checked byte-for-byte against the
 original 0.71 after every change. See [Regression tests](#regression-tests).
