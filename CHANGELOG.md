@@ -7,7 +7,7 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
-## Unreleased
+## 0.3.0 (2026-11-04)
 
 - Elements outside the work area are drawn red. Start and Trace stay locked,
   with a warning above them, until the elements are moved back onto the bed.
