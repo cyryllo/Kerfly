@@ -1132,7 +1132,9 @@ class MainWindow(QMainWindow):
         self._fit_panel_width()
 
     def add_layer(self, kind):
-        """New layer of a kind; the selected element's part of that kind moves to it."""
+        """Append a new layer of a kind to the list. Elements are moved to it with
+        the Layer choice above the bed view (adding never takes a part away from
+        the layer it is on)."""
         base = self._default_layer[kind]
         n = sum(1 for layer in self.layers if layer.kind == kind) + 1
         layer = Layer(kind, name="%s %d" % (_(LAYER_KIND_NAMES[kind]), n),
@@ -1140,12 +1142,9 @@ class MainWindow(QMainWindow):
                       speed=base.speed, passes=base.passes, power=base.power)
         index = max(i for i, l in enumerate(self.layers) if l.kind == kind) + 1
         self.layers.insert(index, layer)
-        e = self.selected
-        if e is not None and part_present(e.design, kind):
-            self._checkpoint()
-            e.layers[kind] = layer.id
         self._layers_structure_changed()
         self._update_layer_assignment()
+        return layer
 
     def remove_layer(self, layer):
         if self._default_layer.get(layer.kind) is layer:

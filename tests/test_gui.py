@@ -424,9 +424,11 @@ def main():
     w.head = (3.0, 0.0)
     w.load_design(os.path.join(FIX, "shapes.dxf"), add=True)          # selected
     second = w.selected
-    w.add_layer("cut")                                                 # selected element moves to it
-    extra = [l for l in w.layers if l.kind == "cut"][1]
-    assigned = second.layers.get("cut") == extra.id
+    n_rows = len(w.layers_panel.rows)
+    extra = w.add_layer("cut")                                         # appended, nothing moved yet
+    appended = len(w.layers_panel.rows) == n_rows + 1 and "cut" not in second.layers
+    w._assign_layer("cut", extra.id)                                   # Layer choice above the bed
+    assigned = appended and second.layers.get("cut") == extra.id
     extra.speed = 3.0
     extra.passes = 2
     w._layer_changed(extra)
@@ -461,7 +463,7 @@ def main():
     w.load_design(png2, add=True)
     w._rotate(w.selected, 30)
     w._preview_drawn("rectangle", QPointF(120, 100), QPointF(170, 130), False)
-    w.add_layer("cut")
+    w._assign_layer("cut", w.add_layer("cut").id)
     extra_id = w.selected.layers["cut"]
     w._preview_drawn("text", QPointF(20, 150), QPointF(20, 150), False)
     spec = w.selected.shape.copy()
