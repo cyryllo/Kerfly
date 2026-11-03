@@ -397,6 +397,16 @@ class MainWindow(QMainWindow):
         self.set_tool("select")
         self._layout_changed()
 
+    def _icon_button(self, icon, tooltip, slot, size=46, icon_size=26):
+        """Square button with only an icon (the meaning is in the tooltip)."""
+        b = QPushButton()
+        b.setIcon(icons.tabler(icon) if isinstance(icon, str) else icon)
+        b.setIconSize(QSize(icon_size, icon_size))
+        b.setFixedSize(size, size)
+        b.setToolTip(tooltip)
+        b.clicked.connect(slot)
+        return b
+
     def _spin(self, key, kind, lo, hi, decimals=1):
         if kind == "int":
             w = QSpinBox()
@@ -483,15 +493,13 @@ class MainWindow(QMainWindow):
                                        "the element (hold Shift for 15\u00b0 steps)."))
         self.sel_rotation.valueChanged.connect(lambda _v: self._selection_field_changed("rotation"))
         row.addWidget(self.sel_rotation)
-        for text, angle, tip in (("\u27f2", 90, N_("Rotate 90\u00b0 counter-clockwise")),
-                                 ("\u27f3", -90, N_("Rotate 90\u00b0 clockwise"))):
-            b = QPushButton(text)
-            b.setFixedWidth(36)
-            b.setToolTip(_(tip))
-            b.clicked.connect(lambda _c=False, a=angle: self.rotate_selected(a))
-            row.addWidget(b)
+        for icon, angle, tip in (("rotate-2", 90, N_("Rotate 90\u00b0 counter-clockwise")),
+                                 ("rotate-clockwise-2", -90, N_("Rotate 90\u00b0 clockwise"))):
+            row.addWidget(self._icon_button(icon, _(tip), lambda _c=False, a=angle: self.rotate_selected(a),
+                                            30, 18))
         row.addStretch(1)
         b = QPushButton(_("Delete"))
+        b.setIcon(icons.tabler("trash", "#c62828"))
         b.clicked.connect(self.delete_selected)
         row.addWidget(b)
         g.addLayout(row, 4, 0, 1, 4)
@@ -503,17 +511,18 @@ class MainWindow(QMainWindow):
         v = QVBoxLayout(box)
         self.laser_label = QLabel()
         v.addWidget(self.laser_label)
-        row = QHBoxLayout()
-        self.btn_connect = QPushButton(_("Initialize"))
-        self.btn_connect.clicked.connect(self.connect_laser)
-        row.addWidget(self.btn_connect)
-        b = QPushButton(_("Home"))
-        b.clicked.connect(self.home)
-        row.addWidget(b)
-        b = QPushButton(_("Unlock"))
-        b.clicked.connect(self.unlock)
-        row.addWidget(b)
-        v.addLayout(row)
+        # machine buttons, in a column beside the jog pad
+        machine = QVBoxLayout()
+        machine.setSpacing(4)
+        self.btn_connect = self._icon_button("plug-connected", _("Connect to the laser") + " (Ctrl+I)",
+                                             self.connect_laser, 56, 28)
+        self.btn_home = self._icon_button("home", _("Home: move the head to the home corner"),
+                                          self.home, 56, 28)
+        self.btn_unlock = self._icon_button("lock-open", _("Unlock rail: release the motors so the head "
+                                                           "can be moved by hand"), self.unlock, 56, 28)
+        for b in (self.btn_connect, self.btn_home, self.btn_unlock):
+            machine.addWidget(b)
+        machine.addStretch(1)
 
         # jog pad: arrows move the design origin; corners/centre move the head
         # to that point of the design (the design stays where it is)
@@ -552,6 +561,8 @@ class MainWindow(QMainWindow):
             self.corner_buttons.append(b)
         pad = QHBoxLayout()
         pad.addStretch(1)
+        pad.addLayout(machine)
+        pad.addSpacing(22)                 # keep machine buttons apart from the jog pad
         pad.addLayout(grid)
         pad.addStretch(1)
         v.addLayout(pad)
@@ -592,11 +603,12 @@ class MainWindow(QMainWindow):
         row.addSpacing(6)
         row.addWidget(QLabel(_("Y")))
         row.addWidget(self.goto_y)
-        row.addStretch(1)
         self.btn_goto = QPushButton(_("Go"))
+        self.btn_goto.setIcon(icons.tabler("arrow-right"))
         self.btn_goto.setToolTip(_("Home the head, then move to X/Y (Ctrl+G)"))
         self.btn_goto.clicked.connect(self.goto_position)
         row.addWidget(self.btn_goto)
+        row.addStretch(1)
         v.addLayout(row)
 
         # test fire (M3 boards)
@@ -604,6 +616,7 @@ class MainWindow(QMainWindow):
         row = QHBoxLayout(self.test_fire_row)
         row.setContentsMargins(0, 0, 0, 0)
         self.btn_test_fire = QPushButton(_("Test fire"))
+        self.btn_test_fire.setIcon(icons.tabler("flame", "#e65100"))
         self.btn_test_fire.setToolTip(_("Fire the laser briefly (M3 boards)"))
         self.btn_test_fire.clicked.connect(self.test_fire)
         row.addWidget(self.btn_test_fire)
@@ -654,21 +667,29 @@ class MainWindow(QMainWindow):
             self.power_widgets[op] = pw
             tl = QLabel("")
             tl.setMinimumWidth(52)
-            g.addWidget(tl, row, 4)
             self.time_labels[op] = tl
-            widgets.append(tl)
+            if op == job.RASTER_ENG:
+                cell = QWidget()
+                h = QHBoxLayout(cell)
+                h.setContentsMargins(0, 0, 0, 0)
+                h.setSpacing(0)
+                h.addWidget(tl)
+                self.btn_calc_time = self._icon_button(
+                    "calculator", _("Calculate raster time: prepare the raster now to estimate "
+                                    "its engraving time"), self.calculate_raster_time, 28, 18)
+                h.addWidget(self.btn_calc_time)
+                h.addStretch(1)
+                g.addWidget(cell, row, 4)
+                widgets.append(cell)
+            else:
+                g.addWidget(tl, row, 4)
+                widgets.append(tl)
             self.op_rows[op] = widgets
         self.no_ops_label = QLabel(_("Open a design to see its operations."))
         self.no_ops_label.setStyleSheet("color:#757575;")
         g.addWidget(self.no_ops_label, len(OPERATIONS) + 1, 0, 1, 5)
-        row = QHBoxLayout()
         self.total_time_label = QLabel()
-        row.addWidget(self.total_time_label, 1)
-        self.btn_calc_time = QPushButton(_("Calculate raster time"))
-        self.btn_calc_time.setToolTip(_("Prepare the raster now to estimate its engraving time"))
-        self.btn_calc_time.clicked.connect(self.calculate_raster_time)
-        row.addWidget(self.btn_calc_time)
-        g.addLayout(row, len(OPERATIONS) + 2, 0, 1, 5)
+        g.addWidget(self.total_time_label, len(OPERATIONS) + 2, 0, 1, 5)
         layout.addWidget(box)
 
         # --- run: one compact row
@@ -1041,7 +1062,7 @@ class MainWindow(QMainWindow):
         total, unknown = 0.0, False
         for op, label in self.time_labels.items():
             t = times.get(op)
-            label.setText(format_time(t) if has[op] else "")
+            label.setText(format_time(t) if has[op] and t is not None else "")
             if has[op] and self.include_checks[op].isChecked():
                 if t is None:
                     unknown = True
@@ -1049,6 +1070,7 @@ class MainWindow(QMainWindow):
                     total += t
         raster_unknown = has[job.RASTER_ENG] and times.get(job.RASTER_ENG) is None
         self.btn_calc_time.setVisible(raster_unknown)
+        self.time_labels[job.RASTER_ENG].setVisible(not raster_unknown)
         if any(has.values()):
             if unknown and total == 0:
                 text = "?"
@@ -1160,17 +1182,20 @@ class MainWindow(QMainWindow):
         if self.laser.connected:
             self.laser_label.setText(_("<b style='color:#2e7d32'>Connected</b> (%s)")
                                      % self.values.get("board_name"))
-            self.btn_connect.setText(_("Re-initialize"))
+            self.btn_connect.setIcon(icons.tabler("plug-connected", "#2e7d32"))
+            self.btn_connect.setToolTip(_("Connected. Click to connect again (re-initialize)."))
         else:
             self.laser_label.setText(_("<b style='color:#c62828'>Not connected</b>"))
-            self.btn_connect.setText(_("Initialize"))
+            self.btn_connect.setIcon(icons.tabler("plug-connected"))
+            self.btn_connect.setToolTip(_("Connect to the laser") + " (Ctrl+I)")
         x, y = self.head
         scale = 25.4 if self.values.get("units") == "mm" else 1.0
         self.head_label.setText(_("Head: X %s  Y %s %s") % (_num(x * scale), _num(-y * scale),
                                                             self.values.get("units")))
 
     def set_busy(self, busy):
-        for w in [self.btn_start, self.btn_trace, self.btn_connect, self.btn_goto,
+        for w in [self.btn_start, self.btn_trace, self.btn_connect, self.btn_home, self.btn_unlock,
+                  self.btn_goto,
                   self.btn_test_fire, self.btn_calc_time, self.selection_box] + self.corner_buttons:
             w.setEnabled(not busy)
         for a in [self.act_open, self.act_reload, self.act_save_egv, self.act_send_egv,

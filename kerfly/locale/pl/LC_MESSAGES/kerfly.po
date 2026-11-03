@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:43+0100\n"
+"POT-Creation-Date: 2026-11-03 22:51+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -190,6 +190,13 @@ msgstr "Przeglądaj…"
 msgid "Calculate raster time"
 msgstr "Oblicz czas rastra"
 
+msgid ""
+"Calculate raster time: prepare the raster now to estimate its engraving "
+"time"
+msgstr ""
+"Oblicz czas rastra: przygotuj raster teraz, aby oszacować czas "
+"grawerowania"
+
 msgid "Centre"
 msgstr "Środek"
 
@@ -209,6 +216,12 @@ msgstr ""
 
 msgid "Click an element on the bed to select it."
 msgstr "Kliknij element na stole, aby go zaznaczyć."
+
+msgid "Connect to the laser"
+msgstr "Połącz z laserem"
+
+msgid "Connected. Click to connect again (re-initialize)."
+msgstr "Połączono. Kliknij, aby połączyć ponownie."
 
 msgid "Controller board"
 msgstr "Płyta sterująca"
@@ -358,7 +371,7 @@ msgid "Generating laser data…"
 msgstr "Generowanie danych dla lasera…"
 
 msgid "Go"
-msgstr "Jedź"
+msgstr "Idź"
 
 msgid "Go to X"
 msgstr "Idź do X"
@@ -386,9 +399,6 @@ msgstr "Głowica: X %s  Y %s %s"
 msgid "Height:"
 msgstr "Wysokość:"
 
-msgid "Home"
-msgstr "Bazowanie"
-
 msgid "Home is in the upper right corner"
 msgstr "Pozycja bazowa w prawym górnym rogu"
 
@@ -397,6 +407,9 @@ msgstr "Bazuj głowicę przy łączeniu"
 
 msgid "Home the head, then move to X/Y (Ctrl+G)"
 msgstr "Bazuj głowicę, a potem jedź do X/Y (Ctrl+G)"
+
+msgid "Home: move the head to the home corner"
+msgstr "Bazowanie: przesuń głowicę do pozycji bazowej"
 
 msgid "Homed"
 msgstr "Głowica w pozycji bazowej"
@@ -409,9 +422,6 @@ msgstr "Obraz:"
 
 msgid "Images"
 msgstr "Obrazy"
-
-msgid "Initialize"
-msgstr "Połącz"
 
 msgid "Inkscape executable"
 msgstr "Program Inkscape"
@@ -628,9 +638,6 @@ msgstr "Moc"
 msgid "Prepare USB data before sending"
 msgstr "Przygotuj dane USB przed wysłaniem"
 
-msgid "Prepare the raster now to estimate its engraving time"
-msgstr "Przygotuj raster teraz, aby oszacować czas grawerowania"
-
 #, python-format
 msgid "Preparing USB data: %s%%"
 msgstr "Przygotowywanie danych USB: %s%%"
@@ -660,9 +667,6 @@ msgstr "Grawerowanie rastrowe"
 
 msgid "Raster prepared"
 msgstr "Raster przygotowany"
-
-msgid "Re-initialize"
-msgstr "Połącz ponownie"
 
 msgid "Ready"
 msgstr "Gotowy"
@@ -960,11 +964,11 @@ msgstr "Jednostki"
 msgid "Unknown USB error: %s"
 msgstr "Nieznany błąd USB: %s"
 
-msgid "Unlock"
-msgstr "Odblokuj"
-
 msgid "Unlock rail after a job"
 msgstr "Odblokuj osie po zadaniu"
+
+msgid "Unlock rail: release the motors so the head can be moved by hand"
+msgstr "Odblokuj osie: zwolnij silniki, aby przesunąć głowicę ręcznie"
 
 msgid "Untick an element to leave it out of the job"
 msgstr "Odznacz element, aby pominąć go w zadaniu"

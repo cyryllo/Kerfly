@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:43+0100\n"
+"POT-Creation-Date: 2026-11-03 22:51+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -188,6 +188,13 @@ msgstr "Parcourir…"
 msgid "Calculate raster time"
 msgstr "Calculer la durée raster"
 
+msgid ""
+"Calculate raster time: prepare the raster now to estimate its engraving "
+"time"
+msgstr ""
+"Calculer la durée raster : préparer le raster maintenant pour estimer la "
+"durée de gravure"
+
 msgid "Centre"
 msgstr "Centre"
 
@@ -207,6 +214,12 @@ msgstr ""
 
 msgid "Click an element on the bed to select it."
 msgstr "Cliquez sur un élément pour le sélectionner."
+
+msgid "Connect to the laser"
+msgstr "Connecter le laser"
+
+msgid "Connected. Click to connect again (re-initialize)."
+msgstr "Connecté. Cliquez pour reconnecter."
 
 msgid "Controller board"
 msgstr "Carte de contrôle"
@@ -386,9 +399,6 @@ msgstr "Tête : X %s  Y %s %s"
 msgid "Height:"
 msgstr "Hauteur :"
 
-msgid "Home"
-msgstr "Origine"
-
 msgid "Home is in the upper right corner"
 msgstr "L'origine est dans le coin supérieur droit"
 
@@ -397,6 +407,9 @@ msgstr "Ramener la tête à l'origine à la connexion"
 
 msgid "Home the head, then move to X/Y (Ctrl+G)"
 msgstr "Ramener la tête à l'origine, puis aller à X/Y (Ctrl+G)"
+
+msgid "Home: move the head to the home corner"
+msgstr "Origine : ramener la tête dans le coin d'origine"
 
 msgid "Homed"
 msgstr "Tête à l'origine"
@@ -409,9 +422,6 @@ msgstr "Image :"
 
 msgid "Images"
 msgstr "Images"
-
-msgid "Initialize"
-msgstr "Connecter"
 
 msgid "Inkscape executable"
 msgstr "Exécutable Inkscape"
@@ -628,9 +638,6 @@ msgstr "Puissance"
 msgid "Prepare USB data before sending"
 msgstr "Préparer les données USB avant l'envoi"
 
-msgid "Prepare the raster now to estimate its engraving time"
-msgstr "Préparer le raster maintenant pour estimer la durée de gravure"
-
 #, python-format
 msgid "Preparing USB data: %s%%"
 msgstr "Préparation des données USB : %s%%"
@@ -660,9 +667,6 @@ msgstr "Gravure raster"
 
 msgid "Raster prepared"
 msgstr "Raster préparé"
-
-msgid "Re-initialize"
-msgstr "Reconnecter"
 
 msgid "Ready"
 msgstr "Prêt"
@@ -959,11 +963,13 @@ msgstr "Unités"
 msgid "Unknown USB error: %s"
 msgstr "Erreur USB inconnue : %s"
 
-msgid "Unlock"
-msgstr "Déverrouiller"
-
 msgid "Unlock rail after a job"
 msgstr "Déverrouiller les axes après la tâche"
+
+msgid "Unlock rail: release the motors so the head can be moved by hand"
+msgstr ""
+"Déverrouiller les axes : libérer les moteurs pour déplacer la tête à la "
+"main"
 
 msgid "Untick an element to leave it out of the job"
 msgstr "Décochez un élément pour l'exclure de la tâche"

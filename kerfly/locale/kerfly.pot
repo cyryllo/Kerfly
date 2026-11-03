@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:43+0100\n"
+"POT-Creation-Date: 2026-11-03 22:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -181,6 +181,11 @@ msgstr ""
 msgid "Calculate raster time"
 msgstr ""
 
+msgid ""
+"Calculate raster time: prepare the raster now to estimate its engraving "
+"time"
+msgstr ""
+
 msgid "Centre"
 msgstr ""
 
@@ -197,6 +202,12 @@ msgid ""
 msgstr ""
 
 msgid "Click an element on the bed to select it."
+msgstr ""
+
+msgid "Connect to the laser"
+msgstr ""
+
+msgid "Connected. Click to connect again (re-initialize)."
 msgstr ""
 
 msgid "Controller board"
@@ -373,9 +384,6 @@ msgstr ""
 msgid "Height:"
 msgstr ""
 
-msgid "Home"
-msgstr ""
-
 msgid "Home is in the upper right corner"
 msgstr ""
 
@@ -383,6 +391,9 @@ msgid "Home the head when initializing"
 msgstr ""
 
 msgid "Home the head, then move to X/Y (Ctrl+G)"
+msgstr ""
+
+msgid "Home: move the head to the home corner"
 msgstr ""
 
 msgid "Homed"
@@ -395,9 +406,6 @@ msgid "Image:"
 msgstr ""
 
 msgid "Images"
-msgstr ""
-
-msgid "Initialize"
 msgstr ""
 
 msgid "Inkscape executable"
@@ -613,9 +621,6 @@ msgstr ""
 msgid "Prepare USB data before sending"
 msgstr ""
 
-msgid "Prepare the raster now to estimate its engraving time"
-msgstr ""
-
 #, python-format
 msgid "Preparing USB data: %s%%"
 msgstr ""
@@ -644,9 +649,6 @@ msgid "Raster engrave"
 msgstr ""
 
 msgid "Raster prepared"
-msgstr ""
-
-msgid "Re-initialize"
 msgstr ""
 
 msgid "Ready"
@@ -919,10 +921,10 @@ msgstr ""
 msgid "Unknown USB error: %s"
 msgstr ""
 
-msgid "Unlock"
+msgid "Unlock rail after a job"
 msgstr ""
 
-msgid "Unlock rail after a job"
+msgid "Unlock rail: release the motors so the head can be moved by hand"
 msgstr ""
 
 msgid "Untick an element to leave it out of the job"

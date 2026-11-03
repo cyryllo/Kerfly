@@ -237,11 +237,12 @@ def main():
     w = make_window()
     w.load_design(os.path.join(FIX, "shapes.svg"))
     before = w.time_labels["Raster_Eng"].text()
+    calc_shown = not w.btn_calc_time.isHidden()
     vcut = w.time_labels["Vector_Cut"].text()
     w.calculate_raster_time()
     run_until_idle(app, w)
     after = w.time_labels["Raster_Eng"].text()
-    check("time estimate", before == "?" and after not in ("", "?") and vcut.endswith("s")
+    check("time estimate", before == "" and calc_shown and after not in ("", "?") and vcut.endswith("s")
           and not w.btn_calc_time.isVisible(), "(raster %r -> %r, cut %r, total %r)"
           % (before, after, vcut, w.total_time_label.text()))
 

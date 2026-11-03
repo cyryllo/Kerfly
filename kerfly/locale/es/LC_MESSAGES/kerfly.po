@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:43+0100\n"
+"POT-Creation-Date: 2026-11-03 22:51+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -188,6 +188,13 @@ msgstr "Examinar…"
 msgid "Calculate raster time"
 msgstr "Calcular tiempo de ráster"
 
+msgid ""
+"Calculate raster time: prepare the raster now to estimate its engraving "
+"time"
+msgstr ""
+"Calcular tiempo de ráster: preparar el ráster ahora para estimar el "
+"tiempo de grabado"
+
 msgid "Centre"
 msgstr "Centro"
 
@@ -207,6 +214,12 @@ msgstr ""
 
 msgid "Click an element on the bed to select it."
 msgstr "Haga clic en un elemento para seleccionarlo."
+
+msgid "Connect to the laser"
+msgstr "Conectar con el láser"
+
+msgid "Connected. Click to connect again (re-initialize)."
+msgstr "Conectado. Haga clic para volver a conectar."
 
 msgid "Controller board"
 msgstr "Placa controladora"
@@ -384,9 +397,6 @@ msgstr "Cabezal: X %s  Y %s %s"
 msgid "Height:"
 msgstr "Alto:"
 
-msgid "Home"
-msgstr "Origen"
-
 msgid "Home is in the upper right corner"
 msgstr "El origen está en la esquina superior derecha"
 
@@ -395,6 +405,9 @@ msgstr "Llevar el cabezal al origen al conectar"
 
 msgid "Home the head, then move to X/Y (Ctrl+G)"
 msgstr "Llevar el cabezal al origen y luego ir a X/Y (Ctrl+G)"
+
+msgid "Home: move the head to the home corner"
+msgstr "Origen: llevar el cabezal a la esquina de origen"
 
 msgid "Homed"
 msgstr "Cabezal en el origen"
@@ -407,9 +420,6 @@ msgstr "Imagen:"
 
 msgid "Images"
 msgstr "Imágenes"
-
-msgid "Initialize"
-msgstr "Conectar"
 
 msgid "Inkscape executable"
 msgstr "Ejecutable de Inkscape"
@@ -628,9 +638,6 @@ msgstr "Potencia"
 msgid "Prepare USB data before sending"
 msgstr "Preparar los datos USB antes de enviar"
 
-msgid "Prepare the raster now to estimate its engraving time"
-msgstr "Preparar el ráster ahora para estimar el tiempo de grabado"
-
 #, python-format
 msgid "Preparing USB data: %s%%"
 msgstr "Preparando datos USB: %s%%"
@@ -660,9 +667,6 @@ msgstr "Grabado ráster"
 
 msgid "Raster prepared"
 msgstr "Ráster preparado"
-
-msgid "Re-initialize"
-msgstr "Reconectar"
 
 msgid "Ready"
 msgstr "Listo"
@@ -961,11 +965,11 @@ msgstr "Unidades"
 msgid "Unknown USB error: %s"
 msgstr "Error de USB desconocido: %s"
 
-msgid "Unlock"
-msgstr "Desbloquear"
-
 msgid "Unlock rail after a job"
 msgstr "Desbloquear los ejes al terminar el trabajo"
+
+msgid "Unlock rail: release the motors so the head can be moved by hand"
+msgstr "Desbloquear ejes: liberar los motores para mover el cabezal a mano"
 
 msgid "Untick an element to leave it out of the job"
 msgstr "Desmarque un elemento para dejarlo fuera del trabajo"

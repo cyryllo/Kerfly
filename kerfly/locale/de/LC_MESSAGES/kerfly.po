@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:43+0100\n"
+"POT-Creation-Date: 2026-11-03 22:51+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -188,6 +188,13 @@ msgstr "Durchsuchen…"
 msgid "Calculate raster time"
 msgstr "Rasterzeit berechnen"
 
+msgid ""
+"Calculate raster time: prepare the raster now to estimate its engraving "
+"time"
+msgstr ""
+"Rasterzeit berechnen: Raster jetzt vorbereiten, um die Gravurzeit zu "
+"schätzen"
+
 msgid "Centre"
 msgstr "Mitte"
 
@@ -209,6 +216,12 @@ msgstr ""
 
 msgid "Click an element on the bed to select it."
 msgstr "Klicken Sie auf ein Element, um es auszuwählen."
+
+msgid "Connect to the laser"
+msgstr "Mit dem Laser verbinden"
+
+msgid "Connected. Click to connect again (re-initialize)."
+msgstr "Verbunden. Klicken, um erneut zu verbinden."
 
 msgid "Controller board"
 msgstr "Steuerplatine"
@@ -388,9 +401,6 @@ msgstr "Kopf: X %s  Y %s %s"
 msgid "Height:"
 msgstr "Höhe:"
 
-msgid "Home"
-msgstr "Referenzfahrt"
-
 msgid "Home is in the upper right corner"
 msgstr "Referenzpunkt oben rechts"
 
@@ -399,6 +409,9 @@ msgstr "Referenzfahrt beim Verbinden"
 
 msgid "Home the head, then move to X/Y (Ctrl+G)"
 msgstr "Referenzfahrt, dann zu X/Y fahren (Strg+G)"
+
+msgid "Home: move the head to the home corner"
+msgstr "Referenzfahrt: Kopf in die Ausgangsecke fahren"
 
 msgid "Homed"
 msgstr "Referenzfahrt abgeschlossen"
@@ -411,9 +424,6 @@ msgstr "Bild:"
 
 msgid "Images"
 msgstr "Bilder"
-
-msgid "Initialize"
-msgstr "Verbinden"
 
 msgid "Inkscape executable"
 msgstr "Inkscape-Programm"
@@ -632,9 +642,6 @@ msgstr "Leistung"
 msgid "Prepare USB data before sending"
 msgstr "USB-Daten vor dem Senden vorbereiten"
 
-msgid "Prepare the raster now to estimate its engraving time"
-msgstr "Raster jetzt vorbereiten, um die Gravurzeit zu schätzen"
-
 #, python-format
 msgid "Preparing USB data: %s%%"
 msgstr "USB-Daten werden vorbereitet: %s%%"
@@ -664,9 +671,6 @@ msgstr "Rastergravur"
 
 msgid "Raster prepared"
 msgstr "Raster vorbereitet"
-
-msgid "Re-initialize"
-msgstr "Erneut verbinden"
 
 msgid "Ready"
 msgstr "Bereit"
@@ -970,11 +974,13 @@ msgstr "Einheiten"
 msgid "Unknown USB error: %s"
 msgstr "Unbekannter USB-Fehler: %s"
 
-msgid "Unlock"
-msgstr "Freigeben"
-
 msgid "Unlock rail after a job"
 msgstr "Achsen nach dem Auftrag freigeben"
+
+msgid "Unlock rail: release the motors so the head can be moved by hand"
+msgstr ""
+"Achsen freigeben: Motoren lösen, damit der Kopf von Hand bewegt werden "
+"kann"
 
 msgid "Untick an element to leave it out of the job"
 msgstr "Haken entfernen, um ein Element aus dem Auftrag auszulassen"
