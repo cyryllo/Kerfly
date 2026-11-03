@@ -99,6 +99,9 @@ def install_qt_translations(app, language):
 
 def main(argv=None):
     argv = sys.argv if argv is None else argv
+    if "--self-test" in argv:
+        from kerfly import selftest
+        return selftest.run()
     app = QApplication(argv)
     app.setApplicationName("Kerfly")
     app.setStyle("Fusion")

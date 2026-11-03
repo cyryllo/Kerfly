@@ -68,6 +68,20 @@ echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="5512", ENV{D
 
 Potem wyloguj się i zaloguj ponownie (albo uruchom komputer ponownie).
 
+## Autotest
+
+Przed pierwszym zadaniem sprawdź instalację. Podłącz i włącz laser, a potem
+w folderze Kerfly uruchom:
+
+- Windows (Wiersz polecenia, `cmd`): `start_kerfly.bat --self-test`
+- Linux: `./start_kerfly.sh --self-test`
+
+Kerfly wypisze po jednej linii na każde sprawdzenie: biblioteki, sterownik
+USB, czy widzi laser (nie rusza nim), Inkscape, folder ustawień i czy okno
+otwiera projekt. Linie `FAIL` trzeba naprawić. Linie `WARN` dotyczą rzeczy
+opcjonalnych albo niepodłączonego lasera. Wynik dołącz do każdego zgłoszenia
+błędu.
+
 ## Pierwszy test na laserze (lista kontrolna)
 
 Kerfly wysyła do lasera te same dane co K40 Whisperer 0.71, co sprawdzają

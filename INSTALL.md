@@ -43,6 +43,19 @@ sudo usermod -a -G lasercutter $USER
 echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="5512", ENV{DEVTYPE}=="usb_device", MODE="0664", GROUP="lasercutter"' | sudo tee /etc/udev/rules.d/97-ctc-lasercutter.rules
 ```
 
+## Self-test
+
+Before the first job, check the installation. Plug in and switch on the laser,
+then run in the Kerfly folder:
+
+- Windows (Command Prompt): `start_kerfly.bat --self-test`
+- Linux: `./start_kerfly.sh --self-test`
+
+Kerfly prints one line per check: libraries, USB driver, whether the K40 is
+found (it is not moved), Inkscape, the settings folder, and that the window
+opens a design. `FAIL` lines must be fixed; `WARN` lines are optional or mean
+that the laser is not connected. Send this output along with any bug report.
+
 ## First run with a laser
 
 Keep a hand on the laser's power switch.

@@ -1,0 +1,7 @@
+# Laser data and test fixtures are compared byte for byte: never convert line endings.
+tests/baseline/** -text
+tests/fixtures/** -text
+*.egv -text
+# launchers
+*.bat text eol=crlf
+*.sh text eol=lf

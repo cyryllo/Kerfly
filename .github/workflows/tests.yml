@@ -1,0 +1,88 @@
+# Install Kerfly on clean Windows and Linux machines the way a user does
+# (start_kerfly.bat / start_kerfly.sh), run the self-test, then all test suites.
+name: tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: First start with start_kerfly.bat (creates .venv, installs libraries, self-test)
+        shell: cmd
+        run: start_kerfly.bat --self-test < NUL
+      - name: Second start (environment already there)
+        shell: cmd
+        run: start_kerfly.bat --self-test < NUL
+      - name: Test tools
+        shell: cmd
+        run: .venv\Scripts\python -m pip install -r requirements-dev.txt
+      - name: Core tests
+        if: always()
+        shell: cmd
+        run: .venv\Scripts\python tests\test_core.py
+      - name: GUI tests
+        if: always()
+        shell: cmd
+        run: .venv\Scripts\python tests\test_gui.py
+      - name: Translations
+        if: always()
+        shell: cmd
+        run: .venv\Scripts\python tests\test_i18n.py
+      - name: Laser output identical to K40 Whisperer 0.71
+        if: always()
+        shell: cmd
+        run: .venv\Scripts\python tests\regression.py
+      - name: Keep the regression output when it differs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-output-windows
+          path: tests/output/
+          if-no-files-found: ignore
+
+  linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: System libraries for Qt and USB
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends xvfb libegl1 libgl1 libxkbcommon-x11-0 \
+            libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-shape0 libxcb-xinerama0 \
+            libxcb-randr0 libxcb-render-util0 libxcb-image0 libfontconfig1 libdbus-1-3 libusb-1.0-0
+      - name: First start with start_kerfly.sh (creates .venv, installs libraries, self-test)
+        run: xvfb-run -a ./start_kerfly.sh --self-test
+      - name: Test tools
+        run: .venv/bin/python -m pip install -r requirements-dev.txt
+      - name: Core tests
+        if: always()
+        run: .venv/bin/python tests/test_core.py
+      - name: GUI tests
+        if: always()
+        run: .venv/bin/python tests/test_gui.py
+      - name: Translations
+        if: always()
+        run: .venv/bin/python tests/test_i18n.py
+      - name: Laser output identical to K40 Whisperer 0.71
+        if: always()
+        run: xvfb-run -a .venv/bin/python tests/regression.py
+      - name: Keep the regression output when it differs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-output-linux
+          path: tests/output/
+          if-no-files-found: ignore
