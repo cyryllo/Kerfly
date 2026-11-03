@@ -336,6 +336,28 @@ def test_layers(baseline):
     return errors
 
 
+def test_materials():
+    """Material library: export, import, merge by name."""
+    from kerfly.core import materials as ml
+    tmp = tempfile.mkdtemp()
+    path = os.path.join(tmp, "lib.json")
+    lib = ml.example_materials()
+    ml.export_library(lib, path)
+    back = ml.import_library(path)
+    same = [(m.name, m.thickness_mm, {k: vars(v) for k, v in m.settings.items()}) for m in lib] == \
+        [(m.name, m.thickness_mm, {k: vars(v) for k, v in m.settings.items()}) for m in back]
+    changed = ml.import_library(path)
+    changed[0].settings["cut"].speed = 99.0
+    changed.append(ml.Material("MDF 3 mm", 3.0))
+    changed[0].name = changed[0].name.upper()            # same name, other case: replaces
+    merged, added, replaced = ml.merge_materials(lib, changed)
+    ok = same and added == 1 and replaced == len(lib) and len(merged) == len(lib) + 1 \
+        and merged[0].settings["cut"].speed == 99.0
+    print("%-5s materials: export / import / merge (added %d, replaced %d)" % ("OK" if ok else "FAIL", added, replaced))
+    shutil.rmtree(tmp)
+    return 0 if ok else 1
+
+
 def _dxf_design():
     d = Design()
     loaders.load_dxf(DXF, d)
@@ -369,6 +391,7 @@ def main():
     failures += test_layout(baseline)
     failures += test_shapes()
     failures += test_layers(baseline)
+    failures += test_materials()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

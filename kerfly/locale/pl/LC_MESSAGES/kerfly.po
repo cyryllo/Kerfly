@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 23:43+0100\n"
+"POT-Creation-Date: 2026-11-03 23:45+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -60,6 +60,9 @@ msgstr "&Usuń element"
 msgid "&Edit"
 msgstr "&Edycja"
 
+msgid "&Export material library…"
+msgstr "&Eksportuj bazę materiałów…"
+
 msgid "&File"
 msgstr "&Plik"
 
@@ -75,11 +78,17 @@ msgstr "Pomo&c"
 msgid "&Home"
 msgstr "&Bazowanie"
 
+msgid "&Import material library…"
+msgstr "&Importuj bazę materiałów…"
+
 msgid "&Initialize laser"
 msgstr "&Połącz z laserem"
 
 msgid "&Laser"
 msgstr "&Laser"
+
+msgid "&Material library…"
+msgstr "&Baza materiałów…"
 
 msgid "&Open design…"
 msgstr "&Otwórz projekt…"
@@ -387,6 +396,12 @@ msgstr ""
 "Przykładowe wartości startowe dla typowego K40 40 W; najpierw sprawdź na "
 "skrawku materiału."
 
+msgid "Export material library"
+msgstr "Eksport bazy materiałów"
+
+msgid "Export…"
+msgstr "Eksportuj…"
+
 msgctxt "toolbar group"
 msgid "File"
 msgstr "Plik"
@@ -469,6 +484,12 @@ msgstr "Obraz:"
 
 msgid "Images"
 msgstr "Obrazy"
+
+msgid "Import material library"
+msgstr "Import bazy materiałów"
+
+msgid "Import…"
+msgstr "Importuj…"
 
 msgid "Include this layer in the job"
 msgstr "Uwzględnij tę warstwę w zadaniu"
@@ -575,6 +596,10 @@ msgid "Material library"
 msgstr "Baza materiałów"
 
 #, python-format
+msgid "Material library exported to %s"
+msgstr "Wyeksportowano bazę materiałów do %s"
+
+#, python-format
 msgid "Material library saved to %s"
 msgstr "Zapisano bazę materiałów w %s"
 
@@ -587,6 +612,14 @@ msgstr "Materiał:"
 #, python-format
 msgid "Material: %s"
 msgstr "Materiał: %s"
+
+#, python-format
+msgid ""
+"Materials added: %d\n"
+"Materials updated (same name): %d"
+msgstr ""
+"Dodane materiały: %d\n"
+"Zaktualizowane (ta sama nazwa): %d"
 
 msgid "Mirror design"
 msgstr "Odbicie lustrzane projektu"
@@ -1032,6 +1065,9 @@ msgstr "Projekt się nie przesuwa."
 
 msgid "The file does not say how large the image is. Set its size."
 msgstr "Plik nie określa rozmiaru obrazu. Ustaw jego wymiary."
+
+msgid "The file is not a Kerfly material library."
+msgstr "Ten plik nie jest bazą materiałów Kerfly."
 
 msgid "The image resolution must be greater than zero."
 msgstr "Rozdzielczość obrazu musi być większa od zera."

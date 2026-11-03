@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 23:43+0100\n"
+"POT-Creation-Date: 2026-11-03 23:45+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -58,6 +58,9 @@ msgstr "Element &löschen"
 msgid "&Edit"
 msgstr "&Bearbeiten"
 
+msgid "&Export material library…"
+msgstr "Materialbibliothek &exportieren…"
+
 msgid "&File"
 msgstr "&Datei"
 
@@ -73,11 +76,17 @@ msgstr "&Hilfe"
 msgid "&Home"
 msgstr "&Referenzfahrt"
 
+msgid "&Import material library…"
+msgstr "Materialbibliothek &importieren…"
+
 msgid "&Initialize laser"
 msgstr "Laser &verbinden"
 
 msgid "&Laser"
 msgstr "&Laser"
+
+msgid "&Material library…"
+msgstr "&Materialbibliothek…"
 
 msgid "&Open design…"
 msgstr "Entwurf ö&ffnen…"
@@ -393,6 +402,12 @@ msgstr ""
 "Beispiel-Startwerte für einen typischen K40 mit 40 W; zuerst an einem "
 "Reststück testen."
 
+msgid "Export material library"
+msgstr "Materialbibliothek exportieren"
+
+msgid "Export…"
+msgstr "Exportieren…"
+
 msgctxt "toolbar group"
 msgid "File"
 msgstr "Datei"
@@ -475,6 +490,12 @@ msgstr "Bild:"
 
 msgid "Images"
 msgstr "Bilder"
+
+msgid "Import material library"
+msgstr "Materialbibliothek importieren"
+
+msgid "Import…"
+msgstr "Importieren…"
 
 msgid "Include this layer in the job"
 msgstr "Diese Ebene in den Auftrag aufnehmen"
@@ -581,6 +602,10 @@ msgid "Material library"
 msgstr "Materialbibliothek"
 
 #, python-format
+msgid "Material library exported to %s"
+msgstr "Materialbibliothek exportiert nach %s"
+
+#, python-format
 msgid "Material library saved to %s"
 msgstr "Materialbibliothek gespeichert in %s"
 
@@ -593,6 +618,14 @@ msgstr "Material:"
 #, python-format
 msgid "Material: %s"
 msgstr "Material: %s"
+
+#, python-format
+msgid ""
+"Materials added: %d\n"
+"Materials updated (same name): %d"
+msgstr ""
+"Hinzugefügte Materialien: %d\n"
+"Aktualisiert (gleicher Name): %d"
 
 msgid "Mirror design"
 msgstr "Entwurf spiegeln"
@@ -1048,6 +1081,9 @@ msgstr "Der Entwurf bleibt an seinem Platz."
 
 msgid "The file does not say how large the image is. Set its size."
 msgstr "Die Datei gibt die Bildgröße nicht an. Legen Sie die Größe fest."
+
+msgid "The file is not a Kerfly material library."
+msgstr "Die Datei ist keine Kerfly-Materialbibliothek."
 
 msgid "The image resolution must be greater than zero."
 msgstr "Die Bildauflösung muss größer als null sein."

@@ -67,7 +67,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Alignment and distribution | `gui/alignment.py`, `core/elements/align.py` |
 | Ruler, measure tool | `gui/toolwidgets/toolmeasure.py` |
 | Job simulation (play the path) | `gui/simulation.py` |
-| ~~Material library (saved speed/power per material)~~ (done); export / import of the library in Settings | `gui/materialmanager.py`, `core/elements/materials.py` |
+| ~~Material library (saved speed/power per material)~~ (done); export / import (done) | `gui/materialmanager.py`, `core/elements/materials.py` |
 | ~~Toolbar~~ (done; every new command gets a button), themes | `gui/ribbon.py`, `gui/themes.py` |
 
 ## Drawing tools

@@ -508,6 +508,22 @@ def main():
           len(errors) == 1 and "paths" in errors[0], "(%s)" % errors)
     os.remove(red_text)
 
+    # 18. material library import through the Settings menu
+    from kerfly.core import materials as _ml
+    lib_file = tempfile.mktemp(suffix=".json")
+    _ml.export_library([_ml.Material("Test board 2 mm", 2.0, "", {"cut": _ml.OperationSettings(7.0, 2, 0.5)})],
+                       lib_file)
+    w = make_window()
+    n_before = len(w.materials)
+    QFileDialog.getOpenFileName = staticmethod(lambda *a, **k: (lib_file, ""))
+    QMessageBox.information = staticmethod(lambda *a, **k: None)
+    w.import_materials()
+    names = [m.name for m in w.materials]
+    saved = os.path.isfile(_ml.library_path())
+    check("materials: import adds to the library and saves it", len(w.materials) == n_before + 1
+          and "Test board 2 mm" in names and saved, "(%d materials)" % len(w.materials))
+    os.remove(lib_file)
+
     print("\n%d check(s) failed." % failures if failures else "\nAll checks passed.")
     return 1 if failures else 0
 

@@ -196,6 +196,9 @@ class MainWindow(QMainWindow):
         self.act_unfreeze = self._action(_("Un&freeze laser"), self.unfreeze)
         self.act_fit = self._action(_("&Fit to window"), lambda: self.preview.fit_all(), "Ctrl+0")
         self.act_settings = self._action(_("&Settings\u2026"), self.edit_settings, "Ctrl+,")
+        self.act_materials = self._action(_("&Material library\u2026"), lambda: self.edit_materials())
+        self.act_export_materials = self._action(_("&Export material library\u2026"), self.export_materials)
+        self.act_import_materials = self._action(_("&Import material library\u2026"), self.import_materials)
         self.act_about = self._action(_("&About Kerfly"), self.about)
 
         mb = self.menuBar()
@@ -225,6 +228,9 @@ class MainWindow(QMainWindow):
             sub.addAction(a)
         m = mb.addMenu(_("&Settings"))
         m.addAction(self.act_settings)
+        m.addSeparator()
+        for a in (self.act_materials, self.act_export_materials, self.act_import_materials):
+            m.addAction(a)
         m = mb.addMenu(_("&Help"))
         m.addAction(self.act_about)
 
@@ -1190,6 +1196,41 @@ class MainWindow(QMainWindow):
         except OSError as e:
             self.status(_("Could not save the material library: %s") % e, error=True)
         self.layers_panel.set_materials([m.name for m in self.materials])
+
+    def export_materials(self):
+        name, _unused = QFileDialog.getSaveFileName(self, _("Export material library"),
+                                                    os.path.join(os.path.expanduser("~"), "kerfly-materials.json"),
+                                                    _("Material library") + " (*.json)")
+        if not name:
+            return
+        if not name.lower().endswith(".json"):
+            name += ".json"
+        try:
+            material_lib.export_library(self.materials, name)
+        except OSError as e:
+            QMessageBox.critical(self, _("Export material library"), str(e))
+            return
+        self.status(_("Material library exported to %s") % name)
+
+    def import_materials(self):
+        name, _unused = QFileDialog.getOpenFileName(self, _("Import material library"), os.path.expanduser("~"),
+                                                    _("Material library") + " (*.json);;" + _("All files") + " (*)")
+        if not name:
+            return
+        try:
+            imported = material_lib.import_library(name)
+        except (OSError, ValueError) as e:
+            QMessageBox.critical(self, _("Import material library"),
+                                 _("The file is not a Kerfly material library.") + "\n\n" + str(e))
+            return
+        self.materials, added, replaced = material_lib.merge_materials(self.materials, imported)
+        try:
+            material_lib.save_library(self.materials)
+        except OSError as e:
+            self.status(_("Could not save the material library: %s") % e, error=True)
+        self.layers_panel.set_materials([m.name for m in self.materials])
+        QMessageBox.information(self, _("Import material library"),
+                                _("Materials added: %d\nMaterials updated (same name): %d") % (added, replaced))
 
     def _update_layer_assignment(self):
         """Layer choice for each part of the selected element (in the bar above the bed)."""

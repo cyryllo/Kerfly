@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 23:43+0100\n"
+"POT-Creation-Date: 2026-11-03 23:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,6 +57,9 @@ msgstr ""
 msgid "&Edit"
 msgstr ""
 
+msgid "&Export material library…"
+msgstr ""
+
 msgid "&File"
 msgstr ""
 
@@ -72,10 +75,16 @@ msgstr ""
 msgid "&Home"
 msgstr ""
 
+msgid "&Import material library…"
+msgstr ""
+
 msgid "&Initialize laser"
 msgstr ""
 
 msgid "&Laser"
+msgstr ""
+
+msgid "&Material library…"
 msgstr ""
 
 msgid "&Open design…"
@@ -372,6 +381,12 @@ msgid ""
 "first."
 msgstr ""
 
+msgid "Export material library"
+msgstr ""
+
+msgid "Export…"
+msgstr ""
+
 msgctxt "toolbar group"
 msgid "File"
 msgstr ""
@@ -453,6 +468,12 @@ msgid "Image:"
 msgstr ""
 
 msgid "Images"
+msgstr ""
+
+msgid "Import material library"
+msgstr ""
+
+msgid "Import…"
 msgstr ""
 
 msgid "Include this layer in the job"
@@ -560,6 +581,10 @@ msgid "Material library"
 msgstr ""
 
 #, python-format
+msgid "Material library exported to %s"
+msgstr ""
+
+#, python-format
 msgid "Material library saved to %s"
 msgstr ""
 
@@ -571,6 +596,12 @@ msgstr ""
 
 #, python-format
 msgid "Material: %s"
+msgstr ""
+
+#, python-format
+msgid ""
+"Materials added: %d\n"
+"Materials updated (same name): %d"
 msgstr ""
 
 msgid "Mirror design"
@@ -996,6 +1027,9 @@ msgid "The design does not move."
 msgstr ""
 
 msgid "The file does not say how large the image is. Set its size."
+msgstr ""
+
+msgid "The file is not a Kerfly material library."
 msgstr ""
 
 msgid "The image resolution must be greater than zero."

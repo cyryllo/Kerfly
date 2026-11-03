@@ -37,6 +37,12 @@ class MaterialsDialog(QDialog):
             b.clicked.connect(slot)
             row.addWidget(b)
         left.addLayout(row)
+        io_row = QHBoxLayout()
+        for text, slot in ((N_("Import\u2026"), self._import), (N_("Export\u2026"), self._export)):
+            b = QPushButton(_(text))
+            b.clicked.connect(slot)
+            io_row.addWidget(b)
+        left.addLayout(io_row)
         save_current = QPushButton(_("New from current layers"))
         save_current.setToolTip(_("Create a material from the speed, passes and power of the current layers"))
         save_current.clicked.connect(self._from_current)
@@ -162,6 +168,38 @@ class MaterialsDialog(QDialog):
         if 0 <= row < len(self.materials):
             del self.materials[row]
             self._refresh_list(row)
+
+    def _import(self):
+        from PySide6.QtWidgets import QFileDialog, QMessageBox
+        from kerfly.core.materials import import_library, merge_materials
+        name, _unused = QFileDialog.getOpenFileName(self, _("Import material library"), "",
+                                                    _("Material library") + " (*.json)")
+        if not name:
+            return
+        try:
+            imported = import_library(name)
+        except (OSError, ValueError) as e:
+            QMessageBox.critical(self, _("Import material library"),
+                                 _("The file is not a Kerfly material library.") + "\n\n" + str(e))
+            return
+        self.materials, added, replaced = merge_materials(self.materials, imported)
+        self._refresh_list(self.list.currentRow())
+        QMessageBox.information(self, _("Import material library"),
+                                _("Materials added: %d\nMaterials updated (same name): %d") % (added, replaced))
+
+    def _export(self):
+        from PySide6.QtWidgets import QFileDialog, QMessageBox
+        from kerfly.core.materials import export_library
+        name, _unused = QFileDialog.getSaveFileName(self, _("Export material library"), "kerfly-materials.json",
+                                                    _("Material library") + " (*.json)")
+        if not name:
+            return
+        if not name.lower().endswith(".json"):
+            name += ".json"
+        try:
+            export_library(self.materials, name)
+        except OSError as e:
+            QMessageBox.critical(self, _("Export material library"), str(e))
 
     def _from_current(self):
         self.materials.append(Material(_("New material"), 0.0, "",

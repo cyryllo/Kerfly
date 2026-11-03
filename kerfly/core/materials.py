@@ -110,3 +110,31 @@ def save_library(materials, path=None):
         f.write(to_json(materials))
     os.replace(tmp, path)
     return path
+
+
+def merge_materials(existing, imported):
+    """Add imported materials; a material with the same name (ignoring case)
+    is replaced. Returns (merged list, number added, number replaced)."""
+    merged = list(existing)
+    by_name = {m.name.strip().lower(): i for i, m in enumerate(merged)}
+    added = replaced = 0
+    for m in imported:
+        key = m.name.strip().lower()
+        if key in by_name:
+            merged[by_name[key]] = m
+            replaced += 1
+        else:
+            by_name[key] = len(merged)
+            merged.append(m)
+            added += 1
+    return merged, added, replaced
+
+
+def export_library(materials, path):
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(to_json(materials))
+
+
+def import_library(path):
+    with open(path, encoding="utf-8") as f:
+        return from_json(f.read())
