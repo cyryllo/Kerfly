@@ -691,7 +691,7 @@ class MainWindow(QMainWindow):
             g.addWidget(pw, row, 3)
             self.power_widgets[op] = pw
             tl = QLabel("")
-            tl.setMinimumWidth(52)
+            tl.setMinimumWidth(64)               # room for e.g. "1h 25m" so the panel does not change width
             self.time_labels[op] = tl
             if op == job.RASTER_ENG:
                 cell = QWidget()
@@ -704,6 +704,7 @@ class MainWindow(QMainWindow):
                                     "its engraving time"), self.calculate_raster_time, 28, 18)
                 h.addWidget(self.btn_calc_time)
                 h.addStretch(1)
+                cell.setMinimumWidth(64)
                 g.addWidget(cell, row, 4)
                 widgets.append(cell)
             else:
@@ -1150,15 +1151,25 @@ class MainWindow(QMainWindow):
         self._fit_panel_width()
 
     def _fit_panel_width(self):
-        """Make the job panel exactly as wide as its contents need, and the
-        window tall enough to show the whole panel."""
+        """Make the job panel as wide as its contents need, and the window tall
+        enough to show the whole panel. Once the window is shown the panel only
+        grows, so it does not jump while working (e.g. when a time appears)."""
         scroll = getattr(self, "panel_scroll", None)
         if scroll is None:
             return
         panel = scroll.widget()
         panel.adjustSize()
-        width = panel.sizeHint().width() + scroll.verticalScrollBar().sizeHint().width() + 4
-        scroll.setFixedWidth(max(300, width))       # exactly what the panel needs; the rest is the bed
+        width = max(300, panel.sizeHint().width() + scroll.verticalScrollBar().sizeHint().width() + 4)
+        if getattr(self, "_shown_once", False) and getattr(self, "_panel_width", 0) > 0:
+            if width <= self._panel_width:
+                return
+        if self.isVisible():
+            self._panel_width = width
+        if scroll.width() != width or scroll.minimumWidth() != width:
+            scroll.setFixedWidth(width)
+            self.update()                    # repaint everything: no leftovers of the old border
+            if self.centralWidget() is not None:
+                self.centralWidget().update()
         if self.isVisible():
             QTimer.singleShot(0, self._fit_window_height)
 
