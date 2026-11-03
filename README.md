@@ -41,9 +41,10 @@ can install with [Zadig](https://zadig.akeo.ie/).
 
 ## Project layout
 
-- `kerfly/core/`: the GUI-independent laser core. It holds the design data,
-  raster preparation, path ordering and EGV job generation. Nothing in it
-  imports a GUI toolkit.
+- `kerfly/core/`: the GUI-independent laser core. It contains the SVG, DXF
+  and G-code loaders, settings file handling, design data, raster
+  preparation, path ordering and EGV job generation. Nothing in it imports a
+  GUI toolkit.
 - `k40_whisperer.py`: the original Tkinter interface. It now calls
   `kerfly.core`. A new PySide6 interface is planned.
 - `egv.py`, `nano_library.py`: EGV encoding and USB communication with the

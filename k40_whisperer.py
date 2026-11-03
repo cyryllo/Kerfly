@@ -24,12 +24,6 @@ import sys
 from math import *
 from egv import egv
 from nano_library import K40_CLASS
-from dxf import DXF_CLASS
-from svg_reader import SVG_READER
-from svg_reader import SVG_TEXT_EXCEPTION
-from svg_reader import SVG_PXPI_EXCEPTION
-from g_code_library import G_Code_Rip
-from interpolate import interpolate
 from ecoords import ECoord
 from embedded_images import K40_Whisperer_Images
 from kerfly.core.design import Design
@@ -37,6 +31,8 @@ from kerfly.core.settings import JobSettings
 from kerfly.core import job as kcore_job
 from kerfly.core import pathopt as kcore_pathopt
 from kerfly.core import raster as kcore_raster
+from kerfly.core import config as kcore_config
+from kerfly.core import loaders as kcore_loaders
 
 import inkex
 import simplestyle
@@ -997,113 +993,18 @@ class Application(Frame):
             pass
 
     ################################################################################
+    def settings_values(self):
+        """Current settings as settings-file values {key: value}."""
+        values = {}
+        for key, kind in kcore_config.SETTINGS_KEYS:
+            if key == "designfile":
+                values[key] = self.DESIGN_FILE
+            else:
+                values[key] = getattr(self, key).get()
+        return values
+
     def WriteConfig(self):
-        global Zero
-        header = []
-        header.append('( K40 Whisperer Settings: '+version+' )')
-        header.append('( by Scorch - 2019 )')
-        header.append("(=========================================================)")
-        # BOOL
-        header.append('(k40_whisperer_set include_Reng  %s )'  %( int(self.include_Reng.get())  ))
-        header.append('(k40_whisperer_set include_Veng  %s )'  %( int(self.include_Veng.get())  ))
-        header.append('(k40_whisperer_set include_Vcut  %s )'  %( int(self.include_Vcut.get())  ))
-        header.append('(k40_whisperer_set include_Gcde  %s )'  %( int(self.include_Gcde.get())  ))
-        header.append('(k40_whisperer_set include_Time  %s )'  %( int(self.include_Time.get())  ))
-
-        header.append('(k40_whisperer_set halftone      %s )'  %( int(self.halftone.get())      ))
-        header.append('(k40_whisperer_set HomeUR        %s )'  %( int(self.HomeUR.get())        ))
-        header.append('(k40_whisperer_set show_power    %s )'  %( int(self.show_power.get())    ))
-        header.append('(k40_whisperer_set show_test     %s )'  %( int(self.show_test.get())     ))
-        header.append('(k40_whisperer_set inputCSYS     %s )'  %( int(self.inputCSYS.get())     ))
-        header.append('(k40_whisperer_set advanced      %s )'  %( int(self.advanced.get())      ))
-        header.append('(k40_whisperer_set mirror        %s )'  %( int(self.mirror.get())        ))
-        header.append('(k40_whisperer_set rotate        %s )'  %( int(self.rotate.get())        ))
-        header.append('(k40_whisperer_set negate        %s )'  %( int(self.negate.get())        ))
-        
-        header.append('(k40_whisperer_set engraveUP     %s )'  %( int(self.engraveUP.get())     ))
-        header.append('(k40_whisperer_set init_home     %s )'  %( int(self.init_home.get())     ))
-        header.append('(k40_whisperer_set post_home     %s )'  %( int(self.post_home.get())     ))
-        header.append('(k40_whisperer_set post_beep     %s )'  %( int(self.post_beep.get())     ))
-        header.append('(k40_whisperer_set post_disp     %s )'  %( int(self.post_disp.get())     ))
-        header.append('(k40_whisperer_set post_exec     %s )'  %( int(self.post_exec.get())     ))
-        
-        header.append('(k40_whisperer_set pre_pr_crc    %s )'  %( int(self.pre_pr_crc.get())    ))
-        header.append('(k40_whisperer_set inside_first  %s )'  %( int(self.inside_first.get())  ))
-
-        header.append('(k40_whisperer_set comb_engrave  %s )'  %( int(self.comb_engrave.get())  ))
-        header.append('(k40_whisperer_set comb_vector   %s )'  %( int(self.comb_vector.get())   ))
-        header.append('(k40_whisperer_set zoom2image    %s )'  %( int(self.zoom2image.get())    ))
-        header.append('(k40_whisperer_set rotary        %s )'  %( int(self.rotary.get())        ))
-        header.append('(k40_whisperer_set reduced_mem   %s )'  %( int(self.reduced_mem.get())   ))
-        header.append('(k40_whisperer_set wait          %s )'  %( int(self.wait.get())          ))
-
-        header.append('(k40_whisperer_set trace_w_laser %s )'  %( int(self.trace_w_laser.get()) ))
-
-        # STRING.get()
-        header.append('(k40_whisperer_set max_power     %s )'  %( self.max_power.get()      ))
-        header.append('(k40_whisperer_set board_name    %s )'  %( self.board_name.get()     ))
-        header.append('(k40_whisperer_set units         %s )'  %( self.units.get()          ))
-        
-        header.append('(k40_whisperer_set Reng_feed     %s )'  %( self.Reng_feed.get()      ))
-        header.append('(k40_whisperer_set Veng_feed     %s )'  %( self.Veng_feed.get()      ))
-        header.append('(k40_whisperer_set Vcut_feed     %s )'  %( self.Vcut_feed.get()      ))
-
-        header.append('(k40_whisperer_set Reng_power    %s )'  %( self.Reng_power.get()    ))
-        header.append('(k40_whisperer_set Veng_power    %s )'  %( self.Veng_power.get()    ))
-        header.append('(k40_whisperer_set Vcut_power    %s )'  %( self.Vcut_power.get()    ))
-
-        header.append('(k40_whisperer_set jog_step      %s )'  %( self.jog_step.get()       ))
-
-        header.append('(k40_whisperer_set Reng_passes   %s )'  %( self.Reng_passes.get()    ))
-        header.append('(k40_whisperer_set Veng_passes   %s )'  %( self.Veng_passes.get()    ))
-        header.append('(k40_whisperer_set Vcut_passes   %s )'  %( self.Vcut_passes.get()    ))
-        header.append('(k40_whisperer_set Gcde_passes   %s )'  %( self.Gcde_passes.get()    ))
-
-        header.append('(k40_whisperer_set rast_step     %s )'  %( self.rast_step.get()      ))
-        header.append('(k40_whisperer_set ht_size       %s )'  %( self.ht_size.get()        ))
-        
-        header.append('(k40_whisperer_set LaserXsize    %s )'  %( self.LaserXsize.get()     ))
-        header.append('(k40_whisperer_set LaserYsize    %s )'  %( self.LaserYsize.get()     ))
-        header.append('(k40_whisperer_set LaserXscale   %s )'  %( self.LaserXscale.get()    ))
-        header.append('(k40_whisperer_set LaserYscale   %s )'  %( self.LaserYscale.get()    ))
-        header.append('(k40_whisperer_set LaserRscale   %s )'  %( self.LaserRscale.get()    ))
-        header.append('(k40_whisperer_set rapid_feed   %s )'  %( self.rapid_feed.get()      ))
-        
-        header.append('(k40_whisperer_set gotoX         %s )'  %( self.gotoX.get()          ))
-        header.append('(k40_whisperer_set gotoY         %s )'  %( self.gotoY.get()          ))
-
-        header.append('(k40_whisperer_set bezier_M1     %s )'  %( self.bezier_M1.get()      ))
-        header.append('(k40_whisperer_set bezier_M2     %s )'  %( self.bezier_M2.get()      ))
-        header.append('(k40_whisperer_set bezier_weight %s )'  %( self.bezier_weight.get()  ))
-
-        header.append('(k40_whisperer_set trace_gap     %s )'  %( self.trace_gap.get()      ))
-        header.append('(k40_whisperer_set trace_speed   %s )'  %( self.trace_speed.get()    ))
-        header.append('(k40_whisperer_set Trace_power   %s )'  %( self.Trace_power.get()    ))
-
-        header.append('(k40_whisperer_set test_time     %s )'  %( self.test_time.get()      ))
-        header.append('(k40_whisperer_set test_power    %s )'  %( self.test_power.get()     ))
-        
-##        header.append('(k40_whisperer_set unsharp_flag  %s )'  %( int(self.unsharp_flag.get())  ))
-##        header.append('(k40_whisperer_set unsharp_r     %s )'  %( self.unsharp_r.get()      ))
-##        header.append('(k40_whisperer_set unsharp_p     %s )'  %( self.unsharp_p.get()      ))
-##        header.append('(k40_whisperer_set unsharp_t     %s )'  %( self.unsharp_t.get()      ))
-
-        header.append('(k40_whisperer_set t_timeout     %s )'  %( self.t_timeout.get()      ))
-        header.append('(k40_whisperer_set n_timeouts    %s )'  %( self.n_timeouts.get()     ))
-
-        header.append('(k40_whisperer_set ink_timeout   %s )'  %( self.ink_timeout.get()    ))
-
-        
-        header.append('(k40_whisperer_set designfile    \042%s\042 )' %( self.DESIGN_FILE   ))
-        header.append('(k40_whisperer_set inkscape_path \042%s\042 )' %( self.inkscape_path.get() ))
-        header.append('(k40_whisperer_set batch_path    \042%s\042 )' %( self.batch_path.get() ))
-
-
-        self.jog_step
-        header.append("(=========================================================)")
-
-        return header
-        ######################################################
+        return kcore_config.format_settings(self.settings_values(), version)
 
     def Quit_Click(self, event):
         self.statusMessage.set("Exiting!")
@@ -2211,52 +2112,20 @@ class Application(Frame):
     def Open_SVG(self,filemname):
         self.resetPath()
         self.SVG_FILE = filemname
-        if self.reduced_mem.get():
-            self.input_dpi = 500.0
-        else:
-            self.input_dpi = 1000.0
-        svg_reader =  SVG_READER()
-        svg_reader.image_dpi = self.input_dpi
-        svg_reader.set_inkscape_path(self.inkscape_path.get())
-        svg_reader.timout = int(float( self.ink_timeout.get())*60.0) 
-        dialog_pxpi    = None
-        dialog_viewbox = None
+
+        def ask_pxpi(svg_size, viewbox, inkscape_version):
+            pxpi_dialog = pxpiDialog(root, self.units.get(), svg_size, viewbox, inkscape_version)
+            return pxpi_dialog.result
+
         try:
-            try:
-                try:
-                    svg_reader.parse_svg(self.SVG_FILE)
-                    svg_reader.make_paths()
-                except SVG_PXPI_EXCEPTION as e:
-                    pxpi_dialog = pxpiDialog(root,
-                                           self.units.get(),
-                                           svg_reader.SVG_Size,
-                                           svg_reader.SVG_ViewBox,
-                                           svg_reader.SVG_inkscape_version)
-                    
-                    svg_reader = SVG_READER()
-                    svg_reader.image_dpi = self.input_dpi
-                    svg_reader.set_inkscape_path(self.inkscape_path.get())
-                    svg_reader.timout = int(float( self.ink_timeout.get())*60.0) 
-                    if pxpi_dialog.result == None:
-                        return
-                    
-                    dialog_pxpi,dialog_viewbox = pxpi_dialog.result
-                    svg_reader.parse_svg(self.SVG_FILE)
-                    svg_reader.set_size(dialog_pxpi,dialog_viewbox)
-                    svg_reader.make_paths()
-                    
-            except SVG_TEXT_EXCEPTION as e:
-                svg_reader = SVG_READER()
-                svg_reader.image_dpi = self.input_dpi
-                svg_reader.set_inkscape_path(self.inkscape_path.get())
-                svg_reader.timout = int(float( self.ink_timeout.get())*60.0) 
-                self.statusMessage.set("Converting TEXT to PATHS.")
-                self.master.update()
-                svg_reader.parse_svg(self.SVG_FILE)
-                if dialog_pxpi != None and dialog_viewbox != None:
-                    svg_reader.set_size(dialog_pxpi,dialog_viewbox)
-                svg_reader.make_paths(txt2paths=True)
-                
+            warnings = kcore_loaders.load_svg(filemname, self.design,
+                                              inkscape_path=self.inkscape_path.get(),
+                                              inkscape_timeout_s=float(self.ink_timeout.get())*60.0,
+                                              reduced_memory=self.reduced_mem.get(),
+                                              ask_pxpi=ask_pxpi,
+                                              progress=self.show_progress)
+        except kcore_loaders.LoadCancelled:
+            return
         except Exception as e:
             msg1 = "SVG Error: "
             msg2 = "%s" %(e)
@@ -2265,47 +2134,13 @@ class Application(Frame):
             message_box(msg1, msg2)
             debug_message(traceback.format_exc())
             return
-        except:
-            self.statusMessage.set("Unable To open SVG File: %s" %(filemname))
-            debug_message(traceback.format_exc())
-            return
-        xmax = svg_reader.Xsize/25.4
-        ymax = svg_reader.Ysize/25.4
-        xmin = 0
-        ymin = 0
 
-        self.Design_bounds = (xmin,xmax,ymin,ymax)
-            
-        ##########################
-        ###   Create ECOORDS   ###
-        ##########################
-        self.VcutData.make_ecoords(svg_reader.cut_lines,scale=1/25.4)
-        self.VengData.make_ecoords(svg_reader.eng_lines,scale=1/25.4)
-
-        ##########################
-        ###   Load Image       ###
-        ##########################
-        self.RengData.set_image(svg_reader.raster_PIL)
-        
         if (self.RengData.image != None):
             self.wim, self.him = self.RengData.image.size
             self.aspect_ratio =  float(self.wim-1) / float(self.him-1)
-            #self.make_raster_coords()
         self.refreshTime()
-        margin=0.0625 # A bit of margin to prevent the warningwindow for designs that are close to being within the bounds
-        if self.Design_bounds[0] > self.VengData.bounds[0]+margin or\
-           self.Design_bounds[0] > self.VcutData.bounds[0]+margin or\
-           self.Design_bounds[1] < self.VengData.bounds[1]-margin or\
-           self.Design_bounds[1] < self.VcutData.bounds[1]-margin or\
-           self.Design_bounds[2] > self.VengData.bounds[2]+margin or\
-           self.Design_bounds[2] > self.VcutData.bounds[2]+margin or\
-           self.Design_bounds[3] < self.VengData.bounds[3]-margin or\
-           self.Design_bounds[3] < self.VcutData.bounds[3]-margin:
-            line1 = "Warning:\n"
-            line2 = "There is vector cut or vector engrave data located outside of the SVG page bounds.\n\n"
-            line3 = "K40 Whisperer will attempt to use all of the vector data.  "
-            line4 = "Please verify that the vector data is not outside of your lasers working area before engraving."
-            message_box("Warning", line1+line2+line3+line4)
+        for warning in warnings:
+            message_box("Warning", warning)
 
 
     #####################################################################
@@ -2381,15 +2216,8 @@ class Application(Frame):
 
     def Open_G_Code(self,filename):
         self.resetPath()
-        
-        g_rip = G_Code_Rip()
         try:
-            MSG = g_rip.Read_G_Code(filename, XYarc2line = True, arc_angle=2, units="in", Accuracy="")
-            Error_Text = ""
-            if MSG!=[]:
-                self.gcode_error_message(MSG)
-
-        #except StandardError as e:
+            messages = kcore_loaders.load_gcode(filename, self.design)
         except Exception as e:
             msg1 = "G-Code Load Failed:  "
             msg2 = "Filename: %s" %(filename)
@@ -2398,53 +2226,22 @@ class Application(Frame):
             self.statusbar.configure( bg = 'red' )
             message_box(msg1, "%s\n%s" %(msg2,msg3))
             debug_message(traceback.format_exc())
-
-            
-        ecoords= g_rip.generate_laser_paths(g_rip.g_code_data)
-        self.GcodeData.set_ecoords(ecoords,data_sorted=True)
-        self.Design_bounds = self.GcodeData.bounds
+            return
+        if messages:
+            self.gcode_error_message(messages)
 
         
     def Open_DXF(self,filemname):
         self.resetPath()
-        
         self.DXF_FILE = filemname
-        dxf_import=DXF_CLASS()
-        tolerance = .0005
-        try:
-            fd = open(self.DXF_FILE)
-            dxf_import.GET_DXF_DATA(fd,lin_tol = tolerance,get_units=True,units=None)
-            fd.seek(0)
-            
-            dxf_units = dxf_import.units
-            if dxf_units=="Unitless":
-                d = UnitsDialog(root)
-                dxf_units = d.result
-            if dxf_units=="Inches":
-                dxf_scale = 1.0
-            elif dxf_units=="Feet":
-                dxf_scale = 12.0
-            elif dxf_units=="Miles":
-                dxf_scale = 5280.0*12.0
-            elif dxf_units=="Millimeters":
-                dxf_scale = 1.0/25.4
-            elif dxf_units=="Centimeters":
-                dxf_scale = 1.0/2.54
-            elif dxf_units=="Meters":
-                dxf_scale = 1.0/254.0
-            elif dxf_units=="Kilometers":
-                dxf_scale = 1.0/254000.0
-            elif dxf_units=="Microinches":
-                dxf_scale = 1.0/1000000.0
-            elif dxf_units=="Mils":
-                dxf_scale = 1.0/1000.0
-            else:
-                return    
 
-            lin_tol = tolerance / dxf_scale
-            dxf_import.GET_DXF_DATA(fd,lin_tol=lin_tol,get_units=False,units=None)
-            fd.close()
-        #except StandardError as e:
+        def ask_units():
+            return UnitsDialog(root).result
+
+        try:
+            warnings = kcore_loaders.load_dxf(filemname, self.design, ask_units=ask_units)
+        except kcore_loaders.LoadCancelled:
+            return
         except Exception as e:
             msg1 = "DXF Load Failed:"
             msg2 = "%s" %(e)
@@ -2452,233 +2249,27 @@ class Application(Frame):
             self.statusbar.configure( bg = 'red' )
             message_box(msg1, msg2)
             debug_message(traceback.format_exc())
-        except:
-            fmessage("Unable To open Drawing Exchange File (DXF) file.")
-            debug_message(traceback.format_exc())
             return
-        
-        new_origin=False
-        dxf_engrave_coords = dxf_import.DXF_COORDS_GET_TYPE(engrave=True, new_origin=False)
-        dxf_cut_coords     = dxf_import.DXF_COORDS_GET_TYPE(engrave=False,new_origin=False)
-##        if DEBUG:
-##            dxf_code = dxf_import.WriteDXF(close_loops=False)
-##            fout = open('Z:\\out.dxf','w')
-##            for line in dxf_code:
-##                fout.write(line+'\n')
-##            fout.close
-        
-        if dxf_import.dxf_messages != "":
-            msg_split=dxf_import.dxf_messages.split("\n")
-            msg_split.sort()
-            msg_split.append("")
-            mcnt=1
-            msg_out = ""
-            for i in range(1,len(msg_split)):
-                if msg_split[i-1]==msg_split[i]:
-                    mcnt=mcnt+1
-                else:
-                    if msg_split[i-1]!="":
-                        msg_line = "%s (%d places)\n" %(msg_split[i-1],mcnt)
-                        msg_out = msg_out + msg_line
-                    mcnt=1
-            message_box("DXF Import:",msg_out)
-                    
-        ##########################
-        ###   Create ECOORDS   ###
-        ##########################
-        self.VcutData.make_ecoords(dxf_cut_coords    ,scale=dxf_scale)
-        self.VengData.make_ecoords(dxf_engrave_coords,scale=dxf_scale)
-
-        xmin = min(self.VcutData.bounds[0],self.VengData.bounds[0])
-        xmax = max(self.VcutData.bounds[1],self.VengData.bounds[1])
-        ymin = min(self.VcutData.bounds[2],self.VengData.bounds[2])
-        ymax = max(self.VcutData.bounds[3],self.VengData.bounds[3])
-        self.Design_bounds = (xmin,xmax,ymin,ymax)
+        for warning in warnings:
+            message_box("DXF Import:", warning)
 
 
     def Open_Settings_File(self,filename):
         try:
-            fin = open(filename,'r')
+            values = kcore_config.read_settings_file(filename)
         except:
             fmessage("Unable to open file: %s" %(filename))
             return
-        
-        text_codes=[]
-        ident = "k40_whisperer_set"
-        for line in fin:
+
+        for key, val in values.items():
             try:
-                if ident in line:
-                    # BOOL
-                    if "include_Reng"  in line:
-                        self.include_Reng.set(line[line.find("include_Reng"):].split()[1])
-                    elif "include_Veng"  in line:
-                        self.include_Veng.set(line[line.find("include_Veng"):].split()[1])
-                    elif "include_Vcut"  in line:
-                        self.include_Vcut.set(line[line.find("include_Vcut"):].split()[1])
-                    elif "include_Gcde"  in line:
-                        self.include_Gcde.set(line[line.find("include_Gcde"):].split()[1])
-                    elif "include_Time"  in line:
-                        self.include_Time.set(line[line.find("include_Time"):].split()[1])
-                    elif "halftone"  in line:
-                        self.halftone.set(line[line.find("halftone"):].split()[1])
-                    elif "negate"  in line:
-                        self.negate.set(line[line.find("negate"):].split()[1])
-                    elif "HomeUR"  in line:
-                        self.HomeUR.set(line[line.find("HomeUR"):].split()[1])
-                    elif "show_power"  in line:
-                        self.show_power.set(line[line.find("show_power"):].split()[1])
-                    elif "show_test"  in line:
-                        self.show_test.set(line[line.find("show_test"):].split()[1])
-                    elif "inputCSYS"  in line:
-                        self.inputCSYS.set(line[line.find("inputCSYS"):].split()[1])
-                    elif "advanced"  in line:
-                        self.advanced.set(line[line.find("advanced"):].split()[1])
-                    elif "mirror"  in line:
-                        self.mirror.set(line[line.find("mirror"):].split()[1])
-                    elif "rotate"  in line:
-                        self.rotate.set(line[line.find("rotate"):].split()[1])
-                    elif "engraveUP"  in line:
-                        self.engraveUP.set(line[line.find("engraveUP"):].split()[1])
-                    elif "init_home"  in line:
-                        self.init_home.set(line[line.find("init_home"):].split()[1])
-                    elif "post_home"  in line:
-                        self.post_home.set(line[line.find("post_home"):].split()[1])
-                    elif "post_beep"  in line:
-                        self.post_beep.set(line[line.find("post_beep"):].split()[1])
-                    elif "post_disp"  in line:
-                        self.post_disp.set(line[line.find("post_disp"):].split()[1])
-                    elif "post_exec"  in line:
-                        self.post_exec.set(line[line.find("post_exec"):].split()[1])
-                        
-                    elif "pre_pr_crc"  in line:
-                        self.pre_pr_crc.set(line[line.find("pre_pr_crc"):].split()[1])
-                    elif "inside_first"  in line:
-                        self.inside_first.set(line[line.find("inside_first"):].split()[1])
-                    elif "comb_engrave"  in line:
-                        self.comb_engrave.set(line[line.find("comb_engrave"):].split()[1])
-                    elif "comb_vector"  in line:
-                        self.comb_vector.set(line[line.find("comb_vector"):].split()[1])
-                    elif "zoom2image"  in line:
-                        self.zoom2image.set(line[line.find("zoom2image"):].split()[1])
-
-                    elif "rotary"  in line:
-                         self.rotary.set(line[line.find("rotary"):].split()[1])
-                    elif "reduced_mem"  in line:
-                         self.reduced_mem.set(line[line.find("reduced_mem"):].split()[1])
-                    elif "wait"  in line:
-                         self.wait.set(line[line.find("wait"):].split()[1])
-
-                    elif "trace_w_laser"  in line:
-                         self.trace_w_laser.set(line[line.find("trace_w_laser"):].split()[1])
-            
-                    # STRING.set()
-                    elif "board_name" in line:
-                        self.board_name.set(line[line.find("board_name"):].split()[1])
-                    elif "units"    in line:
-                        self.units.set(line[line.find("units"):].split()[1])
-                    elif "Reng_feed"    in line:
-                         self.Reng_feed .set(line[line.find("Reng_feed"):].split()[1])
-                    elif "Veng_feed"    in line:
-                         self.Veng_feed .set(line[line.find("Veng_feed"):].split()[1])  
-                    elif "Vcut_feed"    in line:
-                         self.Vcut_feed.set(line[line.find("Vcut_feed"):].split()[1])
-
-                    elif "max_power"    in line:
-                         self.max_power.set(line[line.find("max_power"):].split()[1])  
-                    elif "Reng_power"    in line:
-                         self.Reng_power .set(line[line.find("Reng_power"):].split()[1])
-                    elif "Veng_power"    in line:
-                         self.Veng_power .set(line[line.find("Veng_power"):].split()[1])  
-                    elif "Vcut_power"    in line:
-                         self.Vcut_power.set(line[line.find("Vcut_power"):].split()[1]) 
-                    elif "Gcode_power"    in line:
-                         self.Gcode_power.set(line[line.find("Gcode_power"):].split()[1])
-                         
-                    elif "jog_step"    in line:
-                         self.jog_step.set(line[line.find("jog_step"):].split()[1])
-                         
-                    elif "Reng_passes"    in line:
-                         self.Reng_passes.set(line[line.find("Reng_passes"):].split()[1])
-                    elif "Veng_passes"    in line:
-                         self.Veng_passes.set(line[line.find("Veng_passes"):].split()[1])
-                    elif "Vcut_passes"    in line:
-                         self.Vcut_passes.set(line[line.find("Vcut_passes"):].split()[1])
-                    elif "Gcde_passes"    in line:
-                         self.Gcde_passes.set(line[line.find("Gcde_passes"):].split()[1])
-
-                    elif "rast_step"    in line:
-                         self.rast_step.set(line[line.find("rast_step"):].split()[1])
-                    elif "ht_size"    in line:
-                         self.ht_size.set(line[line.find("ht_size"):].split()[1])
-
-                    elif "LaserXsize"    in line:
-                         self.LaserXsize.set(line[line.find("LaserXsize"):].split()[1])
-                    elif "LaserYsize"    in line:
-                         self.LaserYsize.set(line[line.find("LaserYsize"):].split()[1])
-
-                    elif "LaserXscale"    in line:
-                         self.LaserXscale.set(line[line.find("LaserXscale"):].split()[1])
-                    elif "LaserYscale"    in line:
-                         self.LaserYscale.set(line[line.find("LaserYscale"):].split()[1])
-                    elif "LaserRscale"    in line:
-                         self.LaserRscale.set(line[line.find("LaserRscale"):].split()[1])
-
-                    elif "rapid_feed"    in line:
-                         self.rapid_feed.set(line[line.find("rapid_feed"):].split()[1])
-                         
-                    elif "gotoX"    in line:
-                         self.gotoX.set(line[line.find("gotoX"):].split()[1])
-                    elif "gotoY"    in line:
-                         self.gotoY.set(line[line.find("gotoY"):].split()[1])
-
-                    elif "bezier_M1"    in line:
-                         self.bezier_M1.set(line[line.find("bezier_M1"):].split()[1])
-                    elif "bezier_M2"    in line:
-                         self.bezier_M2.set(line[line.find("bezier_M2"):].split()[1])
-                    elif "bezier_weight"    in line:
-                         self.bezier_weight.set(line[line.find("bezier_weight"):].split()[1])
-                    elif "trace_gap"    in line:
-                         self.trace_gap.set(line[line.find("trace_gap"):].split()[1])
-                    elif "trace_speed"    in line:
-                         self.trace_speed.set(line[line.find("trace_speed"):].split()[1])
-                    elif "Trace_power"    in line:
-                         self.Trace_power.set(line[line.find("Trace_power"):].split()[1])
-
-                    elif "test_time"    in line:
-                         self.test_time.set(line[line.find("test_time"):].split()[1])
-                    elif "test_power"    in line:
-                         self.test_power.set(line[line.find("test_power"):].split()[1])               
-
-    ##                elif "unsharp_flag"    in line:
-    ##                     self.unsharp_flag.set(line[line.find("unsharp_flag"):].split()[1])
-    ##                elif "unsharp_r"    in line:
-    ##                     self.unsharp_r.set(line[line.find("unsharp_r"):].split()[1])
-    ##                elif "unsharp_p"    in line:
-    ##                     self.unsharp_p.set(line[line.find("unsharp_p"):].split()[1])
-    ##                elif "unsharp_t"    in line:
-    ##                     self.unsharp_t.set(line[line.find("unsharp_t"):].split()[1])
-            
-                    elif "t_timeout"    in line:
-                         self.t_timeout.set(line[line.find("t_timeout"):].split()[1])
-                    elif "n_timeouts"    in line:
-                         self.n_timeouts.set(line[line.find("n_timeouts"):].split()[1])
-
-                    elif "ink_timeout"    in line:
-                         self.ink_timeout.set(line[line.find("ink_timeout"):].split()[1])
-
-                    elif "designfile"    in line:
-                           self.DESIGN_FILE=(line[line.find("designfile"):].split("\042")[1])
-                    elif "inkscape_path"    in line:
-                         self.inkscape_path.set(line[line.find("inkscape_path"):].split("\042")[1])
-                    elif "batch_path"    in line:
-                         self.batch_path.set(line[line.find("batch_path"):].split("\042")[1])
-
-                         
+                if key == "designfile":
+                    self.DESIGN_FILE = val
+                else:
+                    getattr(self, key).set(val)
             except:
-                #Ignoring exeptions during reading data from line 
+                #Ignoring exeptions during reading data from line
                 pass
-                     
-        fin.close()
 
         fileName, fileExtension = os.path.splitext(self.DESIGN_FILE)
         init_file=os.path.basename(fileName)
@@ -3174,52 +2765,8 @@ class Application(Frame):
 
     def job_settings(self):
         """Snapshot of the GUI settings for the GUI-independent core."""
-        def num(var, name):
-            try:
-                return float(var.get())
-            except ValueError:
-                raise ValueError("Invalid value for setting '%s': %r" %(name, var.get()))
-        def passes(var, name):
-            return int(num(var, name))
-        return JobSettings(
-            board_name       = self.board_name.get(),
-            units            = self.units.get(),
-            home_upper_right = self.HomeUR.get(),
-            input_csys       = self.inputCSYS.get(),
-            power_per_stage  = self.display_power,
-            max_power        = num(self.max_power, "max_power"),
-            mirror           = self.mirror.get(),
-            rotate           = self.rotate.get(),
-            x_scale          = num(self.LaserXscale, "LaserXscale"),
-            y_scale          = num(self.LaserYscale, "LaserYscale"),
-            rotary           = self.rotary.get(),
-            rotary_scale     = num(self.LaserRscale, "LaserRscale"),
-            rapid_feed       = num(self.rapid_feed, "rapid_feed"),
-            inside_first     = self.inside_first.get(),
-            raster_feed      = num(self.Reng_feed, "Reng_feed"),
-            raster_passes    = passes(self.Reng_passes, "Reng_passes"),
-            raster_power     = num(self.Reng_power, "Reng_power"),
-            raster_step      = num(self.rast_step, "rast_step"),
-            engrave_up       = self.engraveUP.get(),
-            negate           = self.negate.get(),
-            halftone         = self.halftone.get(),
-            halftone_dpi     = num(self.ht_size, "ht_size"),
-            bezier_m1        = num(self.bezier_M1, "bezier_M1"),
-            bezier_m2        = num(self.bezier_M2, "bezier_M2"),
-            bezier_weight    = num(self.bezier_weight, "bezier_weight"),
-            vengrave_feed    = num(self.Veng_feed, "Veng_feed"),
-            vengrave_passes  = passes(self.Veng_passes, "Veng_passes"),
-            vengrave_power   = num(self.Veng_power, "Veng_power"),
-            vcut_feed        = num(self.Vcut_feed, "Vcut_feed"),
-            vcut_passes      = passes(self.Vcut_passes, "Vcut_passes"),
-            vcut_power       = num(self.Vcut_power, "Vcut_power"),
-            gcode_passes     = passes(self.Gcde_passes, "Gcde_passes"),
-            gcode_power      = num(self.Gcode_power, "Gcode_power"),
-            trace_feed       = num(self.trace_speed, "trace_speed"),
-            trace_with_laser = self.trace_w_laser.get(),
-            trace_gap        = num(self.trace_gap, "trace_gap"),
-            trace_power      = num(self.Trace_power, "Trace_power"),
-        )
+        return kcore_config.job_settings_from_values(self.settings_values(),
+                                                     power_per_stage=self.display_power)
 
   
     def send_data(self,operation_type=None, output_filename=None):
