@@ -6,7 +6,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import os
 
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import QSize, Qt, QTimer
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QDoubleSpinBox, QFileDialog,
                                QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
@@ -458,7 +458,8 @@ class MainWindow(QMainWindow):
         self._fit_panel_width()
 
     def _fit_panel_width(self):
-        """Make the job panel exactly as wide as its contents need."""
+        """Make the job panel exactly as wide as its contents need, and the
+        window tall enough to show the whole panel."""
         scroll = getattr(self, "panel_scroll", None)
         if scroll is None:
             return
@@ -466,6 +467,30 @@ class MainWindow(QMainWindow):
         panel.adjustSize()
         width = panel.sizeHint().width() + scroll.verticalScrollBar().sizeHint().width() + 4
         scroll.setMinimumWidth(max(300, width))
+        if self.isVisible():
+            QTimer.singleShot(0, self._fit_window_height)
+
+    def _fit_window_height(self):
+        """Grow the window so the whole job panel fits without scrolling
+        (limited to the screen; the panel scrolls on small screens)."""
+        scroll = self.panel_scroll
+        panel = scroll.widget()
+        chrome = self.height() - scroll.viewport().height()   # menus, toolbar, dock title, status bar
+        needed = chrome + panel.sizeHint().height() + 2
+        screen = self.screen().availableGeometry() if self.screen() else None
+        if screen is not None:
+            frame = self.frameGeometry().height() - self.geometry().height()
+            needed = min(needed, screen.height() - max(frame, 0))
+        if self.height() < needed:
+            self.resize(self.width(), needed)
+            if screen is not None and self.frameGeometry().bottom() > screen.bottom():
+                self.move(self.x(), max(screen.top(), screen.bottom() - self.frameGeometry().height()))
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        if not getattr(self, "_shown_once", False):
+            self._shown_once = True
+            QTimer.singleShot(0, self._fit_window_height)
 
     def _update_unit_suffixes(self):
         units = self.values.get("units", "mm")
