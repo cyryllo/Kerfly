@@ -114,6 +114,8 @@ def main(argv=None):
 
     from kerfly.gui.main_window import MainWindow
     window = MainWindow(values)
+    window.remember_geometry = True
+    window._restore_window_geometry()          # also brings back the maximized state
     window.show()
     files = [a for a in argv[1:] if not a.startswith("-")]
     if files:

@@ -98,7 +98,7 @@ class MainWindow(QMainWindow):
         self._unit_widgets = []         # (spinbox, kind, key, sign) to update when units change
 
         self._update_title()
-        self.resize(1200, 780)
+        self.resize(1200, 780)                  # replaced by the saved / screen-based size in show()
         self.preview = PreviewView()
         self.tool_options = ToolOptionsBar()
         self.tool_options.changed.connect(self._tool_options_changed)
@@ -1379,6 +1379,35 @@ class MainWindow(QMainWindow):
             if screen is not None and self.frameGeometry().bottom() > screen.bottom():
                 self.move(self.x(), max(screen.top(), screen.bottom() - self.frameGeometry().height()))
 
+    # ---- window size and position, remembered between sessions ---------------
+    @staticmethod
+    def _window_settings():
+        from PySide6.QtCore import QSettings
+        from kerfly.core.materials import library_path
+        return QSettings(os.path.join(os.path.dirname(library_path()), "window.ini"), QSettings.IniFormat)
+
+    def _restore_window_geometry(self):
+        """Last size and position; on the first start 85% of the screen, centred."""
+        saved = self._window_settings().value("geometry")
+        if saved is not None and self.restoreGeometry(saved):
+            return True
+        screen = self.screen().availableGeometry() if self.screen() else None
+        if screen is not None:
+            w, h = int(screen.width() * 0.85), int(screen.height() * 0.85)
+            self.resize(w, h)
+            self.move(screen.x() + (screen.width() - w) // 2, screen.y() + (screen.height() - h) // 2)
+        return False
+
+    def _save_window_geometry(self):
+        if not getattr(self, "remember_geometry", False):
+            return                                  # tests and the self-test leave it alone
+        try:
+            settings = self._window_settings()
+            settings.setValue("geometry", self.saveGeometry())
+            settings.sync()
+        except Exception:
+            pass                                    # never block closing
+
     def showEvent(self, event):
         super().showEvent(event)
         if not getattr(self, "_shown_once", False):
@@ -2092,4 +2121,5 @@ class MainWindow(QMainWindow):
             self.laser.release()
         except Exception:
             pass
+        self._save_window_geometry()
         event.accept()
