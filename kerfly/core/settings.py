@@ -67,7 +67,7 @@ class JobSettings:
 
     # boundary trace
     trace_feed: float = 50.0          # trace_speed
-    trace_with_laser: int = 0         # trace_w_laser
+    trace_with_laser: bool = False    # trace_w_laser
     trace_gap: float = 0.0            # in the units given by `units`
     trace_power: float = 0.5
 

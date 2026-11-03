@@ -175,3 +175,47 @@ def load_gcode(filename, design):
     design.gcode.set_ecoords(ecoords, data_sorted=True)
     design.bounds = design.gcode.bounds
     return list(messages) if messages else []
+
+
+class SvgScale:
+    """Scale question for SVG files without a physical size (logic of the
+    K40 Whisperer 'SVG Import Scale' dialog, without the GUI).
+
+    A GUI shows pxpi (pixels per inch) and the resulting size, lets the user
+    change either, and returns result(...) from load_svg's ask_pxpi callback.
+    """
+
+    def __init__(self, svg_size, viewbox, inkscape_version):
+        pxpi = 72.0
+        if inkscape_version is not None:
+            pxpi = 96.0 if inkscape_version >= .92 else 90.0
+        self.default_pxpi = pxpi
+        if viewbox is not None and viewbox[0] is not None and viewbox[1] is not None:
+            self.minx, self.miny = viewbox[0], viewbox[1]
+        else:
+            self.minx, self.miny = 0.0, 0.0
+        if svg_size is not None and svg_size[2] is not None and svg_size[3] is not None:
+            self.width_px, self.height_px = svg_size[2], svg_size[3]
+        elif viewbox is not None and viewbox[2] is not None and viewbox[3] is not None:
+            self.width_px, self.height_px = viewbox[2], viewbox[3]
+        else:
+            self.width_px, self.height_px = 500.0, 500.0
+        # physical size given by the file (only the px/in ratio is unknown)
+        self.fixed_size_mm = None
+        if svg_size is not None and svg_size[0] is not None and svg_size[1] is not None:
+            self.fixed_size_mm = (svg_size[0], svg_size[1])
+
+    def size_mm(self, pxpi):
+        if self.fixed_size_mm is not None:
+            return self.fixed_size_mm
+        return self.width_px / pxpi * 25.4, self.height_px / pxpi * 25.4
+
+    def pxpi_for_width(self, width_mm):
+        return self.width_px * 25.4 / width_mm
+
+    def result(self, pxpi, width_mm=None, height_mm=None):
+        """(pxpi, viewbox) to return from ask_pxpi."""
+        if width_mm is None or height_mm is None:
+            width_mm, height_mm = self.size_mm(pxpi)
+        viewbox = [self.minx, self.miny, width_mm / 25.4 * pxpi, height_mm / 25.4 * pxpi]
+        return pxpi, viewbox

@@ -55,6 +55,7 @@ GPL-3.0-or-later.
 |---|---|---|
 | `convex_hull.py` | 2026 Kerfly contributors | GPL-3.0-or-later |
 | `interpolate.py` | 2026 Kerfly contributors | GPL-3.0-or-later |
+| `kerfly/gui/`, `kerfly.py` | 2026 Kerfly contributors | GPL-3.0-or-later |
 | `tests/` | 2026 Kerfly contributors | GPL-3.0-or-later |
 
 `convex_hull.py` and `interpolate.py` used to be short snippets copied from

@@ -55,6 +55,69 @@ SETTINGS_KEYS = [
 ]
 SETTINGS_KINDS = dict(SETTINGS_KEYS)
 
+# Default values, as set by K40 Whisperer 0.71 on startup.
+DEFAULT_VALUES = {
+    "include_Reng": "1", "include_Veng": "1", "include_Vcut": "1", "include_Gcde": "1",
+    "include_Time": "0", "halftone": "1", "HomeUR": "0", "show_power": "1", "show_test": "1",
+    "inputCSYS": "0", "advanced": "0", "mirror": "0", "rotate": "0", "negate": "0",
+    "engraveUP": "0", "init_home": "1", "post_home": "0", "post_beep": "0", "post_disp": "0",
+    "post_exec": "0", "pre_pr_crc": "1", "inside_first": "1", "comb_engrave": "0",
+    "comb_vector": "0", "zoom2image": "0", "rotary": "0", "reduced_mem": "0", "wait": "1",
+    "trace_w_laser": "0",
+    "max_power": "30", "board_name": "LASER-M2", "units": "mm",
+    "Reng_feed": "100", "Veng_feed": "20", "Vcut_feed": "10",
+    "Reng_power": "0.5", "Veng_power": "0.5", "Vcut_power": "0.5", "Gcode_power": "0.5",
+    "jog_step": "10.0",
+    "Reng_passes": "1", "Veng_passes": "1", "Vcut_passes": "1", "Gcde_passes": "1",
+    "rast_step": "0.002", "ht_size": "500",
+    "LaserXsize": "325", "LaserYsize": "220",
+    "LaserXscale": "1.000", "LaserYscale": "1.000", "LaserRscale": "1.000", "rapid_feed": "0.0",
+    "gotoX": "0.0", "gotoY": "0.0",
+    "bezier_M1": "2.5", "bezier_M2": "0.50", "bezier_weight": "3.5",
+    "trace_gap": "0", "trace_speed": "50", "Trace_power": "0.5",
+    "test_time": "250", "test_power": "0.5",
+    "t_timeout": "200", "n_timeouts": "30", "ink_timeout": "3",
+    "designfile": "", "inkscape_path": "", "batch_path": "",
+}
+
+BOARD_NAMES = ["LASER-M2", "LASER-M1", "LASER-M", "LASER-B2", "LASER-B1", "LASER-B",
+               "LASER-A", "LASER-M3"]
+
+
+def user_config_path():
+    """Settings file in the user's home directory (shared with K40 Whisperer)."""
+    import os
+    return os.path.join(os.path.expanduser("~"), CONFIG_FILE_NAME)
+
+
+def load_user_settings():
+    """Defaults updated with the user's settings file, if there is one."""
+    import os
+    values = dict(DEFAULT_VALUES)
+    path = user_config_path()
+    if os.path.isfile(path):
+        try:
+            values.update(read_settings_file(path))
+        except OSError:
+            pass
+    return values
+
+
+def is_true(value):
+    """Truth value of a bool setting given as bool, int or string."""
+    if isinstance(value, str):
+        try:
+            return float(value) != 0
+        except ValueError:
+            return value.strip().lower() == "true"
+    return bool(value)
+
+
+def bed_size_inches(values):
+    """(width, height) of the laser bed in inches."""
+    scale = 1.0 if values.get("units") == "in" else 25.4
+    return float(values["LaserXsize"]) / scale, float(values["LaserYsize"]) / scale
+
 
 def parse_settings(lines):
     """Parse settings lines into {key: value string}. Unknown keys and
@@ -116,7 +179,7 @@ def write_settings_file(filename, values, version):
 
 
 def _flag(value):
-    return bool(int(float(value)))
+    return is_true(value)
 
 
 def job_settings_from_values(values, power_per_stage=False):
@@ -142,7 +205,7 @@ def job_settings_from_values(values, power_per_stage=False):
                       ("inside_first", "inside_first"), ("engrave_up", "engraveUP"),
                       ("negate", "negate"), ("halftone", "halftone")]:
         put(attr, key, lambda k: _flag(values[k]))
-    put("trace_with_laser", "trace_w_laser", lambda k: int(float(values[k])))
+    put("trace_with_laser", "trace_w_laser", lambda k: _flag(values[k]))
     for attr, key in [("max_power", "max_power"), ("x_scale", "LaserXscale"),
                       ("y_scale", "LaserYscale"), ("rotary_scale", "LaserRscale"),
                       ("rapid_feed", "rapid_feed"),
@@ -160,3 +223,29 @@ def job_settings_from_values(values, power_per_stage=False):
                       ("vcut_passes", "Vcut_passes"), ("gcode_passes", "Gcde_passes")]:
         put(attr, key, lambda k: int(num(k)))
     return s
+
+
+def convert_units(values, new_units):
+    """Return values with lengths and speeds converted to new_units ('mm' or 'in'),
+    rounded as K40 Whisperer does. Speeds are mm/s in mm mode, in/min in inch mode."""
+    if new_units == "in":
+        factor, vfactor = 1 / 25.4, 60.0 / 25.4
+    elif new_units == "mm":
+        factor, vfactor = 25.4, 25.4 / 60.0
+    else:
+        raise ValueError(new_units)
+    out = dict(values)
+
+    def scale(key, fmt, f):
+        try:
+            out[key] = fmt % (float(values[key]) * f)
+        except (KeyError, ValueError):
+            out[key] = ""
+    for key in ("LaserXsize", "LaserYsize"):
+        scale(key, "%.2f", factor)
+    for key in ("jog_step", "gotoX", "gotoY"):
+        scale(key, "%.3f", factor)
+    for key in ("Reng_feed", "Veng_feed", "Vcut_feed", "trace_speed", "rapid_feed"):
+        scale(key, "%.1f", vfactor)
+    out["units"] = new_units
+    return out

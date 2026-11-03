@@ -9,13 +9,22 @@ control. The original release is tagged `upstream-0.71` in this repository.
 
 ## Status
 
-Early development. The code is currently K40 Whisperer 0.71 plus a regression
-test suite. Planned work:
+Early development (0.1). Kerfly has a new Qt (PySide6) window. It can open
+SVG, DXF and G-code files, show a preview of the laser bed with zoom and
+pan, jog the head, and run raster engrave, vector engrave, vector cut,
+G-code and boundary trace jobs. It can also save jobs as EGV files. Long jobs
+run in the background, and Stop pauses the laser with a choice to resume or
+terminate.
 
-- separate the laser core from the user interface
-- a new Qt (PySide6) interface
+The original K40 Whisperer window (`k40_whisperer.py`) is still included and
+uses the same core. Some of its features are not in the new window yet.
+
+Planned:
+
 - built-in drawing and editing tools
 - direct import of more file formats (PNG/JPG/BMP/TIFF/WebP, PDF, and others)
+- the remaining K40 Whisperer features (moving the head to the design
+  corners, batch mode, test fire, time estimate)
 
 The laser output (EGV data sent over USB) is checked byte-for-byte against the
 original 0.71 after every change. See [Regression tests](#regression-tests).
@@ -26,7 +35,8 @@ original 0.71 after every change. See [Regression tests](#regression-tests).
 sudo apt install python3-venv python3-tk inkscape
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/python k40_whisperer.py
+.venv/bin/python kerfly.py               # new window
+.venv/bin/python k40_whisperer.py        # original K40 Whisperer window
 ```
 
 Inkscape is required: SVG files are rasterized through it.
@@ -36,7 +46,7 @@ USB access without root needs a udev rule. See [README_Linux.txt](README_Linux.t
 ## Running from source (Windows)
 
 Install Python 3 and Inkscape, then run `pip install -r requirements.txt` and
-`python k40_whisperer.py`. The laser needs the libusb-win32 driver, which you
+`python kerfly.py`. The laser needs the libusb-win32 driver, which you
 can install with [Zadig](https://zadig.akeo.ie/).
 
 ## Project layout
@@ -45,8 +55,9 @@ can install with [Zadig](https://zadig.akeo.ie/).
   and G-code loaders, settings file handling, design data, raster
   preparation, path ordering and EGV job generation. Nothing in it imports a
   GUI toolkit.
+- `kerfly/gui/`: the new PySide6 interface. Start it with `kerfly.py`.
 - `k40_whisperer.py`: the original Tkinter interface. It now calls
-  `kerfly.core`. A new PySide6 interface is planned.
+  `kerfly.core`.
 - `egv.py`, `nano_library.py`: EGV encoding and USB communication with the
   controller board. These are unchanged from K40 Whisperer.
 - `tests/`: regression tests.
@@ -55,6 +66,7 @@ can install with [Zadig](https://zadig.akeo.ie/).
 
 ```bash
 .venv/bin/python tests/test_core.py          # core only, no display needed
+.venv/bin/python tests/test_gui.py           # new window, offscreen
 sudo apt install xvfb
 xvfb-run -a .venv/bin/python tests/regression.py   # full application
 ```
