@@ -101,9 +101,20 @@ def run_until_idle(app, window, timeout=120):
     return window.worker is None
 
 
+def find_inkscape():
+    """Inkscape the way Kerfly finds it (PATH or the usual install folders)."""
+    import svg_reader
+    reader = svg_reader.SVG_READER()
+    reader.set_inkscape_path(shutil.which("inkscape"))
+    return reader.inkscape_exe or ""
+
+
+INKSCAPE = find_inkscape()
+
+
 def make_window(**overrides):
     values = dict(config.DEFAULT_VALUES)
-    values["inkscape_path"] = shutil.which("inkscape") or ""
+    values["inkscape_path"] = INKSCAPE
     values.update(overrides)
     return MainWindow(values)
 
@@ -120,14 +131,20 @@ def main():
         print("%-5s %s %s" % ("OK" if ok else "FAIL", name, detail))
         failures += 0 if ok else 1
 
+    def skip(name):
+        print("SKIP  %s (Inkscape not installed; the baseline raster was made with Inkscape)" % name)
+
     # 1. EGV file from the GUI == baseline (raster + vector engrave + vector cut)
-    w = make_window()
-    w.load_design(os.path.join(FIX, "shapes.svg"))
     out = tempfile.mktemp(suffix=".egv")
-    w.start_job(output_file=out)
-    run_until_idle(app, w)
-    digest = hashlib.sha256(open(out, "rb").read()).hexdigest() if os.path.exists(out) else None
-    check("gui_save_egv == svg_raster_vector_cut", digest == manifest["svg_raster_vector_cut"]["sha256"])
+    if INKSCAPE:
+        w = make_window()
+        w.load_design(os.path.join(FIX, "shapes.svg"))
+        w.start_job(output_file=out)
+        run_until_idle(app, w)
+        digest = hashlib.sha256(open(out, "rb").read()).hexdigest() if os.path.exists(out) else None
+        check("gui_save_egv == svg_raster_vector_cut", digest == manifest["svg_raster_vector_cut"]["sha256"])
+    else:
+        skip("gui_save_egv == svg_raster_vector_cut")
 
     # 2. only vector cut selected, DXF
     w = make_window(include_Reng="0", include_Veng="0")
@@ -139,15 +156,18 @@ def main():
     os.remove(out)
 
     # 3. M3 power per stage through the laser path
-    w = make_window(board_name="LASER-M3", Reng_power="0.3", Veng_power="0.6", Vcut_power="0.9")
-    w.load_design(os.path.join(FIX, "shapes.svg"))
-    fake = FakeK40()
-    w.laser.k40 = fake
-    w.start_job()
-    run_until_idle(app, w)
-    expected = read_usb_baseline(os.path.join(BASE, "usb_m3_power_levels.usb"))
-    check("gui_laser_job m3 == usb_m3_power_levels", fake.sent == expected,
-          "(%d stages, powers %s)" % (len(fake.sent), [p for p, _ in fake.sent]))
+    if INKSCAPE:
+        w = make_window(board_name="LASER-M3", Reng_power="0.3", Veng_power="0.6", Vcut_power="0.9")
+        w.load_design(os.path.join(FIX, "shapes.svg"))
+        fake = FakeK40()
+        w.laser.k40 = fake
+        w.start_job()
+        run_until_idle(app, w)
+        expected = read_usb_baseline(os.path.join(BASE, "usb_m3_power_levels.usb"))
+        check("gui_laser_job m3 == usb_m3_power_levels", fake.sent == expected,
+              "(%d stages, powers %s)" % (len(fake.sent), [p for p, _ in fake.sent]))
+    else:
+        skip("gui_laser_job m3 == usb_m3_power_levels")
 
     # 4. Stop while sending: immediate e-stop, no pause, no question
     w = make_window()
@@ -477,27 +497,30 @@ def main():
     run_until_idle(app, w)
     # The built-in renderer anti-aliases edges slightly differently from Inkscape,
     # so after halftoning a few dots move: compare closely, not byte for byte.
-    from PIL import ImageChops
-    from kerfly.core import loaders as _loaders
-    from kerfly.core.design import Design as _Design
-    import shutil as _shutil
-    ref = _Design()
-    _loaders.load_svg(os.path.join(FIX, "shapes.svg"), ref, inkscape_path=_shutil.which("inkscape"))
-    from kerfly.gui.svg_render import render_svg as _render_svg
-    built = _Design()                       # freshly loaded: a job reorders the cut paths in place
-    _loaders.load_svg(os.path.join(FIX, "shapes.svg"), built, svg_renderer=_render_svg, use_inkscape=False)
-    diff = ImageChops.difference(ref.raster.image, built.raster.image)
-    hist = diff.histogram()
-    changed = sum(hist[1:])
-    worst = max((v for v in range(256) if hist[v]), default=0)
-    vectors_same = (ref.vector_cut.ecoords == built.vector_cut.ecoords
-                    and ref.vector_engrave.ecoords == built.vector_engrave.ecoords)
     size = os.path.getsize(out) if os.path.exists(out) else 0
     ref_size = manifest["svg_raster_vector_cut"]["size"]
-    check("SVG without Inkscape: same vectors, raster within anti-aliasing tolerance",
-          vectors_same and worst <= 32 and changed < 0.001 * ref.raster.image.width * ref.raster.image.height
-          and abs(size - ref_size) < 0.01 * ref_size,
-          "(%d edge pixels differ, max %d/255; EGV %d vs %d bytes)" % (changed, worst, size, ref_size))
+    if INKSCAPE:
+        from PIL import ImageChops
+        from kerfly.core import loaders as _loaders
+        from kerfly.core.design import Design as _Design
+        ref = _Design()
+        _loaders.load_svg(os.path.join(FIX, "shapes.svg"), ref, inkscape_path=INKSCAPE)
+        from kerfly.gui.svg_render import render_svg as _render_svg
+        built = _Design()                       # freshly loaded: a job reorders the cut paths in place
+        _loaders.load_svg(os.path.join(FIX, "shapes.svg"), built, svg_renderer=_render_svg, use_inkscape=False)
+        diff = ImageChops.difference(ref.raster.image, built.raster.image)
+        hist = diff.histogram()
+        changed = sum(hist[1:])
+        worst = max((v for v in range(256) if hist[v]), default=0)
+        vectors_same = (ref.vector_cut.ecoords == built.vector_cut.ecoords
+                        and ref.vector_engrave.ecoords == built.vector_engrave.ecoords)
+        check("SVG without Inkscape: same vectors, raster within anti-aliasing tolerance",
+              vectors_same and worst <= 32 and changed < 0.001 * ref.raster.image.width * ref.raster.image.height
+              and abs(size - ref_size) < 0.01 * ref_size,
+              "(%d edge pixels differ, max %d/255; EGV %d vs %d bytes)" % (changed, worst, size, ref_size))
+    else:
+        check("SVG without Inkscape: job size close to the Inkscape baseline", abs(size - ref_size) < 0.01 * ref_size,
+              "(EGV %d vs %d bytes)" % (size, ref_size))
     errors = []
     QMessageBox.critical = staticmethod(lambda *a, **k: errors.append(a[2] if len(a) > 2 else ""))
     red_text = tempfile.mktemp(suffix=".svg")
