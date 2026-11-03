@@ -39,11 +39,23 @@ Install Python 3 and Inkscape, then run `pip install -r requirements.txt` and
 `python k40_whisperer.py`. The laser needs the libusb-win32 driver, which you
 can install with [Zadig](https://zadig.akeo.ie/).
 
+## Project layout
+
+- `kerfly/core/`: the GUI-independent laser core. It holds the design data,
+  raster preparation, path ordering and EGV job generation. Nothing in it
+  imports a GUI toolkit.
+- `k40_whisperer.py`: the original Tkinter interface. It now calls
+  `kerfly.core`. A new PySide6 interface is planned.
+- `egv.py`, `nano_library.py`: EGV encoding and USB communication with the
+  controller board. These are unchanged from K40 Whisperer.
+- `tests/`: regression tests.
+
 ## Regression tests
 
 ```bash
+.venv/bin/python tests/test_core.py          # core only, no display needed
 sudo apt install xvfb
-xvfb-run -a .venv/bin/python tests/regression.py
+xvfb-run -a .venv/bin/python tests/regression.py   # full application
 ```
 
 There are 25 test cases. They cover vector cut, vector engrave, raster, trace

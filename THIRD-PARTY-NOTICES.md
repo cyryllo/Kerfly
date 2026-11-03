@@ -42,6 +42,13 @@ next to the existing one rather than replacing it.
 | `LaserSpeed.py` | LHYMICRO-GL speed code library, also used in MeerK40t | MIT (stated in the file) |
 | `windowsinhibitor.py` | [Deluge-PreventSuspendPlus](https://github.com/h3llrais3r/Deluge-PreventSuspendPlus) | GPL-3.0-or-later (per that project's `setup.py`) |
 
+## Kerfly core (`kerfly/`)
+
+The `kerfly/core/` modules contain code moved out of `k40_whisperer.py` and
+restructured for Kerfly. They carry both copyrights: 2017–2026 Scorch for the
+original code, and 2026 Kerfly contributors for the changes. They are licensed
+GPL-3.0-or-later.
+
 ## Files written for Kerfly
 
 | File | Copyright | License |

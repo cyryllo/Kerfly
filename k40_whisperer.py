@@ -31,8 +31,12 @@ from svg_reader import SVG_PXPI_EXCEPTION
 from g_code_library import G_Code_Rip
 from interpolate import interpolate
 from ecoords import ECoord
-from convex_hull import hull2D
 from embedded_images import K40_Whisperer_Images
+from kerfly.core.design import Design
+from kerfly.core.settings import JobSettings
+from kerfly.core import job as kcore_job
+from kerfly.core import pathopt as kcore_pathopt
+from kerfly.core import raster as kcore_raster
 
 import inkex
 import simplestyle
@@ -118,7 +122,23 @@ QUIET = False
    
 ################################################################################
 class Application(Frame):
+    # The loaded design lives in a GUI-independent kerfly.core Design object;
+    # these aliases keep the original attribute names working.
+    RengData      = property(lambda self: self.design.raster,
+                             lambda self, v: setattr(self.design, "raster", v))
+    VengData      = property(lambda self: self.design.vector_engrave,
+                             lambda self, v: setattr(self.design, "vector_engrave", v))
+    VcutData      = property(lambda self: self.design.vector_cut,
+                             lambda self, v: setattr(self.design, "vector_cut", v))
+    GcodeData     = property(lambda self: self.design.gcode,
+                             lambda self, v: setattr(self.design, "gcode", v))
+    Design_bounds = property(lambda self: self.design.bounds,
+                             lambda self, v: setattr(self.design, "bounds", v))
+    input_dpi     = property(lambda self: self.design.input_dpi,
+                             lambda self, v: setattr(self.design, "input_dpi", v))
+
     def __init__(self, master):
+        self.design = Design()
         self.trace_window = toplevel_dummy()
         Frame.__init__(self, master)
         self.w = 780
@@ -2290,146 +2310,9 @@ class Application(Frame):
 
     #####################################################################
     def make_raster_coords(self):
-        if self.RengData.rpaths:
-            return
         try:
-            hcoords=[]
-            if (self.RengData.image != None and self.RengData.ecoords==[]):
-                ecoords=[]
-                cutoff=128
-                image_temp = self.RengData.image.convert("L")
-##                if self.unsharp_flag.get():
-##                    from PIL import ImageFilter       
-##                    #image_temp = image_temp.filter(UnsharpMask(radius=self.unsharp_r, percent=self.unsharp_p, threshold=self.unsharp_t))
-##                    filter = ImageFilter.UnsharpMask()
-##                    filter.radius    = float(self.unsharp_r.get())      # radius 3-5 pixels
-##                    filter.percent   = int(float(self.unsharp_p.get())) # precent 500%
-##                    filter.threshold = int(float(self.unsharp_t.get())) # Threshold 0
-##                    image_temp = image_temp.filter(filter)
-
-                if self.negate.get():
-                    image_temp = ImageOps.invert(image_temp)
-                    
-                if self.mirror.get():
-                    image_temp = ImageOps.mirror(image_temp)
-
-                if self.rotate.get():
-                    #image_temp = image_temp.rotate(90,expand=True)
-                    image_temp = self.rotate_raster(image_temp)
-
-                Xscale = float(self.LaserXscale.get())
-                Yscale = float(self.LaserYscale.get())    
-                if self.rotary.get():
-                    Rscale = float(self.LaserRscale.get())
-                    Yscale = Yscale*Rscale
-
-                if Xscale != 1.0 or Yscale != 1.0:
-                    wim,him = image_temp.size
-                    nw = int(wim*Xscale)
-                    nh = int(him*Yscale)
-                    image_temp = image_temp.resize((nw,nh))
-
-                    
-                if self.halftone.get():
-                    ht_size_mils =  round( self.input_dpi / float(self.ht_size.get()) ,1)
-                    npixels = int( round(ht_size_mils,1) )
-                    if npixels == 0:
-                        return
-                    wim,him = image_temp.size
-                    # Convert to Halftoning and save
-                    nw=int(wim / npixels)
-                    nh=int(him / npixels)
-                    image_temp = image_temp.resize((nw,nh))
-                    
-                    image_temp = self.convert_halftoning(image_temp)
-                    image_temp = image_temp.resize((wim,him))
-                else:
-                    image_temp = image_temp.point(lambda x: 0 if x<128 else 255, '1')
-                    
-                if DEBUG:
-                    image_name = os.path.expanduser("~")+"/IMAGE.png"
-                    image_temp.save(image_name,"PNG")
-
-                Reng_np = image_temp.load()
-                wim,him = image_temp.size
-                del image_temp
-                #######################################
-                x=0
-                y=0
-                loop=1
-                LENGTH=0
-                n_scanlines = 0 
-                
-                my_hull = hull2D()
-                bignumber = 9999999;
-                Raster_step = int(self.get_raster_step_1000in())
-                timestamp=0
-                im_height_mils = int(him/self.input_dpi*1000.0)
-                for i_step in range(0,im_height_mils,Raster_step):
-                    i=floor(i_step*self.input_dpi/1000.0)
-                    #print(i_step,i)
-                    stamp=int(3*time()) #update every 1/3 of a second
-                    if (stamp != timestamp):
-                        timestamp=stamp #interlock
-                        self.statusMessage.set("Creating Scan Lines: %.1f %%" %( (100.0*i)/him ) )
-                        self.master.update()
-                    if self.stop[0]==True:
-                        raise Exception("Action stopped by User.")
-                    line = []
-                    cnt=1
-                    LEFT  = bignumber;
-                    RIGHT =-bignumber;
-                    for j in range(1,wim):
-                        if (Reng_np[j,i] == Reng_np[j-1,i]):
-                            cnt = cnt+1
-                        else:
-                            if Reng_np[j-1,i]:
-                                laser = "U"
-                            else:
-                                laser = "D"
-                                LEFT  = min(j-cnt,LEFT)
-                                RIGHT = max(j,RIGHT)
-                                
-                            line.append((cnt,laser))
-                            cnt=1
-                    if Reng_np[j-1,i] > cutoff:
-                        laser = "U"
-                    else:
-                        laser = "D"
-                        LEFT  = min(j-cnt,LEFT)
-                        RIGHT = max(j,RIGHT)
-                        
-                    line.append((cnt,laser))
-                    if LEFT != bignumber and RIGHT != -bignumber:
-                        LENGTH = LENGTH + (RIGHT - LEFT)/self.input_dpi
-                        n_scanlines = n_scanlines + 1
-                    
-                    y=(im_height_mils-i_step)/1000.0
-                    x=0
-                    if LEFT != bignumber:
-                        hcoords.append([LEFT/self.input_dpi,y])
-                    if RIGHT != -bignumber:
-                        hcoords.append([RIGHT/self.input_dpi,y])
-                    if hcoords!=[]:
-                        hcoords = my_hull.convexHullecoords(hcoords)
-                        
-                    rng = list(range(0,len(line),1))
-                        
-                    for i in rng:
-                        seg = line[i]
-                        delta = seg[0]/self.input_dpi
-                        if seg[1]=="D":
-                            loop=loop+1
-                            ecoords.append([x      ,y,loop])
-                            ecoords.append([x+delta,y,loop])
-                        x = x + delta
-                self.RengData.set_ecoords(ecoords,data_sorted=True)
-                self.RengData.len=LENGTH
-                self.RengData.n_scanlines = n_scanlines
-            #Set Flag indicating raster paths have been calculated    
-            self.RengData.rpaths = True
-            self.RengData.hull_coords = hcoords
-        
+            kcore_raster.make_raster_coords(self.design, self.job_settings(),
+                                            progress=self.show_progress, stop=self.stop)
         except MemoryError as e:
             msg1 = "Memory Error:"
             msg2 = "Memory Error:  Out of Memory."
@@ -2437,7 +2320,7 @@ class Application(Frame):
             self.statusbar.configure( bg = 'red' )
             message_box(msg1, msg2)
             debug_message(traceback.format_exc())
-            
+
         except Exception as e:
             msg1 = "Making Raster Coords Stopped: "
             msg2 = "%s" %(e)
@@ -2448,17 +2331,6 @@ class Application(Frame):
     #######################################################################
 
 
-    def rotate_raster(self,image_in):
-        wim,him = image_in.size
-        im_rotated = Image.new("L", (him, wim), "white")
-
-        image_in_np   = image_in.load()
-        im_rotated_np = im_rotated.load()
-        
-        for i in range(1,him):
-            for j in range(1,wim):
-                im_rotated_np[i,wim-j] = image_in_np[j,i]
-        return im_rotated
     
     def get_raster_step_1000in(self):
         val_in = float(self.rast_step.get())
@@ -2467,57 +2339,8 @@ class Application(Frame):
 
 
     def generate_bezier(self,M1,M2,w,n=100):
-        if (M1==M2):
-            x1=0
-            y1=0
-        else:
-            x1 = 255*(1-M2)/(M1-M2)
-            y1 = M1*x1
-        x=[]
-        y=[]
-        # Calculate Bezier Curve
-        for step in range(0,n+1):
-            t    = float(step)/float(n)
-            Ct   = 1 / ( pow(1-t,2)+2*(1-t)*t*w+pow(t,2) )
-            x.append( Ct*( 2*(1-t)*t*w*x1+pow(t,2)*255) )
-            y.append( Ct*( 2*(1-t)*t*w*y1+pow(t,2)*255) )
-        return x,y
-
-    '''This Example opens an Image and transform the image into halftone.  -Isai B. Cicourel'''
+        return kcore_raster.generate_bezier(M1,M2,w,n)
     # Create a Half-tone version of the image
-    def convert_halftoning(self,image):
-        image = image.convert('L')
-        x_lim, y_lim = image.size
-        pixel = image.load()
-        
-        M1 = float(self.bezier_M1.get())
-        M2 = float(self.bezier_M2.get())
-        w  = float(self.bezier_weight.get())
-        
-        if w > 0:
-            x,y = self.generate_bezier(M1,M2,w)
-            
-            interp = interpolate(x, y) # Set up interpolate class
-            val_map=[]
-            # Map Bezier Curve to values between 0 and 255
-            for val in range(0,256):
-                val_out = int(round(interp[val])) # Get the interpolated value at each value
-                val_map.append(val_out)
-            # Adjust image
-            timestamp=0
-            for y in range(1, y_lim):
-                stamp=int(3*time()) #update every 1/3 of a second
-                if (stamp != timestamp):
-                    timestamp=stamp #interlock
-                    self.statusMessage.set("Adjusting Image Darkness: %.1f %%" %( (100.0*y)/y_lim ) )
-                    self.master.update()
-                for x in range(1, x_lim):
-                    pixel[x, y] = val_map[ pixel[x, y] ]
-
-        self.statusMessage.set("Creating Halftone Image." )
-        self.master.update()
-        image = image.convert('1')
-        return image
 
     #######################################################################
 
@@ -2918,14 +2741,7 @@ class Application(Frame):
             self.statusbar.configure( bg = 'white' )
         
     def Get_Design_Bounds(self):
-        if self.rotate.get():
-            ymin =  self.Design_bounds[0]
-            ymax =  self.Design_bounds[1]
-            xmin = -self.Design_bounds[3]
-            xmax = -self.Design_bounds[2]
-        else:
-            xmin,xmax,ymin,ymax = self.Design_bounds
-        return (xmin,xmax,ymin,ymax)
+        return self.design.get_bounds(self.rotate.get())
     
     def Move_UL(self,dummy=None):
         xmin,xmax,ymin,ymax = self.Get_Design_Bounds()
@@ -3322,312 +3138,27 @@ class Application(Frame):
 
 
     def make_trace_path(self):
-        my_hull = hull2D()
-        if self.inputCSYS.get() and self.RengData.image == None:
-            xmin,xmax,ymin,ymax = 0.0,0.0,0.0,0.0
-        else:
-            xmin,xmax,ymin,ymax = self.Get_Design_Bounds()
-            
-        startx = xmin
-        starty = ymax
-
-        #######################################
-        Vcut_coords = self.VcutData.ecoords
-        Veng_coords = self.VengData.ecoords
-        Gcode_coords= self.GcodeData.ecoords
-        if self.mirror.get() or self.rotate.get():
-            Vcut_coords = self.mirror_rotate_vector_coords(Vcut_coords)
-            Veng_coords = self.mirror_rotate_vector_coords(Veng_coords)
-            Gcode_coords= self.mirror_rotate_vector_coords(Gcode_coords)
-
-        #######################################
-        if self.RengData.ecoords==[]:
-            if self.stop[0] == True:
-                self.stop[0]=False
-                self.make_raster_coords()
-                self.stop[0]=True
-            else:
-                self.make_raster_coords()
-
-        RengHullCoords = []
-        Xscale = 1/float(self.LaserXscale.get())
-        Yscale = 1/float(self.LaserYscale.get())
-        if self.rotary.get():
-            Rscale = 1/float(self.LaserRscale.get())
-            Yscale = Yscale*Rscale
-            
-        for point in self.RengData.hull_coords:
-            RengHullCoords.append([point[0]*Xscale+xmin, point[1]*Yscale, point[2]])
-            
-        all_coords = []
-        all_coords.extend(Vcut_coords)
-        all_coords.extend(Veng_coords)
-        all_coords.extend(Gcode_coords)
-        all_coords.extend(RengHullCoords)
-
-        trace_coords=[]
-        if all_coords != []:
-            trace_coords = my_hull.convexHullecoords(all_coords)
-            gap = float(self.trace_gap.get())/self.units_scale
-            trace_coords = self.offset_eccords(trace_coords,gap)
-
-        trace_coords,startx,starty = self.scale_vector_coords(trace_coords,startx,starty)
-        return trace_coords
+        return kcore_job.make_trace_path(self.design, self.job_settings(),
+                                         progress=self.show_progress, stop=self.stop)
 
             
     ################################################################################
-    def Sort_Paths(self,ecoords,i_loop=2):
-        ##########################
-        ###   find loop ends   ###
-        ##########################
-        Lbeg=[]
-        Lend=[]
-        if len(ecoords)>0:
-            Lbeg.append(0)
-            loop_old=ecoords[0][i_loop]
-            for i in range(1,len(ecoords)):
-                loop = ecoords[i][i_loop]
-                if loop != loop_old:
-                    Lbeg.append(i)
-                    Lend.append(i-1)
-                loop_old=loop
-            Lend.append(i)
-
-        #######################################################
-        # Find new order based on distance to next beg or end #
-        #######################################################
-        order_out = []
-        use_beg=0
-        if len(ecoords)>0:
-            order_out.append([Lbeg[0],Lend[0]])
-        inext = 0
-        total=len(Lbeg)
-        for i in range(total-1):
-            if use_beg==1:
-                ii=Lbeg.pop(inext)
-                Lend.pop(inext)
-            else:
-                ii=Lend.pop(inext)
-                Lbeg.pop(inext)
-
-            Xcur = ecoords[ii][0]
-            Ycur = ecoords[ii][1]
-
-            dx = Xcur - ecoords[ Lbeg[0] ][0]
-            dy = Ycur - ecoords[ Lbeg[0] ][1]
-            min_dist = dx*dx + dy*dy
-
-            dxe = Xcur - ecoords[ Lend[0] ][0]
-            dye = Ycur - ecoords[ Lend[0] ][1]
-            min_diste = dxe*dxe + dye*dye
-
-            inext=0
-            inexte=0
-            for j in range(1,len(Lbeg)):
-                dx = Xcur - ecoords[ Lbeg[j] ][0]
-                dy = Ycur - ecoords[ Lbeg[j] ][1]
-                dist = dx*dx + dy*dy
-                if dist < min_dist:
-                    min_dist=dist
-                    inext=j
-                ###
-                dxe = Xcur - ecoords[ Lend[j] ][0]
-                dye = Ycur - ecoords[ Lend[j] ][1]
-                diste = dxe*dxe + dye*dye
-                if diste < min_diste:
-                    min_diste=diste
-                    inexte=j
-                ###
-            if min_diste < min_dist:
-                inext=inexte
-                order_out.append([Lend[inexte],Lbeg[inexte]])
-                use_beg=1
-            else:
-                order_out.append([Lbeg[inext],Lend[inext]])
-                use_beg=0
-        ###########################################################
-        return order_out
     
     #####################################################
     # determine if a point is inside a given polygon or not
     # Polygon is a list of (x,y) pairs.
     # http://www.ariel.com.au/a/python-point-int-poly.html
     #####################################################
-    def point_inside_polygon(self,x,y,poly):
-        n = len(poly)
-        inside = -1
-        p1x = poly[0][0]
-        p1y = poly[0][1]
-        for i in range(n+1):
-            p2x = poly[i%n][0]
-            p2y = poly[i%n][1]
-            if y > min(p1y,p2y):
-                if y <= max(p1y,p2y):
-                    if x <= max(p1x,p2x):
-                        if p1y != p2y:
-                            xinters = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
-                        if p1x == p2x or x <= xinters:
-                            inside = inside * -1
-            p1x,p1y = p2x,p2y
-
-        return inside
 
     def optimize_paths(self,ecoords,inside_check=True):
-        order_out = self.Sort_Paths(ecoords)    
-        lastx=-999
-        lasty=-999
-        Acc=0.004
-        cuts=[]
-
-        for line in order_out:
-            temp=line
-            if temp[0] > temp[1]:
-                step = -1
-            else:
-                step = 1
-
-            loop_old = -1
+        return kcore_pathopt.optimize_paths(ecoords, inside_check)
             
-            for i in range(temp[0],temp[1]+step,step):
-                x1   = ecoords[i][0]
-                y1   = ecoords[i][1]
-                loop = ecoords[i][2]
-                # check and see if we need to move to a new discontinuous start point
-                if (loop != loop_old):
-                    dx = x1-lastx
-                    dy = y1-lasty
-                    dist = sqrt(dx*dx + dy*dy)
-                    if dist > Acc:
-                        cuts.append([[x1,y1]])
-                    else:
-                        cuts[-1].append([x1,y1])
-                else:
-                    cuts[-1].append([x1,y1])
-                lastx = x1
-                lasty = y1
-                loop_old = loop
 
-        if inside_check:
-            #####################################################
-            # For each loop determine if other loops are inside #
-            #####################################################
-            Nloops=len(cuts)
-            self.LoopTree=[]
-            for iloop in range(Nloops):
-                self.LoopTree.append([])
-    ##            CUR_PCT=float(iloop)/Nloops*100.0
-    ##            if (not self.batch.get()):
-    ##                self.statusMessage.set('Determining Which Side of Loop to Cut: %d of %d' %(iloop+1,Nloops))
-    ##                self.master.update()
-                ipoly = cuts[iloop]
-                ## Check points in other loops (could just check one) ##
-                if ipoly != []:
-                    for jloop in range(Nloops):
-                        if jloop != iloop:
-                            inside = 0
-                            inside = inside + self.point_inside_polygon(cuts[jloop][0][0],cuts[jloop][0][1],ipoly)
-                            if inside > 0:
-                                self.LoopTree[iloop].append(jloop)
-            #####################################################
-            for i in range(Nloops):
-                lns=[]
-                lns.append(i)
-                self.remove_self_references(lns,self.LoopTree[i])
-
-            self.order=[]
-            self.loops = list(range(Nloops))
-            for i in range(Nloops):
-                if self.LoopTree[i]!=[]:
-                    self.addlist(self.LoopTree[i])
-                    self.LoopTree[i]=[]
-                if self.loops[i]!=[]:
-                    self.order.append(self.loops[i])
-                    self.loops[i]=[]
-        #END inside_check
-            ecoords_out = []
-            for i in self.order:
-                line = cuts[i]
-                for coord in line:
-                    ecoords_out.append([coord[0],coord[1],i])
-        #END inside_check
-        else:
-            ecoords_out = []
-            for i in range(len(cuts)):
-                line = cuts[i]
-                for coord in line:
-                    ecoords_out.append([coord[0],coord[1],i])
-                    
-        return ecoords_out
-            
-    def remove_self_references(self,loop_numbers,loops):
-        for i in range(0,len(loops)):
-            for j in range(0,len(loop_numbers)):
-                if loops[i]==loop_numbers[j]:
-                    loops.pop(i)
-                    return
-            if self.LoopTree[loops[i]]!=[]:
-                loop_numbers.append(loops[i])
-                self.remove_self_references(loop_numbers,self.LoopTree[loops[i]])
-
-    def addlist(self,list):
-        for i in list:
-            try: #this try/except is a bad hack fix to a recursion error. It should be fixed properly later.
-                if self.LoopTree[i]!=[]:
-                    self.addlist(self.LoopTree[i]) #too many recursions here causes cmp error
-                    self.LoopTree[i]=[]
-            except:
-                pass
-            if self.loops[i]!=[]:
-                self.order.append(self.loops[i])
-                self.loops[i]=[]
 
 
     def mirror_rotate_vector_coords(self,coords):
-        xmin = self.Design_bounds[0]
-        xmax = self.Design_bounds[1]
-        coords_rotate_mirror=[]
-        
-        for i in range(len(coords)):
-            coords_rotate_mirror.append(coords[i][:])
-            if self.mirror.get():
-                if self.inputCSYS.get() and self.RengData.image == None:
-                    coords_rotate_mirror[i][0]=-coords_rotate_mirror[i][0]
-                else:
-                    coords_rotate_mirror[i][0]=xmin+xmax-coords_rotate_mirror[i][0]
-                
-                
-            if self.rotate.get():
-                x = coords_rotate_mirror[i][0]
-                y = coords_rotate_mirror[i][1]
-                coords_rotate_mirror[i][0] = -y
-                coords_rotate_mirror[i][1] =  x
-                
-        return coords_rotate_mirror
+        return kcore_job.mirror_rotate_vector_coords(coords, self.design, self.job_settings())
 
-    def scale_vector_coords(self,coords,startx,starty):
-        
-        Xscale = float(self.LaserXscale.get())
-        Yscale = float(self.LaserYscale.get())
-        if self.rotary.get():
-            Rscale = float(self.LaserRscale.get())
-            Yscale = Yscale*Rscale
-
-        coords_scale=[]
-        if Xscale != 1.0 or Yscale != 1.0:
-            for i in range(len(coords)):
-                coords_scale.append(coords[i][:])
-                x = coords_scale[i][0]
-                y = coords_scale[i][1]
-                coords_scale[i][0] = x*Xscale
-                coords_scale[i][1] = y*Yscale
-            scaled_startx = startx*Xscale
-            scaled_starty = starty*Yscale
-        else:
-            coords_scale = coords
-            scaled_startx = startx
-            scaled_starty = starty
-
-        return coords_scale,scaled_startx,scaled_starty
 
 
     def feed_factor(self):
@@ -3637,339 +3168,90 @@ class Application(Frame):
             feed_factor = 1.0
         return feed_factor
 
+    def show_progress(self, message):
+        self.statusMessage.set(message)
+        self.master.update()
+
+    def job_settings(self):
+        """Snapshot of the GUI settings for the GUI-independent core."""
+        def num(var, name):
+            try:
+                return float(var.get())
+            except ValueError:
+                raise ValueError("Invalid value for setting '%s': %r" %(name, var.get()))
+        def passes(var, name):
+            return int(num(var, name))
+        return JobSettings(
+            board_name       = self.board_name.get(),
+            units            = self.units.get(),
+            home_upper_right = self.HomeUR.get(),
+            input_csys       = self.inputCSYS.get(),
+            power_per_stage  = self.display_power,
+            max_power        = num(self.max_power, "max_power"),
+            mirror           = self.mirror.get(),
+            rotate           = self.rotate.get(),
+            x_scale          = num(self.LaserXscale, "LaserXscale"),
+            y_scale          = num(self.LaserYscale, "LaserYscale"),
+            rotary           = self.rotary.get(),
+            rotary_scale     = num(self.LaserRscale, "LaserRscale"),
+            rapid_feed       = num(self.rapid_feed, "rapid_feed"),
+            inside_first     = self.inside_first.get(),
+            raster_feed      = num(self.Reng_feed, "Reng_feed"),
+            raster_passes    = passes(self.Reng_passes, "Reng_passes"),
+            raster_power     = num(self.Reng_power, "Reng_power"),
+            raster_step      = num(self.rast_step, "rast_step"),
+            engrave_up       = self.engraveUP.get(),
+            negate           = self.negate.get(),
+            halftone         = self.halftone.get(),
+            halftone_dpi     = num(self.ht_size, "ht_size"),
+            bezier_m1        = num(self.bezier_M1, "bezier_M1"),
+            bezier_m2        = num(self.bezier_M2, "bezier_M2"),
+            bezier_weight    = num(self.bezier_weight, "bezier_weight"),
+            vengrave_feed    = num(self.Veng_feed, "Veng_feed"),
+            vengrave_passes  = passes(self.Veng_passes, "Veng_passes"),
+            vengrave_power   = num(self.Veng_power, "Veng_power"),
+            vcut_feed        = num(self.Vcut_feed, "Vcut_feed"),
+            vcut_passes      = passes(self.Vcut_passes, "Vcut_passes"),
+            vcut_power       = num(self.Vcut_power, "Vcut_power"),
+            gcode_passes     = passes(self.Gcde_passes, "Gcde_passes"),
+            gcode_power      = num(self.Gcode_power, "Gcode_power"),
+            trace_feed       = num(self.trace_speed, "trace_speed"),
+            trace_with_laser = self.trace_w_laser.get(),
+            trace_gap        = num(self.trace_gap, "trace_gap"),
+            trace_power      = num(self.Trace_power, "Trace_power"),
+        )
+
   
     def send_data(self,operation_type=None, output_filename=None):
-        num_passes=0
         if self.k40 == None and output_filename == None:
             self.statusMessage.set("Laser Cutter is not Initialized...")
             self.statusbar.configure( bg = 'red' ) 
             return
         try:
-            feed_factor=self.feed_factor()
-            
-            if self.inputCSYS.get() and self.RengData.image == None:
-                xmin,xmax,ymin,ymax = 0.0,0.0,0.0,0.0
+            settings = self.job_settings()
+            trace_coords = None
+            if operation_type.find("Trace_Eng") > -1:
+                trace_coords = self.trace_coords
+            chunks = kcore_job.build_job(self.design, settings, operation_type,
+                                         trace_coords=trace_coords,
+                                         progress=self.show_progress,
+                                         update_gui=self.update_gui,
+                                         stop=self.stop)
+            if settings.power_per_stage:
+                # M3 power control: set the power, then send each stage separately
+                for chunk in chunks:
+                    self.send_egv_data(chunk.data, 1, power_level=chunk.power)
+                    self.menu_View_Refresh()
+                self.master.update()
             else:
-                xmin,xmax,ymin,ymax = self.Get_Design_Bounds() 
-                        
-            startx = xmin
-            starty = ymax
-
-            if self.HomeUR.get():
-                Xscale = float(self.LaserXscale.get())
-                FlipXoffset = Xscale*xmin + Xscale*xmax
-                if self.rotate.get():
-                    startx = -xmin
-            else:
-                FlipXoffset = None
-
-            if self.rotary.get():
-                Rapid_Feed = float(self.rapid_feed.get())*feed_factor
-            else:
-                Rapid_Feed = 0.0
-                
-            Raster_Eng_data=[]
-            Vector_Eng_data=[]
-            Trace_Eng_data=[]
-            Vector_Cut_data=[]
-            G_code_Cut_data=[]
-                        
-            if (operation_type.find("Vector_Cut") > -1) and  (self.VcutData.ecoords!=[]):
-                Feed_Rate = float(self.Vcut_feed.get())*feed_factor
-                self.statusMessage.set("Vector Cut: Determining Cut Order....")
-                self.master.update()
-                if not self.VcutData.sorted and self.inside_first.get():
-                    self.VcutData.set_ecoords(self.optimize_paths(self.VcutData.ecoords),data_sorted=True)
-
-
-##                DEBUG_PLOT=False
-##                test_ecoords=self.VcutData.ecoords
-##                if DEBUG_PLOT:
-##                    import matplotlib.pyplot as plt
-##                    plt.ion()
-##                    plt.clf()         
-##                    X=[]
-##                    Y=[]
-##                    LOOP_OLD = test_ecoords[0][2]
-##                    for i in range(len(test_ecoords)):
-##                        LOOP = test_ecoords[i][2]
-##                        if LOOP != LOOP_OLD:
-##                            plt.plot(X,Y)
-##                            plt.pause(.5)
-##                            X=[]
-##                            Y=[]
-##                            LOOP_OLD=LOOP
-##                        X.append(test_ecoords[i][0])
-##                        Y.append(test_ecoords[i][1])
-##                    plt.plot(X,Y)
-
-
-                self.statusMessage.set("Generating EGV data...")
-                self.master.update()
-
-                Vcut_coords = self.VcutData.ecoords
-                if self.mirror.get() or self.rotate.get():
-                    Vcut_coords = self.mirror_rotate_vector_coords(Vcut_coords)
-
-                Vcut_coords,startx,starty = self.scale_vector_coords(Vcut_coords,startx,starty)
-                Vector_Cut_egv_inst = egv(target=lambda s:Vector_Cut_data.append(s))   
-                Vector_Cut_egv_inst.make_egv_data(
-                                                Vcut_coords,                      \
-                                                startX=startx,                    \
-                                                startY=starty,                    \
-                                                Feed = Feed_Rate,                 \
-                                                board_name=self.board_name.get(), \
-                                                Raster_step = 0,                  \
-                                                update_gui=self.update_gui,       \
-                                                stop_calc=self.stop,              \
-                                                FlipXoffset=FlipXoffset,          \
-                                                Rapid_Feed_Rate = Rapid_Feed,     \
-                                                use_laser=True
-                                                )
-
-            if (operation_type.find("Vector_Eng") > -1) and  (self.VengData.ecoords!=[]):
-                Feed_Rate = float(self.Veng_feed.get())*feed_factor
-                self.statusMessage.set("Vector Engrave: Determining Cut Order....")
-                self.master.update()
-                if not self.VengData.sorted and self.inside_first.get():
-                    self.VengData.set_ecoords(self.optimize_paths(self.VengData.ecoords,inside_check=False),data_sorted=True)
-                self.statusMessage.set("Generating EGV data...")
-                self.master.update()
-
-                Veng_coords = self.VengData.ecoords
-                if self.mirror.get() or self.rotate.get():
-                    Veng_coords = self.mirror_rotate_vector_coords(Veng_coords)
-
-                Veng_coords,startx,starty = self.scale_vector_coords(Veng_coords,startx,starty)
-                Vector_Eng_egv_inst = egv(target=lambda s:Vector_Eng_data.append(s))
-                Vector_Eng_egv_inst.make_egv_data(
-                                                Veng_coords,                      \
-                                                startX=startx,                    \
-                                                startY=starty,                    \
-                                                Feed = Feed_Rate,                 \
-                                                board_name=self.board_name.get(), \
-                                                Raster_step = 0,                  \
-                                                update_gui=self.update_gui,       \
-                                                stop_calc=self.stop,              \
-                                                FlipXoffset=FlipXoffset,          \
-                                                Rapid_Feed_Rate = Rapid_Feed,     \
-                                                use_laser=True
-                                                )
-
-
-            if (operation_type.find("Trace_Eng") > -1) and (self.trace_coords!=[]):
-                Feed_Rate = float(self.trace_speed.get())*feed_factor
-                laser_on = self.trace_w_laser.get()
-                self.statusMessage.set("Generating EGV data...")
-                self.master.update()
-                Trace_Eng_egv_inst = egv(target=lambda s:Trace_Eng_data.append(s))
-                Trace_Eng_egv_inst.make_egv_data(
-                                                self.trace_coords,                \
-                                                startX=startx,                    \
-                                                startY=starty,                    \
-                                                Feed = Feed_Rate,                 \
-                                                board_name=self.board_name.get(), \
-                                                Raster_step = 0,                  \
-                                                update_gui=self.update_gui,       \
-                                                stop_calc=self.stop,              \
-                                                FlipXoffset=FlipXoffset,          \
-                                                Rapid_Feed_Rate = Rapid_Feed,     \
-                                                use_laser=laser_on
-                                                )
-                
-                
-            if (operation_type.find("Raster_Eng") > -1) and  (self.RengData.ecoords!=[]):
-                Feed_Rate = float(self.Reng_feed.get())*feed_factor
-                Raster_step = self.get_raster_step_1000in()
-                if not self.engraveUP.get():
-                    Raster_step = -Raster_step
-                    
-                raster_startx = 0
-
-                Yscale = float(self.LaserYscale.get())
-                if self.rotary.get():
-                    Rscale = float(self.LaserRscale.get())
-                    Yscale = Yscale*Rscale
-                raster_starty = Yscale*starty
-
-                self.statusMessage.set("Generating EGV data...")
-                self.master.update()
-                Raster_Eng_egv_inst = egv(target=lambda s:Raster_Eng_data.append(s))
-                Raster_Eng_egv_inst.make_egv_data(
-                                                self.RengData.ecoords,            \
-                                                startX=raster_startx,             \
-                                                startY=raster_starty,             \
-                                                Feed = Feed_Rate,                 \
-                                                board_name=self.board_name.get(), \
-                                                Raster_step = Raster_step,        \
-                                                update_gui=self.update_gui,       \
-                                                stop_calc=self.stop,              \
-                                                FlipXoffset=FlipXoffset,          \
-                                                Rapid_Feed_Rate = Rapid_Feed,     \
-                                                use_laser=True
-                                                )
-                #print(len(Raster_Eng_data))
-                Raster_Eng_data=Raster_Eng_egv_inst.strip_redundant_codes(Raster_Eng_data)
-                #print(len(Raster_Eng_data))
-
-            if (operation_type.find("Gcode_Cut") > -1) and (self.GcodeData.ecoords!=[]):
-                self.statusMessage.set("Generating EGV data...")
-                self.master.update()
-                Gcode_coords = self.GcodeData.ecoords
-                if self.mirror.get() or self.rotate.get():
-                    Gcode_coords = self.mirror_rotate_vector_coords(Gcode_coords)
-
-                Gcode_coords,startx,starty = self.scale_vector_coords(Gcode_coords,startx,starty)
-                G_code_Cut_egv_inst = egv(target=lambda s:G_code_Cut_data.append(s))
-                G_code_Cut_egv_inst.make_egv_data(
-                                                Gcode_coords,                     \
-                                                startX=startx,                    \
-                                                startY=starty,                    \
-                                                Feed = None,                      \
-                                                board_name=self.board_name.get(), \
-                                                Raster_step = 0,                  \
-                                                update_gui=self.update_gui,       \
-                                                stop_calc=self.stop,              \
-                                                FlipXoffset=FlipXoffset,          \
-                                                Rapid_Feed_Rate = Rapid_Feed,     \
-                                                use_laser=True
-                                                )
-                
-            if self.display_power:
-                #########################################################
-                ### Send data to laser with power changed in between  ###
-                #########################################################
-                max_power = float(self.max_power.get())
-                if Trace_Eng_data!=[]:
-                    data=[]
-                    data.append(ord("I"))
-                    trace_passes=1
-                    for k in range(trace_passes):
-                        if len(data)> 4:
-                            data[-4]=ord("@")
-                        data.extend(Trace_Eng_data)
-                        
-                    power_fraction = float(self.Trace_power.get())
-                    if power_fraction > 1: power_fraction=0
-                    power = power_fraction*max_power
-        
-                    self.send_egv_data(data, 1, power_level=power)
-                    self.menu_View_Refresh()
-                        
-                if Raster_Eng_data!=[]:
-                    data=[]
-                    data.append(ord("I"))
-                    num_passes = int(float(self.Reng_passes.get()))
-                    for k in range(num_passes):
-                        if len(data)> 4:
-                            data[-4]=ord("@")
-                        data.extend(Raster_Eng_data)
-                    power_fraction = float(self.Reng_power.get())
-                    if power_fraction > 1: power_fraction=0
-                    power = power_fraction*max_power
-                    self.send_egv_data(data, 1, power_level=power)
-                    self.menu_View_Refresh()
-
-                if Vector_Eng_data!=[]:
-                    data=[]
-                    data.append(ord("I"))
-                    num_passes = int(float(self.Veng_passes.get()))
-                    for k in range(num_passes):
-                        if len(data)> 4:
-                            data[-4]=ord("@")
-                        data.extend(Vector_Eng_data)
-                    power_fraction = float(self.Veng_power.get())
-                    if power_fraction > 1: power_fraction=0
-                    power = power_fraction*max_power
-                    self.send_egv_data(data, 1, power_level=power)
-                    self.menu_View_Refresh()
-
-                if Vector_Cut_data!=[]:
-                    data=[]
-                    data.append(ord("I"))
-                    num_passes = int(float(self.Vcut_passes.get()))
-                    for k in range(num_passes):
-                        if len(data)> 4:
-                            data[-4]=ord("@")
-                        data.extend(Vector_Cut_data)
-                    power_fraction = float(self.Vcut_power.get())
-                    if power_fraction > 1: power_fraction=0
-                    power = power_fraction*max_power
-                    self.send_egv_data(data, 1, power_level=power)
-                    self.menu_View_Refresh()
-
-                if G_code_Cut_data!=[]:
-                    data=[]
-                    data.append(ord("I"))
-                    num_passes = int(float(self.Gcde_passes.get()))
-                    for k in range(num_passes):
-                        if len(data)> 4:
-                            data[-4]=ord("@")
-                        data.extend(G_code_Cut_data)
-                    power_fraction = float(self.Gcode_power.get())
-                    if power_fraction > 1: power_fraction=0
-                    power = power_fraction*max_power
-                    self.send_egv_data(data, 1, power_level=power)
-                    self.menu_View_Refresh()
-
-                #if len(data)< 4:
-                #    raise Exception("No laser data was generated.")
-                #########################################################
-                self.master.update()
-                #if output_filename != None:
-                #    self.write_egv_to_file(data,output_filename)
-                #else:
-                #    self.send_egv_data(data, 1, power_level=None)
-                #    self.menu_View_Refresh()
-                #########################################################
-            else:
-                #########################################################
-                ### Join Resulting Data together for export into file ###
-                ### Power settings are not saved to the file          ###
-                #########################################################
-                data=[]
-                data.append(ord("I"))
-                if Trace_Eng_data!=[]:
-                    trace_passes=1
-                    for k in range(trace_passes):
-                        if len(data)> 4:
-                            data[-4]=ord("@")
-                        data.extend(Trace_Eng_data)
-                if Raster_Eng_data!=[]:
-                    num_passes = int(float(self.Reng_passes.get()))
-                    for k in range(num_passes):
-                        if len(data)> 4:
-                            data[-4]=ord("@")
-                        data.extend(Raster_Eng_data)
-                if Vector_Eng_data!=[]:
-                    num_passes = int(float(self.Veng_passes.get()))
-                    for k in range(num_passes):
-                        if len(data)> 4:
-                            data[-4]=ord("@")
-                        data.extend(Vector_Eng_data)
-                if Vector_Cut_data!=[]:
-                    num_passes = int(float(self.Vcut_passes.get()))
-                    for k in range(num_passes):
-                        if len(data)> 4:
-                            data[-4]=ord("@")
-                        data.extend(Vector_Cut_data)
-                if G_code_Cut_data!=[]:
-                    num_passes = int(float(self.Gcde_passes.get()))
-                    for k in range(num_passes):
-                        if len(data)> 4:
-                            data[-4]=ord("@")
-                        data.extend(G_code_Cut_data)
-                if len(data)< 4:
-                    raise Exception("No laser data was generated.")
-                #########################################################
+                data = chunks[0].data
                 self.master.update()
                 if output_filename != None:
                     self.write_egv_to_file(data,output_filename)
                 else:
                     self.send_egv_data(data, 1, power_level=None)
                     self.menu_View_Refresh()
-                #########################################################
-                
+
         except MemoryError as e:
             msg1 = "Memory Error:"
             msg2 = "Memory Error:  Out of Memory."
@@ -3979,11 +3261,8 @@ class Application(Frame):
             debug_message(traceback.format_exc())
         
         except Exception as e:
-            #print(traceback.format_exc())
             msg1 = "Sending Data Stopped: "
             msg2 = "%s" %(e)
-            if msg2 == "":
-                formatted_lines = traceback.format_exc().splitlines()
             self.statusMessage.set((msg1+msg2).split("\n")[0] )
             self.statusbar.configure( bg = 'red' )
             message_box(msg1, msg2)
@@ -4043,20 +3322,11 @@ class Application(Frame):
         if len(data) == 0:
             raise Exception("No data available to write to file.")
         try:
-            fout = open(fname,'w')
+            fout = open(fname,'wb')
         except:
             raise Exception("Unable to open file ( %s ) for writing." %(fname))
-        fout.write("Document type : LHYMICRO-GL file\n")
-        fout.write("Creator-Software: K40 Whisperer\n")
-        
-        fout.write("\n")
-        fout.write("%0%0%0%0%")
-        for char_val in data:
-            char = chr(char_val)
-            fout.write("%s" %(char))
-            
-        #fout.write("\n")
-        fout.close
+        with fout:
+            fout.write(kcore_job.egv_file_bytes(data))
         self.menu_View_Refresh()
         self.statusMessage.set("Data saved to: %s" %(fname))
         
@@ -5111,27 +4381,6 @@ class Application(Frame):
             )
 
 
-    def offset_eccords(self,ecoords_in,offset_val):
-        if not PYCLIPPER:
-            return ecoords_in
-        
-        loop_num = ecoords_in[0][2]
-        pco = pyclipper.PyclipperOffset()
-        ecoords_out=[]
-        pyclip_path = []
-        for i in range(0,len(ecoords_in)):
-            pyclip_path.append([ecoords_in[i][0]*1000,ecoords_in[i][1]*1000])
-
-        pco.AddPath(pyclip_path, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
-        try:
-            plot_coords = pco.Execute(offset_val*1000.0)[0]
-            plot_coords.append(plot_coords[0])
-        except:
-            plot_coords=[]
-            
-        for i in range(0,len(plot_coords)):
-            ecoords_out.append([plot_coords[i][0]/1000.0,plot_coords[i][1]/1000.0,loop_num])
-        return ecoords_out
     
         
     def Plot_circle(self, XX, YY, Xleft, Ytop, PlotScale, col, radius=0, cross_hair=False):
