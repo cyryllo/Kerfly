@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 *.egv.tmp
 tests/output/
+dist/
