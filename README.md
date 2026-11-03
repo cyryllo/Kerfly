@@ -1,5 +1,7 @@
 # Kerfly
 
+[![tests](https://github.com/cyryllo/Kerfly/actions/workflows/tests.yml/badge.svg)](https://github.com/cyryllo/Kerfly/actions/workflows/tests.yml)
+
 Kerfly is laser cutter control software for K40-class CO2 lasers with Lihuiyu
 (M2 Nano family) controller boards. It runs on Linux (Debian first) and Windows.
 
@@ -65,6 +67,12 @@ See [INSTALL.md](INSTALL.md) ([Polish version](INSTALL_pl.md)). Start Kerfly
 with `start_kerfly.bat` on Windows or `./start_kerfly.sh` on Linux. The first
 start sets up Python and the libraries.
 
+To check an installation, run `start_kerfly.bat --self-test` (Windows) or
+`./start_kerfly.sh --self-test` (Linux). It reports the libraries, the USB
+driver, whether a K40 is connected (without moving it), Inkscape, the
+settings folder, and whether the window opens a design. Please include its
+output in bug reports.
+
 ## Running from source (Debian / Ubuntu)
 
 ```bash
@@ -83,8 +91,8 @@ USB access without root needs a udev rule. See [README_Linux.txt](README_Linux.t
 
 ## Running from source (Windows)
 
-Install Python 3 and Inkscape, then run `pip install -r requirements.txt` and
-`python kerfly.py`. The laser needs the libusb-win32 driver, which you
+Install Python 3.13 (Inkscape is optional), then run
+`pip install -r requirements.txt` and `python kerfly.py`. The laser needs the libusb-win32 driver, which you
 can install with [Zadig](https://zadig.akeo.ie/).
 
 ## Languages
@@ -137,7 +145,13 @@ and G-code jobs, M1/M2/M3/B1 boards, rotate, mirror, home in upper right and
 multiple passes. Each case compares the exact bytes the laser would receive
 with the baseline produced by the unmodified 0.71. M3 power mode is captured
 through a fake USB device. SVG-based baselines depend on the Inkscape version
-(currently 1.4).
+(currently 1.4). Without Inkscape, those cases are skipped.
+
+GitHub Actions runs every push on clean Windows and Ubuntu machines. It
+installs Kerfly with `start_kerfly.bat` / `start_kerfly.sh`, runs the
+self-test, and then runs all the test suites above. These machines have no
+Inkscape, so the SVG-based cases are skipped there. All the other laser output
+is checked byte-for-byte on Windows as well.
 
 ## License
 

@@ -33,6 +33,13 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
   assigned to layers; material library (JSON in the user's settings folder)
 - [x] Translations: English, Polish, German, Spanish, French (gettext;
   DE/ES/FR need a native speaker review)
+- [x] Project files (`.kerfly`): layout, layers and copies of the source files
+- [x] SVG without Inkscape (built-in Qt renderer; Inkscape is still used when
+  installed, and for SVG text that is cut or engraved as an outline)
+- [x] Material library export and import
+- [x] Layout sized from the desktop font (KDE/GNOME), so it fits any font and
+  language
+- [x] `--self-test` and GitHub Actions on clean Windows and Ubuntu machines
 
 ## Next: complete the K40 Whisperer feature set in the new window
 
@@ -103,8 +110,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - Linux: AppImage. PyInstaller collects the program and libraries, and
   appimagetool packs the result. Builds run on an older glibc in GitHub
   Actions. USB access needs a udev rule: Kerfly will offer to install it once
-  through `pkexec`. Inkscape stays external (only needed for SVG) until SVG
-  is read without it.
+  through `pkexec`. Inkscape stays external and optional (SVG text to paths).
 - Windows: PyInstaller `.exe` and an installer that also sets up the libusb
   driver. Reference: Scorch's
   [K40 Whisperer Driver Installer](https://github.com/scorchworks/K40-Whisperer-Driver-Installer).
