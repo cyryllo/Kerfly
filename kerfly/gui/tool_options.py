@@ -77,12 +77,9 @@ class ToolOptionsBar(QWidget):
                 w.deleteLater()
 
     def show_hint(self):
+        """Nothing to edit: leave the bar empty (a hint text made the bar taller in narrow windows)."""
         self.spec = None
         self._clear()
-        label = QLabel(_("Choose a drawing tool on the right, or select a drawn shape, to see its options here."))
-        label.setObjectName("tool_options_hint")
-        label.setWordWrap(True)
-        self.row.addWidget(label, 1)
 
     def _add(self, content, caption):
         if self.row.count():
