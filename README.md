@@ -14,12 +14,14 @@ control. The original release is tagged `upstream-0.71` in this repository.
 Early development (0.1). Kerfly has a new Qt (PySide6) window. It can open
 SVG, DXF and G-code files, and bitmap images (PNG, JPG, BMP, TIFF, GIF, WebP)
 for raster engraving without Inkscape. It shows a preview of the laser bed
-with zoom and pan, jog the head, move it to the design corners or a given position, and
-run raster engrave, vector engrave, vector cut, G-code and boundary trace
-jobs. It estimates the job time, saves jobs as EGV files and can send
-existing EGV files. M3 boards also get test fire and power per operation. Long jobs
-run in the background, and Stop pauses the laser with a choice to resume or
-terminate.
+with zoom and pan.
+
+It can jog the head, move it to the design corners or to a given position,
+and run raster engrave, vector engrave, vector cut, G-code and boundary trace
+jobs. It estimates the job time, saves jobs as EGV files and sends existing
+EGV files. On M3 boards it also offers test fire and power per operation.
+Long jobs run in the background. Stop pauses the laser and lets you resume or
+terminate the job.
 
 The original K40 Whisperer window (`k40_whisperer.py`) is still included and
 uses the same core. Batch mode is not in the new window yet.
