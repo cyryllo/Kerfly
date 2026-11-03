@@ -12,9 +12,22 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QDoubleSpinBox, QFormL
                                QPushButton, QSpinBox, QVBoxLayout, QWidget)
 
 from kerfly.core.materials import KINDS, Material, OperationSettings
+from kerfly.gui.sizing import fit_spin
+from kerfly.gui.layers_panel import CUT, ENGRAVE, KIND_NAMES, RASTER
 from kerfly.i18n import N_, _
 
-KIND_TITLES = {"cut": N_("Cut"), "engrave": N_("Engrave outline"), "raster": N_("Raster engrave")}
+KIND_TITLES = {"cut": KIND_NAMES[CUT], "engrave": KIND_NAMES[ENGRAVE], "raster": KIND_NAMES[RASTER]}
+
+
+def list_label(m):
+    """'Plywood 3 mm', or 'Plywood (3 mm)' when the name does not say the thickness."""
+    if not m.thickness_mm:
+        return m.name
+    t = "%g mm" % m.thickness_mm
+    compact = m.name.replace(" ", "").replace(",", ".").lower()
+    if t.replace(" ", "") in compact:
+        return m.name
+    return "%s (%s)" % (m.name, t)
 
 
 class MaterialsDialog(QDialog):
@@ -59,6 +72,7 @@ class MaterialsDialog(QDialog):
         self.thickness.setRange(0, 1000)
         self.thickness.setDecimals(1)
         self.thickness.setSuffix(" mm")
+        fit_spin(self.thickness, 999.9)
         self.thickness.valueChanged.connect(self._store)
         top.addRow(_("Thickness:"), self.thickness)
         form.addLayout(top)
@@ -113,7 +127,7 @@ class MaterialsDialog(QDialog):
         self.list.blockSignals(True)
         self.list.clear()
         for m in self.materials:
-            self.list.addItem(m.name + (" (%g mm)" % m.thickness_mm if m.thickness_mm else ""))
+            self.list.addItem(list_label(m))
         self.list.blockSignals(False)
         if self.materials:
             self.list.setCurrentRow(max(0, min(select, len(self.materials) - 1)))
@@ -146,7 +160,7 @@ class MaterialsDialog(QDialog):
         for kind, (speed, passes, power) in self.fields.items():
             m.settings[kind] = OperationSettings(speed.value(), passes.value(), power.value() / 100.0)
         item = self.list.item(row)
-        item.setText(m.name + (" (%g mm)" % m.thickness_mm if m.thickness_mm else ""))
+        item.setText(list_label(m))
 
     def _new(self):
         self.materials.append(Material(_("New material"), 3.0, "",

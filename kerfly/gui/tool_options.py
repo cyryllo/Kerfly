@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (QComboBox, QDoubleSpinBox, QFontComboBox, QFrame,
                                QVBoxLayout, QWidget)
 
 from kerfly.gui import icons
+from kerfly.gui.sizing import chars_width
 from kerfly.i18n import N_, _
 
 OPERATION_NAMES = [("cut", N_("Cut")), ("engrave", N_("Engrave outline")), ("fill", N_("Fill (raster)"))]
@@ -100,8 +101,7 @@ class ToolOptionsBar(QWidget):
             op.addItem(_(name), key)
         op.setCurrentIndex(max(0, op.findData(self.spec.operation)))
         op.setToolTip(_("Operation"))
-        op.setFixedWidth(146)
-        op.view().setMinimumWidth(op.view().sizeHintForColumn(0) + 24)
+        op.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         op.currentIndexChanged.connect(lambda _i: self._set("operation", op.currentData()))
         self._add(op, title)
 
@@ -119,7 +119,8 @@ class ToolOptionsBar(QWidget):
             text = QPlainTextEdit(self.spec.text)
             text.setPlaceholderText(_("Text"))
             text.setToolTip(_("Text; press Enter for a new line"))
-            text.setFixedSize(112, 52)
+            fm = text.fontMetrics()
+            text.setFixedSize(chars_width(text, 16), fm.lineSpacing() * 2 + 14)
             text.setTabChangesFocus(True)
             text.textChanged.connect(lambda: self._text_edited(text.toPlainText()))
             self._add(text, _("Content"))
@@ -131,7 +132,7 @@ class ToolOptionsBar(QWidget):
             g.setVerticalSpacing(4)
             font = QFontComboBox()
             font.setCurrentFont(QFont(self.spec.font_family))
-            font.setFixedWidth(128)
+            font.setFixedWidth(chars_width(font, 16) + 28)
             font.setToolTip(_("Font"))
             font.currentFontChanged.connect(lambda f: self._set("font_family", f.family()))
             g.addWidget(font, 0, 0, 1, 3)

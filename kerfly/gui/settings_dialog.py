@@ -5,7 +5,7 @@ Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox,
-                               QFileDialog, QFormLayout, QHBoxLayout, QLineEdit, QPushButton,
+                               QFileDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
                                QSpinBox, QTabWidget, QVBoxLayout, QWidget)
 
 from kerfly.core.config import BOARD_NAMES, is_true
@@ -80,13 +80,27 @@ class SettingsDialog(QDialog):
         speed_unit = "mm/s" if units == "mm" else "in/min"
 
         tabs = QTabWidget()
+        fm = self.fontMetrics()
+        # one label column width for every tab, so fields line up when switching tabs
+        label_width = max(fm.horizontalAdvance(_(label)) for _t, fields in TABS
+                          for _k, label, kind, _o in fields if kind != "bool") + 12
         for title, fields in TABS:
             page = QWidget()
-            form = QFormLayout(page)
-            for key, label, kind, opt in fields:
+            grid = QGridLayout(page)
+            grid.setColumnMinimumWidth(0, label_width)
+            grid.setColumnStretch(2, 1)
+            grid.setHorizontalSpacing(8)
+            for row, (key, label, kind, opt) in enumerate(fields):
                 widget, getter = self._make_field(key, kind, opt, len_unit, speed_unit)
-                form.addRow(_(label), widget)
+                if kind == "bool":
+                    widget.setText(_(label))          # the text sits right next to the box
+                    grid.addWidget(widget, row, 0, 1, 3)
+                else:
+                    grid.addWidget(QLabel(_(label)), row, 0)
+                    span = 2 if kind == "path" else 1
+                    grid.addWidget(widget, row, 1, 1, span)
                 self._getters[key] = getter
+            grid.setRowStretch(len(fields), 1)
             tabs.addTab(page, _(title))
         tabs.setCurrentIndex(tab)
 
@@ -143,6 +157,7 @@ class SettingsDialog(QDialog):
             row.setContentsMargins(0, 0, 0, 0)
             edit = QLineEdit(str(value))
             edit.setPlaceholderText(_("found automatically"))
+            edit.setMinimumWidth(edit.fontMetrics().averageCharWidth() * 36)
             browse = QPushButton(_("Browse…"))
 
             def pick():

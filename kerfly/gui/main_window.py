@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QDockWidget, QDoubleSpin
 
 from kerfly import __version__
 from kerfly.core import config, egvfile, job, loaders
+from kerfly.gui.sizing import chars_width, fit_spin, refit_spin
 from kerfly.i18n import C_, N_, _, ngettext, tr_message
 from kerfly.core.config import is_true
 from kerfly.core.design import Design
@@ -469,9 +470,9 @@ class MainWindow(QMainWindow):
                 w.valueChanged.connect(lambda v: self._set_value(key, _num_text(v)))
                 self._unit_widgets.append((w, kind, key, 1.0))
         # compact columns in the operations table
-        widths = {"int": 58, "power": 72, "speed": 112}
-        if kind in widths:
-            w.setFixedWidth(widths[kind])
+        samples = {"int": 100, "power": 100, "speed": 9999.9}
+        if kind in samples:
+            fit_spin(w, samples[kind])
         return w
 
     def _build_panel(self):
@@ -517,7 +518,7 @@ class MainWindow(QMainWindow):
             spin = QDoubleSpinBox()
             spin.setRange(-10000.0 if key in "xy" else 0.01, 10000.0)
             spin.setDecimals(2)
-            spin.setFixedWidth(88)
+            fit_spin(spin, -9999.99)
             spin.setKeyboardTracking(False)          # apply on Enter / focus out, not per digit
             spin.setToolTip(_(tip))
             spin.valueChanged.connect(lambda _v, k=key: self._selection_field_changed(k))
@@ -541,7 +542,7 @@ class MainWindow(QMainWindow):
         self.sel_rotation.setRange(-360.0, 360.0)
         self.sel_rotation.setDecimals(1)
         self.sel_rotation.setSuffix("\u00b0")
-        self.sel_rotation.setFixedWidth(70)
+        fit_spin(self.sel_rotation, -359.9)
         self.sel_rotation.setKeyboardTracking(False)
         self.sel_rotation.setToolTip(_("Rotation, counter-clockwise. You can also drag the round handle "
                                        "above the element (hold Shift for 15\u00b0 steps)."))
@@ -635,7 +636,7 @@ class MainWindow(QMainWindow):
 
         self.jog_step = self._spin("jog_step", "len", 0.01, 1000, 2)
         self.jog_step.setToolTip(_("Distance moved by one arrow click"))
-        self.jog_step.setFixedWidth(110)
+        fit_spin(self.jog_step, 999.99)
         row = QHBoxLayout()
         row.addStretch(1)
         row.addWidget(QLabel(_("Step:")))
@@ -654,7 +655,7 @@ class MainWindow(QMainWindow):
         for w, key, sign in ((self.goto_x, "gotoX", 1.0), (self.goto_y, "gotoY", -1.0)):
             w.setRange(0.0, 10000.0)
             w.setDecimals(2)
-            w.setFixedWidth(92)
+            fit_spin(w, 9999.99)
             self._unit_widgets.append((w, "len", key, sign))
         try:
             self.goto_x.setValue(float(self.values.get("gotoX") or 0))
@@ -689,7 +690,7 @@ class MainWindow(QMainWindow):
         row.addWidget(self._spin("test_power", "power", 0, 100, 0))
         t = self._spin("test_time", "int", 0, 1000)
         t.setSuffix(" ms")
-        t.setFixedWidth(80)
+        fit_spin(t, 1000)
         row.addWidget(t)
         row.addStretch(1)
         v.addWidget(self.test_fire_row)
@@ -1253,7 +1254,7 @@ class MainWindow(QMainWindow):
                 combo.setItemData(combo.count() - 1, QColor(layer.color), Qt.DecorationRole)
             current = layer_of(e, kind, self.layers)
             combo.setCurrentIndex(max(0, combo.findData(current.id if current else None)))
-            combo.setFixedWidth(130)
+            combo.setFixedWidth(chars_width(combo, 14) + 48)
             combo.setToolTip(_(LAYER_KIND_NAMES[kind]))
             combo.currentIndexChanged.connect(lambda _i, c=combo, k=kind: self._assign_layer(k, c.currentData()))
             grid.addWidget(combo, row % 2, row // 2)
@@ -1391,6 +1392,7 @@ class MainWindow(QMainWindow):
         speed = "mm/s" if units == "mm" else "in/min"
         for w, kind, _key, _sign in self._unit_widgets:
             w.setSuffix(" " + (units if kind == "len" else speed))
+            refit_spin(w)
 
     def _reload_spin_values(self):
         """Re-read unit-dependent fields after the units changed."""

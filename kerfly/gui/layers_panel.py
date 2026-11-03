@@ -13,6 +13,7 @@ from PySide6.QtWidgets import (QCheckBox, QColorDialog, QComboBox, QDoubleSpinBo
 
 from kerfly.core.layers import CUT, ENGRAVE, GCODE, RASTER
 from kerfly.gui import icons
+from kerfly.gui.sizing import fit_spin
 from kerfly.i18n import N_, _
 
 KIND_NAMES = {RASTER: N_("Raster engrave"), ENGRAVE: N_("Vector engrave"), CUT: N_("Vector cut"),
@@ -155,7 +156,9 @@ class LayersPanel(QWidget):
         h.addWidget(color)
         name = QLineEdit(layer.name)
         name.setFrame(False)
-        name.setMinimumWidth(100)
+        name.setObjectName("layer_name")
+        fm = name.fontMetrics()
+        name.setMinimumWidth(max(fm.horizontalAdvance(layer.name), fm.horizontalAdvance(_("Raster engrave"))) + 12)
         name.setToolTip(_("Layer name; click to rename"))
         name.editingFinished.connect(lambda l=layer, e=name: self._rename(l, e.text()))
         h.addWidget(name, 1)
@@ -166,7 +169,7 @@ class LayersPanel(QWidget):
             speed.setDecimals(1)
             speed.setSuffix(" " + self.speed_unit)
             speed.setValue(layer.speed)
-            speed.setFixedWidth(104)
+            fit_spin(speed, 9999.9)
             speed.setKeyboardTracking(False)
             speed.valueChanged.connect(lambda v, l=layer: self._set(l, "speed", v))
             self.grid.addWidget(speed, row, 2)
@@ -176,7 +179,7 @@ class LayersPanel(QWidget):
         passes = QSpinBox()
         passes.setRange(1, 100)
         passes.setValue(layer.passes)
-        passes.setFixedWidth(54)
+        fit_spin(passes, 100)
         passes.setKeyboardTracking(False)
         passes.valueChanged.connect(lambda v, l=layer: self._set(l, "passes", v))
         self.grid.addWidget(passes, row, 3)
@@ -186,7 +189,7 @@ class LayersPanel(QWidget):
             power.setDecimals(0)
             power.setSuffix(" %")
             power.setValue(layer.power * 100.0)
-            power.setFixedWidth(64)
+            fit_spin(power, 100)
             power.setKeyboardTracking(False)
             power.valueChanged.connect(lambda v, l=layer: self._set(l, "power", v / 100.0))
             self.grid.addWidget(power, row, 4)
@@ -207,7 +210,7 @@ class LayersPanel(QWidget):
             calc.hide()
             th.addWidget(calc)
         th.addStretch(1)
-        time_cell.setMinimumWidth(60)
+        time_cell.setMinimumWidth(max(60, time_label.fontMetrics().horizontalAdvance("0:00:00") + 10))
         self.grid.addWidget(time_cell, row, 5)
         if removable:
             rm = QToolButton()
