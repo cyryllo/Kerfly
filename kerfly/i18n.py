@@ -2,9 +2,10 @@
 Translations (gettext).
 
 Usage in any module:
-    from kerfly.i18n import _, N_
+    from kerfly.i18n import _, N_, C_
     label = _("Vector cut")          # translated now
     NAMES = [N_("Vector cut")]       # marked for extraction, translate later with _()
+    short = C_("toolbar", "Reload")  # translated in a context (may use a line break)
 
 Translation files: kerfly/locale/<lang>/LC_MESSAGES/kerfly.po (+ compiled .mo).
 To update them after changing strings, run:  python tools/i18n.py
@@ -39,6 +40,12 @@ def _(message):
 
 def ngettext(singular, plural, n):
     return _translation.ngettext(singular, plural, n)
+
+
+def C_(context, message):
+    """Translate a message in a context (e.g. short toolbar labels), so it can
+    be translated differently from the same English text elsewhere."""
+    return _translation.pgettext(context, message)
 
 
 def N_(message):

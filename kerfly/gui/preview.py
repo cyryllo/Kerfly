@@ -51,6 +51,7 @@ class ViewSignals(QObject):
     moved = Signal(object, float, float)        # element, dx, dy (inches, machine x, y up)
     scaled = Signal(object, float)              # element, factor (about its centre)
     rotated = Signal(object, float)             # element, degrees counter-clockwise
+    nudged = Signal(object, float, float)       # element, dx, dy in mm (screen right / up)
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -222,6 +223,7 @@ class PreviewView(QGraphicsView):
         self.signals = ViewSignals()
         self.home_ur = False
         self.bed_w_mm = 0.0
+        self.grid_mm = 0.0
         self._pixmaps = {}          # (id(design), id(image), negate, halftone) -> (pixmap, scale)
         self._items = []
         self._handles = []
@@ -262,6 +264,20 @@ class PreviewView(QGraphicsView):
             event.accept()
             return
         super().mouseReleaseEvent(event)
+
+    def keyPressEvent(self, event):
+        """Arrow keys move the selected element (1 mm or one grid step; Shift: 10x)."""
+        keys = {Qt.Key_Left: (-1, 0), Qt.Key_Right: (1, 0), Qt.Key_Up: (0, 1), Qt.Key_Down: (0, -1)}
+        items = self._selected_items()
+        if event.key() in keys and len(items) == 1 and not (event.modifiers() & Qt.ControlModifier):
+            step = self.grid_mm or 1.0
+            if event.modifiers() & Qt.ShiftModifier:
+                step *= 10
+            dx, dy = keys[event.key()]
+            self.signals.nudged.emit(items[0].element, dx * step, dy * step)
+            event.accept()
+            return
+        super().keyPressEvent(event)
 
     def fit_all(self):
         rect = self.scene().itemsBoundingRect()
@@ -337,7 +353,7 @@ class PreviewView(QGraphicsView):
         self._pixmaps[key] = result
         return result
 
-    def show_layout(self, elements, selected, settings, values, head, fit=False):
+    def show_layout(self, elements, selected, settings, values, head, fit=False, grid_mm=0.0):
         """Redraw the bed, the elements and the laser head (head in bed inches, y <= 0)."""
         self._rebuilding = True
         scene = self.scene()
@@ -350,12 +366,34 @@ class PreviewView(QGraphicsView):
         bed = scene.addRect(QRectF(0, 0, bed_w * MM, bed_h * MM),
                             _cosmetic_pen(COLORS["bed_border"]), QBrush(COLORS["bed"]))
         bed.setZValue(-10)
+        self.grid_mm = grid_mm
+        if grid_mm > 0:
+            # draw at least every 5 mm so a fine grid does not turn into a grey area
+            step = grid_mm * max(1, int(math.ceil(5.0 / grid_mm)))
+            minor = _cosmetic_pen(QColor("#d3d7dd"), 1)
+            major = _cosmetic_pen(QColor("#bfc5cd"), 1)
+            n = 0
+            x = 0.0
+            while x <= bed_w * MM + 1e-6:
+                line = scene.addLine(x, 0, x, bed_h * MM, major if n % 5 == 0 else minor)
+                line.setZValue(-9)
+                x += step
+                n += 1
+            n = 0
+            y = 0.0
+            while y <= bed_h * MM + 1e-6:
+                line = scene.addLine(0, y, bed_w * MM, y, major if n % 5 == 0 else minor)
+                line.setZValue(-9)
+                y += step
+                n += 1
         live = {id(e.design) for e in elements}
         self._pixmaps = {k: v for k, v in self._pixmaps.items() if k[0] in live}
 
         for e in elements:
             item = ElementItem(e, values, self)
             item.setTransform(element_transform(e, self.home_ur, self.bed_w_mm))
+            if not e.visible:
+                item.setOpacity(0.25)
             scene.addItem(item)
             self._items.append(item)
 

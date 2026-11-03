@@ -64,6 +64,13 @@ compatible with the GPL, so both were rewritten from scratch for Kerfly with
 the same interface. They were checked to give identical results to the
 originals, and the regression tests pass unchanged.
 
+## Icons
+
+| Files | Origin | License |
+|---|---|---|
+| `kerfly/gui/icons/tabler/*.svg` | [Tabler Icons](https://tabler.io/icons), Copyright (c) 2020-2026 Paweł Kuna | MIT (`kerfly/gui/icons/tabler/LICENSE`) |
+| `kerfly/gui/icons/__init__.py` jog pad icons | drawn for Kerfly in the style of the K40 Whisperer icons | GPL-3.0-or-later |
+
 ## Code borrowed from MeerK40t
 
 Code taken from [MeerK40t](https://github.com/meerk40t/meerk40t) in the future

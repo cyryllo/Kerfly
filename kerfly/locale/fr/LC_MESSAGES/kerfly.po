@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 21:57+0100\n"
+"POT-Creation-Date: 2026-11-03 22:06+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -28,6 +28,10 @@ msgstr[0] "%d élément"
 msgstr[1] "%d éléments"
 
 #, python-format
+msgid "%d mm"
+msgstr "%d mm"
+
+#, python-format
 msgid "%d × %d pixels"
 msgstr "%d × %d pixels"
 
@@ -40,6 +44,9 @@ msgstr "À &propos de Kerfly"
 
 msgid "&Add design…"
 msgstr "&Ajouter un dessin…"
+
+msgid "&Centre on the bed"
+msgstr "&Centrer sur le plateau"
 
 msgid "&Delete element"
 msgstr "&Supprimer l'élément"
@@ -74,6 +81,9 @@ msgstr "&Ouvrir un dessin…"
 msgid "&Quit"
 msgstr "&Quitter"
 
+msgid "&Redo"
+msgstr "&Rétablir"
+
 msgid "&Reload design"
 msgstr "&Recharger le dessin"
 
@@ -82,6 +92,12 @@ msgstr "&Paramètres"
 
 msgid "&Settings…"
 msgstr "&Paramètres…"
+
+msgid "&Snap to grid"
+msgstr "&Aimanter à la grille"
+
+msgid "&Undo"
+msgstr "&Annuler"
 
 msgid "&Unlock rail"
 msgstr "&Déverrouiller les axes"
@@ -120,6 +136,10 @@ msgstr "Une tâche est en cours. L'arrêter et quitter ?"
 
 msgid "About Kerfly"
 msgstr "À propos de Kerfly"
+
+msgctxt "toolbar"
+msgid "Add"
+msgstr "Ajouter"
 
 msgid "Add another file to the laser bed"
 msgstr "Ajouter un autre fichier sur le plateau"
@@ -167,8 +187,19 @@ msgstr "Calculer la durée raster"
 msgid "Centre"
 msgstr "Centre"
 
+msgctxt "toolbar"
+msgid "Centre"
+msgstr "Centrer"
+
+msgid "Centre the selected element, or the whole design, on the bed"
+msgstr "Centrer l'élément sélectionné ou tout le dessin sur le plateau"
+
 msgid "Click an element on the bed to select it."
 msgstr "Cliquez sur un élément pour le sélectionner."
+
+msgctxt "toolbar"
+msgid "Connect"
+msgstr "Connecter"
 
 msgid "Controller board"
 msgstr "Carte de contrôle"
@@ -208,6 +239,9 @@ msgstr "Création des lignes de balayage : %s%%"
 msgid "Cut inside shapes first"
 msgstr "Découper d'abord les formes intérieures"
 
+msgid "D&uplicate element"
+msgstr "D&upliquer l'élément"
+
 msgid "DXF files"
 msgstr "Fichiers DXF"
 
@@ -230,6 +264,10 @@ msgstr "Erreur de transmission (CRC) n° %s"
 msgid "Delete"
 msgstr "Supprimer"
 
+msgctxt "toolbar"
+msgid "Delete"
+msgstr "Supprimer"
+
 msgid "Design"
 msgstr "Dessin"
 
@@ -244,6 +282,10 @@ msgstr "Distance vers le bas depuis l'origine"
 
 msgid "Distance moved by one arrow click"
 msgstr "Distance parcourue par clic sur une flèche"
+
+msgctxt "toolbar"
+msgid "Duplicate"
+msgstr "Dupliquer"
 
 #, python-format
 msgid "EGV file sent in %s"
@@ -265,6 +307,10 @@ msgstr "Durée totale estimée : <b>%s</b>"
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Déclencher brièvement le laser (cartes M3)"
 
+msgctxt "toolbar"
+msgid "Fit"
+msgstr "Ajuster"
+
 msgid "G-code"
 msgstr "G-code"
 
@@ -284,6 +330,13 @@ msgstr "Aller"
 msgid "Go to X"
 msgstr "Aller à X"
 
+msgctxt "toolbar"
+msgid "Grid"
+msgstr "Grille"
+
+msgid "Grid size"
+msgstr "Taille de la grille"
+
 msgid "H"
 msgstr "H"
 
@@ -300,6 +353,10 @@ msgstr "Tête : X %s  Y %s %s"
 msgid "Height:"
 msgstr "Hauteur :"
 
+msgid "Home"
+msgstr "Origine"
+
+msgctxt "toolbar"
 msgid "Home"
 msgstr "Origine"
 
@@ -402,6 +459,9 @@ msgstr "Carte M3 : puissance par opération"
 msgid "Machine"
 msgstr "Machine"
 
+msgid "Main toolbar"
+msgstr "Barre d'outils principale"
+
 msgid "Mirror design"
 msgstr "Retourner le dessin en miroir"
 
@@ -453,6 +513,10 @@ msgstr "Rien à faire : chargez un dessin et sélectionnez au moins une opérati
 msgid "Number of passes:"
 msgstr "Nombre de passes :"
 
+msgctxt "toolbar"
+msgid "Open"
+msgstr "Ouvrir"
+
 msgid "Open a design to see its operations."
 msgstr "Ouvrez un dessin pour voir ses opérations."
 
@@ -487,6 +551,9 @@ msgstr "Passes"
 
 msgid "Paths from a G-code file; speeds come from the file (F words)"
 msgstr "Chemins d'un fichier G-code ; les vitesses viennent du fichier (mots F)"
+
+msgid "Pause or stop the running job"
+msgstr "Mettre en pause ou arrêter la tâche en cours"
 
 msgid "Place design at the &head"
 msgstr "Placer le dessin à la &tête"
@@ -539,12 +606,20 @@ msgstr "Reconnecter"
 msgid "Ready"
 msgstr "Prêt"
 
+msgctxt "toolbar"
+msgid "Redo"
+msgstr "Rétablir"
+
 msgid "Reduced memory use (500 dpi raster)"
 msgstr "Utilisation réduite de la mémoire (raster 500 ppp)"
 
 msgid "Release USB"
 msgstr "Libérer l'USB"
 
+msgid "Reload"
+msgstr "Recharger"
+
+msgctxt "toolbar"
 msgid "Reload"
 msgstr "Recharger"
 
@@ -578,6 +653,18 @@ msgstr "Pivoter de 90° dans le sens antihoraire"
 msgid "Rotate design 90°"
 msgstr "Faire pivoter le dessin de 90°"
 
+msgctxt "toolbar"
+msgid "Rotate left"
+msgstr ""
+"Pivoter\n"
+"gauche"
+
+msgctxt "toolbar"
+msgid "Rotate right"
+msgstr ""
+"Pivoter\n"
+"droite"
+
 msgid "Rotation"
 msgstr "Rotation"
 
@@ -592,6 +679,12 @@ msgstr "Échelle d'import SVG"
 
 msgid "Save &EGV file…"
 msgstr "Enregistrer le fichier &EGV…"
+
+msgctxt "toolbar"
+msgid "Save EGV"
+msgstr ""
+"Enreg.\n"
+"EGV"
 
 msgid "Save EGV file"
 msgstr "Enregistrer le fichier EGV"
@@ -628,6 +721,10 @@ msgstr "Envoi des données au laser : %s%%"
 msgid "Settings"
 msgstr "Paramètres"
 
+msgctxt "toolbar"
+msgid "Settings"
+msgstr "Paramètres"
+
 msgid "Settings changed (use File → Save settings as default to keep them)"
 msgstr ""
 "Paramètres modifiés (pour les garder : Fichier → Enregistrer les "
@@ -644,12 +741,26 @@ msgstr "Vitesse"
 msgid "Speed (%s)"
 msgstr "Vitesse (%s)"
 
+msgid "Start"
+msgstr "Démarrer"
+
+msgctxt "toolbar"
+msgid "Start"
+msgstr "Démarrer"
+
 msgid "Start selected operations"
+msgstr "Lancer les opérations sélectionnées"
+
+msgid "Start the selected operations"
 msgstr "Lancer les opérations sélectionnées"
 
 msgid "Step:"
 msgstr "Pas :"
 
+msgid "Stop"
+msgstr "Arrêt"
+
+msgctxt "toolbar"
 msgid "Stop"
 msgstr "Arrêt"
 
@@ -745,6 +856,19 @@ msgstr ""
 msgid "Time"
 msgstr "Durée"
 
+msgctxt "toolbar"
+msgid "To head"
+msgstr ""
+"À la\n"
+"tête"
+
+msgid "Trace"
+msgstr "Contour"
+
+msgctxt "toolbar"
+msgid "Trace"
+msgstr "Contour"
+
 msgid "Trace boundary"
 msgstr "Parcourir le contour"
 
@@ -771,6 +895,10 @@ msgstr "Délai USB (ms)"
 msgid "Un&freeze laser"
 msgstr "Dé&bloquer le laser"
 
+msgctxt "toolbar"
+msgid "Undo"
+msgstr "Annuler"
+
 msgid "Unfreeze complete"
 msgstr "Laser débloqué"
 
@@ -784,8 +912,17 @@ msgstr "Erreur USB inconnue : %s"
 msgid "Unlock"
 msgstr "Déverrouiller"
 
+msgctxt "toolbar"
+msgid "Unlock"
+msgstr ""
+"Déver-\n"
+"rouiller"
+
 msgid "Unlock rail after a job"
 msgstr "Déverrouiller les axes après la tâche"
+
+msgid "Untick an element to leave it out of the job"
+msgstr "Décochez un élément pour l'exclure de la tâche"
 
 msgid "Upper left corner"
 msgstr "Coin supérieur gauche"

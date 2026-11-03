@@ -94,3 +94,34 @@ def centre_icon():
     _dot(p, 32, 32, 7.0)
     p.end()
     return QIcon(pm)
+
+
+# ---- toolbar icons from Tabler Icons (MIT licence, see icons/tabler/LICENSE) ----
+import os as _os
+
+_TABLER_DIR = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "tabler")
+_tabler_cache = {}
+
+
+def tabler(name, color="#2b2f36"):
+    """QIcon for a Tabler icon (outline style) drawn in the given colour."""
+    key = (name, color)
+    icon = _tabler_cache.get(key)
+    if icon is not None:
+        return icon
+    from PySide6.QtCore import QByteArray, QRectF
+    from PySide6.QtSvg import QSvgRenderer
+    with open(_os.path.join(_TABLER_DIR, name + ".svg"), encoding="utf-8") as f:
+        svg = f.read().replace("currentColor", color)
+    renderer = QSvgRenderer(QByteArray(svg.encode("utf-8")))
+    icon = QIcon()
+    for size in (24, 32, 48, 64):
+        pm = QPixmap(size, size)
+        pm.fill(Qt.transparent)
+        p = QPainter(pm)
+        p.setRenderHint(QPainter.Antialiasing, True)
+        renderer.render(p, QRectF(0, 0, size, size))
+        p.end()
+        icon.addPixmap(pm)
+    _tabler_cache[key] = icon
+    return icon

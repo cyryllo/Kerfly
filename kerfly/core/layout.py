@@ -32,6 +32,21 @@ class Element:
     rotation: float = 0.0     # degrees, counter-clockwise
     source_file: str = ""
     load_options: dict = field(default_factory=dict)   # e.g. {"dpi": 300} for images
+    visible: bool = True      # hidden elements are not sent to the laser
+
+    def placement(self):
+        """Placement values (for undo snapshots)."""
+        return (self.x, self.y, self.scale_x, self.scale_y, self.rotation, self.visible)
+
+    def set_placement(self, p):
+        self.x, self.y, self.scale_x, self.scale_y, self.rotation, self.visible = p
+
+    def copy(self):
+        """A new element sharing the same loaded design."""
+        e = Element(self.design, self.name, source_file=self.source_file,
+                    load_options=dict(self.load_options))
+        e.set_placement(self.placement())
+        return e
 
     @property
     def centre(self):
@@ -164,7 +179,7 @@ def compile_layout(elements):
     """Merge elements into one Design. Returns (design, origin) where origin is
     the bed position (x, y) of the design's top-left corner, i.e. where the
     laser head must be when the job starts. Returns (None, None) if empty."""
-    elements = [e for e in elements if e is not None]
+    elements = [e for e in elements if e is not None and e.visible]
     if not elements:
         return None, None
     if len(elements) == 1 and elements[0].is_identity:

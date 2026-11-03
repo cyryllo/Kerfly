@@ -24,6 +24,8 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - [x] Editor, step 1: several elements on the bed; select, drag, scale and
   rotate with handles; X/Y/W/H/angle fields; the head moves to the design
   before a job
+- [x] Editor, step 2: undo/redo, element list with visibility, snap grid,
+  duplicate, centre on bed, arrow-key nudge; MeerK40t-style icon toolbar
 - [x] Translations: English, Polish, German, Spanish, French (gettext;
   DE/ES/FR need a native speaker review)
 
@@ -52,16 +54,16 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 
 | Feature | MeerK40t reference |
 |---|---|
-| Element tree / layers panel (select, hide, reorder) | `gui/wxmtree.py` |
+| Element tree / layers panel (select, hide ~~done~~; reorder, groups) | `gui/wxmtree.py` |
 | Operations list: assign elements to raster, engrave or cut instead of by colour only | `gui/opassignment.py`, `gui/gui_optypes.py` |
 | ~~Select, move, scale and rotate with handles~~ (done) | `gui/scenewidgets/`, `gui/toolwidgets/toolplacement.py` |
-| Undo / redo | `core/undos.py` |
-| Grid and snapping | `gui/snapoptions.py`, `core/elements/grid.py` |
+| ~~Undo / redo~~ (done) | `core/undos.py` |
+| ~~Grid and snapping~~ (done; snapping to other objects still to do) | `gui/snapoptions.py`, `core/elements/grid.py` |
 | Alignment and distribution | `gui/alignment.py`, `core/elements/align.py` |
 | Ruler, measure tool | `gui/toolwidgets/toolmeasure.py` |
 | Job simulation (play the path) | `gui/simulation.py` |
 | Material library (saved speed/power per material) | `gui/materialmanager.py`, `core/elements/materials.py` |
-| Toolbar ribbon, themes | `gui/ribbon.py`, `gui/themes.py` |
+| ~~Toolbar~~ (done; every new command gets a button), themes | `gui/ribbon.py`, `gui/themes.py` |
 
 ## Drawing tools
 
@@ -90,3 +92,15 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Path offset (kerf compensation) | `core/elements/offset_clpr.py`, `offset_mk.py` |
 | Boolean operations on shapes | `tools/polybool.py`, `extra/cag.py` |
 | Kerf test and material test generators | `tools/kerftest.py`, `gui/materialtest.py` |
+
+## Packaging (later)
+
+- Linux: AppImage. PyInstaller collects the program and libraries, and
+  appimagetool packs the result. Builds run on an older glibc in GitHub
+  Actions. USB access needs a udev rule: Kerfly will offer to install it once
+  through `pkexec`. Inkscape stays external (only needed for SVG) until SVG
+  is read without it.
+- Windows: PyInstaller `.exe` and an installer that also sets up the libusb
+  driver. Reference: Scorch's
+  [K40 Whisperer Driver Installer](https://github.com/scorchworks/K40-Whisperer-Driver-Installer).
+- Possibly a Debian `.deb` that installs the udev rule.

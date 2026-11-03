@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 21:57+0100\n"
+"POT-Creation-Date: 2026-11-03 22:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,6 +27,10 @@ msgstr[0] ""
 msgstr[1] ""
 
 #, python-format
+msgid "%d mm"
+msgstr ""
+
+#, python-format
 msgid "%d × %d pixels"
 msgstr ""
 
@@ -38,6 +42,9 @@ msgid "&About Kerfly"
 msgstr ""
 
 msgid "&Add design…"
+msgstr ""
+
+msgid "&Centre on the bed"
 msgstr ""
 
 msgid "&Delete element"
@@ -73,6 +80,9 @@ msgstr ""
 msgid "&Quit"
 msgstr ""
 
+msgid "&Redo"
+msgstr ""
+
 msgid "&Reload design"
 msgstr ""
 
@@ -80,6 +90,12 @@ msgid "&Settings"
 msgstr ""
 
 msgid "&Settings…"
+msgstr ""
+
+msgid "&Snap to grid"
+msgstr ""
+
+msgid "&Undo"
 msgstr ""
 
 msgid "&Unlock rail"
@@ -112,6 +128,10 @@ msgid "A job is running. Stop it and quit?"
 msgstr ""
 
 msgid "About Kerfly"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Add"
 msgstr ""
 
 msgid "Add another file to the laser bed"
@@ -160,7 +180,18 @@ msgstr ""
 msgid "Centre"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Centre"
+msgstr ""
+
+msgid "Centre the selected element, or the whole design, on the bed"
+msgstr ""
+
 msgid "Click an element on the bed to select it."
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Connect"
 msgstr ""
 
 msgid "Controller board"
@@ -199,6 +230,9 @@ msgstr ""
 msgid "Cut inside shapes first"
 msgstr ""
 
+msgid "D&uplicate element"
+msgstr ""
+
 msgid "DXF files"
 msgstr ""
 
@@ -219,6 +253,10 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Delete"
+msgstr ""
+
 msgid "Design"
 msgstr ""
 
@@ -232,6 +270,10 @@ msgid "Distance down from home"
 msgstr ""
 
 msgid "Distance moved by one arrow click"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Duplicate"
 msgstr ""
 
 #, python-format
@@ -254,6 +296,10 @@ msgstr ""
 msgid "Fire the laser briefly (M3 boards)"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Fit"
+msgstr ""
+
 msgid "G-code"
 msgstr ""
 
@@ -273,6 +319,13 @@ msgstr ""
 msgid "Go to X"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Grid"
+msgstr ""
+
+msgid "Grid size"
+msgstr ""
+
 msgid "H"
 msgstr ""
 
@@ -289,6 +342,10 @@ msgstr ""
 msgid "Height:"
 msgstr ""
 
+msgid "Home"
+msgstr ""
+
+msgctxt "toolbar"
 msgid "Home"
 msgstr ""
 
@@ -391,6 +448,9 @@ msgstr ""
 msgid "Machine"
 msgstr ""
 
+msgid "Main toolbar"
+msgstr ""
+
 msgid "Mirror design"
 msgstr ""
 
@@ -442,6 +502,10 @@ msgstr ""
 msgid "Number of passes:"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Open"
+msgstr ""
+
 msgid "Open a design to see its operations."
 msgstr ""
 
@@ -475,6 +539,9 @@ msgid "Passes"
 msgstr ""
 
 msgid "Paths from a G-code file; speeds come from the file (F words)"
+msgstr ""
+
+msgid "Pause or stop the running job"
 msgstr ""
 
 msgid "Place design at the &head"
@@ -528,12 +595,20 @@ msgstr ""
 msgid "Ready"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Redo"
+msgstr ""
+
 msgid "Reduced memory use (500 dpi raster)"
 msgstr ""
 
 msgid "Release USB"
 msgstr ""
 
+msgid "Reload"
+msgstr ""
+
+msgctxt "toolbar"
 msgid "Reload"
 msgstr ""
 
@@ -567,6 +642,14 @@ msgstr ""
 msgid "Rotate design 90°"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Rotate left"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Rotate right"
+msgstr ""
+
 msgid "Rotation"
 msgstr ""
 
@@ -580,6 +663,10 @@ msgid "SVG import scale"
 msgstr ""
 
 msgid "Save &EGV file…"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Save EGV"
 msgstr ""
 
 msgid "Save EGV file"
@@ -617,6 +704,10 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Settings"
+msgstr ""
+
 msgid "Settings changed (use File → Save settings as default to keep them)"
 msgstr ""
 
@@ -631,12 +722,26 @@ msgstr ""
 msgid "Speed (%s)"
 msgstr ""
 
+msgid "Start"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Start"
+msgstr ""
+
 msgid "Start selected operations"
+msgstr ""
+
+msgid "Start the selected operations"
 msgstr ""
 
 msgid "Step:"
 msgstr ""
 
+msgid "Stop"
+msgstr ""
+
+msgctxt "toolbar"
 msgid "Stop"
 msgstr ""
 
@@ -716,6 +821,17 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "To head"
+msgstr ""
+
+msgid "Trace"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Trace"
+msgstr ""
+
 msgid "Trace boundary"
 msgstr ""
 
@@ -742,6 +858,10 @@ msgstr ""
 msgid "Un&freeze laser"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Undo"
+msgstr ""
+
 msgid "Unfreeze complete"
 msgstr ""
 
@@ -755,7 +875,14 @@ msgstr ""
 msgid "Unlock"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Unlock"
+msgstr ""
+
 msgid "Unlock rail after a job"
+msgstr ""
+
+msgid "Untick an element to leave it out of the job"
 msgstr ""
 
 msgid "Upper left corner"

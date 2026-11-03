@@ -9,14 +9,16 @@ import os
 from PySide6.QtCore import QSize, Qt, QTimer
 from PySide6.QtCore import QLocale
 from PySide6.QtGui import QAction, QKeySequence
+from PySide6.QtGui import QActionGroup
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QDoubleSpinBox, QFileDialog,
                                QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
-                               QMainWindow, QMessageBox, QProgressBar, QPushButton, QScrollArea,
-                               QSpinBox, QToolBar, QVBoxLayout, QWidget)
+                               QListWidget, QListWidgetItem, QMainWindow, QMessageBox, QProgressBar,
+                               QPushButton, QScrollArea, QSpinBox, QTabWidget, QToolBar, QVBoxLayout,
+                               QWidget)
 
 from kerfly import __version__
 from kerfly.core import config, egvfile, job, loaders
-from kerfly.i18n import N_, _, ngettext, tr_message
+from kerfly.i18n import C_, N_, _, ngettext, tr_message
 from kerfly.core.config import is_true
 from kerfly.core.design import Design
 from kerfly.core.estimate import estimate_times, format_time
@@ -63,6 +65,8 @@ class MainWindow(QMainWindow):
         self.elements = []              # design elements placed on the bed
         self.selected = None            # selected element
         self._compiled = None           # cached (design, origin) compiled from the elements
+        self._undo = []                 # layout snapshots for undo / redo
+        self._redo = []
         self.design_file = ""           # last file opened (start folder for file dialogs)
         self.laser = LaserController()
         self.head = (0.0, 0.0)          # laser head position on the bed, inches (y <= 0)
@@ -77,6 +81,7 @@ class MainWindow(QMainWindow):
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
         self.preview.signals.rotated.connect(self._preview_rotated)
+        self.preview.signals.nudged.connect(self._preview_nudged)
         self._build_actions()
         self._build_panel()
         self._build_status()
@@ -100,13 +105,29 @@ class MainWindow(QMainWindow):
         self.act_add = self._action(_("&Add design…"), self.add_design, "Ctrl+Shift+O",
                                     _("Add another file to the laser bed"))
         self.act_delete = self._action(_("&Delete element"), self.delete_selected, "Delete")
+        self.act_delete.setShortcutContext(Qt.WidgetWithChildrenShortcut)   # only in the bed view
+        self.preview.addAction(self.act_delete)
+        self.act_undo = self._action(_("&Undo"), self.undo, "Ctrl+Z")
+        self.act_redo = self._action(_("&Redo"), self.redo, "Ctrl+Shift+Z")
+        self.act_duplicate = self._action(_("D&uplicate element"), self.duplicate_selected, "Ctrl+D")
+        self.act_center = self._action(_("&Centre on the bed"), self.center_on_bed, "Ctrl+E",
+                                       _("Centre the selected element, or the whole design, on the bed"))
+        self.act_snap = self._action(_("&Snap to grid"), self.toggle_snap, "Ctrl+'")
+        self.act_snap.setCheckable(True)
+        self.act_snap.setChecked(self._grid_mm() > 0)
+        self.grid_actions = QActionGroup(self)
+        for mm in (1, 2, 5, 10):
+            a = self._action(_("%d mm") % mm, lambda _c=False, g=mm: self.set_grid(g))
+            a.setCheckable(True)
+            a.setChecked(abs(self._grid_size_choice() - mm) < 1e-9)
+            self.grid_actions.addAction(a)
         self.act_rot_left = self._action(_("Rotate 90° counter-clockwise"),
                                          lambda: self.rotate_selected(90), "Ctrl+L")
         self.act_rot_right = self._action(_("Rotate 90° clockwise"),
                                           lambda: self.rotate_selected(-90), "Ctrl+R")
         self.act_place_head = self._action(_("Place design at the &head"), self.place_at_head, "Ctrl+H",
                                            _("Move all elements so the design starts at the laser head"))
-        self.act_save_egv = self._action(_("Save &EGV file\u2026"), self.save_egv, "Ctrl+E",
+        self.act_save_egv = self._action(_("Save &EGV file\u2026"), self.save_egv, "Ctrl+Shift+E",
                                          _("Write the selected operations to an EGV file"))
         self.act_send_egv = self._action(_("Send EGV file to laser\u2026"), self.send_egv_file, None,
                                          _("Send an existing EGV file to the laser"))
@@ -135,7 +156,8 @@ class MainWindow(QMainWindow):
                   self.act_send_egv, None, self.act_save_settings, None, self.act_quit):
             m.addSeparator() if a is None else m.addAction(a)
         m = mb.addMenu(_("&Edit"))
-        for a in (self.act_delete, None, self.act_rot_left, self.act_rot_right, None, self.act_place_head):
+        for a in (self.act_undo, self.act_redo, None, self.act_duplicate, self.act_delete, None,
+                  self.act_rot_left, self.act_rot_right, None, self.act_center, self.act_place_head):
             m.addSeparator() if a is None else m.addAction(a)
         m = mb.addMenu(_("&Laser"))
         for a in (self.act_connect, self.act_release, None, self.act_home, self.act_unlock,
@@ -146,17 +168,70 @@ class MainWindow(QMainWindow):
             sub.addAction(a)
         m = mb.addMenu(_("&View"))
         m.addAction(self.act_fit)
+        m.addSeparator()
+        m.addAction(self.act_snap)
+        sub = m.addMenu(_("Grid size"))
+        for a in self.grid_actions.actions():
+            sub.addAction(a)
         m = mb.addMenu(_("&Settings"))
         m.addAction(self.act_settings)
         m = mb.addMenu(_("&Help"))
         m.addAction(self.act_about)
 
-        tb = QToolBar("Main")
+        self._build_toolbar()
+
+    def _build_toolbar(self):
+        """MeerK40t-style toolbar: icons with short labels, grouped by function."""
+        self.act_start = self._action(_("Start"), lambda: self.start_job(), "F9",
+                                      _("Start the selected operations"))
+        self.act_stop = self._action(_("Stop"), self.stop_job, "Esc", _("Pause or stop the running job"))
+        self.act_stop.setEnabled(False)
+        self.act_trace = self._action(_("Trace"), lambda: self.start_job(trace=True), None,
+                                      _("Move around the outline of the design"))
+        icons_short = [
+            # (action, tabler icon, short label for the toolbar)
+            (self.act_open, "folder-open", C_("toolbar", "Open")),
+            (self.act_add, "file-plus", C_("toolbar", "Add")),
+            (self.act_reload, "refresh", C_("toolbar", "Reload")),
+            (self.act_save_egv, "device-floppy", C_("toolbar", "Save EGV")),
+            None,
+            (self.act_undo, "arrow-back-up", C_("toolbar", "Undo")),
+            (self.act_redo, "arrow-forward-up", C_("toolbar", "Redo")),
+            (self.act_duplicate, "copy", C_("toolbar", "Duplicate")),
+            (self.act_delete, "trash", C_("toolbar", "Delete")),
+            (self.act_rot_left, "rotate-2", C_("toolbar", "Rotate left")),
+            (self.act_rot_right, "rotate-clockwise-2", C_("toolbar", "Rotate right")),
+            (self.act_center, "focus-centered", C_("toolbar", "Centre")),
+            (self.act_place_head, "current-location", C_("toolbar", "To head")),
+            None,
+            (self.act_connect, "plug-connected", C_("toolbar", "Connect")),
+            (self.act_home, "home", C_("toolbar", "Home")),
+            (self.act_unlock, "lock-open", C_("toolbar", "Unlock")),
+            (self.act_trace, "route", C_("toolbar", "Trace")),
+            (self.act_start, "player-play", C_("toolbar", "Start")),
+            (self.act_stop, "player-stop", C_("toolbar", "Stop")),
+            None,
+            (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
+            (self.act_snap, "grid-dots", C_("toolbar", "Grid")),
+            (self.act_settings, "settings", C_("toolbar", "Settings")),
+        ]
+        tb = QToolBar(_("Main toolbar"))
+        tb.setObjectName("main_toolbar")
         tb.setMovable(False)
-        tb.setToolButtonStyle(Qt.ToolButtonTextOnly)
-        for a in (self.act_open, self.act_add, self.act_reload, None, self.act_connect, self.act_home,
-                  self.act_unlock, None, self.act_fit, self.act_settings):
-            tb.addSeparator() if a is None else tb.addAction(a)
+        tb.setIconSize(QSize(24, 24))
+        tb.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        for entry in icons_short:
+            if entry is None:
+                tb.addSeparator()
+                continue
+            action, icon, short = entry
+            action.setIcon(icons.tabler(icon))
+            action.setIconText(short)
+            if not action.toolTip() or action.toolTip() == action.iconText():
+                action.setToolTip(action.text().replace("&", ""))
+            tb.addAction(action)
+        self.act_start.setIcon(icons.tabler("player-play", "#2e7d32"))
+        self.act_stop.setIcon(icons.tabler("player-stop", "#c62828"))
         self.addToolBar(tb)
 
     def _spin(self, key, kind, lo, hi, decimals=1):
@@ -186,13 +261,28 @@ class MainWindow(QMainWindow):
     def _build_panel(self):
         panel = QWidget()
         layout = QVBoxLayout(panel)
+        self.tabs = QTabWidget()
+        design_page, laser_page = QWidget(), QWidget()
+        design_layout = QVBoxLayout(design_page)
+        laser_layout = QVBoxLayout(laser_page)
+        for lay in (design_layout, laser_layout):
+            lay.setContentsMargins(4, 6, 4, 4)
+        self.tabs.addTab(design_page, _("Design"))
+        self.tabs.addTab(laser_page, _("Laser"))
+        layout.addWidget(self.tabs)
 
-        # --- design info
-        box = QGroupBox(_("Design"))
+        # --- design info and element list
+        box = QGroupBox()
         v = QVBoxLayout(box)
         self.design_label = QLabel(_("No design loaded"))
         self.design_label.setWordWrap(True)
         v.addWidget(self.design_label)
+        self.element_list = QListWidget()
+        self.element_list.setMaximumHeight(96)
+        self.element_list.setToolTip(_("Untick an element to leave it out of the job"))
+        self.element_list.itemChanged.connect(self._element_item_changed)
+        self.element_list.currentRowChanged.connect(self._element_row_selected)
+        v.addWidget(self.element_list)
         row = QHBoxLayout()
         b = QPushButton(_("Open\u2026"))
         b.setToolTip(_("Open a file, replacing everything on the bed"))
@@ -210,7 +300,7 @@ class MainWindow(QMainWindow):
         self.btn_place_head.setToolTip(_("Move all elements so the design starts at the laser head"))
         self.btn_place_head.clicked.connect(self.place_at_head)
         v.addWidget(self.btn_place_head)
-        layout.addWidget(box)
+        design_layout.addWidget(box)
 
         # --- selected element
         self.selection_box = QGroupBox(_("Selected element"))
@@ -259,10 +349,11 @@ class MainWindow(QMainWindow):
         b.clicked.connect(self.delete_selected)
         row.addWidget(b)
         g.addLayout(row, 4, 0, 1, 4)
-        layout.addWidget(self.selection_box)
+        design_layout.addWidget(self.selection_box)
+        design_layout.addStretch(1)
 
         # --- laser
-        box = QGroupBox(_("Laser"))
+        box = QGroupBox()
         v = QVBoxLayout(box)
         self.laser_label = QLabel()
         v.addWidget(self.laser_label)
@@ -377,7 +468,8 @@ class MainWindow(QMainWindow):
         row.addWidget(t)
         row.addStretch(1)
         v.addWidget(self.test_fire_row)
-        layout.addWidget(box)
+        laser_layout.addWidget(box)
+        laser_layout.addStretch(1)
 
         # --- operations
         box = QGroupBox(_("Operations"))
@@ -525,17 +617,152 @@ class MainWindow(QMainWindow):
         if h <= bed_h:
             element.y = max(min(element.y, 0.0), -bed_h + h)
 
+    # ---- undo / redo: snapshots of the element list and placements ----
+    def _snapshot(self):
+        return (list(self.elements), [e.placement() for e in self.elements], self.selected)
+
+    def _checkpoint(self):
+        """Call before changing the layout."""
+        self._undo.append(self._snapshot())
+        del self._undo[:-100]
+        self._redo.clear()
+
+    def _restore(self, snap):
+        elements, placements, selected = snap
+        self.elements = list(elements)
+        for e, p in zip(self.elements, placements):
+            e.set_placement(p)
+        self.selected = selected if selected in self.elements else None
+        self._layout_changed()
+
+    def undo(self):
+        if self._undo and self.worker is None:
+            self._redo.append(self._snapshot())
+            self._restore(self._undo.pop())
+
+    def redo(self):
+        if self._redo and self.worker is None:
+            self._undo.append(self._snapshot())
+            self._restore(self._redo.pop())
+
+    # ---- grid ----
+    def _grid_mm(self):
+        try:
+            return max(0.0, float(self.values.get("grid_mm", "0") or 0))
+        except ValueError:
+            return 0.0
+
+    def _grid_size_choice(self):
+        return self._grid_mm() or getattr(self, "_last_grid", 5.0)
+
+    def toggle_snap(self, checked):
+        self.values["grid_mm"] = _num_text(self._grid_size_choice()) if checked else "0"
+        self.refresh_preview()
+
+    def set_grid(self, mm):
+        self._last_grid = float(mm)
+        self.values["grid_mm"] = _num_text(mm)
+        self.act_snap.setChecked(True)
+        self.refresh_preview()
+
+    def _snap(self, element):
+        g = self._grid_mm() / 25.4
+        if g > 0:
+            element.x = round(element.x / g) * g
+            element.y = round(element.y / g) * g
+
+    # ---- element list ----
+    def _update_element_list(self):
+        lst = self.element_list
+        lst.blockSignals(True)
+        lst.clear()
+        for e in self.elements:
+            item = QListWidgetItem(e.name)
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setCheckState(Qt.Checked if e.visible else Qt.Unchecked)
+            lst.addItem(item)
+        if self.selected in self.elements:
+            lst.setCurrentRow(self.elements.index(self.selected))
+        lst.blockSignals(False)
+        lst.setVisible(len(self.elements) > 1)
+
+    def _element_item_changed(self, item):
+        row = self.element_list.row(item)
+        if 0 <= row < len(self.elements):
+            visible = item.checkState() == Qt.Checked
+            if self.elements[row].visible != visible:
+                self._checkpoint()
+                self.elements[row].visible = visible
+                self._layout_changed()
+
+    def _element_row_selected(self, row):
+        if 0 <= row < len(self.elements):
+            self.selected = self.elements[row]
+            self.preview.select_element(self.selected)
+            self._update_selection_panel()
+
+    # ---- more editing commands ----
+    def duplicate_selected(self):
+        if self.selected is None or self.worker is not None:
+            return
+        self._checkpoint()
+        e = self.selected.copy()
+        e.x += 5 / 25.4
+        e.y -= 5 / 25.4
+        self._keep_on_bed(e)
+        self.elements.append(e)
+        self.selected = e
+        self._layout_changed()
+
+    def center_on_bed(self):
+        """Centre the selected element, or all elements together, on the bed."""
+        if not self.elements or self.worker is not None:
+            return
+        bed_w, bed_h = config.bed_size_inches(self.values)
+        self._checkpoint()
+        if self.selected is not None:
+            self.selected.set_centre(bed_w / 2.0, -bed_h / 2.0)
+        else:
+            xmin = min(e.bounds[0] for e in self.elements)
+            xmax = max(e.bounds[1] for e in self.elements)
+            ymin = min(e.bounds[2] for e in self.elements)
+            ymax = max(e.bounds[3] for e in self.elements)
+            dx = bed_w / 2.0 - (xmin + xmax) / 2.0
+            dy = -bed_h / 2.0 - (ymin + ymax) / 2.0
+            for e in self.elements:
+                e.x += dx
+                e.y += dy
+        self._layout_changed()
+
+    def _preview_nudged(self, element, dx_mm, dy_mm):
+        """Arrow keys in the bed view: move the selected element (screen directions)."""
+        if self.worker is not None:
+            return
+        self._checkpoint()
+        sign = -1 if self.job_settings().home_upper_right else 1
+        element.x += sign * dx_mm / 25.4
+        element.y += dy_mm / 25.4
+        self._keep_on_bed(element)
+        self._layout_changed()
+
     def _preview_selected(self, element):
         self.selected = element
         self._update_selection_panel()
+        lst = self.element_list
+        lst.blockSignals(True)
+        lst.setCurrentRow(self.elements.index(element) if element in self.elements else -1)
+        lst.blockSignals(False)
 
     def _preview_moved(self, element, dx, dy):
+        self._checkpoint()
         element.x += dx
         element.y += dy
+        self._snap(element)
         self._keep_on_bed(element)
         self._layout_changed()
 
     def _preview_scaled(self, element, factor):
+        self._checkpoint()
         cx, cy = element.centre
         element.scale_x *= factor
         element.scale_y *= factor
@@ -547,6 +774,7 @@ class MainWindow(QMainWindow):
         self._rotate(element, degrees)
 
     def _rotate(self, element, degrees):
+        self._checkpoint()
         cx, cy = element.centre
         element.rotation = (element.rotation + degrees) % 360
         if abs(element.rotation - round(element.rotation)) < 1e-6:
@@ -562,6 +790,7 @@ class MainWindow(QMainWindow):
     def delete_selected(self):
         if self.selected is None or self.worker is not None:
             return
+        self._checkpoint()
         self.elements.remove(self.selected)
         self.selected = None
         self._layout_changed()
@@ -571,6 +800,7 @@ class MainWindow(QMainWindow):
         if not self.elements or self.worker is not None:
             return
         ox, oy = self.origin
+        self._checkpoint()
         for e in self.elements:
             e.x += self.head[0] - ox
             e.y += self.head[1] - oy
@@ -602,6 +832,8 @@ class MainWindow(QMainWindow):
         if e is None:
             return
         k = self._units_per_inch()
+        if key != "rotation":
+            self._checkpoint()
         if key == "x":
             e.x = self.sel_fields["x"].value() / k
         elif key == "y":
@@ -774,9 +1006,13 @@ class MainWindow(QMainWindow):
         for a in [self.act_open, self.act_reload, self.act_save_egv, self.act_send_egv,
                   self.act_connect, self.act_release, self.act_home, self.act_unlock,
                   self.act_settings, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
-                  self.act_rot_left, self.act_rot_right, self.act_place_head] + list(self.act_corners.values()):
+                  self.act_rot_left, self.act_rot_right, self.act_place_head, self.act_undo,
+                  self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()):
             a.setEnabled(not busy)
         self.btn_stop.setEnabled(busy)
+        self.act_stop.setEnabled(busy)
+        self.act_start.setEnabled(not busy)
+        self.act_trace.setEnabled(not busy)
         self.progress.setVisible(busy)
 
     def status(self, message, error=False):
@@ -791,7 +1027,11 @@ class MainWindow(QMainWindow):
             return
         if self.selected not in self.elements:
             self.selected = None
-        self.preview.show_layout(self.elements, self.selected, settings, self.values, self.head, fit=fit)
+        self.preview.show_layout(self.elements, self.selected, settings, self.values, self.head, fit=fit,
+                                 grid_mm=self._grid_mm())
+        self._update_element_list()
+        self.act_undo.setEnabled(bool(self._undo))
+        self.act_redo.setEnabled(bool(self._redo))
         self._update_laser_state()
         self._update_selection_panel()
         self._update_times()
@@ -902,6 +1142,7 @@ class MainWindow(QMainWindow):
         design = self._load_file(filename, options)
         if design is None:
             return
+        self._checkpoint()
         is_gcode = bool(design.gcode.ecoords)
         if not add or is_gcode or any(e.design.gcode.ecoords for e in self.elements):
             self.elements = []         # G-code files are not combined with other designs
@@ -1157,6 +1398,7 @@ class MainWindow(QMainWindow):
             if not ok:
                 return
         # the loaded design is not what is being cut: clear it, as K40 Whisperer does
+        self._checkpoint()
         self.elements = []
         self.selected = None
         self.design_file = name

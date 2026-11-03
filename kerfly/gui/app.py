@@ -26,6 +26,8 @@ QPushButton#stop:disabled { background:#bdbdbd; }
 QPushButton#jog { font-size:22px; font-weight:bold; }
 QPushButton#corner { font-size:17px; }
 QGroupBox { font-weight:bold; }
+QToolBar#main_toolbar { spacing: 1px; padding: 2px; }
+QToolBar#main_toolbar QToolButton { padding: 2px 1px; font-size: 11px; min-width: 40px; }
 QGroupBox QLabel, QGroupBox QCheckBox { font-weight:normal; }
 """
 

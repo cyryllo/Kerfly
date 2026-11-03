@@ -55,6 +55,7 @@ SETTINGS_KEYS = [
     ("ink_timeout", TEXT),
     ("designfile", QUOTED), ("inkscape_path", QUOTED), ("batch_path", QUOTED),
     ("language", TEXT),      # Kerfly only; ignored by K40 Whisperer
+    ("grid_mm", TEXT),       # Kerfly only: snap grid in mm, 0 = off
 ]
 SETTINGS_KINDS = dict(SETTINGS_KEYS)
 
@@ -82,6 +83,7 @@ DEFAULT_VALUES = {
     "t_timeout": "200", "n_timeouts": "30", "ink_timeout": "3",
     "designfile": "", "inkscape_path": "", "batch_path": "",
     "language": "",          # "" = system language
+    "grid_mm": "0",
 }
 
 BOARD_NAMES = ["LASER-M2", "LASER-M1", "LASER-M", "LASER-B2", "LASER-B1", "LASER-B",

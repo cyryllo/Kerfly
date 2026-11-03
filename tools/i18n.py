@@ -32,7 +32,7 @@ def run(*args):
 
 def extract():
     os.makedirs(LOCALE, exist_ok=True)
-    run("extract", "-k", "_", "-k", "N_", "--no-location", "--sort-output",
+    run("extract", "-k", "_", "-k", "N_", "-k", "C_:1c,2", "--no-location", "--sort-output",
         "--project", "Kerfly", "--copyright-holder", "Kerfly contributors",
         "--msgid-bugs-address", "https://github.com/cyryllo/Kerfly/issues",
         "-o", POT, "kerfly")

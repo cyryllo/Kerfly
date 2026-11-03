@@ -20,7 +20,7 @@ def main():
     pybabel = os.path.join(os.path.dirname(sys.executable), "pybabel")
     with tempfile.TemporaryDirectory() as tmp:
         pot = os.path.join(tmp, "now.pot")
-        subprocess.run([pybabel, "-q", "extract", "-k", "_", "-k", "N_", "--no-location",
+        subprocess.run([pybabel, "-q", "extract", "-k", "_", "-k", "N_", "-k", "C_:1c,2", "--no-location",
                         "-o", pot, "kerfly"], check=True, cwd=ROOT)
         now = {m.id for m in read_po(open(pot, "rb")) if m.id}
     stored = {m.id for m in read_po(open(os.path.join(ROOT, "kerfly/locale/kerfly.pot"), "rb")) if m.id}

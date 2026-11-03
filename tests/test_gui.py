@@ -288,6 +288,46 @@ def main():
     check("editor: place at head, rotate 90, delete", placed and rotated and w.elements == [a]
           and w.selected is None)
 
+    # 13. undo / redo, duplicate, hide, centre, snap to grid, arrow-key nudge
+    w = make_window(include_Reng="0")
+    w.load_design(os.path.join(FIX, "shapes.dxf"))                  # 60 x 40 mm
+    e = w.elements[0]
+    w._preview_moved(e, 1.0, -1.0)
+    w.undo()
+    undo_ok = (e.x, e.y) == (0.0, 0.0)
+    w.redo()
+    redo_ok = (e.x, e.y) == (1.0, -1.0)
+    w.duplicate_selected()
+    dup = w.selected
+    dup_ok = len(w.elements) == 2 and dup is not e and dup.design is e.design
+    w.undo()
+    undo_dup_ok = len(w.elements) == 1
+    w.redo()
+    w.elements[1].visible = False
+    w._compiled = None
+    hidden_ok = w.design is e.design or w.design.bounds == e.design.bounds   # only e compiled
+    w.selected = e
+    w.center_on_bed()
+    bed_w, bed_h = 325 / 25.4, 220 / 25.4
+    cx, cy = e.centre
+    centre_ok = abs(cx - bed_w / 2) < 1e-9 and abs(cy + bed_h / 2) < 1e-9
+    w.set_grid(5)
+    w._preview_moved(e, 0.123, -0.077)
+    g = 5 / 25.4
+    snap_ok = abs(e.x / g - round(e.x / g)) < 1e-9 and abs(e.y / g - round(e.y / g)) < 1e-9
+    x0 = e.x
+    w.preview.select_element(e)
+    from PySide6.QtCore import Qt as _Qt
+    from PySide6.QtTest import QTest
+    QTest.keyClick(w.preview, _Qt.Key_Right)
+    nudge_ok = abs((e.x - x0) - g) < 1e-9
+    QTest.keyClick(w.preview, _Qt.Key_Right, _Qt.ShiftModifier)
+    nudge10_ok = abs((e.x - x0) - 11 * g) < 1e-9
+    check("editor: undo/redo", undo_ok and redo_ok and undo_dup_ok)
+    check("editor: duplicate, hidden element left out of the job", dup_ok and hidden_ok)
+    check("editor: centre on bed, snap to grid, arrow keys", centre_ok and snap_ok and nudge_ok and nudge10_ok,
+          "(centre %s, snap %s, nudge %s/%s)" % (centre_ok, snap_ok, nudge_ok, nudge10_ok))
+
     print("\n%d check(s) failed." % failures if failures else "\nAll checks passed.")
     return 1 if failures else 0
 
