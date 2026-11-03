@@ -195,11 +195,21 @@ def main():
     w = make_window()
     fake = FakeK40()
     w.laser.k40 = fake
-    answers = iter([(20.0, True), (10.0, True)])
-    QInputDialog.getDouble = staticmethod(lambda *a, **k: next(answers))
+    w.goto_x.setValue(20.0)
+    w.goto_y.setValue(10.0)
     w.goto_position()
     check("go to position", "home_position" in fake.calls and fake.moves == [(787, -394)]
-          and w.head == (0.787, -0.394), "(moves %s, head %s)" % (fake.moves, w.head))
+          and w.head == (0.787, -0.394) and w.values["gotoY"] == "-10",
+          "(moves %s, head %s)" % (fake.moves, w.head))
+
+    # 7b. unit change converts the go-to fields
+    from kerfly.core import config as cfg
+    new = cfg.convert_units(w.values, "in")
+    w.values.clear()
+    w.values.update(new)
+    w._reload_spin_values()
+    check("go-to fields follow unit change", abs(w.goto_x.value() - 0.79) < 0.01
+          and abs(w.goto_y.value() - 0.39) < 0.01, "(%s, %s)" % (w.goto_x.value(), w.goto_y.value()))
 
     # 8. time estimate: raster unknown until calculated
     w = make_window()

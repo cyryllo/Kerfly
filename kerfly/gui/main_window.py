@@ -6,7 +6,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import os
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QDoubleSpinBox, QFileDialog,
                                QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
@@ -20,6 +20,7 @@ from kerfly.core.design import Design
 from kerfly.core.estimate import estimate_times, format_time
 from kerfly.core.laser import (LaserController, LaserError, clamp_head_position, corner_offset,
                                temporary_offset_target)
+from kerfly.gui import icons
 from kerfly.gui.preview import PreviewView
 from kerfly.gui.settings_dialog import RASTER_KEYS, RELOAD_KEYS, SettingsDialog
 from kerfly.gui.worker import EgvSendWorker, JobWorker, RasterPrepareWorker
@@ -51,7 +52,7 @@ class MainWindow(QMainWindow):
         self.head = (0.0, 0.0)          # design origin at the laser head, inches (y <= 0)
         self.head_offset = (0, 0)       # temporary head offset from the origin, mils
         self.worker = None
-        self._unit_widgets = []         # (spinbox, kind) to update when units change
+        self._unit_widgets = []         # (spinbox, kind, key, sign) to update when units change
 
         self.setWindowTitle("Kerfly %s" % __version__)
         self.resize(1200, 780)
@@ -82,7 +83,7 @@ class MainWindow(QMainWindow):
         self.act_send_egv = self._action("Send EGV file to laser\u2026", self.send_egv_file, None,
                                          "Send an existing EGV file to the laser")
         self.act_save_settings = self._action("Save settings as default", self.save_settings, "Ctrl+S")
-        self.act_goto = self._action("&Go to position\u2026", self.goto_position, "Ctrl+G")
+        self.act_goto = self._action("&Go to X/Y position", self.goto_position, "Ctrl+G")
         self.act_corners = {}
         for key, text, sc in (("UL", "Upper left", "Ctrl+7"), ("UR", "Upper right", "Ctrl+9"),
                               ("CC", "Centre", "Ctrl+5"), ("LL", "Lower left", "Ctrl+1"),
@@ -143,7 +144,7 @@ class MainWindow(QMainWindow):
             else:
                 w.setValue(float(self.values.get(key) or 0))
                 w.valueChanged.connect(lambda v: self._set_value(key, _num_text(v)))
-                self._unit_widgets.append((w, kind))
+                self._unit_widgets.append((w, kind, key, 1.0))
         # compact columns in the operations table
         widths = {"int": 58, "power": 72, "speed": 112}
         if kind in widths:
@@ -187,59 +188,83 @@ class MainWindow(QMainWindow):
         row.addWidget(b)
         v.addLayout(row)
 
+        # jog pad: arrows move the design origin; corners/centre move the head
+        # to that point of the design (the design stays where it is)
         grid = QGridLayout()
-        for text, r, c, d in (("↑", 0, 1, (0, 1)), ("←", 1, 0, (-1, 0)),
-                              ("→", 1, 2, (1, 0)), ("↓", 2, 1, (0, -1))):
-            b = QPushButton(text)
-            b.setFixedSize(64, 52)
-            b.setObjectName("jog")
-            b.setToolTip("Move the head (Ctrl+arrow)")
+        grid.setSpacing(4)
+        arrows = {(0, 1): ("up", 0, 1, "Ctrl+Up"), (-1, 0): ("left", 1, 0, "Ctrl+Left"),
+                  (1, 0): ("right", 1, 2, "Ctrl+Right"), (0, -1): ("down", 2, 1, "Ctrl+Down")}
+        for d, (name, r, c, sc) in arrows.items():
+            b = QPushButton()
+            b.setIcon(icons.arrow_icon(name))
+            b.setIconSize(QSize(34, 34))
+            b.setFixedSize(64, 56)
+            b.setToolTip("Move the head and design %s by one step (%s)" % (name, sc))
             b.clicked.connect(lambda _=False, d=d: self.jog(*d))
             grid.addWidget(b, r, c)
             act = QAction(self)
-            act.setShortcut(QKeySequence({(0, 1): "Ctrl+Up", (-1, 0): "Ctrl+Left",
-                                          (1, 0): "Ctrl+Right", (0, -1): "Ctrl+Down"}[d]))
+            act.setShortcut(QKeySequence(sc))
             act.triggered.connect(lambda _=False, d=d: self.jog(*d))
             self.addAction(act)
-        self.jog_step = self._spin("jog_step", "len", 0.01, 1000, 2)
-        self.jog_step.setToolTip("Distance moved by one arrow click")
-        # keep the arrow pad compact and centred
-        grid.setSpacing(4)
-        centre = QWidget()
-        centre.setFixedSize(64, 52)
-        grid.addWidget(centre, 1, 1)
+        self.corner_buttons = []
+        corners = (("UL", 0, 0, "upper left corner", "Ctrl+7"), ("UR", 0, 2, "upper right corner", "Ctrl+9"),
+                   ("CC", 1, 1, "centre", "Ctrl+5"), ("LL", 2, 0, "lower left corner", "Ctrl+1"),
+                   ("LR", 2, 2, "lower right corner", "Ctrl+3"))
+        for key, r, c, tip, sc in corners:
+            b = QPushButton()
+            b.setIcon(icons.centre_icon() if key == "CC" else icons.corner_icon(key))
+            b.setIconSize(QSize(34, 34))
+            b.setFixedSize(64, 56)
+            b.setToolTip("Move the head to the %s of the design (%s).\n"
+                         "The design does not move." % (tip, sc))
+            b.clicked.connect(lambda _=False, k=key: self.move_to_corner(k))
+            grid.addWidget(b, r, c)
+            self.corner_buttons.append(b)
         pad = QHBoxLayout()
         pad.addStretch(1)
         pad.addLayout(grid)
         pad.addStretch(1)
         v.addLayout(pad)
 
+        self.jog_step = self._spin("jog_step", "len", 0.01, 1000, 2)
+        self.jog_step.setToolTip("Distance moved by one arrow click")
+        self.jog_step.setFixedWidth(110)
         row = QHBoxLayout()
         row.addStretch(1)
         row.addWidget(QLabel("Step:"))
-        self.jog_step.setFixedWidth(110)
         row.addWidget(self.jog_step)
         row.addStretch(1)
         v.addLayout(row)
-        row = QHBoxLayout()
-        row.addWidget(QLabel("Move to design:"))
-        self.corner_buttons = []
-        for key, text, tip in (("UL", "\u2196", "Upper left corner"), ("UR", "\u2197", "Upper right corner"),
-                               ("CC", "\u25ce", "Centre"), ("LL", "\u2199", "Lower left corner"),
-                               ("LR", "\u2198", "Lower right corner")):
-            b = QPushButton(text)
-            b.setFixedSize(38, 32)
-            b.setObjectName("corner")
-            b.setToolTip("Move the head to the %s of the design (does not move the design)" % tip.lower())
-            b.clicked.connect(lambda _=False, k=key: self.move_to_corner(k))
-            row.addWidget(b)
-            self.corner_buttons.append(b)
-        row.addStretch(1)
-        v.addLayout(row)
-        row = QHBoxLayout()
         self.head_label = QLabel()
-        row.addWidget(self.head_label, 1)
-        self.btn_goto = QPushButton("Go to\u2026")
+        self.head_label.setAlignment(Qt.AlignHCenter)
+        v.addWidget(self.head_label)
+
+        # go to an absolute position (from home)
+        row = QHBoxLayout()
+        row.addWidget(QLabel("Go to X"))
+        self.goto_x = QDoubleSpinBox()
+        self.goto_y = QDoubleSpinBox()
+        for w, key, sign in ((self.goto_x, "gotoX", 1.0), (self.goto_y, "gotoY", -1.0)):
+            w.setRange(0.0, 10000.0)
+            w.setDecimals(2)
+            w.setFixedWidth(92)
+            self._unit_widgets.append((w, "len", key, sign))
+        try:
+            self.goto_x.setValue(float(self.values.get("gotoX") or 0))
+            self.goto_y.setValue(max(0.0, -float(self.values.get("gotoY") or 0)))
+        except ValueError:
+            pass
+        self.goto_x.valueChanged.connect(lambda v: self._set_value("gotoX", _num_text(v)))
+        # gotoY is stored like K40 Whisperer (up is positive); shown as distance down
+        self.goto_y.valueChanged.connect(lambda v: self._set_value("gotoY", _num_text(-v)))
+        self.goto_y.setToolTip("Distance down from home")
+        row.addWidget(self.goto_x)
+        row.addSpacing(6)
+        row.addWidget(QLabel("Y"))
+        row.addWidget(self.goto_y)
+        row.addStretch(1)
+        self.btn_goto = QPushButton("Go")
+        self.btn_goto.setToolTip("Home the head, then move to X/Y (Ctrl+G)")
         self.btn_goto.clicked.connect(self.goto_position)
         row.addWidget(self.btn_goto)
         v.addLayout(row)
@@ -446,25 +471,18 @@ class MainWindow(QMainWindow):
         units = self.values.get("units", "mm")
         speed = "mm/s" if units == "mm" else "in/min"
         self.speed_header.setText("Speed (%s)" % speed)
-        for w, kind in self._unit_widgets:
+        for w, kind, _, _ in self._unit_widgets:
             w.setSuffix(" " + (units if kind == "len" else speed))
 
     def _reload_spin_values(self):
-        for w, kind in self._unit_widgets:
+        """Re-read unit-dependent fields after the units changed."""
+        for w, kind, key, sign in self._unit_widgets:
             w.blockSignals(True)
-        # widgets are rebuilt cheaply by re-reading values
-        for (w, kind), key in zip(self._unit_widgets, self._unit_keys()):
             try:
-                w.setValue(float(self.values[key]))
+                w.setValue(max(w.minimum(), sign * float(self.values[key])))
             except (KeyError, ValueError):
                 pass
-        for w, kind in self._unit_widgets:
             w.blockSignals(False)
-
-    def _unit_keys(self):
-        keys = ["jog_step"]
-        keys += [feed for _, _, feed, _, _, _ in OPERATIONS if feed]
-        return keys
 
     def _update_laser_state(self):
         if self.laser.connected:
@@ -757,25 +775,10 @@ class MainWindow(QMainWindow):
         self.move_head_temporary(offset)
 
     def goto_position(self):
-        """Home, then move to the X/Y given by the user (distance from home)."""
+        """Home, then move to the X/Y set in the panel (distance from home, Y downwards)."""
         if self.worker is not None:
             return
-        units = self.values.get("units", "mm")
-        try:
-            gx = float(self.values.get("gotoX") or 0)
-            gy = -float(self.values.get("gotoY") or 0)    # stored like K40 Whisperer (up = +)
-        except ValueError:
-            gx = gy = 0.0
-        x, ok = QInputDialog.getDouble(self, "Go to position", "X from home (%s):" % units,
-                                       gx, 0.0, 10000.0, 2)
-        if not ok:
-            return
-        y, ok = QInputDialog.getDouble(self, "Go to position", "Y from home, downwards (%s):" % units,
-                                       max(gy, 0.0), 0.0, 10000.0, 2)
-        if not ok:
-            return
-        self.values["gotoX"] = _num_text(x)
-        self.values["gotoY"] = _num_text(-y)
+        x, y = self.goto_x.value(), self.goto_y.value()
         if self.laser.connected and not self._laser_call(self.laser.home, "Homed"):
             return
         self.head = (0.0, 0.0)
