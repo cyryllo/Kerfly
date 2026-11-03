@@ -61,6 +61,8 @@ window and drawing tools. See [ROADMAP.md](ROADMAP.md).
 The laser output (EGV data sent over USB) is checked byte-for-byte against the
 original 0.71 after every change. See [Regression tests](#regression-tests).
 
+Changes between versions are listed in [CHANGELOG.md](CHANGELOG.md).
+
 ## Installing
 
 See [INSTALL.md](INSTALL.md) ([Polish version](INSTALL_pl.md)). Start Kerfly
