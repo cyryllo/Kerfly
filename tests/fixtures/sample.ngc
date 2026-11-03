@@ -1,0 +1,12 @@
+(Regression fixture: simple g-code)
+G21 G90
+G0 X0 Y0
+G1 X40 Y0 F600
+G1 X40 Y30
+G1 X0 Y30
+G1 X0 Y0
+G0 X20 Y5
+G2 X20 Y25 I0 J10
+G3 X20 Y5 I0 J-10
+G0 X0 Y0
+M2

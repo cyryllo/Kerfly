@@ -1,0 +1,250 @@
+{
+  "cases": {
+    "dxf_vcut": {
+      "capture": "file",
+      "job": "Vector_Cut",
+      "settings": {},
+      "sha256": "5c16ee90e70cedab0ba917d338d465772e83f188ca4ec66531f2a437c801f850",
+      "size": 1952,
+      "source": "dxf"
+    },
+    "dxf_veng": {
+      "capture": "file",
+      "job": "Vector_Eng",
+      "settings": {},
+      "sha256": "e0e282aa097db83e8b602f00021a0fc92eb25ea7965797507d80eeee47e90a5d",
+      "size": 1310,
+      "source": "dxf"
+    },
+    "ngc_gcode": {
+      "capture": "file",
+      "job": "Gcode_Cut",
+      "settings": {},
+      "sha256": "aa5081876c21b9c4c74010cfe53d3ac1948f1a8b6c70b081f5520026e08388c8",
+      "size": 2216,
+      "source": "ngc"
+    },
+    "png_reng_feed": {
+      "capture": "file",
+      "job": "Raster_Eng",
+      "settings": {
+        "Reng_feed": "200"
+      },
+      "sha256": "8318610f2a5fc2a9cf3a80c45ff538ffe936d6965bf8f1f06e91732f791c901c",
+      "size": 44387,
+      "source": "png"
+    },
+    "png_reng_grayscale": {
+      "capture": "file",
+      "job": "Raster_Eng",
+      "settings": {
+        "halftone": 0
+      },
+      "sha256": "ccfb64979d1a52fada0b85e7eb344aea8a7336189a726f3aa8a044d21f902acb",
+      "size": 2269,
+      "source": "png"
+    },
+    "png_reng_halftone": {
+      "capture": "file",
+      "job": "Raster_Eng",
+      "settings": {},
+      "sha256": "023f26b7965aa27b65f977dd23ba42802db5473be2367e2e4f4dd4e69a31a93a",
+      "size": 44387,
+      "source": "png"
+    },
+    "png_reng_negate": {
+      "capture": "file",
+      "job": "Raster_Eng",
+      "settings": {
+        "negate": 1
+      },
+      "sha256": "3864ad00eaa85474f32dafcec6fd0242853a2366258ca7f0102d2fc20a0d5a15",
+      "size": 48685,
+      "source": "png"
+    },
+    "png_reng_rotate_mirror": {
+      "capture": "file",
+      "job": "Raster_Eng",
+      "settings": {
+        "mirror": 1,
+        "rotate": 1
+      },
+      "sha256": "2a1bdaad65301a487bb9eb877e7ce16c0e7b153705209cd445c22e90f5144208",
+      "size": 44534,
+      "source": "png"
+    },
+    "png_reng_up_step": {
+      "capture": "file",
+      "job": "Raster_Eng",
+      "settings": {
+        "engraveUP": 1,
+        "rast_step": "0.004"
+      },
+      "sha256": "1fd98712d9c60087dcf18cec85f22d99cc66656f3ec2a07b439ed19f6f752893",
+      "size": 22668,
+      "source": "png"
+    },
+    "svg_all_b1": {
+      "capture": "file",
+      "job": "Raster_Vector_Cut",
+      "settings": {
+        "board_name": "LASER-B1"
+      },
+      "sha256": "1a959a1fc1ba832953c9875a05910a23440c5deb9784c1b3a9cf5febf4060f4d",
+      "size": 251096,
+      "source": "svg"
+    },
+    "svg_raster_vector_cut": {
+      "capture": "file",
+      "job": "Raster_Vector_Cut",
+      "settings": {},
+      "sha256": "333a55fb50caa9f7bd7700d2770af29defe1474a24314451bedd1694e6393671",
+      "size": 251096,
+      "source": "svg"
+    },
+    "svg_reng": {
+      "capture": "file",
+      "job": "Raster_Eng",
+      "settings": {},
+      "sha256": "c941380d7954212bc1e6691feeef3b656732604530b3674585acd59a05237a8d",
+      "size": 243510,
+      "source": "svg"
+    },
+    "svg_trace": {
+      "capture": "file",
+      "job": "Trace_Eng",
+      "settings": {},
+      "sha256": "eaec3c91c8ed2fdcc86be0554316c59d9dd3a3910afd5947f51f3a3fc1d61655",
+      "size": 869,
+      "source": "svg"
+    },
+    "svg_vcut": {
+      "capture": "file",
+      "job": "Vector_Cut",
+      "settings": {},
+      "sha256": "2b798ce92e7670dd456726342c9fb2f09deeeeecb42d3614c3e9a30cf163446a",
+      "size": 5572,
+      "source": "svg"
+    },
+    "svg_vcut_feeds": {
+      "capture": "file",
+      "job": "Vector_Eng_Cut",
+      "settings": {
+        "Vcut_feed": "25",
+        "Veng_feed": "50"
+      },
+      "sha256": "fb69bd770edacf0d3227e1e3a6fca6a4b13a2891144d58d7adc66204d6c8102c",
+      "size": 7662,
+      "source": "svg"
+    },
+    "svg_vcut_home_ur": {
+      "capture": "file",
+      "job": "Vector_Cut",
+      "settings": {
+        "HomeUR": 1
+      },
+      "sha256": "f89fa551632555d3fa578ea468c93971345c1227a8ca83f43590a7ce888d6d5c",
+      "size": 5589,
+      "source": "svg"
+    },
+    "svg_vcut_no_inside_first": {
+      "capture": "file",
+      "job": "Vector_Cut",
+      "settings": {
+        "inside_first": 0
+      },
+      "sha256": "c3a93ded4f7ea36443f1624e8539a493bda4435cd826e48b87123be48f2c2d62",
+      "size": 5571,
+      "source": "svg"
+    },
+    "svg_vcut_passes2": {
+      "capture": "file",
+      "job": "Vector_Cut",
+      "settings": {
+        "Vcut_passes": "2"
+      },
+      "sha256": "a340ebb6b4420b7a8a89434bfb10f81811e2feedd194e1ba84deeb139e875077",
+      "size": 11068,
+      "source": "svg"
+    },
+    "svg_vcut_rotate_mirror": {
+      "capture": "file",
+      "job": "Vector_Cut",
+      "settings": {
+        "mirror": 1,
+        "rotate": 1
+      },
+      "sha256": "3adaef1486c745cb91bca1a6365dcd123642f6e9e6ba22cc1da45328be08da89",
+      "size": 5576,
+      "source": "svg"
+    },
+    "svg_veng": {
+      "capture": "file",
+      "job": "Vector_Eng",
+      "settings": {},
+      "sha256": "2f15b25229466b2bd21fea3d6f707765205b713c0857cca5aaa277fefcc09481",
+      "size": 2166,
+      "source": "svg"
+    },
+    "svg_veng_cut_m1": {
+      "capture": "file",
+      "job": "Vector_Eng_Cut",
+      "settings": {
+        "board_name": "LASER-M1"
+      },
+      "sha256": "acf7243c54452db1ecc0aea9a437f7c6444f8632d36c61068ba1ea68e21abcc7",
+      "size": 7662,
+      "source": "svg"
+    },
+    "usb_m2_vcut": {
+      "capture": "usb",
+      "job": "Vector_Cut",
+      "settings": {},
+      "sha256": "a99425fec62383413e22186398b382c0f46a5e9bdec89ccd2d81a7bf878094a1",
+      "size": 5568,
+      "source": "svg"
+    },
+    "usb_m3_gcode": {
+      "capture": "usb",
+      "job": "Gcode_Cut",
+      "settings": {
+        "Gcode_power": "0.4",
+        "board_name": "LASER-M3"
+      },
+      "sha256": "5482c1957c6160685a00dbe659842c8a14485d967a85fd6c5080fb59a74ab6aa",
+      "size": 2235,
+      "source": "ngc"
+    },
+    "usb_m3_power_all": {
+      "capture": "usb",
+      "job": "Raster_Vector_Cut",
+      "settings": {
+        "board_name": "LASER-M3"
+      },
+      "sha256": "dc4971baff4ead08e08384bfddc0fead3e0a88b8cbff50c215b5b028aaff9e50",
+      "size": 251263,
+      "source": "svg"
+    },
+    "usb_m3_power_levels": {
+      "capture": "usb",
+      "job": "Raster_Vector_Cut",
+      "settings": {
+        "Reng_power": "0.3",
+        "Vcut_power": "0.9",
+        "Veng_power": "0.6",
+        "board_name": "LASER-M3"
+      },
+      "sha256": "1a70c7534dd55ed34819173feb17e7c36ee9c6ddbbe46779658f5eb3ac698de5",
+      "size": 251262,
+      "source": "svg"
+    }
+  },
+  "environment": {
+    "inkscape": "Inkscape 1.4 (e7c3feb100, 2024-10-09)",
+    "k40_whisperer": "0.71",
+    "lxml": "6.1.3",
+    "pillow": "13.0.0",
+    "platform": "Linux-6.12.113+deb13-amd64-x86_64-with-glibc2.41",
+    "python": "3.13.5"
+  }
+}
