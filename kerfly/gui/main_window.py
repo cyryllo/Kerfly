@@ -129,6 +129,10 @@ class MainWindow(QMainWindow):
                 w.setValue(float(self.values.get(key) or 0))
                 w.valueChanged.connect(lambda v: self._set_value(key, _num_text(v)))
                 self._unit_widgets.append((w, kind))
+        # compact columns in the operations table
+        widths = {"int": 58, "power": 72, "speed": 112}
+        if kind in widths:
+            w.setFixedWidth(widths[kind])
         return w
 
     def _build_panel(self):
@@ -275,7 +279,7 @@ class MainWindow(QMainWindow):
         scroll = QScrollArea()
         scroll.setWidget(panel)
         scroll.setWidgetResizable(True)
-        scroll.setMinimumWidth(330)
+        self.panel_scroll = scroll
         dock = QDockWidget("Job", self)
         dock.setObjectName("job_dock")
         dock.setFeatures(QDockWidget.NoDockWidgetFeatures)
@@ -331,6 +335,17 @@ class MainWindow(QMainWindow):
             self.power_widgets[op].setVisible(visible and show_power)
             self.power_widgets[op].setEnabled(has[op])
         self.no_ops_label.setVisible(not any(has.values()))
+        self._fit_panel_width()
+
+    def _fit_panel_width(self):
+        """Make the job panel exactly as wide as its contents need."""
+        scroll = getattr(self, "panel_scroll", None)
+        if scroll is None:
+            return
+        panel = scroll.widget()
+        panel.adjustSize()
+        width = panel.sizeHint().width() + scroll.verticalScrollBar().sizeHint().width() + 4
+        scroll.setMinimumWidth(max(300, width))
 
     def _update_unit_suffixes(self):
         units = self.values.get("units", "mm")
