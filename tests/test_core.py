@@ -173,6 +173,68 @@ def test_images(baseline):
     return errors
 
 
+def test_layout(baseline):
+    """Element placement and compiling several elements into one job."""
+    from kerfly.core.layout import Element, compile_layout
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s layout: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    # a single unchanged element is passed through: identical laser data
+    d = Design()
+    loaders.load_dxf(DXF, d)
+    e = Element(d, x=1.0, y=-2.0)
+    out, origin = compile_layout([e])
+    data = job.egv_file_bytes(job.build_job(out, JobSettings(), "Vector_Cut")[0].data)
+    check("single element passes through", out is d and origin == (1.0, -2.0)
+          and hashlib.sha256(data).hexdigest() == baseline["dxf_vcut"]["sha256"])
+
+    # geometry: 60 x 40 mm DXF rotated 90 degrees -> 40 x 60 mm, corners mapped
+    d = Design()
+    loaders.load_dxf(DXF, d)
+    w0, h0 = d.bounds[1] - d.bounds[0], d.bounds[3] - d.bounds[2]
+    e = Element(d, x=0.5, y=-0.5, rotation=90)
+    w, h = e.size
+    f = e.transform()
+    xmin, xmax, ymin, ymax = d.bounds
+    tl = f(xmin, ymax)        # source top-left -> after +90 (ccw) it is bottom-left
+    check("rotate 90 swaps size", abs(w - h0) < 1e-9 and abs(h - w0) < 1e-9, "(%.3f x %.3f in)" % (w, h))
+    check("rotate 90 maps corner", abs(tl[0] - 0.5) < 1e-9 and abs(tl[1] - (-0.5 - h)) < 1e-9, "(%s)" % (tl,))
+    e.set_size(2.0, 1.0)
+    check("set_size with 90 degree rotation", abs(e.size[0] - 2.0) < 1e-9 and abs(e.size[1] - 1.0) < 1e-9)
+
+    # two elements: union bounds, loops kept apart, rasters composited
+    a = Design()
+    loaders.load_dxf(DXF, a)
+    b = Design()
+    load_png(b)                               # 0.6 x 0.4 in raster at 1000 dpi
+    ea = Element(a, x=0.0, y=0.0)
+    eb = Element(b, x=3.0, y=-1.0, scale_x=2.0, scale_y=2.0)
+    out, origin = compile_layout([ea, eb])
+    xmin, xmax, ymin, ymax = out.bounds
+    cut_loops = len({row[2] for row in out.vector_cut.ecoords})
+    src_loops = len({row[2] for row in a.vector_cut.ecoords})
+    im = out.raster.image
+    ok_bounds = abs(xmin) < 1e-9 and abs(xmax - 4.2) < 1e-9 and abs(ymax) < 1e-9 \
+        and abs(ymin - min(-1.8, ea.bounds[2])) < 1e-9
+    check("two elements: bounds", ok_bounds and origin == (xmin, ymax), "(%s)" % (out.bounds,))
+    check("two elements: vector loops kept", cut_loops == src_loops)
+    # the dark disc of the synthetic image (centre 300,200 px) lands at
+    # x = 3.0 + 2*0.3 in, y = -1.0 - 2*0.2 in
+    px = int(round((3.6 - xmin) * 1000))
+    py = int(round((ymax - (-1.4)) * 1000))
+    check("two elements: raster placed and scaled", im.size == (4200, max(1800, int(round(-ea.bounds[2] * 1000))))
+          and im.getpixel((px, py)) == 0 and im.getpixel((100, 100)) == 255, "(%s)" % (im.size,))
+    settings = JobSettings()
+    raster.make_raster_coords(out, settings)
+    chunks = job.build_job(out, settings, "Raster_Eng+Vector_Eng+Vector_Cut")
+    check("two elements: job generated", len(chunks) == 1 and len(chunks[0].data) > 1000)
+    return errors
+
+
 def main():
     with open(MANIFEST) as f:
         baseline = json.load(f)["cases"]
@@ -197,6 +259,7 @@ def main():
 
     failures += test_settings_file()
     failures += test_images(baseline)
+    failures += test_layout(baseline)
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:
