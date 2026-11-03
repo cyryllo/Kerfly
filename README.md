@@ -36,8 +36,8 @@ It can jog the head, move it to the design corners or to a given position,
 and run raster engrave, vector engrave, vector cut, G-code and boundary trace
 jobs. It estimates the job time, saves jobs as EGV files and sends existing
 EGV files. On M3 boards it also offers test fire and power per operation.
-Long jobs run in the background. Stop pauses the laser and lets you resume or
-terminate the job.
+Long jobs run in the background. Pause stops the laser for a moment and the
+same button resumes it; Stop ends the job immediately.
 
 The original K40 Whisperer window (`k40_whisperer.py`) is still included and
 uses the same core. Batch mode is not in the new window yet.

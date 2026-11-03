@@ -74,6 +74,7 @@ class MainWindow(QMainWindow):
         self.laser = LaserController()
         self.head = (0.0, 0.0)          # laser head position on the bed, inches (y <= 0)
         self.worker = None
+        self._paused = False
         self._unit_widgets = []         # (spinbox, kind, key, sign) to update when units change
 
         self.setWindowTitle(_("Kerfly %s") % __version__)
@@ -219,6 +220,7 @@ class MainWindow(QMainWindow):
                 (self.act_open, "folder-open", C_("toolbar", "Open")),
                 (self.act_add, "file-plus", C_("toolbar", "Add")),
                 (self.act_reload, "refresh", C_("toolbar", "Reload")),
+                (self.act_save_egv, "device-floppy", C_("toolbar", "Save EGV")),
             ]),
             (C_("toolbar group", "Edit"), [
                 (self.act_undo, "arrow-back-up", C_("toolbar", "Undo")),
@@ -669,36 +671,46 @@ class MainWindow(QMainWindow):
         g.addLayout(row, len(OPERATIONS) + 2, 0, 1, 5)
         layout.addWidget(box)
 
-        # --- run
-        box = QGroupBox(_("Run"))
-        v = QVBoxLayout(box)
-        self.btn_start = QPushButton(_("Start selected operations"))
-        self.btn_start.setObjectName("start")
-        self.btn_start.setMinimumHeight(40)
-        self.btn_start.setIcon(icons.tabler("player-play", "#ffffff"))
-        self.btn_start.setIconSize(QSize(20, 20))
-        self.btn_start.clicked.connect(lambda: self.start_job())
-        v.addWidget(self.btn_start)
-        row = QHBoxLayout()
-        self.btn_trace = QPushButton(_("Trace boundary"))
-        self.btn_trace.setToolTip(_("Move the head around the outline of the design (laser off unless "
-                                    "set in Settings), to check where it will be cut"))
+        # --- run: one compact row
+        run = QWidget()
+        row = QHBoxLayout(run)
+        row.setContentsMargins(0, 4, 0, 0)
+        row.setSpacing(6)
+        self.btn_trace = QPushButton()
         self.btn_trace.setIcon(icons.trace_icon())
+        self.btn_trace.setIconSize(QSize(26, 26))
+        self.btn_trace.setFixedSize(46, 46)
+        self.btn_trace.setToolTip(_("Trace boundary: move the head around the outline of the design "
+                                    "(laser off unless set in Settings), to check where it will be cut"))
         self.btn_trace.clicked.connect(lambda: self.start_job(trace=True))
         row.addWidget(self.btn_trace)
-        self.btn_egv = QPushButton(_("Save EGV\u2026"))
-        self.btn_egv.setIcon(icons.tabler("device-floppy"))
-        self.btn_egv.clicked.connect(self.save_egv)
-        row.addWidget(self.btn_egv)
-        v.addLayout(row)
+        self.btn_start = QPushButton(_("Start"))
+        self.btn_start.setObjectName("start")
+        self.btn_start.setFixedHeight(46)
+        self.btn_start.setIcon(icons.tabler("player-play", "#ffffff"))
+        self.btn_start.setIconSize(QSize(22, 22))
+        self.btn_start.setToolTip(_("Start the selected operations") + " (F9)")
+        self.btn_start.clicked.connect(lambda: self.start_job())
+        row.addWidget(self.btn_start, 1)
+        self.btn_pause = QPushButton()
+        self.btn_pause.setObjectName("pause")
+        self.btn_pause.setIcon(icons.tabler("player-pause"))
+        self.btn_pause.setIconSize(QSize(24, 24))
+        self.btn_pause.setFixedSize(46, 46)
+        self.btn_pause.setToolTip(_("Pause the laser; press again to resume"))
+        self.btn_pause.setEnabled(False)
+        self.btn_pause.clicked.connect(self.pause_job)
+        row.addWidget(self.btn_pause)
         self.btn_stop = QPushButton(_("Stop"))
         self.btn_stop.setObjectName("stop")
-        self.btn_stop.setMinimumHeight(34)
+        self.btn_stop.setFixedSize(104, 46)
         self.btn_stop.setIcon(icons.tabler("player-stop", "#ffffff"))
+        self.btn_stop.setIconSize(QSize(22, 22))
+        self.btn_stop.setToolTip(_("Stop the job now") + " (Esc)")
         self.btn_stop.setEnabled(False)
         self.btn_stop.clicked.connect(self.stop_job)
-        v.addWidget(self.btn_stop)
-        layout.addWidget(box)
+        row.addWidget(self.btn_stop)
+        layout.addWidget(run)
         layout.addStretch(1)
 
         scroll = QScrollArea()
@@ -1158,7 +1170,7 @@ class MainWindow(QMainWindow):
                                                             self.values.get("units")))
 
     def set_busy(self, busy):
-        for w in [self.btn_start, self.btn_trace, self.btn_egv, self.btn_connect, self.btn_goto,
+        for w in [self.btn_start, self.btn_trace, self.btn_connect, self.btn_goto,
                   self.btn_test_fire, self.btn_calc_time, self.selection_box] + self.corner_buttons:
             w.setEnabled(not busy)
         for a in [self.act_open, self.act_reload, self.act_save_egv, self.act_send_egv,
@@ -1609,6 +1621,7 @@ class MainWindow(QMainWindow):
 
     def _run_worker(self, worker, message):
         self.worker = worker
+        self._set_paused(False)
         worker.progress.connect(self.status)
         worker.paused.connect(self._job_paused)
         worker.finished_job.connect(self._job_finished)
@@ -1627,20 +1640,35 @@ class MainWindow(QMainWindow):
             self.status(_("Stopping\u2026"))
             self.worker.request_stop()
 
-    def _job_paused(self):
-        answer = QMessageBox.question(
-            self, _("Laser paused"), _("The laser is paused.\n\nResume the job?"),
-            QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
-        if answer == QMessageBox.Yes:
-            self.worker.pause.resume()
+    def pause_job(self):
+        """Pause the running laser job, or resume it if it is paused."""
+        if self.worker is None or self.worker.laser is None:
+            return
+        if self._paused:
+            self.worker.resume()
+            self._set_paused(False)
             self.status(_("Resumed"))
         else:
-            self.worker.pause.terminate()
+            self.btn_pause.setEnabled(False)          # until the board confirms the pause
+            self.status(_("Pausing\u2026"))
+            self.worker.request_pause()
+
+    def _job_paused(self):
+        self._set_paused(True)
+        self.status(_("Paused. Press the pause button again to continue, or Stop to end the job."))
+
+    def _set_paused(self, paused):
+        self._paused = paused
+        self.btn_pause.setEnabled(self.worker is not None and self.worker.laser is not None)
+        self.btn_pause.setIcon(icons.tabler("player-play" if paused else "player-pause",
+                                            "#2e7d32" if paused else "#2b2f36"))
+        self.btn_pause.setToolTip(_("Resume the job") if paused else _("Pause the laser; press again to resume"))
 
     def _job_finished(self, ok, message):
         was_laser_job = isinstance(self.worker, (JobWorker, EgvSendWorker)) and self.worker.laser is not None
         self.worker.wait()
         self.worker = None
+        self._set_paused(False)
         self.set_busy(False)
         self.status(message, error=not ok)
         if was_laser_job and self.laser.connected:

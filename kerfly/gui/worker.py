@@ -33,10 +33,18 @@ class TaskWorker(QThread):
 
     # called from the GUI thread
     def request_stop(self):
+        """Stop now: the send loop stops the board (e-stop) at the next packet,
+        also when the job is paused."""
+        self.stop[0] = True
+        self.pause.terminate()
+
+    def request_pause(self):
+        """Pause the laser (between USB packets); resume() continues."""
         if self.laser is not None:
-            self.pause.request_pause()      # the user then chooses resume or terminate
-        else:
-            self.stop[0] = True
+            self.pause.request_pause()
+
+    def resume(self):
+        self.pause.resume()
 
     def _progress(self, message):
         self.progress.emit(message)

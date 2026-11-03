@@ -144,39 +144,61 @@ def main():
     check("gui_laser_job m3 == usb_m3_power_levels", fake.sent == expected,
           "(%d stages, powers %s)" % (len(fake.sent), [p for p, _ in fake.sent]))
 
-    # 4. pause then terminate while sending
+    # 4. Stop while sending: immediate e-stop, no pause, no question
     w = make_window()
     w.load_design(os.path.join(FIX, "shapes.svg"))
     fake = FakeK40(slow=True)
     w.laser.k40 = fake
-    answers = []
-    QMessageBox.question = staticmethod(lambda *a, **k: (answers.append(1), QMessageBox.No)[1])
+    asked = []
+    QMessageBox.question = staticmethod(lambda *a, **k: (asked.append(1), QMessageBox.No)[1])
+
+    def wait_for_sending(w):
+        t0 = time.time()
+        while "Sending" not in w.statusBar().currentMessage() and time.time() - t0 < 60:
+            app.processEvents()
+            time.sleep(0.01)
+
     w.start_job()
-    t0 = time.time()
-    while "Sending" not in w.statusBar().currentMessage() and time.time() - t0 < 60:
-        app.processEvents()
-        time.sleep(0.01)
+    wait_for_sending(w)
     w.stop_job()
     run_until_idle(app, w)
-    check("gui pause -> terminate", answers == [1] and fake.calls.count("pause") == 1
-          and "e_stop" in fake.calls and fake.sent == [],
-          "(calls %s, status %r)" % (fake.calls, w.statusBar().currentMessage()))
+    check("Stop: immediate e-stop", not asked and "pause" not in fake.calls and "e_stop" in fake.calls
+          and fake.sent == [], "(calls %s, status %r)" % (fake.calls, w.statusBar().currentMessage()))
 
-    # 5. pause then resume
+    # 5. Pause, then the same button resumes; the job finishes
     w = make_window(include_Reng="0")
     w.load_design(os.path.join(FIX, "shapes.svg"))
     fake = FakeK40(slow=True)
     w.laser.k40 = fake
-    QMessageBox.question = staticmethod(lambda *a, **k: QMessageBox.Yes)
     w.start_job()
+    wait_for_sending(w)
+    w.pause_job()
     t0 = time.time()
-    while "Sending" not in w.statusBar().currentMessage() and time.time() - t0 < 60:
+    while not w._paused and time.time() - t0 < 30:
+        app.processEvents()
+        time.sleep(0.01)
+    paused_state = w._paused and w.btn_pause.isEnabled()
+    w.pause_job()                                   # resume
+    run_until_idle(app, w)
+    check("Pause -> resume", paused_state and fake.calls.count("pause") == 2 and len(fake.sent) == 1
+          and not asked, "(calls %s)" % fake.calls)
+
+    # 5b. Pause, then Stop ends the job
+    w = make_window(include_Reng="0")
+    w.load_design(os.path.join(FIX, "shapes.svg"))
+    fake = FakeK40(slow=True)
+    w.laser.k40 = fake
+    w.start_job()
+    wait_for_sending(w)
+    w.pause_job()
+    t0 = time.time()
+    while not w._paused and time.time() - t0 < 30:
         app.processEvents()
         time.sleep(0.01)
     w.stop_job()
     run_until_idle(app, w)
-    check("gui pause -> resume", fake.calls.count("pause") == 2 and len(fake.sent) == 1,
-          "(calls %s)" % fake.calls)
+    check("Pause -> Stop", fake.calls.count("pause") == 1 and "e_stop" in fake.calls and fake.sent == []
+          and not w._paused, "(calls %s)" % fake.calls)
 
     # 6. move head to a design corner, then a job first brings it back
     w = make_window(include_Reng="0")

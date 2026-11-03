@@ -23,6 +23,7 @@ QPushButton#start { background:#2e7d32; color:white; font-weight:bold; border-ra
 QPushButton#start:disabled { background:#9e9e9e; }
 QPushButton#stop { background:#c62828; color:white; font-weight:bold; border-radius:4px; }
 QPushButton#stop:disabled { background:#bdbdbd; }
+QPushButton#start, QPushButton#stop { font-size: 14px; }
 QPushButton#jog { font-size:22px; font-weight:bold; }
 QPushButton#corner { font-size:17px; }
 QGroupBox { font-weight:bold; }

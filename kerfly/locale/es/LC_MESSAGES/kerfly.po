@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:36+0100\n"
+"POT-Creation-Date: 2026-11-03 22:43+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -459,9 +459,6 @@ msgstr "Láser conectado"
 msgid "Laser is not initialized."
 msgstr "El láser no está conectado."
 
-msgid "Laser paused"
-msgstr "Láser en pausa"
-
 msgid "Levels curve slope, dark end"
 msgstr "Pendiente de la curva de niveles, extremo oscuro"
 
@@ -506,13 +503,6 @@ msgstr "Recorrer el contorno del diseño"
 
 msgid "Move head to design"
 msgstr "Mover el cabezal al diseño"
-
-msgid ""
-"Move the head around the outline of the design (laser off unless set in "
-"Settings), to check where it will be cut"
-msgstr ""
-"Mover el cabezal alrededor del contorno del diseño (láser apagado, salvo "
-"que se indique otra cosa en Ajustes) para comprobar dónde se cortará"
 
 msgid "Move the head to the centre of the design"
 msgstr "Mover el cabezal al centro del diseño"
@@ -615,6 +605,17 @@ msgstr ""
 msgid "Pause or stop the running job"
 msgstr "Pausar o detener el trabajo en curso"
 
+msgid "Pause the laser; press again to resume"
+msgstr "Pausar el láser; pulse de nuevo para reanudar"
+
+msgid "Paused. Press the pause button again to continue, or Stop to end the job."
+msgstr ""
+"En pausa. Pulse de nuevo el botón de pausa para continuar o Detener para "
+"terminar el trabajo."
+
+msgid "Pausing…"
+msgstr "Pausando…"
+
 msgid "Place design at the &head"
 msgstr "Colocar el diseño en el &cabezal"
 
@@ -689,6 +690,9 @@ msgstr "Recargado"
 msgid "Resolution:"
 msgstr "Resolución:"
 
+msgid "Resume the job"
+msgstr "Reanudar el trabajo"
+
 msgid "Resumed"
 msgstr "Reanudado"
 
@@ -728,9 +732,6 @@ msgstr ""
 msgid "Rotation"
 msgstr "Rotación"
 
-msgid "Run"
-msgstr "Ejecutar"
-
 msgid "SVG files"
 msgstr "Archivos SVG"
 
@@ -740,11 +741,14 @@ msgstr "Escala de importación SVG"
 msgid "Save &EGV file…"
 msgstr "Guardar archivo &EGV…"
 
+msgctxt "toolbar"
+msgid "Save EGV"
+msgstr ""
+"Guardar\n"
+"EGV"
+
 msgid "Save EGV file"
 msgstr "Guardar archivo EGV"
-
-msgid "Save EGV…"
-msgstr "Guardar EGV…"
 
 msgid "Save settings as default"
 msgstr "Guardar configuración como predeterminada"
@@ -804,9 +808,6 @@ msgstr "Velocidad (%s)"
 msgid "Start"
 msgstr "Iniciar"
 
-msgid "Start selected operations"
-msgstr "Iniciar las operaciones seleccionadas"
-
 msgid "Start the selected operations"
 msgstr "Iniciar las operaciones seleccionadas"
 
@@ -815,6 +816,9 @@ msgstr "Paso:"
 
 msgid "Stop"
 msgstr "Detener"
+
+msgid "Stop the job now"
+msgstr "Detener el trabajo ahora"
 
 msgid "Stopped by the user."
 msgstr "Detenido por el usuario."
@@ -877,15 +881,6 @@ msgstr ""
 "El láser no responde (%s intentos). Pulse Detener para dejar de "
 "intentarlo."
 
-msgid ""
-"The laser is paused.\n"
-"\n"
-"Resume the job?"
-msgstr ""
-"El láser está en pausa.\n"
-"\n"
-"¿Reanudar el trabajo?"
-
 msgid "The laser stopped responding after the job was complete."
 msgstr "El láser dejó de responder al terminar el trabajo."
 
@@ -920,6 +915,14 @@ msgstr ""
 
 msgid "Trace boundary"
 msgstr "Recorrer contorno"
+
+msgid ""
+"Trace boundary: move the head around the outline of the design (laser off"
+" unless set in Settings), to check where it will be cut"
+msgstr ""
+"Recorrer contorno: el cabezal recorre el contorno del diseño (láser "
+"apagado, salvo que se indique otra cosa en Ajustes) para comprobar dónde "
+"se cortará"
 
 msgid "USB data ready"
 msgstr "Datos USB listos"

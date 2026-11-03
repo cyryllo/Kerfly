@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:36+0100\n"
+"POT-Creation-Date: 2026-11-03 22:43+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -461,9 +461,6 @@ msgstr "Połączono z laserem"
 msgid "Laser is not initialized."
 msgstr "Laser nie jest połączony."
 
-msgid "Laser paused"
-msgstr "Laser wstrzymany"
-
 msgid "Levels curve slope, dark end"
 msgstr "Nachylenie krzywej poziomów, ciemny koniec"
 
@@ -508,13 +505,6 @@ msgstr "Objedź kontur projektu"
 
 msgid "Move head to design"
 msgstr "Przesuń głowicę do projektu"
-
-msgid ""
-"Move the head around the outline of the design (laser off unless set in "
-"Settings), to check where it will be cut"
-msgstr ""
-"Objedź głowicą dookoła obrysu projektu (z wyłączonym laserem, chyba że w "
-"Ustawieniach zaznaczono inaczej), aby sprawdzić, gdzie zostanie wycięty"
 
 msgid "Move the head to the centre of the design"
 msgstr "Przesuń głowicę na środek projektu"
@@ -615,6 +605,17 @@ msgstr "Ścieżki z pliku G-code; prędkości są zapisane w pliku (polecenia F)
 msgid "Pause or stop the running job"
 msgstr "Wstrzymaj lub zatrzymaj trwające zadanie"
 
+msgid "Pause the laser; press again to resume"
+msgstr "Wstrzymaj laser; kliknij ponownie, aby wznowić"
+
+msgid "Paused. Press the pause button again to continue, or Stop to end the job."
+msgstr ""
+"Wstrzymano. Kliknij przycisk pauzy ponownie, aby kontynuować, albo Stop, "
+"aby zakończyć zadanie."
+
+msgid "Pausing…"
+msgstr "Wstrzymywanie…"
+
 msgid "Place design at the &head"
 msgstr "Ustaw projekt przy &głowicy"
 
@@ -691,6 +692,9 @@ msgstr "Wczytano ponownie"
 msgid "Resolution:"
 msgstr "Rozdzielczość:"
 
+msgid "Resume the job"
+msgstr "Wznów zadanie"
+
 msgid "Resumed"
 msgstr "Wznowiono"
 
@@ -730,9 +734,6 @@ msgstr ""
 msgid "Rotation"
 msgstr "Obrót"
 
-msgid "Run"
-msgstr "Uruchom"
-
 msgid "SVG files"
 msgstr "Pliki SVG"
 
@@ -742,11 +743,14 @@ msgstr "Skala importu SVG"
 msgid "Save &EGV file…"
 msgstr "Zapisz plik &EGV…"
 
+msgctxt "toolbar"
+msgid "Save EGV"
+msgstr ""
+"Zapisz\n"
+"EGV"
+
 msgid "Save EGV file"
 msgstr "Zapisz plik EGV"
-
-msgid "Save EGV…"
-msgstr "Zapisz EGV…"
 
 msgid "Save settings as default"
 msgstr "Zapisz ustawienia jako domyślne"
@@ -806,9 +810,6 @@ msgstr "Prędkość (%s)"
 msgid "Start"
 msgstr "Start"
 
-msgid "Start selected operations"
-msgstr "Uruchom zaznaczone operacje"
-
 msgid "Start the selected operations"
 msgstr "Uruchom zaznaczone operacje"
 
@@ -817,6 +818,9 @@ msgstr "Krok:"
 
 msgid "Stop"
 msgstr "Stop"
+
+msgid "Stop the job now"
+msgstr "Zatrzymaj zadanie teraz"
 
 msgid "Stopped by the user."
 msgstr "Zatrzymane przez użytkownika."
@@ -877,15 +881,6 @@ msgid ""
 "trying."
 msgstr "Laser nie odpowiada (prób: %s). Naciśnij Stop, aby przestać próbować."
 
-msgid ""
-"The laser is paused.\n"
-"\n"
-"Resume the job?"
-msgstr ""
-"Laser jest wstrzymany.\n"
-"\n"
-"Wznowić zadanie?"
-
 msgid "The laser stopped responding after the job was complete."
 msgstr "Laser przestał odpowiadać po zakończeniu zadania."
 
@@ -919,6 +914,14 @@ msgstr ""
 
 msgid "Trace boundary"
 msgstr "Objazd konturu"
+
+msgid ""
+"Trace boundary: move the head around the outline of the design (laser off"
+" unless set in Settings), to check where it will be cut"
+msgstr ""
+"Objazd konturu: głowica objeżdża obrys projektu (z wyłączonym laserem, "
+"chyba że w Ustawieniach zaznaczono inaczej), aby sprawdzić, gdzie "
+"zostanie wycięty"
 
 msgid "USB data ready"
 msgstr "Dane USB gotowe"

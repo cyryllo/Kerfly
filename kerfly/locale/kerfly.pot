@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:36+0100\n"
+"POT-Creation-Date: 2026-11-03 22:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -448,9 +448,6 @@ msgstr ""
 msgid "Laser is not initialized."
 msgstr ""
 
-msgid "Laser paused"
-msgstr ""
-
 msgid "Levels curve slope, dark end"
 msgstr ""
 
@@ -494,11 +491,6 @@ msgid "Move around the outline of the design"
 msgstr ""
 
 msgid "Move head to design"
-msgstr ""
-
-msgid ""
-"Move the head around the outline of the design (laser off unless set in "
-"Settings), to check where it will be cut"
 msgstr ""
 
 msgid "Move the head to the centre of the design"
@@ -600,6 +592,15 @@ msgstr ""
 msgid "Pause or stop the running job"
 msgstr ""
 
+msgid "Pause the laser; press again to resume"
+msgstr ""
+
+msgid "Paused. Press the pause button again to continue, or Stop to end the job."
+msgstr ""
+
+msgid "Pausing…"
+msgstr ""
+
 msgid "Place design at the &head"
 msgstr ""
 
@@ -674,6 +675,9 @@ msgstr ""
 msgid "Resolution:"
 msgstr ""
 
+msgid "Resume the job"
+msgstr ""
+
 msgid "Resumed"
 msgstr ""
 
@@ -709,9 +713,6 @@ msgstr ""
 msgid "Rotation"
 msgstr ""
 
-msgid "Run"
-msgstr ""
-
 msgid "SVG files"
 msgstr ""
 
@@ -721,10 +722,11 @@ msgstr ""
 msgid "Save &EGV file…"
 msgstr ""
 
-msgid "Save EGV file"
+msgctxt "toolbar"
+msgid "Save EGV"
 msgstr ""
 
-msgid "Save EGV…"
+msgid "Save EGV file"
 msgstr ""
 
 msgid "Save settings as default"
@@ -783,9 +785,6 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-msgid "Start selected operations"
-msgstr ""
-
 msgid "Start the selected operations"
 msgstr ""
 
@@ -793,6 +792,9 @@ msgid "Step:"
 msgstr ""
 
 msgid "Stop"
+msgstr ""
+
+msgid "Stop the job now"
 msgstr ""
 
 msgid "Stopped by the user."
@@ -848,12 +850,6 @@ msgid ""
 "trying."
 msgstr ""
 
-msgid ""
-"The laser is paused.\n"
-"\n"
-"Resume the job?"
-msgstr ""
-
 msgid "The laser stopped responding after the job was complete."
 msgstr ""
 
@@ -879,6 +875,11 @@ msgid "To head"
 msgstr ""
 
 msgid "Trace boundary"
+msgstr ""
+
+msgid ""
+"Trace boundary: move the head around the outline of the design (laser off"
+" unless set in Settings), to check where it will be cut"
 msgstr ""
 
 msgid "USB data ready"
