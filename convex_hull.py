@@ -1,70 +1,49 @@
 """
-2D Convex Hull Code from Wikibooks
-https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
+2D convex hull (Andrew's monotone chain algorithm).
+
+Copyright (C) 2026 Kerfly contributors
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version. See the LICENSE file for details.
+
+Independent replacement for the snippet previously copied into K40 Whisperer;
+the interface (hull2D().convex_hull / convexHullecoords) is kept unchanged.
 """
+
+
+def _turn(a, b, c):
+    """> 0 if a->b->c turns left (counter-clockwise), < 0 right, 0 collinear."""
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+
+def _half_hull(points):
+    chain = []
+    for p in points:
+        while len(chain) > 1 and _turn(chain[-2], chain[-1], p) <= 0:
+            chain.pop()
+        chain.append(p)
+    return chain
+
 
 class hull2D:
 
-    def convex_hull(self,points):
-        """Computes the convex hull of a set of 2D points.
+    def convex_hull(self, points):
+        """Return hull vertices counter-clockwise, starting at the lowest (x, y) point.
 
-        Input: an iterable sequence of (x, y) pairs representing the points.
-        Output: a list of vertices of the convex hull in counter-clockwise order,
-          starting from the vertex with the lexicographically smallest coordinates.
-        Implements Andrew's monotone chain algorithm. O(n log n) complexity.
+        Duplicate and collinear points are dropped.
         """
-
-        # Sort the points lexicographically (tuples are compared lexicographically).
-        # Remove duplicates to detect the case we have just one unique point.
-        points = sorted(set(points))
-
-        # Boring case: no points or a single point, possibly repeated multiple times.
-        if len(points) <= 1:
-            return points
-
-        # 2D cross product of OA and OB vectors, i.e. z-component of their 3D cross product.
-        # Returns a positive value, if OAB makes a counter-clockwise turn,
-        # negative for clockwise turn, and zero if the points are collinear.
-        def cross(o, a, b):
-            return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
-
-        # Build lower hull 
-        lower = []
-        for p in points:
-            while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
-                lower.pop()
-            lower.append(p)
-
-        # Build upper hull
-        upper = []
-        for p in reversed(points):
-            while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
-                upper.pop()
-            upper.append(p)
-
-        # Concatenation of the lower and upper hulls gives the convex hull.
-        # Last point of each list is omitted because it is repeated at the beginning of the other list. 
+        pts = sorted(set(points))
+        if len(pts) < 2:
+            return pts
+        lower = _half_hull(pts)
+        upper = _half_hull(reversed(pts))
+        # each chain ends where the other one starts
         return lower[:-1] + upper[:-1]
 
-
-    def convexHullecoords(self,ecoords):
-        p=[]
-        for line in ecoords:
-            p.append((line[0],line[1]))
-            
-        hull_data = self.convex_hull(p)
-        ecoords=[]
-        for i in range(0,len(hull_data)):
-            ecoords.append([hull_data[i][0],hull_data[i][1],1])
-        ecoords.append(ecoords[0])
-        return ecoords
-
-    ######################################################################
-
-    
-if __name__ == '__main__':
-    my_hull=hull2D()
-    p = [(1,1),(0,3),(0,0),(4,5),(10,10)]
-    c = my_hull.convex_hull(p)
-    print(p)
-    print(c)
+    def convexHullecoords(self, ecoords):
+        """Hull of ecoords ([x, y, loop] rows) as a closed ecoords loop numbered 1."""
+        hull = self.convex_hull([(row[0], row[1]) for row in ecoords])
+        loop = [[x, y, 1] for (x, y) in hull]
+        loop.append(loop[0])
+        return loop

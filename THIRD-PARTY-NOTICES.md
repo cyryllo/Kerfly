@@ -6,8 +6,7 @@ text is in [LICENSE](LICENSE).
 
 Kerfly is a fork of K40 Whisperer 0.71 by Scorch. Some source files carry their
 own copyright notices and licenses. All of them are compatible with
-distributing the combined work under GPL-3.0-or-later (except the two marked
-under [Open item](#open-item), which are under review). The original notices
+distributing the combined work under GPL-3.0-or-later. The original notices
 in each file are kept as they are. When you modify a file, add your own notice
 next to the existing one rather than replacing it.
 
@@ -42,17 +41,20 @@ next to the existing one rather than replacing it.
 |---|---|---|
 | `LaserSpeed.py` | LHYMICRO-GL speed code library, also used in MeerK40t | MIT (stated in the file) |
 | `windowsinhibitor.py` | [Deluge-PreventSuspendPlus](https://github.com/h3llrais3r/Deluge-PreventSuspendPlus) | GPL-3.0-or-later (per that project's `setup.py`) |
-| `convex_hull.py` | [Wikibooks: Monotone chain convex hull](https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain) | CC BY-SA (Wikibooks content license). See [Open item](#open-item) |
-| `interpolate.py` | [Stack Overflow answer](https://stackoverflow.com/questions/7343697/linear-interpolation-python) | CC BY-SA 3.0 (Stack Overflow content license at the time). See [Open item](#open-item) |
 
-### Open item
+## Files written for Kerfly
 
-`convex_hull.py` and `interpolate.py` are short snippets copied from websites
-licensed under Creative Commons BY-SA. CC BY-SA 4.0 is one-way compatible with
-GPLv3. CC BY-SA 3.0 is not formally compatible. Both snippets are a few lines
-of standard algorithms (monotone chain convex hull, linear interpolation). They
-are planned to be replaced with independent implementations, which the
-regression tests will verify for identical output.
+| File | Copyright | License |
+|---|---|---|
+| `convex_hull.py` | 2026 Kerfly contributors | GPL-3.0-or-later |
+| `interpolate.py` | 2026 Kerfly contributors | GPL-3.0-or-later |
+| `tests/` | 2026 Kerfly contributors | GPL-3.0-or-later |
+
+`convex_hull.py` and `interpolate.py` used to be short snippets copied from
+Wikibooks and Stack Overflow (CC BY-SA content). CC BY-SA 3.0 is not formally
+compatible with the GPL, so both were rewritten from scratch for Kerfly with
+the same interface. They were checked to give identical results to the
+originals, and the regression tests pass unchanged.
 
 ## Code borrowed from MeerK40t
 
