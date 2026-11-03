@@ -196,8 +196,11 @@ class MainWindow(QMainWindow):
         v.addLayout(pad)
 
         row = QHBoxLayout()
+        row.addStretch(1)
         row.addWidget(QLabel("Step:"))
-        row.addWidget(self.jog_step, 1)
+        self.jog_step.setFixedWidth(110)
+        row.addWidget(self.jog_step)
+        row.addStretch(1)
         v.addLayout(row)
         self.head_label = QLabel()
         v.addWidget(self.head_label)
@@ -215,8 +218,9 @@ class MainWindow(QMainWindow):
                 g.addWidget(lbl, 0, col)
                 if text == "Power":
                     self.power_header = lbl
-        self.power_widgets = []
+        self.power_widgets = {}
         self.include_checks = {}
+        self.op_rows = {}          # operation -> widgets of its row
         for row, (label, inc, feed, passes, power, op) in enumerate(OPERATIONS, start=1):
             cb = QCheckBox(label)
             cb.setChecked(is_true(self.values.get(inc, "1")))
@@ -224,12 +228,22 @@ class MainWindow(QMainWindow):
                                                   self.refresh_preview()))
             self.include_checks[op] = cb
             g.addWidget(cb, row, 0)
+            widgets = [cb]
             if feed:
-                g.addWidget(self._spin(feed, "speed", 0.1, 10000), row, 1)
-            g.addWidget(self._spin(passes, "int", 1, 100), row, 2)
+                widgets.append(self._spin(feed, "speed", 0.1, 10000))
+                widgets[-1].setToolTip("Speed")
+                g.addWidget(widgets[-1], row, 1)
+            elif op == job.GCODE_CUT:
+                cb.setToolTip("Paths from a G-code file; speeds come from the file (F words)")
+            widgets.append(self._spin(passes, "int", 1, 100))
+            g.addWidget(widgets[-1], row, 2)
             pw = self._spin(power, "power", 0, 100, 0)
             g.addWidget(pw, row, 3)
-            self.power_widgets.append(pw)
+            self.power_widgets[op] = pw
+            self.op_rows[op] = widgets
+        self.no_ops_label = QLabel("Open a design to see its operations.")
+        self.no_ops_label.setStyleSheet("color:#757575;")
+        g.addWidget(self.no_ops_label, len(OPERATIONS) + 1, 0, 1, 4)
         layout.addWidget(box)
 
         # --- run
@@ -293,11 +307,30 @@ class MainWindow(QMainWindow):
         return dict(pre_process_crc=is_true(v["pre_pr_crc"]), wait_for_laser=is_true(v["wait"]),
                     timeout_ms=float(v["t_timeout"]), n_timeouts=float(v["n_timeouts"]))
 
+    def _design_has(self):
+        d = self.design
+        return {job.RASTER_ENG: d.raster.image is not None,
+                job.VECTOR_ENG: bool(d.vector_engrave.ecoords),
+                job.VECTOR_CUT: bool(d.vector_cut.ecoords),
+                job.GCODE_CUT: bool(d.gcode.ecoords)}
+
     def _update_power_visibility(self):
-        show = self.power_per_stage()
-        self.power_header.setVisible(show)
-        for w in self.power_widgets:
-            w.setVisible(show)
+        """Show the rows that apply to the loaded design: the G-code row only
+        for G-code files, other rows greyed out when the design has no such data.
+        The power column is shown only for M3 boards with power control."""
+        show_power = self.power_per_stage()
+        has = self._design_has()
+        gcode_file = has[job.GCODE_CUT]
+        self.power_header.setVisible(show_power)
+        self.speed_header.setVisible(not gcode_file)
+        for op, widgets in self.op_rows.items():
+            visible = gcode_file if op == job.GCODE_CUT else not gcode_file
+            for w in widgets:
+                w.setVisible(visible)
+                w.setEnabled(has[op])
+            self.power_widgets[op].setVisible(visible and show_power)
+            self.power_widgets[op].setEnabled(has[op])
+        self.no_ops_label.setVisible(not any(has.values()))
 
     def _update_unit_suffixes(self):
         units = self.values.get("units", "mm")
@@ -425,6 +458,7 @@ class MainWindow(QMainWindow):
         self.design_file = filename
         self.values["designfile"] = filename
         self._update_design_label()
+        self._update_power_visibility()
         self.refresh_preview(fit=True)
         self.status("Opened %s" % filename)
         for w in warnings:
