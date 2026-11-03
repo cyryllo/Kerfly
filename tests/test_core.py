@@ -235,6 +235,43 @@ def test_layout(baseline):
     return errors
 
 
+def test_shapes():
+    """Drawn shapes: sizes, operations, even-odd fill, job generation."""
+    import math
+    from kerfly.core.shapes import ShapeSpec, build_design
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s shapes: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    def size_mm(d):
+        b = d.bounds
+        return round((b[1] - b[0]) * 25.4, 6), round((b[3] - b[2]) * 25.4, 6)
+
+    d = build_design(ShapeSpec("rectangle", 40, 20, corner_radius=5))
+    check("rectangle 40 x 20 mm, rounded, cut", size_mm(d) == (40.0, 20.0) and d.vector_cut.ecoords
+          and not d.vector_engrave.ecoords)
+    d = build_design(ShapeSpec("ellipse", 30, 10, operation="engrave"))
+    check("ellipse 30 x 10 mm, engrave", size_mm(d) == (30.0, 10.0) and d.vector_engrave.ecoords)
+    d = build_design(ShapeSpec("polygon", 25, 25, sides=6))
+    loops = {row[2] for row in d.vector_cut.ecoords}
+    check("hexagon: one closed loop with 7 points", len(loops) == 1 and len(d.vector_cut.ecoords) == 7)
+    d = build_design(ShapeSpec("line", 30, -10))
+    check("line 30 x 10 mm (up-right)", size_mm(d) == (30.0, 10.0) and len(d.vector_cut.ecoords) == 2)
+    outer = [(10 + 10 * math.cos(a / 60 * 2 * math.pi), 10 + 10 * math.sin(a / 60 * 2 * math.pi)) for a in range(60)]
+    inner = [(10 + 4 * math.cos(a / 60 * 2 * math.pi), 10 + 4 * math.sin(a / 60 * 2 * math.pi)) for a in range(60)]
+    d = build_design(ShapeSpec("text", operation="fill", text_outlines=[outer, inner]))
+    im = d.raster.image
+    check("fill keeps holes (even-odd)", im.getpixel((im.width // 2, im.height // 2)) == 255
+          and im.getpixel((im.width // 2, int(im.height * 0.15))) == 0)
+    settings = JobSettings()
+    raster.make_raster_coords(d, settings)
+    check("filled shape gives a raster job", len(job.build_job(d, settings, "Raster_Eng")[0].data) > 100)
+    return errors
+
+
 def main():
     with open(MANIFEST) as f:
         baseline = json.load(f)["cases"]
@@ -260,6 +297,7 @@ def main():
     failures += test_settings_file()
     failures += test_images(baseline)
     failures += test_layout(baseline)
+    failures += test_shapes()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

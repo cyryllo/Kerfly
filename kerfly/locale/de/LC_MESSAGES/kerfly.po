@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:29+0100\n"
+"POT-Creation-Date: 2026-11-03 22:36+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -170,6 +170,9 @@ msgstr "Breite der Arbeitsfläche"
 msgid "Beep after a job"
 msgstr "Signalton nach dem Auftrag"
 
+msgid "Bold"
+msgstr "Fett"
+
 msgid "Boundary trace gap"
 msgstr "Abstand beim Umrissabfahren"
 
@@ -197,6 +200,13 @@ msgstr ""
 "Ausgewähltes Element oder den ganzen Entwurf auf der Arbeitsfläche "
 "zentrieren"
 
+msgid ""
+"Choose a drawing tool on the right, or select a drawn shape, to see its "
+"options here."
+msgstr ""
+"Wählen Sie rechts ein Zeichenwerkzeug oder eine gezeichnete Form, um hier"
+" ihre Optionen zu sehen."
+
 msgid "Click an element on the bed to select it."
 msgstr "Klicken Sie auf ein Element, um es auszuwählen."
 
@@ -205,6 +215,9 @@ msgstr "Steuerplatine"
 
 msgid "Converting text to paths."
 msgstr "Text wird in Pfade umgewandelt."
+
+msgid "Corner radius:"
+msgstr "Eckenradius:"
 
 #, python-format
 msgid "Could not open %s"
@@ -234,6 +247,9 @@ msgstr "Halbtonbild wird erstellt."
 #, python-format
 msgid "Creating scan lines: %s%%"
 msgstr "Scanlinien werden erstellt: %s%%"
+
+msgid "Cut"
+msgstr "Schneiden"
 
 msgid "Cut inside shapes first"
 msgstr "Innere Formen zuerst schneiden"
@@ -280,6 +296,9 @@ msgstr "Abstand nach unten vom Referenzpunkt"
 msgid "Distance moved by one arrow click"
 msgstr "Verfahrweg pro Klick auf einen Pfeil"
 
+msgid "Drawing tools"
+msgstr "Zeichenwerkzeuge"
+
 msgctxt "toolbar"
 msgid "Duplicate"
 msgstr ""
@@ -300,8 +319,14 @@ msgctxt "toolbar group"
 msgid "Edit"
 msgstr "Bearbeiten"
 
+msgid "Ellipse"
+msgstr "Ellipse"
+
 msgid "Engrave bottom to top"
 msgstr "Von unten nach oben gravieren"
+
+msgid "Engrave outline"
+msgstr "Kontur gravieren"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
@@ -310,6 +335,9 @@ msgstr "Geschätzte Gesamtzeit: <b>%s</b>"
 msgctxt "toolbar group"
 msgid "File"
 msgstr "Datei"
+
+msgid "Fill (raster)"
+msgstr "Füllen (Raster)"
 
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Laser kurz auslösen (M3-Platinen)"
@@ -400,6 +428,9 @@ msgstr "Ungültiger Wert für Einstellung '%s': %r"
 msgid "Invert raster colors"
 msgstr "Rasterfarben umkehren"
 
+msgid "Italic"
+msgstr "Kursiv"
+
 msgid "Job"
 msgstr "Auftrag"
 
@@ -443,6 +474,9 @@ msgstr "Steigung der Tonwertkurve, helles Ende"
 
 msgid "Levels curve weight"
 msgstr "Gewichtung der Tonwertkurve"
+
+msgid "Line"
+msgstr "Linie"
 
 msgid "Loading cancelled"
 msgstr "Laden abgebrochen"
@@ -511,6 +545,21 @@ msgstr "Laserkopf einen Schritt nach rechts bewegen"
 msgid "Move the laser head up by one step"
 msgstr "Laserkopf einen Schritt nach oben bewegen"
 
+msgid "New ellipse:"
+msgstr "Neue Ellipse:"
+
+msgid "New line:"
+msgstr "Neue Linie:"
+
+msgid "New polygon:"
+msgstr "Neues Polygon:"
+
+msgid "New rectangle:"
+msgstr "Neues Rechteck:"
+
+msgid "New text:"
+msgstr "Neuer Text:"
+
 msgid "No design loaded"
 msgstr "Kein Entwurf geladen"
 
@@ -519,6 +568,9 @@ msgstr "Es wurden keine Laserdaten erzeugt."
 
 msgid "Nothing to do: load a design and select at least one operation."
 msgstr "Nichts zu tun: Entwurf laden und mindestens einen Vorgang auswählen."
+
+msgid "Nothing to draw."
+msgstr "Nichts zu zeichnen."
 
 msgid "Number of passes:"
 msgstr "Anzahl der Durchgänge:"
@@ -544,6 +596,9 @@ msgstr "%s geöffnet"
 msgid "Opening %s"
 msgstr "%s wird geöffnet"
 
+msgid "Operation:"
+msgstr "Vorgang:"
+
 msgid "Operations"
 msgstr "Vorgänge"
 
@@ -566,6 +621,9 @@ msgstr "Laufenden Auftrag anhalten oder beenden"
 
 msgid "Place design at the &head"
 msgstr "Entwurf am &Laserkopf platzieren"
+
+msgid "Polygon"
+msgstr "Polygon"
 
 msgid "Power"
 msgstr "Leistung"
@@ -611,6 +669,9 @@ msgstr "Erneut verbinden"
 
 msgid "Ready"
 msgstr "Bereit"
+
+msgid "Rectangle"
+msgstr "Rechteck"
 
 msgctxt "toolbar"
 msgid "Redo"
@@ -699,6 +760,9 @@ msgstr "Einstellungen als Standard speichern"
 msgid "Scan line step (in)"
 msgstr "Zeilenabstand (Zoll)"
 
+msgid "Select and move"
+msgstr "Auswählen und verschieben"
+
 msgid "Selected element"
 msgstr "Ausgewähltes Element"
 
@@ -737,6 +801,9 @@ msgstr ""
 msgid "Settings saved to %s"
 msgstr "Einstellungen gespeichert in %s"
 
+msgid "Sides:"
+msgstr "Seiten:"
+
 msgid "Speed"
 msgstr "Geschwindigkeit"
 
@@ -774,6 +841,9 @@ msgstr "Testschuss"
 #, python-format
 msgid "Test fire: %.0f%% for %d ms"
 msgstr "Testschuss: %.0f%% für %d ms"
+
+msgid "Text"
+msgstr "Text"
 
 msgid "That corner of the design is outside the laser bed."
 msgstr "Diese Ecke des Entwurfs liegt außerhalb der Arbeitsfläche."

@@ -52,6 +52,7 @@ class ViewSignals(QObject):
     scaled = Signal(object, float)              # element, factor (about its centre)
     rotated = Signal(object, float)             # element, degrees counter-clockwise
     nudged = Signal(object, float, float)       # element, dx, dy in mm (screen right / up)
+    drawn = Signal(str, QPointF, QPointF, bool)  # tool, start, end (scene mm), shift held
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -224,6 +225,9 @@ class PreviewView(QGraphicsView):
         self.home_ur = False
         self.bed_w_mm = 0.0
         self.grid_mm = 0.0
+        self.tool = "select"        # or a shape kind: rectangle, ellipse, polygon, line, text
+        self._draw_start = None
+        self._draw_item = None
         self._pixmaps = {}          # (id(design), id(image), negate, halftone) -> (pixmap, scale)
         self._items = []
         self._handles = []
@@ -239,7 +243,43 @@ class PreviewView(QGraphicsView):
         if 0.05 < current * factor < 400:
             self.scale(factor, factor)
 
+    def set_tool(self, tool):
+        self.tool = tool
+        drawing = tool != "select"
+        self.setDragMode(QGraphicsView.NoDrag if drawing else QGraphicsView.RubberBandDrag)
+        self.viewport().setCursor(Qt.CrossCursor if drawing else Qt.ArrowCursor)
+
+    def _snap_point(self, p):
+        if self.grid_mm > 0:
+            g = self.grid_mm
+            return QPointF(round(p.x() / g) * g, round(p.y() / g) * g)
+        return p
+
+    def _draw_shape_item(self, start, end, shift):
+        """Rubber-band preview of the shape being drawn."""
+        if self._draw_item is not None:
+            self.scene().removeItem(self._draw_item)
+            self._draw_item = None
+        pen = _cosmetic_pen(COLORS["selection"], 1.2, Qt.DashLine)
+        if self.tool == "line":
+            self._draw_item = self.scene().addLine(start.x(), start.y(), end.x(), end.y(), pen)
+            return
+        rect = QRectF(start, end).normalized()
+        if shift:
+            side = max(rect.width(), rect.height())
+            rect = QRectF(start.x() if end.x() >= start.x() else start.x() - side,
+                          start.y() if end.y() >= start.y() else start.y() - side, side, side)
+        if self.tool == "ellipse":
+            self._draw_item = self.scene().addEllipse(rect, pen)
+        else:
+            self._draw_item = self.scene().addRect(rect, pen)
+        self._draw_item.setZValue(30)
+
     def mousePressEvent(self, event):
+        if self.tool != "select" and event.button() == Qt.LeftButton:
+            self._draw_start = self._snap_point(self.mapToScene(event.position().toPoint()))
+            event.accept()
+            return
         if event.button() in (Qt.MiddleButton, Qt.RightButton):
             self._panning = event.position()
             self.setCursor(Qt.ClosedHandCursor)
@@ -248,6 +288,12 @@ class PreviewView(QGraphicsView):
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
+        if self._draw_start is not None:
+            end = self._snap_point(self.mapToScene(event.position().toPoint()))
+            if self.tool != "text":
+                self._draw_shape_item(self._draw_start, end, bool(event.modifiers() & Qt.ShiftModifier))
+            event.accept()
+            return
         if self._panning is not None:
             delta = event.position() - self._panning
             self._panning = event.position()
@@ -258,6 +304,16 @@ class PreviewView(QGraphicsView):
         super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
+        if self._draw_start is not None and event.button() == Qt.LeftButton:
+            start = self._draw_start
+            end = self._snap_point(self.mapToScene(event.position().toPoint()))
+            self._draw_start = None
+            if self._draw_item is not None:
+                self.scene().removeItem(self._draw_item)
+                self._draw_item = None
+            self.signals.drawn.emit(self.tool, start, end, bool(event.modifiers() & Qt.ShiftModifier))
+            event.accept()
+            return
         if self._panning is not None and event.button() in (Qt.MiddleButton, Qt.RightButton):
             self._panning = None
             self.unsetCursor()
@@ -266,7 +322,12 @@ class PreviewView(QGraphicsView):
         super().mouseReleaseEvent(event)
 
     def keyPressEvent(self, event):
-        """Arrow keys move the selected element (1 mm or one grid step; Shift: 10x)."""
+        """Arrow keys move the selected element (1 mm or one grid step; Shift: 10x).
+        Escape leaves a drawing tool."""
+        if event.key() == Qt.Key_Escape and self.tool != "select":
+            self.signals.drawn.emit("cancel", QPointF(), QPointF(), False)
+            event.accept()
+            return
         keys = {Qt.Key_Left: (-1, 0), Qt.Key_Right: (1, 0), Qt.Key_Up: (0, 1), Qt.Key_Down: (0, -1)}
         items = self._selected_items()
         if event.key() in keys and len(items) == 1 and not (event.modifiers() & Qt.ControlModifier):
@@ -391,6 +452,8 @@ class PreviewView(QGraphicsView):
 
         for e in elements:
             item = ElementItem(e, values, self)
+            if self.tool != "select":
+                item.setFlag(QGraphicsItem.ItemIsMovable, False)
             item.setTransform(element_transform(e, self.home_ur, self.bed_w_mm))
             if not e.visible:
                 item.setOpacity(0.25)

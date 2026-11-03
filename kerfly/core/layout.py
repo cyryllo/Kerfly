@@ -33,6 +33,7 @@ class Element:
     source_file: str = ""
     load_options: dict = field(default_factory=dict)   # e.g. {"dpi": 300} for images
     visible: bool = True      # hidden elements are not sent to the laser
+    shape: object = None      # ShapeSpec for drawn shapes (kerfly.core.shapes), else None
 
     def placement(self):
         """Placement values (for undo snapshots)."""
@@ -44,7 +45,8 @@ class Element:
     def copy(self):
         """A new element sharing the same loaded design."""
         e = Element(self.design, self.name, source_file=self.source_file,
-                    load_options=dict(self.load_options))
+                    load_options=dict(self.load_options),
+                    shape=self.shape.copy() if self.shape is not None else None)
         e.set_placement(self.placement())
         return e
 

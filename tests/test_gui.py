@@ -328,6 +328,43 @@ def main():
     check("editor: centre on bed, snap to grid, arrow keys", centre_ok and snap_ok and nudge_ok and nudge10_ok,
           "(centre %s, snap %s, nudge %s/%s)" % (centre_ok, snap_ok, nudge_ok, nudge10_ok))
 
+    # 14. drawing tools: shapes drawn in the bed view, edited from the options bar
+    from PySide6.QtCore import QPointF
+    w = make_window()
+    w._preview_drawn("rectangle", QPointF(10, 10), QPointF(50, 30), False)
+    rect = w.selected
+    w._preview_drawn("ellipse", QPointF(60, 10), QPointF(80, 40), True)      # Shift: circle
+    circle = w.selected
+    w._preview_drawn("line", QPointF(10, 50), QPointF(60, 52), True)         # Shift: horizontal
+    line = w.selected
+    w._preview_drawn("text", QPointF(10, 70), QPointF(10, 70), False)
+    text = w.selected
+    sizes = [tuple(round(v * 25.4, 1) for v in e.size) for e in (rect, circle, line)]
+    drawn_ok = (sizes[0] == (40.0, 20.0) and sizes[1] == (30.0, 30.0) and sizes[2][1] == 0.0
+                and abs(rect.x * 25.4 - 10) < 1e-6 and abs(rect.y * 25.4 + 10) < 1e-6
+                and text.design.raster.image is not None and w.preview.tool == "select")
+    check("draw: rectangle, Shift-circle, Shift-line, text", drawn_ok, "(%s)" % sizes)
+    w.selected = rect
+    w._update_tool_options(force=True)
+    spec = rect.shape.copy()
+    spec.operation = "engrave"
+    spec.corner_radius = 4
+    w._tool_options_changed(spec)
+    engraved = bool(rect.design.vector_engrave.ecoords) and not rect.design.vector_cut.ecoords
+    w.selected = text
+    w._update_tool_options(force=True)
+    spec = text.shape.copy()
+    spec.text = "Kerfly"
+    w._tool_options_changed(spec)
+    wider = text.size[0] > 0 and text.shape.text == "Kerfly"
+    w.undo()
+    undone = text.shape.text != "Kerfly"
+    out = tempfile.mktemp(suffix=".egv")
+    w.start_job(output_file=out)
+    run_until_idle(app, w)
+    check("draw: options bar edits (operation, radius, text) and undo",
+          engraved and wider and undone and os.path.exists(out) and os.path.getsize(out) > 1000)
+
     print("\n%d check(s) failed." % failures if failures else "\nAll checks passed.")
     return 1 if failures else 0
 

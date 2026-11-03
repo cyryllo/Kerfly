@@ -24,8 +24,11 @@ from kerfly.core.design import Design
 from kerfly.core.estimate import estimate_times, format_time
 from kerfly.core.laser import LaserController, LaserError, clamp_head_position, corner_offset
 from kerfly.core.layout import Element, compile_layout
+from kerfly.core.shapes import ShapeSpec, build_design
 from kerfly.gui import icons
 from kerfly.gui.image_dialog import ImageSizeDialog
+from kerfly.gui.text_shapes import update_text_spec
+from kerfly.gui.tool_options import KIND_NAMES, NEW_KIND_TITLES, ToolOptionsBar
 from kerfly.gui.preview import PreviewView
 from kerfly.gui.settings_dialog import RASTER_KEYS, RELOAD_KEYS, SettingsDialog
 from kerfly.gui.worker import EgvSendWorker, JobWorker, RasterPrepareWorker
@@ -76,13 +79,26 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(_("Kerfly %s") % __version__)
         self.resize(1200, 780)
         self.preview = PreviewView()
-        self.setCentralWidget(self.preview)
+        self.tool_options = ToolOptionsBar()
+        self.tool_options.changed.connect(self._tool_options_changed)
+        central = QWidget()
+        central_layout = QVBoxLayout(central)
+        central_layout.setContentsMargins(0, 0, 0, 0)
+        central_layout.setSpacing(0)
+        central_layout.addWidget(self.tool_options)
+        central_layout.addWidget(self.preview, 1)
+        self.setCentralWidget(central)
+        self.shape_defaults = {kind: ShapeSpec(kind=kind, operation="fill" if kind == "text" else "cut",
+                                               text=_("Text"))
+                               for kind in ("rectangle", "ellipse", "polygon", "line", "text")}
+        self.preview.signals.drawn.connect(self._preview_drawn)
         self.preview.signals.selected.connect(self._preview_selected)
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
         self.preview.signals.rotated.connect(self._preview_rotated)
         self.preview.signals.nudged.connect(self._preview_nudged)
         self._build_actions()
+        self._build_tool_strip()
         self._build_panel()
         self._build_status()
         self._update_power_visibility()
@@ -256,6 +272,128 @@ class MainWindow(QMainWindow):
             v.addWidget(caption)
             tb.addWidget(group)
         self.addToolBar(tb)
+
+    def _build_tool_strip(self):
+        """Vertical strip of drawing tools on the right of the bed view (like LightBurn's)."""
+        strip = QToolBar(_("Drawing tools"))
+        strip.setObjectName("tool_strip")
+        strip.setMovable(False)
+        strip.setOrientation(Qt.Vertical)
+        strip.setIconSize(QSize(24, 24))
+        strip.setToolButtonStyle(Qt.ToolButtonIconOnly)
+        self.tool_group = QActionGroup(self)
+        self.tool_actions = {}
+        tools = [("select", "pointer", N_("Select and move"), "S"),
+                 ("rectangle", "square", N_("Rectangle"), "R"),
+                 ("ellipse", "circle", N_("Ellipse"), "E"),
+                 ("polygon", "hexagon", N_("Polygon"), "P"),
+                 ("line", "line", N_("Line"), "L"),
+                 ("text", "typography", N_("Text"), "T")]
+        for key, icon, name, shortcut in tools:
+            act = QAction(icons.tabler(icon), _(name), self)
+            act.setCheckable(True)
+            act.setShortcut(QKeySequence(shortcut))
+            act.setShortcutContext(Qt.WidgetWithChildrenShortcut)    # only while the bed view has focus
+            act.setToolTip("%s (%s)" % (_(name), shortcut))
+            act.triggered.connect(lambda _c=False, k=key: self.set_tool(k))
+            self.tool_group.addAction(act)
+            self.preview.addAction(act)
+            strip.addAction(act)
+            self.tool_actions[key] = act
+        self.tool_actions["select"].setChecked(True)
+        self.addToolBar(Qt.RightToolBarArea, strip)
+
+    def set_tool(self, tool):
+        self.preview.set_tool(tool)
+        self.tool_actions[tool].setChecked(True)
+        if tool != "select":
+            self.preview.setFocus()
+        self._update_tool_options()
+
+    def _update_tool_options(self, force=False):
+        e = self.selected
+        if e is not None and e.shape is not None:
+            if not force and getattr(self, "_options_target", None) == "selected" \
+                    and getattr(self, "_options_element", None) is e:
+                return                   # already shown; rebuilding would interrupt typing
+            self._options_target, self._options_element = "selected", e
+            self.tool_options.show_spec(e.shape, "%s:" % e.name)
+        elif self.preview.tool != "select":
+            self._options_target, self._options_element = self.preview.tool, None
+            self.tool_options.show_spec(self.shape_defaults[self.preview.tool],
+                                        _(NEW_KIND_TITLES[self.preview.tool]))
+        else:
+            self._options_target, self._options_element = None, None
+            self.tool_options.show_hint()
+
+    def _tool_options_changed(self, spec):
+        target = getattr(self, "_options_target", None)
+        if target == "selected" and self.selected is not None and self.selected.shape is not None:
+            self._apply_shape(self.selected, spec)
+        elif target in self.shape_defaults:
+            self.shape_defaults[target] = spec
+
+    def _apply_shape(self, element, spec):
+        """Rebuild a drawn element from a changed spec, keeping its top-left corner."""
+        self._checkpoint()
+        if spec.kind == "text":
+            update_text_spec(spec)
+        x, y = element.x, element.y
+        element.shape = spec
+        element.design = build_design(spec)
+        element.x, element.y = x, y
+        self._keep_on_bed(element)
+        self._layout_changed()
+
+    def _preview_drawn(self, tool, start, end, shift):
+        """A shape was drawn in the bed view (scene mm, y down)."""
+        if tool == "cancel":
+            self.set_tool("select")
+            return
+        spec = self.shape_defaults[tool].copy()
+        dx, dy = end.x() - start.x(), end.y() - start.y()
+        clicked = abs(dx) < 0.5 and abs(dy) < 0.5
+        if tool == "text":
+            update_text_spec(spec)
+            left, top = start.x(), start.y()
+        elif tool == "line":
+            if clicked:
+                dx, dy = 20.0, 0.0
+            if shift:                                    # 0 / 45 / 90 degree steps
+                import math
+                angle = round(math.atan2(dy, dx) / (math.pi / 4)) * (math.pi / 4)
+                length = math.hypot(dx, dy)
+                dx, dy = length * math.cos(angle), length * math.sin(angle)
+            spec.width, spec.height = dx, dy
+            left, top = min(start.x(), start.x() + dx), min(start.y(), start.y() + dy)
+        else:
+            if clicked:
+                dx, dy = 20.0, 20.0
+            if shift:
+                side = max(abs(dx), abs(dy))
+                dx, dy = (side if dx >= 0 else -side), (side if dy >= 0 else -side)
+            spec.width, spec.height = abs(dx), abs(dy)
+            left, top = min(start.x(), start.x() + dx), min(start.y(), start.y() + dy)
+        design = build_design(spec)
+        xmin, xmax, ymin, ymax = design.bounds
+        if xmax - xmin <= 0 and ymax - ymin <= 0:
+            self.status(_("Nothing to draw."), error=True)
+            return
+        self._checkpoint()
+        element = Element(design, name=_(KIND_NAMES[tool]), shape=spec)
+        bed_w, bed_h = config.bed_size_inches(self.values)
+        width_in = xmax - xmin
+        if self.job_settings().home_upper_right:
+            element.x = bed_w - left / 25.4 - width_in
+        else:
+            element.x = left / 25.4
+        element.y = -top / 25.4
+        self._keep_on_bed(element)
+        self.elements.append(element)
+        self.selected = element
+        self._compiled = None
+        self.set_tool("select")
+        self._layout_changed()
 
     def _spin(self, key, kind, lo, hi, decimals=1):
         if kind == "int":
@@ -631,7 +769,10 @@ class MainWindow(QMainWindow):
 
     # ---- undo / redo: snapshots of the element list and placements ----
     def _snapshot(self):
-        return (list(self.elements), [e.placement() for e in self.elements], self.selected)
+        return (list(self.elements),
+                [(e.placement(), e.design, e.shape.copy() if e.shape is not None else None)
+                 for e in self.elements],
+                self.selected)
 
     def _checkpoint(self):
         """Call before changing the layout."""
@@ -640,12 +781,16 @@ class MainWindow(QMainWindow):
         self._redo.clear()
 
     def _restore(self, snap):
-        elements, placements, selected = snap
+        elements, states, selected = snap
         self.elements = list(elements)
-        for e, p in zip(self.elements, placements):
-            e.set_placement(p)
+        for e, (placement, design, shape) in zip(self.elements, states):
+            e.set_placement(placement)
+            e.design = design
+            e.shape = shape
         self.selected = selected if selected in self.elements else None
+        self._compiled = None
         self._layout_changed()
+        self._update_tool_options(force=True)
 
     def undo(self):
         if self._undo and self.worker is None:
@@ -712,6 +857,7 @@ class MainWindow(QMainWindow):
             self.selected = self.elements[row]
             self.preview.select_element(self.selected)
             self._update_selection_panel()
+            self._update_tool_options()
 
     # ---- more editing commands ----
     def duplicate_selected(self):
@@ -760,6 +906,7 @@ class MainWindow(QMainWindow):
     def _preview_selected(self, element):
         self.selected = element
         self._update_selection_panel()
+        self._update_tool_options()
         lst = self.element_list
         lst.blockSignals(True)
         lst.setCurrentRow(self.elements.index(element) if element in self.elements else -1)
@@ -1022,6 +1169,9 @@ class MainWindow(QMainWindow):
             a.setEnabled(not busy)
         self.btn_stop.setEnabled(busy)
         self.act_stop.setEnabled(busy)
+        for a in self.tool_actions.values():
+            a.setEnabled(not busy)
+        self.tool_options.setEnabled(not busy)
         self.act_start.setEnabled(not busy)
         self.act_trace.setEnabled(not busy)
         self.progress.setVisible(busy)
@@ -1063,7 +1213,11 @@ class MainWindow(QMainWindow):
         if not self.elements:
             self.open_design()
             return
+        self._checkpoint()
         for e in list(self.elements):
+            if e.shape is not None:
+                e.design = build_design(e.shape)
+                continue
             design = self._load_file(e.source_file, e.load_options)
             if design is None:
                 return

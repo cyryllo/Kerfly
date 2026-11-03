@@ -15,6 +15,12 @@ Early development (0.1). Kerfly has a new Qt (PySide6) window. It can open
 SVG, DXF and G-code files, and bitmap images (PNG, JPG, BMP, TIFF, GIF, WebP)
 for raster engraving without Inkscape.
 
+Kerfly has drawing tools in a strip on the right of the bed view, like
+LightBurn's: rectangle (with rounded corners), ellipse, regular polygon, line
+and text in any installed font. Each shape is cut, engraved as an outline, or
+filled as a raster engraving. The options of the selected shape or tool are
+shown in a bar above the bed view.
+
 Designs are placed on a picture of the laser bed. You can put several files
 on the bed, drag them with the mouse, scale and rotate them with handles, or
 type their position, size and angle. The editor has undo and redo, a snap

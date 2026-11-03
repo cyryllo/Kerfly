@@ -26,6 +26,9 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
   before a job
 - [x] Editor, step 2: undo/redo, element list with visibility, snap grid,
   duplicate, centre on bed, arrow-key nudge; MeerK40t-style icon toolbar
+- [x] Drawing tools, step 1: rectangle, ellipse, polygon, line, text (system
+  fonts); cut / engrave outline / raster fill; tool strip on the right and
+  options bar above the bed view
 - [x] Translations: English, Polish, German, Spanish, French (gettext;
   DE/ES/FR need a native speaker review)
 
@@ -69,12 +72,12 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 
 | Tool | MeerK40t reference (`gui/toolwidgets/`) |
 |---|---|
-| Rectangle (also rounded) | `toolrect.py` |
-| Ellipse, circle | `toolellipse.py`, `toolcircle.py` |
-| Line, polyline, polygon | `toolline.py`, `toolpolyline.py`, `toolpolygon.py` |
+| ~~Rectangle (also rounded)~~ (done) | `toolrect.py` |
+| ~~Ellipse, circle~~ (done) | `toolellipse.py`, `toolcircle.py` |
+| ~~Line, regular polygon~~ (done); polyline, free polygon | `toolline.py`, `toolpolyline.py`, `toolpolygon.py` |
 | Freehand drawing | `tooldraw.py` |
 | Bezier / vector path | `toolvector.py` |
-| Text | `tooltext.py`, `toollinetext.py` |
+| ~~Text (system fonts)~~ (done); text on a path | `tooltext.py`, `toollinetext.py` |
 | Node editing | `toolnodeedit.py`, `toolnodemove.py` |
 | Cut a region out of an image | `toolimagecut.py` |
 | Tabs (bridges) on cut paths | `tooltabedit.py` |

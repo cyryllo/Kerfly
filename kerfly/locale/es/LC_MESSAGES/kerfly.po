@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 22:29+0100\n"
+"POT-Creation-Date: 2026-11-03 22:36+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -170,6 +170,9 @@ msgstr "Ancho del área de trabajo"
 msgid "Beep after a job"
 msgstr "Pitido al terminar el trabajo"
 
+msgid "Bold"
+msgstr "Negrita"
+
 msgid "Boundary trace gap"
 msgstr "Separación del recorrido del contorno"
 
@@ -195,6 +198,13 @@ msgstr "Centrar"
 msgid "Centre the selected element, or the whole design, on the bed"
 msgstr "Centrar el elemento seleccionado o todo el diseño en el área de trabajo"
 
+msgid ""
+"Choose a drawing tool on the right, or select a drawn shape, to see its "
+"options here."
+msgstr ""
+"Elija una herramienta de dibujo a la derecha o seleccione una forma "
+"dibujada para ver aquí sus opciones."
+
 msgid "Click an element on the bed to select it."
 msgstr "Haga clic en un elemento para seleccionarlo."
 
@@ -203,6 +213,9 @@ msgstr "Placa controladora"
 
 msgid "Converting text to paths."
 msgstr "Convirtiendo texto en trazados."
+
+msgid "Corner radius:"
+msgstr "Radio de esquina:"
 
 #, python-format
 msgid "Could not open %s"
@@ -232,6 +245,9 @@ msgstr "Creando imagen de semitonos."
 #, python-format
 msgid "Creating scan lines: %s%%"
 msgstr "Creando líneas de barrido: %s%%"
+
+msgid "Cut"
+msgstr "Corte"
 
 msgid "Cut inside shapes first"
 msgstr "Cortar primero las formas interiores"
@@ -278,6 +294,9 @@ msgstr "Distancia hacia abajo desde el origen"
 msgid "Distance moved by one arrow click"
 msgstr "Distancia por cada clic en una flecha"
 
+msgid "Drawing tools"
+msgstr "Herramientas de dibujo"
+
 msgctxt "toolbar"
 msgid "Duplicate"
 msgstr "Duplicar"
@@ -296,8 +315,14 @@ msgctxt "toolbar group"
 msgid "Edit"
 msgstr "Edición"
 
+msgid "Ellipse"
+msgstr "Elipse"
+
 msgid "Engrave bottom to top"
 msgstr "Grabar de abajo hacia arriba"
+
+msgid "Engrave outline"
+msgstr "Grabar contorno"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
@@ -306,6 +331,9 @@ msgstr "Tiempo total estimado: <b>%s</b>"
 msgctxt "toolbar group"
 msgid "File"
 msgstr "Archivo"
+
+msgid "Fill (raster)"
+msgstr "Relleno (ráster)"
 
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Disparar el láser brevemente (placas M3)"
@@ -396,6 +424,9 @@ msgstr "Valor no válido para el ajuste '%s': %r"
 msgid "Invert raster colors"
 msgstr "Invertir colores del ráster"
 
+msgid "Italic"
+msgstr "Cursiva"
+
 msgid "Job"
 msgstr "Trabajo"
 
@@ -439,6 +470,9 @@ msgstr "Pendiente de la curva de niveles, extremo claro"
 
 msgid "Levels curve weight"
 msgstr "Peso de la curva de niveles"
+
+msgid "Line"
+msgstr "Línea"
 
 msgid "Loading cancelled"
 msgstr "Carga cancelada"
@@ -507,6 +541,21 @@ msgstr "Mover el cabezal un paso a la derecha"
 msgid "Move the laser head up by one step"
 msgstr "Mover el cabezal un paso hacia arriba"
 
+msgid "New ellipse:"
+msgstr "Nueva elipse:"
+
+msgid "New line:"
+msgstr "Nueva línea:"
+
+msgid "New polygon:"
+msgstr "Nuevo polígono:"
+
+msgid "New rectangle:"
+msgstr "Nuevo rectángulo:"
+
+msgid "New text:"
+msgstr "Nuevo texto:"
+
 msgid "No design loaded"
 msgstr "No hay ningún diseño cargado"
 
@@ -515,6 +564,9 @@ msgstr "No se generaron datos para el láser."
 
 msgid "Nothing to do: load a design and select at least one operation."
 msgstr "Nada que hacer: cargue un diseño y seleccione al menos una operación."
+
+msgid "Nothing to draw."
+msgstr "No hay nada que dibujar."
 
 msgid "Number of passes:"
 msgstr "Número de pasadas:"
@@ -540,6 +592,9 @@ msgstr "Abierto %s"
 msgid "Opening %s"
 msgstr "Abriendo %s"
 
+msgid "Operation:"
+msgstr "Operación:"
+
 msgid "Operations"
 msgstr "Operaciones"
 
@@ -562,6 +617,9 @@ msgstr "Pausar o detener el trabajo en curso"
 
 msgid "Place design at the &head"
 msgstr "Colocar el diseño en el &cabezal"
+
+msgid "Polygon"
+msgstr "Polígono"
 
 msgid "Power"
 msgstr "Potencia"
@@ -607,6 +665,9 @@ msgstr "Reconectar"
 
 msgid "Ready"
 msgstr "Listo"
+
+msgid "Rectangle"
+msgstr "Rectángulo"
 
 msgctxt "toolbar"
 msgid "Redo"
@@ -691,6 +752,9 @@ msgstr "Guardar configuración como predeterminada"
 msgid "Scan line step (in)"
 msgstr "Paso entre líneas (pulg.)"
 
+msgid "Select and move"
+msgstr "Seleccionar y mover"
+
 msgid "Selected element"
 msgstr "Elemento seleccionado"
 
@@ -726,6 +790,9 @@ msgstr ""
 #, python-format
 msgid "Settings saved to %s"
 msgstr "Configuración guardada en %s"
+
+msgid "Sides:"
+msgstr "Lados:"
 
 msgid "Speed"
 msgstr "Velocidad"
@@ -764,6 +831,9 @@ msgstr "Disparo de prueba"
 #, python-format
 msgid "Test fire: %.0f%% for %d ms"
 msgstr "Disparo de prueba: %.0f%% durante %d ms"
+
+msgid "Text"
+msgstr "Texto"
 
 msgid "That corner of the design is outside the laser bed."
 msgstr "Esa esquina del diseño está fuera del área de trabajo."
