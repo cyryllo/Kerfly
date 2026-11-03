@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 00:26+0100\n"
+"POT-Creation-Date: 2026-11-04 00:28+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -376,7 +376,7 @@ msgid "Engrave bottom to top"
 msgstr "Graweruj od dołu do góry"
 
 msgid "Engrave outline"
-msgstr "Grawerowanie konturu"
+msgstr "Obrys"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
@@ -400,7 +400,7 @@ msgid "File"
 msgstr "Plik"
 
 msgid "Fill (raster)"
-msgstr "Wypełnienie (raster)"
+msgstr "Grawer"
 
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Krótko odpal laser (płyty M3)"
@@ -817,7 +817,7 @@ msgid "Raster"
 msgstr "Raster"
 
 msgid "Raster engrave"
-msgstr "Grawer rastrowy"
+msgstr "Grawer"
 
 msgid "Raster prepared"
 msgstr "Raster przygotowany"
@@ -1195,16 +1195,16 @@ msgid "Vector"
 msgstr "Wektory"
 
 msgid "Vector cut"
-msgstr "Cięcie wektorowe"
+msgstr "Cięcie"
 
 msgid "Vector cut: determining cut order…"
-msgstr "Cięcie wektorowe: ustalanie kolejności cięcia…"
+msgstr "Cięcie: ustalanie kolejności…"
 
 msgid "Vector engrave"
-msgstr "Grawer wektorowy"
+msgstr "Obrys"
 
 msgid "Vector engrave: determining order…"
-msgstr "Grawerowanie wektorowe: ustalanie kolejności…"
+msgstr "Obrys: ustalanie kolejności…"
 
 msgctxt "toolbar group"
 msgid "View"
@@ -1257,13 +1257,13 @@ msgid "project"
 msgstr "projekt"
 
 msgid "raster"
-msgstr "raster"
+msgstr "grawer"
 
 msgid "vector cut"
-msgstr "cięcie wektorowe"
+msgstr "cięcie"
 
 msgid "vector engrave"
-msgstr "grawerowanie wektorowe"
+msgstr "obrys"
 
 #~ msgid ""
 #~ "Choose a drawing tool on the "

@@ -38,7 +38,7 @@ def main():
     failures += rc.returncode
     from kerfly import i18n
     i18n.setup("pl")
-    ok = i18n._("Vector cut") == "Cięcie wektorowe" and \
+    ok = i18n._("Vector engrave") == "Obrys" and \
         i18n.tr_message("Sending Data to Laser = 45.0%") == "Wysyłanie danych do lasera: 45.0%"
     print("%-5s compiled Polish catalog is loaded and upstream messages are translated" % ("OK" if ok else "FAIL"))
     failures += 0 if ok else 1
