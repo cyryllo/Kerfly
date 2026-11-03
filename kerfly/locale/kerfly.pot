@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 21:37+0100\n"
+"POT-Creation-Date: 2026-11-03 21:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,14 @@ msgstr ""
 "Generated-By: Babel 2.18.0\n"
 
 msgid " + raster"
+msgstr ""
+
+#, python-format
+msgid "%d × %d pixels"
+msgstr ""
+
+#, python-format
+msgid "%s × %s mm"
 msgstr ""
 
 msgid "&About Kerfly"
@@ -73,10 +81,6 @@ msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
 msgstr ""
 
 msgid "<b style='color:#c62828'>Not connected</b>"
-msgstr ""
-
-#, python-format
-msgid "<b>%s</b><br>%.1f × %.1f mm<br>%s"
 msgstr ""
 
 #, python-format
@@ -169,6 +173,9 @@ msgstr ""
 msgid "DXF units"
 msgstr ""
 
+msgid "Dark pixels are engraved, light and transparent pixels are not."
+msgstr ""
+
 #, python-format
 msgid "Data saved to: %s"
 msgstr ""
@@ -206,7 +213,7 @@ msgid "Engrave bottom to top"
 msgstr ""
 
 #, python-format
-msgid "Estimated total: <b>%s%s</b>"
+msgid "Estimated total: <b>%s</b>"
 msgstr ""
 
 msgid "Fire the laser briefly (M3 boards)"
@@ -238,7 +245,10 @@ msgid "Halftone resolution (dpi)"
 msgstr ""
 
 #, python-format
-msgid "Head: X %.1f  Y %.1f %s"
+msgid "Head: X %s  Y %s %s"
+msgstr ""
+
+msgid "Height:"
 msgstr ""
 
 msgid "Home"
@@ -254,6 +264,15 @@ msgid "Home the head, then move to X/Y (Ctrl+G)"
 msgstr ""
 
 msgid "Homed"
+msgstr ""
+
+msgid "Image size"
+msgstr ""
+
+msgid "Image:"
+msgstr ""
+
+msgid "Images"
 msgstr ""
 
 msgid "Initialize"
@@ -462,6 +481,9 @@ msgstr ""
 msgid "Reload"
 msgstr ""
 
+msgid "Resolution:"
+msgstr ""
+
 msgid "Resumed"
 msgstr ""
 
@@ -582,6 +604,12 @@ msgstr ""
 msgid "The design does not move."
 msgstr ""
 
+msgid "The file does not say how large the image is. Set its size."
+msgstr ""
+
+msgid "The image resolution must be greater than zero."
+msgstr ""
+
 #, python-format
 msgid ""
 "The laser cutter is not responding (%s attempts). Press Stop to stop "
@@ -681,6 +709,9 @@ msgid "Wait for the laser to finish"
 msgstr ""
 
 msgid "Waiting for the laser to finish."
+msgstr ""
+
+msgid "Width:"
 msgstr ""
 
 msgid "Write the selected operations to an EGV file"

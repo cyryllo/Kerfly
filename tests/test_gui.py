@@ -237,6 +237,23 @@ def main():
     check("send EGV file", fake.sent == [(None, payload)] and fake.passes == [3] and fake.moves == [],
           "(sent %d bytes, passes %s)" % (len(fake.sent[0][1]) if fake.sent else 0, fake.passes))
 
+    # 10. open a PNG through the window (size dialog accepted) and save EGV
+    from kerfly.gui import image_dialog
+    sys.path.insert(0, TESTS_DIR)
+    from regression import synthetic_image
+    png = tempfile.mktemp(suffix=".png")
+    synthetic_image().save(png, dpi=(1000, 1000))
+    image_dialog.ImageSizeDialog.exec = lambda self: True
+    w = make_window()
+    w.load_design(png)
+    out = tempfile.mktemp(suffix=".egv")
+    w.start_job(output_file=out)
+    run_until_idle(app, w)
+    digest = hashlib.sha256(open(out, "rb").read()).hexdigest() if os.path.exists(out) else None
+    check("open PNG in window, save EGV == png_reng_halftone",
+          digest == manifest["png_reng_halftone"]["sha256"], "(%s)" % w.design_label.text())
+    os.remove(png)
+
     print("\n%d check(s) failed." % failures if failures else "\nAll checks passed.")
     return 1 if failures else 0
 

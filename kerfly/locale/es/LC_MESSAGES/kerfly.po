@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 21:37+0100\n"
+"POT-Creation-Date: 2026-11-03 21:42+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -20,6 +20,14 @@ msgstr ""
 
 msgid " + raster"
 msgstr " + ráster"
+
+#, python-format
+msgid "%d × %d pixels"
+msgstr "%d × %d píxeles"
+
+#, python-format
+msgid "%s × %s mm"
+msgstr "%s × %s mm"
 
 msgid "&About Kerfly"
 msgstr "&Acerca de Kerfly"
@@ -75,10 +83,6 @@ msgstr "<b style='color:#2e7d32'>Conectado</b> (%s)"
 
 msgid "<b style='color:#c62828'>Not connected</b>"
 msgstr "<b style='color:#c62828'>No conectado</b>"
-
-#, python-format
-msgid "<b>%s</b><br>%.1f × %.1f mm<br>%s"
-msgstr "<b>%s</b><br>%.1f × %.1f mm<br>%s"
 
 #, python-format
 msgid ""
@@ -176,6 +180,9 @@ msgstr "Archivos DXF"
 msgid "DXF units"
 msgstr "Unidades DXF"
 
+msgid "Dark pixels are engraved, light and transparent pixels are not."
+msgstr "Los píxeles oscuros se graban; los claros y transparentes no."
+
 #, python-format
 msgid "Data saved to: %s"
 msgstr "Datos guardados en: %s"
@@ -213,8 +220,8 @@ msgid "Engrave bottom to top"
 msgstr "Grabar de abajo hacia arriba"
 
 #, python-format
-msgid "Estimated total: <b>%s%s</b>"
-msgstr "Tiempo total estimado: <b>%s%s</b>"
+msgid "Estimated total: <b>%s</b>"
+msgstr "Tiempo total estimado: <b>%s</b>"
 
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Disparar el láser brevemente (placas M3)"
@@ -245,8 +252,11 @@ msgid "Halftone resolution (dpi)"
 msgstr "Resolución de semitonos (ppp)"
 
 #, python-format
-msgid "Head: X %.1f  Y %.1f %s"
-msgstr "Cabezal: X %.1f  Y %.1f %s"
+msgid "Head: X %s  Y %s %s"
+msgstr "Cabezal: X %s  Y %s %s"
+
+msgid "Height:"
+msgstr "Alto:"
 
 msgid "Home"
 msgstr "Origen"
@@ -262,6 +272,15 @@ msgstr "Llevar el cabezal al origen y luego ir a X/Y (Ctrl+G)"
 
 msgid "Homed"
 msgstr "Cabezal en el origen"
+
+msgid "Image size"
+msgstr "Tamaño de la imagen"
+
+msgid "Image:"
+msgstr "Imagen:"
+
+msgid "Images"
+msgstr "Imágenes"
 
 msgid "Initialize"
 msgstr "Conectar"
@@ -471,6 +490,9 @@ msgstr "Liberar USB"
 msgid "Reload"
 msgstr "Recargar"
 
+msgid "Resolution:"
+msgstr "Resolución:"
+
 msgid "Resumed"
 msgstr "Reanudado"
 
@@ -599,6 +621,12 @@ msgstr ""
 msgid "The design does not move."
 msgstr "El diseño no se mueve."
 
+msgid "The file does not say how large the image is. Set its size."
+msgstr "El archivo no indica el tamaño de la imagen. Indique su tamaño."
+
+msgid "The image resolution must be greater than zero."
+msgstr "La resolución de la imagen debe ser mayor que cero."
+
 #, python-format
 msgid ""
 "The laser cutter is not responding (%s attempts). Press Stop to stop "
@@ -711,6 +739,9 @@ msgstr "Esperar a que el láser termine"
 msgid "Waiting for the laser to finish."
 msgstr "Esperando a que el láser termine."
 
+msgid "Width:"
+msgstr "Ancho:"
+
 msgid "Write the selected operations to an EGV file"
 msgstr "Escribir las operaciones seleccionadas en un archivo EGV"
 
@@ -748,7 +779,4 @@ msgstr "corte vectorial"
 
 msgid "vector engrave"
 msgstr "grabado vectorial"
-
-#~ msgid "%s"
-#~ msgstr ""
 

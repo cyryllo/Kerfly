@@ -123,6 +123,56 @@ def test_settings_file():
     return len(errors)
 
 
+def test_images(baseline):
+    """Bitmap import: a 1000 dpi PNG must give exactly the baseline laser data;
+    transparency, resolution and EXIF orientation are handled."""
+    from PIL import Image
+    errors = 0
+    tmp = tempfile.mkdtemp()
+    png = os.path.join(tmp, "synthetic.png")
+    synthetic_image().save(png, dpi=(1000, 1000))
+    w, h, dpi = loaders.read_image_info(png)
+    for name, overrides in (("png_reng_halftone", {}), ("png_reng_grayscale", {"halftone": False}),
+                            ("png_reng_negate", {"negate": True})):
+        design = Design()
+        loaders.load_image(png, design, dpi)
+        settings = JobSettings(**overrides)
+        raster.make_raster_coords(design, settings)
+        data = job.egv_file_bytes(job.build_job(design, settings, "Raster_Eng")[0].data)
+        ok = hashlib.sha256(data).hexdigest() == baseline[name]["sha256"]
+        print("%-5s image import %-17s == baseline" % ("OK" if ok else "DIFF", name))
+        errors += 0 if ok else 1
+
+    # transparency counts as white; 300 dpi image is resampled to 1000 dpi
+    rgba = Image.new("RGBA", (300, 150), (0, 0, 0, 0))
+    for x in range(100):
+        for y in range(150):
+            rgba.putpixel((x, y), (0, 0, 0, 255))
+    path = os.path.join(tmp, "alpha.png")
+    rgba.save(path, dpi=(300, 300))
+    design = Design()
+    loaders.load_image(path, design, loaders.read_image_info(path)[2])
+    im = design.raster.image
+    ok = (im.size == (1000, 500) and im.getpixel((100, 250)) == 0 and im.getpixel((900, 250)) == 255
+          and abs(design.bounds[1] - 1.0) < 1e-9 and abs(design.bounds[3] - 0.5) < 1e-9)
+    print("%-5s image import: transparency is white, 300 dpi -> 1 x 0.5 in at 1000 dpi" % ("OK" if ok else "FAIL"))
+    errors += 0 if ok else 1
+
+    # EXIF orientation 6 (rotate 90 degrees) swaps width and height
+    jpg = os.path.join(tmp, "rotated.jpg")
+    exif = Image.Exif()
+    exif[0x0112] = 6
+    Image.new("RGB", (200, 100), "white").save(jpg, exif=exif, dpi=(100, 100))
+    info = loaders.read_image_info(jpg)
+    design = Design()
+    loaders.load_image(jpg, design, 100)
+    ok = info[:2] == (100, 200) and design.raster.image.size == (1000, 2000)
+    print("%-5s image import: EXIF rotation applied %s" % ("OK" if ok else "FAIL", info))
+    errors += 0 if ok else 1
+    shutil.rmtree(tmp)
+    return errors
+
+
 def main():
     with open(MANIFEST) as f:
         baseline = json.load(f)["cases"]
@@ -146,6 +196,7 @@ def main():
         failures += run_case(name, source, operation, settings, baseline)
 
     failures += test_settings_file()
+    failures += test_images(baseline)
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

@@ -7,11 +7,14 @@ Kerfly is a fork of **[K40 Whisperer](https://www.scorchworks.com/K40whisperer/k
 by Scorch (scorchworks.com), version 0.71, which is known for its stable laser
 control. The original release is tagged `upstream-0.71` in this repository.
 
+![Kerfly main window](docs/screenshot.png)
+
 ## Status
 
 Early development (0.1). Kerfly has a new Qt (PySide6) window. It can open
-SVG, DXF and G-code files, show a preview of the laser bed with zoom and
-pan, jog the head, move it to the design corners or a given position, and
+SVG, DXF and G-code files, and bitmap images (PNG, JPG, BMP, TIFF, GIF, WebP)
+for raster engraving without Inkscape. It shows a preview of the laser bed
+with zoom and pan, jog the head, move it to the design corners or a given position, and
 run raster engrave, vector engrave, vector cut, G-code and boundary trace
 jobs. It estimates the job time, saves jobs as EGV files and can send
 existing EGV files. M3 boards also get test fire and power per operation. Long jobs

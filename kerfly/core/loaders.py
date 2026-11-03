@@ -220,3 +220,56 @@ class SvgScale:
             width_mm, height_mm = self.size_mm(pxpi)
         viewbox = [self.minx, self.miny, width_mm / 25.4 * pxpi, height_mm / 25.4 * pxpi]
         return pxpi, viewbox
+
+
+IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".gif", ".webp")
+
+
+def read_image_info(filename):
+    """(width_px, height_px, dpi or None) of a bitmap, without loading it fully."""
+    from PIL import Image
+    with Image.open(filename) as im:
+        dpi = im.info.get("dpi")
+        x_dpi = float(dpi[0]) if dpi and dpi[0] else None
+        if x_dpi is not None and x_dpi < 1:
+            x_dpi = None
+        width, height = im.size
+        try:
+            orientation = im.getexif().get(0x0112, 1)
+        except Exception:
+            orientation = 1
+    if orientation in (5, 6, 7, 8):        # EXIF rotation by 90 degrees swaps the sides
+        width, height = height, width
+    return width, height, x_dpi
+
+
+def load_image(filename, design, dpi, reduced_memory=False):
+    """Load a bitmap (PNG, JPG, BMP, TIFF, GIF, WebP) as a raster engraving.
+
+    dpi is the image's resolution in pixels per inch, which sets its physical
+    size. Dark pixels are engraved; transparent pixels count as white. The
+    image is resampled to the raster resolution used for SVG files (1000 dpi,
+    or 500 dpi with reduced_memory), so it goes through exactly the same
+    raster pipeline. Returns a list of warning strings.
+    """
+    from PIL import Image, ImageOps
+    if not dpi or dpi <= 0:
+        raise ValueError(_("The image resolution must be greater than zero."))
+    design.reset()
+    design.input_dpi = 500.0 if reduced_memory else 1000.0
+    with Image.open(filename) as src:
+        src.seek(0)                                   # first frame of animated images
+        im = ImageOps.exif_transpose(src)
+        if im.mode in ("RGBA", "LA", "PA") or (im.mode == "P" and "transparency" in im.info):
+            rgba = im.convert("RGBA")
+            white = Image.new("RGBA", rgba.size, (255, 255, 255, 255))
+            im = Image.alpha_composite(white, rgba)
+        im = im.convert("L")
+    w_in = im.width / float(dpi)
+    h_in = im.height / float(dpi)
+    target = (max(1, int(round(w_in * design.input_dpi))), max(1, int(round(h_in * design.input_dpi))))
+    if target != im.size:
+        im = im.resize(target, Image.LANCZOS)
+    design.raster.set_image(im)
+    design.bounds = (0, im.width / design.input_dpi, 0, im.height / design.input_dpi)
+    return []

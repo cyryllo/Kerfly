@@ -7,6 +7,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 import os
 
 from PySide6.QtCore import QSize, Qt, QTimer
+from PySide6.QtCore import QLocale
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QDoubleSpinBox, QFileDialog,
                                QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
@@ -22,13 +23,18 @@ from kerfly.core.estimate import estimate_times, format_time
 from kerfly.core.laser import (LaserController, LaserError, clamp_head_position, corner_offset,
                                temporary_offset_target)
 from kerfly.gui import icons
+from kerfly.gui.image_dialog import ImageSizeDialog
 from kerfly.gui.preview import PreviewView
 from kerfly.gui.settings_dialog import RASTER_KEYS, RELOAD_KEYS, SettingsDialog
 from kerfly.gui.worker import EgvSendWorker, JobWorker, RasterPrepareWorker
 
+IMAGE_PATTERNS = " ".join("*" + e for e in loaders.IMAGE_EXTENSIONS)
+
+
 def design_filters():
-    return ";;".join([_("Design files") + " (*.svg *.dxf *.ngc *.gcode *.nc *.g *.tap)",
+    return ";;".join([_("Design files") + " (*.svg *.dxf *.ngc *.gcode *.nc *.g *.tap %s)" % IMAGE_PATTERNS,
                       _("SVG files") + " (*.svg)", _("DXF files") + " (*.dxf)",
+                      _("Images") + " (%s)" % IMAGE_PATTERNS,
                       _("G-code files") + " (*.ngc *.gcode *.nc *.g *.tap)",
                       _("All files") + " (*)"])
 
@@ -41,6 +47,11 @@ OPERATIONS = [
 ]
 
 
+def _num(value, decimals=1):
+    """Number formatted for the current language (e.g. 12,5 in Polish)."""
+    return QLocale().toString(float(value) + 0.0, "f", decimals)
+
+
 def _num_text(v):
     return ("%.4f" % v).rstrip("0").rstrip(".")
 
@@ -51,6 +62,8 @@ class MainWindow(QMainWindow):
         self.values = values
         self.design = Design()
         self.design_file = ""
+        self._image_file = None         # last bitmap opened and the size chosen for it
+        self._image_dpi = None
         self.laser = LaserController()
         self.head = (0.0, 0.0)          # design origin at the laser head, inches (y <= 0)
         self.head_offset = (0, 0)       # temporary head offset from the origin, mils
@@ -418,8 +431,11 @@ class MainWindow(QMainWindow):
         raster_unknown = has[job.RASTER_ENG] and times.get(job.RASTER_ENG) is None
         self.btn_calc_time.setVisible(raster_unknown)
         if any(has.values()):
-            self.total_time_label.setText(_("Estimated total: <b>%s%s</b>")
-                                          % (format_time(total), _(" + raster") if unknown else ""))
+            if unknown and total == 0:
+                text = "?"
+            else:
+                text = format_time(total) + (_(" + raster") if unknown else "")
+            self.total_time_label.setText(_("Estimated total: <b>%s</b>") % text)
         else:
             self.total_time_label.setText("")
 
@@ -527,8 +543,8 @@ class MainWindow(QMainWindow):
         x = self.head[0] + self.head_offset[0] / 1000.0
         y = self.head[1] + self.head_offset[1] / 1000.0
         scale = 25.4 if self.values.get("units") == "mm" else 1.0
-        self.head_label.setText(_("Head: X %.1f  Y %.1f %s") % (x * scale + 0.0, -y * scale + 0.0,
-                                                              self.values.get("units")))
+        self.head_label.setText(_("Head: X %s  Y %s %s") % (_num(x * scale), _num(-y * scale),
+                                                            self.values.get("units")))
 
     def set_busy(self, busy):
         for w in [self.btn_start, self.btn_trace, self.btn_egv, self.btn_connect, self.btn_goto,
@@ -588,8 +604,28 @@ class MainWindow(QMainWindow):
             q.default_pxpi, 1.0, 10000.0, 2)
         return q.result(pxpi) if ok else None
 
+    def _ask_image_dpi(self, filename):
+        """Ask for the physical size of a bitmap; returns its dpi or None if cancelled."""
+        try:
+            width, height, file_dpi = loaders.read_image_info(filename)
+        except Exception as e:
+            QMessageBox.critical(self, _("Could not open design"), tr_message(str(e)))
+            return None
+        if filename == self._image_file and self._image_dpi:
+            file_dpi = self._image_dpi          # reloading: keep the size chosen before
+        dlg = ImageSizeDialog(width, height, file_dpi, self.values.get("units", "mm"), self)
+        if not dlg.exec():
+            return None
+        return dlg.result_dpi()
+
     def load_design(self, filename):
         ext = os.path.splitext(filename)[1].lower()
+        image_dpi = None
+        if ext in loaders.IMAGE_EXTENSIONS:
+            image_dpi = self._ask_image_dpi(filename)
+            if image_dpi is None:
+                self.status(_("Loading cancelled"))
+                return
         QApplication.setOverrideCursor(Qt.WaitCursor)
         self.status(_("Opening %s") % filename)
         QApplication.processEvents()
@@ -607,6 +643,10 @@ class MainWindow(QMainWindow):
                     ask_pxpi=self._ask_svg_scale, progress=progress)
             elif ext == ".dxf":
                 warnings = loaders.load_dxf(filename, self.design, ask_units=self._ask_dxf_units)
+            elif image_dpi is not None:
+                warnings = loaders.load_image(filename, self.design, image_dpi,
+                                              reduced_memory=is_true(self.values.get("reduced_mem", "0")))
+                self._image_file, self._image_dpi = filename, image_dpi
             else:
                 warnings = loaders.load_gcode(filename, self.design)
         except loaders.LoadCancelled:
@@ -642,8 +682,9 @@ class MainWindow(QMainWindow):
             parts.append(_("vector cut"))
         if d.gcode.ecoords:
             parts.append(_("g-code"))
-        self.design_label.setText(_("<b>%s</b><br>%.1f × %.1f mm<br>%s") % (
-            os.path.basename(self.design_file), (xmax - xmin) * 25.4, (ymax - ymin) * 25.4,
+        self.design_label.setText("<b>%s</b><br>%s<br>%s" % (
+            os.path.basename(self.design_file),
+            _("%s \u00d7 %s mm") % (_num((xmax - xmin) * 25.4), _num((ymax - ymin) * 25.4)),
             ", ".join(parts) or _("empty")))
 
     # ------------------------------------------------------------ settings

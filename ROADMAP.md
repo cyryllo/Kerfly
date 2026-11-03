@@ -38,7 +38,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 
 | Feature | MeerK40t reference |
 |---|---|
-| Bitmaps directly: PNG, JPG, BMP, TIFF, GIF, WebP | `image/imagetools.py` (loader) |
+| ~~Bitmaps directly: PNG, JPG, BMP, TIFF, GIF, WebP~~ (done) | `image/imagetools.py` (loader) |
 | PDF, EPS, AI, CDR, WMF via the Inkscape command line | `extra/inkscape.py` |
 | LightBurn `.lbrn` / `.lbrn2` | `extra/lbrn.py` |
 | xTool `.xcs` | `extra/xcs_reader.py` |
