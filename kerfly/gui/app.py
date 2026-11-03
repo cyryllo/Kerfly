@@ -12,8 +12,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+from PySide6.QtCore import QLibraryInfo, QLocale, QTranslator  # noqa: E402
 from PySide6.QtWidgets import QApplication  # noqa: E402
 
+from kerfly import i18n  # noqa: E402
 from kerfly.core import config  # noqa: E402
 
 STYLE = """
@@ -28,6 +30,17 @@ QGroupBox QLabel, QGroupBox QCheckBox { font-weight:normal; }
 """
 
 
+def install_qt_translations(app, language):
+    """Translate Qt's own texts (standard buttons, file dialogs) and use the
+    language's number format."""
+    QLocale.setDefault(QLocale(language))
+    translator = QTranslator(app)
+    path = QLibraryInfo.path(QLibraryInfo.TranslationsPath)
+    if translator.load("qtbase_" + language, path):
+        app.installTranslator(translator)
+        app._kerfly_qt_translator = translator      # keep a reference
+
+
 def main(argv=None):
     argv = sys.argv if argv is None else argv
     app = QApplication(argv)
@@ -35,8 +48,12 @@ def main(argv=None):
     app.setStyle("Fusion")
     app.setStyleSheet(STYLE)
 
+    values = config.load_user_settings()
+    language = i18n.setup(values.get("language", ""))
+    install_qt_translations(app, language)
+
     from kerfly.gui.main_window import MainWindow
-    window = MainWindow(config.load_user_settings())
+    window = MainWindow(values)
     window.show()
     files = [a for a in argv[1:] if not a.startswith("-")]
     if files:

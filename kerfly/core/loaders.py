@@ -18,6 +18,8 @@ from svg_reader import SVG_READER, SVG_TEXT_EXCEPTION, SVG_PXPI_EXCEPTION
 
 from .raster import _no_progress
 
+from kerfly.i18n import _
+
 
 class LoadCancelled(Exception):
     """The user cancelled a question asked during loading."""
@@ -101,11 +103,10 @@ def load_svg(filename, design, inkscape_path="", inkscape_timeout_s=180,
        b[1] < veng[1] - margin or b[1] < vcut[1] - margin or \
        b[2] > veng[2] + margin or b[2] > vcut[2] + margin or \
        b[3] < veng[3] - margin or b[3] < vcut[3] - margin:
-        warnings.append(
-            "Warning:\n"
-            "There is vector cut or vector engrave data located outside of the SVG page bounds.\n\n"
-            "K40 Whisperer will attempt to use all of the vector data.  "
-            "Please verify that the vector data is not outside of your lasers working area before engraving.")
+        warnings.append(_(
+            "There is vector cut or vector engrave data outside of the SVG page.\n\n"
+            "All of the vector data will be used. Please check that it is not outside "
+            "the working area of your laser before engraving."))
     return warnings
 
 

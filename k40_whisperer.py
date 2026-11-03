@@ -999,7 +999,7 @@ class Application(Frame):
         for key, kind in kcore_config.SETTINGS_KEYS:
             if key == "designfile":
                 values[key] = self.DESIGN_FILE
-            else:
+            elif hasattr(self, key):
                 values[key] = getattr(self, key).get()
         return values
 

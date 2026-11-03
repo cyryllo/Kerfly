@@ -18,6 +18,8 @@ version. See the LICENSE file for details.
 """
 from .settings import JobSettings
 
+from kerfly.i18n import _
+
 IDENT = "k40_whisperer_set"
 CONFIG_FILE_NAME = "k40_whisperer.txt"
 
@@ -52,6 +54,7 @@ SETTINGS_KEYS = [
     ("t_timeout", TEXT), ("n_timeouts", TEXT),
     ("ink_timeout", TEXT),
     ("designfile", QUOTED), ("inkscape_path", QUOTED), ("batch_path", QUOTED),
+    ("language", TEXT),      # Kerfly only; ignored by K40 Whisperer
 ]
 SETTINGS_KINDS = dict(SETTINGS_KEYS)
 
@@ -78,6 +81,7 @@ DEFAULT_VALUES = {
     "test_time": "250", "test_power": "0.5",
     "t_timeout": "200", "n_timeouts": "30", "ink_timeout": "3",
     "designfile": "", "inkscape_path": "", "batch_path": "",
+    "language": "",          # "" = system language
 }
 
 BOARD_NAMES = ["LASER-M2", "LASER-M1", "LASER-M", "LASER-B2", "LASER-B1", "LASER-B",
@@ -192,7 +196,7 @@ def job_settings_from_values(values, power_per_stage=False):
         try:
             return float(values[key])
         except ValueError:
-            raise ValueError("Invalid value for setting '%s': %r" % (key, values[key]))
+            raise ValueError(_("Invalid value for setting '%s': %r") % (key, values[key]))
 
     def put(attr, key, conv):
         if key in values:

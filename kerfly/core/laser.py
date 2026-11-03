@@ -19,6 +19,7 @@ import threading
 from time import time
 
 from egv import egv
+from kerfly.i18n import _
 
 
 class LaserError(Exception):
@@ -85,8 +86,8 @@ class LaserController:
         except Exception as e:
             text = "%s" % e
             if "BACKEND" in text.upper():
-                text += " (libUSB driver not installed)"
-            raise LaserError("USB Error: %s" % text)
+                text += " " + _("(libUSB driver not installed)")
+            raise LaserError(_("USB error: %s") % text)
         self.k40 = k40
         if init_home:
             self.home()
@@ -102,7 +103,7 @@ class LaserController:
 
     def _require(self):
         if self.k40 is None:
-            raise LaserError("Laser is not initialized.")
+            raise LaserError(_("Laser is not initialized."))
         return self.k40
 
     def home(self):

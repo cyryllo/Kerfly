@@ -11,6 +11,7 @@ from PySide6.QtCore import QThread, Signal
 
 from kerfly.core import job, raster
 from kerfly.core.laser import PauseControl
+from kerfly.i18n import _
 
 
 class TaskWorker(QThread):
@@ -55,7 +56,7 @@ class TaskWorker(QThread):
         try:
             self.finished_job.emit(True, self.task())
         except MemoryError:
-            self.finished_job.emit(False, "Out of memory.")
+            self.finished_job.emit(False, _("Out of memory."))
         except Exception as e:
             message = str(e) or e.__class__.__name__
             if "stopped by user" not in message.lower():
@@ -95,15 +96,16 @@ class JobWorker(TaskWorker):
                                stop=self.stop)
         if self.output_file is not None:
             if self.settings.power_per_stage:
-                raise job.NoLaserData("Writing EGV file not supported with M3 power settings enabled")
+                raise job.NoLaserData(_("Writing an EGV file is not possible with M3 power per operation "
+                                        "enabled (the power settings cannot be stored in the file)."))
             with open(self.output_file, "wb") as f:
                 f.write(job.egv_file_bytes(chunks[0].data))
-            return "Data saved to: %s" % self.output_file
+            return _("Data saved to: %s") % self.output_file
         total = 0.0
         for chunk in chunks:
             total += self.laser.send(chunk.data, power=chunk.power, update_gui=self._update_gui,
                                      stop=self.stop, **self.send_options)
-        return "Job finished in %s" % _duration(total)
+        return _("Job finished in %s") % _duration(total)
 
 
 class EgvSendWorker(TaskWorker):
@@ -123,7 +125,7 @@ class EgvSendWorker(TaskWorker):
             dx, dy = self.egv.return_move()
             if dx or dy:
                 self.laser.rapid_move(dx, dy, self.settings, self.send_options)
-        return "EGV file sent in %s" % _duration(total)
+        return _("EGV file sent in %s") % _duration(total)
 
 
 class RasterPrepareWorker(TaskWorker):
@@ -136,4 +138,4 @@ class RasterPrepareWorker(TaskWorker):
 
     def task(self):
         raster.make_raster_coords(self.design, self.settings, self._progress, self.stop)
-        return "Raster prepared"
+        return _("Raster prepared")

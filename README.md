@@ -47,6 +47,28 @@ Install Python 3 and Inkscape, then run `pip install -r requirements.txt` and
 `python kerfly.py`. The laser needs the libusb-win32 driver, which you
 can install with [Zadig](https://zadig.akeo.ie/).
 
+## Languages
+
+Kerfly is available in English, Polish, German, Spanish and French. It uses
+the system language by default. You can change it in Settings → Advanced →
+Language.
+
+The German, Spanish and French translations have not yet been reviewed by
+native speakers. Corrections are welcome.
+
+To translate Kerfly into another language or correct a translation:
+
+1. Install the developer tools: `pip install -r requirements-dev.txt`
+2. To add a language, add its code to `LANGUAGES` in `kerfly/i18n.py` and run
+   `python tools/i18n.py`. This creates
+   `kerfly/locale/<code>/LC_MESSAGES/kerfly.po`.
+3. Translate the `.po` file, for example with [Poedit](https://poedit.net/).
+4. Run `python tools/i18n.py` to compile it, then `python tests/test_i18n.py`
+   to check it.
+
+Developers: wrap every user-visible string in `_()`, or use `N_()` for strings
+in tables that are translated later. Then run `python tools/i18n.py`.
+
 ## Project layout
 
 - `kerfly/core/`: the GUI-independent laser core. It contains the SVG, DXF
@@ -65,6 +87,7 @@ can install with [Zadig](https://zadig.akeo.ie/).
 ```bash
 .venv/bin/python tests/test_core.py          # core only, no display needed
 .venv/bin/python tests/test_gui.py           # new window, offscreen
+.venv/bin/python tests/test_i18n.py          # translations complete and up to date
 sudo apt install xvfb
 xvfb-run -a .venv/bin/python tests/regression.py   # full application
 ```

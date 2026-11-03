@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QDoubleSpin
 
 from kerfly import __version__
 from kerfly.core import config, egvfile, job, loaders
+from kerfly.i18n import N_, _, tr_message
 from kerfly.core.config import is_true
 from kerfly.core.design import Design
 from kerfly.core.estimate import estimate_times, format_time
@@ -25,16 +26,18 @@ from kerfly.gui.preview import PreviewView
 from kerfly.gui.settings_dialog import RASTER_KEYS, RELOAD_KEYS, SettingsDialog
 from kerfly.gui.worker import EgvSendWorker, JobWorker, RasterPrepareWorker
 
-DESIGN_FILTERS = ("Design files (*.svg *.dxf *.ngc *.gcode *.nc *.g *.tap);;"
-                  "SVG files (*.svg);;DXF files (*.dxf);;"
-                  "G-code files (*.ngc *.gcode *.nc *.g *.tap);;All files (*)")
+def design_filters():
+    return ";;".join([_("Design files") + " (*.svg *.dxf *.ngc *.gcode *.nc *.g *.tap)",
+                      _("SVG files") + " (*.svg)", _("DXF files") + " (*.dxf)",
+                      _("G-code files") + " (*.ngc *.gcode *.nc *.g *.tap)",
+                      _("All files") + " (*)"])
 
 # (label, include key, speed key, passes key, power key, operation)
 OPERATIONS = [
-    ("Raster engrave", "include_Reng", "Reng_feed", "Reng_passes", "Reng_power", job.RASTER_ENG),
-    ("Vector engrave", "include_Veng", "Veng_feed", "Veng_passes", "Veng_power", job.VECTOR_ENG),
-    ("Vector cut", "include_Vcut", "Vcut_feed", "Vcut_passes", "Vcut_power", job.VECTOR_CUT),
-    ("G-code", "include_Gcde", None, "Gcde_passes", "Gcode_power", job.GCODE_CUT),
+    (N_("Raster engrave"), "include_Reng", "Reng_feed", "Reng_passes", "Reng_power", job.RASTER_ENG),
+    (N_("Vector engrave"), "include_Veng", "Veng_feed", "Veng_passes", "Veng_power", job.VECTOR_ENG),
+    (N_("Vector cut"), "include_Vcut", "Vcut_feed", "Vcut_passes", "Vcut_power", job.VECTOR_CUT),
+    (N_("G-code"), "include_Gcde", None, "Gcde_passes", "Gcode_power", job.GCODE_CUT),
 ]
 
 
@@ -54,7 +57,7 @@ class MainWindow(QMainWindow):
         self.worker = None
         self._unit_widgets = []         # (spinbox, kind, key, sign) to update when units change
 
-        self.setWindowTitle("Kerfly %s" % __version__)
+        self.setWindowTitle(_("Kerfly %s") % __version__)
         self.resize(1200, 780)
         self.preview = PreviewView()
         self.setCentralWidget(self.preview)
@@ -76,47 +79,48 @@ class MainWindow(QMainWindow):
         return act
 
     def _build_actions(self):
-        self.act_open = self._action("&Open design\u2026", self.open_design, "Ctrl+O")
-        self.act_reload = self._action("&Reload design", self.reload_design, "F5")
-        self.act_save_egv = self._action("Save &EGV file\u2026", self.save_egv, "Ctrl+E",
-                                         "Write the selected operations to an EGV file")
-        self.act_send_egv = self._action("Send EGV file to laser\u2026", self.send_egv_file, None,
-                                         "Send an existing EGV file to the laser")
-        self.act_save_settings = self._action("Save settings as default", self.save_settings, "Ctrl+S")
-        self.act_goto = self._action("&Go to X/Y position", self.goto_position, "Ctrl+G")
+        self.act_open = self._action(_("&Open design\u2026"), self.open_design, "Ctrl+O")
+        self.act_reload = self._action(_("&Reload design"), self.reload_design, "F5")
+        self.act_save_egv = self._action(_("Save &EGV file\u2026"), self.save_egv, "Ctrl+E",
+                                         _("Write the selected operations to an EGV file"))
+        self.act_send_egv = self._action(_("Send EGV file to laser\u2026"), self.send_egv_file, None,
+                                         _("Send an existing EGV file to the laser"))
+        self.act_save_settings = self._action(_("Save settings as default"), self.save_settings, "Ctrl+S")
+        self.act_goto = self._action(_("&Go to X/Y position"), self.goto_position, "Ctrl+G")
         self.act_corners = {}
-        for key, text, sc in (("UL", "Upper left", "Ctrl+7"), ("UR", "Upper right", "Ctrl+9"),
-                              ("CC", "Centre", "Ctrl+5"), ("LL", "Lower left", "Ctrl+1"),
-                              ("LR", "Lower right", "Ctrl+3")):
-            self.act_corners[key] = self._action(text, lambda _=False, k=key: self.move_to_corner(k), sc)
-        self.act_calc_time = self._action("Calculate raster time", self.calculate_raster_time)
-        self.act_quit = self._action("&Quit", self.close, "Ctrl+Q")
-        self.act_connect = self._action("&Initialize laser", self.connect_laser, "Ctrl+I")
-        self.act_release = self._action("Release USB", self.release_laser)
-        self.act_home = self._action("&Home", self.home, "Home")
-        self.act_unlock = self._action("&Unlock rail", self.unlock)
-        self.act_unfreeze = self._action("Un&freeze laser", self.unfreeze)
-        self.act_fit = self._action("&Fit to window", lambda: self.preview.fit_all(), "Ctrl+0")
-        self.act_settings = self._action("&Settings\u2026", self.edit_settings, "Ctrl+,")
-        self.act_about = self._action("&About Kerfly", self.about)
+        for key, text, sc in (("UL", N_("Upper left corner"), "Ctrl+7"),
+                              ("UR", N_("Upper right corner"), "Ctrl+9"),
+                              ("CC", N_("Centre"), "Ctrl+5"), ("LL", N_("Lower left corner"), "Ctrl+1"),
+                              ("LR", N_("Lower right corner"), "Ctrl+3")):
+            self.act_corners[key] = self._action(_(text), lambda _checked=False, k=key: self.move_to_corner(k), sc)
+        self.act_calc_time = self._action(_("Calculate raster time"), self.calculate_raster_time)
+        self.act_quit = self._action(_("&Quit"), self.close, "Ctrl+Q")
+        self.act_connect = self._action(_("&Initialize laser"), self.connect_laser, "Ctrl+I")
+        self.act_release = self._action(_("Release USB"), self.release_laser)
+        self.act_home = self._action(_("&Home"), self.home, "Home")
+        self.act_unlock = self._action(_("&Unlock rail"), self.unlock)
+        self.act_unfreeze = self._action(_("Un&freeze laser"), self.unfreeze)
+        self.act_fit = self._action(_("&Fit to window"), lambda: self.preview.fit_all(), "Ctrl+0")
+        self.act_settings = self._action(_("&Settings\u2026"), self.edit_settings, "Ctrl+,")
+        self.act_about = self._action(_("&About Kerfly"), self.about)
 
         mb = self.menuBar()
-        m = mb.addMenu("&File")
+        m = mb.addMenu(_("&File"))
         for a in (self.act_open, self.act_reload, None, self.act_save_egv, self.act_send_egv, None,
                   self.act_save_settings, None, self.act_quit):
             m.addSeparator() if a is None else m.addAction(a)
-        m = mb.addMenu("&Laser")
+        m = mb.addMenu(_("&Laser"))
         for a in (self.act_connect, self.act_release, None, self.act_home, self.act_unlock,
                   self.act_unfreeze, None, self.act_goto):
             m.addSeparator() if a is None else m.addAction(a)
-        sub = m.addMenu("Move head to design")
+        sub = m.addMenu(_("Move head to design"))
         for a in self.act_corners.values():
             sub.addAction(a)
-        m = mb.addMenu("&View")
+        m = mb.addMenu(_("&View"))
         m.addAction(self.act_fit)
-        m = mb.addMenu("&Settings")
+        m = mb.addMenu(_("&Settings"))
         m.addAction(self.act_settings)
-        m = mb.addMenu("&Help")
+        m = mb.addMenu(_("&Help"))
         m.addAction(self.act_about)
 
         tb = QToolBar("Main")
@@ -156,34 +160,34 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout(panel)
 
         # --- design info
-        box = QGroupBox("Design")
+        box = QGroupBox(_("Design"))
         v = QVBoxLayout(box)
-        self.design_label = QLabel("No design loaded")
+        self.design_label = QLabel(_("No design loaded"))
         self.design_label.setWordWrap(True)
         v.addWidget(self.design_label)
         row = QHBoxLayout()
-        b = QPushButton("Open\u2026")
+        b = QPushButton(_("Open\u2026"))
         b.clicked.connect(self.open_design)
         row.addWidget(b)
-        b = QPushButton("Reload")
+        b = QPushButton(_("Reload"))
         b.clicked.connect(self.reload_design)
         row.addWidget(b)
         v.addLayout(row)
         layout.addWidget(box)
 
         # --- laser
-        box = QGroupBox("Laser")
+        box = QGroupBox(_("Laser"))
         v = QVBoxLayout(box)
         self.laser_label = QLabel()
         v.addWidget(self.laser_label)
         row = QHBoxLayout()
-        self.btn_connect = QPushButton("Initialize")
+        self.btn_connect = QPushButton(_("Initialize"))
         self.btn_connect.clicked.connect(self.connect_laser)
         row.addWidget(self.btn_connect)
-        b = QPushButton("Home")
+        b = QPushButton(_("Home"))
         b.clicked.connect(self.home)
         row.addWidget(b)
-        b = QPushButton("Unlock")
+        b = QPushButton(_("Unlock"))
         b.clicked.connect(self.unlock)
         row.addWidget(b)
         v.addLayout(row)
@@ -192,32 +196,35 @@ class MainWindow(QMainWindow):
         # to that point of the design (the design stays where it is)
         grid = QGridLayout()
         grid.setSpacing(4)
-        arrows = {(0, 1): ("up", 0, 1, "Ctrl+Up"), (-1, 0): ("left", 1, 0, "Ctrl+Left"),
-                  (1, 0): ("right", 1, 2, "Ctrl+Right"), (0, -1): ("down", 2, 1, "Ctrl+Down")}
-        for d, (name, r, c, sc) in arrows.items():
+        arrows = {(0, 1): ("up", 0, 1, "Ctrl+Up", N_("Move the head and design up by one step")),
+                  (-1, 0): ("left", 1, 0, "Ctrl+Left", N_("Move the head and design left by one step")),
+                  (1, 0): ("right", 1, 2, "Ctrl+Right", N_("Move the head and design right by one step")),
+                  (0, -1): ("down", 2, 1, "Ctrl+Down", N_("Move the head and design down by one step"))}
+        for d, (name, r, c, sc, tip) in arrows.items():
             b = QPushButton()
             b.setIcon(icons.arrow_icon(name))
             b.setIconSize(QSize(34, 34))
             b.setFixedSize(64, 56)
-            b.setToolTip("Move the head and design %s by one step (%s)" % (name, sc))
-            b.clicked.connect(lambda _=False, d=d: self.jog(*d))
+            b.setToolTip("%s (%s)" % (_(tip), sc))
+            b.clicked.connect(lambda _checked=False, d=d: self.jog(*d))
             grid.addWidget(b, r, c)
             act = QAction(self)
             act.setShortcut(QKeySequence(sc))
-            act.triggered.connect(lambda _=False, d=d: self.jog(*d))
+            act.triggered.connect(lambda _checked=False, d=d: self.jog(*d))
             self.addAction(act)
         self.corner_buttons = []
-        corners = (("UL", 0, 0, "upper left corner", "Ctrl+7"), ("UR", 0, 2, "upper right corner", "Ctrl+9"),
-                   ("CC", 1, 1, "centre", "Ctrl+5"), ("LL", 2, 0, "lower left corner", "Ctrl+1"),
-                   ("LR", 2, 2, "lower right corner", "Ctrl+3"))
+        corners = (("UL", 0, 0, N_("Move the head to the upper left corner of the design"), "Ctrl+7"),
+                   ("UR", 0, 2, N_("Move the head to the upper right corner of the design"), "Ctrl+9"),
+                   ("CC", 1, 1, N_("Move the head to the centre of the design"), "Ctrl+5"),
+                   ("LL", 2, 0, N_("Move the head to the lower left corner of the design"), "Ctrl+1"),
+                   ("LR", 2, 2, N_("Move the head to the lower right corner of the design"), "Ctrl+3"))
         for key, r, c, tip, sc in corners:
             b = QPushButton()
             b.setIcon(icons.centre_icon() if key == "CC" else icons.corner_icon(key))
             b.setIconSize(QSize(34, 34))
             b.setFixedSize(64, 56)
-            b.setToolTip("Move the head to the %s of the design (%s).\n"
-                         "The design does not move." % (tip, sc))
-            b.clicked.connect(lambda _=False, k=key: self.move_to_corner(k))
+            b.setToolTip("%s (%s).\n%s" % (_(tip), sc, _("The design does not move.")))
+            b.clicked.connect(lambda _checked=False, k=key: self.move_to_corner(k))
             grid.addWidget(b, r, c)
             self.corner_buttons.append(b)
         pad = QHBoxLayout()
@@ -227,11 +234,11 @@ class MainWindow(QMainWindow):
         v.addLayout(pad)
 
         self.jog_step = self._spin("jog_step", "len", 0.01, 1000, 2)
-        self.jog_step.setToolTip("Distance moved by one arrow click")
+        self.jog_step.setToolTip(_("Distance moved by one arrow click"))
         self.jog_step.setFixedWidth(110)
         row = QHBoxLayout()
         row.addStretch(1)
-        row.addWidget(QLabel("Step:"))
+        row.addWidget(QLabel(_("Step:")))
         row.addWidget(self.jog_step)
         row.addStretch(1)
         v.addLayout(row)
@@ -241,7 +248,7 @@ class MainWindow(QMainWindow):
 
         # go to an absolute position (from home)
         row = QHBoxLayout()
-        row.addWidget(QLabel("Go to X"))
+        row.addWidget(QLabel(_("Go to X")))
         self.goto_x = QDoubleSpinBox()
         self.goto_y = QDoubleSpinBox()
         for w, key, sign in ((self.goto_x, "gotoX", 1.0), (self.goto_y, "gotoY", -1.0)):
@@ -257,14 +264,14 @@ class MainWindow(QMainWindow):
         self.goto_x.valueChanged.connect(lambda v: self._set_value("gotoX", _num_text(v)))
         # gotoY is stored like K40 Whisperer (up is positive); shown as distance down
         self.goto_y.valueChanged.connect(lambda v: self._set_value("gotoY", _num_text(-v)))
-        self.goto_y.setToolTip("Distance down from home")
+        self.goto_y.setToolTip(_("Distance down from home"))
         row.addWidget(self.goto_x)
         row.addSpacing(6)
-        row.addWidget(QLabel("Y"))
+        row.addWidget(QLabel(_("Y")))
         row.addWidget(self.goto_y)
         row.addStretch(1)
-        self.btn_goto = QPushButton("Go")
-        self.btn_goto.setToolTip("Home the head, then move to X/Y (Ctrl+G)")
+        self.btn_goto = QPushButton(_("Go"))
+        self.btn_goto.setToolTip(_("Home the head, then move to X/Y (Ctrl+G)"))
         self.btn_goto.clicked.connect(self.goto_position)
         row.addWidget(self.btn_goto)
         v.addLayout(row)
@@ -273,8 +280,8 @@ class MainWindow(QMainWindow):
         self.test_fire_row = QWidget()
         row = QHBoxLayout(self.test_fire_row)
         row.setContentsMargins(0, 0, 0, 0)
-        self.btn_test_fire = QPushButton("Test fire")
-        self.btn_test_fire.setToolTip("Fire the laser briefly (M3 boards)")
+        self.btn_test_fire = QPushButton(_("Test fire"))
+        self.btn_test_fire.setToolTip(_("Fire the laser briefly (M3 boards)"))
         self.btn_test_fire.clicked.connect(self.test_fire)
         row.addWidget(self.btn_test_fire)
         row.addWidget(self._spin("test_power", "power", 0, 100, 0))
@@ -287,14 +294,14 @@ class MainWindow(QMainWindow):
         layout.addWidget(box)
 
         # --- operations
-        box = QGroupBox("Operations")
+        box = QGroupBox(_("Operations"))
         g = QGridLayout(box)
         self.speed_header = QLabel()
-        for col, text in enumerate(("", None, "Passes", "Power", "Time")):
+        for col, text in enumerate(("", None, N_("Passes"), N_("Power"), N_("Time"))):
             if text is None:
                 g.addWidget(self.speed_header, 0, col)
             elif text:
-                lbl = QLabel(text)
+                lbl = QLabel(_(text))
                 g.addWidget(lbl, 0, col)
                 if text == "Power":
                     self.power_header = lbl
@@ -303,7 +310,7 @@ class MainWindow(QMainWindow):
         self.include_checks = {}
         self.op_rows = {}          # operation -> widgets of its row
         for row, (label, inc, feed, passes, power, op) in enumerate(OPERATIONS, start=1):
-            cb = QCheckBox(label)
+            cb = QCheckBox(_(label))
             cb.setChecked(is_true(self.values.get(inc, "1")))
             cb.toggled.connect(lambda on, k=inc: (self._set_value(k, "1" if on else "0"),
                                                   self.refresh_preview()))
@@ -312,10 +319,10 @@ class MainWindow(QMainWindow):
             widgets = [cb]
             if feed:
                 widgets.append(self._spin(feed, "speed", 0.1, 10000))
-                widgets[-1].setToolTip("Speed")
+                widgets[-1].setToolTip(_("Speed"))
                 g.addWidget(widgets[-1], row, 1)
             elif op == job.GCODE_CUT:
-                cb.setToolTip("Paths from a G-code file; speeds come from the file (F words)")
+                cb.setToolTip(_("Paths from a G-code file; speeds come from the file (F words)"))
             widgets.append(self._spin(passes, "int", 1, 100))
             g.addWidget(widgets[-1], row, 2)
             pw = self._spin(power, "power", 0, 100, 0)
@@ -327,37 +334,37 @@ class MainWindow(QMainWindow):
             self.time_labels[op] = tl
             widgets.append(tl)
             self.op_rows[op] = widgets
-        self.no_ops_label = QLabel("Open a design to see its operations.")
+        self.no_ops_label = QLabel(_("Open a design to see its operations."))
         self.no_ops_label.setStyleSheet("color:#757575;")
         g.addWidget(self.no_ops_label, len(OPERATIONS) + 1, 0, 1, 5)
         row = QHBoxLayout()
         self.total_time_label = QLabel()
         row.addWidget(self.total_time_label, 1)
-        self.btn_calc_time = QPushButton("Calculate raster time")
-        self.btn_calc_time.setToolTip("Prepare the raster now to estimate its engraving time")
+        self.btn_calc_time = QPushButton(_("Calculate raster time"))
+        self.btn_calc_time.setToolTip(_("Prepare the raster now to estimate its engraving time"))
         self.btn_calc_time.clicked.connect(self.calculate_raster_time)
         row.addWidget(self.btn_calc_time)
         g.addLayout(row, len(OPERATIONS) + 2, 0, 1, 5)
         layout.addWidget(box)
 
         # --- run
-        box = QGroupBox("Run")
+        box = QGroupBox(_("Run"))
         v = QVBoxLayout(box)
-        self.btn_start = QPushButton("Start selected operations")
+        self.btn_start = QPushButton(_("Start selected operations"))
         self.btn_start.setObjectName("start")
         self.btn_start.setMinimumHeight(40)
         self.btn_start.clicked.connect(lambda: self.start_job())
         v.addWidget(self.btn_start)
         row = QHBoxLayout()
-        self.btn_trace = QPushButton("Trace boundary")
-        self.btn_trace.setToolTip("Move around the outline of the design")
+        self.btn_trace = QPushButton(_("Trace boundary"))
+        self.btn_trace.setToolTip(_("Move around the outline of the design"))
         self.btn_trace.clicked.connect(lambda: self.start_job(trace=True))
         row.addWidget(self.btn_trace)
-        self.btn_egv = QPushButton("Save EGV\u2026")
+        self.btn_egv = QPushButton(_("Save EGV\u2026"))
         self.btn_egv.clicked.connect(self.save_egv)
         row.addWidget(self.btn_egv)
         v.addLayout(row)
-        self.btn_stop = QPushButton("Stop")
+        self.btn_stop = QPushButton(_("Stop"))
         self.btn_stop.setObjectName("stop")
         self.btn_stop.setMinimumHeight(34)
         self.btn_stop.setEnabled(False)
@@ -370,7 +377,7 @@ class MainWindow(QMainWindow):
         scroll.setWidget(panel)
         scroll.setWidgetResizable(True)
         self.panel_scroll = scroll
-        dock = QDockWidget("Job", self)
+        dock = QDockWidget(_("Job"), self)
         dock.setObjectName("job_dock")
         dock.setFeatures(QDockWidget.NoDockWidgetFeatures)
         dock.setWidget(scroll)
@@ -383,7 +390,7 @@ class MainWindow(QMainWindow):
         self.progress.setRange(0, 0)
         self.progress.hide()
         self.statusBar().addPermanentWidget(self.progress)
-        self.statusBar().showMessage("Ready")
+        self.statusBar().showMessage(_("Ready"))
 
     # ------------------------------------------------------------ state
     def _set_value(self, key, val):
@@ -411,8 +418,8 @@ class MainWindow(QMainWindow):
         raster_unknown = has[job.RASTER_ENG] and times.get(job.RASTER_ENG) is None
         self.btn_calc_time.setVisible(raster_unknown)
         if any(has.values()):
-            self.total_time_label.setText("Estimated total: <b>%s%s</b>"
-                                          % (format_time(total), " + raster" if unknown else ""))
+            self.total_time_label.setText(_("Estimated total: <b>%s%s</b>")
+                                          % (format_time(total), _(" + raster") if unknown else ""))
         else:
             self.total_time_label.setText("")
 
@@ -495,8 +502,8 @@ class MainWindow(QMainWindow):
     def _update_unit_suffixes(self):
         units = self.values.get("units", "mm")
         speed = "mm/s" if units == "mm" else "in/min"
-        self.speed_header.setText("Speed (%s)" % speed)
-        for w, kind, _, _ in self._unit_widgets:
+        self.speed_header.setText(_("Speed (%s)") % speed)
+        for w, kind, _key, _sign in self._unit_widgets:
             w.setSuffix(" " + (units if kind == "len" else speed))
 
     def _reload_spin_values(self):
@@ -511,16 +518,16 @@ class MainWindow(QMainWindow):
 
     def _update_laser_state(self):
         if self.laser.connected:
-            self.laser_label.setText("<b style='color:#2e7d32'>Connected</b> (%s)"
+            self.laser_label.setText(_("<b style='color:#2e7d32'>Connected</b> (%s)")
                                      % self.values.get("board_name"))
-            self.btn_connect.setText("Re-initialize")
+            self.btn_connect.setText(_("Re-initialize"))
         else:
-            self.laser_label.setText("<b style='color:#c62828'>Not connected</b>")
-            self.btn_connect.setText("Initialize")
+            self.laser_label.setText(_("<b style='color:#c62828'>Not connected</b>"))
+            self.btn_connect.setText(_("Initialize"))
         x = self.head[0] + self.head_offset[0] / 1000.0
         y = self.head[1] + self.head_offset[1] / 1000.0
         scale = 25.4 if self.values.get("units") == "mm" else 1.0
-        self.head_label.setText("Head: X %.1f  Y %.1f %s" % (x * scale + 0.0, -y * scale + 0.0,
+        self.head_label.setText(_("Head: X %.1f  Y %.1f %s") % (x * scale + 0.0, -y * scale + 0.0,
                                                               self.values.get("units")))
 
     def set_busy(self, busy):
@@ -536,7 +543,7 @@ class MainWindow(QMainWindow):
 
     def status(self, message, error=False):
         self.statusBar().setStyleSheet("color:#c62828;" if error else "")
-        self.statusBar().showMessage(message)
+        self.statusBar().showMessage(tr_message(message))
 
     def refresh_preview(self, fit=False):
         try:
@@ -553,7 +560,7 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------ design files
     def open_design(self):
         start = os.path.dirname(self.design_file or self.values.get("designfile", "")) or os.path.expanduser("~")
-        name, _ = QFileDialog.getOpenFileName(self, "Open design", start, DESIGN_FILTERS)
+        name, _unused = QFileDialog.getOpenFileName(self, _("Open design"), start, design_filters())
         if name:
             self.load_design(name)
 
@@ -564,8 +571,8 @@ class MainWindow(QMainWindow):
             self.open_design()
 
     def _ask_dxf_units(self):
-        unit, ok = QInputDialog.getItem(self, "DXF units",
-                                        "The DXF file does not say which units it uses.\nUnits:",
+        unit, ok = QInputDialog.getItem(self, _("DXF units"),
+                                        _("The DXF file does not say which units it uses.\nUnits:"),
                                         loaders.DXF_UNITS, loaders.DXF_UNITS.index("Millimeters"),
                                         False)
         return unit if ok else None
@@ -574,17 +581,17 @@ class MainWindow(QMainWindow):
         q = loaders.SvgScale(svg_size, viewbox, inkscape_version)
         w, h = q.size_mm(q.default_pxpi)
         pxpi, ok = QInputDialog.getDouble(
-            self, "SVG import scale",
-            "The SVG file does not define its physical size.\n"
+            self, _("SVG import scale"),
+            _("The SVG file does not define its physical size.\n"
             "Pixels per inch (Inkscape 0.92+: 96, older Inkscape: 90, Illustrator: 72).\n"
-            "At %g px/in the design is %.1f x %.1f mm." % (q.default_pxpi, w, h),
+            "At %g px/in the design is %.1f x %.1f mm.") % (q.default_pxpi, w, h),
             q.default_pxpi, 1.0, 10000.0, 2)
         return q.result(pxpi) if ok else None
 
     def load_design(self, filename):
         ext = os.path.splitext(filename)[1].lower()
         QApplication.setOverrideCursor(Qt.WaitCursor)
-        self.status("Opening %s" % filename)
+        self.status(_("Opening %s") % filename)
         QApplication.processEvents()
 
         def progress(msg):
@@ -604,13 +611,13 @@ class MainWindow(QMainWindow):
                 warnings = loaders.load_gcode(filename, self.design)
         except loaders.LoadCancelled:
             QApplication.restoreOverrideCursor()
-            self.status("Loading cancelled")
+            self.status(_("Loading cancelled"))
             self.refresh_preview()
             return
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            self.status("Could not open %s" % os.path.basename(filename), error=True)
-            QMessageBox.critical(self, "Could not open design", str(e))
+            self.status(_("Could not open %s") % os.path.basename(filename), error=True)
+            QMessageBox.critical(self, _("Could not open design"), tr_message(str(e)))
             self.refresh_preview()
             return
         QApplication.restoreOverrideCursor()
@@ -619,25 +626,25 @@ class MainWindow(QMainWindow):
         self._update_design_label()
         self._update_power_visibility()
         self.refresh_preview(fit=True)
-        self.status("Opened %s" % filename)
+        self.status(_("Opened %s") % filename)
         for w in warnings:
-            QMessageBox.warning(self, "Design import", w)
+            QMessageBox.warning(self, _("Design import"), tr_message(w))
 
     def _update_design_label(self):
         d = self.design
         xmin, xmax, ymin, ymax = d.bounds
         parts = []
         if d.raster.image is not None:
-            parts.append("raster")
+            parts.append(_("raster"))
         if d.vector_engrave.ecoords:
-            parts.append("vector engrave")
+            parts.append(_("vector engrave"))
         if d.vector_cut.ecoords:
-            parts.append("vector cut")
+            parts.append(_("vector cut"))
         if d.gcode.ecoords:
-            parts.append("g-code")
-        self.design_label.setText("<b>%s</b><br>%.1f × %.1f mm<br>%s" % (
+            parts.append(_("g-code"))
+        self.design_label.setText(_("<b>%s</b><br>%.1f × %.1f mm<br>%s") % (
             os.path.basename(self.design_file), (xmax - xmin) * 25.4, (ymax - ymin) * 25.4,
-            ", ".join(parts) or "empty"))
+            ", ".join(parts) or _("empty")))
 
     # ------------------------------------------------------------ settings
     def edit_settings(self):
@@ -656,31 +663,34 @@ class MainWindow(QMainWindow):
         self._reload_spin_values()
         self._update_unit_suffixes()
         self._update_power_visibility()
+        if "language" in changed:
+            QMessageBox.information(self, _("Language"),
+                                    _("The new language will be used after restarting Kerfly."))
         if changed & RASTER_KEYS:
             self.design.raster.reset_path()
         if changed & RELOAD_KEYS and self.design_file:
             self.load_design(self.design_file)
         self.refresh_preview()
-        self.status("Settings changed (use File → Save settings as default to keep them)")
+        self.status(_("Settings changed (use File → Save settings as default to keep them)"))
 
     def save_settings(self):
         path = config.user_config_path()
         try:
             config.write_settings_file(path, self.values, "0.71 (Kerfly %s)" % __version__)
         except OSError as e:
-            self.status("Could not save settings: %s" % e, error=True)
+            self.status(_("Could not save settings: %s") % e, error=True)
             return
-        self.status("Settings saved to %s" % path)
+        self.status(_("Settings saved to %s") % path)
 
     # ------------------------------------------------------------ laser
     def _laser_call(self, func, ok_message):
         if not self.laser.connected:
-            self.status("Laser is not initialized.", error=True)
+            self.status(_("Laser is not initialized."), error=True)
             return False
         try:
             func()
         except Exception as e:
-            self.status("%s" % e, error=True)
+            self.status(str(e), error=True)
             return False
         self.status(ok_message)
         return True
@@ -691,11 +701,11 @@ class MainWindow(QMainWindow):
             self.laser.connect(init_home=is_true(self.values.get("init_home", "1")))
             self.head = (0.0, 0.0)
             self.head_offset = (0, 0)
-            self.status("Laser initialized")
+            self.status(_("Laser initialized"))
         except LaserError as e:
             self.status(str(e), error=True)
         except Exception as e:
-            self.status("Unknown USB error: %s" % e, error=True)
+            self.status(_("Unknown USB error: %s") % e, error=True)
         finally:
             QApplication.restoreOverrideCursor()
         self.refresh_preview()
@@ -703,23 +713,23 @@ class MainWindow(QMainWindow):
     def release_laser(self):
         try:
             self.laser.release()
-            self.status("USB released")
+            self.status(_("USB released"))
         except Exception as e:
             self.status(str(e), error=True)
         self._update_laser_state()
 
     def home(self):
-        if self.laser.connected and not self._laser_call(self.laser.home, "Homed"):
+        if self.laser.connected and not self._laser_call(self.laser.home, _("Homed")):
             return
         self.head = (0.0, 0.0)
         self.head_offset = (0, 0)
         self.refresh_preview()
 
     def unlock(self):
-        self._laser_call(self.laser.unlock, "Rail unlocked")
+        self._laser_call(self.laser.unlock, _("Rail unlocked"))
 
     def unfreeze(self):
-        self._laser_call(self.laser.unfreeze, "Unfreeze complete")
+        self._laser_call(self.laser.unfreeze, _("Unfreeze complete"))
 
     def jog(self, dirx, diry):
         """Move by one jog step in the given direction (+y = up)."""
@@ -754,7 +764,7 @@ class MainWindow(QMainWindow):
                 self.laser.rapid_move((x - self.head[0]) * 1000.0, (y - self.head[1]) * 1000.0,
                                       settings, self.send_options())
             except Exception as e:
-                self.status("Rapid move failed: %s" % e, error=True)
+                self.status(_("Rapid move failed: %s") % e, error=True)
                 return
         self.head = (x, y)
         self.refresh_preview()
@@ -777,7 +787,7 @@ class MainWindow(QMainWindow):
             try:
                 self.laser.rapid_move(dx, dy, settings, self.send_options())
             except Exception as e:
-                self.status("Rapid move failed: %s" % e, error=True)
+                self.status(_("Rapid move failed: %s") % e, error=True)
                 return False
         self.head_offset = target
         self.refresh_preview()
@@ -795,7 +805,7 @@ class MainWindow(QMainWindow):
         bounds = self.design.get_bounds(settings.rotate)
         offset = corner_offset(corner, bounds, settings.home_upper_right, self.head, bed_w, bed_h)
         if offset is None:
-            self.status("That corner of the design is outside the laser bed.", error=True)
+            self.status(_("That corner of the design is outside the laser bed."), error=True)
             return
         self.move_head_temporary(offset)
 
@@ -804,7 +814,7 @@ class MainWindow(QMainWindow):
         if self.worker is not None:
             return
         x, y = self.goto_x.value(), self.goto_y.value()
-        if self.laser.connected and not self._laser_call(self.laser.home, "Homed"):
+        if self.laser.connected and not self._laser_call(self.laser.home, _("Homed")):
             return
         self.head = (0.0, 0.0)
         self.head_offset = (0, 0)
@@ -812,7 +822,7 @@ class MainWindow(QMainWindow):
 
     def test_fire(self):
         if not self.laser.connected:
-            self.status("Laser is not initialized.", error=True)
+            self.status(_("Laser is not initialized."), error=True)
             return
         try:
             ms = int(float(self.values["test_time"]))
@@ -826,7 +836,7 @@ class MainWindow(QMainWindow):
             self.status(str(e), error=True)
             return
         self._laser_call(lambda: self.laser.test_fire(power, ms),
-                         "Test fire: %.0f%% for %d ms" % (power, ms))
+                         _("Test fire: %.0f%% for %d ms") % (power, ms))
 
     def calculate_raster_time(self):
         if self.worker is not None or self.design.raster.image is None:
@@ -837,17 +847,17 @@ class MainWindow(QMainWindow):
             self.status(str(e), error=True)
             return
         self._run_worker(RasterPrepareWorker(self.design, settings, parent=self),
-                         "Preparing raster…")
+                         _("Preparing raster…"))
 
     def send_egv_file(self):
         if self.worker is not None:
             return
         if not self.laser.connected:
-            self.status("Laser is not initialized.", error=True)
+            self.status(_("Laser is not initialized."), error=True)
             return
         start = os.path.dirname(self.design_file) or os.path.expanduser("~")
-        name, _ = QFileDialog.getOpenFileName(self, "Send EGV file", start,
-                                              "EGV files (*.egv *.EGV);;All files (*)")
+        name, _unused = QFileDialog.getOpenFileName(self, _("Send EGV file"), start,
+                                              _("EGV files (*.egv *.EGV);;All files (*)"))
         if not name:
             return
         try:
@@ -855,11 +865,11 @@ class MainWindow(QMainWindow):
             settings = self.job_settings()
             send_options = self.send_options()
         except (OSError, ValueError) as e:
-            self.status("Could not read %s: %s" % (os.path.basename(name), e), error=True)
+            self.status(_("Could not read %s: %s") % (os.path.basename(name), e), error=True)
             return
         passes = 1
         if not egv.has_end_position:
-            passes, ok = QInputDialog.getInt(self, "Send EGV file", "Number of passes:", 1, 1, 100)
+            passes, ok = QInputDialog.getInt(self, _("Send EGV file"), _("Number of passes:"), 1, 1, 100)
             if not ok:
                 return
         if self.head_offset != (0, 0) and not self.move_head_temporary((0, 0)):
@@ -871,14 +881,14 @@ class MainWindow(QMainWindow):
         self._update_power_visibility()
         self.refresh_preview()
         self._run_worker(EgvSendWorker(egv, passes, self.laser, settings, send_options, parent=self),
-                         "Sending %s…" % os.path.basename(name))
+                         _("Sending %s…") % os.path.basename(name))
 
     # ------------------------------------------------------------ jobs
     def selected_operation(self):
         d = self.design
         has = {job.RASTER_ENG: d.raster.image is not None, job.VECTOR_ENG: bool(d.vector_engrave.ecoords),
                job.VECTOR_CUT: bool(d.vector_cut.ecoords), job.GCODE_CUT: bool(d.gcode.ecoords)}
-        ops = [op for _, _, _, _, _, op in OPERATIONS if self.include_checks[op].isChecked() and has[op]]
+        ops = [op for *_row, op in OPERATIONS if self.include_checks[op].isChecked() and has[op]]
         return "+".join(ops)
 
     def start_job(self, output_file=None, trace=False):
@@ -886,10 +896,10 @@ class MainWindow(QMainWindow):
             return
         op = job.TRACE_ENG if trace else self.selected_operation()
         if not op:
-            self.status("Nothing to do: load a design and select at least one operation.", error=True)
+            self.status(_("Nothing to do: load a design and select at least one operation."), error=True)
             return
         if output_file is None and not self.laser.connected:
-            self.status("Laser is not initialized.", error=True)
+            self.status(_("Laser is not initialized."), error=True)
             return
         try:
             settings = self.job_settings()
@@ -904,7 +914,7 @@ class MainWindow(QMainWindow):
         self._run_worker(JobWorker(self.design, settings, op,
                                    laser=None if output_file else self.laser,
                                    output_file=output_file, send_options=send_options,
-                                   parent=self), "Preparing job\u2026")
+                                   parent=self), _("Preparing job\u2026"))
 
     def _run_worker(self, worker, message):
         self.worker = worker
@@ -917,22 +927,22 @@ class MainWindow(QMainWindow):
 
     def save_egv(self):
         base = os.path.splitext(self.design_file)[0] if self.design_file else os.path.expanduser("~/out")
-        name, _ = QFileDialog.getSaveFileName(self, "Save EGV file", base + ".EGV", "EGV files (*.EGV *.egv)")
+        name, _unused = QFileDialog.getSaveFileName(self, _("Save EGV file"), base + ".EGV", _("EGV files (*.EGV *.egv)"))
         if name:
             self.start_job(output_file=name)
 
     def stop_job(self):
         if self.worker is not None:
-            self.status("Stopping\u2026")
+            self.status(_("Stopping\u2026"))
             self.worker.request_stop()
 
     def _job_paused(self):
         answer = QMessageBox.question(
-            self, "Laser paused", "The laser is paused.\n\nResume the job?",
+            self, _("Laser paused"), _("The laser is paused.\n\nResume the job?"),
             QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
         if answer == QMessageBox.Yes:
             self.worker.pause.resume()
-            self.status("Resumed")
+            self.status(_("Resumed"))
         else:
             self.worker.pause.terminate()
 
@@ -955,18 +965,18 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------ misc
     def about(self):
         QMessageBox.about(
-            self, "About Kerfly",
-            "<h3>Kerfly %s</h3>"
+            self, _("About Kerfly"),
+            _("<h3>Kerfly %s</h3>"
             "<p>Laser cutter control software for K40 lasers with Lihuiyu M2 Nano boards.</p>"
             "<p>Based on <a href='https://www.scorchworks.com/K40whisperer/k40whisperer.html'>"
             "K40 Whisperer</a> by Scorch.</p>"
             "<p>Free software under the GNU General Public License v3 or later.<br>"
-            "<a href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>" % __version__)
+            "<a href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>") % __version__)
 
     def closeEvent(self, event):
         if self.worker is not None:
-            if QMessageBox.question(self, "Job running",
-                                    "A job is running. Stop it and quit?") != QMessageBox.Yes:
+            if QMessageBox.question(self, _("Job running"),
+                                    _("A job is running. Stop it and quit?")) != QMessageBox.Yes:
                 event.ignore()
                 return
             self.worker.stop[0] = True

@@ -1,0 +1,751 @@
+# French translations for Kerfly.
+# Copyright (C) 2026 Kerfly contributors
+# This file is distributed under the same license as the Kerfly project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Kerfly VERSION\n"
+"Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
+"POT-Creation-Date: 2026-11-03 21:37+0100\n"
+"PO-Revision-Date: 2026-11-03 21:00+0000\n"
+"Last-Translator: Kerfly contributors\n"
+"Language: fr\n"
+"Language-Team: fr <https://github.com/cyryllo/Kerfly>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+msgid " + raster"
+msgstr " + raster"
+
+msgid "&About Kerfly"
+msgstr "À &propos de Kerfly"
+
+msgid "&File"
+msgstr "&Fichier"
+
+msgid "&Fit to window"
+msgstr "&Ajuster à la fenêtre"
+
+msgid "&Go to X/Y position"
+msgstr "&Aller à la position X/Y"
+
+msgid "&Help"
+msgstr "&Aide"
+
+msgid "&Home"
+msgstr "&Origine"
+
+msgid "&Initialize laser"
+msgstr "&Connecter le laser"
+
+msgid "&Laser"
+msgstr "&Laser"
+
+msgid "&Open design…"
+msgstr "&Ouvrir un dessin…"
+
+msgid "&Quit"
+msgstr "&Quitter"
+
+msgid "&Reload design"
+msgstr "&Recharger le dessin"
+
+msgid "&Settings"
+msgstr "&Paramètres"
+
+msgid "&Settings…"
+msgstr "&Paramètres…"
+
+msgid "&Unlock rail"
+msgstr "&Déverrouiller les axes"
+
+msgid "&View"
+msgstr "&Affichage"
+
+msgid "(libUSB driver not installed)"
+msgstr "(pilote libUSB non installé)"
+
+#, python-format
+msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
+msgstr "<b style='color:#2e7d32'>Connecté</b> (%s)"
+
+msgid "<b style='color:#c62828'>Not connected</b>"
+msgstr "<b style='color:#c62828'>Non connecté</b>"
+
+#, python-format
+msgid "<b>%s</b><br>%.1f × %.1f mm<br>%s"
+msgstr "<b>%s</b><br>%.1f × %.1f mm<br>%s"
+
+#, python-format
+msgid ""
+"<h3>Kerfly %s</h3><p>Laser cutter control software for K40 lasers with "
+"Lihuiyu M2 Nano boards.</p><p>Based on <a "
+"href='https://www.scorchworks.com/K40whisperer/k40whisperer.html'>K40 "
+"Whisperer</a> by Scorch.</p><p>Free software under the GNU General Public"
+" License v3 or later.<br><a "
+"href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>"
+msgstr ""
+"<h3>Kerfly %s</h3><p>Logiciel de pilotage pour lasers K40 avec cartes "
+"Lihuiyu M2 Nano.</p><p>Basé sur <a "
+"href='https://www.scorchworks.com/K40whisperer/k40whisperer.html'>K40 "
+"Whisperer</a> de Scorch.</p><p>Logiciel libre sous licence GNU General "
+"Public License v3 ou ultérieure.<br><a "
+"href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>"
+
+msgid "A job is running. Stop it and quit?"
+msgstr "Une tâche est en cours. L'arrêter et quitter ?"
+
+msgid "About Kerfly"
+msgstr "À propos de Kerfly"
+
+#, python-format
+msgid "Adjusting image darkness: %s%%"
+msgstr "Ajustement de la luminosité de l'image : %s%%"
+
+msgid "Advanced"
+msgstr "Avancé"
+
+msgid "All files"
+msgstr "Tous les fichiers"
+
+msgid "Bed height"
+msgstr "Hauteur du plateau"
+
+msgid "Bed width"
+msgstr "Largeur du plateau"
+
+msgid "Beep after a job"
+msgstr "Bip à la fin de la tâche"
+
+msgid "Boundary trace gap"
+msgstr "Écart du parcours de contour"
+
+msgid "Boundary trace speed"
+msgstr "Vitesse du parcours de contour"
+
+msgid "Boundary trace with laser on"
+msgstr "Parcourir le contour avec le laser allumé"
+
+msgid "Browse…"
+msgstr "Parcourir…"
+
+msgid "Calculate raster time"
+msgstr "Calculer la durée raster"
+
+msgid "Centre"
+msgstr "Centre"
+
+msgid "Controller board"
+msgstr "Carte de contrôle"
+
+msgid "Converting text to paths."
+msgstr "Conversion du texte en chemins."
+
+#, python-format
+msgid "Could not open %s"
+msgstr "Impossible d'ouvrir %s"
+
+msgid "Could not open design"
+msgstr "Impossible d'ouvrir le dessin"
+
+#, python-format
+msgid "Could not read %s: %s"
+msgstr "Impossible de lire %s : %s"
+
+#, python-format
+msgid "Could not save settings: %s"
+msgstr "Impossible d'enregistrer les paramètres : %s"
+
+msgid "Creating halftone image."
+msgstr "Création de l'image en demi-teintes."
+
+#, python-format
+msgid "Creating scan lines: %s%%"
+msgstr "Création des lignes de balayage : %s%%"
+
+msgid "Cut inside shapes first"
+msgstr "Découper d'abord les formes intérieures"
+
+msgid "DXF files"
+msgstr "Fichiers DXF"
+
+msgid "DXF units"
+msgstr "Unités DXF"
+
+#, python-format
+msgid "Data saved to: %s"
+msgstr "Données enregistrées dans : %s"
+
+#, python-format
+msgid "Data transmission (CRC) error #%s"
+msgstr "Erreur de transmission (CRC) n° %s"
+
+msgid "Design"
+msgstr "Dessin"
+
+msgid "Design files"
+msgstr "Fichiers de dessin"
+
+msgid "Design import"
+msgstr "Import du dessin"
+
+msgid "Distance down from home"
+msgstr "Distance vers le bas depuis l'origine"
+
+msgid "Distance moved by one arrow click"
+msgstr "Distance parcourue par clic sur une flèche"
+
+#, python-format
+msgid "EGV file sent in %s"
+msgstr "Fichier EGV envoyé en %s"
+
+msgid "EGV files (*.EGV *.egv)"
+msgstr "Fichiers EGV (*.EGV *.egv)"
+
+msgid "EGV files (*.egv *.EGV);;All files (*)"
+msgstr "Fichiers EGV (*.egv *.EGV);;Tous les fichiers (*)"
+
+msgid "Engrave bottom to top"
+msgstr "Graver de bas en haut"
+
+#, python-format
+msgid "Estimated total: <b>%s%s</b>"
+msgstr "Durée totale estimée : <b>%s%s</b>"
+
+msgid "Fire the laser briefly (M3 boards)"
+msgstr "Déclencher brièvement le laser (cartes M3)"
+
+msgid "G-code"
+msgstr "G-code"
+
+msgid "G-code files"
+msgstr "Fichiers G-code"
+
+#, python-format
+msgid "Generating laser data: %s%%"
+msgstr "Génération des données laser : %s%%"
+
+msgid "Generating laser data…"
+msgstr "Génération des données laser…"
+
+msgid "Go"
+msgstr "Aller"
+
+msgid "Go to X"
+msgstr "Aller à X"
+
+msgid "Halftone (dither) grayscale images"
+msgstr "Demi-teintes (tramage) pour les images en niveaux de gris"
+
+msgid "Halftone resolution (dpi)"
+msgstr "Résolution des demi-teintes (ppp)"
+
+#, python-format
+msgid "Head: X %.1f  Y %.1f %s"
+msgstr "Tête : X %.1f  Y %.1f %s"
+
+msgid "Home"
+msgstr "Origine"
+
+msgid "Home is in the upper right corner"
+msgstr "L'origine est dans le coin supérieur droit"
+
+msgid "Home the head when initializing"
+msgstr "Ramener la tête à l'origine à la connexion"
+
+msgid "Home the head, then move to X/Y (Ctrl+G)"
+msgstr "Ramener la tête à l'origine, puis aller à X/Y (Ctrl+G)"
+
+msgid "Homed"
+msgstr "Tête à l'origine"
+
+msgid "Initialize"
+msgstr "Connecter"
+
+msgid "Inkscape executable"
+msgstr "Exécutable Inkscape"
+
+msgid "Inkscape timeout (minutes)"
+msgstr "Délai d'Inkscape (minutes)"
+
+#, python-format
+msgid "Invalid value for setting '%s': %r"
+msgstr "Valeur non valide pour le paramètre '%s' : %r"
+
+msgid "Invert raster colors"
+msgstr "Inverser les couleurs du raster"
+
+msgid "Job"
+msgstr "Tâche"
+
+#, python-format
+msgid "Job finished in %s"
+msgstr "Tâche terminée en %s"
+
+msgid "Job running"
+msgstr "Tâche en cours"
+
+#, python-format
+msgid "Kerfly %s"
+msgstr "Kerfly %s"
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "Language (applies after restart)"
+msgstr "Langue (après redémarrage)"
+
+msgid "Laser"
+msgstr "Laser"
+
+msgid "Laser initialized"
+msgstr "Laser connecté"
+
+msgid "Laser is not initialized."
+msgstr "Le laser n'est pas connecté."
+
+msgid "Laser paused"
+msgstr "Laser en pause"
+
+msgid "Levels curve slope, dark end"
+msgstr "Pente de la courbe de niveaux, extrémité sombre"
+
+msgid "Levels curve slope, light end"
+msgstr "Pente de la courbe de niveaux, extrémité claire"
+
+msgid "Levels curve weight"
+msgstr "Poids de la courbe de niveaux"
+
+msgid "Loading cancelled"
+msgstr "Chargement annulé"
+
+msgid "Lower left corner"
+msgstr "Coin inférieur gauche"
+
+msgid "Lower right corner"
+msgstr "Coin inférieur droit"
+
+msgid "M3 board: maximum power (%)"
+msgstr "Carte M3 : puissance maximale (%)"
+
+msgid "M3 board: set power per operation"
+msgstr "Carte M3 : puissance par opération"
+
+msgid "Machine"
+msgstr "Machine"
+
+msgid "Mirror design"
+msgstr "Retourner le dessin en miroir"
+
+msgid "Move around the outline of the design"
+msgstr "Parcourir le contour du dessin"
+
+msgid "Move head to design"
+msgstr "Déplacer la tête vers le dessin"
+
+msgid "Move the head and design down by one step"
+msgstr "Déplacer la tête et le dessin d'un pas vers le bas"
+
+msgid "Move the head and design left by one step"
+msgstr "Déplacer la tête et le dessin d'un pas vers la gauche"
+
+msgid "Move the head and design right by one step"
+msgstr "Déplacer la tête et le dessin d'un pas vers la droite"
+
+msgid "Move the head and design up by one step"
+msgstr "Déplacer la tête et le dessin d'un pas vers le haut"
+
+msgid "Move the head to the centre of the design"
+msgstr "Déplacer la tête au centre du dessin"
+
+msgid "Move the head to the lower left corner of the design"
+msgstr "Déplacer la tête au coin inférieur gauche du dessin"
+
+msgid "Move the head to the lower right corner of the design"
+msgstr "Déplacer la tête au coin inférieur droit du dessin"
+
+msgid "Move the head to the upper left corner of the design"
+msgstr "Déplacer la tête au coin supérieur gauche du dessin"
+
+msgid "Move the head to the upper right corner of the design"
+msgstr "Déplacer la tête au coin supérieur droit du dessin"
+
+msgid "No design loaded"
+msgstr "Aucun dessin chargé"
+
+msgid "No laser data was generated."
+msgstr "Aucune donnée laser n'a été générée."
+
+msgid "Nothing to do: load a design and select at least one operation."
+msgstr "Rien à faire : chargez un dessin et sélectionnez au moins une opération."
+
+msgid "Number of passes:"
+msgstr "Nombre de passes :"
+
+msgid "Open a design to see its operations."
+msgstr "Ouvrez un dessin pour voir ses opérations."
+
+msgid "Open design"
+msgstr "Ouvrir un dessin"
+
+#, python-format
+msgid "Opened %s"
+msgstr "%s ouvert"
+
+#, python-format
+msgid "Opening %s"
+msgstr "Ouverture de %s"
+
+msgid "Open…"
+msgstr "Ouvrir…"
+
+msgid "Operations"
+msgstr "Opérations"
+
+msgid "Out of memory."
+msgstr "Mémoire insuffisante."
+
+msgid "Passes"
+msgstr "Passes"
+
+msgid "Paths from a G-code file; speeds come from the file (F words)"
+msgstr "Chemins d'un fichier G-code ; les vitesses viennent du fichier (mots F)"
+
+msgid "Power"
+msgstr "Puissance"
+
+msgid "Prepare USB data before sending"
+msgstr "Préparer les données USB avant l'envoi"
+
+msgid "Prepare the raster now to estimate its engraving time"
+msgstr "Préparer le raster maintenant pour estimer la durée de gravure"
+
+#, python-format
+msgid "Preparing USB data: %s%%"
+msgstr "Préparation des données USB : %s%%"
+
+msgid "Preparing job…"
+msgstr "Préparation de la tâche…"
+
+msgid "Preparing raster…"
+msgstr "Préparation du raster…"
+
+#, python-format
+msgid "Preprocessing raster data: %s%%"
+msgstr "Prétraitement des données raster : %s%%"
+
+msgid "Rail unlocked"
+msgstr "Axes déverrouillés"
+
+#, python-format
+msgid "Rapid move failed: %s"
+msgstr "Échec du déplacement rapide : %s"
+
+msgid "Raster"
+msgstr "Raster"
+
+msgid "Raster engrave"
+msgstr "Gravure raster"
+
+msgid "Raster prepared"
+msgstr "Raster préparé"
+
+msgid "Re-initialize"
+msgstr "Reconnecter"
+
+msgid "Ready"
+msgstr "Prêt"
+
+msgid "Reduced memory use (500 dpi raster)"
+msgstr "Utilisation réduite de la mémoire (raster 500 ppp)"
+
+msgid "Release USB"
+msgstr "Libérer l'USB"
+
+msgid "Reload"
+msgstr "Recharger"
+
+msgid "Resumed"
+msgstr "Reprise"
+
+msgid "Rotary"
+msgstr "Axe rotatif"
+
+msgid "Rotary attachment in use"
+msgstr "Axe rotatif utilisé"
+
+msgid "Rotary rapid speed (0 = default)"
+msgstr "Vitesse rapide de l'axe rotatif (0 = par défaut)"
+
+msgid "Rotary scale factor"
+msgstr "Facteur d'échelle de l'axe rotatif"
+
+msgid "Rotate design 90°"
+msgstr "Faire pivoter le dessin de 90°"
+
+msgid "Run"
+msgstr "Exécuter"
+
+msgid "SVG files"
+msgstr "Fichiers SVG"
+
+msgid "SVG import scale"
+msgstr "Échelle d'import SVG"
+
+msgid "Save &EGV file…"
+msgstr "Enregistrer le fichier &EGV…"
+
+msgid "Save EGV file"
+msgstr "Enregistrer le fichier EGV"
+
+msgid "Save EGV…"
+msgstr "Enregistrer EGV…"
+
+msgid "Save settings as default"
+msgstr "Enregistrer les paramètres par défaut"
+
+msgid "Scan line step (in)"
+msgstr "Pas entre les lignes (po)"
+
+msgid "Send EGV file"
+msgstr "Envoyer le fichier EGV"
+
+msgid "Send EGV file to laser…"
+msgstr "Envoyer un fichier EGV au laser…"
+
+msgid "Send an existing EGV file to the laser"
+msgstr "Envoyer un fichier EGV existant au laser"
+
+#, python-format
+msgid "Sending %s…"
+msgstr "Envoi de %s…"
+
+#, python-format
+msgid "Sending data to laser: %s%%"
+msgstr "Envoi des données au laser : %s%%"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "Settings changed (use File → Save settings as default to keep them)"
+msgstr ""
+"Paramètres modifiés (pour les garder : Fichier → Enregistrer les "
+"paramètres par défaut)"
+
+#, python-format
+msgid "Settings saved to %s"
+msgstr "Paramètres enregistrés dans %s"
+
+msgid "Speed"
+msgstr "Vitesse"
+
+#, python-format
+msgid "Speed (%s)"
+msgstr "Vitesse (%s)"
+
+msgid "Start selected operations"
+msgstr "Lancer les opérations sélectionnées"
+
+msgid "Step:"
+msgstr "Pas :"
+
+msgid "Stop"
+msgstr "Arrêt"
+
+msgid "Stopped by the user."
+msgstr "Arrêté par l'utilisateur."
+
+msgid "Stopping…"
+msgstr "Arrêt en cours…"
+
+msgid "System default"
+msgstr "Langue du système"
+
+msgid "Test fire"
+msgstr "Tir d'essai"
+
+#, python-format
+msgid "Test fire: %.0f%% for %d ms"
+msgstr "Tir d'essai : %.0f%% pendant %d ms"
+
+msgid "That corner of the design is outside the laser bed."
+msgstr "Ce coin du dessin est en dehors du plateau du laser."
+
+msgid ""
+"The DXF file does not say which units it uses.\n"
+"Units:"
+msgstr ""
+"Le fichier DXF n'indique pas ses unités.\n"
+"Unités :"
+
+#, python-format
+msgid ""
+"The SVG file does not define its physical size.\n"
+"Pixels per inch (Inkscape 0.92+: 96, older Inkscape: 90, Illustrator: "
+"72).\n"
+"At %g px/in the design is %.1f x %.1f mm."
+msgstr ""
+"Le fichier SVG ne définit pas sa taille physique.\n"
+"Pixels par pouce (Inkscape 0.92+ : 96, Inkscape plus ancien : 90, "
+"Illustrator : 72).\n"
+"À %g px/po, le dessin mesure %.1f x %.1f mm."
+
+msgid "The design does not move."
+msgstr "Le dessin ne bouge pas."
+
+#, python-format
+msgid ""
+"The laser cutter is not responding (%s attempts). Press Stop to stop "
+"trying."
+msgstr "Le laser ne répond pas (%s tentatives). Appuyez sur Arrêt pour abandonner."
+
+msgid ""
+"The laser is paused.\n"
+"\n"
+"Resume the job?"
+msgstr ""
+"Le laser est en pause.\n"
+"\n"
+"Reprendre la tâche ?"
+
+msgid "The laser stopped responding after the job was complete."
+msgstr "Le laser ne répond plus après la fin de la tâche."
+
+msgid "The new language will be used after restarting Kerfly."
+msgstr "La nouvelle langue sera utilisée après le redémarrage de Kerfly."
+
+#, python-format
+msgid "There are many data transmission errors (%s). Press Stop to stop trying."
+msgstr ""
+"Nombreuses erreurs de transmission (%s). Appuyez sur Arrêt pour "
+"abandonner."
+
+msgid ""
+"There is vector cut or vector engrave data outside of the SVG page.\n"
+"\n"
+"All of the vector data will be used. Please check that it is not outside "
+"the working area of your laser before engraving."
+msgstr ""
+"Des données de découpe ou de gravure vectorielle se trouvent en dehors de"
+" la page SVG.\n"
+"\n"
+"Toutes les données vectorielles seront utilisées. Vérifiez avant la "
+"gravure qu'elles ne dépassent pas la zone de travail du laser."
+
+msgid "Time"
+msgstr "Durée"
+
+msgid "Trace boundary"
+msgstr "Parcourir le contour"
+
+msgid "USB data ready"
+msgstr "Données USB prêtes"
+
+#, python-format
+msgid "USB error: %s"
+msgstr "Erreur USB : %s"
+
+msgid "USB released"
+msgstr "USB libéré"
+
+msgid "USB retries"
+msgstr "Tentatives USB"
+
+#, python-format
+msgid "USB timeout #%s"
+msgstr "Délai USB dépassé n° %s"
+
+msgid "USB timeout (ms)"
+msgstr "Délai USB (ms)"
+
+msgid "Un&freeze laser"
+msgstr "Dé&bloquer le laser"
+
+msgid "Unfreeze complete"
+msgstr "Laser débloqué"
+
+msgid "Units"
+msgstr "Unités"
+
+#, python-format
+msgid "Unknown USB error: %s"
+msgstr "Erreur USB inconnue : %s"
+
+msgid "Unlock"
+msgstr "Déverrouiller"
+
+msgid "Unlock rail after a job"
+msgstr "Déverrouiller les axes après la tâche"
+
+msgid "Upper left corner"
+msgstr "Coin supérieur gauche"
+
+msgid "Upper right corner"
+msgstr "Coin supérieur droit"
+
+msgid "Vector"
+msgstr "Vectoriel"
+
+msgid "Vector cut"
+msgstr "Découpe vectorielle"
+
+msgid "Vector cut: determining cut order…"
+msgstr "Découpe vectorielle : calcul de l'ordre de découpe…"
+
+msgid "Vector engrave"
+msgstr "Gravure vectorielle"
+
+msgid "Vector engrave: determining order…"
+msgstr "Gravure vectorielle : calcul de l'ordre…"
+
+msgid "Wait for the laser to finish"
+msgstr "Attendre la fin du laser"
+
+msgid "Waiting for the laser to finish."
+msgstr "Attente de la fin du laser."
+
+msgid "Write the selected operations to an EGV file"
+msgstr "Écrire les opérations sélectionnées dans un fichier EGV"
+
+msgid ""
+"Writing an EGV file is not possible with M3 power per operation enabled "
+"(the power settings cannot be stored in the file)."
+msgstr ""
+"Impossible d'écrire un fichier EGV avec la puissance par opération (M3) "
+"activée, car les réglages de puissance ne peuvent pas être enregistrés "
+"dans le fichier."
+
+msgid "X scale factor"
+msgstr "Facteur d'échelle X"
+
+msgid "Y"
+msgstr "Y"
+
+msgid "Y scale factor"
+msgstr "Facteur d'échelle Y"
+
+msgid "empty"
+msgstr "vide"
+
+msgid "found automatically"
+msgstr "détecté automatiquement"
+
+msgid "g-code"
+msgstr "g-code"
+
+msgid "raster"
+msgstr "raster"
+
+msgid "vector cut"
+msgstr "découpe vectorielle"
+
+msgid "vector engrave"
+msgstr "gravure vectorielle"
+
+#~ msgid "%s"
+#~ msgstr ""
+

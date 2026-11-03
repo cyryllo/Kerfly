@@ -21,6 +21,8 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - [x] GUI-independent core (`kerfly/core`)
 - [x] PySide6 main window with preview, jog, operations, settings, EGV export
 - [x] Background job thread, with pause, resume and terminate
+- [x] Translations: English, Polish, German, Spanish, French (gettext;
+  DE/ES/FR need a native speaker review)
 
 ## Next: complete the K40 Whisperer feature set in the new window
 
