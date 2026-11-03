@@ -14,5 +14,8 @@ if [ ! -x .venv/bin/python ]; then
         rm -rf .venv
         exit 1
     fi
+    # optional: offset of the boundary trace; Kerfly works without it
+    .venv/bin/python -m pip install -r requirements-optional.txt || \
+        echo "Optional library pyclipper was not installed; Kerfly works without it."
 fi
 exec .venv/bin/python kerfly.py "$@"

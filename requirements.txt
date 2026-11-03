@@ -1,5 +1,4 @@
 lxml
 pyusb
 pillow
-pyclipper
 PySide6-Essentials

@@ -5,7 +5,9 @@ later. A Polish version of this guide is in [INSTALL_pl.md](INSTALL_pl.md).
 
 ## Windows 10 / 11
 
-1. **Python 3** from <https://www.python.org/downloads/>. In the installer,
+1. **Python 3.13** from <https://www.python.org/downloads/windows/> (the
+   "Windows installer (64-bit)" of the latest 3.13 release). It is recommended
+   because every library has ready-made packages for it. In the installer,
    tick **"Add python.exe to PATH"**.
 2. **Inkscape** from <https://inkscape.org/release/>. It is only needed for
    SVG files. Images, DXF and G-code work without it.

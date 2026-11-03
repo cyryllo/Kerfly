@@ -7,7 +7,9 @@ Kerfly działa z kodu źródłowego, czyli przez Pythona. Gotowe instalatory
 
 ### 1. Python
 
-1. Pobierz Python 3 ze strony <https://www.python.org/downloads/>.
+1. Pobierz **Python 3.13** (zalecany, bo wszystkie biblioteki mają dla niego gotowe paczki):
+   <https://www.python.org/downloads/windows/>. Wybierz „Windows installer (64-bit)”
+   z najnowszego wydania 3.13.
 2. W pierwszym oknie instalatora **zaznacz „Add python.exe to PATH”**, potem
    kliknij „Install Now”.
 

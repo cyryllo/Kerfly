@@ -21,6 +21,8 @@ if not exist ".venv\Scripts\python.exe" (
         pause
         exit /b 1
     )
+    rem optional: offset of the boundary trace; Kerfly works without it
+    ".venv\Scripts\python.exe" -m pip install -r requirements-optional.txt || echo Optional library pyclipper was not installed; Kerfly works without it.
 )
 ".venv\Scripts\python.exe" kerfly.py %*
 if errorlevel 1 pause

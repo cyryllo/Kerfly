@@ -66,7 +66,7 @@ start sets up Python and the libraries.
 ```bash
 sudo apt install python3-venv python3-tk inkscape
 python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+.venv/bin/pip install -r requirements.txt -r requirements-optional.txt
 .venv/bin/python kerfly.py               # new window
 .venv/bin/python k40_whisperer.py        # original K40 Whisperer window
 ```
