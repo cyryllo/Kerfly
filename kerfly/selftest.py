@@ -24,15 +24,17 @@ OK, WARN, FAIL = "OK", "WARN", "FAIL"
 
 
 class Report:
-    def __init__(self):
+    def __init__(self, echo=True):
         self.lines = []
         self.failed = False
+        self.echo = echo
 
     def add(self, status, what, detail=""):
         self.lines.append((status, what, detail))
         if status == FAIL:
             self.failed = True
-        print("%-4s  %-22s %s" % (status, what, detail), flush=True)
+        if self.echo:
+            print("%-4s  %-22s %s" % (status, what, detail), flush=True)
 
 
 def _check_imports(r):
@@ -152,6 +154,20 @@ def _check_gui(r, values):
     window.close()
     window.deleteLater()
     app.processEvents()
+
+
+def checks_without_window():
+    """The self-test checks that do not open a window (for the diagnostic
+    report of a running Kerfly): list of (status, what, detail)."""
+    r = Report(echo=False)
+    try:
+        _check_imports(r)
+        values = _check_settings(r)
+        _check_usb(r)
+        _check_inkscape(r, values)
+    except Exception as e:
+        r.add(FAIL, "Unexpected error", repr(e))
+    return r.lines
 
 
 def run():

@@ -28,7 +28,8 @@ from kerfly.core import materials as material_lib
 from kerfly.core import project as project_io
 from kerfly.core.layers import (CUT, ENGRAVE, EXTRA_COLORS, GCODE, KINDS, RASTER, Layer, layer_of,
                                 layer_times, part_present)
-from kerfly.core.layout import Element, compile_layout
+from kerfly.core.diag import log as diag_log
+from kerfly.core.layout import on_bed, Element, compile_layout
 from kerfly.core.shapes import ShapeSpec, build_design
 from kerfly.gui import icons
 from kerfly.gui.image_dialog import ImageSizeDialog
@@ -201,6 +202,9 @@ class MainWindow(QMainWindow):
         self.act_export_materials = self._action(_("&Export material library\u2026"), self.export_materials)
         self.act_import_materials = self._action(_("&Import material library\u2026"), self.import_materials)
         self.act_about = self._action(_("&About Kerfly"), self.about)
+        self.act_report = self._action(_("Save &diagnostic report…"), self.save_report, None,
+                                       _("Save a report with the laser log and settings, to attach to a bug report"))
+        self.act_log_folder = self._action(_("Open the &log folder"), self.open_log_folder)
 
         mb = self.menuBar()
         m = mb.addMenu(_("&File"))
@@ -233,6 +237,9 @@ class MainWindow(QMainWindow):
         for a in (self.act_materials, self.act_export_materials, self.act_import_materials):
             m.addAction(a)
         m = mb.addMenu(_("&Help"))
+        m.addAction(self.act_report)
+        m.addAction(self.act_log_folder)
+        m.addSeparator()
         m.addAction(self.act_about)
 
         self._build_toolbar()
@@ -277,6 +284,9 @@ class MainWindow(QMainWindow):
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
                 (self.act_snap, "grid-dots", C_("toolbar", "Grid")),
                 (self.act_settings, "settings", C_("toolbar", "Settings")),
+            ]),
+            (C_("toolbar group", "Help"), [
+                (self.act_report, "file-report", C_("toolbar", "Report")),
             ]),
         ]
         tb = QToolBar(_("Main toolbar"))
@@ -714,6 +724,11 @@ class MainWindow(QMainWindow):
         layout.addWidget(box)
 
         # --- run: one compact row
+        self.bed_warning = QLabel()
+        self.bed_warning.setObjectName("bed_warning")
+        self.bed_warning.setWordWrap(True)
+        self.bed_warning.hide()
+        layout.addWidget(self.bed_warning)
         run = QWidget()
         row = QHBoxLayout(run)
         row.setContentsMargins(0, 4, 0, 0)
@@ -802,16 +817,25 @@ class MainWindow(QMainWindow):
     def _units_per_inch(self):
         return 25.4 if self.values.get("units", "mm") == "mm" else 1.0
 
-    def _layout_fits_bed(self):
-        if not self.elements:
-            return True
+    def _off_bed_elements(self):
+        """Visible elements that stick out of the laser bed (they go into the job)."""
         bed_w, bed_h = config.bed_size_inches(self.values)
-        xmin = min(e.bounds[0] for e in self.elements)
-        xmax = max(e.bounds[1] for e in self.elements)
-        ymin = min(e.bounds[2] for e in self.elements)
-        ymax = max(e.bounds[3] for e in self.elements)
-        tol = 0.002
-        return xmin >= -tol and xmax <= bed_w + tol and ymax <= tol and ymin >= -bed_h - tol
+        return [e for e in self.elements if e.visible and not on_bed(e, bed_w, bed_h)]
+
+    def _layout_fits_bed(self):
+        return not self._off_bed_elements()
+
+    def _update_bed_check(self):
+        """Elements outside the bed are drawn red, and nothing can be sent to the
+        laser (Start, Trace) until they are moved back."""
+        off = self._off_bed_elements()
+        busy = self.worker is not None
+        self.bed_warning.setVisible(bool(off))
+        if off:
+            names = ", ".join(e.name for e in off[:3]) + ("…" if len(off) > 3 else "")
+            self.bed_warning.setText(_("Outside the work area: %s. Move it onto the bed to start.") % names)
+        for w in (self.btn_start, self.btn_trace, self.act_start, self.act_trace):
+            w.setEnabled(not busy and not off)
 
     def _keep_on_bed(self, element):
         """Nudge an element back onto the bed if it fits there."""
@@ -1465,11 +1489,14 @@ class MainWindow(QMainWindow):
         for a in self.tool_actions.values():
             a.setEnabled(not busy)
         self.tool_options.setEnabled(not busy)
-        self.act_start.setEnabled(not busy)
-        self.act_trace.setEnabled(not busy)
         self.progress.setVisible(busy)
+        self._update_bed_check()
 
     def status(self, message, error=False):
+        if error:
+            diag_log.warning("status: %s", message)
+        elif not message.endswith("%") and "%: " not in message:
+            diag_log.info("status: %s", message)     # progress percentages are left out
         self.statusBar().setStyleSheet("color:#c62828;" if error else "")
         self.statusBar().showMessage(tr_message(message))
 
@@ -1489,6 +1516,7 @@ class MainWindow(QMainWindow):
         self._update_laser_state()
         self._update_selection_panel()
         self._update_times()
+        self._update_bed_check()
 
     # ------------------------------------------------------------ design files
     def open_design(self, add=False):
@@ -2005,6 +2033,9 @@ class MainWindow(QMainWindow):
         if not any(l.enabled and self._layer_has_data(l) for l in self.layers) and not (trace and self.elements):
             self.status(_("Nothing to do: load a design and select at least one operation."), error=True)
             return
+        if not self._layout_fits_bed():
+            self.status(_("The design does not fit on the laser bed at this position."), error=True)
+            return
         if output_file is None and not self.laser.connected:
             self.status(_("Laser is not initialized."), error=True)
             return
@@ -2014,13 +2045,17 @@ class MainWindow(QMainWindow):
         except ValueError as e:
             self.status(str(e), error=True)
             return
-        if not self._layout_fits_bed():
-            self.status(_("The design does not fit on the laser bed at this position."), error=True)
-            return
         if output_file is None and self.head != self.origin:
             # the job starts where the head is: first move it to the design
             if not self.move_head_to(*self.origin):
                 return
+        diag_log.info("job: %s to %s; board %s; origin %s; elements %s; layers %s",
+                      "trace" if trace else "start", output_file or "laser", self.values.get("board_name"),
+                      tuple(round(v, 4) for v in self.origin),
+                      [(e.name, round(e.x, 3), round(e.y, 3), round(e.rotation, 1)) for e in self.elements
+                       if e.visible],
+                      [(l.name, l.kind, l.speed, l.passes, round(l.power, 2)) for l in self.layers
+                       if l.enabled and self._layer_has_data(l)])
         if trace:
             worker = JobWorker(self.design, settings, job.TRACE_ENG,
                                laser=None if output_file else self.laser,
@@ -2095,6 +2130,38 @@ class MainWindow(QMainWindow):
         self.refresh_preview()
 
     # ------------------------------------------------------------ misc
+    # ------------------------------------------------------------ diagnostics
+    def save_report(self):
+        from datetime import datetime
+        from kerfly import selftest
+        from kerfly.core import diag
+        default = os.path.join(os.path.expanduser("~"),
+                               "kerfly-report-%s.txt" % datetime.now().strftime("%Y%m%d-%H%M"))
+        name, _unused = QFileDialog.getSaveFileName(self, _("Save diagnostic report"), default,
+                                                    _("Text files") + " (*.txt)")
+        if not name:
+            return
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            diag.log.info("diagnostic report requested; laser connected: %s", self.laser.connected)
+            text = diag.build_report(__version__, self.values, selftest.checks_without_window())
+            with open(name, "w", encoding="utf-8") as f:
+                f.write(text)
+        except OSError as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.critical(self, _("Save diagnostic report"), str(e))
+            return
+        QApplication.restoreOverrideCursor()
+        self.status(_("Diagnostic report saved: %s") % name)
+
+    def open_log_folder(self):
+        from PySide6.QtCore import QUrl
+        from PySide6.QtGui import QDesktopServices
+        from kerfly.core import diag
+        folder = os.path.dirname(diag.log_path())
+        os.makedirs(folder, exist_ok=True)
+        QDesktopServices.openUrl(QUrl.fromLocalFile(folder))
+
     def about(self):
         QMessageBox.about(
             self, _("About Kerfly"),

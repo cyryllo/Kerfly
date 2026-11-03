@@ -32,6 +32,7 @@ QToolBar#main_toolbar QToolButton { padding: 2px 1px; font-size: 11px; min-width
 QLineEdit#layer_name { background: transparent; }
 QLineEdit#layer_name:focus { background: palette(base); }
 QToolBar#tool_strip { padding: 2px 4px 2px 2px; spacing: 2px; }
+QLabel#bed_warning { color: #c62828; font-weight: bold; padding: 2px 0; }
 QWidget#top_bar { background: #eef0f3; border-bottom: 1px solid #c4c9d0; }
 QLabel#tool_options_title { font-weight: bold; }
 QLabel#ribbon_caption { color: #6b7280; font-size: 10px; padding-bottom: 1px; }
@@ -102,6 +103,9 @@ def main(argv=None):
     if "--self-test" in argv:
         from kerfly import selftest
         return selftest.run()
+    from kerfly import __version__
+    from kerfly.core import diag
+    diag.setup(__version__)
     app = QApplication(argv)
     app.setApplicationName("Kerfly")
     app.setStyle("Fusion")
@@ -111,6 +115,11 @@ def main(argv=None):
     values = config.load_user_settings()
     language = i18n.setup(values.get("language", ""))
     install_qt_translations(app, language)
+    from PySide6.QtCore import qVersion
+    diag.log.info("Qt %s (%s), language %s, font %s; board %s, bed %s x %s %s",
+                  qVersion(), app.platformName(), language or "en", app.font().family(),
+                  values.get("board_name"), values.get("LaserXsize"), values.get("LaserYsize"),
+                  values.get("units"))
 
     from kerfly.gui.main_window import MainWindow
     window = MainWindow(values)
@@ -120,7 +129,9 @@ def main(argv=None):
     files = [a for a in argv[1:] if not a.startswith("-")]
     if files:
         window.load_design(files[0])
-    return app.exec()
+    rc = app.exec()
+    diag.log.info("==== Kerfly closed (exit code %s)", rc)
+    return rc
 
 
 if __name__ == "__main__":

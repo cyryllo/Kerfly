@@ -82,6 +82,13 @@ otwiera projekt. Linie `FAIL` trzeba naprawić. Linie `WARN` dotyczą rzeczy
 opcjonalnych albo niepodłączonego lasera. Wynik dołącz do każdego zgłoszenia
 błędu.
 
+## Gdy coś pójdzie nie tak
+
+Kerfly zapisuje dziennik wszystkich komend lasera i błędów (`kerfly.log` w
+folderze ustawień: `~/.config/kerfly/` na Linuksie, `%APPDATA%\Kerfly\` na
+Windows). Wybierz **Pomoc → Zapisz raport diagnostyczny…** (albo przycisk
+**Raport**) i dołącz plik do zgłoszenia błędu.
+
 ## Pierwszy test na laserze (lista kontrolna)
 
 Kerfly wysyła do lasera te same dane co K40 Whisperer 0.71, co sprawdzają

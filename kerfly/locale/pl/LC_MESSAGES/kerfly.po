@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 00:28+0100\n"
+"POT-Creation-Date: 2026-11-04 00:51+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -336,6 +336,10 @@ msgstr "Projekt"
 msgid "Design import"
 msgstr "Import projektu"
 
+#, python-format
+msgid "Diagnostic report saved: %s"
+msgstr "Zapisano raport diagnostyczny: %s"
+
 msgid "Distance down from home"
 msgstr "Odległość w dół od pozycji bazowej"
 
@@ -453,6 +457,10 @@ msgstr "Wysokość"
 
 msgid "Height:"
 msgstr "Wysokość:"
+
+msgctxt "toolbar group"
+msgid "Help"
+msgstr "Pomoc"
 
 msgid "Home is in the upper right corner"
 msgstr "Pozycja bazowa w prawym górnym rogu"
@@ -711,6 +719,9 @@ msgstr "Otwórz plik, zastępując wszystko na stole"
 msgid "Open design"
 msgstr "Otwórz projekt"
 
+msgid "Open the &log folder"
+msgstr "Otwórz folder &dziennika"
+
 #, python-format
 msgid "Opened %s"
 msgstr "Otwarto %s"
@@ -727,6 +738,10 @@ msgstr "Brak pamięci."
 
 msgid "Outside the laser bed!"
 msgstr "Poza stołem lasera!"
+
+#, python-format
+msgid "Outside the work area: %s. Move it onto the bed to start."
+msgstr "Poza polem roboczym: %s. Przesuń na stół, aby uruchomić."
 
 msgid "Passes"
 msgstr "Przejścia"
@@ -847,6 +862,10 @@ msgstr ""
 msgid "Reloaded"
 msgstr "Wczytano ponownie"
 
+msgctxt "toolbar"
+msgid "Report"
+msgstr "Raport"
+
 msgid "Resolution:"
 msgstr "Rozdzielczość:"
 
@@ -912,6 +931,9 @@ msgstr "Zapisz"
 msgid "Save &EGV file…"
 msgstr "Zapisz plik &EGV…"
 
+msgid "Save &diagnostic report…"
+msgstr "Zapisz raport &diagnostyczny…"
+
 msgctxt "toolbar"
 msgid "Save EGV"
 msgstr ""
@@ -920,6 +942,14 @@ msgstr ""
 
 msgid "Save EGV file"
 msgstr "Zapisz plik EGV"
+
+msgid "Save a report with the laser log and settings, to attach to a bug report"
+msgstr ""
+"Zapisz raport z dziennikiem lasera i ustawieniami, do dołączenia do "
+"zgłoszenia błędu"
+
+msgid "Save diagnostic report"
+msgstr "Zapisz raport diagnostyczny"
 
 msgid "Save project"
 msgstr "Zapisz projekt"
@@ -1021,6 +1051,9 @@ msgstr "Strzał testowy: %.0f%% przez %d ms"
 
 msgid "Text"
 msgstr "Tekst"
+
+msgid "Text files"
+msgstr "Pliki tekstowe"
 
 msgid "Text height"
 msgstr "Wysokość tekstu"

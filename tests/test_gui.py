@@ -551,6 +551,37 @@ def main():
           and "Test board 2 mm" in names and saved, "(%d materials)" % len(w.materials))
     os.remove(lib_file)
 
+    # 19. element outside the work area: drawn red, Start and Trace locked
+    w = make_window()
+    w.load_design(os.path.join(FIX, "shapes.dxf"))
+    ok_before = w.btn_start.isEnabled() and not w.bed_warning.isVisibleTo(w)
+    e = w.elements[0]
+    e.x = 100.0                                                        # far right of any bed
+    w._layout_changed()
+    item = w.preview._items[0]
+    locked = (not w.btn_start.isEnabled() and not w.btn_trace.isEnabled() and not w.act_start.isEnabled()
+              and w.bed_warning.isVisibleTo(w) and item.off_bed())
+    w.start_job(output_file=tempfile.mktemp(suffix=".egv"))
+    not_started = w.worker is None
+    e.x = 0.0
+    w._layout_changed()
+    unlocked = w.btn_start.isEnabled() and not w.bed_warning.isVisibleTo(w) and not w.preview._items[0].off_bed()
+    check("outside the work area: red, Start/Trace locked, unlocked when back",
+          ok_before and locked and not_started and unlocked)
+
+    # 20. diagnostic log and report
+    from kerfly.core import diag as _diag
+    _diag.setup("test")
+    _diag.log.info("laser: test entry for the report")
+    report = tempfile.mktemp(suffix=".txt")
+    QFileDialog.getSaveFileName = staticmethod(lambda *a, **k: (report, ""))
+    w.save_report()
+    text = open(report, encoding="utf-8").read() if os.path.exists(report) else ""
+    check("diagnostic report: checks, settings and log", "Kerfly diagnostic report" in text
+          and "== Checks" in text and "board_name = " in text and "laser: test entry for the report" in text,
+          "(%d bytes)" % len(text))
+    sys.stdout, sys.stderr = sys.__stdout__, sys.__stderr__
+
     # Let every worker thread finish: a QThread still running when the process
     # exits crashes it on Windows (access violation in exit).
     import gc

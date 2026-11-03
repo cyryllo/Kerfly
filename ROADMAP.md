@@ -40,6 +40,8 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - [x] Layout sized from the desktop font (KDE/GNOME), so it fits any font and
   language
 - [x] `--self-test` and GitHub Actions on clean Windows and Ubuntu machines
+- [x] Elements outside the work area drawn red; Start and Trace locked
+- [x] Diagnostic log and report (Help menu, Report button)
 
 ## Next: complete the K40 Whisperer feature set in the new window
 
@@ -103,7 +105,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Bitmap to vector (trace) | `extra/potrace.py`, `extra/vtracer.py`, `extra/vectrace.py` |
 | Path offset (kerf compensation) | `core/elements/offset_clpr.py`, `offset_mk.py` |
 | Boolean operations on shapes | `tools/polybool.py`, `extra/cag.py` |
-| Kerf test and material test generators | `tools/kerftest.py`, `gui/materialtest.py` |
+| Kerf test and material test generators (material test: planned after the first laser test) | `tools/kerftest.py`, `gui/materialtest.py` |
 
 ## Packaging (later)
 

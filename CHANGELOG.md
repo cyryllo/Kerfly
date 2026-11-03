@@ -7,6 +7,16 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
+## Unreleased
+
+- Elements outside the work area are drawn red. Start and Trace stay locked,
+  with a warning above them, until the elements are moved back onto the bed.
+- Diagnostic log (`kerfly.log` in the settings folder). It records every laser
+  command, job, status message and error, and what the laser library prints.
+- **Help → Save diagnostic report…** (also the **Report** button on the
+  toolbar) saves the checks, settings and log in one text file to attach to
+  a bug report. **Help → Open the log folder** opens the folder with the log.
+
 ## 0.2.0 (2026-11-04)
 
 - Polish layer names shortened: Cięcie / Obrys / Grawer.

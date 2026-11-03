@@ -56,6 +56,13 @@ found (it is not moved), Inkscape, the settings folder, and that the window
 opens a design. `FAIL` lines must be fixed; `WARN` lines are optional or mean
 that the laser is not connected. Send this output along with any bug report.
 
+## When something goes wrong
+
+Kerfly keeps a log of every laser command and error (`kerfly.log` in the
+settings folder: `~/.config/kerfly/` on Linux, `%APPDATA%\Kerfly\` on
+Windows). Use **Help → Save diagnostic report…** (or the **Report** button)
+and attach the file to the bug report.
+
 ## First run with a laser
 
 Keep a hand on the laser's power switch.

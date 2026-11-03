@@ -31,6 +31,7 @@ COLORS = {
     "outline": QColor("#9aa1ab"),
     "selection": QColor("#1e88e5"),
     "head": QColor("#f57c00"),
+    "off_bed": QColor("#d32f2f"),
 }
 
 
@@ -120,10 +121,26 @@ class ElementItem(QGraphicsItem):
             painter.setPen(pen)
             painter.drawPath(path)
         selected = self.isSelected()
+        if self.off_bed():
+            # outside the work area: red frame and tint (the job is blocked)
+            tint = QColor(COLORS["off_bed"])
+            tint.setAlpha(45)
+            painter.setPen(_cosmetic_pen(COLORS["off_bed"], 2))
+            painter.setBrush(QBrush(tint))
+            painter.drawRect(self.boundingRect())
+            return
         painter.setPen(_cosmetic_pen(COLORS["selection"] if selected else COLORS["outline"], 1,
                                      Qt.SolidLine if selected else Qt.DashLine))
         painter.setBrush(Qt.NoBrush)
         painter.drawRect(self.boundingRect())
+
+    def off_bed(self):
+        """Outside the bed rectangle (checked on the scene, so it follows a drag)."""
+        bed = getattr(self.view, "bed_rect", None)
+        if bed is None or not self.element.visible:
+            return False
+        tol = 0.05                                   # mm
+        return not bed.adjusted(-tol, -tol, tol, tol).contains(self.sceneBoundingRect())
 
     def mousePressEvent(self, event):
         self._press_pos = self.pos()
@@ -425,6 +442,7 @@ class PreviewView(QGraphicsView):
         self.home_ur = bool(settings.home_upper_right)
         self.bed_w_mm = bed_w * MM
 
+        self.bed_rect = QRectF(0, 0, bed_w * MM, bed_h * MM)
         bed = scene.addRect(QRectF(0, 0, bed_w * MM, bed_h * MM),
                             _cosmetic_pen(COLORS["bed_border"]), QBrush(COLORS["bed"]))
         bed.setZValue(-10)

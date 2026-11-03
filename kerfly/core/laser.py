@@ -19,6 +19,7 @@ import threading
 from time import time
 
 from egv import egv
+from kerfly.core.diag import log
 from kerfly.i18n import _
 
 
@@ -79,16 +80,19 @@ class LaserController:
         """Open the USB device. Raises LaserError with a readable message."""
         from nano_library import K40_CLASS   # needs pyusb; imported lazily
         self.release()
+        log.info("laser: connect (home after connecting: %s)", init_home)
         k40 = K40_CLASS()
         try:
             k40.initialize_device()
             k40.say_hello()
         except Exception as e:
+            log.error("laser: connect failed: %r", e)
             text = "%s" % e
             if "BACKEND" in text.upper():
                 text += " " + _("(libUSB driver not installed)")
             raise LaserError(_("USB error: %s") % text)
         self.k40 = k40
+        log.info("laser: connected (USB location %s)", getattr(k40, "USB_Location", None))
         if init_home:
             self.home()
         else:
@@ -96,6 +100,7 @@ class LaserController:
 
     def release(self):
         if self.k40 is not None:
+            log.info("laser: release USB")
             try:
                 self.k40.release_usb()
             finally:
@@ -107,18 +112,23 @@ class LaserController:
         return self.k40
 
     def home(self):
+        log.info("laser: home")
         self._require().home_position()
 
     def unlock(self):
+        log.info("laser: unlock rail")
         self._require().unlock_rail()
 
     def unfreeze(self):
+        log.info("laser: unfreeze")
         self._require().unfreeze()
 
     def reset_usb(self):
+        log.info("laser: reset USB")
         self._require().reset_usb()
 
     def pause_toggle(self):
+        log.info("laser: pause / resume toggle")
         self._require().pause_un_pause()
 
     def rapid_move(self, dxmils, dymils, settings, send_options=None):
@@ -131,6 +141,8 @@ class LaserController:
             dxmils = int(round(dxmils * Xscale))
             dymils = int(round(dymils * Yscale))
         k40.n_timeouts = 10
+        log.info("laser: rapid move dx=%d dy=%d mils (%.2f, %.2f mm)", int(dxmils), int(dymils),
+                 dxmils * 0.0254, dymils * 0.0254)
         if settings.rotary and settings.rapid_feed:
             if int(dxmils) == 0 and int(dymils) == 0:
                 return
@@ -151,13 +163,23 @@ class LaserController:
         k40.timeout = int(timeout_ms)
         k40.n_timeouts = int(n_timeouts)
         start = time()
-        if power is not None:
-            k40.set_PWM_register(power)
-        k40.send_data(data, update_gui, stop, passes, pre_process_crc, wait_for_laser=wait_for_laser)
+        log.info("laser: send %s bytes, power %s, passes %s, wait for laser %s",
+                 len(data) if hasattr(data, "__len__") else "?", power, passes,
+                 wait_for_laser)
+        try:
+            if power is not None:
+                k40.set_PWM_register(power)
+            k40.send_data(data, update_gui, stop, passes, pre_process_crc, wait_for_laser=wait_for_laser)
+        except BaseException as e:
+            log.warning("laser: send ended after %.1f s: %r%s", time() - start, e,
+                        " (stopped by the user)" if stop and stop[0] else "")
+            raise
+        log.info("laser: send finished in %.1f s", time() - start)
         return time() - start
 
     def test_fire(self, power, ms):
         k40 = self._require()
+        log.info("laser: test fire %s%% for %s ms", power, ms)
         if ms < 1 or power == 0:
             k40.set_PWM_register(power)
         else:

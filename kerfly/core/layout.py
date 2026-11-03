@@ -139,6 +139,16 @@ class Element:
                 self.scale_y *= width / cur_w
 
 
+BED_TOLERANCE = 0.002       # inches; rounding of positions typed in mm
+
+
+def on_bed(element, bed_w, bed_h, tol=BED_TOLERANCE):
+    """True when the element's bounding box lies inside the bed (inches;
+    x from 0 to bed_w, y from 0 down to -bed_h)."""
+    xmin, xmax, ymin, ymax = element.bounds
+    return xmin >= -tol and xmax <= bed_w + tol and ymax <= tol and ymin >= -bed_h - tol
+
+
 def _transform_ecoords(coords, f, loop_offset):
     out = []
     for row in coords:

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 00:28+0100\n"
+"POT-Creation-Date: 2026-11-04 00:51+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -340,6 +340,10 @@ msgstr "Dessin"
 msgid "Design import"
 msgstr "Import du dessin"
 
+#, python-format
+msgid "Diagnostic report saved: %s"
+msgstr "Rapport de diagnostic enregistré : %s"
+
 msgid "Distance down from home"
 msgstr "Distance vers le bas depuis l'origine"
 
@@ -457,6 +461,10 @@ msgstr "Hauteur"
 
 msgid "Height:"
 msgstr "Hauteur :"
+
+msgctxt "toolbar group"
+msgid "Help"
+msgstr "Aide"
 
 msgid "Home is in the upper right corner"
 msgstr "L'origine est dans le coin supérieur droit"
@@ -715,6 +723,9 @@ msgstr "Ouvrir un fichier en remplaçant tout le plateau"
 msgid "Open design"
 msgstr "Ouvrir un dessin"
 
+msgid "Open the &log folder"
+msgstr "Ouvrir le dossier du &journal"
+
 #, python-format
 msgid "Opened %s"
 msgstr "%s ouvert"
@@ -731,6 +742,10 @@ msgstr "Mémoire insuffisante."
 
 msgid "Outside the laser bed!"
 msgstr "Hors du plateau !"
+
+#, python-format
+msgid "Outside the work area: %s. Move it onto the bed to start."
+msgstr "Hors de la zone de travail : %s. Déplacez-le sur le plateau pour démarrer."
 
 msgid "Passes"
 msgstr "Passes"
@@ -851,6 +866,10 @@ msgstr "Recharger"
 msgid "Reloaded"
 msgstr "Rechargé"
 
+msgctxt "toolbar"
+msgid "Report"
+msgstr "Rapport"
+
 msgid "Resolution:"
 msgstr "Résolution :"
 
@@ -916,6 +935,9 @@ msgstr "Enregistrer"
 msgid "Save &EGV file…"
 msgstr "Enregistrer le fichier &EGV…"
 
+msgid "Save &diagnostic report…"
+msgstr "Enregistrer le rapport de &diagnostic…"
+
 msgctxt "toolbar"
 msgid "Save EGV"
 msgstr ""
@@ -924,6 +946,14 @@ msgstr ""
 
 msgid "Save EGV file"
 msgstr "Enregistrer le fichier EGV"
+
+msgid "Save a report with the laser log and settings, to attach to a bug report"
+msgstr ""
+"Enregistrer un rapport avec le journal du laser et les réglages, à "
+"joindre à un rapport de bogue"
+
+msgid "Save diagnostic report"
+msgstr "Enregistrer le rapport de diagnostic"
 
 msgid "Save project"
 msgstr "Enregistrer le projet"
@@ -1029,6 +1059,9 @@ msgstr "Tir d'essai : %.0f%% pendant %d ms"
 
 msgid "Text"
 msgstr "Texte"
+
+msgid "Text files"
+msgstr "Fichiers texte"
 
 msgid "Text height"
 msgstr "Hauteur du texte"
