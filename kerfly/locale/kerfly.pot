@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 23:00+0100\n"
+"POT-Creation-Date: 2026-11-03 23:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,6 +32,10 @@ msgstr ""
 
 #, python-format
 msgid "%d × %d pixels"
+msgstr ""
+
+#, python-format
+msgid "%s (copy)"
 msgstr ""
 
 #, python-format
@@ -107,6 +111,9 @@ msgstr ""
 msgid "(libUSB driver not installed)"
 msgstr ""
 
+msgid "(own settings)"
+msgstr ""
+
 #, python-format
 msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
 msgstr ""
@@ -130,8 +137,14 @@ msgstr ""
 msgid "About Kerfly"
 msgstr ""
 
+msgid "Acrylic 3 mm"
+msgstr ""
+
 msgctxt "toolbar"
 msgid "Add"
+msgstr ""
+
+msgid "Add a layer"
 msgstr ""
 
 msgid "Add another file to the laser bed"
@@ -186,6 +199,9 @@ msgid ""
 "time"
 msgstr ""
 
+msgid "Cardboard 2 mm"
+msgstr ""
+
 msgid "Centre"
 msgstr ""
 
@@ -199,6 +215,9 @@ msgstr ""
 msgid ""
 "Choose a drawing tool on the right, or select a drawn shape, to see its "
 "options here."
+msgstr ""
+
+msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr ""
 
 msgid "Click an element on the bed to select it."
@@ -237,6 +256,13 @@ msgstr ""
 msgid "Could not save settings: %s"
 msgstr ""
 
+#, python-format
+msgid "Could not save the material library: %s"
+msgstr ""
+
+msgid "Create a material from the speed, passes and power of the current layers"
+msgstr ""
+
 msgid "Creating halftone image."
 msgstr ""
 
@@ -270,8 +296,14 @@ msgstr ""
 msgid "Data transmission (CRC) error #%s"
 msgstr ""
 
+msgid "Delete"
+msgstr ""
+
 msgctxt "toolbar"
 msgid "Delete"
+msgstr ""
+
+msgid "Delete this layer (its parts go back to the default layer)"
 msgstr ""
 
 msgid "Design"
@@ -293,6 +325,9 @@ msgid "Distance right from home"
 msgstr ""
 
 msgid "Drawing tools"
+msgstr ""
+
+msgid "Duplicate"
 msgstr ""
 
 msgctxt "toolbar"
@@ -324,6 +359,11 @@ msgstr ""
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
+msgstr ""
+
+msgid ""
+"Example starting values for a typical 40 W K40; test on a scrap piece "
+"first."
 msgstr ""
 
 msgctxt "toolbar group"
@@ -409,6 +449,9 @@ msgstr ""
 msgid "Images"
 msgstr ""
 
+msgid "Include this layer in the job"
+msgstr ""
+
 msgid "Inkscape executable"
 msgstr ""
 
@@ -454,6 +497,24 @@ msgstr ""
 msgid "Laser is not initialized."
 msgstr ""
 
+msgid "Layer"
+msgstr ""
+
+msgid "Layer colour"
+msgstr ""
+
+msgid "Layer colour; click to change"
+msgstr ""
+
+msgid "Layer name; click to rename"
+msgstr ""
+
+msgid "Layers"
+msgstr ""
+
+msgid "Leather 2 mm"
+msgstr ""
+
 msgid "Levels curve slope, dark end"
 msgstr ""
 
@@ -485,6 +546,26 @@ msgid "Machine"
 msgstr ""
 
 msgid "Main toolbar"
+msgstr ""
+
+msgid "Material"
+msgstr ""
+
+msgid "Material library"
+msgstr ""
+
+#, python-format
+msgid "Material library saved to %s"
+msgstr ""
+
+msgid "Material library: add, edit and delete materials"
+msgstr ""
+
+msgid "Material:"
+msgstr ""
+
+#, python-format
+msgid "Material: %s"
 msgstr ""
 
 msgid "Mirror design"
@@ -526,10 +607,22 @@ msgstr ""
 msgid "Move the laser head up by one step"
 msgstr ""
 
+msgid "Name:"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
 msgid "New ellipse"
 msgstr ""
 
+msgid "New from current layers"
+msgstr ""
+
 msgid "New line"
+msgstr ""
+
+msgid "New material"
 msgstr ""
 
 msgid "New polygon"
@@ -547,6 +640,9 @@ msgstr ""
 msgid "No laser data was generated."
 msgstr ""
 
+msgid "Notes (e.g. supplier, lens, air assist)"
+msgstr ""
+
 msgid "Nothing to do: load a design and select at least one operation."
 msgstr ""
 
@@ -560,7 +656,7 @@ msgctxt "toolbar"
 msgid "Open"
 msgstr ""
 
-msgid "Open a design to see its operations."
+msgid "Open a design to see its layers."
 msgstr ""
 
 msgid "Open a file, replacing everything on the bed"
@@ -580,9 +676,6 @@ msgstr ""
 msgid "Operation"
 msgstr ""
 
-msgid "Operations"
-msgstr ""
-
 msgid "Out of memory."
 msgstr ""
 
@@ -590,6 +683,9 @@ msgid "Outside the laser bed!"
 msgstr ""
 
 msgid "Passes"
+msgstr ""
+
+msgid "Passes:"
 msgstr ""
 
 msgid "Paths from a G-code file; speeds come from the file (F words)"
@@ -610,6 +706,12 @@ msgstr ""
 msgid "Place design at the &head"
 msgstr ""
 
+msgid "Plywood 3 mm"
+msgstr ""
+
+msgid "Plywood 4 mm"
+msgstr ""
+
 msgid "Polygon"
 msgstr ""
 
@@ -617,6 +719,9 @@ msgid "Position and size"
 msgstr ""
 
 msgid "Power"
+msgstr ""
+
+msgid "Power:"
 msgstr ""
 
 msgid "Prepare USB data before sending"
@@ -786,11 +891,14 @@ msgstr ""
 msgid "Sides"
 msgstr ""
 
-msgid "Speed"
-msgstr ""
-
 #, python-format
 msgid "Speed (%s)"
+msgstr ""
+
+msgid "Speed:"
+msgstr ""
+
+msgid "Speeds are stored in mm/s and converted to in/min for the layers."
 msgstr ""
 
 msgid "Start"
@@ -884,6 +992,9 @@ msgid ""
 "the working area of your laser before engraving."
 msgstr ""
 
+msgid "Thickness:"
+msgstr ""
+
 msgid "Time"
 msgstr ""
 
@@ -949,6 +1060,9 @@ msgid "Upper left corner"
 msgstr ""
 
 msgid "Upper right corner"
+msgstr ""
+
+msgid "Used with M3 boards (power per layer)"
 msgstr ""
 
 msgid "Vector"

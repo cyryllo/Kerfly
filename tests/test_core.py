@@ -272,6 +272,76 @@ def test_shapes():
     return errors
 
 
+def test_layers(baseline):
+    """Default layers give byte-identical laser data; extra layers add stages."""
+    from kerfly.core.layers import CUT, Layer, build_layers_job, default_layers
+    from kerfly.core.layout import Element
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s layers: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    def run(source, settings, layers=None, extra=None):
+        d = Design()
+        if source == "svg":
+            loaders.load_svg(SVG, d, inkscape_path=INKSCAPE)
+        elif source == "dxf":
+            loaders.load_dxf(DXF, d)
+        elif source == "png":
+            load_png(d)
+        elements = [Element(d, x=1.0, y=-1.0)]
+        if extra is not None:
+            extra(elements, layers)
+        return build_layers_job(elements, layers or default_layers(), settings)
+
+    def egv_digest(chunks):
+        return hashlib.sha256(job.egv_file_bytes(chunks[0].data)).hexdigest()
+
+    if INKSCAPE:
+        chunks, origin = run("svg", JobSettings())
+        check("default layers, SVG raster+engrave+cut == baseline",
+              egv_digest(chunks) == baseline["svg_raster_vector_cut"]["sha256"] and origin == (1.0, -1.0))
+        layers = default_layers()
+        for layer in layers:
+            layer.power = {"raster": 0.3, "engrave": 0.6, "cut": 0.9, "gcode": 0.5}[layer.kind]
+        chunks, _o = run("svg", JobSettings(power_per_stage=True), layers)
+        expected = open(os.path.join(TESTS_DIR, "baseline", "usb_m3_power_levels.usb"), "rb").read()
+        sent = b"".join(bytes(c.data) for c in chunks)
+        powers = [round(c.power, 6) for c in chunks]
+        check("M3 power per layer matches baseline data", powers == [9.0, 18.0, 27.0]
+              and all(bytes(c.data) in expected for c in chunks) and len(sent) > 1000)
+    chunks, _o = run("dxf", JobSettings(), default_layers())
+    check("default layers, DXF == baseline (cut + engrave stages)",
+          egv_digest(chunks) == hashlib.sha256(job.egv_file_bytes(
+              job.build_job(_dxf_design(), JobSettings(), "Vector_Eng+Vector_Cut")[0].data)).hexdigest())
+    chunks, _o = run("png", JobSettings())
+    check("default layers, PNG raster == baseline", egv_digest(chunks) == baseline["png_reng_halftone"]["sha256"])
+
+    # two cut layers: a second element on its own, slower cut layer
+    def two_cut_layers(elements, layers):
+        d2 = Design()
+        loaders.load_dxf(DXF, d2)
+        e2 = Element(d2, x=4.0, y=-1.0)
+        slow = Layer(CUT, name="slow", speed=3.0, passes=2)
+        layers.append(slow)
+        e2.layers[CUT] = slow.id
+        elements.append(e2)
+    layers = default_layers()
+    chunks, origin = run("dxf", JobSettings(), layers, two_cut_layers)
+    data = bytes(chunks[0].data)
+    check("two cut layers: one job, both stages, origin at the layout corner",
+          len(chunks) == 1 and origin == (1.0, -1.0) and data.count(b"@") >= 2, "(%d bytes)" % len(data))
+    return errors
+
+
+def _dxf_design():
+    d = Design()
+    loaders.load_dxf(DXF, d)
+    return d
+
+
 def main():
     with open(MANIFEST) as f:
         baseline = json.load(f)["cases"]
@@ -298,6 +368,7 @@ def main():
     failures += test_images(baseline)
     failures += test_layout(baseline)
     failures += test_shapes()
+    failures += test_layers(baseline)
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

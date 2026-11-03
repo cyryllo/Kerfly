@@ -29,6 +29,8 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - [x] Drawing tools, step 1: rectangle, ellipse, polygon, line, text (system
   fonts); cut / engrave outline / raster fill; tool strip on the right and
   options bar above the bed view
+- [x] Layers with their own speed, passes, power and colour; element parts
+  assigned to layers; material library (JSON in the user's settings folder)
 - [x] Translations: English, Polish, German, Spanish, French (gettext;
   DE/ES/FR need a native speaker review)
 
@@ -58,14 +60,14 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Feature | MeerK40t reference |
 |---|---|
 | Element tree / layers panel (select, hide ~~done~~; reorder, groups) | `gui/wxmtree.py` |
-| Operations list: assign elements to raster, engrave or cut instead of by colour only | `gui/opassignment.py`, `gui/gui_optypes.py` |
+| ~~Operations list: assign elements to raster, engrave or cut instead of by colour only~~ (done: layers) | `gui/opassignment.py`, `gui/gui_optypes.py` |
 | ~~Select, move, scale and rotate with handles~~ (done) | `gui/scenewidgets/`, `gui/toolwidgets/toolplacement.py` |
 | ~~Undo / redo~~ (done) | `core/undos.py` |
 | ~~Grid and snapping~~ (done; snapping to other objects still to do) | `gui/snapoptions.py`, `core/elements/grid.py` |
 | Alignment and distribution | `gui/alignment.py`, `core/elements/align.py` |
 | Ruler, measure tool | `gui/toolwidgets/toolmeasure.py` |
 | Job simulation (play the path) | `gui/simulation.py` |
-| Material library (saved speed/power per material) | `gui/materialmanager.py`, `core/elements/materials.py` |
+| ~~Material library (saved speed/power per material)~~ (done); export / import of the library in Settings | `gui/materialmanager.py`, `core/elements/materials.py` |
 | ~~Toolbar~~ (done; every new command gets a button), themes | `gui/ribbon.py`, `gui/themes.py` |
 
 ## Drawing tools

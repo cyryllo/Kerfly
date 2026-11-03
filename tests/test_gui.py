@@ -17,6 +17,9 @@ import tempfile
 import time
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+# never touch the user's real settings folder (material library) from tests
+os.environ["XDG_CONFIG_HOME"] = tempfile.mkdtemp(prefix="kerfly_test_cfg_")
+os.environ["APPDATA"] = os.environ["XDG_CONFIG_HOME"]
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(TESTS_DIR)
 sys.path.insert(0, ROOT_DIR)
@@ -236,15 +239,18 @@ def main():
     # 8. time estimate: raster unknown until calculated
     w = make_window()
     w.load_design(os.path.join(FIX, "shapes.svg"))
-    before = w.time_labels["Raster_Eng"].text()
-    calc_shown = not w.btn_calc_time.isHidden()
-    vcut = w.time_labels["Vector_Cut"].text()
+    raster_row = w.layers_panel.rows[w._default_layer["raster"].id]
+    cut_row = w.layers_panel.rows[w._default_layer["cut"].id]
+    before = raster_row["time"].text()
+    calc_shown = not raster_row["calc"].isHidden()
+    vcut = cut_row["time"].text()
     w.calculate_raster_time()
     run_until_idle(app, w)
-    after = w.time_labels["Raster_Eng"].text()
+    raster_row = w.layers_panel.rows[w._default_layer["raster"].id]
+    after = raster_row["time"].text()
     check("time estimate", before == "" and calc_shown and after not in ("", "?") and vcut.endswith("s")
-          and not w.btn_calc_time.isVisible(), "(raster %r -> %r, cut %r, total %r)"
-          % (before, after, vcut, w.total_time_label.text()))
+          and raster_row["calc"].isHidden(), "(raster %r -> %r, cut %r, total %r)"
+          % (before, after, vcut, w.layers_panel.total_label.text()))
 
     # 9. send an EGV file (3 passes)
     egv_path = os.path.join(BASE, "svg_vcut.egv")
@@ -387,6 +393,38 @@ def main():
     run_until_idle(app, w)
     check("draw: options bar edits (operation, radius, text) and undo",
           engraved and wider and undone and os.path.exists(out) and os.path.getsize(out) > 1000)
+
+    # 15. layers: an extra cut layer for a second element, materials, undo
+    w = make_window(include_Reng="0", include_Veng="0")
+    w.load_design(os.path.join(FIX, "shapes.dxf"))
+    w.head = (3.0, 0.0)
+    w.load_design(os.path.join(FIX, "shapes.dxf"), add=True)          # selected
+    second = w.selected
+    w.add_layer("cut")                                                 # selected element moves to it
+    extra = [l for l in w.layers if l.kind == "cut"][1]
+    assigned = second.layers.get("cut") == extra.id
+    extra.speed = 3.0
+    extra.passes = 2
+    w._layer_changed(extra)
+    rows_ok = extra.id in w.layers_panel.rows and w._default_layer["cut"].id in w.layers_panel.rows
+    out = tempfile.mktemp(suffix=".egv")
+    w.start_job(output_file=out)
+    run_until_idle(app, w)
+    two_layers = os.path.getsize(out)
+    w._assign_layer("cut", w._default_layer["cut"].id)                 # back via the bar above the bed
+    back = "cut" not in second.layers
+    w.undo()
+    undone = second.layers.get("cut") == extra.id
+    w.remove_layer(extra)
+    removed = extra not in w.layers and "cut" not in second.layers
+    check("layers: extra cut layer, assignment, undo, delete", assigned and rows_ok and back and undone
+          and removed and two_layers > 1000, "(egv %d bytes)" % two_layers)
+    plywood = [i for i, m in enumerate(w.materials) if m.name.startswith("Plywood 3")][0]
+    w.apply_material(plywood)
+    cut = w._default_layer["cut"]
+    check("materials: applying a material sets the layers", cut.speed == 8.0 and cut.passes == 1
+          and w.values["Vcut_feed"] == "8" and abs(cut.power - 0.6) < 1e-9,
+          "(cut speed %s, Vcut_feed %s)" % (cut.speed, w.values["Vcut_feed"]))
 
     print("\n%d check(s) failed." % failures if failures else "\nAll checks passed.")
     return 1 if failures else 0

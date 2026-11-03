@@ -22,6 +22,12 @@ filled as a raster engraving. Position, size and rotation of the selected elemen
 and the options of the selected shape or tool (operation, corner radius,
 text, font), are shown in a ribbon-style bar above the bed view.
 
+Work is organised in layers, as in LightBurn. Each layer is a raster
+engrave, vector (outline) engrave or vector cut with its own speed, passes
+and power (M3 boards) and colour, and every element's parts can be put on any
+layer of the right kind. A material library (for example "Plywood 3 mm")
+stores cut, outline and raster settings and sets all layers at once.
+
 Designs are placed on a picture of the laser bed. You can put several files
 on the bed, drag them with the mouse, scale and rotate them with handles, or
 type their position, size and angle. The editor has undo and redo, a snap

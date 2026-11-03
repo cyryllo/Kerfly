@@ -8,9 +8,9 @@ import os
 
 from PySide6.QtCore import QSize, Qt, QTimer
 from PySide6.QtCore import QLocale
-from PySide6.QtGui import QAction, QKeySequence
+from PySide6.QtGui import QAction, QColor, QKeySequence
 from PySide6.QtGui import QActionGroup
-from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QDoubleSpinBox, QFileDialog,
+from PySide6.QtWidgets import (QApplication, QComboBox, QDockWidget, QDoubleSpinBox, QFileDialog,
                                QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
                                QListWidget, QListWidgetItem, QMainWindow, QMessageBox, QProgressBar,
                                QPushButton, QScrollArea, QSpinBox, QTabWidget, QToolBar, QToolButton,
@@ -21,8 +21,11 @@ from kerfly.core import config, egvfile, job, loaders
 from kerfly.i18n import C_, N_, _, ngettext, tr_message
 from kerfly.core.config import is_true
 from kerfly.core.design import Design
-from kerfly.core.estimate import estimate_times, format_time
+from kerfly.core.estimate import format_time
 from kerfly.core.laser import LaserController, LaserError, clamp_head_position, corner_offset
+from kerfly.core import materials as material_lib
+from kerfly.core.layers import (CUT, ENGRAVE, EXTRA_COLORS, GCODE, KINDS, RASTER, Layer, layer_of,
+                                layer_times, part_present)
 from kerfly.core.layout import Element, compile_layout
 from kerfly.core.shapes import ShapeSpec, build_design
 from kerfly.gui import icons
@@ -32,7 +35,10 @@ from kerfly.gui.tool_options import (KIND_NAMES, NEW_KIND_TITLES, ToolOptionsBar
                                     ribbon_separator)
 from kerfly.gui.preview import PreviewView
 from kerfly.gui.settings_dialog import RASTER_KEYS, RELOAD_KEYS, SettingsDialog
-from kerfly.gui.worker import EgvSendWorker, JobWorker, RasterPrepareWorker
+from kerfly.gui.layers_panel import KIND_NAMES as LAYER_KIND_NAMES
+from kerfly.gui.layers_panel import LayersPanel
+from kerfly.gui.materials_dialog import MaterialsDialog
+from kerfly.gui.worker import EgvSendWorker, JobWorker, LayersJobWorker, RasterLayersWorker
 
 IMAGE_PATTERNS = " ".join("*" + e for e in loaders.IMAGE_EXTENSIONS)
 
@@ -44,13 +50,14 @@ def design_filters():
                       _("G-code files") + " (*.ngc *.gcode *.nc *.g *.tap)",
                       _("All files") + " (*)"])
 
-# (label, include key, speed key, passes key, power key, operation)
-OPERATIONS = [
-    (N_("Raster engrave"), "include_Reng", "Reng_feed", "Reng_passes", "Reng_power", job.RASTER_ENG),
-    (N_("Vector engrave"), "include_Veng", "Veng_feed", "Veng_passes", "Veng_power", job.VECTOR_ENG),
-    (N_("Vector cut"), "include_Vcut", "Vcut_feed", "Vcut_passes", "Vcut_power", job.VECTOR_CUT),
-    (N_("G-code"), "include_Gcde", None, "Gcde_passes", "Gcode_power", job.GCODE_CUT),
-]
+
+
+# default layers are bound to the K40 Whisperer settings (k40_whisperer.txt)
+DEFAULT_LAYER_KEYS = {RASTER: ("include_Reng", "Reng_feed", "Reng_passes", "Reng_power"),
+                      ENGRAVE: ("include_Veng", "Veng_feed", "Veng_passes", "Veng_power"),
+                      CUT: ("include_Vcut", "Vcut_feed", "Vcut_passes", "Vcut_power"),
+                      GCODE: ("include_Gcde", None, "Gcde_passes", "Gcode_power")}
+OPERATION_KIND = {"cut": CUT, "engrave": ENGRAVE, "fill": RASTER}
 
 
 def _num(value, decimals=1):
@@ -69,6 +76,11 @@ class MainWindow(QMainWindow):
         self.elements = []              # design elements placed on the bed
         self.selected = None            # selected element
         self._compiled = None           # cached (design, origin) compiled from the elements
+        self.layers = []                # layers; the first of each kind is the default one
+        self._default_layer = {}        # kind -> default layer
+        self._layer_cache = {}          # layer id -> compiled design (kept until the layout changes)
+        self.materials = material_lib.load_library()
+        self._init_layers()
         self._undo = []                 # layout snapshots for undo / redo
         self._redo = []
         self.design_file = ""           # last file opened (start folder for file dialogs)
@@ -527,6 +539,18 @@ class MainWindow(QMainWindow):
         buttons.addStretch(1)
         rot.addLayout(buttons)
         sb.addWidget(ribbon_section(rot, _("Rotation")))
+        self.layer_assign_box = QWidget()
+        la = QGridLayout(self.layer_assign_box)
+        la.setContentsMargins(0, 0, 0, 0)
+        la.setSpacing(4)
+        self.layer_assign_section = QWidget()
+        ls = QHBoxLayout(self.layer_assign_section)
+        ls.setContentsMargins(0, 0, 0, 0)
+        ls.setSpacing(4)
+        ls.addWidget(ribbon_separator())
+        ls.addWidget(ribbon_section(self.layer_assign_box, _("Layer")))
+        self.layer_assign_section.hide()
+        sb.addWidget(self.layer_assign_section)
         self.top_bar_layout.insertWidget(0, self.selection_box)
         self.top_bar_layout.insertWidget(1, ribbon_separator())
         design_layout.addStretch(1)
@@ -655,67 +679,20 @@ class MainWindow(QMainWindow):
         laser_layout.addWidget(box)
         laser_layout.addStretch(1)
 
-        # --- operations
-        box = QGroupBox(_("Operations"))
-        g = QGridLayout(box)
-        self.speed_header = QLabel()
-        for col, text in enumerate(("", None, N_("Passes"), N_("Power"), N_("Time"))):
-            if text is None:
-                g.addWidget(self.speed_header, 0, col)
-            elif text:
-                lbl = QLabel(_(text))
-                g.addWidget(lbl, 0, col)
-                if text == "Power":
-                    self.power_header = lbl
-        self.power_widgets = {}
-        self.time_labels = {}
-        self.include_checks = {}
-        self.op_rows = {}          # operation -> widgets of its row
-        for row, (label, inc, feed, passes, power, op) in enumerate(OPERATIONS, start=1):
-            cb = QCheckBox(_(label))
-            cb.setChecked(is_true(self.values.get(inc, "1")))
-            cb.toggled.connect(lambda on, k=inc: (self._set_value(k, "1" if on else "0"),
-                                                  self.refresh_preview()))
-            self.include_checks[op] = cb
-            g.addWidget(cb, row, 0)
-            widgets = [cb]
-            if feed:
-                widgets.append(self._spin(feed, "speed", 0.1, 10000))
-                widgets[-1].setToolTip(_("Speed"))
-                g.addWidget(widgets[-1], row, 1)
-            elif op == job.GCODE_CUT:
-                cb.setToolTip(_("Paths from a G-code file; speeds come from the file (F words)"))
-            widgets.append(self._spin(passes, "int", 1, 100))
-            g.addWidget(widgets[-1], row, 2)
-            pw = self._spin(power, "power", 0, 100, 0)
-            g.addWidget(pw, row, 3)
-            self.power_widgets[op] = pw
-            tl = QLabel("")
-            tl.setMinimumWidth(64)               # room for e.g. "1h 25m" so the panel does not change width
-            self.time_labels[op] = tl
-            if op == job.RASTER_ENG:
-                cell = QWidget()
-                h = QHBoxLayout(cell)
-                h.setContentsMargins(0, 0, 0, 0)
-                h.setSpacing(0)
-                h.addWidget(tl)
-                self.btn_calc_time = self._icon_button(
-                    "calculator", _("Calculate raster time: prepare the raster now to estimate "
-                                    "its engraving time"), self.calculate_raster_time, 28, 18)
-                h.addWidget(self.btn_calc_time)
-                h.addStretch(1)
-                cell.setMinimumWidth(64)
-                g.addWidget(cell, row, 4)
-                widgets.append(cell)
-            else:
-                g.addWidget(tl, row, 4)
-                widgets.append(tl)
-            self.op_rows[op] = widgets
-        self.no_ops_label = QLabel(_("Open a design to see its operations."))
-        self.no_ops_label.setStyleSheet("color:#757575;")
-        g.addWidget(self.no_ops_label, len(OPERATIONS) + 1, 0, 1, 5)
-        self.total_time_label = QLabel()
-        g.addWidget(self.total_time_label, len(OPERATIONS) + 2, 0, 1, 5)
+        # --- layers
+        box = QGroupBox(_("Layers"))
+        bl = QVBoxLayout(box)
+        self.layers_panel = LayersPanel()
+        self.layers_panel.changed.connect(self._layer_changed)
+        self.layers_panel.structure_changed.connect(self._layers_structure_changed)
+        self.layers_panel.add_layer.connect(self.add_layer)
+        self.layers_panel.remove_layer.connect(self.remove_layer)
+        self.layers_panel.material_chosen.connect(self.apply_material)
+        self.layers_panel.manage_materials.connect(self.edit_materials)
+        self.layers_panel.calc_raster.connect(self.calculate_raster_time)
+        self.layers_panel.set_materials([m.name for m in self.materials])
+        self.btn_calc_time = self.layers_panel.add_button       # disabled while busy, like before
+        bl.addWidget(self.layers_panel)
         layout.addWidget(box)
 
         # --- run: one compact row
@@ -799,6 +776,7 @@ class MainWindow(QMainWindow):
 
     def _layout_changed(self):
         self._compiled = None
+        self._layer_cache.clear()
         self._update_design_label()
         self._update_power_visibility()
         self.refresh_preview()
@@ -829,8 +807,8 @@ class MainWindow(QMainWindow):
     # ---- undo / redo: snapshots of the element list and placements ----
     def _snapshot(self):
         return (list(self.elements),
-                [(e.placement(), e.design, e.shape.copy() if e.shape is not None else None)
-                 for e in self.elements],
+                [(e.placement(), e.design, e.shape.copy() if e.shape is not None else None,
+                  dict(e.layers)) for e in self.elements],
                 self.selected)
 
     def _checkpoint(self):
@@ -842,10 +820,11 @@ class MainWindow(QMainWindow):
     def _restore(self, snap):
         elements, states, selected = snap
         self.elements = list(elements)
-        for e, (placement, design, shape) in zip(self.elements, states):
+        for e, (placement, design, shape, layers) in zip(self.elements, states):
             e.set_placement(placement)
             e.design = design
             e.shape = shape
+            e.layers = layers
         self.selected = selected if selected in self.elements else None
         self._compiled = None
         self._layout_changed()
@@ -916,6 +895,7 @@ class MainWindow(QMainWindow):
             self.selected = self.elements[row]
             self.preview.select_element(self.selected)
             self._update_selection_panel()
+            self._update_layer_assignment()
             self._update_tool_options()
 
     # ---- more editing commands ----
@@ -965,6 +945,7 @@ class MainWindow(QMainWindow):
     def _preview_selected(self, element):
         self.selected = element
         self._update_selection_panel()
+        self._update_layer_assignment()
         self._update_tool_options()
         lst = self.element_list
         lst.blockSignals(True)
@@ -1072,39 +1053,197 @@ class MainWindow(QMainWindow):
             return
         self._layout_changed()
 
+    # ------------------------------------------------------------ layers
+    def _init_layers(self):
+        self.layers = []
+        for kind in KINDS:
+            layer = Layer(kind, name=_(LAYER_KIND_NAMES[kind]))
+            from kerfly.core.layers import DEFAULT_COLORS
+            layer.color = DEFAULT_COLORS[kind]
+            self.layers.append(layer)
+            self._default_layer[kind] = layer
+        self._layers_from_values()
+
+    def _layers_from_values(self):
+        """Default layers take their settings from the K40 Whisperer settings values."""
+        for kind, layer in self._default_layer.items():
+            inc, feed, passes, power = DEFAULT_LAYER_KEYS[kind]
+            layer.enabled = is_true(self.values.get(inc, "1"))
+            try:
+                if feed:
+                    layer.speed = float(self.values.get(feed) or layer.speed)
+                layer.passes = int(float(self.values.get(passes) or 1))
+                layer.power = float(self.values.get(power) or 0.5)
+            except ValueError:
+                pass
+
+    def _layer_to_values(self, layer):
+        if self._default_layer.get(layer.kind) is not layer:
+            return
+        inc, feed, passes, power = DEFAULT_LAYER_KEYS[layer.kind]
+        self.values[inc] = "1" if layer.enabled else "0"
+        if feed:
+            self.values[feed] = _num_text(layer.speed)
+        self.values[passes] = str(int(layer.passes))
+        self.values[power] = _num_text(layer.power)
+
+    def _layer_changed(self, layer):
+        self._layer_to_values(layer)
+        self._update_times()
+        self.refresh_preview()
+
+    def _layers_structure_changed(self):
+        self._layer_cache.clear()
+        self._rebuild_layers_panel()
+        self.refresh_preview()
+
+    def _layer_has_data(self, layer):
+        return any(e.visible and layer_of(e, layer.kind, self.layers) is layer and part_present(e.design, layer.kind)
+                   for e in self.elements)
+
+    def _rebuild_layers_panel(self):
+        speed_unit = "mm/s" if self.values.get("units", "mm") == "mm" else "in/min"
+        gcode_file = any(part_present(e.design, GCODE) for e in self.elements)
+        self.layers_panel.rebuild(self.layers, self._layer_has_data,
+                                  lambda layer: self._default_layer.get(layer.kind) is not layer,
+                                  speed_unit, self.power_per_stage(), gcode_file)
+        self._update_times()
+        self._fit_panel_width()
+
+    def add_layer(self, kind):
+        """New layer of a kind; the selected element's part of that kind moves to it."""
+        base = self._default_layer[kind]
+        n = sum(1 for layer in self.layers if layer.kind == kind) + 1
+        layer = Layer(kind, name="%s %d" % (_(LAYER_KIND_NAMES[kind]), n),
+                      color=EXTRA_COLORS[(len(self.layers) - len(KINDS)) % len(EXTRA_COLORS)],
+                      speed=base.speed, passes=base.passes, power=base.power)
+        index = max(i for i, l in enumerate(self.layers) if l.kind == kind) + 1
+        self.layers.insert(index, layer)
+        e = self.selected
+        if e is not None and part_present(e.design, kind):
+            self._checkpoint()
+            e.layers[kind] = layer.id
+        self._layers_structure_changed()
+        self._update_layer_assignment()
+
+    def remove_layer(self, layer):
+        if self._default_layer.get(layer.kind) is layer:
+            return
+        self._checkpoint()
+        for e in self.elements:
+            if e.layers.get(layer.kind) == layer.id:
+                del e.layers[layer.kind]
+        self.layers.remove(layer)
+        self._layers_structure_changed()
+        self._update_layer_assignment()
+
+    def _speed_from_mm_s(self, speed):
+        return speed if self.values.get("units", "mm") == "mm" else speed * 60.0 / 25.4
+
+    def _speed_to_mm_s(self, speed):
+        return speed if self.values.get("units", "mm") == "mm" else speed * 25.4 / 60.0
+
+    def apply_material(self, index):
+        """Set every layer's speed, passes and power from a material."""
+        if not 0 <= index < len(self.materials):
+            return
+        m = self.materials[index]
+        for layer in self.layers:
+            s = m.get(layer.kind)
+            if s is None:
+                continue
+            layer.speed = round(self._speed_from_mm_s(s.speed), 2)
+            layer.passes = s.passes
+            layer.power = s.power
+            self._layer_to_values(layer)
+        self._rebuild_layers_panel()
+        self.layers_panel.material.setCurrentIndex(index + 1)
+        self.status(_("Material: %s") % m.name)
+
+    def edit_materials(self):
+        current = {}
+        for kind in (CUT, ENGRAVE, RASTER):
+            layer = self._default_layer[kind]
+            current[kind] = material_lib.OperationSettings(round(self._speed_to_mm_s(layer.speed), 2),
+                                                           layer.passes, layer.power)
+        dlg = MaterialsDialog(self.materials, current, self.values.get("units", "mm"), self)
+        if not dlg.exec():
+            return
+        self.materials = dlg.materials
+        try:
+            path = material_lib.save_library(self.materials)
+            self.status(_("Material library saved to %s") % path)
+        except OSError as e:
+            self.status(_("Could not save the material library: %s") % e, error=True)
+        self.layers_panel.set_materials([m.name for m in self.materials])
+
+    def _update_layer_assignment(self):
+        """Layer choice for each part of the selected element (in the bar above the bed)."""
+        box = self.layer_assign_box
+        grid = box.layout()
+        while grid.count():
+            w = grid.takeAt(0).widget()
+            if w is not None:
+                w.hide()
+                w.setParent(None)
+                w.deleteLater()
+        e = self.selected
+        kinds = [k for k in (RASTER, ENGRAVE, CUT, GCODE) if e is not None and part_present(e.design, k)]
+        self.layer_assign_section.setVisible(bool(kinds))
+        for row, kind in enumerate(kinds[:2] if len(kinds) <= 2 else kinds):
+            combo = QComboBox()
+            choices = [layer for layer in self.layers if layer.kind == kind]
+            for layer in choices:
+                combo.addItem(layer.name, layer.id)
+                combo.setItemData(combo.count() - 1, QColor(layer.color), Qt.DecorationRole)
+            current = layer_of(e, kind, self.layers)
+            combo.setCurrentIndex(max(0, combo.findData(current.id if current else None)))
+            combo.setFixedWidth(130)
+            combo.setToolTip(_(LAYER_KIND_NAMES[kind]))
+            combo.currentIndexChanged.connect(lambda _i, c=combo, k=kind: self._assign_layer(k, c.currentData()))
+            grid.addWidget(combo, row % 2, row // 2)
+
+    def _assign_layer(self, kind, layer_id):
+        e = self.selected
+        if e is None or e.layers.get(kind, self._default_layer[kind].id) == layer_id:
+            return
+        self._checkpoint()
+        if layer_id == self._default_layer[kind].id:
+            e.layers.pop(kind, None)
+        else:
+            e.layers[kind] = layer_id
+        self._layer_cache.clear()
+        self._rebuild_layers_panel()
+        self.refresh_preview()
+
+    def _part_color(self, element, kind):
+        layer = layer_of(element, kind, self.layers)
+        return layer.color if layer is not None else None
+
     def _set_value(self, key, val):
         self.values[key] = val
         if key.endswith("_feed") or key.endswith("_passes") or key == "Gcde_passes":
             self._update_times()
 
     def _update_times(self):
-        if not hasattr(self, "total_time_label"):
+        if not hasattr(self, "layers_panel"):
             return
-        has = self._design_has()
         try:
-            times = estimate_times(self.design, self.job_settings())
+            times = layer_times(self.elements, [l for l in self.layers if l.enabled],
+                                self.job_settings(), self._layer_cache) if self.elements else {}
         except (ValueError, ZeroDivisionError):
             times = {}
-        total, unknown = 0.0, False
-        for op, label in self.time_labels.items():
-            t = times.get(op)
-            label.setText(format_time(t) if has[op] and t is not None else "")
-            if has[op] and self.include_checks[op].isChecked():
-                if t is None:
-                    unknown = True
-                else:
-                    total += t
-        raster_unknown = has[job.RASTER_ENG] and times.get(job.RASTER_ENG) is None
-        self.btn_calc_time.setVisible(raster_unknown)
-        self.time_labels[job.RASTER_ENG].setVisible(not raster_unknown)
-        if any(has.values()):
-            if unknown and total == 0:
+        self.layers_panel.set_times(times, format_time)
+        if times:
+            known = [t for t in times.values() if t is not None]
+            unknown = any(t is None for t in times.values())
+            if unknown and not known:
                 text = "?"
             else:
-                text = format_time(total) + (_(" + raster") if unknown else "")
-            self.total_time_label.setText(_("Estimated total: <b>%s</b>") % text)
+                text = format_time(sum(known)) + (_(" + raster") if unknown else "")
+            self.layers_panel.total_label.setText(_("Estimated total: <b>%s</b>") % text)
         else:
-            self.total_time_label.setText("")
+            self.layers_panel.total_label.setText("")
 
     def power_per_stage(self):
         return (self.values.get("board_name") == "LASER-M3"
@@ -1129,25 +1268,10 @@ class MainWindow(QMainWindow):
         return has
 
     def _update_power_visibility(self):
-        """Show the rows that apply to the loaded design: the G-code row only
-        for G-code files, other rows greyed out when the design has no such data.
-        The power column is shown only for M3 boards with power control."""
-        show_power = self.power_per_stage()
-        has = self._design_has()
-        gcode_file = has[job.GCODE_CUT]
-        self.power_header.setVisible(show_power)
-        self.speed_header.setVisible(not gcode_file)
+        """Layer rows for the loaded design; power column for M3 boards with power control."""
         self.test_fire_row.setVisible(self.values.get("board_name") == "LASER-M3"
                                       and is_true(self.values.get("show_test", "1")))
-        for op, widgets in self.op_rows.items():
-            visible = gcode_file if op == job.GCODE_CUT else not gcode_file
-            for w in widgets:
-                w.setVisible(visible)
-                w.setEnabled(has[op])
-            self.power_widgets[op].setVisible(visible and show_power)
-            self.power_widgets[op].setEnabled(has[op])
-        self.no_ops_label.setVisible(not any(has.values()))
-        self._update_times()
+        self._rebuild_layers_panel()
         self._fit_panel_width()
 
     def _fit_panel_width(self):
@@ -1158,8 +1282,19 @@ class MainWindow(QMainWindow):
         if scroll is None:
             return
         panel = scroll.widget()
+        for w in [panel] + panel.findChildren(QWidget):
+            if w.layout() is not None:
+                w.layout().activate()           # new rows must be measured, not the old layout
         panel.adjustSize()
         width = max(300, panel.sizeHint().width() + scroll.verticalScrollBar().sizeHint().width() + 4)
+        if not getattr(self, "_fit_again_pending", False) and self.isVisible():
+            # measure once more after Qt has finished laying out the new widgets
+            self._fit_again_pending = True
+
+            def again():
+                self._fit_again_pending = False
+                self._fit_panel_width()
+            QTimer.singleShot(0, again)
         if getattr(self, "_shown_once", False) and getattr(self, "_panel_width", 0) > 0:
             if width <= self._panel_width:
                 return
@@ -1199,7 +1334,6 @@ class MainWindow(QMainWindow):
     def _update_unit_suffixes(self):
         units = self.values.get("units", "mm")
         speed = "mm/s" if units == "mm" else "in/min"
-        self.speed_header.setText(_("Speed (%s)") % speed)
         for w, kind, _key, _sign in self._unit_widgets:
             w.setSuffix(" " + (units if kind == "len" else speed))
 
@@ -1263,7 +1397,7 @@ class MainWindow(QMainWindow):
         if self.selected not in self.elements:
             self.selected = None
         self.preview.show_layout(self.elements, self.selected, settings, self.values, self.head, fit=fit,
-                                 grid_mm=self._grid_mm())
+                                 grid_mm=self._grid_mm(), part_color=self._part_color)
         self._update_element_list()
         self.act_undo.setEnabled(bool(self._undo))
         self.act_redo.setEnabled(bool(self._redo))
@@ -1444,10 +1578,17 @@ class MainWindow(QMainWindow):
         if "language" in changed:
             QMessageBox.information(self, _("Language"),
                                     _("The new language will be used after restarting Kerfly."))
+        if "units" in changed:
+            factor = (60.0 / 25.4) if self.values.get("units") == "in" else (25.4 / 60.0)
+            for layer in self.layers:
+                if self._default_layer.get(layer.kind) is not layer:
+                    layer.speed = round(layer.speed * factor, 1)
+        self._layers_from_values()
         if changed & RASTER_KEYS:
             for e in self.elements:
                 e.design.raster.reset_path()
             self._compiled = None
+            self._layer_cache.clear()
         if changed & RELOAD_KEYS and self.elements:
             self.reload_design()
         self.refresh_preview()
@@ -1603,15 +1744,15 @@ class MainWindow(QMainWindow):
                          _("Test fire: %.0f%% for %d ms") % (power, ms))
 
     def calculate_raster_time(self):
-        if self.worker is not None or self.design.raster.image is None:
+        if self.worker is not None or not any(part_present(e.design, RASTER) for e in self.elements):
             return
         try:
             settings = self.job_settings()
         except ValueError as e:
             self.status(str(e), error=True)
             return
-        self._run_worker(RasterPrepareWorker(self.design, settings, parent=self),
-                         _("Preparing raster…"))
+        self._run_worker(RasterLayersWorker(self.elements, self.layers, settings, self._layer_cache,
+                                            parent=self), _("Preparing raster\u2026"))
 
     def send_egv_file(self):
         if self.worker is not None:
@@ -1646,18 +1787,10 @@ class MainWindow(QMainWindow):
                          _("Sending %s…") % os.path.basename(name))
 
     # ------------------------------------------------------------ jobs
-    def selected_operation(self):
-        d = self.design
-        has = {job.RASTER_ENG: d.raster.image is not None, job.VECTOR_ENG: bool(d.vector_engrave.ecoords),
-               job.VECTOR_CUT: bool(d.vector_cut.ecoords), job.GCODE_CUT: bool(d.gcode.ecoords)}
-        ops = [op for *_row, op in OPERATIONS if self.include_checks[op].isChecked() and has[op]]
-        return "+".join(ops)
-
     def start_job(self, output_file=None, trace=False):
         if self.worker is not None:
             return
-        op = job.TRACE_ENG if trace else self.selected_operation()
-        if not op:
+        if not any(l.enabled and self._layer_has_data(l) for l in self.layers) and not (trace and self.elements):
             self.status(_("Nothing to do: load a design and select at least one operation."), error=True)
             return
         if output_file is None and not self.laser.connected:
@@ -1676,10 +1809,15 @@ class MainWindow(QMainWindow):
             # the job starts where the head is: first move it to the design
             if not self.move_head_to(*self.origin):
                 return
-        self._run_worker(JobWorker(self.design, settings, op,
-                                   laser=None if output_file else self.laser,
-                                   output_file=output_file, send_options=send_options,
-                                   parent=self), _("Preparing job\u2026"))
+        if trace:
+            worker = JobWorker(self.design, settings, job.TRACE_ENG,
+                               laser=None if output_file else self.laser,
+                               output_file=output_file, send_options=send_options, parent=self)
+        else:
+            worker = LayersJobWorker(self.elements, self.layers, settings, self._layer_cache,
+                                     laser=None if output_file else self.laser,
+                                     output_file=output_file, send_options=send_options, parent=self)
+        self._run_worker(worker, _("Preparing job\u2026"))
 
     def _run_worker(self, worker, message):
         self.worker = worker
@@ -1727,7 +1865,8 @@ class MainWindow(QMainWindow):
         self.btn_pause.setToolTip(_("Resume the job") if paused else _("Pause the laser; press again to resume"))
 
     def _job_finished(self, ok, message):
-        was_laser_job = isinstance(self.worker, (JobWorker, EgvSendWorker)) and self.worker.laser is not None
+        was_laser_job = isinstance(self.worker, (JobWorker, LayersJobWorker, EgvSendWorker)) \
+            and self.worker.laser is not None
         self.worker.wait()
         self.worker = None
         self._set_paused(False)

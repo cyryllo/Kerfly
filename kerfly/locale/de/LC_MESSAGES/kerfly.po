@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 23:00+0100\n"
+"POT-Creation-Date: 2026-11-03 23:19+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -34,6 +34,10 @@ msgstr "%d mm"
 #, python-format
 msgid "%d × %d pixels"
 msgstr "%d × %d Pixel"
+
+#, python-format
+msgid "%s (copy)"
+msgstr "%s (Kopie)"
 
 #, python-format
 msgid "%s × %s mm"
@@ -108,6 +112,9 @@ msgstr "&Ansicht"
 msgid "(libUSB driver not installed)"
 msgstr "(libUSB-Treiber nicht installiert)"
 
+msgid "(own settings)"
+msgstr "(eigene Einstellungen)"
+
 #, python-format
 msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
 msgstr "<b style='color:#2e7d32'>Verbunden</b> (%s)"
@@ -137,9 +144,15 @@ msgstr "Ein Auftrag läuft. Anhalten und beenden?"
 msgid "About Kerfly"
 msgstr "Über Kerfly"
 
+msgid "Acrylic 3 mm"
+msgstr "Acryl 3 mm"
+
 msgctxt "toolbar"
 msgid "Add"
 msgstr "Hinzufügen"
+
+msgid "Add a layer"
+msgstr "Ebene hinzufügen"
 
 msgid "Add another file to the laser bed"
 msgstr "Eine weitere Datei auf die Arbeitsfläche legen"
@@ -195,6 +208,9 @@ msgstr ""
 "Rasterzeit berechnen: Raster jetzt vorbereiten, um die Gravurzeit zu "
 "schätzen"
 
+msgid "Cardboard 2 mm"
+msgstr "Karton 2 mm"
+
 msgid "Centre"
 msgstr "Mitte"
 
@@ -213,6 +229,11 @@ msgid ""
 msgstr ""
 "Wählen Sie rechts ein Zeichenwerkzeug oder eine gezeichnete Form, um hier"
 " ihre Optionen zu sehen."
+
+msgid "Choose a material to set the speed, passes and power of all layers"
+msgstr ""
+"Material wählen, um Geschwindigkeit, Durchgänge und Leistung aller Ebenen"
+" einzustellen"
 
 msgid "Click an element on the bed to select it."
 msgstr "Klicken Sie auf ein Element, um es auszuwählen."
@@ -250,6 +271,15 @@ msgstr "%s konnte nicht gelesen werden: %s"
 msgid "Could not save settings: %s"
 msgstr "Einstellungen konnten nicht gespeichert werden: %s"
 
+#, python-format
+msgid "Could not save the material library: %s"
+msgstr "Materialbibliothek konnte nicht gespeichert werden: %s"
+
+msgid "Create a material from the speed, passes and power of the current layers"
+msgstr ""
+"Material aus Geschwindigkeit, Durchgängen und Leistung der aktuellen "
+"Ebenen erstellen"
+
 msgid "Creating halftone image."
 msgstr "Halbtonbild wird erstellt."
 
@@ -283,9 +313,15 @@ msgstr "Daten gespeichert in: %s"
 msgid "Data transmission (CRC) error #%s"
 msgstr "Datenübertragungsfehler (CRC) Nr. %s"
 
+msgid "Delete"
+msgstr "Löschen"
+
 msgctxt "toolbar"
 msgid "Delete"
 msgstr "Löschen"
+
+msgid "Delete this layer (its parts go back to the default layer)"
+msgstr "Diese Ebene löschen (ihre Teile kommen zurück in die Standardebene)"
 
 msgid "Design"
 msgstr "Entwurf"
@@ -307,6 +343,9 @@ msgstr "Abstand nach rechts vom Referenzpunkt"
 
 msgid "Drawing tools"
 msgstr "Zeichenwerkzeuge"
+
+msgid "Duplicate"
+msgstr "Duplizieren"
 
 msgctxt "toolbar"
 msgid "Duplicate"
@@ -340,6 +379,13 @@ msgstr "Kontur gravieren"
 #, python-format
 msgid "Estimated total: <b>%s</b>"
 msgstr "Geschätzte Gesamtzeit: <b>%s</b>"
+
+msgid ""
+"Example starting values for a typical 40 W K40; test on a scrap piece "
+"first."
+msgstr ""
+"Beispiel-Startwerte für einen typischen K40 mit 40 W; zuerst an einem "
+"Reststück testen."
 
 msgctxt "toolbar group"
 msgid "File"
@@ -424,6 +470,9 @@ msgstr "Bild:"
 msgid "Images"
 msgstr "Bilder"
 
+msgid "Include this layer in the job"
+msgstr "Diese Ebene in den Auftrag aufnehmen"
+
 msgid "Inkscape executable"
 msgstr "Inkscape-Programm"
 
@@ -469,6 +518,24 @@ msgstr "Laser verbunden"
 msgid "Laser is not initialized."
 msgstr "Laser ist nicht verbunden."
 
+msgid "Layer"
+msgstr "Ebene"
+
+msgid "Layer colour"
+msgstr "Ebenenfarbe"
+
+msgid "Layer colour; click to change"
+msgstr "Ebenenfarbe; klicken zum Ändern"
+
+msgid "Layer name; click to rename"
+msgstr "Ebenenname; klicken zum Umbenennen"
+
+msgid "Layers"
+msgstr "Ebenen"
+
+msgid "Leather 2 mm"
+msgstr "Leder 2 mm"
+
 msgid "Levels curve slope, dark end"
 msgstr "Steigung der Tonwertkurve, dunkles Ende"
 
@@ -501,6 +568,26 @@ msgstr "Maschine"
 
 msgid "Main toolbar"
 msgstr "Hauptwerkzeugleiste"
+
+msgid "Material"
+msgstr "Material"
+
+msgid "Material library"
+msgstr "Materialbibliothek"
+
+#, python-format
+msgid "Material library saved to %s"
+msgstr "Materialbibliothek gespeichert in %s"
+
+msgid "Material library: add, edit and delete materials"
+msgstr "Materialbibliothek: Materialien hinzufügen, bearbeiten und löschen"
+
+msgid "Material:"
+msgstr "Material:"
+
+#, python-format
+msgid "Material: %s"
+msgstr "Material: %s"
 
 msgid "Mirror design"
 msgstr "Entwurf spiegeln"
@@ -541,11 +628,23 @@ msgstr "Laserkopf einen Schritt nach rechts bewegen"
 msgid "Move the laser head up by one step"
 msgstr "Laserkopf einen Schritt nach oben bewegen"
 
+msgid "Name:"
+msgstr "Name:"
+
+msgid "New"
+msgstr "Neu"
+
 msgid "New ellipse"
 msgstr "Neue Ellipse"
 
+msgid "New from current layers"
+msgstr "Neu aus aktuellen Ebenen"
+
 msgid "New line"
 msgstr "Neue Linie"
+
+msgid "New material"
+msgstr "Neues Material"
 
 msgid "New polygon"
 msgstr "Neues Polygon"
@@ -562,6 +661,9 @@ msgstr "Kein Entwurf geladen"
 msgid "No laser data was generated."
 msgstr "Es wurden keine Laserdaten erzeugt."
 
+msgid "Notes (e.g. supplier, lens, air assist)"
+msgstr "Notizen (z. B. Lieferant, Linse, Luftunterstützung)"
+
 msgid "Nothing to do: load a design and select at least one operation."
 msgstr "Nichts zu tun: Entwurf laden und mindestens einen Vorgang auswählen."
 
@@ -575,8 +677,8 @@ msgctxt "toolbar"
 msgid "Open"
 msgstr "Öffnen"
 
-msgid "Open a design to see its operations."
-msgstr "Öffnen Sie einen Entwurf, um seine Vorgänge zu sehen."
+msgid "Open a design to see its layers."
+msgstr "Öffnen Sie einen Entwurf, um seine Ebenen zu sehen."
 
 msgid "Open a file, replacing everything on the bed"
 msgstr "Datei öffnen und alles auf der Arbeitsfläche ersetzen"
@@ -595,9 +697,6 @@ msgstr "%s wird geöffnet"
 msgid "Operation"
 msgstr "Vorgang"
 
-msgid "Operations"
-msgstr "Vorgänge"
-
 msgid "Out of memory."
 msgstr "Nicht genügend Speicher."
 
@@ -606,6 +705,9 @@ msgstr "Außerhalb der Arbeitsfläche!"
 
 msgid "Passes"
 msgstr "Durchgänge"
+
+msgid "Passes:"
+msgstr "Durchgänge:"
 
 msgid "Paths from a G-code file; speeds come from the file (F words)"
 msgstr ""
@@ -629,6 +731,12 @@ msgstr "Wird angehalten…"
 msgid "Place design at the &head"
 msgstr "Entwurf am &Laserkopf platzieren"
 
+msgid "Plywood 3 mm"
+msgstr "Sperrholz 3 mm"
+
+msgid "Plywood 4 mm"
+msgstr "Sperrholz 4 mm"
+
 msgid "Polygon"
 msgstr "Polygon"
 
@@ -637,6 +745,9 @@ msgstr "Position und Größe"
 
 msgid "Power"
 msgstr "Leistung"
+
+msgid "Power:"
+msgstr "Leistung:"
 
 msgid "Prepare USB data before sending"
 msgstr "USB-Daten vor dem Senden vorbereiten"
@@ -823,12 +934,17 @@ msgstr "Einstellungen gespeichert in %s"
 msgid "Sides"
 msgstr "Seiten"
 
-msgid "Speed"
-msgstr "Geschwindigkeit"
-
 #, python-format
 msgid "Speed (%s)"
 msgstr "Geschw. (%s)"
+
+msgid "Speed:"
+msgstr "Geschwindigkeit:"
+
+msgid "Speeds are stored in mm/s and converted to in/min for the layers."
+msgstr ""
+"Geschwindigkeiten werden in mm/s gespeichert und für die Ebenen in in/min"
+" umgerechnet."
 
 msgid "Start"
 msgstr "Start"
@@ -932,6 +1048,9 @@ msgstr ""
 "Es werden alle Vektordaten verwendet. Prüfen Sie vor dem Gravieren, ob "
 "sie innerhalb des Arbeitsbereichs Ihres Lasers liegen."
 
+msgid "Thickness:"
+msgstr "Dicke:"
+
 msgid "Time"
 msgstr "Zeit"
 
@@ -1007,6 +1126,9 @@ msgstr "Obere linke Ecke"
 
 msgid "Upper right corner"
 msgstr "Obere rechte Ecke"
+
+msgid "Used with M3 boards (power per layer)"
+msgstr "Für M3-Platinen (Leistung je Ebene)"
 
 msgid "Vector"
 msgstr "Vektor"

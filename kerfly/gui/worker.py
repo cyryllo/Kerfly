@@ -147,3 +147,60 @@ class RasterPrepareWorker(TaskWorker):
     def task(self):
         raster.make_raster_coords(self.design, self.settings, self._progress, self.stop)
         return _("Raster prepared")
+
+
+class LayersJobWorker(TaskWorker):
+    """Run all enabled layers as one job (send to the laser or write an EGV file).
+    The cached layer designs are modified while running."""
+
+    def __init__(self, elements, layers, settings, cache, laser=None, output_file=None,
+                 send_options=None, parent=None):
+        super().__init__(laser=None if output_file else laser, send_options=send_options, parent=parent)
+        self.elements = list(elements)
+        self.layers = [layer.copy() for layer in layers]
+        self.settings = settings
+        self.cache = cache
+        self.output_file = output_file
+
+    def task(self):
+        from kerfly.core.layers import build_layers_job
+        chunks, _origin = build_layers_job(self.elements, self.layers, self.settings,
+                                           progress=self._progress, update_gui=self._update_gui,
+                                           stop=self.stop, cache=self.cache)
+        if self.output_file is not None:
+            if self.settings.power_per_stage:
+                raise job.NoLaserData(_("Writing an EGV file is not possible with M3 power per operation "
+                                        "enabled (the power settings cannot be stored in the file)."))
+            with open(self.output_file, "wb") as f:
+                f.write(job.egv_file_bytes(chunks[0].data))
+            return _("Data saved to: %s") % self.output_file
+        total = 0.0
+        for chunk in chunks:
+            total += self.laser.send(chunk.data, power=chunk.power, update_gui=self._update_gui,
+                                     stop=self.stop, **self.send_options)
+        return _("Job finished in %s") % _duration(total)
+
+
+class RasterLayersWorker(TaskWorker):
+    """Prepare the raster lines of every raster layer (for the time estimate)."""
+
+    def __init__(self, elements, layers, settings, cache, parent=None):
+        super().__init__(parent=parent)
+        self.elements = list(elements)
+        self.layers = [layer.copy() for layer in layers]
+        self.settings = settings
+        self.cache = cache
+
+    def task(self):
+        from kerfly.core.layers import RASTER, compile_layer, layer_settings
+        for layer in self.layers:
+            if layer.kind != RASTER or not layer.enabled:
+                continue
+            design = self.cache.get(layer.id)
+            if design is None:
+                design, _origin = compile_layer(self.elements, layer, self.layers)
+                if design is None:
+                    continue
+                self.cache[layer.id] = design
+            raster.make_raster_coords(design, layer_settings(self.settings, layer), self._progress, self.stop)
+        return _("Raster prepared")

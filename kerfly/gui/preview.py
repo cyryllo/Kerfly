@@ -77,7 +77,7 @@ class ElementItem(QGraphicsItem):
     """One design element. Local coordinates: mm, y down, (0,0) = top-left
     of the element's source design."""
 
-    def __init__(self, element, values, view):
+    def __init__(self, element, values, view, part_color=None):
         super().__init__()
         self.element = element
         self.view = view
@@ -89,13 +89,13 @@ class ElementItem(QGraphicsItem):
         self.setFlag(QGraphicsItem.ItemIsMovable, True)
         self.setCursor(Qt.SizeAllCursor)
         self.pixmap = None
-        if d.raster.image is not None and is_true(values.get("include_Reng", "1")):
+        if d.raster.image is not None:
             self.pixmap = view.raster_pixmap(element, values)
         self.paths = []
-        for key, coords, color in (("include_Veng", d.vector_engrave.ecoords, "engrave"),
-                                   ("include_Vcut", d.vector_cut.ecoords, "cut"),
-                                   ("include_Gcde", d.gcode.ecoords, "gcode")):
-            if coords and is_true(values.get(key, "1")):
+        for kind, coords, color in (("engrave", d.vector_engrave.ecoords, "engrave"),
+                                    ("cut", d.vector_cut.ecoords, "cut"),
+                                    ("gcode", d.gcode.ecoords, "gcode")):
+            if coords:
                 path = QPainterPath()
                 loop_old = None
                 for row in coords:
@@ -105,7 +105,8 @@ class ElementItem(QGraphicsItem):
                     else:
                         path.lineTo(p)
                     loop_old = row[2]
-                self.paths.append((path, _cosmetic_pen(COLORS[color], 1.2)))
+                layer_color = part_color(element, kind) if part_color is not None else None
+                self.paths.append((path, _cosmetic_pen(QColor(layer_color) if layer_color else COLORS[color], 1.2)))
 
     def boundingRect(self):
         return QRectF(0, 0, max(self.w0, 0.01), max(self.h0, 0.01))
@@ -414,7 +415,7 @@ class PreviewView(QGraphicsView):
         self._pixmaps[key] = result
         return result
 
-    def show_layout(self, elements, selected, settings, values, head, fit=False, grid_mm=0.0):
+    def show_layout(self, elements, selected, settings, values, head, fit=False, grid_mm=0.0, part_color=None):
         """Redraw the bed, the elements and the laser head (head in bed inches, y <= 0)."""
         self._rebuilding = True
         scene = self.scene()
@@ -451,7 +452,7 @@ class PreviewView(QGraphicsView):
         self._pixmaps = {k: v for k, v in self._pixmaps.items() if k[0] in live}
 
         for e in elements:
-            item = ElementItem(e, values, self)
+            item = ElementItem(e, values, self, part_color)
             if self.tool != "select":
                 item.setFlag(QGraphicsItem.ItemIsMovable, False)
             item.setTransform(element_transform(e, self.home_ur, self.bed_w_mm))
