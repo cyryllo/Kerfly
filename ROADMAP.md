@@ -21,6 +21,9 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - [x] GUI-independent core (`kerfly/core`)
 - [x] PySide6 main window with preview, jog, operations, settings, EGV export
 - [x] Background job thread, with pause, resume and terminate
+- [x] Editor, step 1: several elements on the bed; select, drag, scale and
+  rotate with handles; X/Y/W/H/angle fields; the head moves to the design
+  before a job
 - [x] Translations: English, Polish, German, Spanish, French (gettext;
   DE/ES/FR need a native speaker review)
 
@@ -51,7 +54,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 |---|---|
 | Element tree / layers panel (select, hide, reorder) | `gui/wxmtree.py` |
 | Operations list: assign elements to raster, engrave or cut instead of by colour only | `gui/opassignment.py`, `gui/gui_optypes.py` |
-| Select, move, scale and rotate with handles | `gui/scenewidgets/`, `gui/toolwidgets/toolplacement.py` |
+| ~~Select, move, scale and rotate with handles~~ (done) | `gui/scenewidgets/`, `gui/toolwidgets/toolplacement.py` |
 | Undo / redo | `core/undos.py` |
 | Grid and snapping | `gui/snapoptions.py`, `core/elements/grid.py` |
 | Alignment and distribution | `gui/alignment.py`, `core/elements/align.py` |

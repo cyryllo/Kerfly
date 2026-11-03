@@ -16,7 +16,7 @@ Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .design import Design
 
@@ -31,6 +31,16 @@ class Element:
     scale_y: float = 1.0
     rotation: float = 0.0     # degrees, counter-clockwise
     source_file: str = ""
+    load_options: dict = field(default_factory=dict)   # e.g. {"dpi": 300} for images
+
+    @property
+    def centre(self):
+        w, h = self.size
+        return self.x + w / 2.0, self.y - h / 2.0
+
+    def set_centre(self, cx, cy):
+        w, h = self.size
+        self.x, self.y = cx - w / 2.0, cy + h / 2.0
 
     # ---- geometry --------------------------------------------------
     @property

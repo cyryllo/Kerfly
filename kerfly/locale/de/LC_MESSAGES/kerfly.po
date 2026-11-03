@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 21:42+0100\n"
+"POT-Creation-Date: 2026-11-03 21:57+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -22,6 +22,12 @@ msgid " + raster"
 msgstr " + Raster"
 
 #, python-format
+msgid "%d element"
+msgid_plural "%d elements"
+msgstr[0] "%d Element"
+msgstr[1] "%d Elemente"
+
+#, python-format
 msgid "%d × %d pixels"
 msgstr "%d × %d Pixel"
 
@@ -31,6 +37,15 @@ msgstr "%s × %s mm"
 
 msgid "&About Kerfly"
 msgstr "Über &Kerfly"
+
+msgid "&Add design…"
+msgstr "Entwurf &hinzufügen…"
+
+msgid "&Delete element"
+msgstr "Element &löschen"
+
+msgid "&Edit"
+msgstr "&Bearbeiten"
 
 msgid "&File"
 msgstr "&Datei"
@@ -106,6 +121,15 @@ msgstr "Ein Auftrag läuft. Anhalten und beenden?"
 msgid "About Kerfly"
 msgstr "Über Kerfly"
 
+msgid "Add another file to the laser bed"
+msgstr "Eine weitere Datei auf die Arbeitsfläche legen"
+
+msgid "Add design"
+msgstr "Entwurf hinzufügen"
+
+msgid "Add…"
+msgstr "Hinzufügen…"
+
 #, python-format
 msgid "Adjusting image darkness: %s%%"
 msgstr "Bildhelligkeit wird angepasst: %s%%"
@@ -143,6 +167,9 @@ msgstr "Rasterzeit berechnen"
 msgid "Centre"
 msgstr "Mitte"
 
+msgid "Click an element on the bed to select it."
+msgstr "Klicken Sie auf ein Element, um es auszuwählen."
+
 msgid "Controller board"
 msgstr "Steuerplatine"
 
@@ -163,6 +190,13 @@ msgstr "%s konnte nicht gelesen werden: %s"
 #, python-format
 msgid "Could not save settings: %s"
 msgstr "Einstellungen konnten nicht gespeichert werden: %s"
+
+msgid ""
+"Counter-clockwise. You can also drag the round handle above the element "
+"(hold Shift for 15° steps)."
+msgstr ""
+"Gegen den Uhrzeigersinn. Sie können auch den runden Griff über dem "
+"Element ziehen (mit Umschalt in 15°-Schritten)."
 
 msgid "Creating halftone image."
 msgstr "Halbtonbild wird erstellt."
@@ -190,6 +224,9 @@ msgstr "Daten gespeichert in: %s"
 #, python-format
 msgid "Data transmission (CRC) error #%s"
 msgstr "Datenübertragungsfehler (CRC) Nr. %s"
+
+msgid "Delete"
+msgstr "Löschen"
 
 msgid "Design"
 msgstr "Entwurf"
@@ -244,6 +281,9 @@ msgstr "Los"
 
 msgid "Go to X"
 msgstr "Gehe zu X"
+
+msgid "H"
+msgstr "H"
 
 msgid "Halftone (dither) grayscale images"
 msgstr "Graustufenbilder rastern (Dithering)"
@@ -308,6 +348,9 @@ msgstr "Auftrag beendet in %s"
 msgid "Job running"
 msgstr "Auftrag läuft"
 
+msgid "Keep proportions"
+msgstr "Seitenverhältnis beibehalten"
+
 #, python-format
 msgid "Kerfly %s"
 msgstr "Kerfly %s"
@@ -360,23 +403,14 @@ msgstr "Maschine"
 msgid "Mirror design"
 msgstr "Entwurf spiegeln"
 
+msgid "Move all elements so the design starts at the laser head"
+msgstr "Alle Elemente so verschieben, dass der Entwurf am Laserkopf beginnt"
+
 msgid "Move around the outline of the design"
 msgstr "Den Umriss des Entwurfs abfahren"
 
 msgid "Move head to design"
 msgstr "Kopf zum Entwurf fahren"
-
-msgid "Move the head and design down by one step"
-msgstr "Kopf und Entwurf einen Schritt nach unten bewegen"
-
-msgid "Move the head and design left by one step"
-msgstr "Kopf und Entwurf einen Schritt nach links bewegen"
-
-msgid "Move the head and design right by one step"
-msgstr "Kopf und Entwurf einen Schritt nach rechts bewegen"
-
-msgid "Move the head and design up by one step"
-msgstr "Kopf und Entwurf einen Schritt nach oben bewegen"
 
 msgid "Move the head to the centre of the design"
 msgstr "Kopf zur Mitte des Entwurfs fahren"
@@ -393,6 +427,18 @@ msgstr "Kopf zur oberen linken Ecke des Entwurfs fahren"
 msgid "Move the head to the upper right corner of the design"
 msgstr "Kopf zur oberen rechten Ecke des Entwurfs fahren"
 
+msgid "Move the laser head down by one step"
+msgstr "Laserkopf einen Schritt nach unten bewegen"
+
+msgid "Move the laser head left by one step"
+msgstr "Laserkopf einen Schritt nach links bewegen"
+
+msgid "Move the laser head right by one step"
+msgstr "Laserkopf einen Schritt nach rechts bewegen"
+
+msgid "Move the laser head up by one step"
+msgstr "Laserkopf einen Schritt nach oben bewegen"
+
 msgid "No design loaded"
 msgstr "Kein Entwurf geladen"
 
@@ -407,6 +453,9 @@ msgstr "Anzahl der Durchgänge:"
 
 msgid "Open a design to see its operations."
 msgstr "Öffnen Sie einen Entwurf, um seine Vorgänge zu sehen."
+
+msgid "Open a file, replacing everything on the bed"
+msgstr "Datei öffnen und alles auf der Arbeitsfläche ersetzen"
 
 msgid "Open design"
 msgstr "Entwurf öffnen"
@@ -428,6 +477,9 @@ msgstr "Vorgänge"
 msgid "Out of memory."
 msgstr "Nicht genügend Speicher."
 
+msgid "Outside the laser bed!"
+msgstr "Außerhalb der Arbeitsfläche!"
+
 msgid "Passes"
 msgstr "Durchgänge"
 
@@ -435,6 +487,12 @@ msgid "Paths from a G-code file; speeds come from the file (F words)"
 msgstr ""
 "Pfade aus einer G-Code-Datei; die Geschwindigkeiten stehen in der Datei "
 "(F-Wörter)"
+
+msgid "Place design at the &head"
+msgstr "Entwurf am &Laserkopf platzieren"
+
+msgid "Place design at the head"
+msgstr "Entwurf am Laserkopf platzieren"
 
 msgid "Power"
 msgstr "Leistung"
@@ -490,6 +548,9 @@ msgstr "USB freigeben"
 msgid "Reload"
 msgstr "Neu laden"
 
+msgid "Reloaded"
+msgstr "Neu geladen"
+
 msgid "Resolution:"
 msgstr "Auflösung:"
 
@@ -508,8 +569,17 @@ msgstr "Eilgeschwindigkeit der Drehachse (0 = Standard)"
 msgid "Rotary scale factor"
 msgstr "Skalierungsfaktor der Drehachse"
 
+msgid "Rotate 90° clockwise"
+msgstr "Um 90° im Uhrzeigersinn drehen"
+
+msgid "Rotate 90° counter-clockwise"
+msgstr "Um 90° gegen den Uhrzeigersinn drehen"
+
 msgid "Rotate design 90°"
 msgstr "Entwurf um 90° drehen"
+
+msgid "Rotation"
+msgstr "Drehung"
 
 msgid "Run"
 msgstr "Ausführen"
@@ -534,6 +604,9 @@ msgstr "Einstellungen als Standard speichern"
 
 msgid "Scan line step (in)"
 msgstr "Zeilenabstand (Zoll)"
+
+msgid "Selected element"
+msgstr "Ausgewähltes Element"
 
 msgid "Send EGV file"
 msgstr "EGV-Datei senden"
@@ -617,6 +690,9 @@ msgstr ""
 "Pixel pro Zoll (Inkscape 0.92+: 96, älteres Inkscape: 90, Illustrator: "
 "72).\n"
 "Bei %g px/Zoll ist der Entwurf %.1f x %.1f mm groß."
+
+msgid "The design does not fit on the laser bed at this position."
+msgstr "Der Entwurf passt an dieser Position nicht auf die Arbeitsfläche."
 
 msgid "The design does not move."
 msgstr "Der Entwurf bleibt an seinem Platz."
@@ -730,6 +806,9 @@ msgstr "Vektorgravur"
 msgid "Vector engrave: determining order…"
 msgstr "Vektorgravur: Reihenfolge wird ermittelt…"
 
+msgid "W"
+msgstr "B"
+
 msgid "Wait for the laser to finish"
 msgstr "Warten, bis der Laser fertig ist"
 
@@ -749,6 +828,9 @@ msgstr ""
 "Eine EGV-Datei kann bei aktivierter Leistung je Vorgang (M3) nicht "
 "geschrieben werden, da die Leistungseinstellungen nicht in der Datei "
 "gespeichert werden können."
+
+msgid "X"
+msgstr "X"
 
 msgid "X scale factor"
 msgstr "Skalierungsfaktor X"

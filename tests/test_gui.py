@@ -189,7 +189,7 @@ def main():
     run_until_idle(app, w)
     check("move to corner LR and back before job",
           lr == [(3937, -3150)] and fake.moves == [(3937, -3150), (-3937, 3150)]
-          and w.head_offset == (0, 0) and len(fake.sent) == 1, "(moves %s)" % fake.moves)
+          and w.head == (0.0, 0.0) and len(fake.sent) == 1, "(moves %s)" % fake.moves)
 
     # 7. go to position: home, then move to X 20 mm, Y 10 mm down
     w = make_window()
@@ -253,6 +253,40 @@ def main():
     check("open PNG in window, save EGV == png_reng_halftone",
           digest == manifest["png_reng_halftone"]["sha256"], "(%s)" % w.design_label.text())
     os.remove(png)
+
+    # 11. editor: two elements, drag one, the job first moves the head to the design
+    w = make_window(include_Reng="0")
+    w.load_design(os.path.join(FIX, "shapes.dxf"))                  # 60 x 40 mm at home
+    w.load_design(os.path.join(FIX, "sample.ngc"), add=True)        # G-code replaces, never combines
+    only_gcode = len(w.elements) == 1 and w.elements[0].name == "sample.ngc"
+    w.load_design(os.path.join(FIX, "shapes.dxf"))
+    w.head = (2.0, -1.0)
+    w.load_design(os.path.join(FIX, "shapes.dxf"), add=True)        # second copy placed at the head
+    a, b = w.elements
+    w._preview_moved(a, 1.0, -0.5)                                  # drag the first one
+    fake = FakeK40()
+    w.laser.k40 = fake
+    w.head = (0.0, 0.0)
+    w.start_job()
+    run_until_idle(app, w)
+    check("editor: G-code is not combined", only_gcode)
+    check("editor: two elements, head moves to the design first",
+          (a.x, a.y) == (1.0, -0.5) and (b.x, b.y) == (2.0, -1.0) and w.origin == (1.0, -0.5)
+          and fake.moves[:1] == [(1000, -500)] and len(fake.sent) == 1,
+          "(origin %s, moves %s)" % (w.origin, fake.moves))
+
+    # 12. place at head, rotate 90, delete
+    w.laser.k40 = None
+    w.head = (3.0, -2.0)
+    w.place_at_head()
+    placed = w.origin == (3.0, -2.0)
+    w.selected = b
+    size_before = b.size
+    w.rotate_selected(90)
+    rotated = abs(b.size[0] - size_before[1]) < 1e-9 and abs(b.size[1] - size_before[0]) < 1e-9
+    w.delete_selected()
+    check("editor: place at head, rotate 90, delete", placed and rotated and w.elements == [a]
+          and w.selected is None)
 
     print("\n%d check(s) failed." % failures if failures else "\nAll checks passed.")
     return 1 if failures else 0

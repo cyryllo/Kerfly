@@ -66,12 +66,17 @@ def check():
         for msg in catalog:
             if not msg.id:
                 continue
-            if not msg.string or msg.fuzzy:
-                print("%s: missing translation: %r" % (lang, msg.id))
+            ids = msg.id if isinstance(msg.id, tuple) else (msg.id,)
+            strings = msg.string if isinstance(msg.string, tuple) else (msg.string,)
+            if msg.fuzzy or not all(strings) or (len(ids) > 1 and len(strings) != catalog.num_plurals):
+                print("%s: missing translation: %r" % (lang, ids[0]))
                 problems += 1
-            elif sorted(placeholder.findall(msg.id)) != sorted(placeholder.findall(msg.string)):
-                print("%s: placeholders differ: %r -> %r" % (lang, msg.id, msg.string))
-                problems += 1
+                continue
+            expected = sorted(placeholder.findall(ids[-1]))
+            for text in strings:
+                if sorted(placeholder.findall(text)) != expected:
+                    print("%s: placeholders differ: %r -> %r" % (lang, ids[0], text))
+                    problems += 1
     print("%d problem(s)" % problems if problems else "All translations complete.")
     return problems
 

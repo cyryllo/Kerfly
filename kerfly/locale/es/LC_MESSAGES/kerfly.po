@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-03 21:42+0100\n"
+"POT-Creation-Date: 2026-11-03 21:57+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -22,6 +22,12 @@ msgid " + raster"
 msgstr " + ráster"
 
 #, python-format
+msgid "%d element"
+msgid_plural "%d elements"
+msgstr[0] "%d elemento"
+msgstr[1] "%d elementos"
+
+#, python-format
 msgid "%d × %d pixels"
 msgstr "%d × %d píxeles"
 
@@ -31,6 +37,15 @@ msgstr "%s × %s mm"
 
 msgid "&About Kerfly"
 msgstr "&Acerca de Kerfly"
+
+msgid "&Add design…"
+msgstr "&Añadir diseño…"
+
+msgid "&Delete element"
+msgstr "&Eliminar elemento"
+
+msgid "&Edit"
+msgstr "&Editar"
 
 msgid "&File"
 msgstr "&Archivo"
@@ -106,6 +121,15 @@ msgstr "Hay un trabajo en curso. ¿Detenerlo y salir?"
 msgid "About Kerfly"
 msgstr "Acerca de Kerfly"
 
+msgid "Add another file to the laser bed"
+msgstr "Añadir otro archivo al área de trabajo"
+
+msgid "Add design"
+msgstr "Añadir diseño"
+
+msgid "Add…"
+msgstr "Añadir…"
+
 #, python-format
 msgid "Adjusting image darkness: %s%%"
 msgstr "Ajustando el oscurecimiento de la imagen: %s%%"
@@ -143,6 +167,9 @@ msgstr "Calcular tiempo de ráster"
 msgid "Centre"
 msgstr "Centro"
 
+msgid "Click an element on the bed to select it."
+msgstr "Haga clic en un elemento para seleccionarlo."
+
 msgid "Controller board"
 msgstr "Placa controladora"
 
@@ -163,6 +190,13 @@ msgstr "No se pudo leer %s: %s"
 #, python-format
 msgid "Could not save settings: %s"
 msgstr "No se pudo guardar la configuración: %s"
+
+msgid ""
+"Counter-clockwise. You can also drag the round handle above the element "
+"(hold Shift for 15° steps)."
+msgstr ""
+"En sentido antihorario. También puede arrastrar el tirador redondo sobre "
+"el elemento (con Mayús, en pasos de 15°)."
 
 msgid "Creating halftone image."
 msgstr "Creando imagen de semitonos."
@@ -190,6 +224,9 @@ msgstr "Datos guardados en: %s"
 #, python-format
 msgid "Data transmission (CRC) error #%s"
 msgstr "Error de transmisión de datos (CRC) n.º %s"
+
+msgid "Delete"
+msgstr "Eliminar"
 
 msgid "Design"
 msgstr "Diseño"
@@ -244,6 +281,9 @@ msgstr "Ir"
 
 msgid "Go to X"
 msgstr "Ir a X"
+
+msgid "H"
+msgstr "Al"
 
 msgid "Halftone (dither) grayscale images"
 msgstr "Semitonos (tramado) para imágenes en escala de grises"
@@ -308,6 +348,9 @@ msgstr "Trabajo terminado en %s"
 msgid "Job running"
 msgstr "Trabajo en curso"
 
+msgid "Keep proportions"
+msgstr "Mantener proporciones"
+
 #, python-format
 msgid "Kerfly %s"
 msgstr "Kerfly %s"
@@ -360,23 +403,14 @@ msgstr "Máquina"
 msgid "Mirror design"
 msgstr "Reflejar el diseño"
 
+msgid "Move all elements so the design starts at the laser head"
+msgstr "Mover todos los elementos para que el diseño empiece en el cabezal"
+
 msgid "Move around the outline of the design"
 msgstr "Recorrer el contorno del diseño"
 
 msgid "Move head to design"
 msgstr "Mover el cabezal al diseño"
-
-msgid "Move the head and design down by one step"
-msgstr "Mover el cabezal y el diseño un paso hacia abajo"
-
-msgid "Move the head and design left by one step"
-msgstr "Mover el cabezal y el diseño un paso a la izquierda"
-
-msgid "Move the head and design right by one step"
-msgstr "Mover el cabezal y el diseño un paso a la derecha"
-
-msgid "Move the head and design up by one step"
-msgstr "Mover el cabezal y el diseño un paso hacia arriba"
 
 msgid "Move the head to the centre of the design"
 msgstr "Mover el cabezal al centro del diseño"
@@ -393,6 +427,18 @@ msgstr "Mover el cabezal a la esquina superior izquierda del diseño"
 msgid "Move the head to the upper right corner of the design"
 msgstr "Mover el cabezal a la esquina superior derecha del diseño"
 
+msgid "Move the laser head down by one step"
+msgstr "Mover el cabezal un paso hacia abajo"
+
+msgid "Move the laser head left by one step"
+msgstr "Mover el cabezal un paso a la izquierda"
+
+msgid "Move the laser head right by one step"
+msgstr "Mover el cabezal un paso a la derecha"
+
+msgid "Move the laser head up by one step"
+msgstr "Mover el cabezal un paso hacia arriba"
+
 msgid "No design loaded"
 msgstr "No hay ningún diseño cargado"
 
@@ -407,6 +453,9 @@ msgstr "Número de pasadas:"
 
 msgid "Open a design to see its operations."
 msgstr "Abra un diseño para ver sus operaciones."
+
+msgid "Open a file, replacing everything on the bed"
+msgstr "Abrir un archivo y reemplazar todo el área de trabajo"
 
 msgid "Open design"
 msgstr "Abrir diseño"
@@ -428,6 +477,9 @@ msgstr "Operaciones"
 msgid "Out of memory."
 msgstr "Memoria insuficiente."
 
+msgid "Outside the laser bed!"
+msgstr "¡Fuera del área de trabajo!"
+
 msgid "Passes"
 msgstr "Pasadas"
 
@@ -435,6 +487,12 @@ msgid "Paths from a G-code file; speeds come from the file (F words)"
 msgstr ""
 "Trayectorias de un archivo de código G; las velocidades vienen del "
 "archivo (palabras F)"
+
+msgid "Place design at the &head"
+msgstr "Colocar el diseño en el &cabezal"
+
+msgid "Place design at the head"
+msgstr "Colocar el diseño en el cabezal"
 
 msgid "Power"
 msgstr "Potencia"
@@ -490,6 +548,9 @@ msgstr "Liberar USB"
 msgid "Reload"
 msgstr "Recargar"
 
+msgid "Reloaded"
+msgstr "Recargado"
+
 msgid "Resolution:"
 msgstr "Resolución:"
 
@@ -508,8 +569,17 @@ msgstr "Velocidad rápida del eje rotativo (0 = predeterminada)"
 msgid "Rotary scale factor"
 msgstr "Factor de escala del eje rotativo"
 
+msgid "Rotate 90° clockwise"
+msgstr "Girar 90° en sentido horario"
+
+msgid "Rotate 90° counter-clockwise"
+msgstr "Girar 90° en sentido antihorario"
+
 msgid "Rotate design 90°"
 msgstr "Girar el diseño 90°"
+
+msgid "Rotation"
+msgstr "Rotación"
 
 msgid "Run"
 msgstr "Ejecutar"
@@ -534,6 +604,9 @@ msgstr "Guardar configuración como predeterminada"
 
 msgid "Scan line step (in)"
 msgstr "Paso entre líneas (pulg.)"
+
+msgid "Selected element"
+msgstr "Elemento seleccionado"
 
 msgid "Send EGV file"
 msgstr "Enviar archivo EGV"
@@ -617,6 +690,9 @@ msgstr ""
 "Píxeles por pulgada (Inkscape 0.92+: 96, Inkscape anterior: 90, "
 "Illustrator: 72).\n"
 "A %g px/pulg. el diseño mide %.1f x %.1f mm."
+
+msgid "The design does not fit on the laser bed at this position."
+msgstr "El diseño no cabe en el área de trabajo en esta posición."
 
 msgid "The design does not move."
 msgstr "El diseño no se mueve."
@@ -733,6 +809,9 @@ msgstr "Grabado vectorial"
 msgid "Vector engrave: determining order…"
 msgstr "Grabado vectorial: determinando el orden…"
 
+msgid "W"
+msgstr "An"
+
 msgid "Wait for the laser to finish"
 msgstr "Esperar a que el láser termine"
 
@@ -752,6 +831,9 @@ msgstr ""
 "No se puede escribir un archivo EGV con la potencia por operación (M3) "
 "activada, porque los ajustes de potencia no se pueden guardar en el "
 "archivo."
+
+msgid "X"
+msgstr "X"
 
 msgid "X scale factor"
 msgstr "Factor de escala X"

@@ -13,8 +13,13 @@ control. The original release is tagged `upstream-0.71` in this repository.
 
 Early development (0.1). Kerfly has a new Qt (PySide6) window. It can open
 SVG, DXF and G-code files, and bitmap images (PNG, JPG, BMP, TIFF, GIF, WebP)
-for raster engraving without Inkscape. It shows a preview of the laser bed
-with zoom and pan.
+for raster engraving without Inkscape.
+
+Designs are placed on a picture of the laser bed. You can put several files
+on the bed, drag them with the mouse, scale and rotate them with handles, or
+type their position, size and angle. When a job starts, the laser head first
+moves to the design. "Place design at the head" keeps the K40 Whisperer way of
+working, where the design starts where the head is.
 
 It can jog the head, move it to the design corners or to a given position,
 and run raster engrave, vector engrave, vector cut, G-code and boundary trace

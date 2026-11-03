@@ -16,12 +16,12 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QDoubleSpin
 
 from kerfly import __version__
 from kerfly.core import config, egvfile, job, loaders
-from kerfly.i18n import N_, _, tr_message
+from kerfly.i18n import N_, _, ngettext, tr_message
 from kerfly.core.config import is_true
 from kerfly.core.design import Design
 from kerfly.core.estimate import estimate_times, format_time
-from kerfly.core.laser import (LaserController, LaserError, clamp_head_position, corner_offset,
-                               temporary_offset_target)
+from kerfly.core.laser import LaserController, LaserError, clamp_head_position, corner_offset
+from kerfly.core.layout import Element, compile_layout
 from kerfly.gui import icons
 from kerfly.gui.image_dialog import ImageSizeDialog
 from kerfly.gui.preview import PreviewView
@@ -60,13 +60,12 @@ class MainWindow(QMainWindow):
     def __init__(self, values):
         super().__init__()
         self.values = values
-        self.design = Design()
-        self.design_file = ""
-        self._image_file = None         # last bitmap opened and the size chosen for it
-        self._image_dpi = None
+        self.elements = []              # design elements placed on the bed
+        self.selected = None            # selected element
+        self._compiled = None           # cached (design, origin) compiled from the elements
+        self.design_file = ""           # last file opened (start folder for file dialogs)
         self.laser = LaserController()
-        self.head = (0.0, 0.0)          # design origin at the laser head, inches (y <= 0)
-        self.head_offset = (0, 0)       # temporary head offset from the origin, mils
+        self.head = (0.0, 0.0)          # laser head position on the bed, inches (y <= 0)
         self.worker = None
         self._unit_widgets = []         # (spinbox, kind, key, sign) to update when units change
 
@@ -74,6 +73,10 @@ class MainWindow(QMainWindow):
         self.resize(1200, 780)
         self.preview = PreviewView()
         self.setCentralWidget(self.preview)
+        self.preview.signals.selected.connect(self._preview_selected)
+        self.preview.signals.moved.connect(self._preview_moved)
+        self.preview.signals.scaled.connect(self._preview_scaled)
+        self.preview.signals.rotated.connect(self._preview_rotated)
         self._build_actions()
         self._build_panel()
         self._build_status()
@@ -94,6 +97,15 @@ class MainWindow(QMainWindow):
     def _build_actions(self):
         self.act_open = self._action(_("&Open design\u2026"), self.open_design, "Ctrl+O")
         self.act_reload = self._action(_("&Reload design"), self.reload_design, "F5")
+        self.act_add = self._action(_("&Add design…"), self.add_design, "Ctrl+Shift+O",
+                                    _("Add another file to the laser bed"))
+        self.act_delete = self._action(_("&Delete element"), self.delete_selected, "Delete")
+        self.act_rot_left = self._action(_("Rotate 90° counter-clockwise"),
+                                         lambda: self.rotate_selected(90), "Ctrl+L")
+        self.act_rot_right = self._action(_("Rotate 90° clockwise"),
+                                          lambda: self.rotate_selected(-90), "Ctrl+R")
+        self.act_place_head = self._action(_("Place design at the &head"), self.place_at_head, "Ctrl+H",
+                                           _("Move all elements so the design starts at the laser head"))
         self.act_save_egv = self._action(_("Save &EGV file\u2026"), self.save_egv, "Ctrl+E",
                                          _("Write the selected operations to an EGV file"))
         self.act_send_egv = self._action(_("Send EGV file to laser\u2026"), self.send_egv_file, None,
@@ -119,8 +131,11 @@ class MainWindow(QMainWindow):
 
         mb = self.menuBar()
         m = mb.addMenu(_("&File"))
-        for a in (self.act_open, self.act_reload, None, self.act_save_egv, self.act_send_egv, None,
-                  self.act_save_settings, None, self.act_quit):
+        for a in (self.act_open, self.act_add, self.act_reload, None, self.act_save_egv,
+                  self.act_send_egv, None, self.act_save_settings, None, self.act_quit):
+            m.addSeparator() if a is None else m.addAction(a)
+        m = mb.addMenu(_("&Edit"))
+        for a in (self.act_delete, None, self.act_rot_left, self.act_rot_right, None, self.act_place_head):
             m.addSeparator() if a is None else m.addAction(a)
         m = mb.addMenu(_("&Laser"))
         for a in (self.act_connect, self.act_release, None, self.act_home, self.act_unlock,
@@ -139,7 +154,7 @@ class MainWindow(QMainWindow):
         tb = QToolBar("Main")
         tb.setMovable(False)
         tb.setToolButtonStyle(Qt.ToolButtonTextOnly)
-        for a in (self.act_open, self.act_reload, None, self.act_connect, self.act_home,
+        for a in (self.act_open, self.act_add, self.act_reload, None, self.act_connect, self.act_home,
                   self.act_unlock, None, self.act_fit, self.act_settings):
             tb.addSeparator() if a is None else tb.addAction(a)
         self.addToolBar(tb)
@@ -180,13 +195,71 @@ class MainWindow(QMainWindow):
         v.addWidget(self.design_label)
         row = QHBoxLayout()
         b = QPushButton(_("Open\u2026"))
+        b.setToolTip(_("Open a file, replacing everything on the bed"))
         b.clicked.connect(self.open_design)
         row.addWidget(b)
+        self.btn_add = QPushButton(_("Add\u2026"))
+        self.btn_add.setToolTip(_("Add another file to the laser bed"))
+        self.btn_add.clicked.connect(self.add_design)
+        row.addWidget(self.btn_add)
         b = QPushButton(_("Reload"))
         b.clicked.connect(self.reload_design)
         row.addWidget(b)
         v.addLayout(row)
+        self.btn_place_head = QPushButton(_("Place design at the head"))
+        self.btn_place_head.setToolTip(_("Move all elements so the design starts at the laser head"))
+        self.btn_place_head.clicked.connect(self.place_at_head)
+        v.addWidget(self.btn_place_head)
         layout.addWidget(box)
+
+        # --- selected element
+        self.selection_box = QGroupBox(_("Selected element"))
+        g = QGridLayout(self.selection_box)
+        self.sel_name = QLabel()
+        self.sel_name.setWordWrap(True)
+        g.addWidget(self.sel_name, 0, 0, 1, 4)
+        self.sel_fields = {}
+        for i, (key, label) in enumerate((("x", N_("X")), ("y", N_("Y")), ("w", N_("W")), ("h", N_("H")))):
+            spin = QDoubleSpinBox()
+            spin.setRange(-10000.0 if key in "xy" else 0.01, 10000.0)
+            spin.setDecimals(2)
+            spin.setFixedWidth(104)
+            spin.setKeyboardTracking(False)          # apply on Enter / focus out, not per digit
+            spin.valueChanged.connect(lambda _v, k=key: self._selection_field_changed(k))
+            g.addWidget(QLabel(_(label)), 1 + i // 2, (i % 2) * 2)
+            g.addWidget(spin, 1 + i // 2, (i % 2) * 2 + 1)
+            self.sel_fields[key] = spin
+        self.sel_fields["y"].setToolTip(_("Distance down from home"))
+        g.setColumnStretch(4, 1)          # keep label/field pairs together on the left
+        g.setHorizontalSpacing(8)
+        self.sel_lock = QCheckBox(_("Keep proportions"))
+        self.sel_lock.setChecked(True)
+        g.addWidget(self.sel_lock, 3, 0, 1, 4)
+        row = QHBoxLayout()
+        row.addWidget(QLabel(_("Rotation")))
+        self.sel_rotation = QDoubleSpinBox()
+        self.sel_rotation.setRange(-360.0, 360.0)
+        self.sel_rotation.setDecimals(1)
+        self.sel_rotation.setSuffix("\u00b0")
+        self.sel_rotation.setFixedWidth(84)
+        self.sel_rotation.setKeyboardTracking(False)
+        self.sel_rotation.setToolTip(_("Counter-clockwise. You can also drag the round handle above "
+                                       "the element (hold Shift for 15\u00b0 steps)."))
+        self.sel_rotation.valueChanged.connect(lambda _v: self._selection_field_changed("rotation"))
+        row.addWidget(self.sel_rotation)
+        for text, angle, tip in (("\u27f2", 90, N_("Rotate 90\u00b0 counter-clockwise")),
+                                 ("\u27f3", -90, N_("Rotate 90\u00b0 clockwise"))):
+            b = QPushButton(text)
+            b.setFixedWidth(36)
+            b.setToolTip(_(tip))
+            b.clicked.connect(lambda _c=False, a=angle: self.rotate_selected(a))
+            row.addWidget(b)
+        row.addStretch(1)
+        b = QPushButton(_("Delete"))
+        b.clicked.connect(self.delete_selected)
+        row.addWidget(b)
+        g.addLayout(row, 4, 0, 1, 4)
+        layout.addWidget(self.selection_box)
 
         # --- laser
         box = QGroupBox(_("Laser"))
@@ -209,10 +282,10 @@ class MainWindow(QMainWindow):
         # to that point of the design (the design stays where it is)
         grid = QGridLayout()
         grid.setSpacing(4)
-        arrows = {(0, 1): ("up", 0, 1, "Ctrl+Up", N_("Move the head and design up by one step")),
-                  (-1, 0): ("left", 1, 0, "Ctrl+Left", N_("Move the head and design left by one step")),
-                  (1, 0): ("right", 1, 2, "Ctrl+Right", N_("Move the head and design right by one step")),
-                  (0, -1): ("down", 2, 1, "Ctrl+Down", N_("Move the head and design down by one step"))}
+        arrows = {(0, 1): ("up", 0, 1, "Ctrl+Up", N_("Move the laser head up by one step")),
+                  (-1, 0): ("left", 1, 0, "Ctrl+Left", N_("Move the laser head left by one step")),
+                  (1, 0): ("right", 1, 2, "Ctrl+Right", N_("Move the laser head right by one step")),
+                  (0, -1): ("down", 2, 1, "Ctrl+Down", N_("Move the laser head down by one step"))}
         for d, (name, r, c, sc, tip) in arrows.items():
             b = QPushButton()
             b.setIcon(icons.arrow_icon(name))
@@ -395,6 +468,8 @@ class MainWindow(QMainWindow):
         dock.setFeatures(QDockWidget.NoDockWidgetFeatures)
         dock.setWidget(scroll)
         self.addDockWidget(Qt.LeftDockWidgetArea, dock)
+        for key in ("x", "y", "w", "h"):
+            self._unit_widgets.append((self.sel_fields[key], "len", None, 1.0))
         self._update_unit_suffixes()
 
     def _build_status(self):
@@ -406,6 +481,147 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage(_("Ready"))
 
     # ------------------------------------------------------------ state
+    # ------------------------------------------------------------ elements
+    @property
+    def design(self):
+        """The elements compiled into one design (cached until they change)."""
+        if self._compiled is None:
+            design, origin = compile_layout(self.elements)
+            self._compiled = (design or Design(), origin or (0.0, 0.0))
+        return self._compiled[0]
+
+    @property
+    def origin(self):
+        """Bed position where the job starts (top-left of all elements)."""
+        self.design
+        return self._compiled[1]
+
+    def _layout_changed(self):
+        self._compiled = None
+        self._update_design_label()
+        self._update_power_visibility()
+        self.refresh_preview()
+
+    def _units_per_inch(self):
+        return 25.4 if self.values.get("units", "mm") == "mm" else 1.0
+
+    def _layout_fits_bed(self):
+        if not self.elements:
+            return True
+        bed_w, bed_h = config.bed_size_inches(self.values)
+        xmin = min(e.bounds[0] for e in self.elements)
+        xmax = max(e.bounds[1] for e in self.elements)
+        ymin = min(e.bounds[2] for e in self.elements)
+        ymax = max(e.bounds[3] for e in self.elements)
+        tol = 0.002
+        return xmin >= -tol and xmax <= bed_w + tol and ymax <= tol and ymin >= -bed_h - tol
+
+    def _keep_on_bed(self, element):
+        """Nudge an element back onto the bed if it fits there."""
+        bed_w, bed_h = config.bed_size_inches(self.values)
+        w, h = element.size
+        if w <= bed_w:
+            element.x = min(max(element.x, 0.0), bed_w - w)
+        if h <= bed_h:
+            element.y = max(min(element.y, 0.0), -bed_h + h)
+
+    def _preview_selected(self, element):
+        self.selected = element
+        self._update_selection_panel()
+
+    def _preview_moved(self, element, dx, dy):
+        element.x += dx
+        element.y += dy
+        self._keep_on_bed(element)
+        self._layout_changed()
+
+    def _preview_scaled(self, element, factor):
+        cx, cy = element.centre
+        element.scale_x *= factor
+        element.scale_y *= factor
+        element.set_centre(cx, cy)
+        self._keep_on_bed(element)
+        self._layout_changed()
+
+    def _preview_rotated(self, element, degrees):
+        self._rotate(element, degrees)
+
+    def _rotate(self, element, degrees):
+        cx, cy = element.centre
+        element.rotation = (element.rotation + degrees) % 360
+        if abs(element.rotation - round(element.rotation)) < 1e-6:
+            element.rotation = float(round(element.rotation)) % 360
+        element.set_centre(cx, cy)
+        self._keep_on_bed(element)
+        self._layout_changed()
+
+    def rotate_selected(self, degrees):
+        if self.selected is not None and self.worker is None:
+            self._rotate(self.selected, degrees)
+
+    def delete_selected(self):
+        if self.selected is None or self.worker is not None:
+            return
+        self.elements.remove(self.selected)
+        self.selected = None
+        self._layout_changed()
+
+    def place_at_head(self):
+        """Move all elements together so the design's top-left is at the laser head."""
+        if not self.elements or self.worker is not None:
+            return
+        ox, oy = self.origin
+        for e in self.elements:
+            e.x += self.head[0] - ox
+            e.y += self.head[1] - oy
+        self._layout_changed()
+
+    def _update_selection_panel(self):
+        e = self.selected
+        self.selection_box.setEnabled(e is not None)
+        k = self._units_per_inch()
+        values = {"x": 0.0, "y": 0.0, "w": 0.0, "h": 0.0}
+        rotation = 0.0
+        if e is not None:
+            w, h = e.size
+            values = {"x": e.x * k, "y": -e.y * k, "w": w * k, "h": h * k}
+            rotation = e.rotation if e.rotation <= 180 else e.rotation - 360
+            self.sel_name.setText("<b>%s</b>" % e.name)
+        else:
+            self.sel_name.setText(_("Click an element on the bed to select it."))
+        for key, spin in self.sel_fields.items():
+            spin.blockSignals(True)
+            spin.setValue(values[key])
+            spin.blockSignals(False)
+        self.sel_rotation.blockSignals(True)
+        self.sel_rotation.setValue(rotation)
+        self.sel_rotation.blockSignals(False)
+
+    def _selection_field_changed(self, key):
+        e = self.selected
+        if e is None:
+            return
+        k = self._units_per_inch()
+        if key == "x":
+            e.x = self.sel_fields["x"].value() / k
+        elif key == "y":
+            e.y = -self.sel_fields["y"].value() / k
+        elif key in ("w", "h"):
+            w, h = e.size
+            new_w = self.sel_fields["w"].value() / k
+            new_h = self.sel_fields["h"].value() / k
+            if self.sel_lock.isChecked() and w > 0 and h > 0:
+                factor = new_w / w if key == "w" else new_h / h
+                new_w, new_h = w * factor, h * factor
+            x, y = e.x, e.y                      # keep the top-left corner
+            e.set_size(new_w, new_h)
+            e.x, e.y = x, y
+            self._keep_on_bed(e)
+        elif key == "rotation":
+            self._rotate(e, self.sel_rotation.value() - (e.rotation if e.rotation <= 180 else e.rotation - 360))
+            return
+        self._layout_changed()
+
     def _set_value(self, key, val):
         self.values[key] = val
         if key.endswith("_feed") or key.endswith("_passes") or key == "Gcde_passes":
@@ -452,11 +668,14 @@ class MainWindow(QMainWindow):
                     timeout_ms=float(v["t_timeout"]), n_timeouts=float(v["n_timeouts"]))
 
     def _design_has(self):
-        d = self.design
-        return {job.RASTER_ENG: d.raster.image is not None,
-                job.VECTOR_ENG: bool(d.vector_engrave.ecoords),
-                job.VECTOR_CUT: bool(d.vector_cut.ecoords),
-                job.GCODE_CUT: bool(d.gcode.ecoords)}
+        has = {job.RASTER_ENG: False, job.VECTOR_ENG: False, job.VECTOR_CUT: False, job.GCODE_CUT: False}
+        for e in self.elements:
+            d = e.design
+            has[job.RASTER_ENG] |= d.raster.image is not None
+            has[job.VECTOR_ENG] |= bool(d.vector_engrave.ecoords)
+            has[job.VECTOR_CUT] |= bool(d.vector_cut.ecoords)
+            has[job.GCODE_CUT] |= bool(d.gcode.ecoords)
+        return has
 
     def _update_power_visibility(self):
         """Show the rows that apply to the loaded design: the G-code row only
@@ -525,6 +744,8 @@ class MainWindow(QMainWindow):
     def _reload_spin_values(self):
         """Re-read unit-dependent fields after the units changed."""
         for w, kind, key, sign in self._unit_widgets:
+            if key is None:
+                continue
             w.blockSignals(True)
             try:
                 w.setValue(max(w.minimum(), sign * float(self.values[key])))
@@ -540,19 +761,20 @@ class MainWindow(QMainWindow):
         else:
             self.laser_label.setText(_("<b style='color:#c62828'>Not connected</b>"))
             self.btn_connect.setText(_("Initialize"))
-        x = self.head[0] + self.head_offset[0] / 1000.0
-        y = self.head[1] + self.head_offset[1] / 1000.0
+        x, y = self.head
         scale = 25.4 if self.values.get("units") == "mm" else 1.0
         self.head_label.setText(_("Head: X %s  Y %s %s") % (_num(x * scale), _num(-y * scale),
                                                             self.values.get("units")))
 
     def set_busy(self, busy):
         for w in [self.btn_start, self.btn_trace, self.btn_egv, self.btn_connect, self.btn_goto,
-                  self.btn_test_fire, self.btn_calc_time] + self.corner_buttons:
+                  self.btn_test_fire, self.btn_calc_time, self.btn_add, self.btn_place_head,
+                  self.selection_box] + self.corner_buttons:
             w.setEnabled(not busy)
         for a in [self.act_open, self.act_reload, self.act_save_egv, self.act_send_egv,
                   self.act_connect, self.act_release, self.act_home, self.act_unlock,
-                  self.act_settings, self.act_goto, self.act_calc_time] + list(self.act_corners.values()):
+                  self.act_settings, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
+                  self.act_rot_left, self.act_rot_right, self.act_place_head] + list(self.act_corners.values()):
             a.setEnabled(not busy)
         self.btn_stop.setEnabled(busy)
         self.progress.setVisible(busy)
@@ -567,24 +789,36 @@ class MainWindow(QMainWindow):
         except ValueError as e:
             self.status(str(e), error=True)
             return
-        self.preview.show_design(self.design, settings, self.values, self.head, fit=fit,
-                                 head_offset=(self.head_offset[0] / 1000.0,
-                                              self.head_offset[1] / 1000.0))
+        if self.selected not in self.elements:
+            self.selected = None
+        self.preview.show_layout(self.elements, self.selected, settings, self.values, self.head, fit=fit)
         self._update_laser_state()
+        self._update_selection_panel()
         self._update_times()
 
     # ------------------------------------------------------------ design files
-    def open_design(self):
+    def open_design(self, add=False):
         start = os.path.dirname(self.design_file or self.values.get("designfile", "")) or os.path.expanduser("~")
-        name, _unused = QFileDialog.getOpenFileName(self, _("Open design"), start, design_filters())
+        title = _("Add design") if add else _("Open design")
+        name, _unused = QFileDialog.getOpenFileName(self, title, start, design_filters())
         if name:
-            self.load_design(name)
+            self.load_design(name, add=add)
+
+    def add_design(self):
+        self.open_design(add=True)
 
     def reload_design(self):
-        if self.design_file:
-            self.load_design(self.design_file)
-        else:
+        """Reload every element's file, keeping its placement."""
+        if not self.elements:
             self.open_design()
+            return
+        for e in list(self.elements):
+            design = self._load_file(e.source_file, e.load_options)
+            if design is None:
+                return
+            e.design = design
+        self._layout_changed()
+        self.status(_("Reloaded"))
 
     def _ask_dxf_units(self):
         unit, ok = QInputDialog.getItem(self, _("DXF units"),
@@ -611,21 +845,16 @@ class MainWindow(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, _("Could not open design"), tr_message(str(e)))
             return None
-        if filename == self._image_file and self._image_dpi:
-            file_dpi = self._image_dpi          # reloading: keep the size chosen before
         dlg = ImageSizeDialog(width, height, file_dpi, self.values.get("units", "mm"), self)
         if not dlg.exec():
             return None
         return dlg.result_dpi()
 
-    def load_design(self, filename):
+    def _load_file(self, filename, options):
+        """Load a file into a new Design. options may hold {"dpi": ...} for images.
+        Returns the design, or None if loading failed or was cancelled."""
         ext = os.path.splitext(filename)[1].lower()
-        image_dpi = None
-        if ext in loaders.IMAGE_EXTENSIONS:
-            image_dpi = self._ask_image_dpi(filename)
-            if image_dpi is None:
-                self.status(_("Loading cancelled"))
-                return
+        design = Design()
         QApplication.setOverrideCursor(Qt.WaitCursor)
         self.status(_("Opening %s") % filename)
         QApplication.processEvents()
@@ -633,59 +862,87 @@ class MainWindow(QMainWindow):
         def progress(msg):
             self.status(msg)
             QApplication.processEvents()
+        reduced = is_true(self.values.get("reduced_mem", "0"))
         try:
             if ext == ".svg":
                 warnings = loaders.load_svg(
-                    filename, self.design,
+                    filename, design,
                     inkscape_path=self.values.get("inkscape_path", ""),
                     inkscape_timeout_s=float(self.values.get("ink_timeout", 3)) * 60.0,
-                    reduced_memory=is_true(self.values.get("reduced_mem", "0")),
-                    ask_pxpi=self._ask_svg_scale, progress=progress)
+                    reduced_memory=reduced, ask_pxpi=self._ask_svg_scale, progress=progress)
             elif ext == ".dxf":
-                warnings = loaders.load_dxf(filename, self.design, ask_units=self._ask_dxf_units)
-            elif image_dpi is not None:
-                warnings = loaders.load_image(filename, self.design, image_dpi,
-                                              reduced_memory=is_true(self.values.get("reduced_mem", "0")))
-                self._image_file, self._image_dpi = filename, image_dpi
+                warnings = loaders.load_dxf(filename, design, ask_units=self._ask_dxf_units)
+            elif ext in loaders.IMAGE_EXTENSIONS:
+                warnings = loaders.load_image(filename, design, options["dpi"], reduced_memory=reduced)
             else:
-                warnings = loaders.load_gcode(filename, self.design)
+                warnings = loaders.load_gcode(filename, design)
         except loaders.LoadCancelled:
             QApplication.restoreOverrideCursor()
             self.status(_("Loading cancelled"))
-            self.refresh_preview()
-            return
+            return None
         except Exception as e:
             QApplication.restoreOverrideCursor()
             self.status(_("Could not open %s") % os.path.basename(filename), error=True)
             QMessageBox.critical(self, _("Could not open design"), tr_message(str(e)))
-            self.refresh_preview()
-            return
+            return None
         QApplication.restoreOverrideCursor()
-        self.design_file = filename
-        self.values["designfile"] = filename
-        self._update_design_label()
-        self._update_power_visibility()
-        self.refresh_preview(fit=True)
-        self.status(_("Opened %s") % filename)
         for w in warnings:
             QMessageBox.warning(self, _("Design import"), tr_message(w))
+        return design
+
+    def load_design(self, filename, add=False):
+        """Open a file as a new element at the laser head; replaces all elements unless add."""
+        options = {}
+        if os.path.splitext(filename)[1].lower() in loaders.IMAGE_EXTENSIONS:
+            dpi = self._ask_image_dpi(filename)
+            if dpi is None:
+                self.status(_("Loading cancelled"))
+                return
+            options["dpi"] = dpi
+        design = self._load_file(filename, options)
+        if design is None:
+            return
+        is_gcode = bool(design.gcode.ecoords)
+        if not add or is_gcode or any(e.design.gcode.ecoords for e in self.elements):
+            self.elements = []         # G-code files are not combined with other designs
+        element = Element(design, name=os.path.basename(filename), source_file=filename,
+                          load_options=options)
+        element.x, element.y = self.head
+        self._keep_on_bed(element)
+        self.elements.append(element)
+        self.selected = element
+        self.design_file = filename
+        self.values["designfile"] = filename
+        self._compiled = None
+        self._update_design_label()
+        self._update_power_visibility()
+        self.refresh_preview(fit=not add)
+        self.status(_("Opened %s") % filename)
+        if not self._layout_fits_bed():
+            self.status(_("The design does not fit on the laser bed at this position."), error=True)
 
     def _update_design_label(self):
-        d = self.design
-        xmin, xmax, ymin, ymax = d.bounds
+        if not self.elements:
+            self.design_label.setText(_("No design loaded"))
+            return
         parts = []
-        if d.raster.image is not None:
-            parts.append(_("raster"))
-        if d.vector_engrave.ecoords:
-            parts.append(_("vector engrave"))
-        if d.vector_cut.ecoords:
-            parts.append(_("vector cut"))
-        if d.gcode.ecoords:
-            parts.append(_("g-code"))
-        self.design_label.setText("<b>%s</b><br>%s<br>%s" % (
-            os.path.basename(self.design_file),
-            _("%s \u00d7 %s mm") % (_num((xmax - xmin) * 25.4), _num((ymax - ymin) * 25.4)),
-            ", ".join(parts) or _("empty")))
+        has = self._design_has()
+        for op, text in ((job.RASTER_ENG, _("raster")), (job.VECTOR_ENG, _("vector engrave")),
+                         (job.VECTOR_CUT, _("vector cut")), (job.GCODE_CUT, _("g-code"))):
+            if has[op]:
+                parts.append(text)
+        xmin = min(e.bounds[0] for e in self.elements)
+        xmax = max(e.bounds[1] for e in self.elements)
+        ymin = min(e.bounds[2] for e in self.elements)
+        ymax = max(e.bounds[3] for e in self.elements)
+        title = self.elements[0].name if len(self.elements) == 1 else \
+            ngettext("%d element", "%d elements", len(self.elements)) % len(self.elements)
+        text = "<b>%s</b><br>%s<br>%s" % (
+            title, _("%s \u00d7 %s mm") % (_num((xmax - xmin) * 25.4), _num((ymax - ymin) * 25.4)),
+            ", ".join(parts) or _("empty"))
+        if not self._layout_fits_bed():
+            text += "<br><b style='color:#c62828'>%s</b>" % _("Outside the laser bed!")
+        self.design_label.setText(text)
 
     # ------------------------------------------------------------ settings
     def edit_settings(self):
@@ -708,9 +965,11 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, _("Language"),
                                     _("The new language will be used after restarting Kerfly."))
         if changed & RASTER_KEYS:
-            self.design.raster.reset_path()
-        if changed & RELOAD_KEYS and self.design_file:
-            self.load_design(self.design_file)
+            for e in self.elements:
+                e.design.raster.reset_path()
+            self._compiled = None
+        if changed & RELOAD_KEYS and self.elements:
+            self.reload_design()
         self.refresh_preview()
         self.status(_("Settings changed (use File → Save settings as default to keep them)"))
 
@@ -741,7 +1000,6 @@ class MainWindow(QMainWindow):
         try:
             self.laser.connect(init_home=is_true(self.values.get("init_home", "1")))
             self.head = (0.0, 0.0)
-            self.head_offset = (0, 0)
             self.status(_("Laser initialized"))
         except LaserError as e:
             self.status(str(e), error=True)
@@ -763,7 +1021,6 @@ class MainWindow(QMainWindow):
         if self.laser.connected and not self._laser_call(self.laser.home, _("Homed")):
             return
         self.head = (0.0, 0.0)
-        self.head_offset = (0, 0)
         self.refresh_preview()
 
     def unlock(self):
@@ -782,7 +1039,7 @@ class MainWindow(QMainWindow):
         self.move_by(dirx * step, diry * step)
 
     def move_by(self, dx_units, dy_units):
-        """Move the design origin and head by (dx, dy) in the current units (+y = up)."""
+        """Move the laser head by (dx, dy) in the current units (+y = up, +x = right on screen)."""
         if self.worker is not None:
             return
         try:
@@ -796,46 +1053,31 @@ class MainWindow(QMainWindow):
         dy = round(dy_units * f, 3)
         if settings.home_upper_right:
             dx = -dx
-        xmin, xmax, ymin, ymax = self.design.origin_bounds(settings)
-        x, y = clamp_head_position(self.head[0], self.head[1], dx, dy, bed_w, bed_h,
-                                   xmax - xmin, ymax - ymin,
-                                   offset=(self.head_offset[0] / 1000.0, self.head_offset[1] / 1000.0))
-        if self.laser.connected:
-            try:
-                self.laser.rapid_move((x - self.head[0]) * 1000.0, (y - self.head[1]) * 1000.0,
-                                      settings, self.send_options())
-            except Exception as e:
-                self.status(_("Rapid move failed: %s") % e, error=True)
-                return
-        self.head = (x, y)
-        self.refresh_preview()
+        x, y = clamp_head_position(self.head[0], self.head[1], dx, dy, bed_w, bed_h)
+        self.move_head_to(x, y)
 
-    def move_head_temporary(self, offset_mils):
-        """Move the head to origin + offset (mils) without moving the design origin."""
+    def move_head_to(self, x, y):
+        """Move the laser head to a bed position (inches, y <= 0). Returns True on success."""
         try:
             settings = self.job_settings()
-            bed_w, bed_h = config.bed_size_inches(self.values)
         except ValueError as e:
             self.status(str(e), error=True)
             return False
-        if settings.input_csys and self.design.raster.image is None:
-            target = (0, 0)
-        else:
-            target = temporary_offset_target(self.head, offset_mils, bed_w, bed_h)
-        dx = target[0] - self.head_offset[0]
-        dy = target[1] - self.head_offset[1]
+        dx = round((x - self.head[0]) * 1000.0)
+        dy = round((y - self.head[1]) * 1000.0)
         if self.laser.connected and (dx or dy):
             try:
                 self.laser.rapid_move(dx, dy, settings, self.send_options())
             except Exception as e:
                 self.status(_("Rapid move failed: %s") % e, error=True)
                 return False
-        self.head_offset = target
+        self.head = (self.head[0] + dx / 1000.0, self.head[1] + dy / 1000.0)
         self.refresh_preview()
         return True
 
     def move_to_corner(self, corner):
-        if self.worker is not None:
+        """Move the head to a corner or the centre of the design (the design stays)."""
+        if self.worker is not None or not self.elements:
             return
         try:
             settings = self.job_settings()
@@ -844,11 +1086,13 @@ class MainWindow(QMainWindow):
             self.status(str(e), error=True)
             return
         bounds = self.design.get_bounds(settings.rotate)
-        offset = corner_offset(corner, bounds, settings.home_upper_right, self.head, bed_w, bed_h)
+        ox, oy = self.origin
+        offset = corner_offset(corner, bounds, settings.home_upper_right, (ox, oy), bed_w, bed_h)
         if offset is None:
             self.status(_("That corner of the design is outside the laser bed."), error=True)
             return
-        self.move_head_temporary(offset)
+        x, y = clamp_head_position(ox, oy, offset[0] / 1000.0, offset[1] / 1000.0, bed_w, bed_h)
+        self.move_head_to(x, y)
 
     def goto_position(self):
         """Home, then move to the X/Y set in the panel (distance from home, Y downwards)."""
@@ -858,7 +1102,6 @@ class MainWindow(QMainWindow):
         if self.laser.connected and not self._laser_call(self.laser.home, _("Homed")):
             return
         self.head = (0.0, 0.0)
-        self.head_offset = (0, 0)
         self.move_by(x, -y)
 
     def test_fire(self):
@@ -913,14 +1156,11 @@ class MainWindow(QMainWindow):
             passes, ok = QInputDialog.getInt(self, _("Send EGV file"), _("Number of passes:"), 1, 1, 100)
             if not ok:
                 return
-        if self.head_offset != (0, 0) and not self.move_head_temporary((0, 0)):
-            return
         # the loaded design is not what is being cut: clear it, as K40 Whisperer does
-        self.design.reset()
+        self.elements = []
+        self.selected = None
         self.design_file = name
-        self._update_design_label()
-        self._update_power_visibility()
-        self.refresh_preview()
+        self._layout_changed()
         self._run_worker(EgvSendWorker(egv, passes, self.laser, settings, send_options, parent=self),
                          _("Sending %s…") % os.path.basename(name))
 
@@ -948,9 +1188,12 @@ class MainWindow(QMainWindow):
         except ValueError as e:
             self.status(str(e), error=True)
             return
-        if output_file is None and self.head_offset != (0, 0):
-            # the job starts at the design origin: bring the head back first
-            if not self.move_head_temporary((0, 0)):
+        if not self._layout_fits_bed():
+            self.status(_("The design does not fit on the laser bed at this position."), error=True)
+            return
+        if output_file is None and self.head != self.origin:
+            # the job starts where the head is: first move it to the design
+            if not self.move_head_to(*self.origin):
                 return
         self._run_worker(JobWorker(self.design, settings, op,
                                    laser=None if output_file else self.laser,
