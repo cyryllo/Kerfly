@@ -21,6 +21,7 @@ QPushButton#start { background:#2e7d32; color:white; font-weight:bold; border-ra
 QPushButton#start:disabled { background:#9e9e9e; }
 QPushButton#stop { background:#c62828; color:white; font-weight:bold; border-radius:4px; }
 QPushButton#stop:disabled { background:#bdbdbd; }
+QPushButton#jog { font-size:22px; font-weight:bold; }
 QGroupBox { font-weight:bold; }
 QGroupBox QLabel, QGroupBox QCheckBox { font-weight:normal; }
 """
