@@ -55,6 +55,23 @@ through a fake USB device. SVG-based baselines depend on the Inkscape version
 
 ## License
 
-GNU General Public License v3.0 or later. See [LICENSE](LICENSE).
+Kerfly is free software, distributed under the **GNU General Public License,
+version 3 or later** (GPL-3.0-or-later). See [LICENSE](LICENSE).
 
-Copyright (C) 2017–2026 Scorch (original K40 Whisperer) and Kerfly contributors.
+- Copyright (C) 2017–2026 Scorch: the original K40 Whisperer.
+- Copyright (C) 2026 Kerfly contributors: changes made in this fork.
+
+Some files come from other projects (Inkscape extensions, a MIT-licensed speed
+code library, small snippets from public websites) and keep their own notices.
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) lists each file, its author
+and its license.
+
+## Credits and disclaimer
+
+All credit for the laser control core goes to **Scorch**, the author of
+K40 Whisperer. Kerfly is an independent fork. It is not affiliated with or
+endorsed by Scorch or scorchworks.com. Please report Kerfly bugs here, not to
+the K40 Whisperer author.
+
+This program controls a laser. It is provided WITHOUT ANY WARRANTY (see
+sections 15–16 of the GPL). Never leave a running laser unattended.
