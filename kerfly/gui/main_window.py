@@ -1018,6 +1018,8 @@ class MainWindow(QMainWindow):
         self.element_list.setToolTip(_("Untick an element to leave it out of the job"))
         self.element_list.itemChanged.connect(self._element_item_changed)
         self.element_list.setSelectionMode(QAbstractItemView.ExtendedSelection)   # Ctrl / Shift: several
+        self.element_list.setIconSize(QSize(3 * self.element_list.fontMetrics().height(),
+                                             self.element_list.fontMetrics().height()))
         self.element_list.itemSelectionChanged.connect(self._list_selection_changed)
         v.addWidget(self.element_list, 1)
         design_layout.addWidget(box, 1)
@@ -1434,13 +1436,32 @@ class MainWindow(QMainWindow):
             if e.group and e.group not in numbers:
                 numbers[e.group] = len(numbers) + 1
         for e in self.elements:
-            item = QListWidgetItem(_("Group %d: %s") % (numbers[e.group], e.name) if e.group else e.name)
+            name = _("Group %d: %s") % (numbers[e.group], e.name) if e.group else e.name
+            kinds = [k for k in (RASTER, ENGRAVE, CUT, GCODE) if e.design is not None and part_present(e.design, k)]
+            layers = [layer_of(e, k, self.layers) for k in kinds]
+            layers = [l for l in layers if l is not None]
+            item = QListWidgetItem(self._layer_swatch([l.color for l in layers]),
+                                   "%s  \u00b7  %s" % (name, ", ".join(l.name for l in layers)) if layers else name)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if e.visible else Qt.Unchecked)
             lst.addItem(item)
         lst.blockSignals(False)
         self._sync_list_selection()
         lst.setVisible(len(self.elements) > 1)
+
+    def _layer_swatch(self, colors):
+        """Icon with a small square in each layer colour (like LightBurn's list)."""
+        from PySide6.QtGui import QIcon, QPainter, QPixmap
+        size = self.element_list.fontMetrics().height()
+        pm = QPixmap(max(1, len(colors)) * (size + 2), size)
+        pm.fill(Qt.transparent)
+        p = QPainter(pm)
+        for n, c in enumerate(colors):
+            p.fillRect(n * (size + 2) + 1, 1, size - 2, size - 2, QColor(c))
+            p.setPen(QColor("#555555"))
+            p.drawRect(n * (size + 2) + 1, 1, size - 3, size - 3)
+        p.end()
+        return QIcon(pm)
 
     def _sync_list_selection(self):
         """Highlight the rows of the elements selected on the bed."""

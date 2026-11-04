@@ -152,16 +152,7 @@ class ToolOptionsBar(QWidget):
         self.spec = spec.copy()
         self._clear()
 
-        op = QComboBox()
-        for key, name in OPERATION_NAMES:
-            if key in ("fill", "hatch") and not self.spec.closed:
-                continue
-            op.addItem(_(name), key)
-        op.setCurrentIndex(max(0, op.findData(self.spec.operation)))
-        op.setToolTip(_("Operation"))
-        op.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        op.currentIndexChanged.connect(lambda _i: self._set("operation", op.currentData()))
-        self._add(op, title)
+        # what the laser does with the shape is chosen with its layer (bar above, Layer)
 
         if self.spec.operation == "cut" and self.spec.closed:
             tb = QWidget()
@@ -181,27 +172,35 @@ class ToolOptionsBar(QWidget):
             tg.addWidget(width, 1, 0)
             self._add(tb, _("Bridges"))
 
-        if self.spec.operation == "hatch" and self.spec.closed:
+        if self.spec.operation in ("engrave", "hatch") and self.spec.closed:
             hb = QWidget()
             hg = QGridLayout(hb)
             hg.setContentsMargins(0, 0, 0, 0)
             hg.setHorizontalSpacing(4)
             hg.setVerticalSpacing(4)
-            spacing = self._dspin("hatch_spacing", 0.05, 20.0, " mm", decimals=2)
-            spacing.setSingleStep(0.1)
-            spacing.setToolTip(_("Distance between the lines"))
-            angle = self._dspin("hatch_angle", -180.0, 180.0, "\u00b0")
-            angle.setSingleStep(15.0)
-            angle.setToolTip(_("Direction of the lines"))
-            cross = QToolButton()
-            cross.setText("#")
-            cross.setCheckable(True)
-            cross.setChecked(self.spec.hatch_cross)
-            cross.setToolTip(_("Cross-hatch: a second set of lines at 90\u00b0"))
-            cross.toggled.connect(lambda on: self._set("hatch_cross", on))
-            hg.addWidget(spacing, 0, 0)
-            hg.addWidget(angle, 1, 0)
-            hg.addWidget(cross, 0, 1, 2, 1)
+            on = QToolButton()
+            on.setText(_("Fill with lines"))
+            on.setCheckable(True)
+            on.setChecked(self.spec.operation == "hatch")
+            on.setToolTip(_("Hatch: fill the shape with engraved lines instead of only its outline"))
+            on.toggled.connect(lambda v: self._set("operation", "hatch" if v else "engrave"))
+            hg.addWidget(on, 0, 0, 1, 2)
+            if self.spec.operation == "hatch":
+                spacing = self._dspin("hatch_spacing", 0.05, 20.0, " mm", decimals=2)
+                spacing.setSingleStep(0.1)
+                spacing.setToolTip(_("Distance between the lines"))
+                angle = self._dspin("hatch_angle", -180.0, 180.0, "\u00b0")
+                angle.setSingleStep(15.0)
+                angle.setToolTip(_("Direction of the lines"))
+                cross = QToolButton()
+                cross.setText("#")
+                cross.setCheckable(True)
+                cross.setChecked(self.spec.hatch_cross)
+                cross.setToolTip(_("Cross-hatch: a second set of lines at 90\u00b0"))
+                cross.toggled.connect(lambda v: self._set("hatch_cross", v))
+                hg.addWidget(cross, 0, 2)
+                hg.addWidget(spacing, 1, 0)
+                hg.addWidget(angle, 1, 1, 1, 2)
             self._add(hb, _("Hatch"))
 
         kind = self.spec.kind

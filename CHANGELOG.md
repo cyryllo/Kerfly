@@ -20,6 +20,11 @@ Version numbers:
 
 ### New
 
+- **The layer decides what the laser does.** The separate operation list in
+  the shape options is gone: select an element and choose its layer. On an
+  outline layer a closed shape can be **filled with lines** (hatch).
+- **Element list as in LightBurn**: each element shows the colour squares and
+  names of its layers ("Rectangle · Cut").
 - **Any layer for a drawn shape.** The Layer list above the bed view shows
   every layer of the left panel (cut, outline engrave, raster engrave and the
   ones you added). A layer of another kind changes the shape's operation:
@@ -66,11 +71,11 @@ Version numbers:
 - **Freehand** drawing tool (F). Draw with the mouse button held; end near
   the start to close the shape. The line is simplified and smoothed into
   curves that can be edited with Edit nodes.
-- **Hatch** operation for closed shapes: the area is filled with parallel
+- **Hatch** for closed shapes on an outline layer ("Fill with lines"): the area is filled with parallel
   engraved lines instead of a raster image. You set the spacing, the angle,
   and optionally a cross-hatch. Holes (for example in letters) stay empty, and
   the lines go to the outline engrave layer.
-- **Bridges** for cut shapes (options bar): a number of short uncut gaps per
+- **Bridges** for shapes on a cut layer (options bar): a number of short uncut gaps per
   closed outline, with their width, so the part stays in the sheet.
 - **Measure** tool (M). A plain click does not erase the last measurement. Drag between two points to see the distance, width,
   height and angle, on the bed and in the status bar. Points snap to corners,
