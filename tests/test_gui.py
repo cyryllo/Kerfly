@@ -745,6 +745,34 @@ def main():
           "(%s)" % [grouped, whole, moved, turned, dup, saved, ungrouped, regrouped])
     w.close()
 
+    # 26. break apart an opened file: one polyline per path, same place, grouped; image part stays; undo
+    w = make_window(grid_mm="0")
+    w.load_design(os.path.join(FIX, "shapes.dxf"))
+    src = w.elements[0]
+    src.rotation = 30.0
+    w._layout_changed()
+    before = w.preview._items[0].snap_shape()
+    pts_before = sorted((round(x, 3), round(y, 3)) for x, y, k in before.points if k == "corner")[:6]
+    from kerfly.core.layout import compile_layout as _cl
+    def bed_points(elements):
+        d, o = _cl(elements)
+        return sorted({(round(r[0] + o[0], 4), round(r[1] + o[1], 4)) for r in d.vector_cut.ecoords + d.vector_engrave.ecoords})
+    ref_pts = bed_points([src, w.elements[0].copy()])          # two elements: coordinates on the bed
+    w.preview.select_element(src)
+    w.break_apart_selected()
+    parts = list(w.elements)
+    one_group = len(parts) > 1 and len({e.group for e in parts}) == 1 and all(e.shape.kind == "polyline" for e in parts)
+    corners = set()
+    for item in w.preview._items:
+        corners |= {(round(x, 3), round(y, 3)) for x, y, k in item.snap_shape().points if k == "corner"}
+    new_pts = bed_points(parts + [src.copy()])
+    same_place = len(ref_pts) == len(new_pts) and all(abs(a[0] - b[0]) < 2e-4 and abs(a[1] - b[1]) < 2e-4
+                                                     for a, b in zip(ref_pts, new_pts))
+    w.undo()
+    back = len(w.elements) == 1 and w.elements[0] is src
+    check("break apart: polylines in the same place, grouped, undo", one_group and same_place and back,
+          "(%d parts)" % len(parts))
+
     # 20. diagnostic log and report
     from kerfly.core import diag as _diag
     _diag.setup("test")

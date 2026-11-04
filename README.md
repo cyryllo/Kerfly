@@ -74,6 +74,7 @@ Changes between versions are listed in [CHANGELOG.md](CHANGELOG.md).
 | Square / circle, 45° lines | Hold Shift while drawing |
 | Polyline | Click the corners. Click the first point to close; double-click or Enter for an open line; Backspace removes the last corner; Esc cancels |
 | Edit nodes (N) | Drag a corner; double-click a side to add one; double-click a corner or Delete to remove it |
+| Edit an opened SVG / DXF | Break apart (Ctrl+Shift+B) first, then edit nodes |
 | Group / Ungroup | Ctrl+Shift+G / Ctrl+Alt+G. Clicking one member selects the whole group |
 | Pan and zoom | Middle or right mouse button drags the view; the wheel zooms |
 

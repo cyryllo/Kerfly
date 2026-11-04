@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:57+0100\n"
+"POT-Creation-Date: 2026-11-04 19:33+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -48,6 +48,9 @@ msgstr "Über &Kerfly"
 
 msgid "&Add design…"
 msgstr "Entwurf &hinzufügen…"
+
+msgid "&Break apart"
+msgstr "&Zerlegen"
 
 msgid "&Centre on the bed"
 msgstr "Auf der Arbeitsfläche &zentrieren"
@@ -237,6 +240,21 @@ msgstr "Geschwindigkeit beim Umrissabfahren"
 
 msgid "Boundary trace with laser on"
 msgstr "Umriss mit eingeschaltetem Laser abfahren"
+
+msgctxt "toolbar"
+msgid ""
+"Break\n"
+"apart"
+msgstr ""
+"Zer-\n"
+"legen"
+
+msgid "Break apart"
+msgstr "Zerlegen"
+
+#, python-format
+msgid "Broken apart into %d shapes (grouped; use Ungroup to separate them)."
+msgstr "In %d Formen zerlegt (gruppiert; mit Aufheben trennen)."
 
 msgid "Browse…"
 msgstr "Durchsuchen…"
@@ -824,11 +842,6 @@ msgstr "Nichts zu zeichnen."
 msgid "Number of passes:"
 msgstr "Anzahl der Durchgänge:"
 
-msgid "Only drawn shapes have editable nodes (not text or opened files)."
-msgstr ""
-"Nur gezeichnete Formen haben bearbeitbare Knoten (kein Text, keine "
-"geöffneten Dateien)."
-
 msgctxt "toolbar"
 msgid "Open"
 msgstr "Öffnen"
@@ -1110,6 +1123,9 @@ msgstr "Anordnung, Ebenen und Dateien in einer .kerfly-Datei speichern"
 msgid "Scan line step (in)"
 msgstr "Zeilenabstand (Zoll)"
 
+msgid "Select an opened file or a text with lines to break it apart."
+msgstr "Wählen Sie eine geöffnete Datei oder einen Text mit Linien zum Zerlegen."
+
 msgid "Select and move"
 msgstr "Auswählen und verschieben"
 
@@ -1333,6 +1349,17 @@ msgstr ""
 "Inkscape: Pfad → Objekt in Pfad umwandeln) oder installieren Sie "
 "Inkscape."
 
+msgid ""
+"This element has no editable nodes yet. For an opened SVG / DXF file or a"
+" text, use Break apart (Arrange group) first."
+msgstr ""
+"Dieses Element hat noch keine bearbeitbaren Knoten. Eine geöffnete SVG"
+"-/DXF-Datei oder einen Text zuerst zerlegen (Gruppe Anordnen)."
+
+#, python-format
+msgid "This makes %d separate shapes, which can make Kerfly slow. Continue?"
+msgstr "Das ergibt %d einzelne Formen und kann Kerfly verlangsamen. Fortfahren?"
+
 msgid "Time"
 msgstr "Zeit"
 
@@ -1352,6 +1379,13 @@ msgstr ""
 "Umriss abfahren: der Kopf fährt um den Umriss des Entwurfs (Laser aus, "
 "außer in den Einstellungen anders gewählt), um zu prüfen, wo geschnitten "
 "wird"
+
+msgid ""
+"Turn every line of an opened SVG / DXF file or a text into its own shape "
+"with editable nodes"
+msgstr ""
+"Jede Linie einer geöffneten SVG-/DXF-Datei oder eines Textes in eine "
+"eigene Form mit bearbeitbaren Knoten umwandeln"
 
 msgid "U&ngroup"
 msgstr "Gruppierung auf&heben"
@@ -1548,4 +1582,10 @@ msgstr "Vektorgravur"
 #~ "Beim Zeichnen und Verschieben an Ecken,"
 #~ " Mitten, Seitenmitten und Linien anderer"
 #~ " Elemente und des Betts fangen"
+
+#~ msgid "Only drawn shapes have editable nodes (not text or opened files)."
+#~ msgstr ""
+#~ "Nur gezeichnete Formen haben bearbeitbare "
+#~ "Knoten (kein Text, keine geöffneten "
+#~ "Dateien)."
 

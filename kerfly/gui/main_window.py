@@ -188,6 +188,9 @@ class MainWindow(QMainWindow):
                                         "as one"))
         self.act_ungroup = self._action(_("U&ngroup"), self.ungroup_selected, "Ctrl+Alt+G",
                                         _("Split the selected group into separate elements"))
+        self.act_break = self._action(_("&Break apart"), self.break_apart_selected, "Ctrl+Shift+B",
+                                      _("Turn every line of an opened SVG / DXF file or a text into its own "
+                                        "shape with editable nodes"))
         self.act_mirror_h = self._action(_("&Mirror horizontally"), lambda: self.mirror_selected(True), "Ctrl+Shift+H",
                                          _("Flip the selected elements left to right"))
         self.act_mirror_v = self._action(_("Mirror &vertically"), lambda: self.mirror_selected(False), "Ctrl+Shift+V",
@@ -249,7 +252,7 @@ class MainWindow(QMainWindow):
         m = mb.addMenu(_("&Edit"))
         for a in (self.act_undo, self.act_redo, None, self.act_duplicate, self.act_delete, None,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v, None,
-                  self.act_group, self.act_ungroup, None, self.act_center, self.act_place_head):
+                  self.act_group, self.act_ungroup, self.act_break, None, self.act_center, self.act_place_head):
             m.addSeparator() if a is None else m.addAction(a)
         sub = m.addMenu(_("Align and distribute"))
         for a in list(self.act_align.values()) + [None, self.act_distribute_h, self.act_distribute_v]:
@@ -320,6 +323,7 @@ class MainWindow(QMainWindow):
                 (self.act_mirror_v, "flip-vertical", C_("toolbar", "Mirror\nvertical")),
                 (self.act_group, "squares-selected", C_("toolbar", "Group")),
                 (self.act_ungroup, "squares", C_("toolbar", "Ungroup")),
+                (self.act_break, "arrows-split", C_("toolbar", "Break\napart")),
                 (self.act_center, "focus-centered", C_("toolbar", "Centre")),
                 (self.act_place_head, "current-location", C_("toolbar", "To head")),
             ]),
@@ -544,7 +548,8 @@ class MainWindow(QMainWindow):
         spec = element.shape
         if spec is None or spec.kind not in self.NODE_KINDS:
             if self.preview.tool == "nodes":
-                self.status(_("Only drawn shapes have editable nodes (not text or opened files)."), error=True)
+                self.status(_("This element has no editable nodes yet. For an opened SVG / DXF file or a text, "
+                              "use Break apart (Arrange group) first."), error=True)
             return None
         if spec.kind == "polyline":
             return [tuple(p) for p in spec.points], spec.closed_path
@@ -554,26 +559,22 @@ class MainWindow(QMainWindow):
             poly = poly[:-1]
         return [tuple(p) for p in poly], closed
 
-    def _nodes_changed(self, element, scene_points, closed):
-        """New corner positions from the node tool (scene mm). The shape becomes
-        a polyline; rotation, scale and mirror of the element are kept."""
+    def _fit_polyline(self, e, scene_points, closed, base_spec):
+        """Make element e a polyline through scene_points (scene mm), keeping its
+        rotation, scale and mirror. Returns False when nothing is left to draw."""
         import math
         from PySide6.QtGui import QTransform
-        if element not in self.elements or element.shape is None:
-            return
-        e = element
-        # scene -> item coordinates with the element's current rotation / scale (not its old size)
+        # scene -> item coordinates with the element's rotation / scale
         lin = QTransform().rotate(-e.rotation).scale(e.scale_x, e.scale_y)
         inv, ok = lin.inverted()
         if not ok:
-            return
+            return False
         local = [inv.map(p.x(), p.y()) for p in scene_points]
         left = min(x for x, _ in local)
         top = min(y for _, y in local)
         pts = [(x - left, y - top) for x, y in local]
-        spec = e.shape.copy()
-        if spec.kind != "polyline":
-            spec.kind = "polyline"
+        spec = base_spec.copy()
+        spec.kind = "polyline"
         spec.points = pts
         spec.closed_path = bool(closed)
         spec.width = max(x for x, _ in pts)
@@ -583,22 +584,89 @@ class MainWindow(QMainWindow):
         design = build_design(spec)
         xmin, xmax, ymin, ymax = design.bounds
         if xmax - xmin <= 0 and ymax - ymin <= 0:
-            return
-        self._checkpoint()
+            return False
         e.shape = spec
         e.design = design
-        # place it so that point 0 lands where it was dragged to
+        # place it so that point 0 lands on its scene position
         w0, h0 = (xmax - xmin) * 25.4, (ymax - ymin) * 25.4
         vx, vy = lin.map(pts[0][0] - w0 / 2.0, pts[0][1] - h0 / 2.0)
         cx, cy = scene_points[0].x() - vx, scene_points[0].y() - vy
         if self.preview.home_ur:
             cx = self.preview.bed_w_mm - cx
         e.set_centre(cx / 25.4, -cy / 25.4)
-        if math.isfinite(e.x) and math.isfinite(e.y):
-            self._layer_cache.clear()
-            self._layout_changed()
-            self.preview.select_element(e)
-            self._update_tool_options(force=True)        # now a polyline: no more "sides" or "radius"
+        return math.isfinite(e.x) and math.isfinite(e.y)
+
+    def _nodes_changed(self, element, scene_points, closed):
+        """New corner positions from the node tool (scene mm). The shape becomes
+        a polyline; rotation, scale and mirror of the element are kept."""
+        if element not in self.elements or element.shape is None:
+            return
+        snapshot = self._snapshot()
+        old = (element.shape, element.design, element.placement())
+        if not self._fit_polyline(element, scene_points, closed, element.shape):
+            element.shape, element.design = old[0], old[1]
+            element.set_placement(old[2])
+            return
+        self._set_dirty(True)
+        self._undo.append(snapshot)
+        del self._undo[:-100]
+        self._redo.clear()
+        self._layer_cache.clear()
+        self._layout_changed()
+        self.preview.select_element(element)
+        self._update_tool_options(force=True)        # now a polyline: no more "sides" or "radius"
+
+    # ---- break apart ------------------------------------------------------
+    def break_apart_selected(self):
+        """Every vector path of the selected elements becomes its own polyline
+        (cut or outline engrave as before), grouped so they stay together. An
+        image part stays as it was."""
+        from PySide6.QtCore import QPointF
+        from kerfly.core.explode import has_vectors, raster_only, vector_loops
+        from kerfly.gui.preview import element_transform
+        chosen = [e for e in self._selection() if e.design is not None and has_vectors(e.design)
+                  and not (e.shape is not None and e.shape.kind in self.NODE_KINDS)]
+        if not chosen or self.worker is not None:
+            self.status(_("Select an opened file or a text with lines to break it apart."), error=True)
+            return
+        loops = [(e, vector_loops(e.design)) for e in chosen]
+        total = sum(len(l) for _e, l in loops)
+        if total > 300 and QMessageBox.question(
+                self, _("Break apart"),
+                _("This makes %d separate shapes, which can make Kerfly slow. Continue?") % total,
+                QMessageBox.Yes | QMessageBox.No) != QMessageBox.Yes:
+            return
+        self._checkpoint()
+        made = []
+        for e, paths in loops:
+            xmin, xmax, ymin, ymax = e.design.bounds
+            t = element_transform(e, self.preview.home_ur, self.preview.bed_w_mm)
+            gid = e.group or self._new_group_id()
+            index = self.elements.index(e)
+            parts = []
+            for n, (kind, pts, closed) in enumerate(paths, 1):
+                scene = [QPointF(*t.map((x - xmin) * 25.4, (ymax - y) * 25.4)) for x, y in pts]
+                part = Element(e.design, name="%s %d" % (e.name, n), rotation=e.rotation,
+                               scale_x=e.scale_x, scale_y=e.scale_y, visible=e.visible, group=gid)
+                base = ShapeSpec(kind="polyline", operation=kind)
+                if self._fit_polyline(part, scene, closed, base):
+                    if e.layers.get(kind):
+                        part.layers[kind] = e.layers[kind]
+                    parts.append(part)
+            if e.design.raster.image is not None:          # the picture part stays
+                e.design = raster_only(e.design)
+                e.load_options["raster_only"] = True
+                e.group = gid
+                index += 1
+            else:
+                self.elements.remove(e)
+            self.elements[index:index] = parts
+            made += parts
+        self.selected = None
+        self._compiled = None
+        self._layer_cache.clear()
+        self._arranged(made)
+        self.status(_("Broken apart into %d shapes (grouped; use Ungroup to separate them).") % len(made))
 
     def _add_drawn_element(self, spec, tool, left, top):
         design = build_design(spec)
@@ -1799,7 +1867,7 @@ class MainWindow(QMainWindow):
                   self.act_connect, self.act_release, self.act_home, self.act_unlock,
                   self.act_settings, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v,
-                  self.act_group, self.act_ungroup, self.act_distribute_h, self.act_distribute_v, self.act_place_head, self.act_undo,
+                  self.act_group, self.act_ungroup, self.act_break, self.act_distribute_h, self.act_distribute_v, self.act_place_head, self.act_undo,
                   self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()) \
                 + list(self.act_align.values()):
             a.setEnabled(not busy)
@@ -2055,6 +2123,9 @@ class MainWindow(QMainWindow):
         QApplication.restoreOverrideCursor()
         for w in warnings:
             QMessageBox.warning(self, _("Design import"), tr_message(w))
+        if options.get("raster_only"):                   # its lines were broken apart into shapes
+            from kerfly.core.explode import raster_only
+            design = raster_only(design)
         return design
 
     def load_design(self, filename, add=False):

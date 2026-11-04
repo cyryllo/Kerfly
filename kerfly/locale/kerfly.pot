@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:57+0100\n"
+"POT-Creation-Date: 2026-11-04 19:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,6 +46,9 @@ msgid "&About Kerfly"
 msgstr ""
 
 msgid "&Add design…"
+msgstr ""
+
+msgid "&Break apart"
 msgstr ""
 
 msgid "&Centre on the bed"
@@ -229,6 +232,19 @@ msgid "Boundary trace speed"
 msgstr ""
 
 msgid "Boundary trace with laser on"
+msgstr ""
+
+msgctxt "toolbar"
+msgid ""
+"Break\n"
+"apart"
+msgstr ""
+
+msgid "Break apart"
+msgstr ""
+
+#, python-format
+msgid "Broken apart into %d shapes (grouped; use Ungroup to separate them)."
 msgstr ""
 
 msgid "Browse…"
@@ -790,9 +806,6 @@ msgstr ""
 msgid "Number of passes:"
 msgstr ""
 
-msgid "Only drawn shapes have editable nodes (not text or opened files)."
-msgstr ""
-
 msgctxt "toolbar"
 msgid "Open"
 msgstr ""
@@ -1051,6 +1064,9 @@ msgstr ""
 msgid "Scan line step (in)"
 msgstr ""
 
+msgid "Select an opened file or a text with lines to break it apart."
+msgstr ""
+
 msgid "Select and move"
 msgstr ""
 
@@ -1243,6 +1259,15 @@ msgid ""
 "Path), or install Inkscape."
 msgstr ""
 
+msgid ""
+"This element has no editable nodes yet. For an opened SVG / DXF file or a"
+" text, use Break apart (Arrange group) first."
+msgstr ""
+
+#, python-format
+msgid "This makes %d separate shapes, which can make Kerfly slow. Continue?"
+msgstr ""
+
 msgid "Time"
 msgstr ""
 
@@ -1256,6 +1281,11 @@ msgstr ""
 msgid ""
 "Trace boundary: move the head around the outline of the design (laser off"
 " unless set in Settings), to check where it will be cut"
+msgstr ""
+
+msgid ""
+"Turn every line of an opened SVG / DXF file or a text into its own shape "
+"with editable nodes"
 msgstr ""
 
 msgid "U&ngroup"

@@ -7,6 +7,15 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
+## Unreleased
+
+- **Break apart** (Arrange group, Ctrl+Shift+B). Every line of an opened SVG
+  or DXF file, or of a text that is cut or outlined, becomes its own polyline
+  with editable nodes. The pieces stay exactly in place, keep their cut or
+  outline layer, and are grouped (Ungroup separates them). The image part of
+  an SVG stays as it was. Curves become polylines with many nodes; real curve
+  editing comes with the curves module.
+
 ## 0.4.0 (2026-11-04)
 
 - **Mirror** horizontally and vertically (toolbar group Arrange, Edit menu,

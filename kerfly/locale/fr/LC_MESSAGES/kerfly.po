@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:57+0100\n"
+"POT-Creation-Date: 2026-11-04 19:33+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -48,6 +48,9 @@ msgstr "À &propos de Kerfly"
 
 msgid "&Add design…"
 msgstr "&Ajouter un dessin…"
+
+msgid "&Break apart"
+msgstr "&Décomposer"
 
 msgid "&Centre on the bed"
 msgstr "&Centrer sur le plateau"
@@ -237,6 +240,21 @@ msgstr "Vitesse du parcours de contour"
 
 msgid "Boundary trace with laser on"
 msgstr "Parcourir le contour avec le laser allumé"
+
+msgctxt "toolbar"
+msgid ""
+"Break\n"
+"apart"
+msgstr ""
+"Décom-\n"
+"poser"
+
+msgid "Break apart"
+msgstr "Décomposer"
+
+#, python-format
+msgid "Broken apart into %d shapes (grouped; use Ungroup to separate them)."
+msgstr "Décomposé en %d formes (groupées ; utilisez Dégrouper pour les séparer)."
 
 msgid "Browse…"
 msgstr "Parcourir…"
@@ -822,11 +840,6 @@ msgstr "Rien à dessiner."
 msgid "Number of passes:"
 msgstr "Nombre de passes :"
 
-msgid "Only drawn shapes have editable nodes (not text or opened files)."
-msgstr ""
-"Seules les formes dessinées ont des nœuds modifiables (pas le texte ni "
-"les fichiers ouverts)."
-
 msgctxt "toolbar"
 msgid "Open"
 msgstr "Ouvrir"
@@ -1105,6 +1118,11 @@ msgstr ""
 msgid "Scan line step (in)"
 msgstr "Pas entre les lignes (po)"
 
+msgid "Select an opened file or a text with lines to break it apart."
+msgstr ""
+"Sélectionnez un fichier ouvert ou un texte avec des lignes pour le "
+"décomposer."
+
 msgid "Select and move"
 msgstr "Sélectionner et déplacer"
 
@@ -1327,6 +1345,17 @@ msgstr ""
 "Convertissez le texte en chemins dans votre logiciel de dessin (dans "
 "Inkscape : Chemin → Objet en chemin) ou installez Inkscape."
 
+msgid ""
+"This element has no editable nodes yet. For an opened SVG / DXF file or a"
+" text, use Break apart (Arrange group) first."
+msgstr ""
+"Cet élément n'a pas encore de nœuds modifiables. Pour un fichier SVG / "
+"DXF ouvert ou un texte, utilisez d'abord Décomposer (groupe Disposition)."
+
+#, python-format
+msgid "This makes %d separate shapes, which can make Kerfly slow. Continue?"
+msgstr "Cela crée %d formes séparées, ce qui peut ralentir Kerfly. Continuer ?"
+
 msgid "Time"
 msgstr "Durée"
 
@@ -1345,6 +1374,13 @@ msgid ""
 msgstr ""
 "Parcourir le contour : la tête fait le tour du dessin (laser éteint, sauf"
 " réglage contraire dans les Paramètres) pour vérifier où il sera découpé"
+
+msgid ""
+"Turn every line of an opened SVG / DXF file or a text into its own shape "
+"with editable nodes"
+msgstr ""
+"Transformer chaque ligne d'un fichier SVG / DXF ouvert ou d'un texte en "
+"une forme à part avec des nœuds modifiables"
 
 msgid "U&ngroup"
 msgstr "Dé&grouper"
@@ -1541,4 +1577,10 @@ msgstr "gravure vectorielle"
 #~ "Aimanter aux coins, centres, milieux et"
 #~ " lignes des autres éléments et du "
 #~ "plateau, en dessinant et en déplaçant"
+
+#~ msgid "Only drawn shapes have editable nodes (not text or opened files)."
+#~ msgstr ""
+#~ "Seules les formes dessinées ont des "
+#~ "nœuds modifiables (pas le texte ni "
+#~ "les fichiers ouverts)."
 
