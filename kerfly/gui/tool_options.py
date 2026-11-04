@@ -96,6 +96,7 @@ class ToolOptionsBar(QWidget):
     # ---- building -------------------------------------------------------
     def _clear(self):
         self._text_timer.stop()
+        self._node_buttons = []                  # their widgets are deleted below
         while self.row.count():
             item = self.row.takeAt(0)
             w = item.widget()
@@ -140,7 +141,10 @@ class ToolOptionsBar(QWidget):
     def set_node_selection(self, count):
         """Enable the node buttons that need a selected node, and say what to do."""
         for b, needs_node in getattr(self, "_node_buttons", []):
-            b.setEnabled(count > 0 or not needs_node)
+            try:
+                b.setEnabled(count > 0 or not needs_node)
+            except RuntimeError:
+                pass                             # the bar was rebuilt meanwhile
 
     def _add(self, content, caption):
         if self.row.count():

@@ -82,8 +82,12 @@ def setup(version=""):
     sys.stderr = _Tee(sys.stderr, logging.WARNING)
 
     def excepthook(kind, value, tb):
-        log.error("Uncaught error:\n%s", "".join(traceback.format_exception(kind, value, tb)).rstrip())
-        sys.__excepthook__(kind, value, tb)
+        text = "".join(traceback.format_exception(kind, value, tb))
+        log.error("Uncaught error:\n%s", text.rstrip())
+        try:
+            sys.__stderr__.write(text)               # to the console only, not into the log again
+        except Exception:
+            pass
 
     def thread_excepthook(args):
         log.error("Uncaught error in thread %s:\n%s", args.thread.name if args.thread else "?",

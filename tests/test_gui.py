@@ -757,6 +757,11 @@ def main():
     view.node_editor.select({(0, 0)})
     w.tool_options.node_action.emit("smooth")
     buttons_ok = pe.shape.subpaths[0]["nodes"][0][4] is not None
+    w._update_tool_options(force=True)                                 # rebuild the bar, then select nodes
+    try:
+        w._node_selection_changed(1)
+    except RuntimeError:
+        buttons_ok = False
     names = [b.text() for b in w.tool_options.findChildren(QToolButton)]
     proj = tempfile.mktemp(suffix=".kerfly")
     from kerfly.core import project as _project
