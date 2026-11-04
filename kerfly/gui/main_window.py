@@ -6,11 +6,11 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import os
 
-from PySide6.QtCore import QSize, Qt, QTimer
+from PySide6.QtCore import QItemSelectionModel, QSize, Qt, QTimer
 from PySide6.QtCore import QLocale
 from PySide6.QtGui import QAction, QColor, QKeySequence
 from PySide6.QtGui import QActionGroup
-from PySide6.QtWidgets import (QApplication, QComboBox, QDockWidget, QDoubleSpinBox, QFileDialog,
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QDockWidget, QDoubleSpinBox, QFileDialog,
                                QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
                                QListWidget, QListWidgetItem, QMainWindow, QMessageBox, QProgressBar,
                                QPushButton, QScrollArea, QSpinBox, QTabWidget, QToolBar, QToolButton,
@@ -132,7 +132,6 @@ class MainWindow(QMainWindow):
         self.preview.signals.nodes_changed.connect(self._nodes_changed)
         self.preview.signals.pen_drawn.connect(self._preview_pen_drawn)
         self.preview.signals.edit_nodes.connect(self._edit_nodes_of)
-        self.preview.signals.group_hint.connect(self._group_hint)
         self.preview.signals.measured.connect(self._preview_measured)
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
@@ -202,9 +201,6 @@ class MainWindow(QMainWindow):
                           ("exclusion", N_("Exclusion: keep where the shapes do not overlap"))):
             self.act_boolean[code] = self._action(_(self.BOOLEAN_NAMES[code]),
                                                   lambda _c=False, k=code: self.boolean_selected(k), None, _(tip))
-        self.act_break = self._action(_("&Break apart"), self.break_apart_selected, "Ctrl+Shift+B",
-                                      _("Turn every line of an opened SVG / DXF file or a text into its own "
-                                        "shape with editable nodes"))
         self.act_mirror_h = self._action(_("&Mirror horizontally"), lambda: self.mirror_selected(True), "Ctrl+Shift+H",
                                          _("Flip the selected elements left to right"))
         self.act_mirror_v = self._action(_("Mirror &vertically"), lambda: self.mirror_selected(False), "Ctrl+Shift+V",
@@ -268,7 +264,7 @@ class MainWindow(QMainWindow):
         m = mb.addMenu(_("&Edit"))
         for a in (self.act_undo, self.act_redo, None, self.act_duplicate, self.act_delete, None,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v, None,
-                  self.act_group, self.act_ungroup, self.act_break, None, self.act_center, self.act_place_head):
+                  self.act_group, self.act_ungroup, None, self.act_center, self.act_place_head):
             m.addSeparator() if a is None else m.addAction(a)
         sub2 = m.addMenu(_("Combine shapes"))
         for a in self.act_boolean.values():
@@ -360,7 +356,6 @@ class MainWindow(QMainWindow):
                 (self.act_group, "squares-selected"),
                 (self.act_boolean["union"], "layers-union"),
                 (self.act_boolean["difference"], "layers-subtract"),
-                (self.act_break, "arrows-split"),
                 (self.act_ungroup, "squares"),
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
@@ -629,9 +624,10 @@ class MainWindow(QMainWindow):
         from kerfly.core import curves
         spec = element.shape
         from kerfly.core.explode import has_vectors
-        if self.preview.tool == "nodes" and (spec is None or spec.kind == "text") and element.design is not None \
+        if self.preview.tool == "nodes" and spec is None and element.design is not None \
                 and has_vectors(element.design):
-            QTimer.singleShot(0, self, lambda e=element: self._auto_break(e))   # after this click is handled
+            self.status(_("This is an opened file: click Ungroup first, then every line is its own shape you "
+                          "can move or double-click to edit."), error=True)
             return None
         if spec is None or spec.kind not in self.NODE_KINDS + ("path",):
             if self.preview.tool == "nodes":
@@ -790,30 +786,17 @@ class MainWindow(QMainWindow):
         self._layer_cache.clear()
         self._layout_changed()
 
-    def _auto_break(self, element):
-        """Edit nodes on an opened file: break it into shapes first (undo brings it back)."""
-        if element not in self.elements or self.preview.tool != "nodes" or self.worker is not None:
-            return
-        self.preview.select_element(element)
-        n = len(self.elements)
-        self.break_apart_selected()
-        if len(self.elements) != n or element not in self.elements:
-            self.preview.scene().clearSelection()
-            self.status(_("The file was broken into shapes so its nodes can be edited. Click the line you want "
-                          "to change (Ctrl+Z puts the file back together)."))
-
-    def _group_hint(self, what):
-        if what == 1:
-            self.status(_("Group selected. Click an element again to select only that element."))
-        else:
-            self.status(_("Only this element of the group is selected: move, rotate or delete it alone. "
-                          "Click outside the group to leave it."))
-
     def _edit_nodes_of(self, element):
-        """Double-click on an element: edit its nodes."""
-        if element in self.elements and self.worker is None:
-            self.set_tool("nodes")
-            self.preview.select_element(element)
+        """Double-click on an element: edit its nodes (an opened file: ungroup it first)."""
+        from kerfly.core.explode import has_vectors
+        if element not in self.elements or self.worker is not None:
+            return
+        if element.shape is None and has_vectors(element.design):
+            self.status(_("This is an opened file: click Ungroup first, then every line is its own shape you "
+                          "can move or double-click to edit."), error=True)
+            return
+        self.set_tool("nodes")
+        self.preview.select_element(element)
 
     # ---- break apart ------------------------------------------------------
     def _curve_paths(self, e):
@@ -864,7 +847,7 @@ class MainWindow(QMainWindow):
             out += [(kind, [sp], True) for sp in subs]
         return out
 
-    def break_apart_selected(self):
+    def break_apart_selected(self, grouped=True):
         """Every vector path of the selected elements becomes its own polyline
         (cut or outline engrave as before), grouped so they stay together. An
         image part stays as it was."""
@@ -890,7 +873,7 @@ class MainWindow(QMainWindow):
         for e, paths in loops:
             xmin, xmax, ymin, ymax = e.design.bounds
             t = element_transform(e, self.preview.home_ur, self.preview.bed_w_mm)
-            gid = e.group or self._new_group_id()
+            gid = (e.group or self._new_group_id()) if grouped else ""
             index = self.elements.index(e)
             parts = []
             for n, (kind, sub, _design_units) in enumerate(paths, 1):
@@ -925,7 +908,11 @@ class MainWindow(QMainWindow):
         self._compiled = None
         self._layer_cache.clear()
         self._arranged(made)
-        self.status(_("Broken apart into %d shapes (grouped; use Ungroup to separate them).") % len(made))
+        if grouped:
+            self.status(_("Broken apart into %d shapes (grouped; use Ungroup to separate them).") % len(made))
+        else:
+            self.status(_("Ungrouped into %d shapes: click one to move it, double-click it to edit its "
+                          "nodes.") % len(made))
 
     def _add_drawn_element(self, spec, tool, left, top):
         design = build_design(spec)
@@ -1012,7 +999,8 @@ class MainWindow(QMainWindow):
         self.element_list.setMinimumHeight(self.element_list.fontMetrics().lineSpacing() * 4 + 8)
         self.element_list.setToolTip(_("Untick an element to leave it out of the job"))
         self.element_list.itemChanged.connect(self._element_item_changed)
-        self.element_list.currentRowChanged.connect(self._element_row_selected)
+        self.element_list.setSelectionMode(QAbstractItemView.ExtendedSelection)   # Ctrl / Shift: several
+        self.element_list.itemSelectionChanged.connect(self._list_selection_changed)
         v.addWidget(self.element_list, 1)
         design_layout.addWidget(box, 1)
 
@@ -1432,10 +1420,41 @@ class MainWindow(QMainWindow):
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if e.visible else Qt.Unchecked)
             lst.addItem(item)
-        if self.selected in self.elements:
-            lst.setCurrentRow(self.elements.index(self.selected))
         lst.blockSignals(False)
+        self._sync_list_selection()
         lst.setVisible(len(self.elements) > 1)
+
+    def _sync_list_selection(self):
+        """Highlight the rows of the elements selected on the bed."""
+        lst = self.element_list
+        chosen = {id(e) for e in self.preview.selected_elements()}
+        if not chosen and self.selected is not None:
+            chosen = {id(self.selected)}
+        lst.blockSignals(True)
+        current = None
+        for row, e in enumerate(self.elements):
+            item = lst.item(row)
+            if item is None:
+                continue
+            on = id(e) in chosen
+            item.setSelected(on)
+            if on and current is None:
+                current = row
+        if current is not None:
+            lst.setCurrentRow(current, QItemSelectionModel.NoUpdate)
+            lst.scrollToItem(lst.item(current))
+        lst.blockSignals(False)
+
+    def _list_selection_changed(self):
+        """Rows picked in the element list select those elements on the bed."""
+        rows = sorted(self.element_list.row(i) for i in self.element_list.selectedItems())
+        chosen = [self.elements[r] for r in rows if 0 <= r < len(self.elements)]
+        self.preview.select_element(chosen)
+        self.selected = chosen[0] if len(chosen) == 1 else None
+        self._update_selection_panel()
+        self._update_layer_assignment()
+        self._update_tool_options()
+        self._sync_list_selection()                  # a group member brings its whole group
 
     def _element_item_changed(self, item):
         row = self.element_list.row(item)
@@ -1445,14 +1464,6 @@ class MainWindow(QMainWindow):
                 self._checkpoint()
                 self.elements[row].visible = visible
                 self._layout_changed()
-
-    def _element_row_selected(self, row):
-        if 0 <= row < len(self.elements):
-            self.selected = self.elements[row]
-            self.preview.select_element(self.selected)
-            self._update_selection_panel()
-            self._update_layer_assignment()
-            self._update_tool_options()
 
     # ---- more editing commands ----
     def duplicate_selected(self):
@@ -1514,10 +1525,7 @@ class MainWindow(QMainWindow):
         self._update_selection_panel()
         self._update_layer_assignment()
         self._update_tool_options()
-        lst = self.element_list
-        lst.blockSignals(True)
-        lst.setCurrentRow(self.elements.index(element) if element in self.elements else -1)
-        lst.blockSignals(False)
+        self._sync_list_selection()
 
     def _preview_moved(self, element, dx, dy):
         """An element was dragged; the other selected elements (a group or a
@@ -1571,7 +1579,7 @@ class MainWindow(QMainWindow):
         chosen = [e for e in self.preview.selected_elements() if e in self.elements]
         if not chosen and self.selected is not None:
             chosen = [self.selected]
-        groups = {e.group for e in chosen if e.group and e.group != self.preview.entered_group}
+        groups = {e.group for e in chosen if e.group}
         if groups:
             chosen = [e for e in self.elements if e in chosen or (e.group and e.group in groups)]
         return chosen
@@ -1593,6 +1601,16 @@ class MainWindow(QMainWindow):
         self.status(_("Grouped %d elements. Click any of them to select the whole group.") % len(chosen))
 
     def ungroup_selected(self):
+        from kerfly.core.explode import has_vectors
+        files = [e for e in self._selection() if (e.shape is None or e.shape.kind == "text")
+                 and e.design is not None and has_vectors(e.design)]
+        if files and self.worker is None:              # an opened file splits into one shape per line
+            for e in self._selection():
+                if e not in files and e.group:
+                    e.group = ""
+            self.preview.select_element(files)
+            self.break_apart_selected(grouped=False)
+            return
         chosen = [e for e in self._selection() if e.group]
         if not chosen and not self._selection():
             groups = {e.group for e in self.elements if e.group}
@@ -2130,7 +2148,7 @@ class MainWindow(QMainWindow):
                   self.act_connect, self.act_release, self.act_home, self.act_unlock,
                   self.act_settings, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v,
-                  self.act_group, self.act_ungroup, self.act_break, self.act_distribute_h, self.act_distribute_v, self.act_place_head, self.act_undo,
+                  self.act_group, self.act_ungroup, self.act_distribute_h, self.act_distribute_v, self.act_place_head, self.act_undo,
                   self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()) \
                 + list(self.act_align.values()) + list(self.act_boolean.values()):
             a.setEnabled(not busy)

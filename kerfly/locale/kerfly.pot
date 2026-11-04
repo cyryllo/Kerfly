@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 20:24+0100\n"
+"POT-Creation-Date: 2026-11-04 20:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,9 +50,6 @@ msgid "&About Kerfly"
 msgstr ""
 
 msgid "&Add design…"
-msgstr ""
-
-msgid "&Break apart"
 msgstr ""
 
 msgid "&Centre on the bed"
@@ -583,9 +580,6 @@ msgstr ""
 msgid "Group %d: %s"
 msgstr ""
 
-msgid "Group selected. Click an element again to select only that element."
-msgstr ""
-
 #, python-format
 msgid "Grouped %d elements. Click any of them to select the whole group."
 msgstr ""
@@ -910,11 +904,6 @@ msgid "Nothing to draw."
 msgstr ""
 
 msgid "Number of passes:"
-msgstr ""
-
-msgid ""
-"Only this element of the group is selected: move, rotate or delete it "
-"alone. Click outside the group to leave it."
 msgstr ""
 
 msgctxt "toolbar"
@@ -1364,11 +1353,6 @@ msgstr ""
 msgid "The file is not a Kerfly material library."
 msgstr ""
 
-msgid ""
-"The file was broken into shapes so its nodes can be edited. Click the "
-"line you want to change (Ctrl+Z puts the file back together)."
-msgstr ""
-
 msgid "The image resolution must be greater than zero."
 msgstr ""
 
@@ -1414,6 +1398,11 @@ msgid ""
 "operation to Cut or Engrave outline first; a picture has no nodes."
 msgstr ""
 
+msgid ""
+"This is an opened file: click Ungroup first, then every line is its own "
+"shape you can move or double-click to edit."
+msgstr ""
+
 #, python-format
 msgid "This makes %d separate shapes, which can make Kerfly slow. Continue?"
 msgstr ""
@@ -1435,11 +1424,6 @@ msgstr ""
 
 msgctxt "toolbar group"
 msgid "Transform"
-msgstr ""
-
-msgid ""
-"Turn every line of an opened SVG / DXF file or a text into its own shape "
-"with editable nodes"
 msgstr ""
 
 msgid "U&ngroup"
@@ -1473,6 +1457,12 @@ msgid "Undo"
 msgstr ""
 
 msgid "Unfreeze complete"
+msgstr ""
+
+#, python-format
+msgid ""
+"Ungrouped into %d shapes: click one to move it, double-click it to edit "
+"its nodes."
 msgstr ""
 
 msgid "Union"

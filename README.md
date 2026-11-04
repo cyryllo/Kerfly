@@ -77,9 +77,11 @@ Changes between versions are listed in [CHANGELOG.md](CHANGELOG.md).
 | Freehand (F) | Draw with the button held; end near the start to close |
 | Measure (M) | Drag between two points: distance, width, height, angle |
 | Edit nodes (N) | Drag nodes and round curve handles (Ctrl: one handle alone). Shift+click selects more. Double-click a side to add a node, a node to remove it. Keys: I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / open, B break |
-| Edit an opened SVG / DXF | Double-click it (or click it with Edit nodes): it is broken into shapes, then click a line |
+| Edit an opened SVG / DXF | Ungroup it: every line becomes its own shape; click to move, double-click to edit nodes |
 | Edit nodes of any element | Double-click it |
-| Group / Ungroup | Ctrl+Shift+G / Ctrl+Alt+G. Clicking one member selects the whole group; click it again to select only that element |
+| Group / Ungroup | Ctrl+Shift+G / Ctrl+Alt+G. Clicking one member selects the whole group |
+| Element list | Shows what is selected on the bed; click a row (Ctrl / Shift: several) to select on the bed |
+| Zoom | The wheel zooms in; it does not zoom out further than the whole bed |
 | Pan and zoom | Middle or right mouse button drags the view; the wheel zooms |
 
 On KDE Plasma 5, Alt+drag moves windows by default. Change it in System

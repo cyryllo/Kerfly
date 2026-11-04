@@ -68,7 +68,6 @@ class ViewSignals(QObject):
     pen_drawn = Signal(list)                      # path drawn with the pen (subpaths, scene mm)
     measured = Signal(float, float)               # dx, dy of the ruler in mm (screen right / down)
     edit_nodes = Signal(object)                   # element double-clicked with the select tool
-    group_hint = Signal(int)                      # 1: a whole group was selected, 2: one element inside it
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -183,11 +182,6 @@ class ElementItem(QGraphicsItem):
         self._press_screen = event.screenPos()
         self._drag_started = False
         self._dragging = event.button() == Qt.LeftButton
-        # a second click (without dragging) on a selected group picks this element alone
-        self._enter_on_release = (event.button() == Qt.LeftButton and self.view.tool == "select"
-                                  and bool(self.element.group) and self.isSelected()
-                                  and self.view.entered_group != self.element.group
-                                  and not event.modifiers() & (Qt.ControlModifier | Qt.ShiftModifier))
         self.view.last_move_snapped = False
         super().mousePressEvent(event)
 
@@ -207,10 +201,6 @@ class ElementItem(QGraphicsItem):
         self.view.hide_snap_marker()
         super().mouseReleaseEvent(event)
         moved = self.pos() - getattr(self, "_press_pos", QPointF())
-        if getattr(self, "_enter_on_release", False) and abs(moved.x()) < 1e-6 and abs(moved.y()) < 1e-6:
-            self._enter_on_release = False
-            self.view.enter_group(self)
-            return
         if abs(moved.x()) > 1e-6 or abs(moved.y()) > 1e-6:
             dx = moved.x() / MM * (-1 if self.view.home_ur else 1)
             dy = -moved.y() / MM
@@ -326,11 +316,38 @@ class PreviewView(QGraphicsView):
 
     # ---- navigation: wheel zooms, middle (or right) button drags the view ----
     def wheelEvent(self, event):
-        self._user_zoomed = True                 # keep the user's zoom when the window is resized
+        """Wheel zooms in as far as you like, but not further out than the whole
+        bed fitted in the view (it can never get lost)."""
         factor = 1.25 if event.angleDelta().y() > 0 else 1 / 1.25
         current = self.transform().m11()
-        if 0.05 < current * factor < 400:
+        fitted = self._fit_scale()
+        if factor < 1 and fitted is not None and current * factor <= fitted * 1.001:
+            self.fit_all()                       # zoomed out to the limit: the whole bed again
+            return
+        if current * factor < 400:
+            self._user_zoomed = True             # keep the user's zoom when the window is resized
             self.scale(factor, factor)
+
+    def _fit_rect(self):
+        rect = QRectF(getattr(self, "bed_rect", QRectF()))
+        for item in self._items:
+            rect = rect.united(item.sceneBoundingRect()) if not rect.isEmpty() else item.sceneBoundingRect()
+        return rect.adjusted(-5, -5, 5, 5) if not rect.isEmpty() else rect
+
+    def _fit_scale(self):
+        """Scale at which the bed and all elements just fit (the zoom-out limit)."""
+        rect = self._fit_rect()
+        vp = self.viewport().size()
+        if rect.isEmpty() or vp.width() < 20 or vp.height() < 20:
+            return None
+        return min(vp.width() / rect.width(), vp.height() / rect.height())
+
+    def _bed_visible(self):
+        bed = getattr(self, "bed_rect", None)
+        if bed is None or bed.isEmpty():
+            return True
+        shown = self.mapFromScene(bed).boundingRect()
+        return shown.intersects(self.viewport().rect()) and shown.width() > 20 and shown.height() > 20
 
     def set_tool(self, tool):
         self._clear_measure()
@@ -893,13 +910,11 @@ class PreviewView(QGraphicsView):
         vp = self.viewport().size()
         if vp.width() < 20 or vp.height() < 20:
             return                               # not laid out yet (or minimised): fit later
-        rect = QRectF(getattr(self, "bed_rect", QRectF()))
-        for item in self._items:
-            rect = rect.united(item.sceneBoundingRect()) if not rect.isEmpty() else item.sceneBoundingRect()
+        rect = self._fit_rect()
         if rect.isEmpty():
             return
         self.resetTransform()
-        self.fitInView(rect.adjusted(-5, -5, 5, 5), Qt.KeepAspectRatio)
+        self.fitInView(rect, Qt.KeepAspectRatio)
         self._place_handles()
 
     def resizeEvent(self, event):
@@ -911,35 +926,17 @@ class PreviewView(QGraphicsView):
     def _selected_items(self):
         return [i for i in self.scene().selectedItems() if isinstance(i, ElementItem)]
 
-    entered_group = ""                            # group whose single element is being worked on
-
-    def enter_group(self, item):
-        """Select one element of a group alone (second click on the group)."""
-        self.entered_group = item.element.group
-        self._expanding = True
-        self.scene().clearSelection()
-        item.setSelected(True)
-        self._expanding = False
-        self._selection_changed()
-        self.signals.group_hint.emit(2)
-
     def _selection_changed(self):
         if self._rebuilding or getattr(self, "_expanding", False):
             return
         selected = self._selected_items()
-        if self.entered_group and (not selected or any(i.element.group != self.entered_group for i in selected)):
-            self.entered_group = ""                 # left the group
-        groups = {i.element.group for i in selected if i.element.group and i.element.group != self.entered_group}
+        groups = {i.element.group for i in selected if i.element.group}
         if groups and self.tool != "nodes":         # a group is selected as a whole (nodes: one shape)
             self._expanding = True
-            added = False
             for item in self._items:
                 if item.element.group in groups and not item.isSelected():
                     item.setSelected(True)
-                    added = True
             self._expanding = False
-            if added and len(selected) == 1:        # the user clicked one member: say how to get inside
-                self.signals.group_hint.emit(1)
         self._place_handles()
         items = self._selected_items()
         self.signals.selected.emit(items[0].element if len(items) == 1 else None)
@@ -1094,8 +1091,8 @@ class PreviewView(QGraphicsView):
             line.setPen(_cosmetic_pen(COLORS["head"], 1))
 
         scene.setSceneRect(QRectF(-60, -60, bed_w * MM + 120, bed_h * MM + 120))
-        if fit or not self._fitted:
-            self.fit_all()
+        if fit or not self._fitted or not self._bed_visible():
+            self.fit_all()                       # first time, asked for, or the bed got out of view
             self._fitted = True
         self._rebuilding = False
         if selected is not None:

@@ -882,28 +882,79 @@ def main():
     check("simulation: plays, draws the path, closes", played and drawn, "(%.1f s)" % (dlg.total if dlg else 0))
     w.close()
 
-    # 33. opened DXF: double-click edits nodes -> the file is broken into shapes automatically; undo
+    # 33. opened DXF: double-click only explains; Ungroup splits it; a part can be dragged and node-edited
     w = make_window(grid_mm="0")
     w.load_design(os.path.join(FIX, "shapes.dxf"))
     src = w.elements[0]
     w._edit_nodes_of(src)
-    for _i in range(5):
-        app.processEvents()
-    broken = len(w.elements) > 1 and all(e.shape is not None and e.shape.kind == "path" for e in w.elements)
-    w.preview.select_element(w.elements[0])
+    explained = len(w.elements) == 1 and w.preview.tool == "select" and "Ungroup" in w.statusBar().currentMessage()
+    w.preview.select_element(src)
+    w.ungroup_selected()
+    parts = list(w.elements)
+    split = len(parts) > 1 and all(e.shape.kind == "path" and not e.group for e in parts)
+    w.preview.select_element(parts[0])
+    single = w._selection() == [parts[0]]
+    x1 = parts[1].x
+    w._preview_moved(parts[0], 0.3, 0.0)
+    moved_alone = abs(parts[1].x - x1) < 1e-12
+    w._edit_nodes_of(parts[0])
     app.processEvents()
-    has_nodes = bool(w.preview._node_handles)
-    w.undo()
-    w.redo()
-    w.preview.scene().clearSelection()
-    w.ungroup_selected()                                                # nothing selected, one group
-    alone = all(not e.group for e in w.elements)
-    w.undo()
-    w.undo()
-    broken = broken and alone
-    check("opened DXF: edit nodes breaks it apart automatically, nodes appear, undo",
-          broken and has_nodes and w.elements == [src] and w.preview.tool == "nodes",
-          "(%s)" % [broken, has_nodes, len(w.elements)])
+    nodes_ok = w.preview.tool == "nodes" and bool(w.preview._node_handles)
+    check("opened DXF: Ungroup splits it, a part moves alone, double-click edits its nodes",
+          explained and split and single and moved_alone and nodes_ok,
+          "(%s)" % [explained, split, single, moved_alone, nodes_ok])
+    w.close()
+
+    # 35. element list and bed selection follow each other (one, several, a group)
+    w = make_window(grid_mm="0")
+    for x0 in (20, 70, 120):
+        w._preview_drawn("rectangle", QPointF(x0, 20), QPointF(x0 + 30, 50), False)
+    e1, e2, e3 = w.elements
+    lst = w.element_list
+
+    def rows():
+        return sorted(lst.row(i) for i in lst.selectedItems())
+    w.preview.select_element(e2)
+    one = rows() == [1]
+    w.preview.select_element([e1, e3])
+    several = rows() == [0, 2]
+    lst.clearSelection()
+    lst.item(2).setSelected(True)
+    from_list = w.preview.selected_elements() == [e3] and w.selected is e3
+    w.preview.select_element([e1, e2])
+    w.group_selected()
+    lst.clearSelection()
+    lst.item(0).setSelected(True)                                       # a group member: the whole group
+    group_rows = rows() == [0, 1] and len(w.preview.selected_elements()) == 2
+    check("element list <-> bed selection: one, several, from the list, a group",
+          one and several and from_list and group_rows, "(%s)" % [one, several, from_list, group_rows])
+    w.close()
+
+    # 36. zoom: the wheel cannot zoom out past the whole bed; zooming in works; the bed stays in view
+    from PySide6.QtCore import QPoint as _QP
+    from PySide6.QtGui import QWheelEvent
+    w = make_window(grid_mm="0")
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    v = w.preview
+    v.fit_all()
+    fit = v.transform().m11()
+
+    def wheel(n):
+        for _i in range(abs(n)):
+            pos = QPointF(v.viewport().rect().center())
+            ev = QWheelEvent(pos, QPointF(v.viewport().mapToGlobal(pos.toPoint())), _QP(0, 0),
+                             _QP(0, 120 if n > 0 else -120), Qt.NoButton, Qt.NoModifier, Qt.NoScrollPhase, False)
+            QApplication.sendEvent(v.viewport(), ev)
+    wheel(-10)
+    out_limit = abs(v.transform().m11() - fit) < 1e-6
+    wheel(3)
+    zoomed_in = v.transform().m11() > fit * 1.9
+    wheel(-10)
+    back = abs(v.transform().m11() - fit) < 1e-6 and v._bed_visible()
+    check("zoom: not further out than the whole bed, zoom in works", out_limit and zoomed_in and back,
+          "(%s)" % [out_limit, zoomed_in, back])
     w.close()
 
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo
@@ -961,9 +1012,9 @@ def main():
         return sorted({(round(r[0] + o[0], 4), round(r[1] + o[1], 4)) for r in d.vector_cut.ecoords + d.vector_engrave.ecoords})
     ref_pts = bed_points([src])                                 # rotated: coordinates on the bed
     w.preview.select_element(src)
-    w.break_apart_selected()
+    w.ungroup_selected()                                                # an opened file splits into shapes
     parts = list(w.elements)
-    one_group = len(parts) > 1 and len({e.group for e in parts}) == 1 and all(e.shape.kind == "path" for e in parts)
+    one_group = len(parts) > 1 and all(not e.group for e in parts) and all(e.shape.kind == "path" for e in parts)
     curved = any(n[4] is not None for e in parts for sp in e.shape.subpaths for n in sp["nodes"])   # real arcs
     corners = set()
     for item in w.preview._items:
@@ -975,45 +1026,8 @@ def main():
     same_place = max(abs(a - b) for a, b in zip(box(ref_pts), box(new_pts))) < 0.003
     w.undo()
     back = len(w.elements) == 1 and w.elements[0] is src
-    check("break apart: curves in the same place, grouped, undo", one_group and curved and same_place and back,
+    check("ungroup a file: separate curves in the same place, undo", one_group and curved and same_place and back,
           "(%d parts)" % len(parts))
-
-    from PySide6.QtCore import QEvent, QPoint
-    from PySide6.QtGui import QMouseEvent
-    # 34. second click on a selected group picks one element; it moves alone; clicking away leaves the group
-    from PySide6.QtTest import QTest as _QT
-    w = make_window(grid_mm="0")
-    w.resize(1200, 800)
-    w.show()
-    app.processEvents()
-    for x0 in (30, 90):
-        w._preview_drawn("rectangle", QPointF(x0, 30), QPointF(x0 + 40, 70), False)
-    a, b = w.elements[-2:]
-    w.preview.select_element([a, b])
-    w.group_selected()
-    w.preview.scene().clearSelection()
-    w.preview.fit_all()
-    app.processEvents()
-    ia = [i for i in w.preview._items if i.element is a][0]
-    pa = w.preview.mapFromScene(ia.sceneBoundingRect().center())
-    _QT.mouseClick(w.preview.viewport(), Qt.LeftButton, Qt.NoModifier, pa)          # first click: the group
-    group_sel = len(w.preview.selected_elements()) == 2
-    # second click with a 1-pixel shake of the hand: still a click, not a drag of the group
-    vp_ = w.preview.viewport()
-    _QT.mousePress(vp_, Qt.LeftButton, Qt.NoModifier, pa)
-    jig = pa + QPoint(1, 1)
-    QApplication.sendEvent(vp_, QMouseEvent(QEvent.MouseMove, QPointF(jig), QPointF(vp_.mapToGlobal(jig)),
-                                            Qt.NoButton, Qt.LeftButton, Qt.NoModifier))
-    _QT.mouseRelease(vp_, Qt.LeftButton, Qt.NoModifier, jig)
-    inside = w.preview.selected_elements() == [a] and w._selection() == [a]
-    bx2 = b.x
-    w._preview_moved(a, 0.2, 0.0)
-    alone = abs(b.x - bx2) < 1e-12 and w.preview.entered_group == a.group
-    w.preview.scene().clearSelection()
-    left_group = w.preview.entered_group == ""
-    check("groups: second click selects one element, it moves alone, clicking away leaves the group",
-          group_sel and inside and alone and left_group, "(%s)" % [group_sel, inside, alone, left_group])
-    w.close()
 
     # 20. diagnostic log and report
     from kerfly.core import diag as _diag

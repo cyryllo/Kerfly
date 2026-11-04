@@ -26,20 +26,22 @@ Version numbers:
     - double-click a side to add a node, or a node to remove it.
   - Ellipses become real curves when you edit their nodes.
   - Paths are saved in projects.
-- **Editing opened SVG / DXF files is direct.** Double-click an element, or
-  click it with Edit nodes, and an opened file is broken into shapes
-  automatically: then click the line you want to change. Ctrl+Z puts the file
-  back together.
-- **Break apart** (Shapes group, Ctrl+Shift+B):
-  - every line of an opened SVG or DXF file becomes its own path with its
+- **Editing opened SVG / DXF files.** An opened file is one element that
+  behaves like a group.
+  - **Ungroup** splits it into separate shapes, one per line, each with its
     real curves (SVG via svgelements; DXF arcs, circles and polyline bulges
-    stay arcs);
-  - the pieces stay exactly in place, keep their cut or outline layer, and
-    are grouped (Ungroup separates them);
-  - when a file cannot be read with its curves (for example SVG text), its
-    lines become polylines, as before;
-  - the image part of an SVG stays as it was;
-  - texts can be broken apart as well.
+    stay arcs).
+  - The pieces stay exactly in place and keep their cut or outline layer.
+  - Each piece can then be clicked and dragged on its own; double-click it
+    to edit its nodes.
+  - Double-clicking a file that is not ungrouped explains this.
+  - When a file cannot be read with its curves (for example SVG text), its
+    lines become polylines, as before.
+  - The image part of an SVG stays as it was.
+  - Ungroup also splits a cut or outlined text into its letters.
+- **Element list ↔ bed selection.** Selecting on the bed highlights the rows
+  in the element list (also several elements or a whole group). Clicking a
+  row selects the element on the bed; Ctrl / Shift picks several.
 - **Freehand** drawing tool (F). Draw with the mouse button held; end near
   the start to close the shape. The line is simplified and smoothed into
   curves that can be edited with Edit nodes.
@@ -59,7 +61,9 @@ Version numbers:
   - The time comes from the layer speeds and passes.
 - Toolbar reorganised so labels are not cut short:
   - rotate and mirror are small icons in a new Transform group;
-  - group, ungroup and break apart joined the Shapes group.
+  - group and ungroup joined the Shapes group.
+- The mouse wheel zooms in as far as you like, but not further out than the
+  whole bed, so the bed cannot get lost.
 - The bed view follows the window size until you zoom or pan. Fitting counts
   only the bed and the elements, and waits until the view has a size, so the
   bed no longer shrinks away or disappears.
@@ -111,14 +115,11 @@ Version numbers:
   and a dashed guide line shows it. Rectangles, ellipses, polygons and lines
   become polylines on the first edit. Rotation, scale and mirror are kept, and every edit can be undone.
   Text and opened files have no editable nodes.
-- **Group / Ungroup** (Arrange group, Ctrl+Shift+G / Ctrl+Alt+G):
+- **Group / Ungroup** (Shapes group, Ctrl+Shift+G / Ctrl+Alt+G):
   - Clicking any member of a group selects the whole group.
   - Moving, arrow keys, rotating, mirroring, duplicating and deleting act on
     the group as one. Align and distribute treat it as a single block.
   - The element list shows "Group 1: …", and groups are saved in projects.
-  - Click a selected group again to select only the element you clicked, and
-    move, rotate or delete it alone. Dragging right away still moves the whole
-    group. Clicking outside leaves the group.
 - A click with a slightly shaking mouse is a click, not a tiny drag (system
   drag distance), so elements no longer move by accident.
 - Several selected elements (a frame drag or Ctrl+click) now move, rotate
