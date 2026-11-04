@@ -957,11 +957,17 @@ def main():
             QApplication.sendEvent(v.viewport(), ev)
     wheel(-10)
     out_limit = abs(v.transform().m11() - fit) < 1e-6
-    wheel(3)
-    zoomed_in = v.transform().m11() > fit * 1.9
+    anchor = v.mapFromScene(QPointF(60, 40))
+    under = v.mapToScene(anchor)
+    for _i in range(3):
+        ev = QWheelEvent(QPointF(anchor), QPointF(v.viewport().mapToGlobal(anchor)), _QP(0, 0), _QP(0, 120),
+                         Qt.NoButton, Qt.NoModifier, Qt.NoScrollPhase, False)
+        QApplication.sendEvent(v.viewport(), ev)
+    after = v.mapToScene(anchor)
+    zoomed_in = v.transform().m11() > fit * 1.9 and abs(after.x() - under.x()) < 1 and abs(after.y() - under.y()) < 1
     wheel(-10)
     back = abs(v.transform().m11() - fit) < 1e-6 and v._bed_visible()
-    check("zoom: not further out than the whole bed, zoom in works", out_limit and zoomed_in and back,
+    check("zoom: not further out than the whole bed, zooms in about the cursor", out_limit and zoomed_in and back,
           "(%s)" % [out_limit, zoomed_in, back])
     w.close()
 

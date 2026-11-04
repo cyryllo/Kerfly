@@ -327,7 +327,16 @@ class PreviewView(QGraphicsView):
             return
         if current * factor < 400:
             self._user_zoomed = True             # keep the user's zoom when the window is resized
+            # zoom about the point under the cursor: it stays where it is on the screen
+            pos = event.position().toPoint()
+            before = self.mapToScene(pos)
+            self.setTransformationAnchor(QGraphicsView.NoAnchor)
             self.scale(factor, factor)
+            moved = self.mapFromScene(before) - pos
+            self.horizontalScrollBar().setValue(self.horizontalScrollBar().value() + moved.x())
+            self.verticalScrollBar().setValue(self.verticalScrollBar().value() + moved.y())
+            self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+            self._place_handles()
 
     def _fit_rect(self):
         rect = QRectF(getattr(self, "bed_rect", QRectF()))
