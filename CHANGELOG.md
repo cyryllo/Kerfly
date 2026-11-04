@@ -36,6 +36,15 @@ Version numbers:
   - A dragged element snaps with its corners, side middles or centre onto
     those points.
   - Several selected elements move together without snapping.
+- **Edit nodes** tool (N, second button on the tool strip). Click a drawn
+  shape to show its corners:
+  - drag a corner to move it (it snaps to other elements and the grid);
+  - double-click a side to add a corner;
+  - double-click a corner, or select it and press Delete, to remove it.
+
+  Rectangles, ellipses, polygons and lines become polylines on the first
+  edit. Rotation, scale and mirror are kept, and every edit can be undone.
+  Text and opened files have no editable nodes.
 - Toolbar: **Settings** has its own group, together with a new **Materials**
   button (material library).
 

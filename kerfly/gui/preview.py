@@ -63,6 +63,7 @@ class ViewSignals(QObject):
     nudged = Signal(object, float, float)       # element, dx, dy in mm (screen right / up)
     drawn = Signal(str, QPointF, QPointF, bool)  # tool, start, end (scene mm), shift held
     polyline_drawn = Signal(list, bool)           # corner points (scene mm), closed
+    nodes_changed = Signal(object, list, bool)    # element, its corner points (scene mm), closed
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -193,6 +194,49 @@ class ElementItem(QGraphicsItem):
             self.view.signals.moved.emit(self.element, dx, dy)
 
 
+class NodeHandle(QGraphicsRectItem):
+    """A corner point of a shape in the node tool: drag to move it, click to
+    select it (Delete removes it), double-click to remove it."""
+
+    def __init__(self, index, view):
+        super().__init__(-4.5, -4.5, 9, 9)
+        self.index = index
+        self.view = view
+        self.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
+        self.setZValue(45)
+        self.setCursor(Qt.SizeAllCursor)
+        self.set_selected(False)
+
+    def set_selected(self, on):
+        self.setPen(_cosmetic_pen(COLORS["selection"], 1.5))
+        self.setBrush(QBrush(COLORS["selection"] if on else QColor("white")))
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.view.select_node(self)
+            self._moved = False
+            event.accept()
+            return
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        exclude = (self.view._node_item,) if self.view._node_item is not None else ()
+        self.setPos(self.view.snap_point(event.scenePos(), exclude=exclude))
+        self._moved = True
+        self.view._draw_node_overlay()
+        event.accept()
+
+    def mouseReleaseEvent(self, event):
+        self.view.hide_snap_marker()
+        if getattr(self, "_moved", False):
+            self.view._commit_nodes()
+        event.accept()
+
+    def mouseDoubleClickEvent(self, event):
+        self.view.delete_node(self)
+        event.accept()
+
+
 class Handle(QGraphicsRectItem):
     """Scale handle (corner) or rotation handle, constant size on screen."""
 
@@ -282,6 +326,11 @@ class PreviewView(QGraphicsView):
         self._draw_item = None
         self._poly_points = []      # polyline being drawn (scene mm)
         self.snap_objects = True    # snap to corners, centres, middles and lines of other elements
+        self.node_points_provider = None   # element -> (points in item coordinates, closed) or None
+        self._node_handles = []
+        self._node_item = None
+        self._node_closed = False
+        self._node_overlay = None
         self.last_move_snapped = False
         self._snap_marker = None
         self._pixmaps = {}          # (id(design), id(image), negate, halftone) -> (pixmap, scale)
@@ -303,6 +352,13 @@ class PreviewView(QGraphicsView):
         self._clear_polyline()
         self.hide_snap_marker()
         self.tool = tool
+        for item in self._items:
+            item.setFlag(QGraphicsItem.ItemIsMovable, tool == "select")
+        self._place_handles()
+        if tool == "nodes":
+            self.setDragMode(QGraphicsView.NoDrag)
+            self.viewport().setCursor(Qt.ArrowCursor)
+            return
         drawing = tool != "select"
         self.setDragMode(QGraphicsView.NoDrag if drawing else QGraphicsView.RubberBandDrag)
         self.viewport().setCursor(Qt.CrossCursor if drawing else Qt.ArrowCursor)
@@ -459,6 +515,12 @@ class PreviewView(QGraphicsView):
             self.signals.polyline_drawn.emit(pts, closed)
 
     def mouseDoubleClickEvent(self, event):
+        if self.tool == "nodes" and event.button() == Qt.LeftButton and self._node_item is not None:
+            hit = self.itemAt(event.position().toPoint())
+            if not isinstance(hit, NodeHandle):
+                self.insert_node(self.mapToScene(event.position().toPoint()))
+                event.accept()
+                return
         if self.tool == "polyline" and event.button() == Qt.LeftButton:
             self._finish_polyline(False)
             event.accept()
@@ -466,6 +528,9 @@ class PreviewView(QGraphicsView):
         super().mouseDoubleClickEvent(event)
 
     def mousePressEvent(self, event):
+        if self.tool == "nodes" and event.button() == Qt.LeftButton:
+            super().mousePressEvent(event)          # select a shape, or grab one of its nodes
+            return
         if self.tool == "polyline" and event.button() == Qt.LeftButton:
             p = self._snap_point(self.mapToScene(event.position().toPoint()))
             p = self._poly_constrained(p, bool(event.modifiers() & Qt.ShiftModifier))
@@ -488,7 +553,7 @@ class PreviewView(QGraphicsView):
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        if self.tool != "select" and self._draw_start is None and not self._poly_points \
+        if self.tool not in ("select", "nodes") and self._draw_start is None and not self._poly_points \
                 and not event.buttons():
             self.snap_point(self.mapToScene(event.position().toPoint()))     # shows where a click lands
         if self.tool == "polyline" and self._poly_points:
@@ -532,6 +597,12 @@ class PreviewView(QGraphicsView):
     def keyPressEvent(self, event):
         """Arrow keys move the selected element (1 mm or one grid step; Shift: 10x).
         Escape leaves a drawing tool."""
+        if self.tool == "nodes" and event.key() in (Qt.Key_Delete, Qt.Key_Backspace):
+            chosen = [h for h in self._node_handles if h.brush().color() == COLORS["selection"]]
+            if chosen:
+                self.delete_node(chosen[0])
+                event.accept()
+                return
         if self.tool == "polyline" and self._poly_points:
             if event.key() in (Qt.Key_Return, Qt.Key_Enter):
                 self._finish_polyline(False)
@@ -589,7 +660,8 @@ class PreviewView(QGraphicsView):
             self.scene().removeItem(h)
         self._handles = []
         items = self._selected_items()
-        if len(items) != 1:
+        self._place_nodes(items[0] if len(items) == 1 and self.tool == "nodes" else None)
+        if len(items) != 1 or self.tool == "nodes":
             return
         item = items[0]
         r = item.boundingRect()
@@ -612,6 +684,87 @@ class PreviewView(QGraphicsView):
         for h in self._handles:
             if h is not except_item:
                 h.setVisible(False)
+
+    # ---- node tool --------------------------------------------------------
+    def _clear_nodes(self):
+        for h in self._node_handles:
+            if h.scene() is not None:
+                self.scene().removeItem(h)
+        self._node_handles = []
+        if self._node_overlay is not None and self._node_overlay.scene() is not None:
+            self.scene().removeItem(self._node_overlay)
+        self._node_overlay = None
+        self._node_item = None
+
+    def _place_nodes(self, item):
+        self._clear_nodes()
+        if item is None or self.node_points_provider is None:
+            return
+        found = self.node_points_provider(item.element)
+        if not found:
+            return
+        points, closed = found
+        self._node_item = item
+        self._node_closed = closed
+        t = item.sceneTransform()
+        for i, (x, y) in enumerate(points):
+            h = NodeHandle(i, self)
+            h.setPos(QPointF(*t.map(x, y)))
+            self.scene().addItem(h)
+            self._node_handles.append(h)
+
+    def node_scene_points(self):
+        return [h.pos() for h in self._node_handles]
+
+    def select_node(self, handle):
+        for h in self._node_handles:
+            h.set_selected(h is handle)
+
+    def _draw_node_overlay(self):
+        if self._node_overlay is not None and self._node_overlay.scene() is not None:
+            self.scene().removeItem(self._node_overlay)
+        pts = self.node_scene_points()
+        if len(pts) < 2:
+            self._node_overlay = None
+            return
+        path = QPainterPath(pts[0])
+        for q in pts[1:]:
+            path.lineTo(q)
+        if self._node_closed:
+            path.closeSubpath()
+        self._node_overlay = self.scene().addPath(path, _cosmetic_pen(COLORS["selection"], 1.2, Qt.DashLine))
+        self._node_overlay.setZValue(40)
+
+    def _commit_nodes(self, points=None):
+        if self._node_item is None:
+            return
+        element = self._node_item.element
+        self.signals.nodes_changed.emit(element, points if points is not None else self.node_scene_points(),
+                                        self._node_closed)
+
+    def delete_node(self, handle):
+        pts = self.node_scene_points()
+        if len(pts) <= (3 if self._node_closed else 2):
+            return                                  # keep at least a line / a triangle
+        del pts[self._node_handles.index(handle)]
+        self._commit_nodes(pts)
+
+    def insert_node(self, p):
+        """Add a corner on the nearest side of the shape (double-click on it)."""
+        pts = self.node_scene_points()
+        if len(pts) < 2:
+            return
+        pairs = list(zip(range(len(pts)), pts, pts[1:] + ([pts[0]] if self._node_closed else [])))
+        best = None
+        for i, a, b in pairs:
+            nx, ny = snapping._nearest_on_segment(p.x(), p.y(), a.x(), a.y(), b.x(), b.y())
+            d = math.hypot(nx - p.x(), ny - p.y())
+            if best is None or d < best[0]:
+                best = (d, i, QPointF(nx, ny))
+        if best is None or best[0] > 3 * self._snap_tolerance():
+            return                                  # not on the outline
+        pts.insert(best[1] + 1, best[2])
+        self._commit_nodes(pts)
 
     def select_element(self, element):
         """Select one element, or several when given a list."""
@@ -646,6 +799,7 @@ class PreviewView(QGraphicsView):
         self._rebuilding = True
         scene = self.scene()
         self._snap_marker = None                 # deleted with the scene contents
+        self._node_handles, self._node_item, self._node_overlay = [], None, None
         scene.clear()
         self._items, self._handles = [], []
         bed_w, bed_h = bed_size_inches(values)

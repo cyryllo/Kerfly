@@ -658,6 +658,43 @@ def main():
     view.last_move_snapped = False
     w.close()
 
+    # 24. node tool: drag a corner of a rotated rectangle, insert and delete corners; text is not editable
+    w = make_window(grid_mm="0")
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    w._preview_drawn("rectangle", QPointF(40, 40), QPointF(80, 70), False)    # 40 x 30 mm
+    rect = w.elements[-1]
+    w._rotate(rect, 90)
+    w.set_tool("nodes")
+    view = w.preview
+    view.select_element(rect)
+    app.processEvents()
+    handles = list(view._node_handles)
+    four = len(handles) == 4
+    before = [QPointF(h.pos()) for h in handles]
+    moved_to = before[0] + QPointF(-10, -5)
+    pts = [QPointF(p) for p in before]
+    pts[0] = moved_to
+    view._commit_nodes(pts)
+    after = view.node_scene_points()
+    same = (rect.shape.kind == "polyline" and rect.shape.closed_path and rect.rotation == 90
+            and all(abs(a.x() - b.x()) < 1e-6 and abs(a.y() - b.y()) < 1e-6 for a, b in zip(after, pts)))
+    mid = (after[1] + after[2]) / 2.0
+    view.insert_node(mid)
+    inserted = len(view._node_handles) == 5 and w.tool_options.spec.kind == "polyline"
+    view.delete_node(view._node_handles[2])
+    deleted = len(view._node_handles) == 4
+    w.undo(); w.undo(); w.undo()
+    undone = rect.shape.kind == "rectangle" if rect in w.elements else w.elements[-1].shape.kind == "rectangle"
+    w._preview_drawn("text", QPointF(20, 120), QPointF(20, 120), False)
+    w.set_tool("nodes")
+    view.select_element(w.elements[-1])
+    no_text_nodes = not view._node_handles
+    check("node tool: move a corner of a rotated shape, insert, delete, undo; text has no nodes",
+          four and same and inserted and deleted and undone and no_text_nodes)
+    w.close()
+
     # 20. diagnostic log and report
     from kerfly.core import diag as _diag
     _diag.setup("test")

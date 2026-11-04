@@ -90,7 +90,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Freehand drawing | `tooldraw.py` |
 | Bezier / vector path | `toolvector.py` |
 | ~~Text (system fonts)~~ (done); text on a path | `tooltext.py`, `toollinetext.py` |
-| Node editing | `toolnodeedit.py`, `toolnodemove.py` |
+| ~~Node editing (drawn shapes: move, add, delete corners)~~ (done; curves/Bezier handles and imported paths still to do) | `toolnodeedit.py`, `toolnodemove.py` |
 | Cut a region out of an image | `toolimagecut.py` |
 | Tabs (bridges) on cut paths | `tooltabedit.py` |
 

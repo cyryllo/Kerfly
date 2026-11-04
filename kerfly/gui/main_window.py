@@ -31,7 +31,7 @@ from kerfly.core.layers import (CUT, ENGRAVE, EXTRA_COLORS, GCODE, KINDS, RASTER
 from kerfly.core.diag import log as diag_log
 from kerfly.core.layout import (Element, align, compile_layout, distribute, mirror, on_bed,
                                 selection_bounds)
-from kerfly.core.shapes import ShapeSpec, build_design
+from kerfly.core.shapes import ShapeSpec, build_design, outlines
 from kerfly.gui import icons
 from kerfly.gui.image_dialog import ImageSizeDialog
 from kerfly.gui.svg_render import render_svg
@@ -126,6 +126,8 @@ class MainWindow(QMainWindow):
         self.preview.signals.drawn.connect(self._preview_drawn)
         self.preview.signals.selected.connect(self._preview_selected)
         self.preview.signals.polyline_drawn.connect(self._preview_polyline_drawn)
+        self.preview.signals.nodes_changed.connect(self._nodes_changed)
+        self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
         self.preview.signals.rotated.connect(self._preview_rotated)
@@ -413,6 +415,7 @@ class MainWindow(QMainWindow):
         self.tool_group = QActionGroup(self)
         self.tool_actions = {}
         tools = [("select", "pointer", N_("Select and move"), "S"),
+                 ("nodes", "vector", N_("Edit nodes"), "N"),
                  ("rectangle", "square", N_("Rectangle"), "R"),
                  ("ellipse", "circle", N_("Ellipse"), "E"),
                  ("polygon", "hexagon", N_("Polygon"), "P"),
@@ -436,6 +439,9 @@ class MainWindow(QMainWindow):
     def set_tool(self, tool):
         self.preview.set_tool(tool)
         self.tool_actions[tool].setChecked(True)
+        if tool == "nodes":
+            self.status(_("Edit nodes: click a drawn shape, drag its corners. Double-click a side to add a "
+                          "corner; double-click a corner or select it and press Delete to remove it."))
         if tool == "polyline":
             self.status(_("Polyline: click the corners. Click the first point to close the shape; double-click or "
                           "press Enter to finish an open line. Backspace removes the last corner, Shift keeps "
@@ -452,7 +458,7 @@ class MainWindow(QMainWindow):
                 return                   # already shown; rebuilding would interrupt typing
             self._options_target, self._options_element = "selected", e
             self.tool_options.show_spec(e.shape, e.name)
-        elif self.preview.tool != "select":
+        elif self.preview.tool in self.shape_defaults:
             self._options_target, self._options_element = self.preview.tool, None
             self.tool_options.show_spec(self.shape_defaults[self.preview.tool],
                                         _(NEW_KIND_TITLES[self.preview.tool]))
@@ -521,6 +527,71 @@ class MainWindow(QMainWindow):
         if not spec.closed and spec.operation == "fill":
             spec.operation = "cut"                         # an open line has no area to fill
         self._add_drawn_element(spec, "polyline", left, top)
+
+    # ---- node editing -----------------------------------------------------
+    NODE_KINDS = ("polyline", "line", "rectangle", "ellipse", "polygon")
+
+    def _node_points(self, element):
+        """Corner points of a drawn shape in its item coordinates (mm, y down,
+        top-left of the shape at 0, 0), or None when it cannot be node-edited."""
+        spec = element.shape
+        if spec is None or spec.kind not in self.NODE_KINDS:
+            if self.preview.tool == "nodes":
+                self.status(_("Only drawn shapes have editable nodes (not text or opened files)."), error=True)
+            return None
+        if spec.kind == "polyline":
+            return [tuple(p) for p in spec.points], spec.closed_path
+        poly = outlines(spec)[0]
+        closed = spec.closed
+        if closed and len(poly) > 1 and poly[0] == poly[-1]:
+            poly = poly[:-1]
+        return [tuple(p) for p in poly], closed
+
+    def _nodes_changed(self, element, scene_points, closed):
+        """New corner positions from the node tool (scene mm). The shape becomes
+        a polyline; rotation, scale and mirror of the element are kept."""
+        import math
+        from PySide6.QtGui import QTransform
+        if element not in self.elements or element.shape is None:
+            return
+        e = element
+        # scene -> item coordinates with the element's current rotation / scale (not its old size)
+        lin = QTransform().rotate(-e.rotation).scale(e.scale_x, e.scale_y)
+        inv, ok = lin.inverted()
+        if not ok:
+            return
+        local = [inv.map(p.x(), p.y()) for p in scene_points]
+        left = min(x for x, _ in local)
+        top = min(y for _, y in local)
+        pts = [(x - left, y - top) for x, y in local]
+        spec = e.shape.copy()
+        if spec.kind != "polyline":
+            spec.kind = "polyline"
+        spec.points = pts
+        spec.closed_path = bool(closed)
+        spec.width = max(x for x, _ in pts)
+        spec.height = max(y for _, y in pts)
+        if not spec.closed and spec.operation == "fill":
+            spec.operation = "cut"
+        design = build_design(spec)
+        xmin, xmax, ymin, ymax = design.bounds
+        if xmax - xmin <= 0 and ymax - ymin <= 0:
+            return
+        self._checkpoint()
+        e.shape = spec
+        e.design = design
+        # place it so that point 0 lands where it was dragged to
+        w0, h0 = (xmax - xmin) * 25.4, (ymax - ymin) * 25.4
+        vx, vy = lin.map(pts[0][0] - w0 / 2.0, pts[0][1] - h0 / 2.0)
+        cx, cy = scene_points[0].x() - vx, scene_points[0].y() - vy
+        if self.preview.home_ur:
+            cx = self.preview.bed_w_mm - cx
+        e.set_centre(cx / 25.4, -cy / 25.4)
+        if math.isfinite(e.x) and math.isfinite(e.y):
+            self._layer_cache.clear()
+            self._layout_changed()
+            self.preview.select_element(e)
+            self._update_tool_options(force=True)        # now a polyline: no more "sides" or "radius"
 
     def _add_drawn_element(self, spec, tool, left, top):
         design = build_design(spec)
