@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 19:58+0100\n"
+"POT-Creation-Date: 2026-11-04 19:59+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -357,6 +357,9 @@ msgstr "Création de l'image en demi-teintes."
 msgid "Creating scan lines: %s%%"
 msgstr "Création des lignes de balayage : %s%%"
 
+msgid "Cross-hatch: a second set of lines at 90°"
+msgstr "Hachures croisées : un second jeu de lignes à 90°"
+
 msgid "Curve"
 msgstr "Courbe"
 
@@ -420,6 +423,9 @@ msgstr "Différence"
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr "Différence : découper les autres formes sélectionnées dans la première"
 
+msgid "Direction of the lines"
+msgstr "Direction des lignes"
+
 #, python-format
 msgid ""
 "Distance %(d).2f %(u)s: width %(w).2f %(u)s, height %(h).2f %(u)s, angle "
@@ -427,6 +433,9 @@ msgid ""
 msgstr ""
 "Distance %(d).2f %(u)s : largeur %(w).2f %(u)s, hauteur %(h).2f %(u)s, "
 "angle %(a).1f°"
+
+msgid "Distance between the lines"
+msgstr "Distance entre les lignes"
 
 msgid "Distance down from home"
 msgstr "Distance vers le bas depuis l'origine"
@@ -604,6 +613,12 @@ msgstr "Demi-teintes (tramage) pour les images en niveaux de gris"
 
 msgid "Halftone resolution (dpi)"
 msgstr "Résolution des demi-teintes (ppp)"
+
+msgid "Hatch"
+msgstr "Hachures"
+
+msgid "Hatch (lines)"
+msgstr "Hachures (lignes)"
 
 #, python-format
 msgid "Head: X %s  Y %s %s"

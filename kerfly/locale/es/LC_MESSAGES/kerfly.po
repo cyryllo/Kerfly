@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 19:58+0100\n"
+"POT-Creation-Date: 2026-11-04 19:59+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -355,6 +355,9 @@ msgstr "Creando imagen de semitonos."
 msgid "Creating scan lines: %s%%"
 msgstr "Creando líneas de barrido: %s%%"
 
+msgid "Cross-hatch: a second set of lines at 90°"
+msgstr "Rayado cruzado: un segundo juego de líneas a 90°"
+
 msgid "Curve"
 msgstr "Curva"
 
@@ -416,6 +419,9 @@ msgstr "Diferencia"
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr "Diferencia: recortar las demás formas seleccionadas de la primera"
 
+msgid "Direction of the lines"
+msgstr "Dirección de las líneas"
+
 #, python-format
 msgid ""
 "Distance %(d).2f %(u)s: width %(w).2f %(u)s, height %(h).2f %(u)s, angle "
@@ -423,6 +429,9 @@ msgid ""
 msgstr ""
 "Distancia %(d).2f %(u)s: ancho %(w).2f %(u)s, alto %(h).2f %(u)s, ángulo "
 "%(a).1f°"
+
+msgid "Distance between the lines"
+msgstr "Distancia entre las líneas"
 
 msgid "Distance down from home"
 msgstr "Distancia hacia abajo desde el origen"
@@ -600,6 +609,12 @@ msgstr "Semitonos (tramado) para imágenes en escala de grises"
 
 msgid "Halftone resolution (dpi)"
 msgstr "Resolución de semitonos (ppp)"
+
+msgid "Hatch"
+msgstr "Rayado"
+
+msgid "Hatch (lines)"
+msgstr "Rayado (líneas)"
 
 #, python-format
 msgid "Head: X %s  Y %s %s"

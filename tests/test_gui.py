@@ -24,7 +24,7 @@ TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(TESTS_DIR)
 sys.path.insert(0, ROOT_DIR)
 
-from PySide6.QtWidgets import QApplication, QFileDialog, QInputDialog, QMessageBox, QToolButton  # noqa: E402
+from PySide6.QtWidgets import QApplication, QFileDialog, QInputDialog, QLabel, QMessageBox, QToolButton  # noqa: E402
 
 from kerfly.core import config  # noqa: E402
 from kerfly.gui.main_window import MainWindow  # noqa: E402
@@ -839,6 +839,22 @@ def main():
     QTest.mouseRelease(vp, Qt.LeftButton, Qt.NoModifier, q)
     msg = w.statusBar().currentMessage()
     check("ruler: snapped corners, 50 mm diagonal", "50.00" in msg or "50,00" in msg, "(%s)" % msg)
+    w.close()
+
+    # 31. hatch operation from the options bar
+    w = make_window(grid_mm="0")
+    w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
+    spec = w.selected.shape.copy()
+    spec.operation = "hatch"
+    w._tool_options_changed(spec)
+    for _i in range(5):
+        app.processEvents()
+    labels = [l.text() for l in w.tool_options.findChildren(QLabel)]
+    e = w.selected
+    from kerfly.gui.layers_panel import KIND_NAMES as _KN
+    hatch_ok = e.design.vector_engrave.ecoords and not e.design.vector_cut.ecoords and e.shape.operation == "hatch"
+    check("hatch: from the options bar, its settings appear, lines go to the engrave layer",
+          hatch_ok and any(t in ("Hatch", "Kreskowanie") for t in labels), "(%s)" % labels)
     w.close()
 
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo

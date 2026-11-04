@@ -9,6 +9,7 @@ shapes are ordinary elements on the bed.
 Operations:
     "cut"      outline as vector cut (red)
     "engrave"  outline as vector engrave (blue)
+    "hatch"    area filled with parallel engraved lines (vector engrave)
     "fill"     area filled as a raster engraving (even-odd rule, so letters
                like "O" keep their holes)
 
@@ -27,7 +28,7 @@ MM = 25.4
 FILL_DPI = 1000.0
 
 KINDS = ("rectangle", "ellipse", "polygon", "line", "polyline", "path", "text")
-OPERATIONS = ("cut", "engrave", "fill")
+OPERATIONS = ("cut", "engrave", "hatch", "fill")
 
 
 @dataclass
@@ -36,6 +37,9 @@ class ShapeSpec:
     width: float = 20.0           # mm (for "line": the end point relative to the start)
     height: float = 20.0          # mm
     operation: str = "cut"
+    hatch_spacing: float = 0.5    # hatch: distance between lines, mm
+    hatch_angle: float = 45.0     # hatch: line direction, degrees counter-clockwise
+    hatch_cross: bool = False     # hatch: second set of lines at 90 degrees
     corner_radius: float = 0.0    # rectangle, mm
     sides: int = 6                # polygon
     text: str = "Kerfly"          # text
@@ -164,7 +168,16 @@ def build_design(spec):
     def to_design(x, y):
         return (x - xmin) / MM, h_in - (y - ymin) / MM
 
-    if spec.operation == "fill" and spec.closed:
+    if spec.operation == "hatch" and spec.closed:
+        from .hatch import hatch_lines
+        segments = []
+        spacing = max(0.02, float(spec.hatch_spacing))
+        # y down in the shape, so a positive angle turns counter-clockwise on the bed
+        for (x1, y1), (x2, y2) in hatch_lines(polys, spacing, -spec.hatch_angle, spec.hatch_cross):
+            a, b = to_design(x1, y1), to_design(x2, y2)
+            segments.append([a[0], a[1], b[0], b[1]])
+        design.vector_engrave.make_ecoords(segments, scale=1.0)
+    elif spec.operation == "fill" and spec.closed:
         design.input_dpi = FILL_DPI
         design.raster.set_image(_fill_image(polys, xmin, ymin, xmax - xmin, ymax - ymin))
     else:
@@ -173,7 +186,7 @@ def build_design(spec):
             pts = [to_design(x, y) for x, y in p]
             for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
                 segments.append([x1, y1, x2, y2])
-        target = design.vector_engrave if spec.operation == "engrave" else design.vector_cut
+        target = design.vector_engrave if spec.operation in ("engrave", "hatch") else design.vector_cut
         target.make_ecoords(segments, scale=1.0)
     design.bounds = (0.0, (xmax - xmin) / MM, 0.0, h_in)
     return design

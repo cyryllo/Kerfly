@@ -99,7 +99,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Feature | MeerK40t reference |
 |---|---|
 | Text from Hershey / TrueType / SHX fonts (no Inkscape) | `extra/hershey.py`, `tools/ttfparser.py`, `tools/shxparser.py`, `tools/jhfparser.py` |
-| Hatch and pattern fills | `fill/fills.py`, `fill/patternfill.py`, `fill/patterns.py` |
+| ~~Hatch fill~~ (done: spacing, angle, cross-hatch); pattern fills | `fill/fills.py`, `fill/patternfill.py`, `fill/patterns.py` |
 | Living hinges | `tools/livinghinges.py`, `tools/living_hinge_optimizer.py` |
 | Image dithering (more methods than Floyd-Steinberg) | `image/dither.py` |
 | Image adjustments (contrast, sharpen, crop, split) | `image/imagetools.py`, `extra/imageactions.py`, `gui/imagesplitter.py` |

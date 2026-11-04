@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 19:58+0100\n"
+"POT-Creation-Date: 2026-11-04 19:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -342,6 +342,9 @@ msgstr ""
 msgid "Creating scan lines: %s%%"
 msgstr ""
 
+msgid "Cross-hatch: a second set of lines at 90°"
+msgstr ""
+
 msgid "Curve"
 msgstr ""
 
@@ -403,10 +406,16 @@ msgstr ""
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr ""
 
+msgid "Direction of the lines"
+msgstr ""
+
 #, python-format
 msgid ""
 "Distance %(d).2f %(u)s: width %(w).2f %(u)s, height %(h).2f %(u)s, angle "
 "%(a).1f°"
+msgstr ""
+
+msgid "Distance between the lines"
 msgstr ""
 
 msgid "Distance down from home"
@@ -571,6 +580,12 @@ msgid "Halftone (dither) grayscale images"
 msgstr ""
 
 msgid "Halftone resolution (dpi)"
+msgstr ""
+
+msgid "Hatch"
+msgstr ""
+
+msgid "Hatch (lines)"
 msgstr ""
 
 #, python-format

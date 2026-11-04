@@ -64,7 +64,7 @@ DEFAULT_LAYER_KEYS = {RASTER: ("include_Reng", "Reng_feed", "Reng_passes", "Reng
                       ENGRAVE: ("include_Veng", "Veng_feed", "Veng_passes", "Veng_power"),
                       CUT: ("include_Vcut", "Vcut_feed", "Vcut_passes", "Vcut_power"),
                       GCODE: ("include_Gcde", None, "Gcde_passes", "Gcode_power")}
-OPERATION_KIND = {"cut": CUT, "engrave": ENGRAVE, "fill": RASTER}
+OPERATION_KIND = {"cut": CUT, "engrave": ENGRAVE, "hatch": ENGRAVE, "fill": RASTER}
 
 
 def _num(value, decimals=1):
@@ -525,9 +525,15 @@ class MainWindow(QMainWindow):
     def _tool_options_changed(self, spec):
         target = getattr(self, "_options_target", None)
         if target == "selected" and self.selected is not None and self.selected.shape is not None:
+            before = self.selected.shape.operation
             self._apply_shape(self.selected, spec)
         elif target in self.shape_defaults:
+            before = self.shape_defaults[target].operation
             self.shape_defaults[target] = spec
+        else:
+            return
+        if before != spec.operation:              # e.g. hatch shows its own settings
+            QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
 
     def _apply_shape(self, element, spec):
         """Rebuild a drawn element from a changed spec, keeping its top-left corner."""
@@ -602,8 +608,8 @@ class MainWindow(QMainWindow):
         spec.points = [(p.x() - left, p.y() - top) for p in points]
         spec.closed_path = bool(closed)
         spec.width, spec.height = max(xs) - left, max(ys) - top
-        if not spec.closed and spec.operation == "fill":
-            spec.operation = "cut"                         # an open line has no area to fill
+        if not spec.closed and spec.operation in ("fill", "hatch"):
+            spec.operation = "cut" if spec.operation == "fill" else "engrave"                         # an open line has no area to fill
         self._add_drawn_element(spec, "polyline", left, top)
 
     # ---- node editing -----------------------------------------------------
@@ -662,8 +668,8 @@ class MainWindow(QMainWindow):
         spec.points, spec.closed_path = [], False
         x0, x1, y0, y1 = curves.bounds(local)
         spec.width, spec.height = x1, y1
-        if not spec.closed and spec.operation == "fill":
-            spec.operation = "cut"
+        if not spec.closed and spec.operation in ("fill", "hatch"):
+            spec.operation = "cut" if spec.operation == "fill" else "engrave"
         design = build_design(spec)
         xmin, xmax, ymin, ymax = design.bounds
         if xmax - xmin <= 0 and ymax - ymin <= 0:

@@ -507,6 +507,19 @@ def test_curves():
     sm = C.smooth_path([(0, 0), (10, 5), (20, 0), (30, 5)], False)
     check("smooth path passes through the points", [n[:2] for n in sm[0]["nodes"]] == [[0, 0], [10, 5], [20, 0], [30, 5]]
           and sm[0]["nodes"][1][4] is not None)
+    from kerfly.core.hatch import hatch_lines
+    sq = [[(0, 0), (10, 0), (10, 10), (0, 10)]]
+    ring = sq + [[(3, 3), (7, 3), (7, 7), (3, 7)]]
+    lines = hatch_lines(sq, 1.0, 0)
+    check("hatch: 10 mm square, 1 mm spacing -> 10 lines, zigzag", len(lines) == 10
+          and lines[0][0][0] < lines[0][1][0] and lines[1][0][0] > lines[1][1][0])
+    holed = hatch_lines(ring, 1.0, 0)
+    check("hatch keeps holes empty", len(holed) == 14 and not any(3 < (a[0] + b[0]) / 2 < 7 and 3 < a[1] < 7
+                                                                  for a, b in holed))
+    hd = build_design(ShapeSpec(kind="rectangle", width=10, height=10, operation="hatch",
+                                hatch_spacing=1.0, hatch_angle=0.0))
+    check("hatched rectangle: engrave lines, no cut, no raster", hd.vector_engrave.ecoords and not hd.vector_cut.ecoords
+          and hd.raster.image is None and abs(hd.bounds[1] * 25.4 - 10) < 1e-9)
     design = build_design(ShapeSpec(kind="path", subpaths=circle, operation="fill"))
     check("a closed path can be filled", design.raster.image is not None)
     found = C.svg_segments(SVG)
