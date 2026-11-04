@@ -7,7 +7,7 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
-## Unreleased
+## 0.4.0 (2026-11-04)
 
 - **Mirror** horizontally and vertically (toolbar group Arrange, Edit menu,
   Ctrl+Shift+H / Ctrl+Shift+V). Works for vectors and images, also when they
