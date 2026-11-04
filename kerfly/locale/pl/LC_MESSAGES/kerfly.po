@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 19:53+0100\n"
+"POT-Creation-Date: 2026-11-04 19:56+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -534,6 +534,17 @@ msgstr "Odbij zaznaczone elementy góra–dół"
 msgid "Font"
 msgstr "Czcionka"
 
+msgid "Freehand"
+msgstr "Odręcznie"
+
+msgid ""
+"Freehand: draw with the mouse button held. End near the start to close "
+"the shape. The line is smoothed into curves you can edit with Edit nodes."
+msgstr ""
+"Rysowanie odręczne: rysuj z wciśniętym przyciskiem myszy. Zakończ blisko "
+"początku, aby zamknąć kształt. Linia zostanie wygładzona w krzywe, które "
+"poprawisz edycją węzłów."
+
 msgid "G-code"
 msgstr "G-code"
 
@@ -845,6 +856,9 @@ msgstr "Nowy"
 
 msgid "New ellipse"
 msgstr "Nowa elipsa"
+
+msgid "New freehand line"
+msgstr "Nowa linia odręczna"
 
 msgid "New from current layers"
 msgstr "Nowy z obecnych warstw"

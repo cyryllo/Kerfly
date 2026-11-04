@@ -125,6 +125,7 @@ class MainWindow(QMainWindow):
                                                text=_("Text"))
                                for kind in ("rectangle", "ellipse", "polygon", "line", "polyline", "text")}
         self.shape_defaults["pen"] = ShapeSpec(kind="path", operation="cut")
+        self.shape_defaults["freehand"] = self.shape_defaults["pen"]
         self.preview.signals.drawn.connect(self._preview_drawn)
         self.preview.signals.selected.connect(self._preview_selected)
         self.preview.signals.polyline_drawn.connect(self._preview_polyline_drawn)
@@ -452,6 +453,7 @@ class MainWindow(QMainWindow):
                  ("line", "line", N_("Line"), "L"),
                  ("polyline", "polygon", N_("Polyline"), "Shift+L"),
                  ("pen", "vector-bezier-2", N_("Pen (curves)"), "B"),
+                 ("freehand", "scribble", N_("Freehand"), "F"),
                  ("text", "typography", N_("Text"), "T")]
         for key, icon, name, shortcut in tools:
             act = QAction(icons.tabler(icon), _(name), self)
@@ -474,6 +476,9 @@ class MainWindow(QMainWindow):
             self.status(_("Edit nodes: click a shape, drag its nodes and the round curve handles (Ctrl: one "
                           "handle alone). Shift+click selects more nodes. Double-click a side to add a node, a node "
                           "to remove it. Buttons above, or keys I D L C O S Z B."))
+        if tool == "freehand":
+            self.status(_("Freehand: draw with the mouse button held. End near the start to close the shape. The "
+                          "line is smoothed into curves you can edit with Edit nodes."))
         if tool == "pen":
             self.status(_("Pen: click for a corner, press and drag for a smooth curve. Click the first point to "
                           "close the shape; double-click or Enter finishes an open path. Backspace removes the "
@@ -564,7 +569,8 @@ class MainWindow(QMainWindow):
 
     def _preview_pen_drawn(self, subpaths):
         """A path was drawn with the pen (scene mm)."""
-        e = Element(Design(), name=_("Path"))
+        tool = self.preview.tool
+        e = Element(Design(), name=_("Freehand") if tool == "freehand" else _("Path"))
         if not self._fit_path(e, subpaths, self.shape_defaults["pen"]):
             self.status(_("Nothing to draw."), error=True)
             return

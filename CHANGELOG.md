@@ -36,6 +36,10 @@ Version numbers:
     lines become polylines, as before;
   - the image part of an SVG stays as it was;
   - texts can be broken apart as well.
+- **Freehand** drawing tool (F). Draw with the mouse button held; end near
+  the start to close the shape. The line is simplified and smoothed into
+  curves that can be edited with Edit nodes.
+- The bed view follows the window size until you zoom or pan.
 - **Combine shapes** (new Shapes toolbar group, Edit → Combine shapes):
   union, difference (the first selected shape minus the others), intersection
   and exclusion of the closed outlines of two or more selected shapes. The

@@ -326,6 +326,52 @@ def break_at(subpaths, sub, i):
     return True
 
 
+# ---- freehand ------------------------------------------------------------------------
+def simplify(points, tol):
+    """Ramer-Douglas-Peucker: drop points closer than tol to the line between
+    their neighbours (keeps the first and last point)."""
+    if len(points) < 3:
+        return list(points)
+    keep = [False] * len(points)
+    keep[0] = keep[-1] = True
+    stack = [(0, len(points) - 1)]
+    while stack:
+        a, b = stack.pop()
+        ax, ay = points[a]
+        bx, by = points[b]
+        dx, dy = bx - ax, by - ay
+        length = math.hypot(dx, dy)
+        best, index = -1.0, None
+        for k in range(a + 1, b):
+            px, py = points[k]
+            d = (abs((px - ax) * dy - (py - ay) * dx) / length) if length else math.hypot(px - ax, py - ay)
+            if d > best:
+                best, index = d, k
+        if index is not None and best > tol:
+            keep[index] = True
+            stack += [(a, index), (index, b)]
+    return [p for p, k in zip(points, keep) if k]
+
+
+def smooth_path(points, closed=False, tension=1.0 / 6.0):
+    """A smooth curve through points (Catmull-Rom, as Bezier handles)."""
+    n = len(points)
+    if n < 3:
+        return from_polylines([points], [False])
+    nodes = []
+    for i, (x, y) in enumerate(points):
+        if closed:
+            prev, nxt = points[(i - 1) % n], points[(i + 1) % n]
+        else:
+            prev = points[i - 1] if i > 0 else points[i]
+            nxt = points[i + 1] if i < n - 1 else points[i]
+        tx, ty = (nxt[0] - prev[0]) * tension, (nxt[1] - prev[1]) * tension
+        hin = (x - tx, y - ty) if (closed or i > 0) else None
+        hout = (x + tx, y + ty) if (closed or i < n - 1) else None
+        nodes.append(node(x, y, hin, hout))
+    return [{"closed": closed, "nodes": nodes}]
+
+
 # ---- arcs ----------------------------------------------------------------------------
 def arc_segments(cx, cy, r, start_deg, end_deg, rx=None, ry=None, rotation_deg=0.0):
     """Bezier segments of a circular (or elliptical) arc, counter-clockwise from

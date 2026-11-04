@@ -74,6 +74,7 @@ Changes between versions are listed in [CHANGELOG.md](CHANGELOG.md).
 | Square / circle, 45° lines | Hold Shift while drawing |
 | Polyline | Click the corners. Click the first point to close; double-click or Enter for an open line; Backspace removes the last corner; Esc cancels |
 | Pen (B) | Click for a corner, press and drag for a smooth curve. Click the first point to close; double-click or Enter to finish; Backspace removes the last node |
+| Freehand (F) | Draw with the button held; end near the start to close |
 | Edit nodes (N) | Drag nodes and round curve handles (Ctrl: one handle alone). Shift+click selects more. Double-click a side to add a node, a node to remove it. Keys: I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / open, B break |
 | Edit an opened SVG / DXF | Break apart (Ctrl+Shift+B) first, then edit nodes |
 | Group / Ungroup | Ctrl+Shift+G / Ctrl+Alt+G. Clicking one member selects the whole group |

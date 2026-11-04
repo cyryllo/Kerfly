@@ -285,6 +285,7 @@ class PreviewView(QGraphicsView):
         self._draw_item = None
         self._poly_points = []      # polyline being drawn (scene mm)
         self._pen = None            # pen path being drawn: {"nodes": [...], "pressed": bool}
+        self._freehand = None       # points of a freehand line being drawn (scene mm)
         self.snap_objects = True    # snap to corners, centres, middles and lines of other elements
         self.node_points_provider = None   # element -> subpaths in item coordinates, or None
         from kerfly.gui.node_editor import NodeEditor
@@ -301,6 +302,7 @@ class PreviewView(QGraphicsView):
 
     # ---- navigation: wheel zooms, middle (or right) button drags the view ----
     def wheelEvent(self, event):
+        self._user_zoomed = True                 # keep the user's zoom when the window is resized
         factor = 1.25 if event.angleDelta().y() > 0 else 1 / 1.25
         current = self.transform().m11()
         if 0.05 < current * factor < 400:
@@ -570,6 +572,34 @@ class PreviewView(QGraphicsView):
         if len(nodes) >= (3 if closed else 2) or (closed and len(nodes) == 2 and nodes[0][4] is not None):
             self.signals.pen_drawn.emit([{"closed": closed, "nodes": nodes}])
 
+    # ---- freehand: draw with the mouse button held; ends near the start: closed
+    def _draw_freehand(self):
+        if self._draw_item is not None and self._draw_item.scene() is not None:
+            self.scene().removeItem(self._draw_item)
+        qp = QPainterPath(QPointF(*self._freehand[0]))
+        for p in self._freehand[1:]:
+            qp.lineTo(QPointF(*p))
+        self._draw_item = self.scene().addPath(qp, _cosmetic_pen(COLORS["selection"], 1.3))
+        self._draw_item.setZValue(30)
+
+    def _finish_freehand(self, end_view_pos):
+        from kerfly.core import curves
+        pts, self._freehand = self._freehand, None
+        if self._draw_item is not None and self._draw_item.scene() is not None:
+            self.scene().removeItem(self._draw_item)
+        self._draw_item = None
+        if not pts or len(pts) < 2:
+            return
+        start = self.mapFromScene(QPointF(*pts[0]))
+        closed = len(pts) > 10 and abs(start.x() - end_view_pos.x()) <= 10 and abs(start.y() - end_view_pos.y()) <= 10
+        tol = 1.5 / max(abs(self.transform().m11()), 1e-9)          # 1.5 screen pixels, in mm
+        simple = curves.simplify(pts, tol)
+        if closed and len(simple) > 3:
+            simple = simple[:-1]
+        if len(simple) < 2:
+            return
+        self.signals.pen_drawn.emit(curves.smooth_path(simple, closed and len(simple) >= 3))
+
     def mouseDoubleClickEvent(self, event):
         if self.tool == "nodes" and event.button() == Qt.LeftButton and self._node_item is not None:
             from kerfly.gui.node_editor import HandleMark, NodeMark
@@ -589,6 +619,12 @@ class PreviewView(QGraphicsView):
         super().mouseDoubleClickEvent(event)
 
     def mousePressEvent(self, event):
+        if self.tool == "freehand" and event.button() == Qt.LeftButton:
+            p = self.snap_point(self.mapToScene(event.position().toPoint()))
+            self.hide_snap_marker()
+            self._freehand = [(p.x(), p.y())]
+            event.accept()
+            return
         if self.tool == "pen" and event.button() == Qt.LeftButton:
             from kerfly.core import curves
             p = self._pen_point(event)
@@ -620,6 +656,7 @@ class PreviewView(QGraphicsView):
             event.accept()
             return
         if event.button() in (Qt.MiddleButton, Qt.RightButton):
+            self._user_zoomed = True             # panned: keep this view when the window is resized
             self._panning = event.position()
             self.setCursor(Qt.ClosedHandCursor)
             event.accept()
@@ -628,8 +665,16 @@ class PreviewView(QGraphicsView):
 
     def mouseMoveEvent(self, event):
         if self.tool not in ("select", "nodes") and self._draw_start is None and not self._poly_points \
-                and not self._pen and not event.buttons():
+                and not self._pen and self._freehand is None and not event.buttons():
             self.snap_point(self.mapToScene(event.position().toPoint()))     # shows where a click lands
+        if self.tool == "freehand" and self._freehand is not None:
+            pos = self.mapToScene(event.position().toPoint())
+            last = self._freehand[-1]
+            if math.hypot(pos.x() - last[0], pos.y() - last[1]) > 0.4 / max(abs(self.transform().m11()), 1e-9):
+                self._freehand.append((pos.x(), pos.y()))
+                self._draw_freehand()
+            event.accept()
+            return
         if self.tool == "pen" and self._pen:
             pos = self.mapToScene(event.position().toPoint())
             if self._pen["pressed"]:                      # dragging out the handles of the new node
@@ -663,6 +708,10 @@ class PreviewView(QGraphicsView):
         super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
+        if self.tool == "freehand" and event.button() == Qt.LeftButton and self._freehand is not None:
+            self._finish_freehand(event.position())
+            event.accept()
+            return
         if self.tool == "pen" and event.button() == Qt.LeftButton:
             if self._pen:
                 self._pen["pressed"] = False
@@ -749,6 +798,7 @@ class PreviewView(QGraphicsView):
         super().keyPressEvent(event)
 
     def fit_all(self):
+        self._user_zoomed = False
         rect = self.scene().itemsBoundingRect()
         if not rect.isEmpty():
             self.fitInView(rect.adjusted(-5, -5, 5, 5), Qt.KeepAspectRatio)
@@ -756,8 +806,8 @@ class PreviewView(QGraphicsView):
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        if not self._fitted:
-            self.fit_all()
+        if not self._fitted or not getattr(self, "_user_zoomed", False):
+            self.fit_all()                       # the bed follows the window size until you zoom
 
     # ---- selection and handles ----------------------------------------
     def _selected_items(self):

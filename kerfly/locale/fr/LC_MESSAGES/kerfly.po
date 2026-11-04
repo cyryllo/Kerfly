@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 19:53+0100\n"
+"POT-Creation-Date: 2026-11-04 19:56+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -540,6 +540,17 @@ msgstr "Retourner les éléments sélectionnés de haut en bas"
 msgid "Font"
 msgstr "Police"
 
+msgid "Freehand"
+msgstr "Main levée"
+
+msgid ""
+"Freehand: draw with the mouse button held. End near the start to close "
+"the shape. The line is smoothed into curves you can edit with Edit nodes."
+msgstr ""
+"Main levée : dessinez en maintenant le bouton de la souris. Terminez près"
+" du début pour fermer la forme. La ligne est lissée en courbes "
+"modifiables avec Modifier les nœuds."
+
 msgid "G-code"
 msgstr "G-code"
 
@@ -853,6 +864,9 @@ msgstr "Nouveau"
 
 msgid "New ellipse"
 msgstr "Nouvelle ellipse"
+
+msgid "New freehand line"
+msgstr "Nouvelle ligne à main levée"
 
 msgid "New from current layers"
 msgstr "Nouveau depuis les calques"

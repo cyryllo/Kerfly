@@ -502,6 +502,11 @@ def test_curves():
         C.from_polylines([[(0, 0), (1, 0), (0, 1)]], [True]), 0, 0))
     C.break_at(sq, 0, 2)
     check("break a closed path opens it at the node", not sq[0]["closed"] and len(sq[0]["nodes"]) == 5)
+    line = [(x * 0.1, 0.001 * ((-1) ** x)) for x in range(100)]
+    check("simplify drops points on a straight line", len(C.simplify(line, 0.01)) == 2)
+    sm = C.smooth_path([(0, 0), (10, 5), (20, 0), (30, 5)], False)
+    check("smooth path passes through the points", [n[:2] for n in sm[0]["nodes"]] == [[0, 0], [10, 5], [20, 0], [30, 5]]
+          and sm[0]["nodes"][1][4] is not None)
     design = build_design(ShapeSpec(kind="path", subpaths=circle, operation="fill"))
     check("a closed path can be filled", design.raster.image is not None)
     found = C.svg_segments(SVG)

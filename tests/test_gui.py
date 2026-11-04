@@ -597,6 +597,8 @@ def main():
     w.resize(1200, 800)
     w.show()
     app.processEvents()
+    w.preview.fit_all()                  # the whole bed in view, also on small test screens
+    app.processEvents()
     view = w.preview
     w.set_tool("polyline")
 
@@ -627,13 +629,16 @@ def main():
     reread = _project.shape_from_item(data["elements"][0])
     check("polyline: click corners, close on the first point, Enter for open, saved in project",
           closed_ok and open_ok and reread.points == closed_el.shape.points and reread.closed_path,
-          "(%d elements)" % len(w.elements))
+          "(%d elements, closed %s, open %s, viewport %s)" % (len(w.elements), closed_ok, open_ok,
+                                                             view.viewport().size().toTuple()))
     w.close()
 
     # 23. object snapping: drawing starts on another shape's corner; dragging snaps an element to it
     w = make_window(grid_mm="0")
     w.resize(1200, 800)
     w.show()
+    app.processEvents()
+    w.preview.fit_all()                  # the whole bed in view, also on small test screens
     app.processEvents()
     w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
     view = w.preview
@@ -663,6 +668,8 @@ def main():
     w = make_window(grid_mm="0")
     w.resize(1200, 800)
     w.show()
+    app.processEvents()
+    w.preview.fit_all()                  # the whole bed in view, also on small test screens
     app.processEvents()
     w._preview_drawn("rectangle", QPointF(40, 40), QPointF(80, 70), False)    # 40 x 30 mm
     rect = w.elements[-1]
@@ -719,6 +726,8 @@ def main():
     w.resize(1200, 800)
     w.show()
     app.processEvents()
+    w.preview.fit_all()                  # the whole bed in view, also on small test screens
+    app.processEvents()
     view = w.preview
     w.set_tool("pen")
     vp = view.viewport()
@@ -770,6 +779,8 @@ def main():
     w.resize(1200, 800)
     w.show()
     app.processEvents()
+    w.preview.fit_all()                  # the whole bed in view, also on small test screens
+    app.processEvents()
     sizes = {}
     for op in ("union", "difference", "intersection", "exclusion"):
         two_squares(w)
@@ -784,10 +795,38 @@ def main():
     check("combine shapes: union, difference, intersection, exclusion", ok and len(w.elements) == 2, str(sizes))
     w.close()
 
+    # 29. freehand: a circle drawn with the mouse becomes a closed smooth path with few nodes
+    import math as _m
+    w = make_window(grid_mm="0")
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    w.preview.fit_all()                  # the whole bed in view, also on small test screens
+    app.processEvents()
+    view = w.preview
+    vp = view.viewport()
+    w.set_tool("freehand")
+    pts = [(100 + 30 * _m.cos(a / 60.0 * 2 * _m.pi), 100 + 30 * _m.sin(a / 60.0 * 2 * _m.pi)) for a in range(61)]
+    QTest.mousePress(vp, Qt.LeftButton, Qt.NoModifier, view.mapFromScene(QPointF(*pts[0])))
+    for x, y in pts[1:]:
+        q = view.mapFromScene(QPointF(x, y))
+        QApplication.sendEvent(vp, QMouseEvent(QEvent.MouseMove, QPointF(q), QPointF(vp.mapToGlobal(q)),
+                                               Qt.NoButton, Qt.LeftButton, Qt.NoModifier))
+    QTest.mouseRelease(vp, Qt.LeftButton, Qt.NoModifier, view.mapFromScene(QPointF(*pts[-1])))
+    app.processEvents()
+    fe = w.elements[-1] if w.elements else None
+    fh_ok = (fe is not None and fe.shape.kind == "path" and fe.shape.subpaths[0]["closed"]
+             and 6 <= len(fe.shape.subpaths[0]["nodes"]) <= 40 and abs(fe.size[0] * 25.4 - 60) < 2.0)
+    check("freehand: drawn circle -> closed smooth path", fh_ok,
+          "(%s nodes, %.1f mm wide)" % (len(fe.shape.subpaths[0]["nodes"]) if fe else 0, fe.size[0] * 25.4 if fe else 0))
+    w.close()
+
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo
     w = make_window(grid_mm="0")
     w.resize(1200, 800)
     w.show()
+    app.processEvents()
+    w.preview.fit_all()                  # the whole bed in view, also on small test screens
     app.processEvents()
     for x0 in (20, 60, 100):
         w._preview_drawn("rectangle", QPointF(x0, 20), QPointF(x0 + 20, 40), False)
