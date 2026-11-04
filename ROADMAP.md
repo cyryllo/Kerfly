@@ -99,7 +99,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Feature | MeerK40t reference |
 |---|---|
 | Text from Hershey / TrueType / SHX fonts (no Inkscape) | `extra/hershey.py`, `tools/ttfparser.py`, `tools/shxparser.py`, `tools/jhfparser.py` |
-| ~~Hatch fill~~ (done: spacing, angle, cross-hatch); pattern fills | `fill/fills.py`, `fill/patternfill.py`, `fill/patterns.py` |
+| ~~Hatch fill~~ (done: spacing, angle, cross-hatch); pattern fills (planned below) | `fill/fills.py`, `fill/patterns.py` (`fill/patternfill.py` is obsolete in MeerK40t) |
 | Living hinges | `tools/livinghinges.py`, `tools/living_hinge_optimizer.py` |
 | Image dithering (more methods than Floyd-Steinberg) | `image/dither.py` |
 | Image adjustments (contrast, sharpen, crop, split) | `image/imagetools.py`, `extra/imageactions.py`, `gui/imagesplitter.py` |
@@ -107,6 +107,33 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Path offset (kerf compensation) | `core/elements/offset_clpr.py`, `offset_mk.py` |
 | ~~Boolean operations on shapes~~ (done: union, difference, intersection, exclusion) | `tools/polybool.py`, `extra/cag.py` |
 | Kerf test and material test generators (material test: planned after the first laser test) | `tools/kerftest.py`, `gui/materialtest.py` |
+
+### Pattern fills (planned)
+
+Any closed shape (drawn, or from an ungrouped SVG / DXF) can be filled with a
+pattern, clipped to its outline; holes stay empty.
+
+- **The outline stays.** It keeps its own layer (cut or outline), and the fill
+  is a separate part on a vector engrave layer, with its own speed and power.
+  Example: a coaster whose edge is cut and whose inside gets engraved waves.
+  Option to leave the outline out (fill only, like the current hatch).
+- **Options:** pattern, spacing / tile size, angle, margin from the outline,
+  line width of the motif.
+- **Patterns** (more can be added later, so they are kept in a simple list):
+  - lines: parallel (current hatch), cross-hatch, dashed, dotted, concentric
+    (offset rings following the outline), spiral, radial lines
+  - wavy lines ("wobble"): sine wave, zigzag / sawtooth, circles, gear, jigsaw,
+    meander (Greek key)
+  - tiles: grid, bricks, diamonds, herringbone / fishbone, chevron, honeycomb,
+    triangles, fish scales, fabric weave, crosses, stars, dots
+  - curves: Hilbert / Peano curves, Truchet tiles, Voronoi cells
+  - custom: any drawn shape or SVG repeated in a grid (with optional
+    alternate-row offset)
+- The tile patterns are the same ones used for living hinges (cut instead of
+  engraved), so both features share one pattern library.
+- MeerK40t references: `fill/patterns.py` (tile patterns, shape pattern,
+  concentric), `fill/fills.py` (scanline, Eulerian and spiral fills; wobbles:
+  circle, sine wave, sawtooth, jigsaw, gear, meander, dashed).
 
 ## Packaging (later)
 
