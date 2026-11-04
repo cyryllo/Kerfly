@@ -978,6 +978,35 @@ def main():
     check("break apart: curves in the same place, grouped, undo", one_group and curved and same_place and back,
           "(%d parts)" % len(parts))
 
+    # 34. second click on a selected group picks one element; it moves alone; clicking away leaves the group
+    from PySide6.QtTest import QTest as _QT
+    w = make_window(grid_mm="0")
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    for x0 in (30, 90):
+        w._preview_drawn("rectangle", QPointF(x0, 30), QPointF(x0 + 40, 70), False)
+    a, b = w.elements[-2:]
+    w.preview.select_element([a, b])
+    w.group_selected()
+    w.preview.scene().clearSelection()
+    w.preview.fit_all()
+    app.processEvents()
+    ia = [i for i in w.preview._items if i.element is a][0]
+    pa = w.preview.mapFromScene(ia.sceneBoundingRect().center())
+    _QT.mouseClick(w.preview.viewport(), Qt.LeftButton, Qt.NoModifier, pa)          # first click: the group
+    group_sel = len(w.preview.selected_elements()) == 2
+    _QT.mouseClick(w.preview.viewport(), Qt.LeftButton, Qt.NoModifier, pa)          # second click: inside
+    inside = w.preview.selected_elements() == [a] and w._selection() == [a]
+    bx2 = b.x
+    w._preview_moved(a, 0.2, 0.0)
+    alone = abs(b.x - bx2) < 1e-12 and w.preview.entered_group == a.group
+    w.preview.scene().clearSelection()
+    left_group = w.preview.entered_group == ""
+    check("groups: second click selects one element, it moves alone, clicking away leaves the group",
+          group_sel and inside and alone and left_group, "(%s)" % [group_sel, inside, alone, left_group])
+    w.close()
+
     # 20. diagnostic log and report
     from kerfly.core import diag as _diag
     _diag.setup("test")

@@ -116,6 +116,9 @@ Version numbers:
   - Moving, arrow keys, rotating, mirroring, duplicating and deleting act on
     the group as one. Align and distribute treat it as a single block.
   - The element list shows "Group 1: …", and groups are saved in projects.
+  - Click a selected group again to select only the element you clicked, and
+    move, rotate or delete it alone. Dragging right away still moves the whole
+    group. Clicking outside leaves the group.
 - Several selected elements (a frame drag or Ctrl+click) now move, rotate
   and mirror together, around the centre of the selection.
 - Toolbar: **Settings** has its own group, together with a new **Materials**

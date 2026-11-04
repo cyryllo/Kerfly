@@ -132,6 +132,7 @@ class MainWindow(QMainWindow):
         self.preview.signals.nodes_changed.connect(self._nodes_changed)
         self.preview.signals.pen_drawn.connect(self._preview_pen_drawn)
         self.preview.signals.edit_nodes.connect(self._edit_nodes_of)
+        self.preview.signals.group_hint.connect(self._group_hint)
         self.preview.signals.measured.connect(self._preview_measured)
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
@@ -800,6 +801,13 @@ class MainWindow(QMainWindow):
             self.preview.scene().clearSelection()
             self.status(_("The file was broken into shapes so its nodes can be edited. Click the line you want "
                           "to change (Ctrl+Z puts the file back together)."))
+
+    def _group_hint(self, what):
+        if what == 1:
+            self.status(_("Group selected. Click an element again to select only that element."))
+        else:
+            self.status(_("Only this element of the group is selected: move, rotate or delete it alone. "
+                          "Click outside the group to leave it."))
 
     def _edit_nodes_of(self, element):
         """Double-click on an element: edit its nodes."""
@@ -1563,7 +1571,7 @@ class MainWindow(QMainWindow):
         chosen = [e for e in self.preview.selected_elements() if e in self.elements]
         if not chosen and self.selected is not None:
             chosen = [self.selected]
-        groups = {e.group for e in chosen if e.group}
+        groups = {e.group for e in chosen if e.group and e.group != self.preview.entered_group}
         if groups:
             chosen = [e for e in self.elements if e in chosen or (e.group and e.group in groups)]
         return chosen

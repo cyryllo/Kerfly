@@ -68,6 +68,7 @@ class ViewSignals(QObject):
     pen_drawn = Signal(list)                      # path drawn with the pen (subpaths, scene mm)
     measured = Signal(float, float)               # dx, dy of the ruler in mm (screen right / down)
     edit_nodes = Signal(object)                   # element double-clicked with the select tool
+    group_hint = Signal(int)                      # 1: a whole group was selected, 2: one element inside it
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -180,6 +181,11 @@ class ElementItem(QGraphicsItem):
     def mousePressEvent(self, event):
         self._press_pos = self.pos()
         self._dragging = event.button() == Qt.LeftButton
+        # a second click (without dragging) on a selected group picks this element alone
+        self._enter_on_release = (event.button() == Qt.LeftButton and self.view.tool == "select"
+                                  and bool(self.element.group) and self.isSelected()
+                                  and self.view.entered_group != self.element.group
+                                  and not event.modifiers() & (Qt.ControlModifier | Qt.ShiftModifier))
         self.view.last_move_snapped = False
         super().mousePressEvent(event)
 
@@ -192,6 +198,10 @@ class ElementItem(QGraphicsItem):
         self.view.hide_snap_marker()
         super().mouseReleaseEvent(event)
         moved = self.pos() - getattr(self, "_press_pos", QPointF())
+        if getattr(self, "_enter_on_release", False) and abs(moved.x()) < 1e-6 and abs(moved.y()) < 1e-6:
+            self._enter_on_release = False
+            self.view.enter_group(self)
+            return
         if abs(moved.x()) > 1e-6 or abs(moved.y()) > 1e-6:
             dx = moved.x() / MM * (-1 if self.view.home_ur else 1)
             dy = -moved.y() / MM
@@ -892,16 +902,35 @@ class PreviewView(QGraphicsView):
     def _selected_items(self):
         return [i for i in self.scene().selectedItems() if isinstance(i, ElementItem)]
 
+    entered_group = ""                            # group whose single element is being worked on
+
+    def enter_group(self, item):
+        """Select one element of a group alone (second click on the group)."""
+        self.entered_group = item.element.group
+        self._expanding = True
+        self.scene().clearSelection()
+        item.setSelected(True)
+        self._expanding = False
+        self._selection_changed()
+        self.signals.group_hint.emit(2)
+
     def _selection_changed(self):
         if self._rebuilding or getattr(self, "_expanding", False):
             return
-        groups = {i.element.group for i in self._selected_items() if i.element.group}
+        selected = self._selected_items()
+        if self.entered_group and (not selected or any(i.element.group != self.entered_group for i in selected)):
+            self.entered_group = ""                 # left the group
+        groups = {i.element.group for i in selected if i.element.group and i.element.group != self.entered_group}
         if groups and self.tool != "nodes":         # a group is selected as a whole (nodes: one shape)
             self._expanding = True
+            added = False
             for item in self._items:
                 if item.element.group in groups and not item.isSelected():
                     item.setSelected(True)
+                    added = True
             self._expanding = False
+            if added and len(selected) == 1:        # the user clicked one member: say how to get inside
+                self.signals.group_hint.emit(1)
         self._place_handles()
         items = self._selected_items()
         self.signals.selected.emit(items[0].element if len(items) == 1 else None)
