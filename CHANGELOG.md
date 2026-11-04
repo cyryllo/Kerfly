@@ -17,6 +17,8 @@ Version numbers:
   the bed. **Distribute** gives three or more elements equal gaps,
   horizontally or vertically. Select several elements by dragging a frame
   around them or with Ctrl+click.
+- Toolbar: **Settings** has its own group, together with a new **Materials**
+  button (material library).
 
 ## 0.3.0 (2026-11-04)
 

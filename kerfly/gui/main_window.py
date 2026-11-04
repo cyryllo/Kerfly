@@ -316,7 +316,10 @@ class MainWindow(QMainWindow):
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
                 (self.act_snap, "grid-dots", C_("toolbar", "Grid")),
+            ]),
+            (C_("toolbar group", "Settings"), [
                 (self.act_settings, "settings", C_("toolbar", "Settings")),
+                (self.act_materials, "book", C_("toolbar", "Materials")),
             ]),
             (C_("toolbar group", "Help"), [
                 (self.act_report, "file-report", C_("toolbar", "Report")),

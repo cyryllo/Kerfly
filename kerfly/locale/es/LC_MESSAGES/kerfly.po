@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 17:59+0100\n"
+"POT-Creation-Date: 2026-11-04 18:02+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -662,6 +662,10 @@ msgstr "Material:"
 msgid "Material: %s"
 msgstr "Material: %s"
 
+msgctxt "toolbar"
+msgid "Materials"
+msgstr "Materiales"
+
 #, python-format
 msgid ""
 "Materials added: %d\n"
@@ -1063,6 +1067,10 @@ msgid "Settings"
 msgstr "Configuración"
 
 msgctxt "toolbar"
+msgid "Settings"
+msgstr "Ajustes"
+
+msgctxt "toolbar group"
 msgid "Settings"
 msgstr "Ajustes"
 
