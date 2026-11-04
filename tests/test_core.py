@@ -483,6 +483,11 @@ def test_snap():
     off = snap_offset([(9.2, 10.6), (50, 50)], shapes, 1.5)
     check("moving shape: offset to the nearest target", off is not None
           and abs(off[0] - 0.8) < 1e-9 and abs(off[1] + 0.6) < 1e-9, str(off))
+    from kerfly.core.snap import find_axis_snap
+    al = find_axis_snap(30.4, 12.0, [(30.0, 0.0), (0.0, 12.3)], 0.5)
+    check("in line with other corners: x and y", al is not None and al[0] == 30.0 and al[1] == 12.3
+          and len(al[2]) == 2)
+    check("in line: nothing near", find_axis_snap(15, 15, [(0, 0)], 0.5) is None)
     many = SnapShape([[(i * 0.01, 0.0) for i in range(20000)]])
     check("detailed shapes are thinned out", len(many.points) < 7000 and find_snap(199.99, 0, [many], 0.5))
     return errors

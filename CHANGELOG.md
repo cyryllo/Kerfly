@@ -42,8 +42,10 @@ Version numbers:
   - double-click a side to add a corner;
   - double-click a corner, or select it and press Delete, to remove it.
 
-  Rectangles, ellipses, polygons and lines become polylines on the first
-  edit. Rotation, scale and mirror are kept, and every edit can be undone.
+  A dragged corner also snaps to the other corners and side middles of the
+  same shape. It lines up (same height or same column) with another corner,
+  and a dashed guide line shows it. Rectangles, ellipses, polygons and lines
+  become polylines on the first edit. Rotation, scale and mirror are kept, and every edit can be undone.
   Text and opened files have no editable nodes.
 - **Group / Ungroup** (Arrange group, Ctrl+Shift+G / Ctrl+Alt+G):
   - Clicking any member of a group selects the whole group.

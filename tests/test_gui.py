@@ -687,12 +687,23 @@ def main():
     deleted = len(view._node_handles) == 4
     w.undo(); w.undo(); w.undo()
     undone = rect.shape.kind == "rectangle" if rect in w.elements else w.elements[-1].shape.kind == "rectangle"
+    # snapping while dragging a corner: to the shape's own corner, and in line with another one
+    w.preview.select_element(w.elements[-1] if rect not in w.elements else rect)
+    hs = view._node_handles
+    own = view.snap_node(hs[0], hs[2].pos() + QPointF(0.3, 0.3))
+    own_ok = abs(own.x() - hs[2].pos().x()) < 1e-6 and abs(own.y() - hs[2].pos().y()) < 1e-6
+    far = hs[1].pos() + QPointF(15, 0.4)                                  # same height as corner 1, 15 mm away
+    lined = view.snap_node(hs[0], far)
+    in_line = abs(lined.y() - hs[1].pos().y()) < 1e-6 and abs(lined.x() - far.x()) < 1e-6
+    view._remove_guides()
+    view.hide_snap_marker()
     w._preview_drawn("text", QPointF(20, 120), QPointF(20, 120), False)
     w.set_tool("nodes")
     view.select_element(w.elements[-1])
     no_text_nodes = not view._node_handles
-    check("node tool: move a corner of a rotated shape, insert, delete, undo; text has no nodes",
-          four and same and inserted and deleted and undone and no_text_nodes)
+    check("node tool: move a corner of a rotated shape, insert, delete, undo, snap; text has no nodes",
+          four and same and inserted and deleted and undone and no_text_nodes and own_ok and in_line,
+          "(%s)" % [four, same, inserted, deleted, undone, no_text_nodes, own_ok, in_line])
     w.close()
 
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo

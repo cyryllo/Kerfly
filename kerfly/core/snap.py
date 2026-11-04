@@ -17,6 +17,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 import math
 
 CORNER, CENTRE, MIDDLE, EDGE = "corner", "centre", "middle", "edge"
+ALIGNED = "aligned"              # same x and/or y as another corner (axis alignment)
 _PREFERENCE = {CORNER: 0, CENTRE: 1, MIDDLE: 2}
 MAX_POINTS_PER_SHAPE = 6000      # very detailed shapes (text) are thinned out
 
@@ -91,6 +92,29 @@ def find_snap(x, y, shapes, tolerance):
     if edge is not None:
         return edge[1], edge[2], EDGE
     return None
+
+
+def find_axis_snap(x, y, points, tolerance):
+    """Line up with other corners: x and/or y moved onto the nearest point's
+    x / y when within tolerance. Returns (x, y, guides) where guides is a list
+    of (x1, y1, x2, y2) helper lines from the matched corners, or None."""
+    best_x = best_y = None
+    for px, py in points:
+        dx, dy = abs(px - x), abs(py - y)
+        if dx <= tolerance and (best_x is None or dx < best_x[0]):
+            best_x = (dx, px, py)
+        if dy <= tolerance and (best_y is None or dy < best_y[0]):
+            best_y = (dy, px, py)
+    if best_x is None and best_y is None:
+        return None
+    nx = best_x[1] if best_x else x
+    ny = best_y[2] if best_y else y
+    guides = []
+    if best_x:
+        guides.append((best_x[1], best_x[2], nx, ny))
+    if best_y:
+        guides.append((best_y[1], best_y[2], nx, ny))
+    return nx, ny, guides
 
 
 def snap_offset(reference_points, shapes, tolerance):

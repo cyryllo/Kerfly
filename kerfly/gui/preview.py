@@ -23,7 +23,8 @@ from kerfly.i18n import N_, _
 
 SNAP_PIXELS = 10                     # snap distance on screen
 SNAP_LABELS = {snapping.CORNER: N_("corner"), snapping.CENTRE: N_("centre"),
-               snapping.MIDDLE: N_("middle"), snapping.EDGE: N_("on line")}
+               snapping.MIDDLE: N_("middle"), snapping.EDGE: N_("on line"),
+               snapping.ALIGNED: N_("in line")}
 
 MM = 25.4
 MAX_PREVIEW_PIXELS = 3000   # longest side of a raster preview image
@@ -220,14 +221,14 @@ class NodeHandle(QGraphicsRectItem):
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        exclude = (self.view._node_item,) if self.view._node_item is not None else ()
-        self.setPos(self.view.snap_point(event.scenePos(), exclude=exclude))
+        self.setPos(self.view.snap_node(self, event.scenePos()))
         self._moved = True
         self.view._draw_node_overlay()
         event.accept()
 
     def mouseReleaseEvent(self, event):
         self.view.hide_snap_marker()
+        self.view._remove_guides()
         if getattr(self, "_moved", False):
             self.view._commit_nodes()
         event.accept()
@@ -390,6 +391,8 @@ class PreviewView(QGraphicsView):
             path.moveTo(-7, 0); path.lineTo(7, 0); path.moveTo(0, -7); path.lineTo(0, 7)
         elif kind == snapping.MIDDLE:
             path.moveTo(0, -6); path.lineTo(6, 5); path.lineTo(-6, 5); path.closeSubpath()
+        elif kind == snapping.ALIGNED:
+            path.moveTo(-7, 0); path.lineTo(7, 0); path.moveTo(0, -7); path.lineTo(0, 7)
         else:
             path.moveTo(-5, -5); path.lineTo(5, 5); path.moveTo(-5, 5); path.lineTo(5, -5)
         marker = QGraphicsPathItem(path)
@@ -402,6 +405,56 @@ class PreviewView(QGraphicsView):
         label.setPos(8, 4)
         self.scene().addItem(marker)
         self._snap_marker = marker
+
+    def snap_node(self, handle, p):
+        """Where a dragged corner goes in the node tool: onto other elements, the
+        other corners and side middles of its own shape, in line (same x or y)
+        with another corner, or onto the grid."""
+        others = [h.pos() for h in self._node_handles if h is not handle]
+        own = []
+        if self.snap_objects and others:
+            i = self._node_handles.index(handle)
+            pts = [h.pos() for h in self._node_handles]
+            n = len(pts)
+            pairs = [(k, (k + 1) % n) for k in range(n if self._node_closed else n - 1)]
+            sides = [(pts[a].x(), pts[a].y(), pts[b].x(), pts[b].y()) for a, b in pairs if i not in (a, b)]
+            own_shape = snapping.SnapShape([], (min(q.x() for q in others), min(q.y() for q in others),
+                                                max(q.x() for q in others), max(q.y() for q in others)))
+            own_shape.points = [(q.x(), q.y(), snapping.CORNER) for q in others] + \
+                [((x1 + x2) / 2.0, (y1 + y2) / 2.0, snapping.MIDDLE) for x1, y1, x2, y2 in sides]
+            own_shape.segments = sides
+            own = [own_shape]
+        exclude = (self._node_item,) if self._node_item is not None else ()
+        if self.snap_objects:
+            tol = self._snap_tolerance()
+            hit = snapping.find_snap(p.x(), p.y(), own + self._snap_shapes(exclude), tol)
+            if hit is not None:
+                self._remove_guides()
+                self.show_snap_marker(*hit)
+                return QPointF(hit[0], hit[1])
+            aligned = snapping.find_axis_snap(p.x(), p.y(), [(q.x(), q.y()) for q in others], tol)
+            if aligned is not None:
+                x, y, guides = aligned
+                self.show_snap_marker(x, y, snapping.ALIGNED)
+                self._show_guides(guides)
+                return QPointF(x, y)
+        self._remove_guides()
+        return self.snap_point(p, exclude=exclude)
+
+    def _show_guides(self, guides):
+        self._remove_guides()
+        path = QPainterPath()
+        for x1, y1, x2, y2 in guides:
+            path.moveTo(x1, y1)
+            path.lineTo(x2, y2)
+        self._guides = self.scene().addPath(path, _cosmetic_pen(COLORS["snap"], 1, Qt.DashLine))
+        self._guides.setZValue(44)
+
+    def _remove_guides(self):
+        g = getattr(self, "_guides", None)
+        if g is not None and g.scene() is not None:
+            self.scene().removeItem(g)
+        self._guides = None
 
     def snap_point(self, p, exclude=()):
         """A point the user clicks or drags to, snapped to other elements (when
@@ -810,6 +863,7 @@ class PreviewView(QGraphicsView):
         scene = self.scene()
         self._snap_marker = None                 # deleted with the scene contents
         self._node_handles, self._node_item, self._node_overlay = [], None, None
+        self._guides = None
         scene.clear()
         self._items, self._handles = [], []
         bed_w, bed_h = bed_size_inches(values)
