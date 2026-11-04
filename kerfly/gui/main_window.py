@@ -1137,6 +1137,12 @@ class MainWindow(QMainWindow):
             return
         self._checkpoint()
         how, step = distribute(chosen, horizontal)
+        if how == "in_line":
+            self._undo.pop()                            # nothing changed
+            self.act_undo.setEnabled(bool(self._undo))
+            self.status(_("These elements are centred on one line in this direction, so there is nothing to "
+                          "spread. Use the other direction, or move one of them first."), error=True)
+            return
         self._arranged(chosen)
         unit = self.values.get("units", "mm")
         value = step * (25.4 if unit == "mm" else 1.0)

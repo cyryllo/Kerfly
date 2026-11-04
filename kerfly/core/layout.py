@@ -189,8 +189,9 @@ def distribute(elements, horizontal=True):
     The two outermost elements stay where they are. The ones between get
     equal gaps between their bounding boxes. When the elements are too wide
     for gaps (they overlap along that axis), their centres are spaced evenly
-    instead. Returns ("gap", inches) or ("centres", inches), or None for fewer
-    than three elements."""
+    instead. Returns ("gap", inches), ("centres", inches), ("in_line", 0) when
+    the centres already sit on one line along that axis (nothing is moved),
+    or None for fewer than three elements."""
     if len(elements) < 3:
         return None
     axis = 0 if horizontal else 1
@@ -222,6 +223,8 @@ def distribute(elements, horizontal=True):
         return ("gap", gap)
     c0 = (lo(first) + hi(first)) / 2.0
     step = ((lo(last) + hi(last)) / 2.0 - c0) / (len(order) - 1)
+    if abs(step) < 1e-6:
+        return ("in_line", 0.0)    # all centred on one line along this axis: nothing to spread
     for n, e in enumerate(order[1:-1], 1):
         shift(e, c0 + n * step - (lo(e) + hi(e)) / 2.0)
     return ("centres", step)

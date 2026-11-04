@@ -430,6 +430,9 @@ def test_arrange():
     cs = [(e.bounds[0] + e.bounds[1]) / 2.0 for e in (c1, c2, c3)]
     check("distribute overlapping elements by their centres", how[0] == "centres"
           and abs((cs[1] - cs[0]) - (cs[2] - cs[1])) < 1e-9 and c1.x == 0.0 and c3.x == 3.0)
+    s1, s2, s3 = Element(d, x=1.0, y=0.0), Element(d, x=1.0, y=-2.0), Element(d, x=1.0, y=-4.0)
+    check("distribute along a line they are centred on: nothing moves",
+          distribute([s1, s2, s3], horizontal=True) == ("in_line", 0.0) and (s1.x, s2.x, s3.x) == (1.0, 1.0, 1.0))
     return errors
 
 
