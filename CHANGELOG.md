@@ -23,6 +23,8 @@ Version numbers:
 - **The layer decides what the laser does.** The separate operation list in
   the shape options is gone: select an element and choose its layer. On an
   outline layer a closed shape can be **filled with lines** (hatch).
+- Pictures (raster engraving) are shown in the colour of their layer, as the
+  lines are (dark = the layer colour, greys lighter).
 - **Element list as in LightBurn**: each element shows the colour squares and
   names of its layers ("Rectangle · Cut").
 - **Any layer for a drawn shape.** The Layer list above the bed view shows

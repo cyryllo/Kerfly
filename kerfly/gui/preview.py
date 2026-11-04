@@ -51,6 +51,9 @@ def _cosmetic_pen(color, width=1.0, style=Qt.SolidLine):
 
 
 def pil_to_qimage(im):
+    if im.mode == "RGB":                         # a tinted picture (layer colour)
+        data = im.tobytes()
+        return QImage(data, im.width, im.height, im.width * 3, QImage.Format_RGB888).copy()
     im = im.convert("L")
     data = im.tobytes()
     return QImage(data, im.width, im.height, im.width, QImage.Format_Grayscale8).copy()
@@ -106,7 +109,8 @@ class ElementItem(QGraphicsItem):
         self.setCursor(Qt.SizeAllCursor)
         self.pixmap = None
         if d.raster.image is not None:
-            self.pixmap = view.raster_pixmap(element, values)
+            color = part_color(element, "raster") if part_color is not None else None
+            self.pixmap = view.raster_pixmap(element, values, color)
         self.paths = []
         self.local_polys = []        # polylines in local coordinates, for snapping
         self._snap_cache = None
@@ -1021,9 +1025,12 @@ class PreviewView(QGraphicsView):
         return [i.element for i in self._selected_items()]
 
     # ---- drawing --------------------------------------------------------
-    def raster_pixmap(self, element, values):
+    def raster_pixmap(self, element, values, color=None):
+        """Picture of a raster part, tinted with its layer's colour (dark = the
+        colour, light = white), as the vector parts are."""
         d = element.design
-        key = (id(d), id(d.raster.image), is_true(values["negate"]), is_true(values["halftone"]))
+        color = color or "#000000"
+        key = (id(d), id(d.raster.image), is_true(values["negate"]), is_true(values["halftone"]), color)
         cached = self._pixmaps.get(key)
         if cached is not None:
             return cached
@@ -1035,6 +1042,8 @@ class PreviewView(QGraphicsView):
             im = ImageOps.invert(im)
         if not key[3]:
             im = im.point(lambda x: 0 if x < 128 else 255, "1").convert("L")
+        if color.lower() not in ("#000000", "black"):
+            im = ImageOps.colorize(im, black=color, white="white")
         result = (QPixmap.fromImage(pil_to_qimage(im)), scale)
         self._pixmaps[key] = result
         return result
