@@ -1702,6 +1702,7 @@ class MainWindow(QMainWindow):
             for e in selection:
                 if e not in files and e.group:
                     e.group = ""
+            n_before = len(self.elements)
             if files:
                 self.preview.select_element(files)
                 self.break_apart_selected(grouped=False)
@@ -1709,9 +1710,11 @@ class MainWindow(QMainWindow):
             if pieces:
                 self._layout_changed()
                 self.preview.select_element(pieces)
-                if not files:
-                    self.status(_("Ungrouped into %d shapes: click one to move it, double-click it to edit its "
-                                  "nodes.") % len(pieces))
+            made = len(self.elements) - n_before + len(files) + (len([e for e in pictures if e not in files])
+                                                                  if pieces else 0)
+            if files or pieces:
+                self.status(_("Ungrouped into %d shapes: click one to move it, double-click it to edit its "
+                              "nodes.") % made)
             return
         chosen = [e for e in self._selection() if e.group]
         if not chosen or self.worker is not None:
