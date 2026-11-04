@@ -131,6 +131,7 @@ class MainWindow(QMainWindow):
         self.preview.signals.polyline_drawn.connect(self._preview_polyline_drawn)
         self.preview.signals.nodes_changed.connect(self._nodes_changed)
         self.preview.signals.pen_drawn.connect(self._preview_pen_drawn)
+        self.preview.signals.edit_nodes.connect(self._edit_nodes_of)
         self.preview.signals.measured.connect(self._preview_measured)
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
@@ -478,7 +479,6 @@ class MainWindow(QMainWindow):
         self.addToolBar(Qt.RightToolBarArea, strip)
 
     def set_tool(self, tool):
-        self.preview.set_tool(tool)
         self.tool_actions[tool].setChecked(True)
         if tool == "nodes":
             self.status(_("Edit nodes: click a shape, drag its nodes and the round curve handles (Ctrl: one "
@@ -498,6 +498,7 @@ class MainWindow(QMainWindow):
             self.status(_("Polyline: click the corners. Click the first point to close the shape; double-click or "
                           "press Enter to finish an open line. Backspace removes the last corner, Shift keeps "
                           "45\u00b0 angles, Esc cancels."))
+        self.preview.set_tool(tool)
         if tool != "select":
             self.preview.setFocus()
         self._update_tool_options()
@@ -626,10 +627,15 @@ class MainWindow(QMainWindow):
         or None when it cannot be node-edited."""
         from kerfly.core import curves
         spec = element.shape
+        from kerfly.core.explode import has_vectors
+        if self.preview.tool == "nodes" and (spec is None or spec.kind == "text") and element.design is not None \
+                and has_vectors(element.design):
+            QTimer.singleShot(0, self, lambda e=element: self._auto_break(e))   # after this click is handled
+            return None
         if spec is None or spec.kind not in self.NODE_KINDS + ("path",):
             if self.preview.tool == "nodes":
-                self.status(_("This element has no editable nodes yet. For an opened SVG / DXF file or a text, "
-                              "use Break apart (Arrange group) first."), error=True)
+                self.status(_("This element has no lines to edit. For a filled text, change its operation to "
+                              "Cut or Engrave outline first; a picture has no nodes."), error=True)
             return None
         if spec.kind == "path":
             return curves.copy_path(spec.subpaths)
@@ -782,6 +788,24 @@ class MainWindow(QMainWindow):
         self._compiled = None
         self._layer_cache.clear()
         self._layout_changed()
+
+    def _auto_break(self, element):
+        """Edit nodes on an opened file: break it into shapes first (undo brings it back)."""
+        if element not in self.elements or self.preview.tool != "nodes" or self.worker is not None:
+            return
+        self.preview.select_element(element)
+        n = len(self.elements)
+        self.break_apart_selected()
+        if len(self.elements) != n or element not in self.elements:
+            self.preview.scene().clearSelection()
+            self.status(_("The file was broken into shapes so its nodes can be edited. Click the line you want "
+                          "to change (Ctrl+Z puts the file back together)."))
+
+    def _edit_nodes_of(self, element):
+        """Double-click on an element: edit its nodes."""
+        if element in self.elements and self.worker is None:
+            self.set_tool("nodes")
+            self.preview.select_element(element)
 
     # ---- break apart ------------------------------------------------------
     def _curve_paths(self, e):

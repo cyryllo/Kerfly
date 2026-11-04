@@ -26,7 +26,11 @@ Version numbers:
     - double-click a side to add a node, or a node to remove it.
   - Ellipses become real curves when you edit their nodes.
   - Paths are saved in projects.
-- **Break apart** (Arrange group, Ctrl+Shift+B):
+- **Editing opened SVG / DXF files is direct.** Double-click an element, or
+  click it with Edit nodes, and an opened file is broken into shapes
+  automatically: then click the line you want to change. Ctrl+Z puts the file
+  back together.
+- **Break apart** (Shapes group, Ctrl+Shift+B):
   - every line of an opened SVG or DXF file becomes its own path with its
     real curves (SVG via svgelements; DXF arcs, circles and polyline bulges
     stay arcs);
@@ -45,7 +49,7 @@ Version numbers:
   the lines go to the outline engrave layer.
 - **Bridges** for cut shapes (options bar): a number of short uncut gaps per
   closed outline, with their width, so the part stays in the sheet.
-- **Measure** tool (M). Drag between two points to see the distance, width,
+- **Measure** tool (M). A plain click does not erase the last measurement. Drag between two points to see the distance, width,
   height and angle, on the bed and in the status bar. Points snap to corners,
   centres and lines.
 - **Job simulation** (View → Simulate job, Ctrl+Shift+J, Simulate button).

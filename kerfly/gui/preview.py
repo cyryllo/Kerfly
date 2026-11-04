@@ -67,6 +67,7 @@ class ViewSignals(QObject):
     nodes_changed = Signal(object, list, bool)    # element, its new path (scene mm), unused
     pen_drawn = Signal(list)                      # path drawn with the pen (subpaths, scene mm)
     measured = Signal(float, float)               # dx, dy of the ruler in mm (screen right / down)
+    edit_nodes = Signal(object)                   # element double-clicked with the select tool
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -637,6 +638,14 @@ class PreviewView(QGraphicsView):
         self._measure_item = item
 
     def mouseDoubleClickEvent(self, event):
+        if self.tool == "select" and event.button() == Qt.LeftButton:
+            hit = self.itemAt(event.position().toPoint())
+            while hit is not None and not isinstance(hit, ElementItem):
+                hit = hit.parentItem()
+            if hit is not None:
+                self.signals.edit_nodes.emit(hit.element)
+                event.accept()
+                return
         if self.tool == "nodes" and event.button() == Qt.LeftButton and self._node_item is not None:
             from kerfly.gui.node_editor import HandleMark, NodeMark
             hit = self.itemAt(event.position().toPoint())
@@ -758,8 +767,13 @@ class PreviewView(QGraphicsView):
         if self.tool == "measure" and event.button() == Qt.LeftButton and self._measure_start is not None:
             end = self.snap_point(self.mapToScene(event.position().toPoint()))
             self.hide_snap_marker()
-            self._draw_measure(self._measure_start, end)
-            self.signals.measured.emit(end.x() - self._measure_start.x(), end.y() - self._measure_start.y())
+            a = self.mapFromScene(self._measure_start)
+            b = self.mapFromScene(end)
+            if abs(a.x() - b.x()) + abs(a.y() - b.y()) < 3:      # a click, not a drag: nothing measured
+                self._clear_measure()
+            else:
+                self._draw_measure(self._measure_start, end)
+                self.signals.measured.emit(end.x() - self._measure_start.x(), end.y() - self._measure_start.y())
             self._measure_start = None
             event.accept()
             return

@@ -882,6 +882,23 @@ def main():
     check("simulation: plays, draws the path, closes", played and drawn, "(%.1f s)" % (dlg.total if dlg else 0))
     w.close()
 
+    # 33. opened DXF: double-click edits nodes -> the file is broken into shapes automatically; undo
+    w = make_window(grid_mm="0")
+    w.load_design(os.path.join(FIX, "shapes.dxf"))
+    src = w.elements[0]
+    w._edit_nodes_of(src)
+    for _i in range(5):
+        app.processEvents()
+    broken = len(w.elements) > 1 and all(e.shape is not None and e.shape.kind == "path" for e in w.elements)
+    w.preview.select_element(w.elements[0])
+    app.processEvents()
+    has_nodes = bool(w.preview._node_handles)
+    w.undo()
+    check("opened DXF: edit nodes breaks it apart automatically, nodes appear, undo",
+          broken and has_nodes and w.elements == [src] and w.preview.tool == "nodes",
+          "(%s)" % [broken, has_nodes, len(w.elements)])
+    w.close()
+
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo
     w = make_window(grid_mm="0")
     w.resize(1200, 800)
