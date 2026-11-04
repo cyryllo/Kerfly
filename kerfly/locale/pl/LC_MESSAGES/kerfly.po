@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 20:14+0100\n"
+"POT-Creation-Date: 2026-11-04 20:16+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -296,6 +296,9 @@ msgstr "Wyśrodkuj zaznaczony element albo cały projekt na stole"
 
 msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr "Wybierz materiał, aby ustawić prędkość, przejścia i moc wszystkich warstw"
+
+msgid "Click an element of the group first, then Ungroup."
+msgstr "Najpierw kliknij element grupy, potem Rozgrupuj."
 
 msgid "Click an element on the bed to select it."
 msgstr "Kliknij element na stole, aby go zaznaczyć."
@@ -1442,9 +1445,6 @@ msgstr "Laser przestał odpowiadać po zakończeniu zadania."
 msgid "The new language will be used after restarting Kerfly."
 msgstr "Nowy język zostanie użyty po ponownym uruchomieniu Kerfly."
 
-msgid "The selection has no group."
-msgstr "Zaznaczenie nie zawiera grupy."
-
 #, python-format
 msgid "There are many data transmission errors (%s). Press Stop to stop trying."
 msgstr "Wiele błędów transmisji danych (%s). Naciśnij Stop, aby przestać próbować."
@@ -1794,4 +1794,7 @@ msgstr "obrys"
 #~ " węzłów. Otwarty plik SVG / DXF "
 #~ "albo tekst najpierw rozbij na kształty"
 #~ " (grupa Układ)."
+
+#~ msgid "The selection has no group."
+#~ msgstr "Zaznaczenie nie zawiera grupy."
 

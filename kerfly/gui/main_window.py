@@ -1586,8 +1586,12 @@ class MainWindow(QMainWindow):
 
     def ungroup_selected(self):
         chosen = [e for e in self._selection() if e.group]
+        if not chosen and not self._selection():
+            groups = {e.group for e in self.elements if e.group}
+            if len(groups) == 1:                   # nothing selected, one group: that one is meant
+                chosen = [e for e in self.elements if e.group]
         if not chosen or self.worker is not None:
-            self.status(_("The selection has no group."), error=True)
+            self.status(_("Click an element of the group first, then Ungroup."), error=True)
             return
         self._checkpoint()
         for e in chosen:

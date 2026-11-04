@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 20:14+0100\n"
+"POT-Creation-Date: 2026-11-04 20:16+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -296,6 +296,9 @@ msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr ""
 "Choisissez un matériau pour régler la vitesse, les passes et la puissance"
 " de tous les calques"
+
+msgid "Click an element of the group first, then Ungroup."
+msgstr "Cliquez d'abord sur un élément du groupe, puis sur Dégrouper."
 
 msgid "Click an element on the bed to select it."
 msgstr "Cliquez sur un élément pour le sélectionner."
@@ -1454,9 +1457,6 @@ msgstr "Le laser ne répond plus après la fin de la tâche."
 msgid "The new language will be used after restarting Kerfly."
 msgstr "La nouvelle langue sera utilisée après le redémarrage de Kerfly."
 
-msgid "The selection has no group."
-msgstr "La sélection ne contient aucun groupe."
-
 #, python-format
 msgid "There are many data transmission errors (%s). Press Stop to stop trying."
 msgstr ""
@@ -1816,4 +1816,7 @@ msgstr "gravure vectorielle"
 #~ " / DXF ouvert ou un texte, "
 #~ "utilisez d'abord Décomposer (groupe "
 #~ "Disposition)."
+
+#~ msgid "The selection has no group."
+#~ msgstr "La sélection ne contient aucun groupe."
 

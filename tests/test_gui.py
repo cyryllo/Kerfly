@@ -894,6 +894,13 @@ def main():
     app.processEvents()
     has_nodes = bool(w.preview._node_handles)
     w.undo()
+    w.redo()
+    w.preview.scene().clearSelection()
+    w.ungroup_selected()                                                # nothing selected, one group
+    alone = all(not e.group for e in w.elements)
+    w.undo()
+    w.undo()
+    broken = broken and alone
     check("opened DXF: edit nodes breaks it apart automatically, nodes appear, undo",
           broken and has_nodes and w.elements == [src] and w.preview.tool == "nodes",
           "(%s)" % [broken, has_nodes, len(w.elements)])
