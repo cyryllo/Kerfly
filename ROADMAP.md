@@ -75,7 +75,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Grid and snapping~~ (done) | `gui/snapoptions.py`, `core/elements/grid.py` |
 | ~~Snapping to other objects: corners, ends and middles of lines, points on curves, centres and edges of elements; for moving and for the drawing tools~~ (done) | `gui/snapoptions.py`, `gui/scenewidgets/` (MeerK40t "magnets"/snap points) |
 | ~~Alignment and distribution, mirror~~ (done) | `gui/alignment.py`, `core/elements/align.py` |
-| Ruler, measure tool | `gui/toolwidgets/toolmeasure.py` |
+| ~~Ruler, measure tool~~ (done) | `gui/toolwidgets/toolmeasure.py` |
 | Job simulation (play the path) | `gui/simulation.py` |
 | ~~Material library (saved speed/power per material)~~ (done); export / import (done) | `gui/materialmanager.py`, `core/elements/materials.py` |
 | ~~Toolbar~~ (done; every new command gets a button), themes | `gui/ribbon.py`, `gui/themes.py` |

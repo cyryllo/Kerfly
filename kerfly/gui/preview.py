@@ -66,6 +66,7 @@ class ViewSignals(QObject):
     polyline_drawn = Signal(list, bool)           # corner points (scene mm), closed
     nodes_changed = Signal(object, list, bool)    # element, its new path (scene mm), unused
     pen_drawn = Signal(list)                      # path drawn with the pen (subpaths, scene mm)
+    measured = Signal(float, float)               # dx, dy of the ruler in mm (screen right / down)
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -286,6 +287,9 @@ class PreviewView(QGraphicsView):
         self._poly_points = []      # polyline being drawn (scene mm)
         self._pen = None            # pen path being drawn: {"nodes": [...], "pressed": bool}
         self._freehand = None       # points of a freehand line being drawn (scene mm)
+        self._measure_start = None
+        self._measure_item = None
+        self.units = "mm"
         self.snap_objects = True    # snap to corners, centres, middles and lines of other elements
         self.node_points_provider = None   # element -> subpaths in item coordinates, or None
         from kerfly.gui.node_editor import NodeEditor
@@ -309,6 +313,7 @@ class PreviewView(QGraphicsView):
             self.scale(factor, factor)
 
     def set_tool(self, tool):
+        self._clear_measure()
         self._clear_polyline()
         self._clear_pen()
         self.hide_snap_marker()
@@ -600,6 +605,37 @@ class PreviewView(QGraphicsView):
             return
         self.signals.pen_drawn.emit(curves.smooth_path(simple, closed and len(simple) >= 3))
 
+    # ---- ruler: drag between two points (snapping works) -------------------------
+    def _clear_measure(self):
+        self._measure_start = None
+        if self._measure_item is not None and self._measure_item.scene() is not None:
+            self.scene().removeItem(self._measure_item)
+        self._measure_item = None
+
+    def _draw_measure(self, a, b):
+        if self._measure_item is not None and self._measure_item.scene() is not None:
+            self.scene().removeItem(self._measure_item)
+        qp = QPainterPath(a)
+        qp.lineTo(b)
+        pen = _cosmetic_pen(COLORS["head"], 1.5)
+        item = self.scene().addPath(qp, pen)
+        item.setZValue(48)
+        for p in (a, b):
+            tick = QGraphicsEllipseItem(-3, -3, 6, 6, item)
+            tick.setPen(pen)
+            tick.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
+            tick.setPos(p)
+        dx, dy = b.x() - a.x(), b.y() - a.y()
+        dist = math.hypot(dx, dy)
+        k, unit = (1.0, "mm") if self.units == "mm" else (1 / 25.4, "in")
+        text = "%.2f %s   (%.2f × %.2f, %.1f°)" % (dist * k, unit, abs(dx) * k, abs(dy) * k,
+                                                           math.degrees(math.atan2(-dy, dx)))
+        label = QGraphicsSimpleTextItem(text, item)
+        label.setBrush(QBrush(COLORS["head"]))
+        label.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
+        label.setPos(QPointF((a.x() + b.x()) / 2.0, (a.y() + b.y()) / 2.0))
+        self._measure_item = item
+
     def mouseDoubleClickEvent(self, event):
         if self.tool == "nodes" and event.button() == Qt.LeftButton and self._node_item is not None:
             from kerfly.gui.node_editor import HandleMark, NodeMark
@@ -619,6 +655,11 @@ class PreviewView(QGraphicsView):
         super().mouseDoubleClickEvent(event)
 
     def mousePressEvent(self, event):
+        if self.tool == "measure" and event.button() == Qt.LeftButton:
+            self._clear_measure()
+            self._measure_start = self.snap_point(self.mapToScene(event.position().toPoint()))
+            event.accept()
+            return
         if self.tool == "freehand" and event.button() == Qt.LeftButton:
             p = self.snap_point(self.mapToScene(event.position().toPoint()))
             self.hide_snap_marker()
@@ -665,8 +706,14 @@ class PreviewView(QGraphicsView):
 
     def mouseMoveEvent(self, event):
         if self.tool not in ("select", "nodes") and self._draw_start is None and not self._poly_points \
-                and not self._pen and self._freehand is None and not event.buttons():
+                and not self._pen and self._freehand is None and self._measure_start is None \
+                and not event.buttons():
             self.snap_point(self.mapToScene(event.position().toPoint()))     # shows where a click lands
+        if self.tool == "measure" and self._measure_start is not None:
+            end = self.snap_point(self.mapToScene(event.position().toPoint()))
+            self._draw_measure(self._measure_start, end)
+            event.accept()
+            return
         if self.tool == "freehand" and self._freehand is not None:
             pos = self.mapToScene(event.position().toPoint())
             last = self._freehand[-1]
@@ -708,6 +755,14 @@ class PreviewView(QGraphicsView):
         super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
+        if self.tool == "measure" and event.button() == Qt.LeftButton and self._measure_start is not None:
+            end = self.snap_point(self.mapToScene(event.position().toPoint()))
+            self.hide_snap_marker()
+            self._draw_measure(self._measure_start, end)
+            self.signals.measured.emit(end.x() - self._measure_start.x(), end.y() - self._measure_start.y())
+            self._measure_start = None
+            event.accept()
+            return
         if self.tool == "freehand" and event.button() == Qt.LeftButton and self._freehand is not None:
             self._finish_freehand(event.position())
             event.accept()
@@ -923,6 +978,8 @@ class PreviewView(QGraphicsView):
         scene.clear()
         self._items, self._handles = [], []
         bed_w, bed_h = bed_size_inches(values)
+        self.units = values.get("units", "mm")
+        self._measure_item = None
         self.home_ur = bool(settings.home_upper_right)
         self.bed_w_mm = bed_w * MM
 

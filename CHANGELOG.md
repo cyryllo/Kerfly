@@ -39,6 +39,9 @@ Version numbers:
 - **Freehand** drawing tool (F). Draw with the mouse button held; end near
   the start to close the shape. The line is simplified and smoothed into
   curves that can be edited with Edit nodes.
+- **Measure** tool (M). Drag between two points to see the distance, width,
+  height and angle, on the bed and in the status bar. Points snap to corners,
+  centres and lines.
 - The bed view follows the window size until you zoom or pan.
 - **Combine shapes** (new Shapes toolbar group, Edit → Combine shapes):
   union, difference (the first selected shape minus the others), intersection

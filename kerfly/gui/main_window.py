@@ -131,6 +131,7 @@ class MainWindow(QMainWindow):
         self.preview.signals.polyline_drawn.connect(self._preview_polyline_drawn)
         self.preview.signals.nodes_changed.connect(self._nodes_changed)
         self.preview.signals.pen_drawn.connect(self._preview_pen_drawn)
+        self.preview.signals.measured.connect(self._preview_measured)
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
@@ -454,6 +455,7 @@ class MainWindow(QMainWindow):
                  ("polyline", "polygon", N_("Polyline"), "Shift+L"),
                  ("pen", "vector-bezier-2", N_("Pen (curves)"), "B"),
                  ("freehand", "scribble", N_("Freehand"), "F"),
+                 ("measure", "ruler-measure", N_("Measure"), "M"),
                  ("text", "typography", N_("Text"), "T")]
         for key, icon, name, shortcut in tools:
             act = QAction(icons.tabler(icon), _(name), self)
@@ -476,6 +478,9 @@ class MainWindow(QMainWindow):
             self.status(_("Edit nodes: click a shape, drag its nodes and the round curve handles (Ctrl: one "
                           "handle alone). Shift+click selects more nodes. Double-click a side to add a node, a node "
                           "to remove it. Buttons above, or keys I D L C O S Z B."))
+        if tool == "measure":
+            self.status(_("Measure: drag from one point to another. Points snap to corners, centres and lines, "
+                          "as when drawing (hold Alt for free points)."))
         if tool == "freehand":
             self.status(_("Freehand: draw with the mouse button held. End near the start to close the shape. The "
                           "line is smoothed into curves you can edit with Edit nodes."))
@@ -566,6 +571,13 @@ class MainWindow(QMainWindow):
             spec.width, spec.height = abs(dx), abs(dy)
             left, top = min(start.x(), start.x() + dx), min(start.y(), start.y() + dy)
         self._add_drawn_element(spec, tool, left, top)
+
+    def _preview_measured(self, dx, dy):
+        import math
+        k, unit = (1.0, "mm") if self.values.get("units", "mm") == "mm" else (1 / 25.4, "in")
+        self.status(_("Distance %(d).2f %(u)s: width %(w).2f %(u)s, height %(h).2f %(u)s, angle %(a).1f\u00b0")
+                    % {"d": math.hypot(dx, dy) * k, "w": abs(dx) * k, "h": abs(dy) * k, "u": unit,
+                       "a": math.degrees(math.atan2(-dy, dx))})
 
     def _preview_pen_drawn(self, subpaths):
         """A path was drawn with the pen (scene mm)."""

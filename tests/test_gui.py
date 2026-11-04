@@ -821,6 +821,26 @@ def main():
           "(%s nodes, %.1f mm wide)" % (len(fe.shape.subpaths[0]["nodes"]) if fe else 0, fe.size[0] * 25.4 if fe else 0))
     w.close()
 
+    # 30. ruler: drag between two snapped corners, distance in the status bar
+    w = make_window(grid_mm="0")
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    w.preview.fit_all()
+    app.processEvents()
+    w._preview_drawn("rectangle", QPointF(40, 40), QPointF(70, 80), False)    # 30 x 40: diagonal 50
+    w.set_tool("measure")
+    view = w.preview
+    vp = view.viewport()
+    QTest.mousePress(vp, Qt.LeftButton, Qt.NoModifier, view.mapFromScene(QPointF(40.3, 40.2)))
+    q = view.mapFromScene(QPointF(69.8, 79.7))
+    QApplication.sendEvent(vp, QMouseEvent(QEvent.MouseMove, QPointF(q), QPointF(vp.mapToGlobal(q)),
+                                           Qt.NoButton, Qt.LeftButton, Qt.NoModifier))
+    QTest.mouseRelease(vp, Qt.LeftButton, Qt.NoModifier, q)
+    msg = w.statusBar().currentMessage()
+    check("ruler: snapped corners, 50 mm diagonal", "50.00" in msg or "50,00" in msg, "(%s)" % msg)
+    w.close()
+
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo
     w = make_window(grid_mm="0")
     w.resize(1200, 800)
