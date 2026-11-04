@@ -68,6 +68,7 @@ class ViewSignals(QObject):
     pen_drawn = Signal(list)                      # path drawn with the pen (subpaths, scene mm)
     measured = Signal(float, float)               # dx, dy of the ruler in mm (screen right / down)
     edit_nodes = Signal(object)                   # element double-clicked with the select tool
+    node_selection = Signal(int)                  # number of selected nodes in the node tool
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 20:34+0100\n"
+"POT-Creation-Date: 2026-11-04 20:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -165,11 +165,17 @@ msgstr ""
 msgid "Acrylic 3 mm"
 msgstr ""
 
+msgid "Add"
+msgstr ""
+
 msgctxt "toolbar"
 msgid "Add"
 msgstr ""
 
 msgid "Add a layer"
+msgstr ""
+
+msgid "Add a node in the middle of the side after the selected node"
 msgstr ""
 
 msgid "Add another file to the laser bed"
@@ -238,9 +244,6 @@ msgstr ""
 msgid "Boundary trace with laser on"
 msgstr ""
 
-msgid "Break"
-msgstr ""
-
 msgid "Break apart"
 msgstr ""
 
@@ -281,6 +284,11 @@ msgstr ""
 msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr ""
 
+msgid ""
+"Click a node (small square) to select it; Shift+click for more. Then use "
+"the buttons above."
+msgstr ""
+
 msgid "Click an element of the group first, then Ungroup."
 msgstr ""
 
@@ -290,7 +298,7 @@ msgstr ""
 msgid "Close / open"
 msgstr ""
 
-msgid "Close an open path, or open a closed one"
+msgid "Close an open shape, or open a closed one"
 msgstr ""
 
 msgid "Combine shapes"
@@ -355,13 +363,19 @@ msgstr ""
 msgid "Curve"
 msgstr ""
 
+msgid "Curve through the node"
+msgstr ""
+
 msgid "Cut"
 msgstr ""
 
 msgid "Cut inside shapes first"
 msgstr ""
 
-msgid "Cut the path open at the selected node"
+msgid "Cut open"
+msgstr ""
+
+msgid "Cut the shape open at the selected node"
 msgstr ""
 
 msgid "D&uplicate element"
@@ -389,9 +403,6 @@ msgstr ""
 
 msgctxt "toolbar"
 msgid "Delete"
-msgstr ""
-
-msgid "Delete the selected nodes"
 msgstr ""
 
 msgid "Delete this layer (its parts go back to the default layer)"
@@ -649,12 +660,6 @@ msgstr ""
 msgid "Inkscape timeout (minutes)"
 msgstr ""
 
-msgid "Insert"
-msgstr ""
-
-msgid "Insert a node after the selected one"
-msgstr ""
-
 msgid "Intersection"
 msgstr ""
 
@@ -756,10 +761,10 @@ msgstr ""
 msgid "Main toolbar"
 msgstr ""
 
-msgid "Make the sides of the selected nodes curves"
+msgid "Make the sides at the selected nodes curves with handles you can drag"
 msgstr ""
 
-msgid "Make the sides of the selected nodes straight lines"
+msgid "Make the sides at the selected nodes straight lines"
 msgstr ""
 
 msgid "Material"
@@ -882,13 +887,16 @@ msgstr ""
 msgid "New text"
 msgstr ""
 
+msgid "No corner at the selected nodes: the curve passes smoothly through them"
+msgstr ""
+
 msgid "No design loaded"
 msgstr ""
 
 msgid "No laser data was generated."
 msgstr ""
 
-msgid "Nodes"
+msgid "Node"
 msgstr ""
 
 msgid "Notes (e.g. supplier, lens, air assist)"
@@ -1089,6 +1097,12 @@ msgstr ""
 msgid "Reloaded"
 msgstr ""
 
+msgid "Remove"
+msgstr ""
+
+msgid "Remove the selected nodes"
+msgstr ""
+
 msgctxt "toolbar"
 msgid "Report"
 msgstr ""
@@ -1193,6 +1207,10 @@ msgstr ""
 msgid "Select two or more shapes with closed outlines."
 msgstr ""
 
+#, python-format
+msgid "Selected nodes: %d. Drag them, or use the buttons above."
+msgstr ""
+
 msgid "Send EGV file"
 msgstr ""
 
@@ -1228,8 +1246,14 @@ msgstr ""
 msgid "Settings saved to %s"
 msgstr ""
 
+msgid "Shape"
+msgstr ""
+
 msgctxt "toolbar group"
 msgid "Shapes"
+msgstr ""
+
+msgid "Side"
 msgstr ""
 
 msgid "Sides"
@@ -1242,10 +1266,7 @@ msgstr ""
 msgid "Smooth"
 msgstr ""
 
-msgid "Smooth curve through the selected nodes"
-msgstr ""
-
-msgid "Smooth with handles of equal length"
+msgid "Smooth, with both handles of the same length"
 msgstr ""
 
 msgid "Snap to &objects"
@@ -1298,6 +1319,9 @@ msgid "Stopped by the user."
 msgstr ""
 
 msgid "Stopping…"
+msgstr ""
+
+msgid "Straight"
 msgstr ""
 
 msgid "Symmetric"

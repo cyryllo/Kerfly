@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 20:34+0100\n"
+"POT-Creation-Date: 2026-11-04 20:39+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -174,12 +174,18 @@ msgstr "O programie Kerfly"
 msgid "Acrylic 3 mm"
 msgstr "Akryl (plexi) 3 mm"
 
+msgid "Add"
+msgstr "Dodaj"
+
 msgctxt "toolbar"
 msgid "Add"
 msgstr "Dodaj"
 
 msgid "Add a layer"
 msgstr "Dodaj warstwę"
+
+msgid "Add a node in the middle of the side after the selected node"
+msgstr "Dodaj węzeł w połowie boku za zaznaczonym węzłem"
 
 msgid "Add another file to the laser bed"
 msgstr "Dodaj kolejny plik na stół lasera"
@@ -247,9 +253,6 @@ msgstr "Prędkość objazdu konturu"
 msgid "Boundary trace with laser on"
 msgstr "Objazd konturu z włączonym laserem"
 
-msgid "Break"
-msgstr "Rozdziel"
-
 msgid "Break apart"
 msgstr "Rozbij na kształty"
 
@@ -294,6 +297,13 @@ msgstr "Wyśrodkuj zaznaczony element albo cały projekt na stole"
 msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr "Wybierz materiał, aby ustawić prędkość, przejścia i moc wszystkich warstw"
 
+msgid ""
+"Click a node (small square) to select it; Shift+click for more. Then use "
+"the buttons above."
+msgstr ""
+"Kliknij węzeł (mały kwadracik), aby go zaznaczyć; Shift+klik dodaje "
+"kolejne. Potem użyj przycisków u góry."
+
 msgid "Click an element of the group first, then Ungroup."
 msgstr "Najpierw kliknij element grupy, potem Rozgrupuj."
 
@@ -303,8 +313,8 @@ msgstr "Kliknij element na stole, aby go zaznaczyć."
 msgid "Close / open"
 msgstr "Zamknij / otwórz"
 
-msgid "Close an open path, or open a closed one"
-msgstr "Zamknij otwartą ścieżkę albo otwórz zamkniętą"
+msgid "Close an open shape, or open a closed one"
+msgstr "Zamknij otwarty kształt albo otwórz zamknięty"
 
 msgid "Combine shapes"
 msgstr "Łącz kształty"
@@ -368,14 +378,20 @@ msgstr "Krzyżowe: druga warstwa linii pod kątem 90°"
 msgid "Curve"
 msgstr "Krzywa"
 
+msgid "Curve through the node"
+msgstr "Krzywa przez węzeł"
+
 msgid "Cut"
 msgstr "Cięcie"
 
 msgid "Cut inside shapes first"
 msgstr "Najpierw wycinaj kształty wewnętrzne"
 
-msgid "Cut the path open at the selected node"
-msgstr "Rozetnij ścieżkę w zaznaczonym węźle"
+msgid "Cut open"
+msgstr "Rozetnij"
+
+msgid "Cut the shape open at the selected node"
+msgstr "Rozetnij kształt w zaznaczonym węźle"
 
 msgid "D&uplicate element"
 msgstr "&Duplikuj element"
@@ -403,9 +419,6 @@ msgstr "Usuń"
 msgctxt "toolbar"
 msgid "Delete"
 msgstr "Usuń"
-
-msgid "Delete the selected nodes"
-msgstr "Usuń zaznaczone węzły"
 
 msgid "Delete this layer (its parts go back to the default layer)"
 msgstr "Usuń tę warstwę (jej części wrócą do warstwy domyślnej)"
@@ -679,12 +692,6 @@ msgstr "Program Inkscape"
 msgid "Inkscape timeout (minutes)"
 msgstr "Limit czasu Inkscape (minuty)"
 
-msgid "Insert"
-msgstr "Wstaw"
-
-msgid "Insert a node after the selected one"
-msgstr "Wstaw węzeł za zaznaczonym"
-
 msgid "Intersection"
 msgstr "Część wspólna"
 
@@ -786,10 +793,12 @@ msgstr "Maszyna"
 msgid "Main toolbar"
 msgstr "Główny pasek narzędzi"
 
-msgid "Make the sides of the selected nodes curves"
-msgstr "Zamień boki przy zaznaczonych węzłach na krzywe"
+msgid "Make the sides at the selected nodes curves with handles you can drag"
+msgstr ""
+"Zamień boki przy zaznaczonych węzłach na krzywe z uchwytami do "
+"przeciągania"
 
-msgid "Make the sides of the selected nodes straight lines"
+msgid "Make the sides at the selected nodes straight lines"
 msgstr "Zamień boki przy zaznaczonych węzłach na proste"
 
 msgid "Material"
@@ -917,14 +926,17 @@ msgstr "Nowy prostokąt"
 msgid "New text"
 msgstr "Nowy tekst"
 
+msgid "No corner at the selected nodes: the curve passes smoothly through them"
+msgstr "Bez narożnika w zaznaczonych węzłach: krzywa przechodzi przez nie gładko"
+
 msgid "No design loaded"
 msgstr "Nie wczytano projektu"
 
 msgid "No laser data was generated."
 msgstr "Nie wygenerowano danych dla lasera."
 
-msgid "Nodes"
-msgstr "Węzły"
+msgid "Node"
+msgstr "Węzeł"
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notatki (np. dostawca, soczewka, nadmuch)"
@@ -1135,6 +1147,12 @@ msgstr ""
 msgid "Reloaded"
 msgstr "Wczytano ponownie"
 
+msgid "Remove"
+msgstr "Usuń"
+
+msgid "Remove the selected nodes"
+msgstr "Usuń zaznaczone węzły"
+
 msgctxt "toolbar"
 msgid "Report"
 msgstr "Raport"
@@ -1245,6 +1263,10 @@ msgstr "Zaznacz co najmniej dwa elementy, aby je zgrupować."
 msgid "Select two or more shapes with closed outlines."
 msgstr "Zaznacz co najmniej dwa kształty o zamkniętym obrysie."
 
+#, python-format
+msgid "Selected nodes: %d. Drag them, or use the buttons above."
+msgstr "Zaznaczone węzły: %d. Przeciągnij je albo użyj przycisków u góry."
+
 msgid "Send EGV file"
 msgstr "Wyślij plik EGV"
 
@@ -1282,9 +1304,15 @@ msgstr ""
 msgid "Settings saved to %s"
 msgstr "Zapisano ustawienia w %s"
 
+msgid "Shape"
+msgstr "Kształt"
+
 msgctxt "toolbar group"
 msgid "Shapes"
 msgstr "Kształty"
+
+msgid "Side"
+msgstr "Odcinek"
 
 msgid "Sides"
 msgstr "Boki"
@@ -1296,11 +1324,8 @@ msgstr "Symulacja"
 msgid "Smooth"
 msgstr "Gładki"
 
-msgid "Smooth curve through the selected nodes"
-msgstr "Gładka krzywa przez zaznaczone węzły"
-
-msgid "Smooth with handles of equal length"
-msgstr "Gładki z uchwytami równej długości"
+msgid "Smooth, with both handles of the same length"
+msgstr "Gładki, z oboma uchwytami tej samej długości"
 
 msgid "Snap to &objects"
 msgstr "Przyciągaj do &obiektów"
@@ -1360,6 +1385,9 @@ msgstr "Zatrzymane przez użytkownika."
 
 msgid "Stopping…"
 msgstr "Zatrzymywanie…"
+
+msgid "Straight"
+msgstr "Prosty"
 
 msgid "Symmetric"
 msgstr "Symetryczny"
@@ -1835,4 +1863,43 @@ msgstr "obrys"
 #~ "Zamień każdą linię otwartego pliku SVG"
 #~ " / DXF albo tekstu w osobny "
 #~ "kształt z edytowalnymi węzłami"
+
+#~ msgid "Break"
+#~ msgstr "Rozdziel"
+
+#~ msgid "Close an open path, or open a closed one"
+#~ msgstr "Zamknij otwartą ścieżkę albo otwórz zamkniętą"
+
+#~ msgid "Cut the path open at the selected node"
+#~ msgstr "Rozetnij ścieżkę w zaznaczonym węźle"
+
+#~ msgid "Delete the selected nodes"
+#~ msgstr "Usuń zaznaczone węzły"
+
+#~ msgid "Insert"
+#~ msgstr "Wstaw"
+
+#~ msgid "Insert a node after the selected one"
+#~ msgstr "Wstaw węzeł za zaznaczonym"
+
+#~ msgid "Make the sides of the selected nodes curves"
+#~ msgstr "Zamień boki przy zaznaczonych węzłach na krzywe"
+
+#~ msgid "Make the sides of the selected nodes straight lines"
+#~ msgstr "Zamień boki przy zaznaczonych węzłach na proste"
+
+#~ msgid "Smooth curve through the selected nodes"
+#~ msgstr "Gładka krzywa przez zaznaczone węzły"
+
+#~ msgid "Smooth with handles of equal length"
+#~ msgstr "Gładki z uchwytami równej długości"
+
+#~ msgid "Click a node (small square) to select it; Shift+click for more."
+#~ msgstr ""
+
+#~ msgid "Nodes"
+#~ msgstr "Węzły"
+
+#~ msgid "Selected nodes: %d"
+#~ msgstr ""
 

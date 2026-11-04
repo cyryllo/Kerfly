@@ -33,6 +33,7 @@ QLineEdit#layer_name { background: transparent; }
 QLineEdit#layer_name:focus { background: palette(base); }
 QToolBar#tool_strip { padding: 2px 4px 2px 2px; spacing: 2px; }
 QLabel#bed_warning { color: #c62828; font-weight: bold; padding: 2px 0; }
+QLabel#node_hint { color: #4b5563; }
 QWidget#top_bar { background: #eef0f3; border-bottom: 1px solid #c4c9d0; }
 QLabel#tool_options_title { font-weight: bold; }
 QLabel#ribbon_caption { color: #6b7280; font-size: 10px; padding-bottom: 1px; }

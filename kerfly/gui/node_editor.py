@@ -149,6 +149,7 @@ class NodeEditor:
         self.path = None
         self._element = None
         self.selected = set()
+        self.view.signals.node_selection.emit(0)
 
     def clear_graphics(self):
         scene = self.view.scene()
@@ -187,6 +188,7 @@ class NodeEditor:
         return qp
 
     def _style_marks(self):
+        self.view.signals.node_selection.emit(len(self.selected) if self.path is not None else 0)
         for key, mark in self._marks.items():
             mark.setBrush(QBrush(BLUE if key in self.selected else QColor("white")))
 

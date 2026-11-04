@@ -118,6 +118,10 @@ class MainWindow(QMainWindow):
         self.top_bar_layout.setContentsMargins(6, 5, 6, 5)
         self.top_bar_layout.setSpacing(6)
         self.top_bar_layout.addWidget(self.tool_options, 1)
+        # fixed height: two rows of fields plus the section captions, whatever is shown
+        probe, cap = QDoubleSpinBox(), QLabel("X")
+        cap.setObjectName("ribbon_caption")
+        self.top_bar.setFixedHeight(2 * probe.sizeHint().height() + cap.sizeHint().height() + 4 + 2 + 10 + 4)
         central_layout.addWidget(self.top_bar)
         central_layout.addWidget(self.preview, 1)
         self.setCentralWidget(central)
@@ -132,6 +136,7 @@ class MainWindow(QMainWindow):
         self.preview.signals.nodes_changed.connect(self._nodes_changed)
         self.preview.signals.pen_drawn.connect(self._preview_pen_drawn)
         self.preview.signals.edit_nodes.connect(self._edit_nodes_of)
+        self.preview.signals.node_selection.connect(self._node_selection_changed)
         self.preview.signals.measured.connect(self._preview_measured)
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
@@ -509,6 +514,8 @@ class MainWindow(QMainWindow):
                 self._options_target, self._options_element = None, None
                 self.tool_options.show_hint()
             self.tool_options.add_node_actions()
+            ed = self.preview.node_editor
+            self.tool_options.set_node_selection(len(ed.selected) if ed.path is not None else 0)
             return
         e = self.selected
         if e is not None and e.shape is not None:
@@ -785,6 +792,15 @@ class MainWindow(QMainWindow):
         self._compiled = None
         self._layer_cache.clear()
         self._layout_changed()
+
+    def _node_selection_changed(self, count):
+        self.tool_options.set_node_selection(count)
+        if self.preview.tool == "nodes" and self.preview.node_editor.path is not None:
+            if count == 0:
+                self.status(_("Click a node (small square) to select it; Shift+click for more. Then use the "
+                              "buttons above."))
+            else:
+                self.status(_("Selected nodes: %d. Drag them, or use the buttons above.") % count)
 
     def _edit_nodes_of(self, element):
         """Double-click on an element: edit its nodes (an opened file: ungroup it first)."""

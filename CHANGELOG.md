@@ -20,9 +20,13 @@ Version numbers:
     - drag nodes and their round handles; a smooth node keeps both handles
       in line, and Ctrl moves one handle alone;
     - Shift+click selects several nodes;
-    - buttons in the bar above the bed view, or keys: I insert, D/Delete
-      remove, L line, C curve, O smooth, S symmetric, Z close / open,
-      B break;
+    - buttons with icons in the bar above the bed view, in four sections:
+      Node (Add, Remove), Side (Straight, Curve), Curve through the node
+      (Smooth, Symmetric), Shape (Close / open, Cut open);
+    - buttons that need a selected node stay grey until you click one, and
+      the status bar says what to do;
+    - keys: I add, D / Delete remove, L straight, C curve, O smooth,
+      S symmetric, Z close / open, B cut open;
     - double-click a side to add a node, or a node to remove it.
   - Ellipses become real curves when you edit their nodes.
   - Paths are saved in projects.
@@ -62,6 +66,7 @@ Version numbers:
 - Toolbar reorganised so labels are not cut short:
   - rotate and mirror are small icons in a new Transform group;
   - group and ungroup joined the Shapes group.
+- The bar above the bed view has a fixed height, so it no longer stretches.
 - The mouse wheel zooms in as far as you like, but not further out than the
   whole bed, so the bed cannot get lost.
 - The bed view follows the window size until you zoom or pan. Fitting counts

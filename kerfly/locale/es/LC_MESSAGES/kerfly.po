@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 20:34+0100\n"
+"POT-Creation-Date: 2026-11-04 20:39+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -172,12 +172,18 @@ msgstr "Acerca de Kerfly"
 msgid "Acrylic 3 mm"
 msgstr "Acrílico 3 mm"
 
+msgid "Add"
+msgstr "Añadir"
+
 msgctxt "toolbar"
 msgid "Add"
 msgstr "Añadir"
 
 msgid "Add a layer"
 msgstr "Añadir una capa"
+
+msgid "Add a node in the middle of the side after the selected node"
+msgstr "Añadir un nodo en mitad del lado tras el nodo seleccionado"
 
 msgid "Add another file to the laser bed"
 msgstr "Añadir otro archivo al área de trabajo"
@@ -245,9 +251,6 @@ msgstr "Velocidad del recorrido del contorno"
 msgid "Boundary trace with laser on"
 msgstr "Recorrer el contorno con el láser encendido"
 
-msgid "Break"
-msgstr "Romper"
-
 msgid "Break apart"
 msgstr "Separar en formas"
 
@@ -294,6 +297,13 @@ msgstr ""
 "Elija un material para ajustar la velocidad, las pasadas y la potencia de"
 " todas las capas"
 
+msgid ""
+"Click a node (small square) to select it; Shift+click for more. Then use "
+"the buttons above."
+msgstr ""
+"Haz clic en un nodo (cuadradito) para seleccionarlo; Mayús+clic para más."
+" Luego usa los botones de arriba."
+
 msgid "Click an element of the group first, then Ungroup."
 msgstr "Primero haz clic en un elemento del grupo y luego en Desagrupar."
 
@@ -303,8 +313,8 @@ msgstr "Haga clic en un elemento para seleccionarlo."
 msgid "Close / open"
 msgstr "Cerrar / abrir"
 
-msgid "Close an open path, or open a closed one"
-msgstr "Cerrar un trazado abierto o abrir uno cerrado"
+msgid "Close an open shape, or open a closed one"
+msgstr "Cerrar una forma abierta o abrir una cerrada"
 
 msgid "Combine shapes"
 msgstr "Combinar formas"
@@ -370,14 +380,20 @@ msgstr "Rayado cruzado: un segundo juego de líneas a 90°"
 msgid "Curve"
 msgstr "Curva"
 
+msgid "Curve through the node"
+msgstr "Curva por el nodo"
+
 msgid "Cut"
 msgstr "Corte"
 
 msgid "Cut inside shapes first"
 msgstr "Cortar primero las formas interiores"
 
-msgid "Cut the path open at the selected node"
-msgstr "Abrir el trazado en el nodo seleccionado"
+msgid "Cut open"
+msgstr "Abrir"
+
+msgid "Cut the shape open at the selected node"
+msgstr "Abrir la forma en el nodo seleccionado"
 
 msgid "D&uplicate element"
 msgstr "D&uplicar elemento"
@@ -405,9 +421,6 @@ msgstr "Eliminar"
 msgctxt "toolbar"
 msgid "Delete"
 msgstr "Eliminar"
-
-msgid "Delete the selected nodes"
-msgstr "Eliminar los nodos seleccionados"
 
 msgid "Delete this layer (its parts go back to the default layer)"
 msgstr "Eliminar esta capa (sus partes vuelven a la capa predeterminada)"
@@ -681,12 +694,6 @@ msgstr "Ejecutable de Inkscape"
 msgid "Inkscape timeout (minutes)"
 msgstr "Tiempo límite de Inkscape (minutos)"
 
-msgid "Insert"
-msgstr "Insertar"
-
-msgid "Insert a node after the selected one"
-msgstr "Insertar un nodo después del seleccionado"
-
 msgid "Intersection"
 msgstr "Intersección"
 
@@ -790,10 +797,10 @@ msgstr "Máquina"
 msgid "Main toolbar"
 msgstr "Barra de herramientas principal"
 
-msgid "Make the sides of the selected nodes curves"
-msgstr "Convertir en curvas los lados de los nodos seleccionados"
+msgid "Make the sides at the selected nodes curves with handles you can drag"
+msgstr "Convertir los lados de los nodos seleccionados en curvas con tiradores"
 
-msgid "Make the sides of the selected nodes straight lines"
+msgid "Make the sides at the selected nodes straight lines"
 msgstr "Convertir en rectas los lados de los nodos seleccionados"
 
 msgid "Material"
@@ -920,14 +927,17 @@ msgstr "Nuevo rectángulo"
 msgid "New text"
 msgstr "Nuevo texto"
 
+msgid "No corner at the selected nodes: the curve passes smoothly through them"
+msgstr "Sin esquina en los nodos seleccionados: la curva pasa suavemente"
+
 msgid "No design loaded"
 msgstr "No hay ningún diseño cargado"
 
 msgid "No laser data was generated."
 msgstr "No se generaron datos para el láser."
 
-msgid "Nodes"
-msgstr "Nodos"
+msgid "Node"
+msgstr "Nodo"
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notas (p. ej. proveedor, lente, asistencia de aire)"
@@ -1138,6 +1148,12 @@ msgstr "Recargar"
 msgid "Reloaded"
 msgstr "Recargado"
 
+msgid "Remove"
+msgstr "Quitar"
+
+msgid "Remove the selected nodes"
+msgstr "Quitar los nodos seleccionados"
+
 msgctxt "toolbar"
 msgid "Report"
 msgstr "Informe"
@@ -1248,6 +1264,10 @@ msgstr "Selecciona dos o más elementos para agruparlos."
 msgid "Select two or more shapes with closed outlines."
 msgstr "Selecciona dos o más formas con contornos cerrados."
 
+#, python-format
+msgid "Selected nodes: %d. Drag them, or use the buttons above."
+msgstr "Nodos seleccionados: %d. Arrástralos o usa los botones de arriba."
+
 msgid "Send EGV file"
 msgstr "Enviar archivo EGV"
 
@@ -1285,9 +1305,15 @@ msgstr ""
 msgid "Settings saved to %s"
 msgstr "Configuración guardada en %s"
 
+msgid "Shape"
+msgstr "Forma"
+
 msgctxt "toolbar group"
 msgid "Shapes"
 msgstr "Formas"
+
+msgid "Side"
+msgstr "Lado"
 
 msgid "Sides"
 msgstr "Lados"
@@ -1299,11 +1325,8 @@ msgstr "Simular"
 msgid "Smooth"
 msgstr "Suave"
 
-msgid "Smooth curve through the selected nodes"
-msgstr "Curva suave por los nodos seleccionados"
-
-msgid "Smooth with handles of equal length"
-msgstr "Suave con tiradores de igual longitud"
+msgid "Smooth, with both handles of the same length"
+msgstr "Suave, con ambos tiradores de la misma longitud"
 
 msgid "Snap to &objects"
 msgstr "Ajustar a &objetos"
@@ -1365,6 +1388,9 @@ msgstr "Detenido por el usuario."
 
 msgid "Stopping…"
 msgstr "Deteniendo…"
+
+msgid "Straight"
+msgstr "Recto"
 
 msgid "Symmetric"
 msgstr "Simétrico"
@@ -1849,4 +1875,43 @@ msgstr "grabado vectorial"
 #~ "SVG / DXF abierto o de un "
 #~ "texto en una forma propia con "
 #~ "nodos editables"
+
+#~ msgid "Break"
+#~ msgstr "Romper"
+
+#~ msgid "Close an open path, or open a closed one"
+#~ msgstr "Cerrar un trazado abierto o abrir uno cerrado"
+
+#~ msgid "Cut the path open at the selected node"
+#~ msgstr "Abrir el trazado en el nodo seleccionado"
+
+#~ msgid "Delete the selected nodes"
+#~ msgstr "Eliminar los nodos seleccionados"
+
+#~ msgid "Insert"
+#~ msgstr "Insertar"
+
+#~ msgid "Insert a node after the selected one"
+#~ msgstr "Insertar un nodo después del seleccionado"
+
+#~ msgid "Make the sides of the selected nodes curves"
+#~ msgstr "Convertir en curvas los lados de los nodos seleccionados"
+
+#~ msgid "Make the sides of the selected nodes straight lines"
+#~ msgstr "Convertir en rectas los lados de los nodos seleccionados"
+
+#~ msgid "Smooth curve through the selected nodes"
+#~ msgstr "Curva suave por los nodos seleccionados"
+
+#~ msgid "Smooth with handles of equal length"
+#~ msgstr "Suave con tiradores de igual longitud"
+
+#~ msgid "Click a node (small square) to select it; Shift+click for more."
+#~ msgstr ""
+
+#~ msgid "Nodes"
+#~ msgstr "Nodos"
+
+#~ msgid "Selected nodes: %d"
+#~ msgstr ""
 

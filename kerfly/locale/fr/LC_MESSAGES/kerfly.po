@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 20:34+0100\n"
+"POT-Creation-Date: 2026-11-04 20:39+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -172,12 +172,18 @@ msgstr "À propos de Kerfly"
 msgid "Acrylic 3 mm"
 msgstr "Acrylique 3 mm"
 
+msgid "Add"
+msgstr "Ajouter"
+
 msgctxt "toolbar"
 msgid "Add"
 msgstr "Ajouter"
 
 msgid "Add a layer"
 msgstr "Ajouter un calque"
+
+msgid "Add a node in the middle of the side after the selected node"
+msgstr "Ajouter un nœud au milieu du côté après le nœud sélectionné"
 
 msgid "Add another file to the laser bed"
 msgstr "Ajouter un autre fichier sur le plateau"
@@ -245,9 +251,6 @@ msgstr "Vitesse du parcours de contour"
 msgid "Boundary trace with laser on"
 msgstr "Parcourir le contour avec le laser allumé"
 
-msgid "Break"
-msgstr "Couper"
-
 msgid "Break apart"
 msgstr "Décomposer"
 
@@ -294,6 +297,13 @@ msgstr ""
 "Choisissez un matériau pour régler la vitesse, les passes et la puissance"
 " de tous les calques"
 
+msgid ""
+"Click a node (small square) to select it; Shift+click for more. Then use "
+"the buttons above."
+msgstr ""
+"Cliquez sur un nœud (petit carré) pour le sélectionner ; Maj+clic pour "
+"d'autres. Puis utilisez les boutons en haut."
+
 msgid "Click an element of the group first, then Ungroup."
 msgstr "Cliquez d'abord sur un élément du groupe, puis sur Dégrouper."
 
@@ -303,8 +313,8 @@ msgstr "Cliquez sur un élément pour le sélectionner."
 msgid "Close / open"
 msgstr "Fermer / ouvrir"
 
-msgid "Close an open path, or open a closed one"
-msgstr "Fermer un chemin ouvert ou ouvrir un chemin fermé"
+msgid "Close an open shape, or open a closed one"
+msgstr "Fermer une forme ouverte ou ouvrir une forme fermée"
 
 msgid "Combine shapes"
 msgstr "Combiner les formes"
@@ -370,14 +380,20 @@ msgstr "Hachures croisées : un second jeu de lignes à 90°"
 msgid "Curve"
 msgstr "Courbe"
 
+msgid "Curve through the node"
+msgstr "Courbe au nœud"
+
 msgid "Cut"
 msgstr "Découpe"
 
 msgid "Cut inside shapes first"
 msgstr "Découper d'abord les formes intérieures"
 
-msgid "Cut the path open at the selected node"
-msgstr "Ouvrir le chemin au nœud sélectionné"
+msgid "Cut open"
+msgstr "Ouvrir"
+
+msgid "Cut the shape open at the selected node"
+msgstr "Ouvrir la forme au nœud sélectionné"
 
 msgid "D&uplicate element"
 msgstr "D&upliquer l'élément"
@@ -407,9 +423,6 @@ msgstr "Supprimer"
 msgctxt "toolbar"
 msgid "Delete"
 msgstr "Supprimer"
-
-msgid "Delete the selected nodes"
-msgstr "Supprimer les nœuds sélectionnés"
 
 msgid "Delete this layer (its parts go back to the default layer)"
 msgstr "Supprimer ce calque (ses éléments reviennent au calque par défaut)"
@@ -683,12 +696,6 @@ msgstr "Exécutable Inkscape"
 msgid "Inkscape timeout (minutes)"
 msgstr "Délai d'Inkscape (minutes)"
 
-msgid "Insert"
-msgstr "Insérer"
-
-msgid "Insert a node after the selected one"
-msgstr "Insérer un nœud après celui sélectionné"
-
 msgid "Intersection"
 msgstr "Intersection"
 
@@ -792,10 +799,10 @@ msgstr "Machine"
 msgid "Main toolbar"
 msgstr "Barre d'outils principale"
 
-msgid "Make the sides of the selected nodes curves"
-msgstr "Transformer en courbes les côtés des nœuds sélectionnés"
+msgid "Make the sides at the selected nodes curves with handles you can drag"
+msgstr "Transformer les côtés des nœuds sélectionnés en courbes avec poignées"
 
-msgid "Make the sides of the selected nodes straight lines"
+msgid "Make the sides at the selected nodes straight lines"
 msgstr "Transformer en droites les côtés des nœuds sélectionnés"
 
 msgid "Material"
@@ -922,14 +929,17 @@ msgstr "Nouveau rectangle"
 msgid "New text"
 msgstr "Nouveau texte"
 
+msgid "No corner at the selected nodes: the curve passes smoothly through them"
+msgstr "Pas d'angle aux nœuds sélectionnés : la courbe y passe en douceur"
+
 msgid "No design loaded"
 msgstr "Aucun dessin chargé"
 
 msgid "No laser data was generated."
 msgstr "Aucune donnée laser n'a été générée."
 
-msgid "Nodes"
-msgstr "Nœuds"
+msgid "Node"
+msgstr "Nœud"
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notes (par ex. fournisseur, lentille, soufflage)"
@@ -1141,6 +1151,12 @@ msgstr "Recharger"
 msgid "Reloaded"
 msgstr "Rechargé"
 
+msgid "Remove"
+msgstr "Retirer"
+
+msgid "Remove the selected nodes"
+msgstr "Retirer les nœuds sélectionnés"
+
 msgctxt "toolbar"
 msgid "Report"
 msgstr "Rapport"
@@ -1255,6 +1271,12 @@ msgstr "Sélectionnez au moins deux éléments pour les grouper."
 msgid "Select two or more shapes with closed outlines."
 msgstr "Sélectionnez au moins deux formes aux contours fermés."
 
+#, python-format
+msgid "Selected nodes: %d. Drag them, or use the buttons above."
+msgstr ""
+"Nœuds sélectionnés : %d. Faites-les glisser ou utilisez les boutons en "
+"haut."
+
 msgid "Send EGV file"
 msgstr "Envoyer le fichier EGV"
 
@@ -1292,9 +1314,15 @@ msgstr ""
 msgid "Settings saved to %s"
 msgstr "Paramètres enregistrés dans %s"
 
+msgid "Shape"
+msgstr "Forme"
+
 msgctxt "toolbar group"
 msgid "Shapes"
 msgstr "Formes"
+
+msgid "Side"
+msgstr "Côté"
 
 msgid "Sides"
 msgstr "Côtés"
@@ -1306,11 +1334,8 @@ msgstr "Simuler"
 msgid "Smooth"
 msgstr "Lisse"
 
-msgid "Smooth curve through the selected nodes"
-msgstr "Courbe lisse passant par les nœuds sélectionnés"
-
-msgid "Smooth with handles of equal length"
-msgstr "Lisse avec des poignées de même longueur"
+msgid "Smooth, with both handles of the same length"
+msgstr "Lisse, avec deux poignées de même longueur"
 
 msgid "Snap to &objects"
 msgstr "Aimanter aux &objets"
@@ -1372,6 +1397,9 @@ msgstr "Arrêté par l'utilisateur."
 
 msgid "Stopping…"
 msgstr "Arrêt en cours…"
+
+msgid "Straight"
+msgstr "Droit"
 
 msgid "Symmetric"
 msgstr "Symétrique"
@@ -1858,4 +1886,43 @@ msgstr "gravure vectorielle"
 #~ "SVG / DXF ouvert ou d'un texte "
 #~ "en une forme à part avec des "
 #~ "nœuds modifiables"
+
+#~ msgid "Break"
+#~ msgstr "Couper"
+
+#~ msgid "Close an open path, or open a closed one"
+#~ msgstr "Fermer un chemin ouvert ou ouvrir un chemin fermé"
+
+#~ msgid "Cut the path open at the selected node"
+#~ msgstr "Ouvrir le chemin au nœud sélectionné"
+
+#~ msgid "Delete the selected nodes"
+#~ msgstr "Supprimer les nœuds sélectionnés"
+
+#~ msgid "Insert"
+#~ msgstr "Insérer"
+
+#~ msgid "Insert a node after the selected one"
+#~ msgstr "Insérer un nœud après celui sélectionné"
+
+#~ msgid "Make the sides of the selected nodes curves"
+#~ msgstr "Transformer en courbes les côtés des nœuds sélectionnés"
+
+#~ msgid "Make the sides of the selected nodes straight lines"
+#~ msgstr "Transformer en droites les côtés des nœuds sélectionnés"
+
+#~ msgid "Smooth curve through the selected nodes"
+#~ msgstr "Courbe lisse passant par les nœuds sélectionnés"
+
+#~ msgid "Smooth with handles of equal length"
+#~ msgstr "Lisse avec des poignées de même longueur"
+
+#~ msgid "Click a node (small square) to select it; Shift+click for more."
+#~ msgstr ""
+
+#~ msgid "Nodes"
+#~ msgstr "Nœuds"
+
+#~ msgid "Selected nodes: %d"
+#~ msgstr ""
 

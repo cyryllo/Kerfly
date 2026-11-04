@@ -8,7 +8,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 from PySide6.QtCore import QSize, Qt, QTimer, Signal
 from PySide6.QtGui import QFont
-from PySide6.QtWidgets import (QComboBox, QDoubleSpinBox, QFontComboBox, QFrame, QGridLayout,
+from PySide6.QtWidgets import (QSizePolicy, QComboBox, QDoubleSpinBox, QFontComboBox, QFrame, QGridLayout,
                                QHBoxLayout, QLabel, QPlainTextEdit, QSpinBox, QToolButton,
                                QVBoxLayout, QWidget)
 
@@ -52,14 +52,26 @@ def ribbon_separator():
     return line
 
 
-NODE_ACTIONS = [("insert", N_("Insert"), "I", N_("Insert a node after the selected one")),
-                ("delete", N_("Delete"), "D", N_("Delete the selected nodes")),
-                ("line", N_("Line"), "L", N_("Make the sides of the selected nodes straight lines")),
-                ("curve", N_("Curve"), "C", N_("Make the sides of the selected nodes curves")),
-                ("smooth", N_("Smooth"), "O", N_("Smooth curve through the selected nodes")),
-                ("symmetric", N_("Symmetric"), "S", N_("Smooth with handles of equal length")),
-                ("close", N_("Close / open"), "Z", N_("Close an open path, or open a closed one")),
-                ("break", N_("Break"), "B", N_("Cut the path open at the selected node"))]
+# node tool buttons: (section, [(code, label, icon, key, tooltip, needs a selected node)])
+NODE_SECTIONS = [
+    (N_("Node"), [("insert", N_("Add"), "square-plus", "I",
+                   N_("Add a node in the middle of the side after the selected node"), True),
+                  ("delete", N_("Remove"), "square-minus", "D",
+                   N_("Remove the selected nodes"), True)]),
+    (N_("Side"), [("line", N_("Straight"), "slash", "L",
+                   N_("Make the sides at the selected nodes straight lines"), True),
+                  ("curve", N_("Curve"), "vector-spline", "C",
+                   N_("Make the sides at the selected nodes curves with handles you can drag"), True)]),
+    (N_("Curve through the node"), [
+        ("smooth", N_("Smooth"), "wave-sine", "O",
+         N_("No corner at the selected nodes: the curve passes smoothly through them"), True),
+        ("symmetric", N_("Symmetric"), "arrows-horizontal", "S",
+         N_("Smooth, with both handles of the same length"), True)]),
+    (N_("Shape"), [("close", N_("Close / open"), "circle-dashed", "Z",
+                    N_("Close an open shape, or open a closed one"), False),
+                   ("break", N_("Cut open"), "scissors", "B",
+                    N_("Cut the shape open at the selected node"), True)]),
+]
 
 
 class ToolOptionsBar(QWidget):
@@ -98,20 +110,33 @@ class ToolOptionsBar(QWidget):
         self._clear()
 
     def add_node_actions(self):
-        """Buttons of the node tool (they act on the selected nodes)."""
-        box = QWidget()
-        g = QGridLayout(box)
-        g.setContentsMargins(0, 0, 0, 0)
-        g.setSpacing(2)
-        for n, (code, label, key, tip) in enumerate(NODE_ACTIONS):
-            b = QToolButton()
-            b.setText(_(label))
-            b.setToolTip("%s (%s)" % (_(tip), key))
-            b.setToolButtonStyle(Qt.ToolButtonTextOnly)
-            b.setAutoRaise(False)
-            b.clicked.connect(lambda _c=False, c=code: self.node_action.emit(c))
-            g.addWidget(b, n // 4, n % 4)
-        self._add(box, _("Nodes"))
+        """Buttons of the node tool, in sections, with icons. Those that need a
+        selected node are greyed out until a node is clicked."""
+        self._node_buttons = []
+        for section, actions in NODE_SECTIONS:
+            box = QWidget()
+            v = QVBoxLayout(box)
+            v.setContentsMargins(0, 0, 0, 0)
+            v.setSpacing(2)
+            for code, label, icon, key, tip, needs_node in actions:
+                b = QToolButton()
+                b.setText(_(label))
+                b.setIcon(icons.tabler(icon))
+                b.setIconSize(QSize(18, 18))
+                b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+                b.setToolTip("%s (%s)" % (_(tip), key))
+                b.setAutoRaise(True)
+                b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+                b.clicked.connect(lambda _c=False, c=code: self.node_action.emit(c))
+                v.addWidget(b)
+                self._node_buttons.append((b, needs_node))
+            self._add(box, _(section))
+        self.set_node_selection(0)
+
+    def set_node_selection(self, count):
+        """Enable the node buttons that need a selected node, and say what to do."""
+        for b, needs_node in getattr(self, "_node_buttons", []):
+            b.setEnabled(count > 0 or not needs_node)
 
     def _add(self, content, caption):
         if self.row.count():
