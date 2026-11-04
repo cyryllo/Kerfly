@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 19:33+0100\n"
+"POT-Creation-Date: 2026-11-04 19:48+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -241,6 +241,9 @@ msgstr "Velocidad del recorrido del contorno"
 msgid "Boundary trace with laser on"
 msgstr "Recorrer el contorno con el láser encendido"
 
+msgid "Break"
+msgstr "Romper"
+
 msgctxt "toolbar"
 msgid ""
 "Break\n"
@@ -287,6 +290,12 @@ msgstr ""
 
 msgid "Click an element on the bed to select it."
 msgstr "Haga clic en un elemento para seleccionarlo."
+
+msgid "Close / open"
+msgstr "Cerrar / abrir"
+
+msgid "Close an open path, or open a closed one"
+msgstr "Cerrar un trazado abierto o abrir uno cerrado"
 
 msgid "Connect to the laser"
 msgstr "Conectar con el láser"
@@ -343,11 +352,17 @@ msgstr "Creando imagen de semitonos."
 msgid "Creating scan lines: %s%%"
 msgstr "Creando líneas de barrido: %s%%"
 
+msgid "Curve"
+msgstr "Curva"
+
 msgid "Cut"
 msgstr "Corte"
 
 msgid "Cut inside shapes first"
 msgstr "Cortar primero las formas interiores"
+
+msgid "Cut the path open at the selected node"
+msgstr "Abrir el trazado en el nodo seleccionado"
 
 msgid "D&uplicate element"
 msgstr "D&uplicar elemento"
@@ -375,6 +390,9 @@ msgstr "Eliminar"
 msgctxt "toolbar"
 msgid "Delete"
 msgstr "Eliminar"
+
+msgid "Delete the selected nodes"
+msgstr "Eliminar los nodos seleccionados"
 
 msgid "Delete this layer (its parts go back to the default layer)"
 msgstr "Eliminar esta capa (sus partes vuelven a la capa predeterminada)"
@@ -444,13 +462,15 @@ msgid "Edit nodes"
 msgstr "Editar nodos"
 
 msgid ""
-"Edit nodes: click a drawn shape, drag its corners. Double-click a side to"
-" add a corner; double-click a corner or select it and press Delete to "
-"remove it."
+"Edit nodes: click a shape, drag its nodes and the round curve handles "
+"(Ctrl: one handle alone). Shift+click selects more nodes. Double-click a "
+"side to add a node, a node to remove it. Buttons above, or keys I D L C O"
+" S Z B."
 msgstr ""
-"Editar nodos: haz clic en una forma dibujada y arrastra sus esquinas. "
-"Doble clic en un lado añade una esquina; doble clic en una esquina o "
-"seleccionarla y pulsar Supr la elimina."
+"Editar nodos: haz clic en una forma, arrastra sus nodos y los tiradores "
+"redondos de las curvas (Ctrl: un tirador solo). Mayús+clic selecciona más"
+" nodos. Doble clic en un lado añade un nodo, en un nodo lo elimina. "
+"Botones arriba o teclas I D L C O S Z B."
 
 msgid "Ellipse"
 msgstr "Elipse"
@@ -600,6 +620,12 @@ msgstr "Ejecutable de Inkscape"
 msgid "Inkscape timeout (minutes)"
 msgstr "Tiempo límite de Inkscape (minutos)"
 
+msgid "Insert"
+msgstr "Insertar"
+
+msgid "Insert a node after the selected one"
+msgstr "Insertar un nodo después del seleccionado"
+
 #, python-format
 msgid "Invalid value for setting '%s': %r"
 msgstr "Valor no válido para el ajuste '%s': %r"
@@ -693,6 +719,12 @@ msgstr "Máquina"
 
 msgid "Main toolbar"
 msgstr "Barra de herramientas principal"
+
+msgid "Make the sides of the selected nodes curves"
+msgstr "Convertir en curvas los lados de los nodos seleccionados"
+
+msgid "Make the sides of the selected nodes straight lines"
+msgstr "Convertir en rectas los lados de los nodos seleccionados"
 
 msgid "Material"
 msgstr "Material"
@@ -806,6 +838,9 @@ msgstr "Nueva línea"
 msgid "New material"
 msgstr "Nuevo material"
 
+msgid "New path"
+msgstr "Nuevo trazado"
+
 msgid "New polygon"
 msgstr "Nuevo polígono"
 
@@ -823,6 +858,9 @@ msgstr "No hay ningún diseño cargado"
 
 msgid "No laser data was generated."
 msgstr "No se generaron datos para el láser."
+
+msgid "Nodes"
+msgstr "Nodos"
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notas (p. ej. proveedor, lente, asistencia de aire)"
@@ -879,6 +917,9 @@ msgstr "Pasadas"
 msgid "Passes:"
 msgstr "Pasadas:"
 
+msgid "Path"
+msgstr "Trazado"
+
 msgid "Paths from a G-code file; speeds come from the file (F words)"
 msgstr ""
 "Trayectorias de un archivo de código G; las velocidades vienen del "
@@ -897,6 +938,20 @@ msgstr ""
 
 msgid "Pausing…"
 msgstr "Pausando…"
+
+msgid "Pen (curves)"
+msgstr "Pluma (curvas)"
+
+msgid ""
+"Pen: click for a corner, press and drag for a smooth curve. Click the "
+"first point to close the shape; double-click or Enter finishes an open "
+"path. Backspace removes the last node, Shift keeps 45° angles, Esc "
+"cancels."
+msgstr ""
+"Pluma: clic para una esquina, pulsa y arrastra para una curva suave. Haz "
+"clic en el primer punto para cerrar la forma; doble clic o Intro termina "
+"un trazado abierto. Retroceso quita el último nodo, Mayús mantiene 45°, "
+"Esc cancela."
 
 msgid "Place design at the &head"
 msgstr "Colocar el diseño en el &cabezal"
@@ -1163,6 +1218,15 @@ msgstr "Configuración guardada en %s"
 msgid "Sides"
 msgstr "Lados"
 
+msgid "Smooth"
+msgstr "Suave"
+
+msgid "Smooth curve through the selected nodes"
+msgstr "Curva suave por los nodos seleccionados"
+
+msgid "Smooth with handles of equal length"
+msgstr "Suave con tiradores de igual longitud"
+
 msgid "Snap to &objects"
 msgstr "Ajustar a &objetos"
 
@@ -1223,6 +1287,9 @@ msgstr "Detenido por el usuario."
 
 msgid "Stopping…"
 msgstr "Deteniendo…"
+
+msgid "Symmetric"
+msgstr "Simétrico"
 
 msgid "System default"
 msgstr "Predeterminado del sistema"
@@ -1573,4 +1640,18 @@ msgstr "grabado vectorial"
 #~ "Solo las formas dibujadas tienen nodos"
 #~ " editables (no el texto ni los "
 #~ "archivos abiertos)."
+
+#~ msgid ""
+#~ "Edit nodes: click a drawn shape, "
+#~ "drag its corners. Double-click a "
+#~ "side to add a corner; double-click"
+#~ " a corner or select it and "
+#~ "press Delete to remove it."
+#~ msgstr ""
+#~ "Editar nodos: haz clic en una "
+#~ "forma dibujada y arrastra sus esquinas."
+#~ " Doble clic en un lado añade "
+#~ "una esquina; doble clic en una "
+#~ "esquina o seleccionarla y pulsar Supr"
+#~ " la elimina."
 

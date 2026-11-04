@@ -62,7 +62,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | LightBurn `.lbrn` / `.lbrn2` | `extra/lbrn.py` |
 | xTool `.xcs` | `extra/xcs_reader.py` |
 | EZCad `.ezd` | `extra/ezd.py` |
-| ~~SVG without Inkscape~~ (done: raster with the built-in Qt renderer; Inkscape still needed to turn cut/engrave text into paths) | `svgelements.py` (also on PyPI) |
+| ~~SVG without Inkscape~~ (done: raster with the built-in Qt renderer; Inkscape still needed to turn cut/engrave text into paths). SVG curves for editing are read with svgelements (PyPI, MIT) | `svgelements.py` (also on PyPI) |
 
 ## Editor window (modelled on MeerK40t's interface)
 
@@ -88,9 +88,9 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Ellipse, circle~~ (done) | `toolellipse.py`, `toolcircle.py` |
 | ~~Line, regular polygon, polyline / free polygon~~ (done) | `toolline.py`, `toolpolyline.py`, `toolpolygon.py` |
 | Freehand drawing | `tooldraw.py` |
-| Bezier / vector path | `toolvector.py` |
+| ~~Bezier / vector path (pen tool)~~ (done) | `toolvector.py` |
 | ~~Text (system fonts)~~ (done); text on a path | `tooltext.py`, `toollinetext.py` |
-| ~~Node editing (drawn shapes: move, add, delete corners)~~ (done; curves/Bezier handles and imported paths still to do) | `toolnodeedit.py`, `toolnodemove.py` |
+| ~~Node editing with Bezier handles, for drawn shapes and broken-apart SVG / DXF~~ (done) | `toolnodeedit.py`, `toolnodemove.py` |
 | Cut a region out of an image | `toolimagecut.py` |
 | Tabs (bridges) on cut paths | `tooltabedit.py` |
 

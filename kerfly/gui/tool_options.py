@@ -18,10 +18,11 @@ from kerfly.i18n import N_, _
 
 OPERATION_NAMES = [("cut", N_("Cut")), ("engrave", N_("Engrave outline")), ("fill", N_("Fill (raster)"))]
 KIND_NAMES = {"rectangle": N_("Rectangle"), "ellipse": N_("Ellipse"), "polygon": N_("Polygon"),
-              "line": N_("Line"), "polyline": N_("Polyline"), "text": N_("Text")}
+              "line": N_("Line"), "polyline": N_("Polyline"), "path": N_("Path"), "pen": N_("Path"),
+              "text": N_("Text")}
 NEW_KIND_TITLES = {"rectangle": N_("New rectangle"), "ellipse": N_("New ellipse"),
                    "polygon": N_("New polygon"), "line": N_("New line"),
-                   "polyline": N_("New polyline"), "text": N_("New text")}
+                   "polyline": N_("New polyline"), "pen": N_("New path"), "text": N_("New text")}
 
 
 def ribbon_section(content, caption):
@@ -49,9 +50,21 @@ def ribbon_separator():
     return line
 
 
+NODE_ACTIONS = [("insert", N_("Insert"), "I", N_("Insert a node after the selected one")),
+                ("delete", N_("Delete"), "D", N_("Delete the selected nodes")),
+                ("line", N_("Line"), "L", N_("Make the sides of the selected nodes straight lines")),
+                ("curve", N_("Curve"), "C", N_("Make the sides of the selected nodes curves")),
+                ("smooth", N_("Smooth"), "O", N_("Smooth curve through the selected nodes")),
+                ("symmetric", N_("Symmetric"), "S", N_("Smooth with handles of equal length")),
+                ("close", N_("Close / open"), "Z", N_("Close an open path, or open a closed one")),
+                ("break", N_("Break"), "B", N_("Cut the path open at the selected node"))]
+
+
 class ToolOptionsBar(QWidget):
-    """Emits changed(spec) with an edited copy of the shown ShapeSpec."""
+    """Emits changed(spec) with an edited copy of the shown ShapeSpec, and
+    node_action(code) from the node tool's buttons."""
     changed = Signal(object)
+    node_action = Signal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -81,6 +94,22 @@ class ToolOptionsBar(QWidget):
         """Nothing to edit: leave the bar empty (a hint text made the bar taller in narrow windows)."""
         self.spec = None
         self._clear()
+
+    def add_node_actions(self):
+        """Buttons of the node tool (they act on the selected nodes)."""
+        box = QWidget()
+        g = QGridLayout(box)
+        g.setContentsMargins(0, 0, 0, 0)
+        g.setSpacing(2)
+        for n, (code, label, key, tip) in enumerate(NODE_ACTIONS):
+            b = QToolButton()
+            b.setText(_(label))
+            b.setToolTip("%s (%s)" % (_(tip), key))
+            b.setToolButtonStyle(Qt.ToolButtonTextOnly)
+            b.setAutoRaise(False)
+            b.clicked.connect(lambda _c=False, c=code: self.node_action.emit(c))
+            g.addWidget(b, n // 4, n % 4)
+        self._add(box, _("Nodes"))
 
     def _add(self, content, caption):
         if self.row.count():

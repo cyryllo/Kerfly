@@ -24,5 +24,11 @@ if not exist ".venv\Scripts\python.exe" (
     rem optional: offset of the boundary trace; Kerfly works without it
     ".venv\Scripts\python.exe" -m pip install -r requirements-optional.txt || echo Optional library pyclipper was not installed; Kerfly works without it.
 )
+rem after an update: install libraries that were added since the last start
+fc /b requirements.txt ".venv\kerfly-requirements.txt" >nul 2>nul
+if errorlevel 1 (
+    echo Updating the libraries ...
+    ".venv\Scripts\python.exe" -m pip install -r requirements.txt && copy /y requirements.txt ".venv\kerfly-requirements.txt" >nul
+)
 ".venv\Scripts\python.exe" kerfly.py %*
 if errorlevel 1 pause

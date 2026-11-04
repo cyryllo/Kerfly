@@ -64,7 +64,8 @@ class ViewSignals(QObject):
     nudged = Signal(object, float, float)       # element, dx, dy in mm (screen right / up)
     drawn = Signal(str, QPointF, QPointF, bool)  # tool, start, end (scene mm), shift held
     polyline_drawn = Signal(list, bool)           # corner points (scene mm), closed
-    nodes_changed = Signal(object, list, bool)    # element, its corner points (scene mm), closed
+    nodes_changed = Signal(object, list, bool)    # element, its new path (scene mm), unused
+    pen_drawn = Signal(list)                      # path drawn with the pen (subpaths, scene mm)
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -195,49 +196,6 @@ class ElementItem(QGraphicsItem):
             self.view.signals.moved.emit(self.element, dx, dy)
 
 
-class NodeHandle(QGraphicsRectItem):
-    """A corner point of a shape in the node tool: drag to move it, click to
-    select it (Delete removes it), double-click to remove it."""
-
-    def __init__(self, index, view):
-        super().__init__(-4.5, -4.5, 9, 9)
-        self.index = index
-        self.view = view
-        self.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
-        self.setZValue(45)
-        self.setCursor(Qt.SizeAllCursor)
-        self.set_selected(False)
-
-    def set_selected(self, on):
-        self.setPen(_cosmetic_pen(COLORS["selection"], 1.5))
-        self.setBrush(QBrush(COLORS["selection"] if on else QColor("white")))
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.view.select_node(self)
-            self._moved = False
-            event.accept()
-            return
-        super().mousePressEvent(event)
-
-    def mouseMoveEvent(self, event):
-        self.setPos(self.view.snap_node(self, event.scenePos()))
-        self._moved = True
-        self.view._draw_node_overlay()
-        event.accept()
-
-    def mouseReleaseEvent(self, event):
-        self.view.hide_snap_marker()
-        self.view._remove_guides()
-        if getattr(self, "_moved", False):
-            self.view._commit_nodes()
-        event.accept()
-
-    def mouseDoubleClickEvent(self, event):
-        self.view.delete_node(self)
-        event.accept()
-
-
 class Handle(QGraphicsRectItem):
     """Scale handle (corner) or rotation handle, constant size on screen."""
 
@@ -326,12 +284,11 @@ class PreviewView(QGraphicsView):
         self._draw_start = None
         self._draw_item = None
         self._poly_points = []      # polyline being drawn (scene mm)
+        self._pen = None            # pen path being drawn: {"nodes": [...], "pressed": bool}
         self.snap_objects = True    # snap to corners, centres, middles and lines of other elements
-        self.node_points_provider = None   # element -> (points in item coordinates, closed) or None
-        self._node_handles = []
-        self._node_item = None
-        self._node_closed = False
-        self._node_overlay = None
+        self.node_points_provider = None   # element -> subpaths in item coordinates, or None
+        from kerfly.gui.node_editor import NodeEditor
+        self.node_editor = NodeEditor(self)
         self.last_move_snapped = False
         self._snap_marker = None
         self._pixmaps = {}          # (id(design), id(image), negate, halftone) -> (pixmap, scale)
@@ -351,6 +308,7 @@ class PreviewView(QGraphicsView):
 
     def set_tool(self, tool):
         self._clear_polyline()
+        self._clear_pen()
         self.hide_snap_marker()
         self.tool = tool
         for item in self._items:
@@ -411,45 +369,6 @@ class PreviewView(QGraphicsView):
         label.setPos(8, 4)
         self.scene().addItem(marker)
         self._snap_marker = marker
-
-    def snap_node(self, handle, p):
-        """Where a dragged corner goes in the node tool: onto other elements, the
-        other corners and side middles of its own shape, in line (same x or y)
-        with another corner, or onto the grid."""
-        others = [h.pos() for h in self._node_handles if h is not handle]
-        own = []
-        if self.snap_objects and others:
-            i = self._node_handles.index(handle)
-            pts = [h.pos() for h in self._node_handles]
-            n = len(pts)
-            pairs = [(k, (k + 1) % n) for k in range(n if self._node_closed else n - 1)]
-            sides = [(pts[a].x(), pts[a].y(), pts[b].x(), pts[b].y()) for a, b in pairs if i not in (a, b)]
-            own_shape = snapping.SnapShape([], (min(q.x() for q in others), min(q.y() for q in others),
-                                                max(q.x() for q in others), max(q.y() for q in others)))
-            own_shape.points = [(q.x(), q.y(), snapping.CORNER) for q in others] + \
-                [((x1 + x2) / 2.0, (y1 + y2) / 2.0, snapping.MIDDLE) for x1, y1, x2, y2 in sides]
-            own_shape.segments = sides
-            own = [own_shape]
-        exclude = (self._node_item,) if self._node_item is not None else ()
-        if self.snap_suspended():
-            self._remove_guides()
-            self.hide_snap_marker()
-            return p
-        if self.snap_objects:
-            tol = self._snap_tolerance()
-            hit = snapping.find_snap(p.x(), p.y(), own + self._snap_shapes(exclude), tol)
-            if hit is not None:
-                self._remove_guides()
-                self.show_snap_marker(*hit)
-                return QPointF(hit[0], hit[1])
-            aligned = snapping.find_axis_snap(p.x(), p.y(), [(q.x(), q.y()) for q in others], tol)
-            if aligned is not None:
-                x, y, guides = aligned
-                self.show_snap_marker(x, y, snapping.ALIGNED)
-                self._show_guides(guides)
-                return QPointF(x, y)
-        self._remove_guides()
-        return self.snap_point(p, exclude=exclude)
 
     def _show_guides(self, guides):
         self._remove_guides()
@@ -580,20 +499,109 @@ class PreviewView(QGraphicsView):
         if len(pts) >= (3 if closed else 2):
             self.signals.polyline_drawn.emit(pts, closed)
 
+    # ---- pen: click = corner, press and drag = smooth node with handles; click the
+    # first node to close; double-click or Enter finishes; Backspace; Esc; Shift 45 degrees
+    def _clear_pen(self):
+        self._pen = None
+        if self._draw_item is not None and self._draw_item.scene() is not None:
+            self.scene().removeItem(self._draw_item)
+        self._draw_item = None
+
+    def _pen_path(self, cursor=None):
+        from kerfly.core import curves
+        nodes = [list(n) for n in self._pen["nodes"]]
+        if cursor is not None and nodes:
+            nodes.append(curves.node(cursor.x(), cursor.y()))
+        return [{"closed": False, "nodes": nodes}]
+
+    def _draw_pen(self, cursor=None):
+        from kerfly.core import curves
+        if self._draw_item is not None and self._draw_item.scene() is not None:
+            self.scene().removeItem(self._draw_item)
+        self._draw_item = None
+        if not self._pen or not self._pen["nodes"]:
+            return
+        qp = QPainterPath()
+        for poly in curves.flatten(self._pen_path(cursor), tol=0.05):
+            qp.moveTo(QPointF(*poly[0]))
+            for q in poly[1:]:
+                qp.lineTo(QPointF(*q))
+        last = self._pen["nodes"][-1]
+        for k in (2, 4):                                   # handles of the last node
+            if last[k] is not None:
+                qp.moveTo(QPointF(last[0], last[1]))
+                qp.lineTo(QPointF(last[k], last[k + 1]))
+        closing = cursor is not None and self._pen_near_first(cursor)
+        pen = _cosmetic_pen(COLORS["cut"] if closing else COLORS["selection"], 1.3,
+                            Qt.SolidLine if closing else Qt.DashLine)
+        self._draw_item = self.scene().addPath(qp, pen)
+        self._draw_item.setZValue(30)
+        first = self._pen["nodes"][0]
+        dot = QGraphicsEllipseItem(-4, -4, 8, 8, self._draw_item)
+        dot.setPen(pen)
+        dot.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
+        dot.setPos(QPointF(first[0], first[1]))
+
+    def _pen_near_first(self, p):
+        if not self._pen or len(self._pen["nodes"]) < 2:
+            return False
+        a = self.mapFromScene(QPointF(self._pen["nodes"][0][0], self._pen["nodes"][0][1]))
+        b = self.mapFromScene(p)
+        return abs(a.x() - b.x()) <= 8 and abs(a.y() - b.y()) <= 8
+
+    def _pen_point(self, event):
+        p = self.snap_point(self.mapToScene(event.position().toPoint()))
+        if event.modifiers() & Qt.ShiftModifier and self._pen and self._pen["nodes"]:
+            last = self._pen["nodes"][-1]
+            dx, dy = p.x() - last[0], p.y() - last[1]
+            angle = round(math.atan2(dy, dx) / (math.pi / 4)) * (math.pi / 4)
+            length = math.hypot(dx, dy)
+            p = QPointF(last[0] + length * math.cos(angle), last[1] + length * math.sin(angle))
+        return p
+
+    def _finish_pen(self, closed):
+        if not self._pen:
+            return
+        nodes = []
+        for n in self._pen["nodes"]:
+            if not nodes or abs(n[0] - nodes[-1][0]) > 1e-6 or abs(n[1] - nodes[-1][1]) > 1e-6:
+                nodes.append(n)
+        self._clear_pen()
+        if len(nodes) >= (3 if closed else 2) or (closed and len(nodes) == 2 and nodes[0][4] is not None):
+            self.signals.pen_drawn.emit([{"closed": closed, "nodes": nodes}])
+
     def mouseDoubleClickEvent(self, event):
         if self.tool == "nodes" and event.button() == Qt.LeftButton and self._node_item is not None:
+            from kerfly.gui.node_editor import HandleMark, NodeMark
             hit = self.itemAt(event.position().toPoint())
-            if not isinstance(hit, NodeHandle):
-                self.insert_node(self.mapToScene(event.position().toPoint()))
+            if not isinstance(hit, (NodeMark, HandleMark)):
+                self.node_editor.insert_at(self.mapToScene(event.position().toPoint()))
                 event.accept()
                 return
         if self.tool == "polyline" and event.button() == Qt.LeftButton:
             self._finish_polyline(False)
             event.accept()
             return
+        if self.tool == "pen" and event.button() == Qt.LeftButton:
+            self._finish_pen(False)
+            event.accept()
+            return
         super().mouseDoubleClickEvent(event)
 
     def mousePressEvent(self, event):
+        if self.tool == "pen" and event.button() == Qt.LeftButton:
+            from kerfly.core import curves
+            p = self._pen_point(event)
+            if self._pen_near_first(p):
+                self._finish_pen(True)
+            else:
+                if self._pen is None:
+                    self._pen = {"nodes": [], "pressed": False}
+                self._pen["nodes"].append(curves.node(p.x(), p.y()))
+                self._pen["pressed"] = True
+                self._draw_pen()
+            event.accept()
+            return
         if self.tool == "nodes" and event.button() == Qt.LeftButton:
             super().mousePressEvent(event)          # select a shape, or grab one of its nodes
             return
@@ -620,8 +628,20 @@ class PreviewView(QGraphicsView):
 
     def mouseMoveEvent(self, event):
         if self.tool not in ("select", "nodes") and self._draw_start is None and not self._poly_points \
-                and not event.buttons():
+                and not self._pen and not event.buttons():
             self.snap_point(self.mapToScene(event.position().toPoint()))     # shows where a click lands
+        if self.tool == "pen" and self._pen:
+            pos = self.mapToScene(event.position().toPoint())
+            if self._pen["pressed"]:                      # dragging out the handles of the new node
+                n = self._pen["nodes"][-1]
+                if math.hypot(pos.x() - n[0], pos.y() - n[1]) > 0.5 * self._snap_tolerance():
+                    n[4], n[5] = pos.x(), pos.y()
+                    n[2], n[3] = 2 * n[0] - pos.x(), 2 * n[1] - pos.y()
+                self._draw_pen()
+            else:
+                self._draw_pen(self._pen_point(event))
+            event.accept()
+            return
         if self.tool == "polyline" and self._poly_points:
             p = self._snap_point(self.mapToScene(event.position().toPoint()))
             self._draw_polyline_item(self._poly_constrained(p, bool(event.modifiers() & Qt.ShiftModifier)))
@@ -643,6 +663,11 @@ class PreviewView(QGraphicsView):
         super().mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
+        if self.tool == "pen" and event.button() == Qt.LeftButton:
+            if self._pen:
+                self._pen["pressed"] = False
+            event.accept()
+            return
         if self._draw_start is not None and event.button() == Qt.LeftButton:
             start = self._draw_start
             end = self._snap_point(self.mapToScene(event.position().toPoint()))
@@ -660,13 +685,37 @@ class PreviewView(QGraphicsView):
             return
         super().mouseReleaseEvent(event)
 
+    def event(self, event):
+        # in the node tool, its letter keys and Delete go to the nodes, not to menu shortcuts
+        from PySide6.QtCore import QEvent
+        if event.type() == QEvent.ShortcutOverride and self.tool == "nodes" and self._node_item is not None:
+            from kerfly.gui.node_editor import KEYS
+            if event.key() in KEYS and not event.modifiers() & (Qt.ControlModifier | Qt.AltModifier):
+                event.accept()
+                return True
+        return super().event(event)
+
     def keyPressEvent(self, event):
         """Arrow keys move the selected element (1 mm or one grid step; Shift: 10x).
         Escape leaves a drawing tool."""
-        if self.tool == "nodes" and event.key() in (Qt.Key_Delete, Qt.Key_Backspace):
-            chosen = [h for h in self._node_handles if h.brush().color() == COLORS["selection"]]
-            if chosen:
-                self.delete_node(chosen[0])
+        if self.tool == "nodes" and self._node_item is not None and self.node_editor.key(event):
+            event.accept()
+            return
+        if self.tool == "pen" and self._pen:
+            if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+                self._finish_pen(False)
+                event.accept()
+                return
+            if event.key() == Qt.Key_Backspace:
+                self._pen["nodes"].pop()
+                if not self._pen["nodes"]:
+                    self._clear_pen()
+                else:
+                    self._draw_pen()
+                event.accept()
+                return
+            if event.key() == Qt.Key_Escape:
+                self._clear_pen()
                 event.accept()
                 return
         if self.tool == "polyline" and self._poly_points:
@@ -718,7 +767,7 @@ class PreviewView(QGraphicsView):
         if self._rebuilding or getattr(self, "_expanding", False):
             return
         groups = {i.element.group for i in self._selected_items() if i.element.group}
-        if groups:                                  # a group is always selected as a whole
+        if groups and self.tool != "nodes":         # a group is selected as a whole (nodes: one shape)
             self._expanding = True
             for item in self._items:
                 if item.element.group in groups and not item.isSelected():
@@ -758,86 +807,30 @@ class PreviewView(QGraphicsView):
             if h is not except_item:
                 h.setVisible(False)
 
-    # ---- node tool --------------------------------------------------------
-    def _clear_nodes(self):
-        for h in self._node_handles:
-            if h.scene() is not None:
-                self.scene().removeItem(h)
-        self._node_handles = []
-        if self._node_overlay is not None and self._node_overlay.scene() is not None:
-            self.scene().removeItem(self._node_overlay)
-        self._node_overlay = None
-        self._node_item = None
-
+    # ---- node tool (kerfly.gui.node_editor) --------------------------------
     def _place_nodes(self, item):
-        self._clear_nodes()
         if item is None or self.node_points_provider is None:
+            self.node_editor.detach()
             return
         found = self.node_points_provider(item.element)
         if not found:
+            self.node_editor.detach()
             return
-        points, closed = found
-        self._node_item = item
-        self._node_closed = closed
-        t = item.sceneTransform()
-        for i, (x, y) in enumerate(points):
-            h = NodeHandle(i, self)
-            h.setPos(QPointF(*t.map(x, y)))
-            self.scene().addItem(h)
-            self._node_handles.append(h)
+        self.node_editor.attach(item, found)
+
+    @property
+    def _node_item(self):
+        return self.node_editor.item
+
+    @property
+    def _node_handles(self):
+        return list(self.node_editor._marks.values())
 
     def node_scene_points(self):
-        return [h.pos() for h in self._node_handles]
-
-    def select_node(self, handle):
-        for h in self._node_handles:
-            h.set_selected(h is handle)
-
-    def _draw_node_overlay(self):
-        if self._node_overlay is not None and self._node_overlay.scene() is not None:
-            self.scene().removeItem(self._node_overlay)
-        pts = self.node_scene_points()
-        if len(pts) < 2:
-            self._node_overlay = None
-            return
-        path = QPainterPath(pts[0])
-        for q in pts[1:]:
-            path.lineTo(q)
-        if self._node_closed:
-            path.closeSubpath()
-        self._node_overlay = self.scene().addPath(path, _cosmetic_pen(COLORS["selection"], 1.2, Qt.DashLine))
-        self._node_overlay.setZValue(40)
-
-    def _commit_nodes(self, points=None):
-        if self._node_item is None:
-            return
-        element = self._node_item.element
-        self.signals.nodes_changed.emit(element, points if points is not None else self.node_scene_points(),
-                                        self._node_closed)
-
-    def delete_node(self, handle):
-        pts = self.node_scene_points()
-        if len(pts) <= (3 if self._node_closed else 2):
-            return                                  # keep at least a line / a triangle
-        del pts[self._node_handles.index(handle)]
-        self._commit_nodes(pts)
-
-    def insert_node(self, p):
-        """Add a corner on the nearest side of the shape (double-click on it)."""
-        pts = self.node_scene_points()
-        if len(pts) < 2:
-            return
-        pairs = list(zip(range(len(pts)), pts, pts[1:] + ([pts[0]] if self._node_closed else [])))
-        best = None
-        for i, a, b in pairs:
-            nx, ny = snapping._nearest_on_segment(p.x(), p.y(), a.x(), a.y(), b.x(), b.y())
-            d = math.hypot(nx - p.x(), ny - p.y())
-            if best is None or d < best[0]:
-                best = (d, i, QPointF(nx, ny))
-        if best is None or best[0] > 3 * self._snap_tolerance():
-            return                                  # not on the outline
-        pts.insert(best[1] + 1, best[2])
-        self._commit_nodes(pts)
+        """Nodes of the edited shape (scene mm), in order."""
+        if self.node_editor.path is None:
+            return []
+        return [QPointF(n[0], n[1]) for sp in self.node_editor.path for n in sp["nodes"]]
 
     def select_element(self, element):
         """Select one element, or several when given a list."""
@@ -875,7 +868,7 @@ class PreviewView(QGraphicsView):
         self._rebuilding = True
         scene = self.scene()
         self._snap_marker = None                 # deleted with the scene contents
-        self._node_handles, self._node_item, self._node_overlay = [], None, None
+        self.node_editor.forget_graphics()
         self._guides = None
         scene.clear()
         self._items, self._handles = [], []

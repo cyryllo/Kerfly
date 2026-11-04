@@ -24,7 +24,7 @@ TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(TESTS_DIR)
 sys.path.insert(0, ROOT_DIR)
 
-from PySide6.QtWidgets import QApplication, QFileDialog, QInputDialog, QMessageBox  # noqa: E402
+from PySide6.QtWidgets import QApplication, QFileDialog, QInputDialog, QMessageBox, QToolButton  # noqa: E402
 
 from kerfly.core import config  # noqa: E402
 from kerfly.gui.main_window import MainWindow  # noqa: E402
@@ -658,7 +658,8 @@ def main():
     view.last_move_snapped = False
     w.close()
 
-    # 24. node tool: drag a corner of a rotated rectangle, insert and delete corners; text is not editable
+    # 24. node tool: move a node of a rotated rectangle, insert, curve, smooth, delete, close, undo, snap
+    from kerfly.core import curves as _curves
     w = make_window(grid_mm="0")
     w.resize(1200, 800)
     w.show()
@@ -668,42 +669,94 @@ def main():
     w._rotate(rect, 90)
     w.set_tool("nodes")
     view = w.preview
+    ed = view.node_editor
     view.select_element(rect)
     app.processEvents()
-    handles = list(view._node_handles)
-    four = len(handles) == 4
-    before = [QPointF(h.pos()) for h in handles]
-    moved_to = before[0] + QPointF(-10, -5)
-    pts = [QPointF(p) for p in before]
-    pts[0] = moved_to
-    view._commit_nodes(pts)
+    four = len(view.node_scene_points()) == 4
+    before = view.node_scene_points()
+    _curves.move_node(ed.path, 0, 0, before[0].x() - 10, before[0].y() - 5)
+    ed.commit()
     after = view.node_scene_points()
-    same = (rect.shape.kind == "polyline" and rect.shape.closed_path and rect.rotation == 90
-            and all(abs(a.x() - b.x()) < 1e-6 and abs(a.y() - b.y()) < 1e-6 for a, b in zip(after, pts)))
+    moved_ok = (rect.shape.kind == "path" and rect.rotation == 90 and abs(after[0].x() - before[0].x() + 10) < 1e-6
+                and abs(after[0].y() - before[0].y() + 5) < 1e-6
+                and all(abs(a.x() - b.x()) < 1e-6 and abs(a.y() - b.y()) < 1e-6 for a, b in zip(after[1:], before[1:])))
     mid = (after[1] + after[2]) / 2.0
-    view.insert_node(mid)
-    inserted = len(view._node_handles) == 5 and w.tool_options.spec.kind == "polyline"
-    view.delete_node(view._node_handles[2])
-    deleted = len(view._node_handles) == 4
-    w.undo(); w.undo(); w.undo()
-    undone = rect.shape.kind == "rectangle" if rect in w.elements else w.elements[-1].shape.kind == "rectangle"
-    # snapping while dragging a corner: to the shape's own corner, and in line with another one
-    w.preview.select_element(w.elements[-1] if rect not in w.elements else rect)
-    hs = view._node_handles
-    own = view.snap_node(hs[0], hs[2].pos() + QPointF(0.3, 0.3))
-    own_ok = abs(own.x() - hs[2].pos().x()) < 1e-6 and abs(own.y() - hs[2].pos().y()) < 1e-6
-    far = hs[1].pos() + QPointF(15, 0.4)                                  # same height as corner 1, 15 mm away
-    lined = view.snap_node(hs[0], far)
-    in_line = abs(lined.y() - hs[1].pos().y()) < 1e-6 and abs(lined.x() - far.x()) < 1e-6
+    inserted = ed.insert_at(mid) and len(view.node_scene_points()) == 5 and w.tool_options.spec.kind == "path"
+    ed.select({(0, 1)})
+    curved = ed.action("curve") and any(n[4] is not None for n in rect.shape.subpaths[0]["nodes"])
+    ed.select({(0, 1)})
+    smoothed = ed.action("smooth") and _curves._is_smooth(rect.shape.subpaths[0]["nodes"][1])
+    ed.select({(0, 2)})
+    deleted = ed.action("delete") and len(view.node_scene_points()) == 4
+    ed.select({(0, 0)})
+    opened = ed.action("close") and not rect.shape.subpaths[0]["closed"]
+    w.undo(); w.undo(); w.undo(); w.undo(); w.undo(); w.undo()
+    undone = (rect.shape.kind == "rectangle") if rect in w.elements else w.elements[-1].shape.kind == "rectangle"
+    # snapping while dragging a node: onto its own corner, and in line with another one
+    view.select_element(w.elements[-1])
+    pts = view.node_scene_points()
+    own = ed._snap(pts[2] + QPointF(0.3, 0.3), (0, 0))
+    own_ok = abs(own.x() - pts[2].x()) < 1e-6 and abs(own.y() - pts[2].y()) < 1e-6
+    far = pts[1] + QPointF(15, 0.4)
+    lined = ed._snap(far, (0, 0))
+    in_line = abs(lined.y() - pts[1].y()) < 1e-6 and abs(lined.x() - far.x()) < 1e-6
     view._remove_guides()
     view.hide_snap_marker()
     w._preview_drawn("text", QPointF(20, 120), QPointF(20, 120), False)
     w.set_tool("nodes")
     view.select_element(w.elements[-1])
     no_text_nodes = not view._node_handles
-    check("node tool: move a corner of a rotated shape, insert, delete, undo, snap; text has no nodes",
-          four and same and inserted and deleted and undone and no_text_nodes and own_ok and in_line,
-          "(%s)" % [four, same, inserted, deleted, undone, no_text_nodes, own_ok, in_line])
+    results = [four, moved_ok, inserted, curved, smoothed, deleted, opened, undone, own_ok, in_line, no_text_nodes]
+    check("node tool: move, insert, curve, smooth, delete, open, undo, snap; text has no nodes",
+          all(results), "(%s)" % results)
+    w.close()
+
+    # 27. pen: click a corner, press and drag a smooth node, close on the first point; node buttons
+    from PySide6.QtCore import QEvent, Qt
+    from PySide6.QtGui import QMouseEvent
+    from PySide6.QtTest import QTest
+    w = make_window(grid_mm="0")
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    view = w.preview
+    w.set_tool("pen")
+    vp = view.viewport()
+
+    def at(x, y):
+        return view.mapFromScene(QPointF(x, y))
+
+    def drag(x0, y0, x1, y1):
+        QTest.mousePress(vp, Qt.LeftButton, Qt.NoModifier, at(x0, y0))
+        ev = QMouseEvent(QEvent.MouseMove, QPointF(at(x1, y1)), QPointF(vp.mapToGlobal(at(x1, y1))),
+                         Qt.NoButton, Qt.LeftButton, Qt.NoModifier)
+        QApplication.sendEvent(vp, ev)
+        QTest.mouseRelease(vp, Qt.LeftButton, Qt.NoModifier, at(x1, y1))
+        app.processEvents()
+
+    QTest.mouseClick(vp, Qt.LeftButton, Qt.NoModifier, at(60, 60))       # corner
+    drag(100, 40, 120, 40)                                                 # smooth node, handles 20 mm
+    QTest.mouseClick(vp, Qt.LeftButton, Qt.NoModifier, at(100, 90))      # corner
+    QTest.mouseClick(vp, Qt.LeftButton, Qt.NoModifier, at(60, 60))       # first point: close
+    app.processEvents()
+    pe = w.elements[-1] if w.elements else None
+    pen_ok = (pe is not None and pe.shape.kind == "path" and pe.shape.subpaths[0]["closed"]
+              and len(pe.shape.subpaths[0]["nodes"]) == 3
+              and pe.shape.subpaths[0]["nodes"][1][4] is not None and pe.shape.subpaths[0]["nodes"][0][4] is None)
+    w.set_tool("nodes")
+    view.select_element(pe)
+    view.node_editor.select({(0, 0)})
+    w.tool_options.node_action.emit("smooth")
+    buttons_ok = pe.shape.subpaths[0]["nodes"][0][4] is not None
+    names = [b.text() for b in w.tool_options.findChildren(QToolButton)]
+    proj = tempfile.mktemp(suffix=".kerfly")
+    from kerfly.core import project as _project
+    _project.save_project(proj, [pe], w.layers)
+    data, _folder = _project.read_project(proj)
+    back = _project.shape_from_item(data["elements"][0])
+    saved_ok = back.kind == "path" and back.subpaths == pe.shape.subpaths
+    check("pen: corner, smooth curve by dragging, close; node buttons; saved in projects",
+          pen_ok and buttons_ok and len(names) >= 8 and saved_ok, "(%s)" % [pen_ok, buttons_ok, len(names), saved_ok])
     w.close()
 
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo
@@ -757,20 +810,23 @@ def main():
     def bed_points(elements):
         d, o = _cl(elements)
         return sorted({(round(r[0] + o[0], 4), round(r[1] + o[1], 4)) for r in d.vector_cut.ecoords + d.vector_engrave.ecoords})
-    ref_pts = bed_points([src, w.elements[0].copy()])          # two elements: coordinates on the bed
+    ref_pts = bed_points([src])                                 # rotated: coordinates on the bed
     w.preview.select_element(src)
     w.break_apart_selected()
     parts = list(w.elements)
-    one_group = len(parts) > 1 and len({e.group for e in parts}) == 1 and all(e.shape.kind == "polyline" for e in parts)
+    one_group = len(parts) > 1 and len({e.group for e in parts}) == 1 and all(e.shape.kind == "path" for e in parts)
+    curved = any(n[4] is not None for e in parts for sp in e.shape.subpaths for n in sp["nodes"])   # real arcs
     corners = set()
     for item in w.preview._items:
         corners |= {(round(x, 3), round(y, 3)) for x, y, k in item.snap_shape().points if k == "corner"}
-    new_pts = bed_points(parts + [src.copy()])
-    same_place = len(ref_pts) == len(new_pts) and all(abs(a[0] - b[0]) < 2e-4 and abs(a[1] - b[1]) < 2e-4
-                                                     for a, b in zip(ref_pts, new_pts))
+    new_pts = bed_points(parts)
+
+    def box(pts):
+        return (min(p[0] for p in pts), max(p[0] for p in pts), min(p[1] for p in pts), max(p[1] for p in pts))
+    same_place = max(abs(a - b) for a, b in zip(box(ref_pts), box(new_pts))) < 0.003
     w.undo()
     back = len(w.elements) == 1 and w.elements[0] is src
-    check("break apart: polylines in the same place, grouped, undo", one_group and same_place and back,
+    check("break apart: curves in the same place, grouped, undo", one_group and curved and same_place and back,
           "(%d parts)" % len(parts))
 
     # 20. diagnostic log and report

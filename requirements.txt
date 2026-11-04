@@ -2,3 +2,4 @@ lxml
 pyusb
 pillow
 PySide6-Essentials
+svgelements

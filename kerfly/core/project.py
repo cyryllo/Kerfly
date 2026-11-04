@@ -47,6 +47,8 @@ def _shape_from_dict(d):
     spec = ShapeSpec(**{k: v for k, v in d.items() if k in names})
     spec.text_outlines = [[tuple(p) for p in poly] for poly in (d.get("text_outlines") or [])]
     spec.points = [tuple(p) for p in (d.get("points") or [])]
+    spec.subpaths = [{"closed": bool(sp.get("closed")), "nodes": [list(n) for n in sp.get("nodes", [])]}
+                     for sp in (d.get("subpaths") or [])]
     return spec
 
 

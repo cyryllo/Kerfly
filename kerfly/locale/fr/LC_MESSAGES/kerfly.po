@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 19:33+0100\n"
+"POT-Creation-Date: 2026-11-04 19:48+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -241,6 +241,9 @@ msgstr "Vitesse du parcours de contour"
 msgid "Boundary trace with laser on"
 msgstr "Parcourir le contour avec le laser allumé"
 
+msgid "Break"
+msgstr "Couper"
+
 msgctxt "toolbar"
 msgid ""
 "Break\n"
@@ -289,6 +292,12 @@ msgstr ""
 
 msgid "Click an element on the bed to select it."
 msgstr "Cliquez sur un élément pour le sélectionner."
+
+msgid "Close / open"
+msgstr "Fermer / ouvrir"
+
+msgid "Close an open path, or open a closed one"
+msgstr "Fermer un chemin ouvert ou ouvrir un chemin fermé"
 
 msgid "Connect to the laser"
 msgstr "Connecter le laser"
@@ -345,11 +354,17 @@ msgstr "Création de l'image en demi-teintes."
 msgid "Creating scan lines: %s%%"
 msgstr "Création des lignes de balayage : %s%%"
 
+msgid "Curve"
+msgstr "Courbe"
+
 msgid "Cut"
 msgstr "Découpe"
 
 msgid "Cut inside shapes first"
 msgstr "Découper d'abord les formes intérieures"
+
+msgid "Cut the path open at the selected node"
+msgstr "Ouvrir le chemin au nœud sélectionné"
 
 msgid "D&uplicate element"
 msgstr "D&upliquer l'élément"
@@ -379,6 +394,9 @@ msgstr "Supprimer"
 msgctxt "toolbar"
 msgid "Delete"
 msgstr "Supprimer"
+
+msgid "Delete the selected nodes"
+msgstr "Supprimer les nœuds sélectionnés"
 
 msgid "Delete this layer (its parts go back to the default layer)"
 msgstr "Supprimer ce calque (ses éléments reviennent au calque par défaut)"
@@ -448,13 +466,15 @@ msgid "Edit nodes"
 msgstr "Modifier les nœuds"
 
 msgid ""
-"Edit nodes: click a drawn shape, drag its corners. Double-click a side to"
-" add a corner; double-click a corner or select it and press Delete to "
-"remove it."
+"Edit nodes: click a shape, drag its nodes and the round curve handles "
+"(Ctrl: one handle alone). Shift+click selects more nodes. Double-click a "
+"side to add a node, a node to remove it. Buttons above, or keys I D L C O"
+" S Z B."
 msgstr ""
-"Modifier les nœuds : cliquez sur une forme dessinée et faites glisser ses"
-" coins. Double-clic sur un côté pour ajouter un coin ; double-clic sur un"
-" coin ou sélection puis Suppr pour le retirer."
+"Modifier les nœuds : cliquez sur une forme, faites glisser ses nœuds et "
+"les poignées rondes des courbes (Ctrl : une poignée seule). Maj+clic "
+"sélectionne d'autres nœuds. Double-clic sur un côté ajoute un nœud, sur "
+"un nœud le supprime. Boutons en haut ou touches I D L C O S Z B."
 
 msgid "Ellipse"
 msgstr "Ellipse"
@@ -604,6 +624,12 @@ msgstr "Exécutable Inkscape"
 msgid "Inkscape timeout (minutes)"
 msgstr "Délai d'Inkscape (minutes)"
 
+msgid "Insert"
+msgstr "Insérer"
+
+msgid "Insert a node after the selected one"
+msgstr "Insérer un nœud après celui sélectionné"
+
 #, python-format
 msgid "Invalid value for setting '%s': %r"
 msgstr "Valeur non valide pour le paramètre '%s' : %r"
@@ -697,6 +723,12 @@ msgstr "Machine"
 
 msgid "Main toolbar"
 msgstr "Barre d'outils principale"
+
+msgid "Make the sides of the selected nodes curves"
+msgstr "Transformer en courbes les côtés des nœuds sélectionnés"
+
+msgid "Make the sides of the selected nodes straight lines"
+msgstr "Transformer en droites les côtés des nœuds sélectionnés"
 
 msgid "Material"
 msgstr "Matériau"
@@ -810,6 +842,9 @@ msgstr "Nouvelle ligne"
 msgid "New material"
 msgstr "Nouveau matériau"
 
+msgid "New path"
+msgstr "Nouveau chemin"
+
 msgid "New polygon"
 msgstr "Nouveau polygone"
 
@@ -827,6 +862,9 @@ msgstr "Aucun dessin chargé"
 
 msgid "No laser data was generated."
 msgstr "Aucune donnée laser n'a été générée."
+
+msgid "Nodes"
+msgstr "Nœuds"
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notes (par ex. fournisseur, lentille, soufflage)"
@@ -883,6 +921,9 @@ msgstr "Passes"
 msgid "Passes:"
 msgstr "Passes :"
 
+msgid "Path"
+msgstr "Chemin"
+
 msgid "Paths from a G-code file; speeds come from the file (F words)"
 msgstr "Chemins d'un fichier G-code ; les vitesses viennent du fichier (mots F)"
 
@@ -899,6 +940,20 @@ msgstr ""
 
 msgid "Pausing…"
 msgstr "Mise en pause…"
+
+msgid "Pen (curves)"
+msgstr "Plume (courbes)"
+
+msgid ""
+"Pen: click for a corner, press and drag for a smooth curve. Click the "
+"first point to close the shape; double-click or Enter finishes an open "
+"path. Backspace removes the last node, Shift keeps 45° angles, Esc "
+"cancels."
+msgstr ""
+"Plume : clic pour un coin, appuyer et glisser pour une courbe lisse. "
+"Cliquez sur le premier point pour fermer la forme ; double-clic ou Entrée"
+" termine un chemin ouvert. Retour arrière supprime le dernier nœud, Maj "
+"garde 45°, Échap annule."
 
 msgid "Place design at the &head"
 msgstr "Placer le dessin à la &tête"
@@ -1172,6 +1227,15 @@ msgstr "Paramètres enregistrés dans %s"
 msgid "Sides"
 msgstr "Côtés"
 
+msgid "Smooth"
+msgstr "Lisse"
+
+msgid "Smooth curve through the selected nodes"
+msgstr "Courbe lisse passant par les nœuds sélectionnés"
+
+msgid "Smooth with handles of equal length"
+msgstr "Lisse avec des poignées de même longueur"
+
 msgid "Snap to &objects"
 msgstr "Aimanter aux &objets"
 
@@ -1232,6 +1296,9 @@ msgstr "Arrêté par l'utilisateur."
 
 msgid "Stopping…"
 msgstr "Arrêt en cours…"
+
+msgid "Symmetric"
+msgstr "Symétrique"
 
 msgid "System default"
 msgstr "Langue du système"
@@ -1583,4 +1650,18 @@ msgstr "gravure vectorielle"
 #~ "Seules les formes dessinées ont des "
 #~ "nœuds modifiables (pas le texte ni "
 #~ "les fichiers ouverts)."
+
+#~ msgid ""
+#~ "Edit nodes: click a drawn shape, "
+#~ "drag its corners. Double-click a "
+#~ "side to add a corner; double-click"
+#~ " a corner or select it and "
+#~ "press Delete to remove it."
+#~ msgstr ""
+#~ "Modifier les nœuds : cliquez sur "
+#~ "une forme dessinée et faites glisser "
+#~ "ses coins. Double-clic sur un côté"
+#~ " pour ajouter un coin ; double-"
+#~ "clic sur un coin ou sélection puis"
+#~ " Suppr pour le retirer."
 

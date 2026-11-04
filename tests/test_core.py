@@ -460,6 +460,57 @@ def test_arrange():
     return errors
 
 
+def test_curves():
+    """Paths with Bezier curves: arcs, node edits, joining, reading SVG / DXF curves."""
+    import math
+    from kerfly.core import curves as C
+    from kerfly.core.shapes import ShapeSpec, build_design
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s curves: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    circle = C.join_segments(C.arc_segments(0, 0, 10, 0, 360), 1e-9)
+    err = max(abs(math.hypot(x, y) - 10) for x, y in C.flatten(circle)[0])
+    check("circle from Bezier arcs is round and closed", circle[0]["closed"] and err < 0.025, "(error %.4f mm)" % err)
+    b = C.bulge_segments(0, 0, 2, 0, 1.0)
+    bottom = b[len(b) // 2 - 1][3]                                   # half way round
+    check("DXF bulge +1 is a half circle below the chord", abs(b[-1][3][0] - 2) < 1e-9
+          and abs(bottom[0] - 1) < 1e-9 and abs(bottom[1] + 1) < 1e-9)
+    sq = C.from_polylines([[(0, 0), (10, 0), (10, 10), (0, 10)]], [True])
+    i = C.insert_node(sq, 0, 0, 0.5)
+    check("insert a node in a line", i == 1 and sq[0]["nodes"][1][:2] == [5.0, 0.0])
+    C.make_curve(sq, 0, 1)
+    curvy = C.segments_of(sq[0])
+    check("make curve gives handles", C.is_curve(curvy[0]) and C.is_curve(curvy[1]))
+    C.smooth_node(sq, 0, 1, symmetric=True)
+    n = sq[0]["nodes"][1]
+    check("symmetric node: handles in line, same length", C._is_smooth(n)
+          and abs(math.hypot(n[2] - n[0], n[3] - n[1]) - math.hypot(n[4] - n[0], n[5] - n[1])) < 1e-9)
+    C.move_handle(sq, 0, 1, "out", n[0] + 3, n[1] + 3)
+    check("moving one handle of a smooth node turns the other", C._is_smooth(sq[0]["nodes"][1]))
+    seg = C.segments_of(sq[0])[0]
+    left, right = C.split_cubic(seg, 0.3)
+    check("splitting a curve keeps its shape", all(
+        math.hypot(*(a - b for a, b in zip(C.bezier_point(left, t), C.bezier_point(seg, 0.3 * t)))) < 1e-9
+        for t in (0.0, 0.5, 1.0)))
+    C.make_line(sq, 0, 1)
+    check("make line removes the handles", not any(C.is_curve(s) for s in C.segments_of(sq[0])[:2]))
+    check("delete keeps at least a triangle", C.delete_node(sq, 0, 1) and not C.delete_node(
+        C.from_polylines([[(0, 0), (1, 0), (0, 1)]], [True]), 0, 0))
+    C.break_at(sq, 0, 2)
+    check("break a closed path opens it at the node", not sq[0]["closed"] and len(sq[0]["nodes"]) == 5)
+    design = build_design(ShapeSpec(kind="path", subpaths=circle, operation="fill"))
+    check("a closed path can be filled", design.raster.image is not None)
+    found = C.svg_segments(SVG)
+    check("SVG curves: red and blue strokes", len(found["cut"]) > 4 and len(found["engrave"]) > 2)
+    dx = C.dxf_segments(DXF, 1 / 25.4)
+    check("DXF curves: arcs stay curves", any(s[1] is not None for s in dx["cut"] + dx["engrave"]))
+    return errors
+
+
 def test_snap():
     """Object snapping targets and preferences."""
     from kerfly.core.snap import CENTRE, CORNER, EDGE, MIDDLE, SnapShape, find_snap, snap_offset
@@ -523,6 +574,7 @@ def main():
     failures += test_materials()
     failures += test_arrange()
     failures += test_snap()
+    failures += test_curves()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

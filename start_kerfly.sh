@@ -18,4 +18,13 @@ if [ ! -x .venv/bin/python ]; then
     .venv/bin/python -m pip install -r requirements-optional.txt || \
         echo "Optional library pyclipper was not installed; Kerfly works without it."
 fi
+# after an update: install libraries that were added since the last start
+if ! cmp -s requirements.txt .venv/kerfly-requirements.txt; then
+    echo "Updating the libraries ..."
+    if .venv/bin/python -m pip install -r requirements.txt; then
+        cp requirements.txt .venv/kerfly-requirements.txt
+    else
+        echo "Updating the libraries failed; Kerfly starts anyway."
+    fi
+fi
 exec .venv/bin/python kerfly.py "$@"

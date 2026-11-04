@@ -9,12 +9,35 @@ Version numbers:
 
 ## Unreleased
 
-- **Break apart** (Arrange group, Ctrl+Shift+B). Every line of an opened SVG
-  or DXF file, or of a text that is cut or outlined, becomes its own polyline
-  with editable nodes. The pieces stay exactly in place, keep their cut or
-  outline layer, and are grouped (Ungroup separates them). The image part of
-  an SVG stays as it was. Curves become polylines with many nodes; real curve
-  editing comes with the curves module.
+- **Curves module.**
+  - **Pen** tool (B, on the tool strip):
+    - click for a corner, or press and drag for a smooth node with curve
+      handles;
+    - click the first point to close the shape; double-click or Enter
+      finishes an open path;
+    - Backspace removes the last node, Shift keeps 45° angles, Esc cancels.
+  - **Edit nodes** now works on curves, as in MeerK40t:
+    - drag nodes and their round handles; a smooth node keeps both handles
+      in line, and Ctrl moves one handle alone;
+    - Shift+click selects several nodes;
+    - buttons in the bar above the bed view, or keys: I insert, D/Delete
+      remove, L line, C curve, O smooth, S symmetric, Z close / open,
+      B break;
+    - double-click a side to add a node, or a node to remove it.
+  - Ellipses become real curves when you edit their nodes.
+  - Paths are saved in projects.
+- **Break apart** (Arrange group, Ctrl+Shift+B):
+  - every line of an opened SVG or DXF file becomes its own path with its
+    real curves (SVG via svgelements; DXF arcs, circles and polyline bulges
+    stay arcs);
+  - the pieces stay exactly in place, keep their cut or outline layer, and
+    are grouped (Ungroup separates them);
+  - when a file cannot be read with its curves (for example SVG text), its
+    lines become polylines, as before;
+  - the image part of an SVG stays as it was;
+  - texts can be broken apart as well.
+- `start_kerfly.bat` / `start_kerfly.sh` install libraries added in an
+  update. New: `svgelements`.
 
 ## 0.4.0 (2026-11-04)
 

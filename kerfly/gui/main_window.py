@@ -105,6 +105,7 @@ class MainWindow(QMainWindow):
         self.preview.snap_objects = is_true(self.values.get("snap_objects", "1"))
         self.tool_options = ToolOptionsBar()
         self.tool_options.changed.connect(self._tool_options_changed)
+        self.tool_options.node_action.connect(lambda code: self.preview.node_editor.action(code))
         central = QWidget()
         central_layout = QVBoxLayout(central)
         central_layout.setContentsMargins(0, 0, 0, 0)
@@ -123,10 +124,12 @@ class MainWindow(QMainWindow):
         self.shape_defaults = {kind: ShapeSpec(kind=kind, operation="fill" if kind == "text" else "cut",
                                                text=_("Text"))
                                for kind in ("rectangle", "ellipse", "polygon", "line", "polyline", "text")}
+        self.shape_defaults["pen"] = ShapeSpec(kind="path", operation="cut")
         self.preview.signals.drawn.connect(self._preview_drawn)
         self.preview.signals.selected.connect(self._preview_selected)
         self.preview.signals.polyline_drawn.connect(self._preview_polyline_drawn)
         self.preview.signals.nodes_changed.connect(self._nodes_changed)
+        self.preview.signals.pen_drawn.connect(self._preview_pen_drawn)
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
@@ -432,6 +435,7 @@ class MainWindow(QMainWindow):
                  ("polygon", "hexagon", N_("Polygon"), "P"),
                  ("line", "line", N_("Line"), "L"),
                  ("polyline", "polygon", N_("Polyline"), "Shift+L"),
+                 ("pen", "vector-bezier-2", N_("Pen (curves)"), "B"),
                  ("text", "typography", N_("Text"), "T")]
         for key, icon, name, shortcut in tools:
             act = QAction(icons.tabler(icon), _(name), self)
@@ -451,8 +455,13 @@ class MainWindow(QMainWindow):
         self.preview.set_tool(tool)
         self.tool_actions[tool].setChecked(True)
         if tool == "nodes":
-            self.status(_("Edit nodes: click a drawn shape, drag its corners. Double-click a side to add a "
-                          "corner; double-click a corner or select it and press Delete to remove it."))
+            self.status(_("Edit nodes: click a shape, drag its nodes and the round curve handles (Ctrl: one "
+                          "handle alone). Shift+click selects more nodes. Double-click a side to add a node, a node "
+                          "to remove it. Buttons above, or keys I D L C O S Z B."))
+        if tool == "pen":
+            self.status(_("Pen: click for a corner, press and drag for a smooth curve. Click the first point to "
+                          "close the shape; double-click or Enter finishes an open path. Backspace removes the "
+                          "last node, Shift keeps 45\u00b0 angles, Esc cancels."))
         if tool == "polyline":
             self.status(_("Polyline: click the corners. Click the first point to close the shape; double-click or "
                           "press Enter to finish an open line. Backspace removes the last corner, Shift keeps "
@@ -462,6 +471,16 @@ class MainWindow(QMainWindow):
         self._update_tool_options()
 
     def _update_tool_options(self, force=False):
+        if self.preview.tool == "nodes":                 # node buttons, after the shape's own options
+            e = self.selected
+            if e is not None and e.shape is not None:
+                self._options_target, self._options_element = "selected", e
+                self.tool_options.show_spec(e.shape, e.name)
+            else:
+                self._options_target, self._options_element = None, None
+                self.tool_options.show_hint()
+            self.tool_options.add_node_actions()
+            return
         e = self.selected
         if e is not None and e.shape is not None:
             if not force and getattr(self, "_options_target", None) == "selected" \
@@ -527,6 +546,20 @@ class MainWindow(QMainWindow):
             left, top = min(start.x(), start.x() + dx), min(start.y(), start.y() + dy)
         self._add_drawn_element(spec, tool, left, top)
 
+    def _preview_pen_drawn(self, subpaths):
+        """A path was drawn with the pen (scene mm)."""
+        e = Element(Design(), name=_("Path"))
+        if not self._fit_path(e, subpaths, self.shape_defaults["pen"]):
+            self.status(_("Nothing to draw."), error=True)
+            return
+        self._checkpoint()
+        self._keep_on_bed(e)
+        self.elements.append(e)
+        self.selected = e
+        self._compiled = None
+        self.set_tool("select")
+        self._layout_changed()
+
     def _preview_polyline_drawn(self, points, closed):
         """A polyline was drawn (scene mm, y down)."""
         xs, ys = [p.x() for p in points], [p.y() for p in points]
@@ -543,42 +576,58 @@ class MainWindow(QMainWindow):
     NODE_KINDS = ("polyline", "line", "rectangle", "ellipse", "polygon")
 
     def _node_points(self, element):
-        """Corner points of a drawn shape in its item coordinates (mm, y down,
-        top-left of the shape at 0, 0), or None when it cannot be node-edited."""
+        """The shape's path in item coordinates (mm, y down, top-left at 0, 0),
+        or None when it cannot be node-edited."""
+        from kerfly.core import curves
         spec = element.shape
-        if spec is None or spec.kind not in self.NODE_KINDS:
+        if spec is None or spec.kind not in self.NODE_KINDS + ("path",):
             if self.preview.tool == "nodes":
                 self.status(_("This element has no editable nodes yet. For an opened SVG / DXF file or a text, "
                               "use Break apart (Arrange group) first."), error=True)
             return None
+        if spec.kind == "path":
+            return curves.copy_path(spec.subpaths)
         if spec.kind == "polyline":
-            return [tuple(p) for p in spec.points], spec.closed_path
+            return curves.from_polylines([spec.points], [spec.closed_path])
+        if spec.kind == "ellipse":                       # a real ellipse: four Bezier quarters
+            rx, ry = abs(spec.width) / 2.0, abs(spec.height) / 2.0
+            segs = curves.arc_segments(rx, ry, 0, 0, 360, rx=rx, ry=ry)
+            return curves.join_segments(segs, 1e-9)
         poly = outlines(spec)[0]
         closed = spec.closed
         if closed and len(poly) > 1 and poly[0] == poly[-1]:
             poly = poly[:-1]
-        return [tuple(p) for p in poly], closed
+        return curves.from_polylines([poly], [closed])
 
-    def _fit_polyline(self, e, scene_points, closed, base_spec):
-        """Make element e a polyline through scene_points (scene mm), keeping its
-        rotation, scale and mirror. Returns False when nothing is left to draw."""
+    def _fit_path(self, e, scene_subpaths, base_spec):
+        """Make element e a path (lines and curves) through scene_subpaths (scene
+        mm), keeping its rotation, scale and mirror. False when nothing is left."""
         import math
         from PySide6.QtGui import QTransform
-        # scene -> item coordinates with the element's rotation / scale
+        from kerfly.core import curves
         lin = QTransform().rotate(-e.rotation).scale(e.scale_x, e.scale_y)
         inv, ok = lin.inverted()
-        if not ok:
+        if not ok or not scene_subpaths:
             return False
-        local = [inv.map(p.x(), p.y()) for p in scene_points]
-        left = min(x for x, _ in local)
-        top = min(y for _, y in local)
-        pts = [(x - left, y - top) for x, y in local]
+
+        def to_local(x, y):
+            return inv.map(x, y)
+        local = []
+        for sp in scene_subpaths:
+            nodes = []
+            for n in sp["nodes"]:
+                x, y = to_local(n[0], n[1])
+                hin = to_local(n[2], n[3]) if n[2] is not None else None
+                hout = to_local(n[4], n[5]) if n[4] is not None else None
+                nodes.append(curves.node(x, y, hin, hout))
+            local.append({"closed": bool(sp.get("closed")), "nodes": nodes})
+        local, (dx, dy) = curves.normalized(local)
         spec = base_spec.copy()
-        spec.kind = "polyline"
-        spec.points = pts
-        spec.closed_path = bool(closed)
-        spec.width = max(x for x, _ in pts)
-        spec.height = max(y for _, y in pts)
+        spec.kind = "path"
+        spec.subpaths = local
+        spec.points, spec.closed_path = [], False
+        x0, x1, y0, y1 = curves.bounds(local)
+        spec.width, spec.height = x1, y1
         if not spec.closed and spec.operation == "fill":
             spec.operation = "cut"
         design = build_design(spec)
@@ -587,23 +636,25 @@ class MainWindow(QMainWindow):
             return False
         e.shape = spec
         e.design = design
-        # place it so that point 0 lands on its scene position
+        # place it so that the first node lands on its scene position
+        first = local[0]["nodes"][0]
         w0, h0 = (xmax - xmin) * 25.4, (ymax - ymin) * 25.4
-        vx, vy = lin.map(pts[0][0] - w0 / 2.0, pts[0][1] - h0 / 2.0)
-        cx, cy = scene_points[0].x() - vx, scene_points[0].y() - vy
+        vx, vy = lin.map(first[0] - w0 / 2.0, first[1] - h0 / 2.0)
+        sx, sy = scene_subpaths[0]["nodes"][0][0], scene_subpaths[0]["nodes"][0][1]
+        cx, cy = sx - vx, sy - vy
         if self.preview.home_ur:
             cx = self.preview.bed_w_mm - cx
         e.set_centre(cx / 25.4, -cy / 25.4)
         return math.isfinite(e.x) and math.isfinite(e.y)
 
-    def _nodes_changed(self, element, scene_points, closed):
-        """New corner positions from the node tool (scene mm). The shape becomes
-        a polyline; rotation, scale and mirror of the element are kept."""
+    def _nodes_changed(self, element, scene_subpaths, _unused=True):
+        """The node tool changed the shape (scene mm). It becomes a path of lines
+        and curves; rotation, scale and mirror of the element are kept."""
         if element not in self.elements or element.shape is None:
             return
         snapshot = self._snapshot()
         old = (element.shape, element.design, element.placement())
-        if not self._fit_polyline(element, scene_points, closed, element.shape):
+        if not self._fit_path(element, scene_subpaths, element.shape):
             element.shape, element.design = old[0], old[1]
             element.set_placement(old[2])
             return
@@ -614,14 +665,63 @@ class MainWindow(QMainWindow):
         self._layer_cache.clear()
         self._layout_changed()
         self.preview.select_element(element)
-        self._update_tool_options(force=True)        # now a polyline: no more "sides" or "radius"
+        self._update_tool_options(force=True)        # now a path: no more "sides" or "radius"
 
     # ---- break apart ------------------------------------------------------
+    def _curve_paths(self, e):
+        """The lines of an opened SVG / DXF with their real curves, in design
+        inches (y up), one subpath each: [(kind, [subpath], True)]. None when the
+        file cannot be read this way or does not match what the laser gets."""
+        from kerfly.core import curves, loaders
+        from kerfly.core.explode import vector_loops
+        if e.shape is not None or not e.source_file or not os.path.isfile(e.source_file):
+            return None
+        ext = os.path.splitext(e.source_file)[1].lower()
+        try:
+            if ext == ".svg":
+                ppi = float((e.load_options.get("svg_scale") or [96.0])[0] or 96.0)
+                found = curves.svg_segments(e.source_file, ppi=ppi)
+                top = e.design.bounds[3]
+                found = {k: [tuple(None if p is None else (p[0], top - p[1]) for p in s) for s in v]
+                         for k, v in found.items()}
+            elif ext == ".dxf":
+                import dxf as _dxf
+                reader = _dxf.DXF_CLASS()
+                with open(e.source_file) as fd:
+                    reader.GET_DXF_DATA(fd, lin_tol=.0005, get_units=True, units=None)
+                units = e.load_options.get("dxf_units") or reader.units
+                scale = loaders.DXF_UNIT_SCALE.get(units)
+                if scale is None:
+                    return None
+                found = curves.dxf_segments(e.source_file, scale)
+            else:
+                return None
+        except Exception as ex:
+            diag_log.warning("break apart: curves not read from %s: %r", e.source_file, ex)
+            return None
+        out = []
+        for kind, attr in (("engrave", "vector_engrave"), ("cut", "vector_cut")):
+            subs = curves.join_segments(found.get(kind, []), tol=1e-5)
+            k40 = getattr(e.design, attr).ecoords
+            flat = [p for poly in curves.flatten(subs, tol=0.0002) for p in poly]
+            if bool(flat) != bool(k40):
+                return None
+            if flat:
+                ours = (min(p[0] for p in flat), max(p[0] for p in flat), min(p[1] for p in flat), max(p[1] for p in flat))
+                theirs = (min(r[0] for r in k40), max(r[0] for r in k40), min(r[1] for r in k40), max(r[1] for r in k40))
+                if max(abs(a - b) for a, b in zip(ours, theirs)) > 0.004:     # inches: not the same drawing
+                    diag_log.info("break apart: curves of %s do not match (%s / %s), using lines",
+                                  e.source_file, ours, theirs)
+                    return None
+            out += [(kind, [sp], True) for sp in subs]
+        return out
+
     def break_apart_selected(self):
         """Every vector path of the selected elements becomes its own polyline
         (cut or outline engrave as before), grouped so they stay together. An
         image part stays as it was."""
         from PySide6.QtCore import QPointF
+        from kerfly.core.curves import from_polylines, node
         from kerfly.core.explode import has_vectors, raster_only, vector_loops
         from kerfly.gui.preview import element_transform
         chosen = [e for e in self._selection() if e.design is not None and has_vectors(e.design)
@@ -629,7 +729,8 @@ class MainWindow(QMainWindow):
         if not chosen or self.worker is not None:
             self.status(_("Select an opened file or a text with lines to break it apart."), error=True)
             return
-        loops = [(e, vector_loops(e.design)) for e in chosen]
+        loops = [(e, self._curve_paths(e) or [(k, from_polylines([pts], [c]), True)
+                                             for k, pts, c in vector_loops(e.design)]) for e in chosen]
         total = sum(len(l) for _e, l in loops)
         if total > 300 and QMessageBox.question(
                 self, _("Break apart"),
@@ -644,12 +745,22 @@ class MainWindow(QMainWindow):
             gid = e.group or self._new_group_id()
             index = self.elements.index(e)
             parts = []
-            for n, (kind, pts, closed) in enumerate(paths, 1):
-                scene = [QPointF(*t.map((x - xmin) * 25.4, (ymax - y) * 25.4)) for x, y in pts]
+            for n, (kind, sub, _design_units) in enumerate(paths, 1):
+                def to_scene(x, y):                       # design inches (y up) -> scene mm
+                    return t.map((x - xmin) * 25.4, (ymax - y) * 25.4)
+                scene_path = []
+                for sp in sub:
+                    nodes = []
+                    for nd in sp["nodes"]:
+                        px, py = to_scene(nd[0], nd[1])
+                        hin = to_scene(nd[2], nd[3]) if nd[2] is not None else None
+                        hout = to_scene(nd[4], nd[5]) if nd[4] is not None else None
+                        nodes.append(node(px, py, hin, hout))
+                    scene_path.append({"closed": sp["closed"], "nodes": nodes})
                 part = Element(e.design, name="%s %d" % (e.name, n), rotation=e.rotation,
                                scale_x=e.scale_x, scale_y=e.scale_y, visible=e.visible, group=gid)
-                base = ShapeSpec(kind="polyline", operation=kind)
-                if self._fit_polyline(part, scene, closed, base):
+                base = ShapeSpec(kind="path", operation=kind)
+                if self._fit_path(part, scene_path, base):
                     if e.layers.get(kind):
                         part.layers[kind] = e.layers[kind]
                     parts.append(part)

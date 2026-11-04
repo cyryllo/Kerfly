@@ -26,7 +26,7 @@ from .design import Design
 MM = 25.4
 FILL_DPI = 1000.0
 
-KINDS = ("rectangle", "ellipse", "polygon", "line", "polyline", "text")
+KINDS = ("rectangle", "ellipse", "polygon", "line", "polyline", "path", "text")
 OPERATIONS = ("cut", "engrave", "fill")
 
 
@@ -50,15 +50,21 @@ class ShapeSpec:
     # bounding box) and whether the last point joins the first
     points: list = field(default_factory=list)
     closed_path: bool = False
+    # path: subpaths of lines and Bezier curves (kerfly.core.curves), mm, y down
+    subpaths: list = field(default_factory=list)
 
     def copy(self):
+        from .curves import copy_path
         return replace(self, text_outlines=[list(p) for p in self.text_outlines],
-                       points=[tuple(p) for p in self.points])
+                       points=[tuple(p) for p in self.points], subpaths=copy_path(self.subpaths))
 
     @property
     def closed(self):
         if self.kind == "polyline":
             return self.closed_path
+        if self.kind == "path":
+            from .curves import all_closed
+            return all_closed(self.subpaths)
         return self.kind != "line"
 
 
@@ -114,6 +120,9 @@ def outlines(spec):
         if len(pts) < 2:
             return []
         return [pts + [pts[0]]] if spec.closed_path and len(pts) >= 3 else [pts]
+    elif spec.kind == "path":
+        from .curves import flatten
+        return flatten(spec.subpaths)
     elif spec.kind == "text":
         polys = [list(p) for p in spec.text_outlines]
     else:
@@ -147,7 +156,7 @@ def build_design(spec):
     polys = outlines(spec)
     design = Design()
     xmin, xmax, ymin, ymax = _bounds_mm(polys)
-    if spec.kind in ("line", "polyline") and (xmax - xmin) < 1e-9 and (ymax - ymin) < 1e-9:
+    if spec.kind in ("line", "polyline", "path") and (xmax - xmin) < 1e-9 and (ymax - ymin) < 1e-9:
         return design
     # design coordinates: inches, y up, top-left of the bounding box at (0, h)
     h_in = (ymax - ymin) / MM

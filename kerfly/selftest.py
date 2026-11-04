@@ -42,10 +42,12 @@ def _check_imports(r):
                                          platform.platform()))
     for name, module, required in (("PySide6", "PySide6", True), ("lxml", "lxml.etree", True),
                                    ("Pillow", "PIL", True), ("pyusb", "usb", True),
+                                   ("svgelements", "svgelements", True),
                                    ("pyclipper", "pyclipper", False)):
         try:
             mod = __import__(module, fromlist=["_"])
-            version = getattr(mod, "__version__", "") or getattr(mod, "LXML_VERSION", "")
+            version = getattr(mod, "__version__", "") or getattr(mod, "LXML_VERSION", "") \
+                or getattr(mod, "SVGELEMENTS_VERSION", "")
             if isinstance(version, tuple):
                 version = ".".join(str(v) for v in version)
             r.add(OK, name, str(version))

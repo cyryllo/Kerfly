@@ -97,3 +97,17 @@ borrowed file keeps its MIT header, and the file is listed here.
 
 If a binary build (Windows `.exe`, AppImage) bundles any of these, it must
 include their license texts.
+
+## Libraries installed with Kerfly
+
+These are installed by pip from `requirements.txt`. They are not copied into
+this repository.
+
+| Library | Licence | Used for |
+|---|---|---|
+| PySide6 (Qt for Python) | LGPL-3.0 | window and drawing |
+| lxml | BSD-3-Clause | SVG reading (K40 Whisperer) |
+| Pillow | MIT-CMU (HPND) | images |
+| pyusb | BSD-3-Clause | USB connection to the laser |
+| svgelements | MIT | reading SVG curves for node editing |
+| pyclipper (optional) | MIT | offset of the boundary trace |
