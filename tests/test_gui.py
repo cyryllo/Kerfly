@@ -869,6 +869,19 @@ def main():
           "(%d pieces, %s)" % (len(loops), labels))
     w.close()
 
+    # 32. job simulation: dialog plays, draws on the bed view, seek to the end, closes cleanly
+    w = make_window(grid_mm="0")
+    w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
+    w.simulate_job()
+    dlg = getattr(w, "_simulation", None)
+    played = dlg is not None and dlg.total > 0 and dlg.timer.isActive()
+    dlg.seek(dlg.total)
+    drawn = len(dlg.items) >= 2
+    dlg.close()
+    app.processEvents()
+    check("simulation: plays, draws the path, closes", played and drawn, "(%.1f s)" % (dlg.total if dlg else 0))
+    w.close()
+
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo
     w = make_window(grid_mm="0")
     w.resize(1200, 800)

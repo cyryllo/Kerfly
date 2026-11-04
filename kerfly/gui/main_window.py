@@ -251,6 +251,8 @@ class MainWindow(QMainWindow):
         self.act_export_materials = self._action(_("&Export material library\u2026"), self.export_materials)
         self.act_import_materials = self._action(_("&Import material library\u2026"), self.import_materials)
         self.act_about = self._action(_("&About Kerfly"), self.about)
+        self.act_simulate = self._action(_("&Simulate job\u2026"), self.simulate_job, "Ctrl+Shift+J",
+                                         _("Play the laser head's moves in the order the job will run them"))
         self.act_report = self._action(_("Save &diagnostic report…"), self.save_report, None,
                                        _("Save a report with the laser log and settings, to attach to a bug report"))
         self.act_log_folder = self._action(_("Open the &log folder"), self.open_log_folder)
@@ -282,6 +284,7 @@ class MainWindow(QMainWindow):
             sub.addAction(a)
         m = mb.addMenu(_("&View"))
         m.addAction(self.act_fit)
+        m.addAction(self.act_simulate)
         m.addSeparator()
         m.addAction(self.act_snap)
         m.addAction(self.act_snap_objects)
@@ -331,14 +334,13 @@ class MainWindow(QMainWindow):
                 (self.act_duplicate, "copy", C_("toolbar", "Duplicate")),
                 (self.act_delete, "trash", C_("toolbar", "Delete")),
             ]),
+            (C_("toolbar group", "Transform"), "grid", [
+                (self.act_rot_left, "rotate-2"),
+                (self.act_rot_right, "rotate-clockwise-2"),
+                (self.act_mirror_h, "flip-horizontal"),
+                (self.act_mirror_v, "flip-vertical"),
+            ]),
             (C_("toolbar group", "Arrange"), [
-                (self.act_rot_left, "rotate-2", C_("toolbar", "Rotate left")),
-                (self.act_rot_right, "rotate-clockwise-2", C_("toolbar", "Rotate right")),
-                (self.act_mirror_h, "flip-horizontal", C_("toolbar", "Mirror\nhorizontal")),
-                (self.act_mirror_v, "flip-vertical", C_("toolbar", "Mirror\nvertical")),
-                (self.act_group, "squares-selected", C_("toolbar", "Group")),
-                (self.act_ungroup, "squares", C_("toolbar", "Ungroup")),
-                (self.act_break, "arrows-split", C_("toolbar", "Break\napart")),
                 (self.act_center, "focus-centered", C_("toolbar", "Centre")),
                 (self.act_place_head, "current-location", C_("toolbar", "To head")),
             ]),
@@ -353,13 +355,17 @@ class MainWindow(QMainWindow):
                 (self.act_distribute_v, "layout-distribute-horizontal"),
             ]),
             (C_("toolbar group", "Shapes"), "grid", [
+                (self.act_group, "squares-selected"),
                 (self.act_boolean["union"], "layers-union"),
                 (self.act_boolean["difference"], "layers-subtract"),
+                (self.act_break, "arrows-split"),
+                (self.act_ungroup, "squares"),
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
             ]),
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
+                (self.act_simulate, "movie", C_("toolbar", "Simulate")),
                 (self.act_snap, "grid-dots", C_("toolbar", "Grid")),
             ]),
             (C_("toolbar group", "Settings"), [
@@ -2742,6 +2748,25 @@ class MainWindow(QMainWindow):
         self.refresh_preview()
 
     # ------------------------------------------------------------ misc
+    # ------------------------------------------------------------ simulation
+    def simulate_job(self):
+        from kerfly.gui.simulation import SimulationDialog, simulation_steps
+        if self.worker is not None:
+            return
+        try:
+            steps = simulation_steps(self)
+        except ValueError as e:
+            self.status(str(e), error=True)
+            return
+        if not steps:
+            self.status(_("Nothing to do: load a design and select at least one operation."), error=True)
+            return
+        dlg = SimulationDialog(self, steps)
+        dlg.setAttribute(Qt.WA_DeleteOnClose)
+        dlg.show()
+        dlg.toggle()                              # start playing
+        self._simulation = dlg
+
     # ------------------------------------------------------------ diagnostics
     def save_report(self):
         from datetime import datetime

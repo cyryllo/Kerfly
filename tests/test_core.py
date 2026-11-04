@@ -536,6 +536,34 @@ def test_curves():
     return errors
 
 
+def test_simulate():
+    """Job simulation: layer order, travel moves, durations from the layer speeds."""
+    from kerfly.core.layers import default_layers, CUT
+    from kerfly.core.layout import Element
+    from kerfly.core.shapes import ShapeSpec, build_design
+    from kerfly.core.simulate import timeline, total_seconds
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s simulate: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    spec = ShapeSpec(kind="rectangle", width=40, height=30, operation="cut")
+    e = Element(build_design(spec), x=1.0, y=-1.0, shape=spec)
+    layers = default_layers()
+    cut = [l for l in layers if l.kind == CUT][0]
+    cut.speed, cut.passes = 10.0, 2
+    steps = timeline([e], layers, JobSettings(), "mm")
+    burn = sum(s.seconds for s in steps if s.burn)
+    first = steps[0]
+    check("rectangle 140 mm at 10 mm/s, 2 passes = 28 s of cutting", abs(burn - 28.0) < 1e-6, "(%.3f s)" % burn)
+    check("starts with a travel move from home to the shape", not first.burn and (first.x0, first.y0) == (0.0, 0.0)
+          and abs(first.x1 - 25.4) < 1e-6 or abs(first.y1 - 25.4) < 1e-6)
+    check("total includes travel", total_seconds(steps) > burn)
+    return errors
+
+
 def test_snap():
     """Object snapping targets and preferences."""
     from kerfly.core.snap import CENTRE, CORNER, EDGE, MIDDLE, SnapShape, find_snap, snap_offset
@@ -600,6 +628,7 @@ def main():
     failures += test_arrange()
     failures += test_snap()
     failures += test_curves()
+    failures += test_simulate()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

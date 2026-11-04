@@ -48,6 +48,14 @@ Version numbers:
 - **Measure** tool (M). Drag between two points to see the distance, width,
   height and angle, on the bed and in the status bar. Points snap to corners,
   centres and lines.
+- **Job simulation** (View → Simulate job, Ctrl+Shift+J, Simulate button).
+  It plays the laser head's moves on the bed view in the order the job runs
+  them: layers in job order, paths inside first, travel moves dashed.
+  - Play / pause, a time slider, and speeds from 1× (real time) to 100×.
+  - The time comes from the layer speeds and passes.
+- Toolbar reorganised so labels are not cut short:
+  - rotate and mirror are small icons in a new Transform group;
+  - group, ungroup and break apart joined the Shapes group.
 - The bed view follows the window size until you zoom or pan.
 - **Combine shapes** (new Shapes toolbar group, Edit → Combine shapes):
   union, difference (the first selected shape minus the others), intersection

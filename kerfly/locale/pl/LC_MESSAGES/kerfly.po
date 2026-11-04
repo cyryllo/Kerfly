@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 20:01+0100\n"
+"POT-Creation-Date: 2026-11-04 20:05+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -40,6 +40,10 @@ msgstr "%d × %d pikseli"
 #, python-format
 msgid "%s (copy)"
 msgstr "%s (kopia)"
+
+#, python-format
+msgid "%s of %s"
+msgstr "%s z %s"
 
 #, python-format
 msgid "%s × %s mm"
@@ -119,6 +123,9 @@ msgstr "&Ustawienia"
 
 msgid "&Settings…"
 msgstr "&Ustawienia…"
+
+msgid "&Simulate job…"
+msgstr "&Symulacja zadania…"
 
 msgid "&Snap to grid"
 msgstr "&Przyciągaj do siatki"
@@ -245,12 +252,6 @@ msgstr "Objazd konturu z włączonym laserem"
 
 msgid "Break"
 msgstr "Rozdziel"
-
-msgctxt "toolbar"
-msgid ""
-"Break\n"
-"apart"
-msgstr "Rozbij"
 
 msgid "Break apart"
 msgstr "Rozbij na kształty"
@@ -589,16 +590,19 @@ msgstr "Idź"
 msgid "Go to X"
 msgstr "Idź do X"
 
+msgid ""
+"Grey dashed lines are moves with the laser off. Raster engraving is shown"
+" one line per millimetre."
+msgstr ""
+"Szare przerywane linie to przejazdy z wyłączonym laserem. Grawer rastrowy"
+" jest pokazany jako jedna linia na milimetr."
+
 msgctxt "toolbar"
 msgid "Grid"
 msgstr "Siatka"
 
 msgid "Grid size"
 msgstr "Rozmiar siatki"
-
-msgctxt "toolbar"
-msgid "Group"
-msgstr "Grupuj"
 
 #, python-format
 msgid "Group %d: %s"
@@ -706,6 +710,9 @@ msgstr "Zadanie zakończone w %s"
 
 msgid "Job running"
 msgstr "Zadanie w toku"
+
+msgid "Job simulation"
+msgstr "Symulacja zadania"
 
 msgid "Join the selected elements into a group that is selected and moved as one"
 msgstr "Połącz zaznaczone elementy w grupę, zaznaczaną i przesuwaną jako całość"
@@ -831,22 +838,6 @@ msgstr ""
 "Miarka: przeciągnij od jednego punktu do drugiego. Punkty przyciągają się"
 " do narożników, środków i linii, jak przy rysowaniu (Alt: dowolne "
 "punkty)."
-
-msgctxt "toolbar"
-msgid ""
-"Mirror\n"
-"horizontal"
-msgstr ""
-"Odbij\n"
-"w poziomie"
-
-msgctxt "toolbar"
-msgid ""
-"Mirror\n"
-"vertical"
-msgstr ""
-"Odbij\n"
-"w pionie"
 
 msgid "Mirror &vertically"
 msgstr "Odbij w p&ionie"
@@ -1030,6 +1021,15 @@ msgstr ""
 msgid "Place design at the &head"
 msgstr "Ustaw projekt przy &głowicy"
 
+msgid "Play / pause"
+msgstr "Odtwórz / pauza"
+
+msgid "Play the laser head's moves in the order the job will run them"
+msgstr "Odtwórz ruchy głowicy w kolejności, w jakiej wykona je zadanie"
+
+msgid "Playback speed (1× = real time)"
+msgstr "Szybkość odtwarzania (1× = czas rzeczywisty)"
+
 msgid "Plywood 3 mm"
 msgstr "Sklejka 3 mm"
 
@@ -1169,18 +1169,6 @@ msgstr "Obróć o 90° w lewo"
 msgid "Rotate design 90°"
 msgstr "Obróć projekt o 90°"
 
-msgctxt "toolbar"
-msgid "Rotate left"
-msgstr ""
-"Obróć\n"
-"w lewo"
-
-msgctxt "toolbar"
-msgid "Rotate right"
-msgstr ""
-"Obróć\n"
-"w prawo"
-
 msgid "Rotation"
 msgstr "Obrót"
 
@@ -1300,6 +1288,10 @@ msgstr "Kształty"
 
 msgid "Sides"
 msgstr "Boki"
+
+msgctxt "toolbar"
+msgid "Simulate"
+msgstr "Symulacja"
 
 msgid "Smooth"
 msgstr "Gładki"
@@ -1512,6 +1504,10 @@ msgstr ""
 "chyba że w Ustawieniach zaznaczono inaczej), aby sprawdzić, gdzie "
 "zostanie wycięty"
 
+msgctxt "toolbar group"
+msgid "Transform"
+msgstr "Przekształć"
+
 msgid ""
 "Turn every line of an opened SVG / DXF file or a text into its own shape "
 "with editable nodes"
@@ -1551,10 +1547,6 @@ msgstr "Cofnij"
 
 msgid "Unfreeze complete"
 msgstr "Laser odmrożony"
-
-msgctxt "toolbar"
-msgid "Ungroup"
-msgstr "Rozgrupuj"
 
 msgid "Union"
 msgstr "Suma"
@@ -1742,4 +1734,46 @@ msgstr "obrys"
 #~ " boku dodaje narożnik; dwuklik na "
 #~ "narożniku albo zaznaczenie go i Delete"
 #~ " usuwa."
+
+#~ msgctxt "toolbar"
+#~ msgid ""
+#~ "Break\n"
+#~ "apart"
+#~ msgstr "Rozbij"
+
+#~ msgctxt "toolbar"
+#~ msgid "Group"
+#~ msgstr "Grupuj"
+
+#~ msgctxt "toolbar"
+#~ msgid ""
+#~ "Mirror\n"
+#~ "horizontal"
+#~ msgstr ""
+#~ "Odbij\n"
+#~ "w poziomie"
+
+#~ msgctxt "toolbar"
+#~ msgid ""
+#~ "Mirror\n"
+#~ "vertical"
+#~ msgstr ""
+#~ "Odbij\n"
+#~ "w pionie"
+
+#~ msgctxt "toolbar"
+#~ msgid "Rotate left"
+#~ msgstr ""
+#~ "Obróć\n"
+#~ "w lewo"
+
+#~ msgctxt "toolbar"
+#~ msgid "Rotate right"
+#~ msgstr ""
+#~ "Obróć\n"
+#~ "w prawo"
+
+#~ msgctxt "toolbar"
+#~ msgid "Ungroup"
+#~ msgstr "Rozgrupuj"
 

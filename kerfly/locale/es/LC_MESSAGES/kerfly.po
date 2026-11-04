@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 20:01+0100\n"
+"POT-Creation-Date: 2026-11-04 20:05+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -38,6 +38,10 @@ msgstr "%d × %d píxeles"
 #, python-format
 msgid "%s (copy)"
 msgstr "%s (copia)"
+
+#, python-format
+msgid "%s of %s"
+msgstr "%s de %s"
 
 #, python-format
 msgid "%s × %s mm"
@@ -117,6 +121,9 @@ msgstr "Con&figuración"
 
 msgid "&Settings…"
 msgstr "Con&figuración…"
+
+msgid "&Simulate job…"
+msgstr "&Simular trabajo…"
 
 msgid "&Snap to grid"
 msgstr "A&justar a la cuadrícula"
@@ -243,12 +250,6 @@ msgstr "Recorrer el contorno con el láser encendido"
 
 msgid "Break"
 msgstr "Romper"
-
-msgctxt "toolbar"
-msgid ""
-"Break\n"
-"apart"
-msgstr "Separar"
 
 msgid "Break apart"
 msgstr "Separar en formas"
@@ -591,16 +592,19 @@ msgstr "Ir"
 msgid "Go to X"
 msgstr "Ir a X"
 
+msgid ""
+"Grey dashed lines are moves with the laser off. Raster engraving is shown"
+" one line per millimetre."
+msgstr ""
+"Las líneas grises discontinuas son movimientos con el láser apagado. El "
+"grabado ráster se muestra con una línea por milímetro."
+
 msgctxt "toolbar"
 msgid "Grid"
 msgstr "Cuadrícula"
 
 msgid "Grid size"
 msgstr "Tamaño de la cuadrícula"
-
-msgctxt "toolbar"
-msgid "Group"
-msgstr "Agrupar"
 
 #, python-format
 msgid "Group %d: %s"
@@ -708,6 +712,9 @@ msgstr "Trabajo terminado en %s"
 
 msgid "Job running"
 msgstr "Trabajo en curso"
+
+msgid "Job simulation"
+msgstr "Simulación del trabajo"
 
 msgid "Join the selected elements into a group that is selected and moved as one"
 msgstr ""
@@ -834,22 +841,6 @@ msgid ""
 msgstr ""
 "Medir: arrastra de un punto a otro. Los puntos se ajustan a esquinas, "
 "centros y líneas, como al dibujar (Alt: puntos libres)."
-
-msgctxt "toolbar"
-msgid ""
-"Mirror\n"
-"horizontal"
-msgstr ""
-"Reflejar\n"
-"horizontal"
-
-msgctxt "toolbar"
-msgid ""
-"Mirror\n"
-"vertical"
-msgstr ""
-"Reflejar\n"
-"vertical"
 
 msgid "Mirror &vertically"
 msgstr "Reflejar &verticalmente"
@@ -1035,6 +1026,15 @@ msgstr ""
 msgid "Place design at the &head"
 msgstr "Colocar el diseño en el &cabezal"
 
+msgid "Play / pause"
+msgstr "Reproducir / pausa"
+
+msgid "Play the laser head's moves in the order the job will run them"
+msgstr "Reproducir los movimientos del cabezal en el orden del trabajo"
+
+msgid "Playback speed (1× = real time)"
+msgstr "Velocidad de reproducción (1× = tiempo real)"
+
 msgid "Plywood 3 mm"
 msgstr "Contrachapado 3 mm"
 
@@ -1172,18 +1172,6 @@ msgstr "Girar 90° en sentido antihorario"
 msgid "Rotate design 90°"
 msgstr "Girar el diseño 90°"
 
-msgctxt "toolbar"
-msgid "Rotate left"
-msgstr ""
-"Girar\n"
-"izq."
-
-msgctxt "toolbar"
-msgid "Rotate right"
-msgstr ""
-"Girar\n"
-"der."
-
 msgid "Rotation"
 msgstr "Rotación"
 
@@ -1303,6 +1291,10 @@ msgstr "Formas"
 
 msgid "Sides"
 msgstr "Lados"
+
+msgctxt "toolbar"
+msgid "Simulate"
+msgstr "Simular"
 
 msgid "Smooth"
 msgstr "Suave"
@@ -1521,6 +1513,10 @@ msgstr ""
 "apagado, salvo que se indique otra cosa en Ajustes) para comprobar dónde "
 "se cortará"
 
+msgctxt "toolbar group"
+msgid "Transform"
+msgstr "Transformar"
+
 msgid ""
 "Turn every line of an opened SVG / DXF file or a text into its own shape "
 "with editable nodes"
@@ -1560,10 +1556,6 @@ msgstr "Deshacer"
 
 msgid "Unfreeze complete"
 msgstr "Láser descongelado"
-
-msgctxt "toolbar"
-msgid "Ungroup"
-msgstr "Desagrupar"
 
 msgid "Union"
 msgstr "Unión"
@@ -1752,4 +1744,46 @@ msgstr "grabado vectorial"
 #~ "una esquina; doble clic en una "
 #~ "esquina o seleccionarla y pulsar Supr"
 #~ " la elimina."
+
+#~ msgctxt "toolbar"
+#~ msgid ""
+#~ "Break\n"
+#~ "apart"
+#~ msgstr "Separar"
+
+#~ msgctxt "toolbar"
+#~ msgid "Group"
+#~ msgstr "Agrupar"
+
+#~ msgctxt "toolbar"
+#~ msgid ""
+#~ "Mirror\n"
+#~ "horizontal"
+#~ msgstr ""
+#~ "Reflejar\n"
+#~ "horizontal"
+
+#~ msgctxt "toolbar"
+#~ msgid ""
+#~ "Mirror\n"
+#~ "vertical"
+#~ msgstr ""
+#~ "Reflejar\n"
+#~ "vertical"
+
+#~ msgctxt "toolbar"
+#~ msgid "Rotate left"
+#~ msgstr ""
+#~ "Girar\n"
+#~ "izq."
+
+#~ msgctxt "toolbar"
+#~ msgid "Rotate right"
+#~ msgstr ""
+#~ "Girar\n"
+#~ "der."
+
+#~ msgctxt "toolbar"
+#~ msgid "Ungroup"
+#~ msgstr "Desagrupar"
 
