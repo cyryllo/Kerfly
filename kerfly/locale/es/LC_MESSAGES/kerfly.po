@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:02+0100\n"
+"POT-Creation-Date: 2026-11-04 18:06+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -385,6 +385,18 @@ msgstr "Distribuir horizontalmente"
 msgid "Distribute vertically"
 msgstr "Distribuir verticalmente"
 
+#, python-format
+msgid "Distributed %d elements: gaps of %.2f %s between them."
+msgstr "%d elementos distribuidos: espacios de %.2f %s entre ellos."
+
+#, python-format
+msgid ""
+"Distributed %d elements: they are too wide for gaps, so their centres are"
+" %.2f %s apart."
+msgstr ""
+"%d elementos distribuidos: son demasiado anchos para dejar espacios, así "
+"que sus centros están a %.2f %s."
+
 msgid "Drawing tools"
 msgstr "Herramientas de dibujo"
 
@@ -417,12 +429,6 @@ msgstr "Grabar de abajo hacia arriba"
 
 msgid "Engrave outline"
 msgstr "Grabar contorno"
-
-msgid "Equal gaps from left to right (three or more elements)"
-msgstr "Espacios iguales de izquierda a derecha (tres o más elementos)"
-
-msgid "Equal gaps from top to bottom (three or more elements)"
-msgstr "Espacios iguales de arriba abajo (tres o más elementos)"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
@@ -1098,6 +1104,20 @@ msgstr ""
 "Las velocidades se guardan en mm/s y se convierten a in/min para las "
 "capas."
 
+msgid ""
+"Spread three or more selected elements evenly from left to right; the "
+"leftmost and rightmost stay in place"
+msgstr ""
+"Repartir de forma uniforme tres o más elementos seleccionados de "
+"izquierda a derecha; los de los extremos no se mueven"
+
+msgid ""
+"Spread three or more selected elements evenly from top to bottom; the top"
+" and bottom ones stay in place"
+msgstr ""
+"Repartir de forma uniforme tres o más elementos seleccionados de arriba "
+"abajo; los de los extremos no se mueven"
+
 msgid "Start"
 msgstr "Iniciar"
 
@@ -1391,4 +1411,10 @@ msgstr "grabado vectorial"
 #~ "Elija una herramienta de dibujo a "
 #~ "la derecha o seleccione una forma "
 #~ "dibujada para ver aquí sus opciones."
+
+#~ msgid "Equal gaps from left to right (three or more elements)"
+#~ msgstr "Espacios iguales de izquierda a derecha (tres o más elementos)"
+
+#~ msgid "Equal gaps from top to bottom (three or more elements)"
+#~ msgstr "Espacios iguales de arriba abajo (tres o más elementos)"
 

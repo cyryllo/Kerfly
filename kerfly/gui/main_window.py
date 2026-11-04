@@ -186,9 +186,11 @@ class MainWindow(QMainWindow):
                 _(text), lambda _c=False, k=edge: self.align_selected(k), None,
                 _(text) + " – " + _("several elements: to each other; one element: to the bed"))
         self.act_distribute_h = self._action(_("Distribute horizontally"), lambda: self.distribute_selected(True),
-                                             None, _("Equal gaps from left to right (three or more elements)"))
+                                             None, _("Spread three or more selected elements evenly from left to right; the leftmost and "
+                                               "rightmost stay in place"))
         self.act_distribute_v = self._action(_("Distribute vertically"), lambda: self.distribute_selected(False),
-                                             None, _("Equal gaps from top to bottom (three or more elements)"))
+                                             None, _("Spread three or more selected elements evenly from top to bottom; the top and "
+                                               "bottom ones stay in place"))
         self.act_place_head = self._action(_("Place design at the &head"), self.place_at_head, "Ctrl+H",
                                            _("Move all elements so the design starts at the laser head"))
         self.act_save_egv = self._action(_("Save &EGV file\u2026"), self.save_egv, "Ctrl+Shift+E",
@@ -1134,8 +1136,15 @@ class MainWindow(QMainWindow):
             self.status(_("Select three or more elements to distribute them."), error=True)
             return
         self._checkpoint()
-        distribute(chosen, horizontal)
+        how, step = distribute(chosen, horizontal)
         self._arranged(chosen)
+        unit = self.values.get("units", "mm")
+        value = step * (25.4 if unit == "mm" else 1.0)
+        if how == "gap":
+            self.status(_("Distributed %d elements: gaps of %.2f %s between them.") % (len(chosen), value, unit))
+        else:
+            self.status(_("Distributed %d elements: they are too wide for gaps, so their centres are "
+                          "%.2f %s apart.") % (len(chosen), value, unit))
 
     def rotate_selected(self, degrees):
         if self.selected is not None and self.worker is None:

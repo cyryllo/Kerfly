@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:02+0100\n"
+"POT-Creation-Date: 2026-11-04 18:06+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -383,6 +383,18 @@ msgstr "Rozłóż w poziomie"
 msgid "Distribute vertically"
 msgstr "Rozłóż w pionie"
 
+#, python-format
+msgid "Distributed %d elements: gaps of %.2f %s between them."
+msgstr "Rozłożono elementy (%d): odstępy po %.2f %s między nimi."
+
+#, python-format
+msgid ""
+"Distributed %d elements: they are too wide for gaps, so their centres are"
+" %.2f %s apart."
+msgstr ""
+"Rozłożono elementy (%d): są za szerokie na odstępy, więc ich środki są co"
+" %.2f %s."
+
 msgid "Drawing tools"
 msgstr "Narzędzia rysowania"
 
@@ -415,12 +427,6 @@ msgstr "Graweruj od dołu do góry"
 
 msgid "Engrave outline"
 msgstr "Obrys"
-
-msgid "Equal gaps from left to right (three or more elements)"
-msgstr "Równe odstępy od lewej do prawej (co najmniej trzy elementy)"
-
-msgid "Equal gaps from top to bottom (three or more elements)"
-msgstr "Równe odstępy od góry do dołu (co najmniej trzy elementy)"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
@@ -1094,6 +1100,20 @@ msgstr "Prędkość:"
 msgid "Speeds are stored in mm/s and converted to in/min for the layers."
 msgstr "Prędkości są zapisane w mm/s i przeliczane na in/min dla warstw."
 
+msgid ""
+"Spread three or more selected elements evenly from left to right; the "
+"leftmost and rightmost stay in place"
+msgstr ""
+"Rozmieść równo co najmniej trzy zaznaczone elementy od lewej do prawej; "
+"skrajny lewy i prawy zostają na miejscu"
+
+msgid ""
+"Spread three or more selected elements evenly from top to bottom; the top"
+" and bottom ones stay in place"
+msgstr ""
+"Rozmieść równo co najmniej trzy zaznaczone elementy od góry do dołu; "
+"skrajny górny i dolny zostają na miejscu"
+
 msgid "Start"
 msgstr "Start"
 
@@ -1385,4 +1405,10 @@ msgstr "obrys"
 #~ "Wybierz narzędzie rysowania po prawej "
 #~ "albo zaznacz narysowany kształt, aby "
 #~ "zobaczyć tu jego opcje."
+
+#~ msgid "Equal gaps from left to right (three or more elements)"
+#~ msgstr "Równe odstępy od lewej do prawej (co najmniej trzy elementy)"
+
+#~ msgid "Equal gaps from top to bottom (three or more elements)"
+#~ msgstr "Równe odstępy od góry do dołu (co najmniej trzy elementy)"
 

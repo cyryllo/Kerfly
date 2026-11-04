@@ -184,28 +184,47 @@ def align(elements, edge, frame):
 
 
 def distribute(elements, horizontal=True):
-    """Equal gaps between the elements' bounding boxes along x (horizontal) or
-    y; the first and last element (by position) stay where they are."""
+    """Spread three or more elements evenly along x (horizontal) or y.
+
+    The two outermost elements stay where they are. The ones between get
+    equal gaps between their bounding boxes. When the elements are too wide
+    for gaps (they overlap along that axis), their centres are spaced evenly
+    instead. Returns ("gap", inches) or ("centres", inches), or None for fewer
+    than three elements."""
     if len(elements) < 3:
-        return
-    if horizontal:
-        order = sorted(elements, key=lambda e: e.bounds[0])
-        span = order[-1].bounds[1] - order[0].bounds[0]
-        sizes = sum(e.size[0] for e in order)
-        gap = (span - sizes) / (len(order) - 1)
-        pos = order[0].bounds[1] + gap
+        return None
+    axis = 0 if horizontal else 1
+
+    def lo(e):                     # start along the axis (left, or top measured downwards)
+        b = e.bounds
+        return b[0] if horizontal else -b[3]
+
+    def hi(e):
+        b = e.bounds
+        return b[1] if horizontal else -b[2]
+
+    def shift(e, d):               # move forward along the axis by d
+        if horizontal:
+            e.x += d
+        else:
+            e.y -= d
+
+    order = sorted(elements, key=lambda e: (lo(e) + hi(e)) / 2.0)
+    first, last = order[0], order[-1]
+    span = hi(last) - lo(first)
+    sizes = sum(e.size[axis] for e in order)
+    gap = (span - sizes) / (len(order) - 1)
+    if gap >= 0:
+        pos = hi(first) + gap
         for e in order[1:-1]:
-            e.x += pos - e.bounds[0]
-            pos = e.bounds[1] + gap
-    else:
-        order = sorted(elements, key=lambda e: -e.bounds[3])          # from the top down
-        span = order[0].bounds[3] - order[-1].bounds[2]
-        sizes = sum(e.size[1] for e in order)
-        gap = (span - sizes) / (len(order) - 1)
-        pos = order[0].bounds[2] - gap
-        for e in order[1:-1]:
-            e.y += pos - e.bounds[3]
-            pos = e.bounds[2] - gap
+            shift(e, pos - lo(e))
+            pos = hi(e) + gap
+        return ("gap", gap)
+    c0 = (lo(first) + hi(first)) / 2.0
+    step = ((lo(last) + hi(last)) / 2.0 - c0) / (len(order) - 1)
+    for n, e in enumerate(order[1:-1], 1):
+        shift(e, c0 + n * step - (lo(e) + hi(e)) / 2.0)
+    return ("centres", step)
 
 
 BED_TOLERANCE = 0.002       # inches; rounding of positions typed in mm

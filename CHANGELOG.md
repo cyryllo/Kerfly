@@ -14,8 +14,10 @@ Version numbers:
   are rotated.
 - **Align** (new toolbar group): left, centre, right, top, middle and bottom.
   Several selected elements are aligned to each other, and a single element to
-  the bed. **Distribute** gives three or more elements equal gaps,
-  horizontally or vertically. Select several elements by dragging a frame
+  the bed. **Distribute** spreads three or more elements evenly, horizontally
+  or vertically. The outermost elements stay in place and the ones between get
+  equal gaps. Elements too wide for gaps get evenly spaced centres instead.
+  The status bar shows the result. Select several elements by dragging a frame
   around them or with Ctrl+click.
 - Toolbar: **Settings** has its own group, together with a new **Materials**
   button (material library).

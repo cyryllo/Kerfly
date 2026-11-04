@@ -425,6 +425,11 @@ def test_arrange():
     g2 = b3.bounds[0] - b2.bounds[1]
     check("distribute: equal gaps, ends stay", abs(g1 - g2) < 1e-9 and b1.x == 0.0 and b3.x == 6.0,
           "(gaps %.4f, %.4f in)" % (g1, g2))
+    c1, c2, c3 = Element(d, x=0.0, y=0.0), Element(d, x=0.5, y=-2.0), Element(d, x=3.0, y=-4.0)
+    how = distribute([c1, c2, c3], horizontal=True)          # too wide for gaps: centres spaced evenly
+    cs = [(e.bounds[0] + e.bounds[1]) / 2.0 for e in (c1, c2, c3)]
+    check("distribute overlapping elements by their centres", how[0] == "centres"
+          and abs((cs[1] - cs[0]) - (cs[2] - cs[1])) < 1e-9 and c1.x == 0.0 and c3.x == 3.0)
     return errors
 
 

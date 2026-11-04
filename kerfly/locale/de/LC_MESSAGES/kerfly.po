@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:02+0100\n"
+"POT-Creation-Date: 2026-11-04 18:06+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -387,6 +387,18 @@ msgstr "Horizontal verteilen"
 msgid "Distribute vertically"
 msgstr "Vertikal verteilen"
 
+#, python-format
+msgid "Distributed %d elements: gaps of %.2f %s between them."
+msgstr "%d Elemente verteilt: Abstände von %.2f %s dazwischen."
+
+#, python-format
+msgid ""
+"Distributed %d elements: they are too wide for gaps, so their centres are"
+" %.2f %s apart."
+msgstr ""
+"%d Elemente verteilt: zu breit für Abstände, daher liegen ihre Mitten "
+"%.2f %s auseinander."
+
 msgid "Drawing tools"
 msgstr "Zeichenwerkzeuge"
 
@@ -421,12 +433,6 @@ msgstr "Von unten nach oben gravieren"
 
 msgid "Engrave outline"
 msgstr "Kontur gravieren"
-
-msgid "Equal gaps from left to right (three or more elements)"
-msgstr "Gleiche Abstände von links nach rechts (drei oder mehr Elemente)"
-
-msgid "Equal gaps from top to bottom (three or more elements)"
-msgstr "Gleiche Abstände von oben nach unten (drei oder mehr Elemente)"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
@@ -1110,6 +1116,20 @@ msgstr ""
 "Geschwindigkeiten werden in mm/s gespeichert und für die Ebenen in in/min"
 " umgerechnet."
 
+msgid ""
+"Spread three or more selected elements evenly from left to right; the "
+"leftmost and rightmost stay in place"
+msgstr ""
+"Drei oder mehr ausgewählte Elemente gleichmäßig von links nach rechts "
+"verteilen; das linke und rechte bleiben stehen"
+
+msgid ""
+"Spread three or more selected elements evenly from top to bottom; the top"
+" and bottom ones stay in place"
+msgstr ""
+"Drei oder mehr ausgewählte Elemente gleichmäßig von oben nach unten "
+"verteilen; das obere und untere bleiben stehen"
+
 msgid "Start"
 msgstr "Start"
 
@@ -1405,4 +1425,10 @@ msgstr "Vektorgravur"
 #~ "Wählen Sie rechts ein Zeichenwerkzeug "
 #~ "oder eine gezeichnete Form, um hier "
 #~ "ihre Optionen zu sehen."
+
+#~ msgid "Equal gaps from left to right (three or more elements)"
+#~ msgstr "Gleiche Abstände von links nach rechts (drei oder mehr Elemente)"
+
+#~ msgid "Equal gaps from top to bottom (three or more elements)"
+#~ msgstr "Gleiche Abstände von oben nach unten (drei oder mehr Elemente)"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:02+0100\n"
+"POT-Creation-Date: 2026-11-04 18:06+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -387,6 +387,18 @@ msgstr "Répartir horizontalement"
 msgid "Distribute vertically"
 msgstr "Répartir verticalement"
 
+#, python-format
+msgid "Distributed %d elements: gaps of %.2f %s between them."
+msgstr "%d éléments répartis : espaces de %.2f %s entre eux."
+
+#, python-format
+msgid ""
+"Distributed %d elements: they are too wide for gaps, so their centres are"
+" %.2f %s apart."
+msgstr ""
+"%d éléments répartis : trop larges pour des espaces, leurs centres sont "
+"donc espacés de %.2f %s."
+
 msgid "Drawing tools"
 msgstr "Outils de dessin"
 
@@ -419,12 +431,6 @@ msgstr "Graver de bas en haut"
 
 msgid "Engrave outline"
 msgstr "Graver le contour"
-
-msgid "Equal gaps from left to right (three or more elements)"
-msgstr "Espaces égaux de gauche à droite (trois éléments ou plus)"
-
-msgid "Equal gaps from top to bottom (three or more elements)"
-msgstr "Espaces égaux de haut en bas (trois éléments ou plus)"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
@@ -1102,6 +1108,20 @@ msgstr ""
 "Les vitesses sont enregistrées en mm/s et converties en in/min pour les "
 "calques."
 
+msgid ""
+"Spread three or more selected elements evenly from left to right; the "
+"leftmost and rightmost stay in place"
+msgstr ""
+"Répartir uniformément trois éléments sélectionnés ou plus de gauche à "
+"droite ; ceux des extrémités restent en place"
+
+msgid ""
+"Spread three or more selected elements evenly from top to bottom; the top"
+" and bottom ones stay in place"
+msgstr ""
+"Répartir uniformément trois éléments sélectionnés ou plus de haut en bas "
+"; ceux des extrémités restent en place"
+
 msgid "Start"
 msgstr "Démarrer"
 
@@ -1397,4 +1417,10 @@ msgstr "gravure vectorielle"
 #~ "Choisissez un outil de dessin à "
 #~ "droite, ou sélectionnez une forme "
 #~ "dessinée, pour voir ses options ici."
+
+#~ msgid "Equal gaps from left to right (three or more elements)"
+#~ msgstr "Espaces égaux de gauche à droite (trois éléments ou plus)"
+
+#~ msgid "Equal gaps from top to bottom (three or more elements)"
+#~ msgstr "Espaces égaux de haut en bas (trois éléments ou plus)"
 
