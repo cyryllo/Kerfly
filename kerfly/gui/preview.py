@@ -180,6 +180,8 @@ class ElementItem(QGraphicsItem):
 
     def mousePressEvent(self, event):
         self._press_pos = self.pos()
+        self._press_screen = event.screenPos()
+        self._drag_started = False
         self._dragging = event.button() == Qt.LeftButton
         # a second click (without dragging) on a selected group picks this element alone
         self._enter_on_release = (event.button() == Qt.LeftButton and self.view.tool == "select"
@@ -190,6 +192,13 @@ class ElementItem(QGraphicsItem):
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
+        if not getattr(self, "_drag_started", True):
+            from PySide6.QtWidgets import QApplication
+            d = event.screenPos() - self._press_screen
+            if abs(d.x()) + abs(d.y()) < QApplication.startDragDistance():
+                event.accept()                   # a shaky click, not a drag
+                return
+            self._drag_started = True
         super().mouseMoveEvent(event)
         self.view.hide_handles()
 

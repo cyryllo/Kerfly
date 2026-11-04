@@ -119,6 +119,8 @@ Version numbers:
   - Click a selected group again to select only the element you clicked, and
     move, rotate or delete it alone. Dragging right away still moves the whole
     group. Clicking outside leaves the group.
+- A click with a slightly shaking mouse is a click, not a tiny drag (system
+  drag distance), so elements no longer move by accident.
 - Several selected elements (a frame drag or Ctrl+click) now move, rotate
   and mirror together, around the centre of the selection.
 - Toolbar: **Settings** has its own group, together with a new **Materials**

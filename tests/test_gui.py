@@ -978,6 +978,8 @@ def main():
     check("break apart: curves in the same place, grouped, undo", one_group and curved and same_place and back,
           "(%d parts)" % len(parts))
 
+    from PySide6.QtCore import QEvent, QPoint
+    from PySide6.QtGui import QMouseEvent
     # 34. second click on a selected group picks one element; it moves alone; clicking away leaves the group
     from PySide6.QtTest import QTest as _QT
     w = make_window(grid_mm="0")
@@ -996,7 +998,13 @@ def main():
     pa = w.preview.mapFromScene(ia.sceneBoundingRect().center())
     _QT.mouseClick(w.preview.viewport(), Qt.LeftButton, Qt.NoModifier, pa)          # first click: the group
     group_sel = len(w.preview.selected_elements()) == 2
-    _QT.mouseClick(w.preview.viewport(), Qt.LeftButton, Qt.NoModifier, pa)          # second click: inside
+    # second click with a 1-pixel shake of the hand: still a click, not a drag of the group
+    vp_ = w.preview.viewport()
+    _QT.mousePress(vp_, Qt.LeftButton, Qt.NoModifier, pa)
+    jig = pa + QPoint(1, 1)
+    QApplication.sendEvent(vp_, QMouseEvent(QEvent.MouseMove, QPointF(jig), QPointF(vp_.mapToGlobal(jig)),
+                                            Qt.NoButton, Qt.LeftButton, Qt.NoModifier))
+    _QT.mouseRelease(vp_, Qt.LeftButton, Qt.NoModifier, jig)
     inside = w.preview.selected_elements() == [a] and w._selection() == [a]
     bx2 = b.x
     w._preview_moved(a, 0.2, 0.0)
