@@ -117,6 +117,12 @@ pattern, clipped to its outline; holes stay empty.
   is a separate part on a vector engrave layer, with its own speed and power.
   Example: a coaster whose edge is cut and whose inside gets engraved waves.
   Option to leave the outline out (fill only, like the current hatch).
+- **Fill tool in the drawing tool strip on the right** (bucket icon), used like
+  a drawing tool: pick it, choose the pattern in the options bar above the bed
+  view (a row of small pattern previews plus the settings), then click a closed
+  shape to fill it. Clicking a filled shape again changes its fill; with shapes
+  already selected, choosing a pattern fills all of them. The fill of a
+  selected shape can be changed or removed later in the options bar.
 - **Options:** pattern, spacing / tile size, angle, margin from the outline,
   line width of the motif.
 - **Patterns** (more can be added later, so they are kept in a simple list):
