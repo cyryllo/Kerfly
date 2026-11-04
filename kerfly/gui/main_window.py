@@ -816,6 +816,49 @@ class MainWindow(QMainWindow):
         self.set_tool("nodes")
         self.preview.select_element(element)
 
+    def _split_pictures(self, elements, checkpoint=True):
+        """Split pictures into their separate parts (areas that do not touch),
+        each a picture element of its own in the same place. Returns the new
+        elements (none when a picture has only one part)."""
+        import tempfile
+        from kerfly.core.explode import raster_pieces
+        from kerfly.gui.preview import element_transform
+        made = []
+        folder = None
+        for e in elements:
+            image, dpi = e.design.raster.image, e.design.input_dpi or 1000.0
+            pieces = raster_pieces(image, dpi)
+            if len(pieces) < 2:
+                continue
+            if checkpoint and not made:
+                self._checkpoint()
+            folder = folder or tempfile.mkdtemp(prefix="kerfly_pieces_")
+            t = element_transform(e, self.preview.home_ur, self.preview.bed_w_mm)
+            index = self.elements.index(e)
+            new = []
+            for n, (box, piece) in enumerate(pieces, 1):
+                # stored as a PNG so projects can keep the piece like any opened picture
+                path = os.path.join(folder, "%s_%d.png" % (os.path.splitext(os.path.basename(e.name))[0] or "part", n))
+                piece.save(path, dpi=(dpi, dpi))
+                d = Design()
+                d.input_dpi = dpi
+                d.raster.set_image(piece)
+                d.bounds = (0.0, piece.width / dpi, 0.0, piece.height / dpi)
+                part = Element(d, name="%s %d" % (e.name, n), source_file=path, load_options={"dpi": dpi},
+                               rotation=e.rotation, scale_x=e.scale_x, scale_y=e.scale_y, visible=e.visible,
+                               layers=dict(e.layers))
+                cx_mm, cy_mm = t.map((box[0] + box[2]) / 2.0 / dpi * 25.4, (box[1] + box[3]) / 2.0 / dpi * 25.4)
+                if self.preview.home_ur:
+                    cx_mm = self.preview.bed_w_mm - cx_mm
+                part.set_centre(cx_mm / 25.4, -cy_mm / 25.4)
+                new.append(part)
+            self.elements[index:index + 1] = new
+            made += new
+        if made:
+            self._compiled = None
+            self._layer_cache.clear()
+        return made
+
     # ---- break apart ------------------------------------------------------
     def _curve_paths(self, e):
         """The lines of an opened SVG / DXF with their real curves, in design
@@ -1650,13 +1693,25 @@ class MainWindow(QMainWindow):
             if len(files_all) + len(groups) == 1:
                 target = files_all or [e for e in self.elements if e.group]
                 self.preview.select_element(target)
-        files = [e for e in self._selection() if splittable(e)]
-        if files and self.worker is None:              # an opened file splits into one shape per line
-            for e in self._selection():
+        selection = self._selection()
+        files = [e for e in selection if splittable(e)]
+        pictures = [e for e in selection if e.shape is None and e.design is not None
+                    and e.design.raster.image is not None]
+        if (files or pictures) and self.worker is None:
+            # an opened file splits into one shape per line, and its picture into its separate parts
+            for e in selection:
                 if e not in files and e.group:
                     e.group = ""
-            self.preview.select_element(files)
-            self.break_apart_selected(grouped=False)
+            if files:
+                self.preview.select_element(files)
+                self.break_apart_selected(grouped=False)
+            pieces = self._split_pictures([e for e in pictures if e in self.elements], checkpoint=not files)
+            if pieces:
+                self._layout_changed()
+                self.preview.select_element(pieces)
+                if not files:
+                    self.status(_("Ungrouped into %d shapes: click one to move it, double-click it to edit its "
+                                  "nodes.") % len(pieces))
             return
         chosen = [e for e in self._selection() if e.group]
         if not chosen or self.worker is not None:

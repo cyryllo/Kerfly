@@ -994,6 +994,35 @@ def main():
           len(names) >= 4 and to_outline and to_extra_cut and undone, "(%s, %s)" % (names, [to_outline, to_extra_cut, undone]))
     w.close()
 
+    # 38. Ungroup an SVG: lines become shapes, the picture splits into its separate parts, same place
+    w = make_window(grid_mm="0", use_inkscape="0")
+    w.load_design(os.path.join(FIX, "shapes.svg"))
+    src = w.elements[0]
+    src.rotation = 0.0
+    from kerfly.core.layout import compile_layout as _cl2
+
+    def dark_box(elements):
+        d, o = _cl2(elements, passthrough=False)
+        im = d.raster.image.convert("L").point(lambda v: 255 if v < 128 else 0)
+        l, t, r, b = im.getbbox()
+        dpi = d.input_dpi
+        return (o[0] + l / dpi, o[1] - t / dpi, o[0] + r / dpi, o[1] - b / dpi)
+    before = dark_box([src])
+    w.preview.select_element(src)
+    w.ungroup_selected()
+    pics = [e for e in w.elements if e.shape is None]
+    shapes = [e for e in w.elements if e.shape is not None]
+    after = dark_box(pics)
+    same = max(abs(a - b) for a, b in zip(before, after)) < 0.012          # inches (0.3 mm)
+    proj = tempfile.mktemp(suffix=".kerfly")
+    w._write_project(proj) if hasattr(w, "_write_project") else None
+    check("ungroup SVG: picture split into its parts in the same place, lines into shapes",
+          len(pics) == 3 and len(shapes) >= 4 and same, "(%d pictures, %d shapes, %s / %s)"
+          % (len(pics), len(shapes), [round(v, 3) for v in before], [round(v, 3) for v in after]))
+    w.undo()
+    check("ungroup SVG: undo gives the file back", w.elements == [src])
+    w.close()
+
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo
     w = make_window(grid_mm="0")
     w.resize(1200, 800)

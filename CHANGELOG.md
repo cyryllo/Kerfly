@@ -63,7 +63,10 @@ Version numbers:
   - Double-clicking a file that is not ungrouped explains this.
   - When a file cannot be read with its curves (for example SVG text), its
     lines become polylines, as before.
-  - The image part of an SVG stays as it was.
+  - The picture part (raster engraving) splits into its separate areas too,
+    each a picture of its own with exactly the same pixels and greys, in the
+    same place. This also works on opened pictures (PNG, JPG, ...).
+  - With nothing selected, Ungroup acts on the only opened file or group.
   - Ungroup also splits a cut or outlined text into its letters.
 - **Element list ↔ bed selection.** Selecting on the bed highlights the rows
   in the element list (also several elements or a whole group). Clicking a
