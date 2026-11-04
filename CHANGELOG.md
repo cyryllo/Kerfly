@@ -19,6 +19,14 @@ Version numbers:
   equal gaps. Elements too wide for gaps get evenly spaced centres instead.
   The status bar shows the result. Select several elements by dragging a frame
   around them or with Ctrl+click.
+- **Polyline** drawing tool (Shift+L, on the tool strip on the right):
+  - click the corners;
+  - click the first point to close the shape, or double-click / press Enter
+    to finish an open line;
+  - Backspace removes the last corner, Shift keeps 45° angles, Esc cancels.
+
+  Closed polylines can be cut, outlined or filled. Polylines are saved in
+  `.kerfly` projects.
 - Toolbar: **Settings** has its own group, together with a new **Materials**
   button (material library).
 

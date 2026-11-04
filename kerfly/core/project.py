@@ -38,6 +38,7 @@ def _layer_to_dict(layer):
 def _shape_to_dict(spec):
     d = asdict(spec)
     d["text_outlines"] = [[list(p) for p in poly] for poly in spec.text_outlines]
+    d["points"] = [list(p) for p in spec.points]
     return d
 
 
@@ -45,6 +46,7 @@ def _shape_from_dict(d):
     names = {f.name for f in fields(ShapeSpec)}
     spec = ShapeSpec(**{k: v for k, v in d.items() if k in names})
     spec.text_outlines = [[tuple(p) for p in poly] for poly in (d.get("text_outlines") or [])]
+    spec.points = [tuple(p) for p in (d.get("points") or [])]
     return spec
 
 

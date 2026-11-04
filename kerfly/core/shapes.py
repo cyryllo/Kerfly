@@ -1,5 +1,6 @@
 """
-Shapes drawn in Kerfly: rectangle, ellipse, regular polygon, line and text.
+Shapes drawn in Kerfly: rectangle, ellipse, regular polygon, line, polyline
+(open or closed) and text.
 
 A ShapeSpec describes a shape and what the laser does with it. build_design()
 turns it into a Design (the same data a loaded file produces), so drawn
@@ -25,7 +26,7 @@ from .design import Design
 MM = 25.4
 FILL_DPI = 1000.0
 
-KINDS = ("rectangle", "ellipse", "polygon", "line", "text")
+KINDS = ("rectangle", "ellipse", "polygon", "line", "polyline", "text")
 OPERATIONS = ("cut", "engrave", "fill")
 
 
@@ -45,12 +46,19 @@ class ShapeSpec:
     # text outlines (list of closed polylines, mm, y down) produced by the GUI
     # from the font; kept so the design can be rebuilt without the GUI
     text_outlines: list = field(default_factory=list)
+    # polyline: corner points (mm, y down, relative to the top-left of their
+    # bounding box) and whether the last point joins the first
+    points: list = field(default_factory=list)
+    closed_path: bool = False
 
     def copy(self):
-        return replace(self, text_outlines=[list(p) for p in self.text_outlines])
+        return replace(self, text_outlines=[list(p) for p in self.text_outlines],
+                       points=[tuple(p) for p in self.points])
 
     @property
     def closed(self):
+        if self.kind == "polyline":
+            return self.closed_path
         return self.kind != "line"
 
 
@@ -101,6 +109,11 @@ def outlines(spec):
         x0 = 0.0 if spec.width >= 0 else w
         y0 = 0.0 if spec.height >= 0 else h
         return [[(x0, y0), (x0 + spec.width, y0 + spec.height)]]
+    elif spec.kind == "polyline":
+        pts = [tuple(p) for p in spec.points]
+        if len(pts) < 2:
+            return []
+        return [pts + [pts[0]]] if spec.closed_path and len(pts) >= 3 else [pts]
     elif spec.kind == "text":
         polys = [list(p) for p in spec.text_outlines]
     else:
@@ -134,7 +147,7 @@ def build_design(spec):
     polys = outlines(spec)
     design = Design()
     xmin, xmax, ymin, ymax = _bounds_mm(polys)
-    if spec.kind == "line" and (xmax - xmin) < 1e-9 and (ymax - ymin) < 1e-9:
+    if spec.kind in ("line", "polyline") and (xmax - xmin) < 1e-9 and (ymax - ymin) < 1e-9:
         return design
     # design coordinates: inches, y up, top-left of the bounding box at (0, h)
     h_in = (ymax - ymin) / MM

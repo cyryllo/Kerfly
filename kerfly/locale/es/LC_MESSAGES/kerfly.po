@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:08+0100\n"
+"POT-Creation-Date: 2026-11-04 18:13+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -759,6 +759,9 @@ msgstr "Nuevo material"
 msgid "New polygon"
 msgstr "Nuevo polígono"
 
+msgid "New polyline"
+msgstr "Nueva polilínea"
+
 msgid "New rectangle"
 msgstr "Nuevo rectángulo"
 
@@ -856,6 +859,18 @@ msgstr "Contrachapado 4 mm"
 
 msgid "Polygon"
 msgstr "Polígono"
+
+msgid "Polyline"
+msgstr "Polilínea"
+
+msgid ""
+"Polyline: click the corners. Click the first point to close the shape; "
+"double-click or press Enter to finish an open line. Backspace removes the"
+" last corner, Shift keeps 45° angles, Esc cancels."
+msgstr ""
+"Polilínea: haz clic en las esquinas. Haz clic en el primer punto para "
+"cerrar la forma; doble clic o Intro termina una línea abierta. Retroceso "
+"quita la última esquina, Mayús mantiene ángulos de 45°, Esc cancela."
 
 msgid "Position and size"
 msgstr "Posición y tamaño"

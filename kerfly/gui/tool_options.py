@@ -18,9 +18,10 @@ from kerfly.i18n import N_, _
 
 OPERATION_NAMES = [("cut", N_("Cut")), ("engrave", N_("Engrave outline")), ("fill", N_("Fill (raster)"))]
 KIND_NAMES = {"rectangle": N_("Rectangle"), "ellipse": N_("Ellipse"), "polygon": N_("Polygon"),
-              "line": N_("Line"), "text": N_("Text")}
+              "line": N_("Line"), "polyline": N_("Polyline"), "text": N_("Text")}
 NEW_KIND_TITLES = {"rectangle": N_("New rectangle"), "ellipse": N_("New ellipse"),
-                   "polygon": N_("New polygon"), "line": N_("New line"), "text": N_("New text")}
+                   "polygon": N_("New polygon"), "line": N_("New line"),
+                   "polyline": N_("New polyline"), "text": N_("New text")}
 
 
 def ribbon_section(content, caption):

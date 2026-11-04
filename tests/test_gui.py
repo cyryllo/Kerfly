@@ -590,6 +590,46 @@ def main():
     check("arrange: align top, distribute, undo, mirror", len(set(tops)) == 1 and still_selected
           and gaps[0] == gaps[1] and undone and mirrored, "(tops %s, gaps %s)" % (tops, gaps))
 
+    # 22. polyline tool: clicks in the bed view, close on the first point; open with Enter; saved in projects
+    from PySide6.QtCore import Qt
+    from PySide6.QtTest import QTest
+    w = make_window()
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    view = w.preview
+    w.set_tool("polyline")
+
+    def click(x, y, mods=Qt.NoModifier):
+        pos = view.mapFromScene(QPointF(x, y))
+        QTest.mouseMove(view.viewport(), pos)
+        QTest.mouseClick(view.viewport(), Qt.LeftButton, mods, pos)
+        app.processEvents()
+
+    for x, y in ((50, 50), (110, 50), (80, 100)):
+        click(x, y)
+    click(50, 50)                                                      # first point again: closes
+    closed_el = w.elements[-1] if w.elements else None
+    closed_ok = (closed_el is not None and closed_el.shape.kind == "polyline" and closed_el.shape.closed_path
+                 and len(closed_el.shape.points) == 3 and abs(closed_el.size[0] * 25.4 - 60) < 0.5)
+    w.set_tool("polyline")
+    for x, y in ((150, 40), (190, 40), (190, 90)):
+        click(x, y)
+    QTest.keyClick(view.viewport(), Qt.Key_Return)
+    app.processEvents()
+    open_el = w.elements[-1]
+    open_ok = (open_el is not closed_el and not open_el.shape.closed_path and len(open_el.shape.points) == 3
+               and open_el.design.vector_cut.ecoords)
+    proj = tempfile.mktemp(suffix=".kerfly")
+    from kerfly.core import project as _project
+    _project.save_project(proj, w.elements, w.layers)
+    data, _folder = _project.read_project(proj)
+    reread = _project.shape_from_item(data["elements"][0])
+    check("polyline: click corners, close on the first point, Enter for open, saved in project",
+          closed_ok and open_ok and reread.points == closed_el.shape.points and reread.closed_path,
+          "(%d elements)" % len(w.elements))
+    w.close()
+
     # 20. diagnostic log and report
     from kerfly.core import diag as _diag
     _diag.setup("test")

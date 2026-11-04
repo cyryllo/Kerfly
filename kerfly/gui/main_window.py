@@ -121,9 +121,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         self.shape_defaults = {kind: ShapeSpec(kind=kind, operation="fill" if kind == "text" else "cut",
                                                text=_("Text"))
-                               for kind in ("rectangle", "ellipse", "polygon", "line", "text")}
+                               for kind in ("rectangle", "ellipse", "polygon", "line", "polyline", "text")}
         self.preview.signals.drawn.connect(self._preview_drawn)
         self.preview.signals.selected.connect(self._preview_selected)
+        self.preview.signals.polyline_drawn.connect(self._preview_polyline_drawn)
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
         self.preview.signals.rotated.connect(self._preview_rotated)
@@ -408,6 +409,7 @@ class MainWindow(QMainWindow):
                  ("ellipse", "circle", N_("Ellipse"), "E"),
                  ("polygon", "hexagon", N_("Polygon"), "P"),
                  ("line", "line", N_("Line"), "L"),
+                 ("polyline", "polygon", N_("Polyline"), "Shift+L"),
                  ("text", "typography", N_("Text"), "T")]
         for key, icon, name, shortcut in tools:
             act = QAction(icons.tabler(icon), _(name), self)
@@ -426,6 +428,10 @@ class MainWindow(QMainWindow):
     def set_tool(self, tool):
         self.preview.set_tool(tool)
         self.tool_actions[tool].setChecked(True)
+        if tool == "polyline":
+            self.status(_("Polyline: click the corners. Click the first point to close the shape; double-click or "
+                          "press Enter to finish an open line. Backspace removes the last corner, Shift keeps "
+                          "45\u00b0 angles, Esc cancels."))
         if tool != "select":
             self.preview.setFocus()
         self._update_tool_options()
@@ -494,6 +500,21 @@ class MainWindow(QMainWindow):
                 dx, dy = (side if dx >= 0 else -side), (side if dy >= 0 else -side)
             spec.width, spec.height = abs(dx), abs(dy)
             left, top = min(start.x(), start.x() + dx), min(start.y(), start.y() + dy)
+        self._add_drawn_element(spec, tool, left, top)
+
+    def _preview_polyline_drawn(self, points, closed):
+        """A polyline was drawn (scene mm, y down)."""
+        xs, ys = [p.x() for p in points], [p.y() for p in points]
+        left, top = min(xs), min(ys)
+        spec = self.shape_defaults["polyline"].copy()
+        spec.points = [(p.x() - left, p.y() - top) for p in points]
+        spec.closed_path = bool(closed)
+        spec.width, spec.height = max(xs) - left, max(ys) - top
+        if not spec.closed and spec.operation == "fill":
+            spec.operation = "cut"                         # an open line has no area to fill
+        self._add_drawn_element(spec, "polyline", left, top)
+
+    def _add_drawn_element(self, spec, tool, left, top):
         design = build_design(spec)
         xmin, xmax, ymin, ymax = design.bounds
         if xmax - xmin <= 0 and ymax - ymin <= 0:
@@ -1500,7 +1521,7 @@ class MainWindow(QMainWindow):
             def again():
                 self._fit_again_pending = False
                 self._fit_panel_width()
-            QTimer.singleShot(0, again)
+            QTimer.singleShot(0, self, again)
         if getattr(self, "_shown_once", False) and getattr(self, "_panel_width", 0) > 0:
             if width <= self._panel_width:
                 return
@@ -1512,7 +1533,7 @@ class MainWindow(QMainWindow):
             if self.centralWidget() is not None:
                 self.centralWidget().update()
         if self.isVisible():
-            QTimer.singleShot(0, self._fit_window_height)
+            QTimer.singleShot(0, self, self._fit_window_height)
 
     def _fit_window_height(self):
         """Grow the window so the whole job panel fits without scrolling
@@ -1563,8 +1584,8 @@ class MainWindow(QMainWindow):
         super().showEvent(event)
         if not getattr(self, "_shown_once", False):
             self._shown_once = True
-            QTimer.singleShot(0, self._fit_panel_width)     # layout is final only once shown
-            QTimer.singleShot(0, self._fit_window_height)
+            QTimer.singleShot(0, self, self._fit_panel_width)     # layout is final only once shown
+            QTimer.singleShot(0, self, self._fit_window_height)
 
     def _update_unit_suffixes(self):
         units = self.values.get("units", "mm")

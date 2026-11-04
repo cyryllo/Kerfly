@@ -269,6 +269,16 @@ def test_shapes():
     settings = JobSettings()
     raster.make_raster_coords(d, settings)
     check("filled shape gives a raster job", len(job.build_job(d, settings, "Raster_Eng")[0].data) > 100)
+    tri = [(0.0, 0.0), (30.0, 0.0), (15.0, 20.0)]
+    closed = build_design(ShapeSpec(kind="polyline", points=tri, closed_path=True))
+    opened = build_design(ShapeSpec(kind="polyline", points=tri, closed_path=False))
+    filled = build_design(ShapeSpec(kind="polyline", points=tri, closed_path=True, operation="fill"))
+    no_fill_open = build_design(ShapeSpec(kind="polyline", points=tri, closed_path=False, operation="fill"))
+    check("polyline: closed has 3 sides, open 2, closed can be filled, open cannot",
+          len(closed.vector_cut.ecoords) == 4 and len(opened.vector_cut.ecoords) == 3
+          and filled.raster.image is not None and no_fill_open.raster.image is None
+          and abs(size_mm(closed)[0] - 30) < 1e-6 and abs(size_mm(closed)[1] - 20) < 1e-6,
+          "(points: closed %d, open %d)" % (len(closed.vector_cut.ecoords), len(opened.vector_cut.ecoords)))
     return errors
 
 

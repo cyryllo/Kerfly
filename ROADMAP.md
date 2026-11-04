@@ -86,7 +86,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 |---|---|
 | ~~Rectangle (also rounded)~~ (done) | `toolrect.py` |
 | ~~Ellipse, circle~~ (done) | `toolellipse.py`, `toolcircle.py` |
-| ~~Line, regular polygon~~ (done); polyline, free polygon | `toolline.py`, `toolpolyline.py`, `toolpolygon.py` |
+| ~~Line, regular polygon, polyline / free polygon~~ (done) | `toolline.py`, `toolpolyline.py`, `toolpolygon.py` |
 | Freehand drawing | `tooldraw.py` |
 | Bezier / vector path | `toolvector.py` |
 | ~~Text (system fonts)~~ (done); text on a path | `tooltext.py`, `toollinetext.py` |

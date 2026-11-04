@@ -54,6 +54,7 @@ class ViewSignals(QObject):
     rotated = Signal(object, float)             # element, degrees counter-clockwise
     nudged = Signal(object, float, float)       # element, dx, dy in mm (screen right / up)
     drawn = Signal(str, QPointF, QPointF, bool)  # tool, start, end (scene mm), shift held
+    polyline_drawn = Signal(list, bool)           # corner points (scene mm), closed
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -246,6 +247,7 @@ class PreviewView(QGraphicsView):
         self.tool = "select"        # or a shape kind: rectangle, ellipse, polygon, line, text
         self._draw_start = None
         self._draw_item = None
+        self._poly_points = []      # polyline being drawn (scene mm)
         self._pixmaps = {}          # (id(design), id(image), negate, halftone) -> (pixmap, scale)
         self._items = []
         self._handles = []
@@ -262,6 +264,7 @@ class PreviewView(QGraphicsView):
             self.scale(factor, factor)
 
     def set_tool(self, tool):
+        self._clear_polyline()
         self.tool = tool
         drawing = tool != "select"
         self.setDragMode(QGraphicsView.NoDrag if drawing else QGraphicsView.RubberBandDrag)
@@ -293,7 +296,78 @@ class PreviewView(QGraphicsView):
             self._draw_item = self.scene().addRect(rect, pen)
         self._draw_item.setZValue(30)
 
+    # ---- polyline: click corners; click the first point to close, double-click
+    # or Enter to finish open; Backspace removes the last corner; Shift: 45 degrees
+    def _clear_polyline(self):
+        self._poly_points = []
+        if self._draw_item is not None:
+            self.scene().removeItem(self._draw_item)
+            self._draw_item = None
+
+    def _poly_constrained(self, p, shift):
+        if not shift or not self._poly_points:
+            return p
+        last = self._poly_points[-1]
+        dx, dy = p.x() - last.x(), p.y() - last.y()
+        angle = round(math.atan2(dy, dx) / (math.pi / 4)) * (math.pi / 4)
+        length = math.hypot(dx, dy)
+        return QPointF(last.x() + length * math.cos(angle), last.y() + length * math.sin(angle))
+
+    def _near_first_point(self, p):
+        if len(self._poly_points) < 3:
+            return False
+        a = self.mapFromScene(self._poly_points[0])
+        b = self.mapFromScene(p)
+        return abs(a.x() - b.x()) <= 8 and abs(a.y() - b.y()) <= 8
+
+    def _draw_polyline_item(self, cursor=None):
+        if self._draw_item is not None:
+            self.scene().removeItem(self._draw_item)
+            self._draw_item = None
+        pts = list(self._poly_points) + ([cursor] if cursor is not None else [])
+        if not pts:
+            return
+        path = QPainterPath(pts[0])
+        for q in pts[1:]:
+            path.lineTo(q)
+        closing = cursor is not None and self._near_first_point(cursor)
+        pen = _cosmetic_pen(COLORS["cut"] if closing else COLORS["selection"], 1.4 if closing else 1.2,
+                            Qt.SolidLine if closing else Qt.DashLine)
+        self._draw_item = self.scene().addPath(path, pen)
+        self._draw_item.setZValue(30)
+        for q in self._poly_points[:1]:        # mark the start: click it to close the shape
+            dot = QGraphicsEllipseItem(-4, -4, 8, 8, self._draw_item)
+            dot.setPen(pen)
+            dot.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
+            dot.setPos(q)
+
+    def _finish_polyline(self, closed):
+        pts = []
+        for q in self._poly_points:
+            if not pts or abs(q.x() - pts[-1].x()) > 1e-6 or abs(q.y() - pts[-1].y()) > 1e-6:
+                pts.append(q)
+        self._clear_polyline()
+        if len(pts) >= (3 if closed else 2):
+            self.signals.polyline_drawn.emit(pts, closed)
+
+    def mouseDoubleClickEvent(self, event):
+        if self.tool == "polyline" and event.button() == Qt.LeftButton:
+            self._finish_polyline(False)
+            event.accept()
+            return
+        super().mouseDoubleClickEvent(event)
+
     def mousePressEvent(self, event):
+        if self.tool == "polyline" and event.button() == Qt.LeftButton:
+            p = self._snap_point(self.mapToScene(event.position().toPoint()))
+            p = self._poly_constrained(p, bool(event.modifiers() & Qt.ShiftModifier))
+            if self._near_first_point(p):
+                self._finish_polyline(True)
+            else:
+                self._poly_points.append(p)
+                self._draw_polyline_item()
+            event.accept()
+            return
         if self.tool != "select" and event.button() == Qt.LeftButton:
             self._draw_start = self._snap_point(self.mapToScene(event.position().toPoint()))
             event.accept()
@@ -306,6 +380,11 @@ class PreviewView(QGraphicsView):
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
+        if self.tool == "polyline" and self._poly_points:
+            p = self._snap_point(self.mapToScene(event.position().toPoint()))
+            self._draw_polyline_item(self._poly_constrained(p, bool(event.modifiers() & Qt.ShiftModifier)))
+            event.accept()
+            return
         if self._draw_start is not None:
             end = self._snap_point(self.mapToScene(event.position().toPoint()))
             if self.tool != "text":
@@ -342,6 +421,20 @@ class PreviewView(QGraphicsView):
     def keyPressEvent(self, event):
         """Arrow keys move the selected element (1 mm or one grid step; Shift: 10x).
         Escape leaves a drawing tool."""
+        if self.tool == "polyline" and self._poly_points:
+            if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+                self._finish_polyline(False)
+                event.accept()
+                return
+            if event.key() == Qt.Key_Backspace:
+                self._poly_points.pop()
+                self._draw_polyline_item()
+                event.accept()
+                return
+            if event.key() == Qt.Key_Escape:
+                self._clear_polyline()            # first Escape drops the unfinished shape
+                event.accept()
+                return
         if event.key() == Qt.Key_Escape and self.tool != "select":
             self.signals.drawn.emit("cancel", QPointF(), QPointF(), False)
             event.accept()
