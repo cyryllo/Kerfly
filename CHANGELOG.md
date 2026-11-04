@@ -36,6 +36,10 @@ Version numbers:
     lines become polylines, as before;
   - the image part of an SVG stays as it was;
   - texts can be broken apart as well.
+- **Combine shapes** (new Shapes toolbar group, Edit → Combine shapes):
+  union, difference (the first selected shape minus the others), intersection
+  and exclusion of the closed outlines of two or more selected shapes. The
+  result is one path that keeps the first shape's operation and layer.
 - `start_kerfly.bat` / `start_kerfly.sh` install libraries added in an
   update. New: `svgelements`.
 

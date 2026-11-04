@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 19:48+0100\n"
+"POT-Creation-Date: 2026-11-04 19:53+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -299,6 +299,9 @@ msgstr "Fermer / ouvrir"
 msgid "Close an open path, or open a closed one"
 msgstr "Fermer un chemin ouvert ou ouvrir un chemin fermé"
 
+msgid "Combine shapes"
+msgstr "Combiner les formes"
+
 msgid "Connect to the laser"
 msgstr "Connecter le laser"
 
@@ -411,6 +414,12 @@ msgstr "Import du dessin"
 msgid "Diagnostic report saved: %s"
 msgstr "Rapport de diagnostic enregistré : %s"
 
+msgid "Difference"
+msgstr "Différence"
+
+msgid "Difference: cut the other selected shapes out of the first one"
+msgstr "Différence : découper les autres formes sélectionnées dans la première"
+
 msgid "Distance down from home"
 msgstr "Distance vers le bas depuis l'origine"
 
@@ -495,6 +504,12 @@ msgid ""
 msgstr ""
 "Valeurs de départ d'exemple pour un K40 typique de 40 W ; testez d'abord "
 "sur une chute."
+
+msgid "Exclusion"
+msgstr "Exclusion"
+
+msgid "Exclusion: keep where the shapes do not overlap"
+msgstr "Exclusion : garder là où les formes ne se chevauchent pas"
 
 msgid "Export material library"
 msgstr "Exporter la bibliothèque de matériaux"
@@ -629,6 +644,12 @@ msgstr "Insérer"
 
 msgid "Insert a node after the selected one"
 msgstr "Insérer un nœud après celui sélectionné"
+
+msgid "Intersection"
+msgstr "Intersection"
+
+msgid "Intersection: keep only where the selected shapes overlap"
+msgstr "Intersection : garder seulement là où les formes se chevauchent"
 
 #, python-format
 msgid "Invalid value for setting '%s': %r"
@@ -868,6 +889,9 @@ msgstr "Nœuds"
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notes (par ex. fournisseur, lentille, soufflage)"
+
+msgid "Nothing is left of the shapes after this operation."
+msgstr "Il ne reste rien des formes après cette opération."
 
 msgid "Nothing to do: load a design and select at least one operation."
 msgstr "Rien à faire : chargez un dessin et sélectionnez au moins une opération."
@@ -1187,6 +1211,9 @@ msgstr "Sélectionnez au moins trois éléments pour les répartir."
 msgid "Select two or more elements to group them."
 msgstr "Sélectionnez au moins deux éléments pour les grouper."
 
+msgid "Select two or more shapes with closed outlines."
+msgstr "Sélectionnez au moins deux formes aux contours fermés."
+
 msgid "Send EGV file"
 msgstr "Envoyer le fichier EGV"
 
@@ -1223,6 +1250,10 @@ msgstr ""
 #, python-format
 msgid "Settings saved to %s"
 msgstr "Paramètres enregistrés dans %s"
+
+msgctxt "toolbar group"
+msgid "Shapes"
+msgstr "Formes"
 
 msgid "Sides"
 msgstr "Côtés"
@@ -1485,6 +1516,12 @@ msgstr "Laser débloqué"
 msgctxt "toolbar"
 msgid "Ungroup"
 msgstr "Dégrouper"
+
+msgid "Union"
+msgstr "Union"
+
+msgid "Union: join the selected shapes into one outline"
+msgstr "Union : réunir les formes sélectionnées en un seul contour"
 
 msgid "Units"
 msgstr "Unités"

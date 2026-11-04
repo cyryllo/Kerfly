@@ -759,6 +759,31 @@ def main():
           pen_ok and buttons_ok and len(names) >= 8 and saved_ok, "(%s)" % [pen_ok, buttons_ok, len(names), saved_ok])
     w.close()
 
+    # 28. combine shapes: union, difference (hole), intersection, exclusion
+    def two_squares(w):
+        for e in list(w.elements):
+            w.elements.remove(e)
+        w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)    # 40 x 40
+        w._preview_drawn("rectangle", QPointF(40, 40), QPointF(80, 80), False)    # overlaps 20 x 20
+        w.preview.select_element(w.elements[-2:])
+    w = make_window(grid_mm="0")
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    sizes = {}
+    for op in ("union", "difference", "intersection", "exclusion"):
+        two_squares(w)
+        w.boolean_selected(op)
+        e = w.elements[-1]
+        sizes[op] = (len(w.elements), round(e.size[0] * 25.4, 3), round(e.size[1] * 25.4, 3),
+                     len(e.shape.subpaths), e.shape.kind)
+    ok = (sizes["union"][:4] == (1, 60.0, 60.0, 1) and sizes["difference"][:3] == (1, 40.0, 40.0)
+          and sizes["intersection"][:4] == (1, 20.0, 20.0, 1) and sizes["exclusion"][1:3] == (60.0, 60.0)
+          and all(v[4] == "path" for v in sizes.values()))
+    w.undo()
+    check("combine shapes: union, difference, intersection, exclusion", ok and len(w.elements) == 2, str(sizes))
+    w.close()
+
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo
     w = make_window(grid_mm="0")
     w.resize(1200, 800)

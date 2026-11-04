@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 19:48+0100\n"
+"POT-Creation-Date: 2026-11-04 19:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -286,6 +286,9 @@ msgstr ""
 msgid "Close an open path, or open a closed one"
 msgstr ""
 
+msgid "Combine shapes"
+msgstr ""
+
 msgid "Connect to the laser"
 msgstr ""
 
@@ -394,6 +397,12 @@ msgstr ""
 msgid "Diagnostic report saved: %s"
 msgstr ""
 
+msgid "Difference"
+msgstr ""
+
+msgid "Difference: cut the other selected shapes out of the first one"
+msgstr ""
+
 msgid "Distance down from home"
 msgstr ""
 
@@ -469,6 +478,12 @@ msgstr ""
 msgid ""
 "Example starting values for a typical 40 W K40; test on a scrap piece "
 "first."
+msgstr ""
+
+msgid "Exclusion"
+msgstr ""
+
+msgid "Exclusion: keep where the shapes do not overlap"
 msgstr ""
 
 msgid "Export material library"
@@ -601,6 +616,12 @@ msgid "Insert"
 msgstr ""
 
 msgid "Insert a node after the selected one"
+msgstr ""
+
+msgid "Intersection"
+msgstr ""
+
+msgid "Intersection: keep only where the selected shapes overlap"
 msgstr ""
 
 #, python-format
@@ -832,6 +853,9 @@ msgid "Nodes"
 msgstr ""
 
 msgid "Notes (e.g. supplier, lens, air assist)"
+msgstr ""
+
+msgid "Nothing is left of the shapes after this operation."
 msgstr ""
 
 msgid "Nothing to do: load a design and select at least one operation."
@@ -1126,6 +1150,9 @@ msgstr ""
 msgid "Select two or more elements to group them."
 msgstr ""
 
+msgid "Select two or more shapes with closed outlines."
+msgstr ""
+
 msgid "Send EGV file"
 msgstr ""
 
@@ -1159,6 +1186,10 @@ msgstr ""
 
 #, python-format
 msgid "Settings saved to %s"
+msgstr ""
+
+msgctxt "toolbar group"
+msgid "Shapes"
 msgstr ""
 
 msgid "Sides"
@@ -1385,6 +1416,12 @@ msgstr ""
 
 msgctxt "toolbar"
 msgid "Ungroup"
+msgstr ""
+
+msgid "Union"
+msgstr ""
+
+msgid "Union: join the selected shapes into one outline"
 msgstr ""
 
 msgid "Units"

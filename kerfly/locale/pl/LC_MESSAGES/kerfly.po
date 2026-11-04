@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 19:48+0100\n"
+"POT-Creation-Date: 2026-11-04 19:53+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -297,6 +297,9 @@ msgstr "Zamknij / otwórz"
 msgid "Close an open path, or open a closed one"
 msgstr "Zamknij otwartą ścieżkę albo otwórz zamkniętą"
 
+msgid "Combine shapes"
+msgstr "Łącz kształty"
+
 msgid "Connect to the laser"
 msgstr "Połącz z laserem"
 
@@ -405,6 +408,12 @@ msgstr "Import projektu"
 msgid "Diagnostic report saved: %s"
 msgstr "Zapisano raport diagnostyczny: %s"
 
+msgid "Difference"
+msgstr "Różnica"
+
+msgid "Difference: cut the other selected shapes out of the first one"
+msgstr "Różnica: wytnij pozostałe zaznaczone kształty z pierwszego"
+
 msgid "Distance down from home"
 msgstr "Odległość w dół od pozycji bazowej"
 
@@ -489,6 +498,12 @@ msgid ""
 msgstr ""
 "Przykładowe wartości startowe dla typowego K40 40 W; najpierw sprawdź na "
 "skrawku materiału."
+
+msgid "Exclusion"
+msgstr "Wykluczenie"
+
+msgid "Exclusion: keep where the shapes do not overlap"
+msgstr "Wykluczenie: zostaw to, gdzie kształty się nie nakładają"
 
 msgid "Export material library"
 msgstr "Eksport bazy materiałów"
@@ -623,6 +638,12 @@ msgstr "Wstaw"
 
 msgid "Insert a node after the selected one"
 msgstr "Wstaw węzeł za zaznaczonym"
+
+msgid "Intersection"
+msgstr "Część wspólna"
+
+msgid "Intersection: keep only where the selected shapes overlap"
+msgstr "Część wspólna: zostaw tylko miejsce, gdzie kształty się nakładają"
 
 #, python-format
 msgid "Invalid value for setting '%s': %r"
@@ -860,6 +881,9 @@ msgstr "Węzły"
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notatki (np. dostawca, soczewka, nadmuch)"
+
+msgid "Nothing is left of the shapes after this operation."
+msgstr "Po tej operacji z kształtów nic nie zostaje."
 
 msgid "Nothing to do: load a design and select at least one operation."
 msgstr "Nic do zrobienia: wczytaj projekt i zaznacz co najmniej jedną operację."
@@ -1174,6 +1198,9 @@ msgstr "Zaznacz co najmniej trzy elementy, aby je rozłożyć."
 msgid "Select two or more elements to group them."
 msgstr "Zaznacz co najmniej dwa elementy, aby je zgrupować."
 
+msgid "Select two or more shapes with closed outlines."
+msgstr "Zaznacz co najmniej dwa kształty o zamkniętym obrysie."
+
 msgid "Send EGV file"
 msgstr "Wyślij plik EGV"
 
@@ -1210,6 +1237,10 @@ msgstr ""
 #, python-format
 msgid "Settings saved to %s"
 msgstr "Zapisano ustawienia w %s"
+
+msgctxt "toolbar group"
+msgid "Shapes"
+msgstr "Kształty"
 
 msgid "Sides"
 msgstr "Boki"
@@ -1468,6 +1499,12 @@ msgstr "Laser odmrożony"
 msgctxt "toolbar"
 msgid "Ungroup"
 msgstr "Rozgrupuj"
+
+msgid "Union"
+msgstr "Suma"
+
+msgid "Union: join the selected shapes into one outline"
+msgstr "Suma: połącz zaznaczone kształty w jeden obrys"
 
 msgid "Units"
 msgstr "Jednostki"

@@ -105,7 +105,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Image adjustments (contrast, sharpen, crop, split) | `image/imagetools.py`, `extra/imageactions.py`, `gui/imagesplitter.py` |
 | Bitmap to vector (trace) | `extra/potrace.py`, `extra/vtracer.py`, `extra/vectrace.py` |
 | Path offset (kerf compensation) | `core/elements/offset_clpr.py`, `offset_mk.py` |
-| Boolean operations on shapes | `tools/polybool.py`, `extra/cag.py` |
+| ~~Boolean operations on shapes~~ (done: union, difference, intersection, exclusion) | `tools/polybool.py`, `extra/cag.py` |
 | Kerf test and material test generators (material test: planned after the first laser test) | `tools/kerftest.py`, `gui/materialtest.py` |
 
 ## Packaging (later)

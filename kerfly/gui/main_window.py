@@ -191,6 +191,13 @@ class MainWindow(QMainWindow):
                                         "as one"))
         self.act_ungroup = self._action(_("U&ngroup"), self.ungroup_selected, "Ctrl+Alt+G",
                                         _("Split the selected group into separate elements"))
+        self.act_boolean = {}
+        for code, tip in (("union", N_("Union: join the selected shapes into one outline")),
+                          ("difference", N_("Difference: cut the other selected shapes out of the first one")),
+                          ("intersection", N_("Intersection: keep only where the selected shapes overlap")),
+                          ("exclusion", N_("Exclusion: keep where the shapes do not overlap"))):
+            self.act_boolean[code] = self._action(_(self.BOOLEAN_NAMES[code]),
+                                                  lambda _c=False, k=code: self.boolean_selected(k), None, _(tip))
         self.act_break = self._action(_("&Break apart"), self.break_apart_selected, "Ctrl+Shift+B",
                                       _("Turn every line of an opened SVG / DXF file or a text into its own "
                                         "shape with editable nodes"))
@@ -257,6 +264,9 @@ class MainWindow(QMainWindow):
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v, None,
                   self.act_group, self.act_ungroup, self.act_break, None, self.act_center, self.act_place_head):
             m.addSeparator() if a is None else m.addAction(a)
+        sub2 = m.addMenu(_("Combine shapes"))
+        for a in self.act_boolean.values():
+            sub2.addAction(a)
         sub = m.addMenu(_("Align and distribute"))
         for a in list(self.act_align.values()) + [None, self.act_distribute_h, self.act_distribute_v]:
             sub.addSeparator() if a is None else sub.addAction(a)
@@ -339,6 +349,12 @@ class MainWindow(QMainWindow):
                 (self.act_align["vcenter"], "layout-align-middle"),
                 (self.act_align["bottom"], "layout-align-bottom"),
                 (self.act_distribute_v, "layout-distribute-horizontal"),
+            ]),
+            (C_("toolbar group", "Shapes"), "grid", [
+                (self.act_boolean["union"], "layers-union"),
+                (self.act_boolean["difference"], "layers-subtract"),
+                (self.act_boolean["intersection"], "layers-intersect-2"),
+                (self.act_boolean["exclusion"], "layers-difference"),
             ]),
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
@@ -666,6 +682,76 @@ class MainWindow(QMainWindow):
         self._layout_changed()
         self.preview.select_element(element)
         self._update_tool_options(force=True)        # now a path: no more "sides" or "radius"
+
+    # ---- boolean operations on shapes ------------------------------------
+    BOOLEAN_NAMES = {"union": N_("Union"), "difference": N_("Difference"),
+                     "intersection": N_("Intersection"), "exclusion": N_("Exclusion")}
+
+    def boolean_selected(self, op):
+        """Combine the closed outlines of the selected elements into one shape:
+        union, difference (the first minus the others), intersection or
+        exclusion (where an odd number of them overlap)."""
+        from PySide6.QtCore import QPointF
+        from PySide6.QtGui import QPainterPath
+        from kerfly.core.curves import from_polylines
+        chosen = self._selection()
+        items = {id(i.element): i for i in self.preview._items}
+        parts = []
+        for e in chosen:
+            item = items.get(id(e))
+            if item is None:
+                continue
+            t = item.sceneTransform()
+            path = QPainterPath()
+            path.setFillRule(Qt.OddEvenFill)
+            for poly in item.local_polys:
+                if len(poly) >= 4 and abs(poly[0][0] - poly[-1][0]) < 1e-6 and abs(poly[0][1] - poly[-1][1]) < 1e-6:
+                    pts = [QPointF(*t.map(x, y)) for x, y in poly]
+                    path.moveTo(pts[0])
+                    for q in pts[1:]:
+                        path.lineTo(q)
+                    path.closeSubpath()
+            if not path.isEmpty():
+                parts.append((e, path))
+        if len(parts) < 2 or self.worker is not None:
+            self.status(_("Select two or more shapes with closed outlines."), error=True)
+            return
+        result = parts[0][1]
+        for _e, path in parts[1:]:
+            if op == "union":
+                result = result.united(path)
+            elif op == "difference":
+                result = result.subtracted(path)
+            elif op == "intersection":
+                result = result.intersected(path)
+            else:
+                result = result.united(path).subtracted(result.intersected(path))
+        polys = []
+        for poly in result.simplified().toSubpathPolygons():
+            pts = [(p.x(), p.y()) for p in poly]
+            if len(pts) > 1 and pts[0] == pts[-1]:
+                pts = pts[:-1]
+            if len(pts) >= 3:
+                polys.append(pts)
+        if not polys:
+            self.status(_("Nothing is left of the shapes after this operation."), error=True)
+            return
+        first = parts[0][0]
+        op_kind = first.shape.operation if first.shape is not None else "cut"
+        new = Element(Design(), name=_(self.BOOLEAN_NAMES[op]), visible=first.visible)
+        if not self._fit_path(new, from_polylines(polys, [True] * len(polys)), ShapeSpec(kind="path", operation=op_kind)):
+            self.status(_("Nothing is left of the shapes after this operation."), error=True)
+            return
+        new.layers = dict(first.layers)
+        self._checkpoint()
+        index = self.elements.index(first)
+        for e, _p in parts:
+            self.elements.remove(e)
+        self.elements.insert(min(index, len(self.elements)), new)
+        self.selected = new
+        self._compiled = None
+        self._layer_cache.clear()
+        self._layout_changed()
 
     # ---- break apart ------------------------------------------------------
     def _curve_paths(self, e):
@@ -1980,7 +2066,7 @@ class MainWindow(QMainWindow):
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v,
                   self.act_group, self.act_ungroup, self.act_break, self.act_distribute_h, self.act_distribute_v, self.act_place_head, self.act_undo,
                   self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()) \
-                + list(self.act_align.values()):
+                + list(self.act_align.values()) + list(self.act_boolean.values()):
             a.setEnabled(not busy)
         self.btn_stop.setEnabled(busy)
         self.act_stop.setEnabled(busy)
