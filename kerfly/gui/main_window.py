@@ -29,8 +29,8 @@ from kerfly.core import project as project_io
 from kerfly.core.layers import (CUT, ENGRAVE, EXTRA_COLORS, GCODE, KINDS, RASTER, Layer, layer_of,
                                 layer_times, part_present)
 from kerfly.core.diag import log as diag_log
-from kerfly.core.layout import (Element, align, compile_layout, distribute, mirror, on_bed,
-                                selection_bounds)
+from kerfly.core.layout import (Element, align, compile_layout, distribute, mirror, mirror_about, on_bed,
+                                rotate_about, selection_bounds, units)
 from kerfly.core.shapes import ShapeSpec, build_design, outlines
 from kerfly.gui import icons
 from kerfly.gui.image_dialog import ImageSizeDialog
@@ -182,6 +182,11 @@ class MainWindow(QMainWindow):
                                          lambda: self.rotate_selected(90), "Ctrl+L")
         self.act_rot_right = self._action(_("Rotate 90° clockwise"),
                                           lambda: self.rotate_selected(-90), "Ctrl+R")
+        self.act_group = self._action(_("&Group"), self.group_selected, "Ctrl+Shift+G",
+                                      _("Join the selected elements into a group that is selected and moved "
+                                        "as one"))
+        self.act_ungroup = self._action(_("U&ngroup"), self.ungroup_selected, "Ctrl+Alt+G",
+                                        _("Split the selected group into separate elements"))
         self.act_mirror_h = self._action(_("&Mirror horizontally"), lambda: self.mirror_selected(True), "Ctrl+Shift+H",
                                          _("Flip the selected elements left to right"))
         self.act_mirror_v = self._action(_("Mirror &vertically"), lambda: self.mirror_selected(False), "Ctrl+Shift+V",
@@ -243,7 +248,7 @@ class MainWindow(QMainWindow):
         m = mb.addMenu(_("&Edit"))
         for a in (self.act_undo, self.act_redo, None, self.act_duplicate, self.act_delete, None,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v, None,
-                  self.act_center, self.act_place_head):
+                  self.act_group, self.act_ungroup, None, self.act_center, self.act_place_head):
             m.addSeparator() if a is None else m.addAction(a)
         sub = m.addMenu(_("Align and distribute"))
         for a in list(self.act_align.values()) + [None, self.act_distribute_h, self.act_distribute_v]:
@@ -312,6 +317,8 @@ class MainWindow(QMainWindow):
                 (self.act_rot_right, "rotate-clockwise-2", C_("toolbar", "Rotate right")),
                 (self.act_mirror_h, "flip-horizontal", C_("toolbar", "Mirror\nhorizontal")),
                 (self.act_mirror_v, "flip-vertical", C_("toolbar", "Mirror\nvertical")),
+                (self.act_group, "squares-selected", C_("toolbar", "Group")),
+                (self.act_ungroup, "squares", C_("toolbar", "Ungroup")),
                 (self.act_center, "focus-centered", C_("toolbar", "Centre")),
                 (self.act_place_head, "current-location", C_("toolbar", "To head")),
             ]),
@@ -1019,7 +1026,7 @@ class MainWindow(QMainWindow):
     def _snapshot(self):
         return (list(self.elements),
                 [(e.placement(), e.design, e.shape.copy() if e.shape is not None else None,
-                  dict(e.layers)) for e in self.elements],
+                  dict(e.layers), e.group) for e in self.elements],
                 self.selected)
 
     def _checkpoint(self):
@@ -1032,11 +1039,12 @@ class MainWindow(QMainWindow):
     def _restore(self, snap):
         elements, states, selected = snap
         self.elements = list(elements)
-        for e, (placement, design, shape, layers) in zip(self.elements, states):
+        for e, (placement, design, shape, layers, group) in zip(self.elements, states):
             e.set_placement(placement)
             e.design = design
             e.shape = shape
             e.layers = layers
+            e.group = group
         self.selected = selected if selected in self.elements else None
         self._compiled = None
         self._layout_changed()
@@ -1088,8 +1096,12 @@ class MainWindow(QMainWindow):
         lst = self.element_list
         lst.blockSignals(True)
         lst.clear()
+        numbers = {}
         for e in self.elements:
-            item = QListWidgetItem(e.name)
+            if e.group and e.group not in numbers:
+                numbers[e.group] = len(numbers) + 1
+        for e in self.elements:
+            item = QListWidgetItem(_("Group %d: %s") % (numbers[e.group], e.name) if e.group else e.name)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if e.visible else Qt.Unchecked)
             lst.addItem(item)
@@ -1117,16 +1129,24 @@ class MainWindow(QMainWindow):
 
     # ---- more editing commands ----
     def duplicate_selected(self):
-        if self.selected is None or self.worker is not None:
+        chosen = self._selection()
+        if not chosen or self.worker is not None:
             return
         self._checkpoint()
-        e = self.selected.copy()
-        e.x += 5 / 25.4
-        e.y -= 5 / 25.4
-        self._keep_on_bed(e)
-        self.elements.append(e)
-        self.selected = e
-        self._layout_changed()
+        new_groups = {}
+        copies = []
+        for src in chosen:
+            e = src.copy()
+            if e.group:                                  # a copied group is a new group
+                e.group = new_groups.setdefault(e.group, self._new_group_id())
+            e.x += 5 / 25.4
+            e.y -= 5 / 25.4
+            copies.append(e)
+        if len(copies) == 1:
+            self._keep_on_bed(copies[0])
+        self.elements.extend(copies)
+        self.selected = copies[0] if len(copies) == 1 else None
+        self._arranged(copies)
 
     def center_on_bed(self):
         """Centre the selected element, or all elements together, on the bed."""
@@ -1152,12 +1172,15 @@ class MainWindow(QMainWindow):
         """Arrow keys in the bed view: move the selected element (screen directions)."""
         if self.worker is not None:
             return
+        chosen = self._selection() or [element]
         self._checkpoint()
         sign = -1 if self.job_settings().home_upper_right else 1
-        element.x += sign * dx_mm / 25.4
-        element.y += dy_mm / 25.4
-        self._keep_on_bed(element)
-        self._layout_changed()
+        for e in chosen:
+            e.x += sign * dx_mm / 25.4
+            e.y += dy_mm / 25.4
+        if len(chosen) == 1:
+            self._keep_on_bed(chosen[0])
+        self._arranged(chosen)
 
     def _preview_selected(self, element):
         self.selected = element
@@ -1170,14 +1193,26 @@ class MainWindow(QMainWindow):
         lst.blockSignals(False)
 
     def _preview_moved(self, element, dx, dy):
+        """An element was dragged; the other selected elements (a group or a
+        multiple selection) moved with it by the same amount."""
+        chosen = self._selection()
+        if element not in chosen:
+            chosen = [element]
         self._checkpoint()
-        element.x += dx
-        element.y += dy
+        for e in chosen:
+            e.x += dx
+            e.y += dy
         if not self.preview.last_move_snapped:       # snapped to another element: keep that, not the grid
+            x0, y0 = element.x, element.y
             self._snap(element)
+            for e in chosen:
+                if e is not element:
+                    e.x += element.x - x0
+                    e.y += element.y - y0
         self.preview.last_move_snapped = False
-        self._keep_on_bed(element)
-        self._layout_changed()
+        if len(chosen) == 1:
+            self._keep_on_bed(element)
+        self._arranged(chosen)
 
     def _preview_scaled(self, element, factor):
         self._checkpoint()
@@ -1203,47 +1238,83 @@ class MainWindow(QMainWindow):
 
     # ---- mirror, align, distribute -------------------------------------
     def _selection(self):
-        """Elements selected in the bed view (several with a rubber band or Ctrl+click)."""
+        """Elements selected in the bed view (several with a rubber band or
+        Ctrl+click), with all members of their groups."""
         chosen = [e for e in self.preview.selected_elements() if e in self.elements]
         if not chosen and self.selected is not None:
             chosen = [self.selected]
+        groups = {e.group for e in chosen if e.group}
+        if groups:
+            chosen = [e for e in self.elements if e in chosen or (e.group and e.group in groups)]
         return chosen
 
+    def _new_group_id(self):
+        import uuid
+        return uuid.uuid4().hex[:8]
+
+    def group_selected(self):
+        chosen = self._selection()
+        if len(chosen) < 2 or self.worker is not None:
+            self.status(_("Select two or more elements to group them."), error=True)
+            return
+        self._checkpoint()
+        gid = self._new_group_id()
+        for e in chosen:
+            e.group = gid
+        self._arranged(chosen)
+        self.status(_("Grouped %d elements. Click any of them to select the whole group.") % len(chosen))
+
+    def ungroup_selected(self):
+        chosen = [e for e in self._selection() if e.group]
+        if not chosen or self.worker is not None:
+            self.status(_("The selection has no group."), error=True)
+            return
+        self._checkpoint()
+        for e in chosen:
+            e.group = ""
+        self._arranged(chosen)
+
     def _arranged(self, chosen):
-        """Finish an arrange command: keep the elements on the bed, redraw and keep the selection."""
+        """Finish an arrange command: redraw and keep the selection."""
         self._layout_changed()
         if len(chosen) > 1:
             self.preview.select_element(chosen)
+            self._update_element_list()
 
     def mirror_selected(self, horizontal):
         chosen = self._selection()
         if not chosen or self.worker is not None:
             return
         self._checkpoint()
-        for e in chosen:
-            mirror(e, horizontal)
+        if len(chosen) == 1:
+            mirror(chosen[0], horizontal)
+        else:
+            x0, x1, y0, y1 = selection_bounds(chosen)
+            mirror_about(chosen, horizontal, (x0 + x1) / 2.0, (y0 + y1) / 2.0)
         self._arranged(chosen)
 
     def align_selected(self, edge):
         chosen = self._selection()
         if not chosen or self.worker is not None:
             return
-        if len(chosen) == 1:
+        parts = units(chosen)
+        if len(parts) == 1:
             bed_w, bed_h = config.bed_size_inches(self.values)
             frame = (0.0, bed_w, -bed_h, 0.0)
         else:
             frame = selection_bounds(chosen)
         self._checkpoint()
-        align(chosen, edge, frame)
+        align(parts, edge, frame)
         self._arranged(chosen)
 
     def distribute_selected(self, horizontal):
         chosen = self._selection()
-        if len(chosen) < 3 or self.worker is not None:
+        parts = units(chosen)
+        if len(parts) < 3 or self.worker is not None:
             self.status(_("Select three or more elements to distribute them."), error=True)
             return
         self._checkpoint()
-        how, step = distribute(chosen, horizontal)
+        how, step = distribute(parts, horizontal)
         if how == "in_line":
             self._undo.pop()                            # nothing changed
             self.act_undo.setEnabled(bool(self._undo))
@@ -1254,21 +1325,32 @@ class MainWindow(QMainWindow):
         unit = self.values.get("units", "mm")
         value = step * (25.4 if unit == "mm" else 1.0)
         if how == "gap":
-            self.status(_("Distributed %d elements: gaps of %.2f %s between them.") % (len(chosen), value, unit))
+            self.status(_("Distributed %d elements: gaps of %.2f %s between them.") % (len(parts), value, unit))
         else:
             self.status(_("Distributed %d elements: they are too wide for gaps, so their centres are "
-                          "%.2f %s apart.") % (len(chosen), value, unit))
+                          "%.2f %s apart.") % (len(parts), value, unit))
 
     def rotate_selected(self, degrees):
-        if self.selected is not None and self.worker is None:
-            self._rotate(self.selected, degrees)
-
-    def delete_selected(self):
-        if self.selected is None or self.worker is not None:
+        chosen = self._selection()
+        if not chosen or self.worker is not None:
+            return
+        if len(chosen) == 1:
+            self._rotate(chosen[0], degrees)
             return
         self._checkpoint()
-        self.elements.remove(self.selected)
+        x0, x1, y0, y1 = selection_bounds(chosen)
+        rotate_about(chosen, degrees, (x0 + x1) / 2.0, (y0 + y1) / 2.0)
+        self._arranged(chosen)
+
+    def delete_selected(self):
+        chosen = self._selection()
+        if not chosen or self.worker is not None:
+            return
+        self._checkpoint()
+        for e in chosen:
+            self.elements.remove(e)
         self.selected = None
+        self._multi = []
         self._layout_changed()
 
     def place_at_head(self):
@@ -1716,7 +1798,7 @@ class MainWindow(QMainWindow):
                   self.act_connect, self.act_release, self.act_home, self.act_unlock,
                   self.act_settings, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v,
-                  self.act_distribute_h, self.act_distribute_v, self.act_place_head, self.act_undo,
+                  self.act_group, self.act_ungroup, self.act_distribute_h, self.act_distribute_v, self.act_place_head, self.act_undo,
                   self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()) \
                 + list(self.act_align.values()):
             a.setEnabled(not busy)
@@ -1860,7 +1942,8 @@ class MainWindow(QMainWindow):
             e = Element(design, name=item.get("name", ""), source_file=source, load_options=options,
                         shape=shape, x=float(item["x"]), y=float(item["y"]),
                         scale_x=float(item.get("scale_x", 1)), scale_y=float(item.get("scale_y", 1)),
-                        rotation=float(item.get("rotation", 0)), visible=bool(item.get("visible", True)))
+                        rotation=float(item.get("rotation", 0)), visible=bool(item.get("visible", True)),
+                        group=str(item.get("group", "") or ""))
             for kind, saved_id in (item.get("layers") or {}).items():
                 if saved_id in by_id:
                     e.layers[kind] = by_id[saved_id].id

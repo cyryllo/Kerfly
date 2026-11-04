@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:23+0100\n"
+"POT-Creation-Date: 2026-11-04 18:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,6 +67,9 @@ msgid "&Fit to window"
 msgstr ""
 
 msgid "&Go to X/Y position"
+msgstr ""
+
+msgid "&Group"
 msgstr ""
 
 msgid "&Help"
@@ -488,6 +491,18 @@ msgstr ""
 msgid "Grid size"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Group"
+msgstr ""
+
+#, python-format
+msgid "Group %d: %s"
+msgstr ""
+
+#, python-format
+msgid "Grouped %d elements. Click any of them to select the whole group."
+msgstr ""
+
 msgid "Halftone (dither) grayscale images"
 msgstr ""
 
@@ -565,6 +580,9 @@ msgid "Job finished in %s"
 msgstr ""
 
 msgid "Job running"
+msgstr ""
+
+msgid "Join the selected elements into a group that is selected and moved as one"
 msgstr ""
 
 msgid "Kerfly projects"
@@ -1039,6 +1057,9 @@ msgstr ""
 msgid "Select three or more elements to distribute them."
 msgstr ""
 
+msgid "Select two or more elements to group them."
+msgstr ""
+
 msgid "Send EGV file"
 msgstr ""
 
@@ -1097,6 +1118,9 @@ msgid "Speed:"
 msgstr ""
 
 msgid "Speeds are stored in mm/s and converted to in/min for the layers."
+msgstr ""
+
+msgid "Split the selected group into separate elements"
 msgstr ""
 
 msgid ""
@@ -1195,6 +1219,9 @@ msgstr ""
 msgid "The new language will be used after restarting Kerfly."
 msgstr ""
 
+msgid "The selection has no group."
+msgstr ""
+
 #, python-format
 msgid "There are many data transmission errors (%s). Press Stop to stop trying."
 msgstr ""
@@ -1235,6 +1262,9 @@ msgid ""
 " unless set in Settings), to check where it will be cut"
 msgstr ""
 
+msgid "U&ngroup"
+msgstr ""
+
 msgid "USB data ready"
 msgstr ""
 
@@ -1263,6 +1293,10 @@ msgid "Undo"
 msgstr ""
 
 msgid "Unfreeze complete"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Ungroup"
 msgstr ""
 
 msgid "Units"

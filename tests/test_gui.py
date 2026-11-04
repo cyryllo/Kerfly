@@ -695,6 +695,45 @@ def main():
           four and same and inserted and deleted and undone and no_text_nodes)
     w.close()
 
+    # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo
+    w = make_window(grid_mm="0")
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    for x0 in (20, 60, 100):
+        w._preview_drawn("rectangle", QPointF(x0, 20), QPointF(x0 + 20, 40), False)
+    a, b, c = w.elements[-3:]
+    w.preview.select_element([a, b])
+    w.group_selected()
+    grouped = a.group and a.group == b.group and not c.group
+    w.preview.select_element(a)                                         # one click selects the group
+    whole = set(map(id, w.preview.selected_elements())) == {id(a), id(b)}
+    bx, by = b.x, b.y
+    w._preview_moved(a, 0.5, -0.25)
+    moved = abs(b.x - bx - 0.5) < 1e-9 and abs(b.y - by + 0.25) < 1e-9
+    w.preview.select_element(a)
+    w.rotate_selected(90)
+    turned = a.rotation == 90 and b.rotation == 90 and abs(a.centre[0] - b.centre[0]) < 1e-9
+    w.preview.select_element(a)
+    n = len(w.elements)
+    w.duplicate_selected()
+    copies = w.elements[n:]
+    dup = len(copies) == 2 and copies[0].group == copies[1].group and copies[0].group != a.group
+    proj = tempfile.mktemp(suffix=".kerfly")
+    from kerfly.core import project as _project
+    _project.save_project(proj, w.elements, w.layers)
+    data, _folder = _project.read_project(proj)
+    saved = [it.get("group") for it in data["elements"]] == [e.group for e in w.elements]
+    w.preview.select_element(a)
+    w.ungroup_selected()
+    ungrouped = not a.group and not b.group and copies[0].group
+    w.undo()
+    regrouped = a.group and a.group == b.group
+    check("groups: select, move, rotate, duplicate, save, ungroup, undo",
+          grouped and whole and moved and turned and dup and saved and ungrouped and regrouped,
+          "(%s)" % [grouped, whole, moved, turned, dup, saved, ungrouped, regrouped])
+    w.close()
+
     # 20. diagnostic log and report
     from kerfly.core import diag as _diag
     _diag.setup("test")

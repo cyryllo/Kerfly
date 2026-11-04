@@ -623,7 +623,7 @@ class PreviewView(QGraphicsView):
             return
         keys = {Qt.Key_Left: (-1, 0), Qt.Key_Right: (1, 0), Qt.Key_Up: (0, 1), Qt.Key_Down: (0, -1)}
         items = self._selected_items()
-        if event.key() in keys and len(items) == 1 and not (event.modifiers() & Qt.ControlModifier):
+        if event.key() in keys and items and not (event.modifiers() & Qt.ControlModifier):
             step = self.grid_mm or 1.0
             if event.modifiers() & Qt.ShiftModifier:
                 step *= 10
@@ -649,8 +649,15 @@ class PreviewView(QGraphicsView):
         return [i for i in self.scene().selectedItems() if isinstance(i, ElementItem)]
 
     def _selection_changed(self):
-        if self._rebuilding:
+        if self._rebuilding or getattr(self, "_expanding", False):
             return
+        groups = {i.element.group for i in self._selected_items() if i.element.group}
+        if groups:                                  # a group is always selected as a whole
+            self._expanding = True
+            for item in self._items:
+                if item.element.group in groups and not item.isSelected():
+                    item.setSelected(True)
+            self._expanding = False
         self._place_handles()
         items = self._selected_items()
         self.signals.selected.emit(items[0].element if len(items) == 1 else None)
@@ -769,8 +776,11 @@ class PreviewView(QGraphicsView):
     def select_element(self, element):
         """Select one element, or several when given a list."""
         wanted = element if isinstance(element, (list, tuple)) else [element]
+        self._expanding = True                      # one selection signal at the end, not one per item
         for item in self._items:
             item.setSelected(any(item.element is e for e in wanted))
+        self._expanding = False
+        self._selection_changed()
 
     def selected_elements(self):
         return [i.element for i in self._selected_items()]

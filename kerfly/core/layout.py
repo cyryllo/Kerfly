@@ -35,6 +35,7 @@ class Element:
     visible: bool = True      # hidden elements are not sent to the laser
     shape: object = None      # ShapeSpec for drawn shapes (kerfly.core.shapes), else None
     layers: dict = field(default_factory=dict)   # part kind -> layer id (missing: default layer)
+    group: str = ""           # elements with the same group id are selected and moved together
 
     def placement(self):
         """Placement values (for undo snapshots)."""
@@ -48,7 +49,7 @@ class Element:
         e = Element(self.design, self.name, source_file=self.source_file,
                     load_options=dict(self.load_options),
                     shape=self.shape.copy() if self.shape is not None else None,
-                    layers=dict(self.layers))
+                    layers=dict(self.layers), group=self.group)
         e.set_placement(self.placement())
         return e
 
@@ -150,6 +151,83 @@ def mirror(element, horizontal=True):
         element.scale_y = -element.scale_y
     element.rotation = (-element.rotation) % 360
     element.set_centre(cx, cy)
+
+
+class Unit:
+    """Several elements handled as one by align and distribute (a group):
+    its bounds are around all of them, and moving it moves all of them."""
+
+    def __init__(self, elements):
+        self.elements = list(elements)
+
+    @property
+    def bounds(self):
+        return selection_bounds(self.elements)
+
+    @property
+    def size(self):
+        x0, x1, y0, y1 = self.bounds
+        return x1 - x0, y1 - y0
+
+    @property
+    def x(self):
+        return self.bounds[0]
+
+    @x.setter
+    def x(self, value):
+        d = value - self.bounds[0]
+        for e in self.elements:
+            e.x += d
+
+    @property
+    def y(self):
+        return self.bounds[3]
+
+    @y.setter
+    def y(self, value):
+        d = value - self.bounds[3]
+        for e in self.elements:
+            e.y += d
+
+
+def units(elements):
+    """Elements as arrange units: the members of a group together, others alone
+    (in the order of their first appearance)."""
+    out, by_group = [], {}
+    for e in elements:
+        if e.group:
+            if e.group not in by_group:
+                by_group[e.group] = []
+                out.append(by_group[e.group])
+            by_group[e.group].append(e)
+        else:
+            out.append([e])
+    return [u[0] if len(u) == 1 else Unit(u) for u in out]
+
+
+def rotate_about(elements, degrees, cx, cy):
+    """Turn elements together by degrees (counter-clockwise) around (cx, cy)."""
+    a = math.radians(degrees)
+    c, s = math.cos(a), math.sin(a)
+    for e in elements:
+        ex, ey = e.centre
+        dx, dy = ex - cx, ey - cy
+        e.rotation = (e.rotation + degrees) % 360
+        if abs(e.rotation - round(e.rotation)) < 1e-6:
+            e.rotation = float(round(e.rotation)) % 360
+        e.set_centre(cx + dx * c - dy * s, cy + dx * s + dy * c)
+
+
+def mirror_about(elements, horizontal, cx, cy):
+    """Mirror elements together about the vertical (horizontal=True) or the
+    horizontal line through (cx, cy)."""
+    for e in elements:
+        mirror(e, horizontal)
+        ex, ey = e.centre
+        if horizontal:
+            e.set_centre(2 * cx - ex, ey)
+        else:
+            e.set_centre(ex, 2 * cy - ey)
 
 
 ALIGN_EDGES = ("left", "hcenter", "right", "top", "vcenter", "bottom")

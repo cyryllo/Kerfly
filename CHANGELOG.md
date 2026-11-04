@@ -45,6 +45,13 @@ Version numbers:
   Rectangles, ellipses, polygons and lines become polylines on the first
   edit. Rotation, scale and mirror are kept, and every edit can be undone.
   Text and opened files have no editable nodes.
+- **Group / Ungroup** (Arrange group, Ctrl+Shift+G / Ctrl+Alt+G):
+  - Clicking any member of a group selects the whole group.
+  - Moving, arrow keys, rotating, mirroring, duplicating and deleting act on
+    the group as one. Align and distribute treat it as a single block.
+  - The element list shows "Group 1: …", and groups are saved in projects.
+- Several selected elements (a frame drag or Ctrl+click) now move, rotate
+  and mirror together, around the centre of the selection.
 - Toolbar: **Settings** has its own group, together with a new **Materials**
   button (material library).
 

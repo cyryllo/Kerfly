@@ -443,6 +443,20 @@ def test_arrange():
     s1, s2, s3 = Element(d, x=1.0, y=0.0), Element(d, x=1.0, y=-2.0), Element(d, x=1.0, y=-4.0)
     check("distribute along a line they are centred on: nothing moves",
           distribute([s1, s2, s3], horizontal=True) == ("in_line", 0.0) and (s1.x, s2.x, s3.x) == (1.0, 1.0, 1.0))
+    from kerfly.core.layout import mirror_about, rotate_about, units
+    g1, g2, lone = Element(d, x=0.0, y=0.0, group="g"), Element(d, x=3.0, y=0.0, group="g"), Element(d, x=6.0, y=-2.0)
+    parts = units([g1, lone, g2])
+    check("units: a group is one unit", len(parts) == 2 and hasattr(parts[0], "elements"))
+    align(parts, "bottom", (0.0, 10.0, -5.0, 0.0))
+    check("align moves a group as a whole", abs(g1.y - g2.y) < 1e-12 and abs(min(g1.bounds[2], g2.bounds[2]) + 5) < 1e-9
+          and abs(lone.bounds[2] + 5) < 1e-9)
+    c0 = (g1.centre, g2.centre)
+    rotate_about([g1, g2], 90, 3.0, -1.0)
+    rotate_about([g1, g2], -90, 3.0, -1.0)
+    back = all(abs(a - b) < 1e-9 for p, q in zip(c0, (g1.centre, g2.centre)) for a, b in zip(p, q))
+    mirror_about([g1, g2], True, 0.0, 0.0)
+    mirrored = abs(g1.centre[0] + c0[0][0]) < 1e-9 and g1.scale_x < 0
+    check("rotate a group about a point and back; mirror about an axis", back and mirrored)
     return errors
 
 

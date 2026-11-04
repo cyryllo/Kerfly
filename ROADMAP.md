@@ -68,7 +68,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 
 | Feature | MeerK40t reference |
 |---|---|
-| Element tree / layers panel (select, hide ~~done~~; reorder, groups) | `gui/wxmtree.py` |
+| Element tree / layers panel (select, hide, groups ~~done~~; reorder, nested groups) | `gui/wxmtree.py` |
 | ~~Operations list: assign elements to raster, engrave or cut instead of by colour only~~ (done: layers) | `gui/opassignment.py`, `gui/gui_optypes.py` |
 | ~~Select, move, scale and rotate with handles~~ (done) | `gui/scenewidgets/`, `gui/toolwidgets/toolplacement.py` |
 | ~~Undo / redo~~ (done) | `core/undos.py` |

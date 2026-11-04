@@ -59,7 +59,7 @@ def save_project(path, elements, layers, info=None):
     for i, e in enumerate(elements):
         item = {"name": e.name, "x": e.x, "y": e.y, "scale_x": e.scale_x, "scale_y": e.scale_y,
                 "rotation": e.rotation, "visible": e.visible,
-                "layers": {k: v for k, v in e.layers.items()}}
+                "layers": {k: v for k, v in e.layers.items()}, "group": e.group}
         if e.shape is not None:
             item["shape"] = _shape_to_dict(e.shape)
         else:

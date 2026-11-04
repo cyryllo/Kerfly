@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:23+0100\n"
+"POT-Creation-Date: 2026-11-04 18:29+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -71,6 +71,9 @@ msgstr "&Dopasuj do okna"
 
 msgid "&Go to X/Y position"
 msgstr "&Idź do pozycji X/Y"
+
+msgid "&Group"
+msgstr "&Grupuj"
 
 msgid "&Help"
 msgstr "Pomo&c"
@@ -506,6 +509,20 @@ msgstr "Siatka"
 msgid "Grid size"
 msgstr "Rozmiar siatki"
 
+msgctxt "toolbar"
+msgid "Group"
+msgstr "Grupuj"
+
+#, python-format
+msgid "Group %d: %s"
+msgstr "Grupa %d: %s"
+
+#, python-format
+msgid "Grouped %d elements. Click any of them to select the whole group."
+msgstr ""
+"Zgrupowano elementy (%d). Kliknij dowolny z nich, aby zaznaczyć całą "
+"grupę."
+
 msgid "Halftone (dither) grayscale images"
 msgstr "Półtony (dithering) dla obrazów w odcieniach szarości"
 
@@ -584,6 +601,9 @@ msgstr "Zadanie zakończone w %s"
 
 msgid "Job running"
 msgstr "Zadanie w toku"
+
+msgid "Join the selected elements into a group that is selected and moved as one"
+msgstr "Połącz zaznaczone elementy w grupę, zaznaczaną i przesuwaną jako całość"
 
 msgid "Kerfly projects"
 msgstr "Projekty Kerfly"
@@ -1082,6 +1102,9 @@ msgstr "Zaznacz i przesuń"
 msgid "Select three or more elements to distribute them."
 msgstr "Zaznacz co najmniej trzy elementy, aby je rozłożyć."
 
+msgid "Select two or more elements to group them."
+msgstr "Zaznacz co najmniej dwa elementy, aby je zgrupować."
+
 msgid "Send EGV file"
 msgstr "Wyślij plik EGV"
 
@@ -1145,6 +1168,9 @@ msgstr "Prędkość:"
 
 msgid "Speeds are stored in mm/s and converted to in/min for the layers."
 msgstr "Prędkości są zapisane w mm/s i przeliczane na in/min dla warstw."
+
+msgid "Split the selected group into separate elements"
+msgstr "Rozdziel zaznaczoną grupę na osobne elementy"
 
 msgid ""
 "Spread three or more selected elements evenly from left to right; the "
@@ -1252,6 +1278,9 @@ msgstr "Laser przestał odpowiadać po zakończeniu zadania."
 msgid "The new language will be used after restarting Kerfly."
 msgstr "Nowy język zostanie użyty po ponownym uruchomieniu Kerfly."
 
+msgid "The selection has no group."
+msgstr "Zaznaczenie nie zawiera grupy."
+
 #, python-format
 msgid "There are many data transmission errors (%s). Press Stop to stop trying."
 msgstr "Wiele błędów transmisji danych (%s). Naciśnij Stop, aby przestać próbować."
@@ -1307,6 +1336,9 @@ msgstr ""
 "chyba że w Ustawieniach zaznaczono inaczej), aby sprawdzić, gdzie "
 "zostanie wycięty"
 
+msgid "U&ngroup"
+msgstr "Roz&grupuj"
+
 msgid "USB data ready"
 msgstr "Dane USB gotowe"
 
@@ -1336,6 +1368,10 @@ msgstr "Cofnij"
 
 msgid "Unfreeze complete"
 msgstr "Laser odmrożony"
+
+msgctxt "toolbar"
+msgid "Ungroup"
+msgstr "Rozgrupuj"
 
 msgid "Units"
 msgstr "Jednostki"
