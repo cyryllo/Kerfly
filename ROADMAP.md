@@ -73,7 +73,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Select, move, scale and rotate with handles~~ (done) | `gui/scenewidgets/`, `gui/toolwidgets/toolplacement.py` |
 | ~~Undo / redo~~ (done) | `core/undos.py` |
 | ~~Grid and snapping~~ (done) | `gui/snapoptions.py`, `core/elements/grid.py` |
-| Snapping to other objects: corners, ends and middles of lines, points on curves, centres and edges of elements; for moving and for the drawing tools (requested 2026-11-04) | `gui/snapoptions.py`, `gui/scenewidgets/` (MeerK40t "magnets"/snap points) |
+| ~~Snapping to other objects: corners, ends and middles of lines, points on curves, centres and edges of elements; for moving and for the drawing tools~~ (done) | `gui/snapoptions.py`, `gui/scenewidgets/` (MeerK40t "magnets"/snap points) |
 | ~~Alignment and distribution, mirror~~ (done) | `gui/alignment.py`, `core/elements/align.py` |
 | Ruler, measure tool | `gui/toolwidgets/toolmeasure.py` |
 | Job simulation (play the path) | `gui/simulation.py` |

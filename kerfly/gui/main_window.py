@@ -102,6 +102,7 @@ class MainWindow(QMainWindow):
         self._update_title()
         self.resize(1200, 780)                  # replaced by the saved / screen-based size in show()
         self.preview = PreviewView()
+        self.preview.snap_objects = is_true(self.values.get("snap_objects", "1"))
         self.tool_options = ToolOptionsBar()
         self.tool_options.changed.connect(self._tool_options_changed)
         central = QWidget()
@@ -161,6 +162,11 @@ class MainWindow(QMainWindow):
         self.act_duplicate = self._action(_("D&uplicate element"), self.duplicate_selected, "Ctrl+D")
         self.act_center = self._action(_("&Centre on the bed"), self.center_on_bed, "Ctrl+E",
                                        _("Centre the selected element, or the whole design, on the bed"))
+        self.act_snap_objects = self._action(_("Snap to &objects"), self.toggle_snap_objects, "Ctrl+;",
+                                             _("Snap to corners, centres, middles and lines of other elements "
+                                               "and of the bed, when drawing and moving"))
+        self.act_snap_objects.setCheckable(True)
+        self.act_snap_objects.setChecked(is_true(self.values.get("snap_objects", "1")))
         self.act_snap = self._action(_("&Snap to grid"), self.toggle_snap, "Ctrl+'")
         self.act_snap.setCheckable(True)
         self.act_snap.setChecked(self._grid_mm() > 0)
@@ -252,6 +258,7 @@ class MainWindow(QMainWindow):
         m.addAction(self.act_fit)
         m.addSeparator()
         m.addAction(self.act_snap)
+        m.addAction(self.act_snap_objects)
         sub = m.addMenu(_("Grid size"))
         for a in self.grid_actions.actions():
             sub.addAction(a)
@@ -319,6 +326,7 @@ class MainWindow(QMainWindow):
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
                 (self.act_snap, "grid-dots", C_("toolbar", "Grid")),
+                (self.act_snap_objects, "magnet", C_("toolbar", "Snap")),
             ]),
             (C_("toolbar group", "Settings"), [
                 (self.act_materials, "book", C_("toolbar", "Materials")),
@@ -987,6 +995,11 @@ class MainWindow(QMainWindow):
         self.values["grid_mm"] = _num_text(self._grid_size_choice()) if checked else "0"
         self.refresh_preview()
 
+    def toggle_snap_objects(self, checked):
+        self.values["snap_objects"] = "1" if checked else "0"
+        self.preview.snap_objects = bool(checked)
+        self.preview.hide_snap_marker()
+
     def set_grid(self, mm):
         self._last_grid = float(mm)
         self.values["grid_mm"] = _num_text(mm)
@@ -1089,7 +1102,9 @@ class MainWindow(QMainWindow):
         self._checkpoint()
         element.x += dx
         element.y += dy
-        self._snap(element)
+        if not self.preview.last_move_snapped:       # snapped to another element: keep that, not the grid
+            self._snap(element)
+        self.preview.last_move_snapped = False
         self._keep_on_bed(element)
         self._layout_changed()
 

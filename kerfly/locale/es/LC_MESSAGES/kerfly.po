@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:13+0100\n"
+"POT-Creation-Date: 2026-11-04 18:20+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -1107,6 +1107,20 @@ msgstr "Configuración guardada en %s"
 msgid "Sides"
 msgstr "Lados"
 
+msgctxt "toolbar"
+msgid "Snap"
+msgstr "Ajustar"
+
+msgid "Snap to &objects"
+msgstr "Ajustar a &objetos"
+
+msgid ""
+"Snap to corners, centres, middles and lines of other elements and of the "
+"bed, when drawing and moving"
+msgstr ""
+"Ajustar a esquinas, centros, puntos medios y líneas de otros elementos y "
+"de la mesa, al dibujar y mover"
+
 #, python-format
 msgid "Speed (%s)"
 msgstr "Velocidad (%s)"
@@ -1402,6 +1416,12 @@ msgstr "Y"
 msgid "Y scale factor"
 msgstr "Factor de escala Y"
 
+msgid "centre"
+msgstr "centro"
+
+msgid "corner"
+msgstr "esquina"
+
 msgid "empty"
 msgstr "vacío"
 
@@ -1410,6 +1430,12 @@ msgstr "se busca automáticamente"
 
 msgid "g-code"
 msgstr "código G"
+
+msgid "middle"
+msgstr "punto medio"
+
+msgid "on line"
+msgstr "en línea"
 
 msgid "project"
 msgstr "proyecto"

@@ -446,6 +446,34 @@ def test_arrange():
     return errors
 
 
+def test_snap():
+    """Object snapping targets and preferences."""
+    from kerfly.core.snap import CENTRE, CORNER, EDGE, MIDDLE, SnapShape, find_snap, snap_offset
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s snap: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    square = SnapShape([[(0, 0), (10, 0), (10, 10), (0, 10), (0, 0)]])
+    line = SnapShape([[(20, 0), (40, 20)]])
+    shapes = [square, line]
+    check("corner", find_snap(10.4, -0.3, shapes, 1.0) == (10, 0, CORNER))
+    check("centre of the box", find_snap(5.2, 4.9, shapes, 1.0) == (5.0, 5.0, CENTRE))
+    check("middle of a side", find_snap(10.3, 5.2, shapes, 1.0) == (10.0, 5.0, MIDDLE))
+    hit = find_snap(25.6, 4.4, shapes, 1.0)
+    check("point on a line", hit is not None and hit[2] == EDGE and abs(hit[0] - hit[1] - 20) < 1e-9, str(hit))
+    check("corner wins over the edge next to it", find_snap(0.5, 3.0, shapes, 3.5)[2] == CORNER)
+    check("nothing near", find_snap(15, 15, shapes, 1.0) is None)
+    off = snap_offset([(9.2, 10.6), (50, 50)], shapes, 1.5)
+    check("moving shape: offset to the nearest target", off is not None
+          and abs(off[0] - 0.8) < 1e-9 and abs(off[1] + 0.6) < 1e-9, str(off))
+    many = SnapShape([[(i * 0.01, 0.0) for i in range(20000)]])
+    check("detailed shapes are thinned out", len(many.points) < 7000 and find_snap(199.99, 0, [many], 0.5))
+    return errors
+
+
 def main():
     with open(MANIFEST) as f:
         baseline = json.load(f)["cases"]
@@ -475,6 +503,7 @@ def main():
     failures += test_layers(baseline)
     failures += test_materials()
     failures += test_arrange()
+    failures += test_snap()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

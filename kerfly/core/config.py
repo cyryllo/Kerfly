@@ -56,6 +56,7 @@ SETTINGS_KEYS = [
     ("designfile", QUOTED), ("inkscape_path", QUOTED), ("batch_path", QUOTED),
     ("language", TEXT),      # Kerfly only; ignored by K40 Whisperer
     ("grid_mm", TEXT),       # Kerfly only: snap grid in mm, 0 = off
+    ("snap_objects", BOOL),  # Kerfly only: snap to corners, centres and lines of other elements
     ("use_inkscape", BOOL),  # Kerfly only: render SVG rasters with Inkscape when installed
 ]
 SETTINGS_KINDS = dict(SETTINGS_KEYS)
@@ -85,6 +86,7 @@ DEFAULT_VALUES = {
     "designfile": "", "inkscape_path": "", "batch_path": "",
     "language": "",          # "" = system language
     "grid_mm": "0",
+    "snap_objects": "1",
     "use_inkscape": "1",
 }
 

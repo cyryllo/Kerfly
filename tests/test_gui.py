@@ -630,6 +630,34 @@ def main():
           "(%d elements)" % len(w.elements))
     w.close()
 
+    # 23. object snapping: drawing starts on another shape's corner; dragging snaps an element to it
+    w = make_window(grid_mm="0")
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
+    view = w.preview
+    p = view.snap_point(QPointF(60.4, 49.7))
+    corner = abs(p.x() - 60) < 1e-6 and abs(p.y() - 50) < 1e-6 and view._snap_marker is not None
+    w.toggle_snap_objects(False)
+    free = view.snap_point(QPointF(60.4, 49.7))
+    off = abs(free.x() - 60.4) < 1e-6
+    w.toggle_snap_objects(True)
+    w._preview_drawn("rectangle", QPointF(100, 100), QPointF(120, 120), False)
+    second = view._items[-1]
+    view.scene().clearSelection()
+    second.setSelected(True)
+    second._dragging = True
+    r = second.sceneBoundingRect()                                     # top-left near the first one's corner
+    second.setPos(second.pos() + QPointF(60.5 - r.left(), 50.4 - r.top()))
+    second._dragging = False
+    r = second.sceneBoundingRect()
+    dragged = abs(r.left() - 60) < 1e-6 and abs(r.top() - 50) < 1e-6 and view.last_move_snapped
+    check("snapping: draw from a corner, off switch, drag onto another element",
+          corner and off and dragged, "(left %.3f)" % second.sceneBoundingRect().left())
+    view.last_move_snapped = False
+    w.close()
+
     # 20. diagnostic log and report
     from kerfly.core import diag as _diag
     _diag.setup("test")

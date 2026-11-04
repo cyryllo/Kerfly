@@ -27,6 +27,15 @@ Version numbers:
 
   Closed polylines can be cut, outlined or filled. Polylines are saved in
   `.kerfly` projects.
+- **Snap to objects** (magnet button in the View group, Ctrl+;). It is on by
+  default and works together with the grid.
+  - Drawing tools snap to corners, centres and side middles of other elements
+    and of the bed, to the ends and middles of lines, and to any point on a
+    line or curve. A purple marker with a label shows the target before you
+    click.
+  - A dragged element snaps with its corners, side middles or centre onto
+    those points.
+  - Several selected elements move together without snapping.
 - Toolbar: **Settings** has its own group, together with a new **Materials**
   button (material library).
 

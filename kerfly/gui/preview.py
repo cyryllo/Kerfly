@@ -13,10 +13,17 @@ import math
 from PIL import ImageOps
 from PySide6.QtCore import QObject, QPointF, QRectF, Qt, Signal
 from PySide6.QtGui import QBrush, QColor, QImage, QPainter, QPainterPath, QPen, QPixmap, QTransform
-from PySide6.QtWidgets import (QGraphicsEllipseItem, QGraphicsItem, QGraphicsLineItem,
+from PySide6.QtWidgets import (QGraphicsEllipseItem, QGraphicsItem, QGraphicsLineItem, QGraphicsPathItem,
+                               QGraphicsSimpleTextItem,
                                QGraphicsRectItem, QGraphicsScene, QGraphicsView)
 
+from kerfly.core import snap as snapping
 from kerfly.core.config import bed_size_inches, is_true
+from kerfly.i18n import N_, _
+
+SNAP_PIXELS = 10                     # snap distance on screen
+SNAP_LABELS = {snapping.CORNER: N_("corner"), snapping.CENTRE: N_("centre"),
+               snapping.MIDDLE: N_("middle"), snapping.EDGE: N_("on line")}
 
 MM = 25.4
 MAX_PREVIEW_PIXELS = 3000   # longest side of a raster preview image
@@ -32,6 +39,7 @@ COLORS = {
     "selection": QColor("#1e88e5"),
     "head": QColor("#f57c00"),
     "off_bed": QColor("#d32f2f"),
+    "snap": QColor("#e040fb"),
 }
 
 
@@ -94,6 +102,10 @@ class ElementItem(QGraphicsItem):
         if d.raster.image is not None:
             self.pixmap = view.raster_pixmap(element, values)
         self.paths = []
+        self.local_polys = []        # polylines in local coordinates, for snapping
+        self._snap_cache = None
+        self.setFlag(QGraphicsItem.ItemSendsGeometryChanges, True)
+        self._dragging = False
         for kind, coords, color in (("engrave", d.vector_engrave.ecoords, "engrave"),
                                     ("cut", d.vector_cut.ecoords, "cut"),
                                     ("gcode", d.gcode.ecoords, "gcode")):
@@ -104,8 +116,10 @@ class ElementItem(QGraphicsItem):
                     p = QPointF((row[0] - xmin) * MM, (ymax - row[1]) * MM)
                     if row[2] != loop_old:
                         path.moveTo(p)
+                        self.local_polys.append([])
                     else:
                         path.lineTo(p)
+                    self.local_polys[-1].append((p.x(), p.y()))
                     loop_old = row[2]
                 layer_color = part_color(element, kind) if part_color is not None else None
                 self.paths.append((path, _cosmetic_pen(QColor(layer_color) if layer_color else COLORS[color], 1.2)))
@@ -143,8 +157,25 @@ class ElementItem(QGraphicsItem):
         tol = 0.05                                   # mm
         return not bed.adjusted(-tol, -tol, tol, tol).contains(self.sceneBoundingRect())
 
+    def snap_shape(self):
+        """Snap targets of this element in scene coordinates (cached until it moves)."""
+        t = self.sceneTransform()
+        key = (t.m11(), t.m12(), t.m21(), t.m22(), t.dx(), t.dy())
+        if self._snap_cache is None or self._snap_cache[0] != key:
+            polys = [[t.map(x, y) for x, y in poly] for poly in self.local_polys]
+            r = self.sceneBoundingRect()
+            self._snap_cache = (key, snapping.SnapShape(polys, (r.left(), r.top(), r.right(), r.bottom())))
+        return self._snap_cache[1]
+
+    def itemChange(self, change, value):
+        if change == QGraphicsItem.ItemPositionChange and self._dragging:
+            return self.view.snap_drag(self, value)
+        return super().itemChange(change, value)
+
     def mousePressEvent(self, event):
         self._press_pos = self.pos()
+        self._dragging = event.button() == Qt.LeftButton
+        self.view.last_move_snapped = False
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
@@ -152,6 +183,8 @@ class ElementItem(QGraphicsItem):
         self.view.hide_handles()
 
     def mouseReleaseEvent(self, event):
+        self._dragging = False
+        self.view.hide_snap_marker()
         super().mouseReleaseEvent(event)
         moved = self.pos() - getattr(self, "_press_pos", QPointF())
         if abs(moved.x()) > 1e-6 or abs(moved.y()) > 1e-6:
@@ -248,6 +281,9 @@ class PreviewView(QGraphicsView):
         self._draw_start = None
         self._draw_item = None
         self._poly_points = []      # polyline being drawn (scene mm)
+        self.snap_objects = True    # snap to corners, centres, middles and lines of other elements
+        self.last_move_snapped = False
+        self._snap_marker = None
         self._pixmaps = {}          # (id(design), id(image), negate, halftone) -> (pixmap, scale)
         self._items = []
         self._handles = []
@@ -265,16 +301,88 @@ class PreviewView(QGraphicsView):
 
     def set_tool(self, tool):
         self._clear_polyline()
+        self.hide_snap_marker()
         self.tool = tool
         drawing = tool != "select"
         self.setDragMode(QGraphicsView.NoDrag if drawing else QGraphicsView.RubberBandDrag)
         self.viewport().setCursor(Qt.CrossCursor if drawing else Qt.ArrowCursor)
 
-    def _snap_point(self, p):
+    # ---- snapping: other elements first, then the grid ------------------------
+    def _snap_tolerance(self):
+        return SNAP_PIXELS / max(abs(self.transform().m11()), 1e-9)
+
+    def _snap_shapes(self, exclude=()):
+        shapes = [i.snap_shape() for i in self._items if i not in exclude and i.element.visible]
+        bed = getattr(self, "bed_rect", None)
+        if bed is not None:
+            shapes.append(snapping.SnapShape([], (bed.left(), bed.top(), bed.right(), bed.bottom())))
+        return shapes
+
+    def hide_snap_marker(self):
+        if self._snap_marker is not None:
+            if self._snap_marker.scene() is not None:
+                self.scene().removeItem(self._snap_marker)
+            self._snap_marker = None
+
+    def show_snap_marker(self, x, y, kind):
+        self.hide_snap_marker()
+        path = QPainterPath()
+        if kind == snapping.CORNER:
+            path.addRect(-5, -5, 10, 10)
+        elif kind == snapping.CENTRE:
+            path.addEllipse(-5, -5, 10, 10)
+            path.moveTo(-7, 0); path.lineTo(7, 0); path.moveTo(0, -7); path.lineTo(0, 7)
+        elif kind == snapping.MIDDLE:
+            path.moveTo(0, -6); path.lineTo(6, 5); path.lineTo(-6, 5); path.closeSubpath()
+        else:
+            path.moveTo(-5, -5); path.lineTo(5, 5); path.moveTo(-5, 5); path.lineTo(5, -5)
+        marker = QGraphicsPathItem(path)
+        marker.setPen(_cosmetic_pen(COLORS["snap"], 2))
+        marker.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
+        marker.setPos(QPointF(x, y))
+        marker.setZValue(50)
+        label = QGraphicsSimpleTextItem(_(SNAP_LABELS[kind]), marker)
+        label.setBrush(QBrush(COLORS["snap"]))
+        label.setPos(8, 4)
+        self.scene().addItem(marker)
+        self._snap_marker = marker
+
+    def snap_point(self, p, exclude=()):
+        """A point the user clicks or drags to, snapped to other elements (when
+        object snapping is on) or else to the grid."""
+        if self.snap_objects:
+            hit = snapping.find_snap(p.x(), p.y(), self._snap_shapes(exclude), self._snap_tolerance())
+            if hit is not None:
+                self.show_snap_marker(*hit)
+                return QPointF(hit[0], hit[1])
+        self.hide_snap_marker()
         if self.grid_mm > 0:
             g = self.grid_mm
             return QPointF(round(p.x() / g) * g, round(p.y() / g) * g)
         return p
+
+    _snap_point = snap_point
+
+    def snap_drag(self, item, new_pos):
+        """While an element is dragged: move it so one of its corners, middles or
+        its centre lands on a target of another element (or of the bed)."""
+        self.last_move_snapped = False
+        if not self.snap_objects or len(self._selected_items()) > 1:
+            self.hide_snap_marker()
+            return new_pos
+        delta = new_pos - item.pos()
+        r = item.sceneBoundingRect().translated(delta)
+        refs = [(r.left(), r.top()), (r.right(), r.top()), (r.right(), r.bottom()), (r.left(), r.bottom()),
+                (r.center().x(), r.center().y()), (r.center().x(), r.top()), (r.right(), r.center().y()),
+                (r.center().x(), r.bottom()), (r.left(), r.center().y())]
+        off = snapping.snap_offset(refs, self._snap_shapes(exclude=(item,)), self._snap_tolerance())
+        if off is None:
+            self.hide_snap_marker()
+            return new_pos
+        dx, dy, x, y, kind = off
+        self.show_snap_marker(x, y, kind)
+        self.last_move_snapped = True
+        return new_pos + QPointF(dx, dy)
 
     def _draw_shape_item(self, start, end, shift):
         """Rubber-band preview of the shape being drawn."""
@@ -380,6 +488,9 @@ class PreviewView(QGraphicsView):
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
+        if self.tool != "select" and self._draw_start is None and not self._poly_points \
+                and not event.buttons():
+            self.snap_point(self.mapToScene(event.position().toPoint()))     # shows where a click lands
         if self.tool == "polyline" and self._poly_points:
             p = self._snap_point(self.mapToScene(event.position().toPoint()))
             self._draw_polyline_item(self._poly_constrained(p, bool(event.modifiers() & Qt.ShiftModifier)))
@@ -534,6 +645,7 @@ class PreviewView(QGraphicsView):
         """Redraw the bed, the elements and the laser head (head in bed inches, y <= 0)."""
         self._rebuilding = True
         scene = self.scene()
+        self._snap_marker = None                 # deleted with the scene contents
         scene.clear()
         self._items, self._handles = [], []
         bed_w, bed_h = bed_size_inches(values)
