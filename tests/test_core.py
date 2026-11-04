@@ -343,6 +343,22 @@ def test_layers(baseline):
     data = bytes(chunks[0].data)
     check("two cut layers: one job, both stages, origin at the layout corner",
           len(chunks) == 1 and origin == (1.0, -1.0) and data.count(b"@") >= 2, "(%d bytes)" % len(data))
+    # a layer with one untransformed element among others: its data in bed coordinates
+    from kerfly.core.layers import compile_layer, default_layers
+    from kerfly.core.shapes import ShapeSpec, build_design
+    c = ShapeSpec(kind="ellipse", width=20, height=20, operation="cut")
+    r = ShapeSpec(kind="rectangle", width=40, height=10, operation="engrave")
+    ce = Element(build_design(c), x=1.0, y=-3.0, shape=c)
+    re_ = Element(build_design(r), x=4.0, y=-0.5, shape=r)
+    lay = default_layers()
+    cut_layer = [l for l in lay if l.kind == "cut"][0]
+    d, o = compile_layer([ce, re_], cut_layer, lay)
+    xs = [row[0] for row in d.vector_cut.ecoords]
+    ys = [row[1] for row in d.vector_cut.ecoords]
+    ok = abs(min(xs) - 1.0) < 1e-6 and abs(max(ys) + 3.0) < 1e-6 and d.bounds[0] == 1.0 and o == (1.0, -0.5)
+    print("%-5s layers: lone untransformed part of a bigger layout keeps its bed position %s"
+          % ("OK" if ok else "FAIL", (round(min(xs), 4), round(max(ys), 4))))
+    errors += 0 if ok else 1
     return errors
 
 

@@ -358,14 +358,19 @@ def _transformed_raster(element, dpi):
     return im, (xmin, ymax)
 
 
-def compile_layout(elements):
+def compile_layout(elements, passthrough=True):
     """Merge elements into one Design. Returns (design, origin) where origin is
     the bed position (x, y) of the design's top-left corner, i.e. where the
-    laser head must be when the job starts. Returns (None, None) if empty."""
+    laser head must be when the job starts. Returns (None, None) if empty.
+
+    A single untransformed element is passed through in its own design
+    coordinates (identical laser data to K40 Whisperer). passthrough=False
+    always gives bed coordinates: needed when the design is one part of a
+    bigger layout whose bounds (bed coordinates) it will share."""
     elements = [e for e in elements if e is not None and e.visible]
     if not elements:
         return None, None
-    if len(elements) == 1 and elements[0].is_identity:
+    if passthrough and len(elements) == 1 and elements[0].is_identity:
         e = elements[0]
         return e.design, (e.x, e.y)
 

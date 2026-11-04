@@ -9,6 +9,17 @@ Version numbers:
 
 ## Unreleased
 
+### Fixed (laser output)
+
+- **Wrong position of a layer with a single untransformed element.** When the
+  layout had several elements and one layer (for example Cut) held just one
+  element that was not rotated, scaled or mirrored, that element was cut
+  relative to the layout's corner instead of at its own place on the bed.
+  Present since 0.1.0. A single element alone on the bed was not affected,
+  and is still byte-identical to K40 Whisperer.
+
+### New
+
 - **Curves module.**
   - **Pen** tool (B, on the tool strip):
     - click for a corner, or press and drag for a smooth node with curve

@@ -137,7 +137,9 @@ def compile_layer(elements, layer, layers):
         return None, full_origin
     if len(visible) == 1 and len(parts) == 1 and visible[0].is_identity:
         return parts[0].design, full_origin       # untransformed single element: pass through
-    design, origin = compile_layout(parts)
+    # bed coordinates, like the layout bounds below (a lone untransformed part must not keep
+    # its own design coordinates: it would be cut at the wrong place)
+    design, origin = compile_layout(parts, passthrough=False)
     if design is not None:
         # same bounds (and so the same job origin) as the whole layout
         if layer.kind == RASTER and design.raster.image is not None and design.bounds != full_bounds:
