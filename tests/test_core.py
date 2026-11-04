@@ -520,6 +520,13 @@ def test_curves():
                                 hatch_spacing=1.0, hatch_angle=0.0))
     check("hatched rectangle: engrave lines, no cut, no raster", hd.vector_engrave.ecoords and not hd.vector_cut.ecoords
           and hd.raster.image is None and abs(hd.bounds[1] * 25.4 - 10) < 1e-9)
+    from kerfly.core.shapes import with_tabs
+    pieces = with_tabs([(0, 0), (10, 0), (10, 10), (0, 10), (0, 0)], 4, 1.0)
+    cut_len = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for p in pieces for a, b in zip(p, p[1:]))
+    check("bridges: 4 x 1 mm leave 36 mm of a 40 mm square", len(pieces) == 4 and abs(cut_len - 36) < 1e-9)
+    tabbed = build_design(ShapeSpec(kind="rectangle", width=10, height=10, operation="cut", tabs=4, tab_width=1.0))
+    loops = {r[2] for r in tabbed.vector_cut.ecoords}
+    check("rectangle with bridges is cut in 4 pieces", len(loops) == 4)
     design = build_design(ShapeSpec(kind="path", subpaths=circle, operation="fill"))
     check("a closed path can be filled", design.raster.image is not None)
     found = C.svg_segments(SVG)

@@ -43,6 +43,8 @@ Version numbers:
   engraved lines instead of a raster image. You set the spacing, the angle,
   and optionally a cross-hatch. Holes (for example in letters) stay empty, and
   the lines go to the outline engrave layer.
+- **Bridges** for cut shapes (options bar): a number of short uncut gaps per
+  closed outline, with their width, so the part stays in the sheet.
 - **Measure** tool (M). Drag between two points to see the distance, width,
   height and angle, on the bed and in the status bar. Points snap to corners,
   centres and lines.

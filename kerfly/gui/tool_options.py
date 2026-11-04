@@ -134,6 +134,24 @@ class ToolOptionsBar(QWidget):
         op.currentIndexChanged.connect(lambda _i: self._set("operation", op.currentData()))
         self._add(op, title)
 
+        if self.spec.operation == "cut" and self.spec.closed:
+            tb = QWidget()
+            tg = QGridLayout(tb)
+            tg.setContentsMargins(0, 0, 0, 0)
+            tg.setVerticalSpacing(4)
+            count = QSpinBox()
+            count.setRange(0, 50)
+            count.setValue(int(self.spec.tabs))
+            count.setSpecialValueText(_("none"))
+            count.setKeyboardTracking(False)
+            count.setToolTip(_("Bridges per outline: short uncut gaps that hold the part in the sheet"))
+            count.valueChanged.connect(lambda v: self._set("tabs", v))
+            width = self._dspin("tab_width", 0.1, 20.0, " mm", decimals=1)
+            width.setToolTip(_("Width of each bridge"))
+            tg.addWidget(count, 0, 0)
+            tg.addWidget(width, 1, 0)
+            self._add(tb, _("Bridges"))
+
         if self.spec.operation == "hatch" and self.spec.closed:
             hb = QWidget()
             hg = QGridLayout(hb)

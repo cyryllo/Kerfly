@@ -40,6 +40,8 @@ class ShapeSpec:
     hatch_spacing: float = 0.5    # hatch: distance between lines, mm
     hatch_angle: float = 45.0     # hatch: line direction, degrees counter-clockwise
     hatch_cross: bool = False     # hatch: second set of lines at 90 degrees
+    tabs: int = 0                 # cut: bridges per closed outline that hold the part in the sheet
+    tab_width: float = 1.0        # cut: width of each bridge, mm
     corner_radius: float = 0.0    # rectangle, mm
     sides: int = 6                # polygon
     text: str = "Kerfly"          # text
@@ -134,6 +136,42 @@ def outlines(spec):
     return [p + [p[0]] for p in polys if len(p) >= 2]
 
 
+def with_tabs(poly, count, width):
+    """A closed polyline (first point repeated at the end) cut into open pieces,
+    leaving `count` gaps of `width` spread evenly along it (bridges)."""
+    if count <= 0 or width <= 0 or len(poly) < 3:
+        return [poly]
+    lengths = [math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(poly, poly[1:])]
+    total = sum(lengths)
+    if total <= count * width * 1.5:
+        return [poly]                          # too small for its bridges: leave it whole
+    step = total / count
+    gaps = [(step * (k + 0.5) - width / 2.0, step * (k + 0.5) + width / 2.0) for k in range(count)]
+
+    def point_at(d):
+        acc = 0.0
+        for (a, b), l in zip(zip(poly, poly[1:]), lengths):
+            if acc + l >= d and l > 0:
+                t = (d - acc) / l
+                return (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)
+            acc += l
+        return poly[-1]
+    # pieces between gaps: from the end of one gap to the start of the next (wrapping round)
+    pieces = []
+    for k in range(count):
+        start = gaps[k][1]
+        end = gaps[(k + 1) % count][0] + (total if k == count - 1 else 0.0)
+        pts = [point_at(start % total)]
+        acc = 0.0
+        for idx, l in enumerate(lengths * 2):
+            acc += l
+            if start < acc < end:
+                pts.append(poly[(idx + 1) % (len(poly) - 1)] if idx + 1 >= len(poly) - 1 else poly[idx + 1])
+        pts.append(point_at(end % total if end > total else end))
+        pieces.append(pts)
+    return pieces
+
+
 def _bounds_mm(polys):
     xs = [x for p in polys for x, _ in p]
     ys = [y for p in polys for _, y in p]
@@ -182,6 +220,12 @@ def build_design(spec):
         design.raster.set_image(_fill_image(polys, xmin, ymin, xmax - xmin, ymax - ymin))
     else:
         segments = []
+        if spec.operation == "cut" and spec.tabs > 0:
+            pieces = []
+            for p in polys:
+                closed_poly = len(p) > 2 and p[0] == p[-1]
+                pieces += with_tabs(p, int(spec.tabs), float(spec.tab_width)) if closed_poly else [p]
+            polys = pieces
         for p in polys:
             pts = [to_design(x, y) for x, y in p]
             for (x1, y1), (x2, y2) in zip(pts, pts[1:]):

@@ -92,7 +92,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Text (system fonts)~~ (done); text on a path | `tooltext.py`, `toollinetext.py` |
 | ~~Node editing with Bezier handles, for drawn shapes and broken-apart SVG / DXF~~ (done) | `toolnodeedit.py`, `toolnodemove.py` |
 | Cut a region out of an image | `toolimagecut.py` |
-| Tabs (bridges) on cut paths | `tooltabedit.py` |
+| ~~Tabs (bridges) on cut paths~~ (done: count and width per outline) | `tooltabedit.py` |
 
 ## Generators and processing
 

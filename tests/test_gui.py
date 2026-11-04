@@ -855,6 +855,18 @@ def main():
     hatch_ok = e.design.vector_engrave.ecoords and not e.design.vector_cut.ecoords and e.shape.operation == "hatch"
     check("hatch: from the options bar, its settings appear, lines go to the engrave layer",
           hatch_ok and any(t in ("Hatch", "Kreskowanie") for t in labels), "(%s)" % labels)
+    spec = w.selected.shape.copy()
+    spec.operation = "cut"
+    w._tool_options_changed(spec)
+    for _i in range(5):
+        app.processEvents()
+    spec = w.tool_options.spec.copy()
+    spec.tabs = 2
+    w._tool_options_changed(spec)
+    labels = [l.text() for l in w.tool_options.findChildren(QLabel)]
+    loops = {r[2] for r in w.selected.design.vector_cut.ecoords}
+    check("bridges: set in the options bar, the cut has gaps", len(loops) == 2 and "Bridges" in labels,
+          "(%d pieces, %s)" % (len(loops), labels))
     w.close()
 
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo
