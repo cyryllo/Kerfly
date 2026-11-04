@@ -166,7 +166,8 @@ class MainWindow(QMainWindow):
                                        _("Centre the selected element, or the whole design, on the bed"))
         self.act_snap_objects = self._action(_("Snap to &objects"), self.toggle_snap_objects, "Ctrl+;",
                                              _("Snap to corners, centres, middles and lines of other elements "
-                                               "and of the bed, when drawing and moving"))
+                                               "and of the bed, when drawing and moving. Hold Alt to snap "
+                                               "nothing for a moment."))
         self.act_snap_objects.setCheckable(True)
         self.act_snap_objects.setChecked(is_true(self.values.get("snap_objects", "1")))
         self.act_snap = self._action(_("&Snap to grid"), self.toggle_snap, "Ctrl+'")
@@ -335,7 +336,6 @@ class MainWindow(QMainWindow):
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
                 (self.act_snap, "grid-dots", C_("toolbar", "Grid")),
-                (self.act_snap_objects, "magnet", C_("toolbar", "Snap")),
             ]),
             (C_("toolbar group", "Settings"), [
                 (self.act_materials, "book", C_("toolbar", "Materials")),
@@ -1202,7 +1202,8 @@ class MainWindow(QMainWindow):
         for e in chosen:
             e.x += dx
             e.y += dy
-        if not self.preview.last_move_snapped:       # snapped to another element: keep that, not the grid
+        if not self.preview.last_move_snapped and not self.preview.snap_suspended():
+            # (snapped to another element: keep that, not the grid; Alt held: no snapping at all)
             x0, y0 = element.x, element.y
             self._snap(element)
             for e in chosen:

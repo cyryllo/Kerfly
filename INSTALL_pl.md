@@ -82,6 +82,15 @@ otwiera projekt. Linie `FAIL` trzeba naprawić. Linie `WARN` dotyczą rzeczy
 opcjonalnych albo niepodłączonego lasera. Wynik dołącz do każdego zgłoszenia
 błędu.
 
+## Rysowanie: najważniejsze skróty
+
+- **Alt** (przytrzymany) chwilowo wyłącza przyciąganie przy rysowaniu,
+  przesuwaniu i edycji węzłów.
+- **Shift** przy rysowaniu daje kwadrat, koło albo linie co 45°.
+- **Ctrl+klik** albo ramka zaznacza kilka elementów, a **Ctrl+Shift+G**
+  grupuje.
+- Pełna tabela jest w README (po angielsku).
+
 ## Gdy coś pójdzie nie tak
 
 Kerfly zapisuje dziennik wszystkich komend lasera i błędów (`kerfly.log` w

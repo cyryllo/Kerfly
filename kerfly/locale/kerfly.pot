@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 18:40+0100\n"
+"POT-Creation-Date: 2026-11-04 18:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1098,16 +1098,12 @@ msgstr ""
 msgid "Sides"
 msgstr ""
 
-msgctxt "toolbar"
-msgid "Snap"
-msgstr ""
-
 msgid "Snap to &objects"
 msgstr ""
 
 msgid ""
 "Snap to corners, centres, middles and lines of other elements and of the "
-"bed, when drawing and moving"
+"bed, when drawing and moving. Hold Alt to snap nothing for a moment."
 msgstr ""
 
 #, python-format

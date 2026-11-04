@@ -63,6 +63,24 @@ original 0.71 after every change. See [Regression tests](#regression-tests).
 
 Changes between versions are listed in [CHANGELOG.md](CHANGELOG.md).
 
+## Drawing and editing: mouse and keys
+
+| Action | How |
+|---|---|
+| Select several elements | Drag a frame around them, or Ctrl+click |
+| Move | Drag, or the arrow keys (1 mm or one grid step; Shift: 10×) |
+| Snapping | Snaps to corners, centres, middles and lines of other elements, to the bed and to the grid (View → Snap to objects, Ctrl+;) |
+| Snap nothing for a moment | **Hold Alt** while drawing, dragging or moving a node |
+| Square / circle, 45° lines | Hold Shift while drawing |
+| Polyline | Click the corners. Click the first point to close; double-click or Enter for an open line; Backspace removes the last corner; Esc cancels |
+| Edit nodes (N) | Drag a corner; double-click a side to add one; double-click a corner or Delete to remove it |
+| Group / Ungroup | Ctrl+Shift+G / Ctrl+Alt+G. Clicking one member selects the whole group |
+| Pan and zoom | Middle or right mouse button drags the view; the wheel zooms |
+
+On KDE Plasma 5, Alt+drag moves windows by default. Change it in System
+Settings → Window Management → Window Behavior → Window Actions, or use Plasma
+6, where Meta moves windows.
+
 ## Installing
 
 See [INSTALL.md](INSTALL.md) ([Polish version](INSTALL_pl.md)). Start Kerfly

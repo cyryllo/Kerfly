@@ -365,6 +365,12 @@ class PreviewView(QGraphicsView):
         self.viewport().setCursor(Qt.CrossCursor if drawing else Qt.ArrowCursor)
 
     # ---- snapping: other elements first, then the grid ------------------------
+    @staticmethod
+    def snap_suspended():
+        """Alt held down: no snapping at all for a moment (objects and grid)."""
+        from PySide6.QtWidgets import QApplication
+        return bool(QApplication.keyboardModifiers() & Qt.AltModifier)
+
     def _snap_tolerance(self):
         return SNAP_PIXELS / max(abs(self.transform().m11()), 1e-9)
 
@@ -425,6 +431,10 @@ class PreviewView(QGraphicsView):
             own_shape.segments = sides
             own = [own_shape]
         exclude = (self._node_item,) if self._node_item is not None else ()
+        if self.snap_suspended():
+            self._remove_guides()
+            self.hide_snap_marker()
+            return p
         if self.snap_objects:
             tol = self._snap_tolerance()
             hit = snapping.find_snap(p.x(), p.y(), own + self._snap_shapes(exclude), tol)
@@ -458,7 +468,10 @@ class PreviewView(QGraphicsView):
 
     def snap_point(self, p, exclude=()):
         """A point the user clicks or drags to, snapped to other elements (when
-        object snapping is on) or else to the grid."""
+        object snapping is on) or else to the grid. Alt: no snapping."""
+        if self.snap_suspended():
+            self.hide_snap_marker()
+            return p
         if self.snap_objects:
             hit = snapping.find_snap(p.x(), p.y(), self._snap_shapes(exclude), self._snap_tolerance())
             if hit is not None:
@@ -476,7 +489,7 @@ class PreviewView(QGraphicsView):
         """While an element is dragged: move it so one of its corners, middles or
         its centre lands on a target of another element (or of the bed)."""
         self.last_move_snapped = False
-        if not self.snap_objects or len(self._selected_items()) > 1:
+        if not self.snap_objects or len(self._selected_items()) > 1 or self.snap_suspended():
             self.hide_snap_marker()
             return new_pos
         delta = new_pos - item.pos()

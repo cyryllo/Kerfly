@@ -27,8 +27,9 @@ Version numbers:
 
   Closed polylines can be cut, outlined or filled. Polylines are saved in
   `.kerfly` projects.
-- **Snap to objects** (magnet button in the View group, Ctrl+;). It is on by
-  default and works together with the grid.
+- **Snap to objects** (View → Snap to objects, Ctrl+;). It is on by default
+  and works together with the grid. **Hold Alt** while drawing, dragging or
+  editing nodes to snap to nothing (objects and grid) for a moment.
   - Drawing tools snap to corners, centres and side middles of other elements
     and of the bed, to the ends and middles of lines, and to any point on a
     line or curve. A purple marker with a label shows the target before you
