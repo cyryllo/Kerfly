@@ -867,11 +867,21 @@ class PreviewView(QGraphicsView):
         super().keyPressEvent(event)
 
     def fit_all(self):
+        """Show the whole bed and every element. Only the bed and the elements
+        count: markers drawn at a fixed screen size (head, handles, labels) grow
+        in scene units when zoomed out, and would make each fit smaller still."""
         self._user_zoomed = False
-        rect = self.scene().itemsBoundingRect()
-        if not rect.isEmpty():
-            self.fitInView(rect.adjusted(-5, -5, 5, 5), Qt.KeepAspectRatio)
-            self._place_handles()
+        vp = self.viewport().size()
+        if vp.width() < 20 or vp.height() < 20:
+            return                               # not laid out yet (or minimised): fit later
+        rect = QRectF(getattr(self, "bed_rect", QRectF()))
+        for item in self._items:
+            rect = rect.united(item.sceneBoundingRect()) if not rect.isEmpty() else item.sceneBoundingRect()
+        if rect.isEmpty():
+            return
+        self.resetTransform()
+        self.fitInView(rect.adjusted(-5, -5, 5, 5), Qt.KeepAspectRatio)
+        self._place_handles()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

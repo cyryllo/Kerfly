@@ -60,7 +60,9 @@ Version numbers:
 - Toolbar reorganised so labels are not cut short:
   - rotate and mirror are small icons in a new Transform group;
   - group, ungroup and break apart joined the Shapes group.
-- The bed view follows the window size until you zoom or pan.
+- The bed view follows the window size until you zoom or pan. Fitting counts
+  only the bed and the elements, and waits until the view has a size, so the
+  bed no longer shrinks away or disappears.
 - **Combine shapes** (new Shapes toolbar group, Edit → Combine shapes):
   union, difference (the first selected shape minus the others), intersection
   and exclusion of the closed outlines of two or more selected shapes. The
