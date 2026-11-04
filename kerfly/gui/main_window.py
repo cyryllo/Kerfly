@@ -29,7 +29,8 @@ from kerfly.core import project as project_io
 from kerfly.core.layers import (CUT, ENGRAVE, EXTRA_COLORS, GCODE, KINDS, RASTER, Layer, layer_of,
                                 layer_times, part_present)
 from kerfly.core.diag import log as diag_log
-from kerfly.core.layout import on_bed, Element, compile_layout
+from kerfly.core.layout import (Element, align, compile_layout, distribute, mirror, on_bed,
+                                selection_bounds)
 from kerfly.core.shapes import ShapeSpec, build_design
 from kerfly.gui import icons
 from kerfly.gui.image_dialog import ImageSizeDialog
@@ -172,6 +173,22 @@ class MainWindow(QMainWindow):
                                          lambda: self.rotate_selected(90), "Ctrl+L")
         self.act_rot_right = self._action(_("Rotate 90° clockwise"),
                                           lambda: self.rotate_selected(-90), "Ctrl+R")
+        self.act_mirror_h = self._action(_("&Mirror horizontally"), lambda: self.mirror_selected(True), "Ctrl+Shift+H",
+                                         _("Flip the selected elements left to right"))
+        self.act_mirror_v = self._action(_("Mirror &vertically"), lambda: self.mirror_selected(False), "Ctrl+Shift+V",
+                                         _("Flip the selected elements top to bottom"))
+        align_names = {"left": N_("Align left"), "hcenter": N_("Align centres horizontally"),
+                       "right": N_("Align right"), "top": N_("Align top"),
+                       "vcenter": N_("Align centres vertically"), "bottom": N_("Align bottom")}
+        self.act_align = {}
+        for edge, text in align_names.items():
+            self.act_align[edge] = self._action(
+                _(text), lambda _c=False, k=edge: self.align_selected(k), None,
+                _(text) + " – " + _("several elements: to each other; one element: to the bed"))
+        self.act_distribute_h = self._action(_("Distribute horizontally"), lambda: self.distribute_selected(True),
+                                             None, _("Equal gaps from left to right (three or more elements)"))
+        self.act_distribute_v = self._action(_("Distribute vertically"), lambda: self.distribute_selected(False),
+                                             None, _("Equal gaps from top to bottom (three or more elements)"))
         self.act_place_head = self._action(_("Place design at the &head"), self.place_at_head, "Ctrl+H",
                                            _("Move all elements so the design starts at the laser head"))
         self.act_save_egv = self._action(_("Save &EGV file\u2026"), self.save_egv, "Ctrl+Shift+E",
@@ -214,8 +231,12 @@ class MainWindow(QMainWindow):
             m.addSeparator() if a is None else m.addAction(a)
         m = mb.addMenu(_("&Edit"))
         for a in (self.act_undo, self.act_redo, None, self.act_duplicate, self.act_delete, None,
-                  self.act_rot_left, self.act_rot_right, None, self.act_center, self.act_place_head):
+                  self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v, None,
+                  self.act_center, self.act_place_head):
             m.addSeparator() if a is None else m.addAction(a)
+        sub = m.addMenu(_("Align and distribute"))
+        for a in list(self.act_align.values()) + [None, self.act_distribute_h, self.act_distribute_v]:
+            sub.addSeparator() if a is None else sub.addAction(a)
         m = mb.addMenu(_("&Laser"))
         self.laser_menu = m
         for a in (self.act_connect, self.act_release, None, self.act_home, self.act_unlock,
@@ -277,8 +298,20 @@ class MainWindow(QMainWindow):
             (C_("toolbar group", "Arrange"), [
                 (self.act_rot_left, "rotate-2", C_("toolbar", "Rotate left")),
                 (self.act_rot_right, "rotate-clockwise-2", C_("toolbar", "Rotate right")),
+                (self.act_mirror_h, "flip-horizontal", C_("toolbar", "Mirror\nhorizontal")),
+                (self.act_mirror_v, "flip-vertical", C_("toolbar", "Mirror\nvertical")),
                 (self.act_center, "focus-centered", C_("toolbar", "Centre")),
                 (self.act_place_head, "current-location", C_("toolbar", "To head")),
+            ]),
+            (C_("toolbar group", "Align"), "grid", [
+                (self.act_align["left"], "layout-align-left"),
+                (self.act_align["hcenter"], "layout-align-center"),
+                (self.act_align["right"], "layout-align-right"),
+                (self.act_distribute_h, "layout-distribute-vertical"),
+                (self.act_align["top"], "layout-align-top"),
+                (self.act_align["vcenter"], "layout-align-middle"),
+                (self.act_align["bottom"], "layout-align-bottom"),
+                (self.act_distribute_v, "layout-distribute-horizontal"),
             ]),
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
@@ -292,7 +325,38 @@ class MainWindow(QMainWindow):
         tb = QToolBar(_("Main toolbar"))
         tb.setObjectName("main_toolbar")
         tb.setMovable(False)
-        for i, (title, entries) in enumerate(groups):
+        for i, group_def in enumerate(groups):
+            title, entries = group_def[0], group_def[-1]
+            if len(group_def) == 3:                  # small icon-only buttons in two rows
+                if i:
+                    line = QFrame()
+                    line.setFrameShape(QFrame.VLine)
+                    line.setObjectName("ribbon_separator")
+                    tb.addWidget(line)
+                group = QWidget()
+                v = QVBoxLayout(group)
+                v.setContentsMargins(4, 2, 4, 0)
+                v.setSpacing(0)
+                grid = QGridLayout()
+                grid.setSpacing(1)
+                per_row = (len(entries) + 1) // 2
+                for n, (action, icon) in enumerate(entries):
+                    action.setIcon(icons.tabler(icon))
+                    button = QToolButton()
+                    button.setDefaultAction(action)
+                    button.setToolButtonStyle(Qt.ToolButtonIconOnly)
+                    button.setIconSize(QSize(20, 20))
+                    button.setAutoRaise(True)
+                    button.setFixedSize(30, 30)
+                    grid.addWidget(button, n // per_row, n % per_row)
+                v.addLayout(grid)
+                v.addStretch(1)
+                caption = QLabel(title)
+                caption.setObjectName("ribbon_caption")
+                caption.setAlignment(Qt.AlignHCenter)
+                v.addWidget(caption)
+                tb.addWidget(group)
+                continue
             if i:
                 line = QFrame()
                 line.setFrameShape(QFrame.VLine)
@@ -1025,6 +1089,51 @@ class MainWindow(QMainWindow):
         self._keep_on_bed(element)
         self._layout_changed()
 
+    # ---- mirror, align, distribute -------------------------------------
+    def _selection(self):
+        """Elements selected in the bed view (several with a rubber band or Ctrl+click)."""
+        chosen = [e for e in self.preview.selected_elements() if e in self.elements]
+        if not chosen and self.selected is not None:
+            chosen = [self.selected]
+        return chosen
+
+    def _arranged(self, chosen):
+        """Finish an arrange command: keep the elements on the bed, redraw and keep the selection."""
+        self._layout_changed()
+        if len(chosen) > 1:
+            self.preview.select_element(chosen)
+
+    def mirror_selected(self, horizontal):
+        chosen = self._selection()
+        if not chosen or self.worker is not None:
+            return
+        self._checkpoint()
+        for e in chosen:
+            mirror(e, horizontal)
+        self._arranged(chosen)
+
+    def align_selected(self, edge):
+        chosen = self._selection()
+        if not chosen or self.worker is not None:
+            return
+        if len(chosen) == 1:
+            bed_w, bed_h = config.bed_size_inches(self.values)
+            frame = (0.0, bed_w, -bed_h, 0.0)
+        else:
+            frame = selection_bounds(chosen)
+        self._checkpoint()
+        align(chosen, edge, frame)
+        self._arranged(chosen)
+
+    def distribute_selected(self, horizontal):
+        chosen = self._selection()
+        if len(chosen) < 3 or self.worker is not None:
+            self.status(_("Select three or more elements to distribute them."), error=True)
+            return
+        self._checkpoint()
+        distribute(chosen, horizontal)
+        self._arranged(chosen)
+
     def rotate_selected(self, degrees):
         if self.selected is not None and self.worker is None:
             self._rotate(self.selected, degrees)
@@ -1481,8 +1590,10 @@ class MainWindow(QMainWindow):
         for a in [self.act_open, self.act_reload, self.act_save_egv, self.act_send_egv,
                   self.act_connect, self.act_release, self.act_home, self.act_unlock,
                   self.act_settings, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
-                  self.act_rot_left, self.act_rot_right, self.act_place_head, self.act_undo,
-                  self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()):
+                  self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v,
+                  self.act_distribute_h, self.act_distribute_v, self.act_place_head, self.act_undo,
+                  self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()) \
+                + list(self.act_align.values()):
             a.setEnabled(not busy)
         self.btn_stop.setEnabled(busy)
         self.act_stop.setEnabled(busy)

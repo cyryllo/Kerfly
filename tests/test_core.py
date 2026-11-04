@@ -364,6 +364,70 @@ def _dxf_design():
     return d
 
 
+def test_arrange():
+    """Mirror, align and distribute elements on the bed."""
+    from PIL import Image, ImageChops
+    from kerfly.core.layout import Element, align, compile_layout, distribute, mirror, selection_bounds
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s arrange: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    def near(a, b, tol=1e-9):
+        return all(abs(p - q) < tol for p, q in zip(a, b))
+
+    d = Design()
+    loaders.load_dxf(DXF, d)
+    e = Element(d, x=1.0, y=-1.0, rotation=30)
+    before = e.bounds
+    plain, _o = compile_layout([Element(d, x=1.0, y=-1.0, rotation=30, scale_x=1.0000001)])
+    mirror(e, horizontal=True)
+    flipped, _o = compile_layout([e])
+    # every point is reflected about the vertical line through the centre
+    cx = (before[0] + before[1]) / 2.0
+    a = sorted((round(2 * cx - r[0], 6), round(r[1], 6)) for r in plain.vector_cut.ecoords)
+    b = sorted((round(r[0], 6), round(r[1], 6)) for r in flipped.vector_cut.ecoords)
+    check("horizontal mirror of a rotated element reflects every point", near(e.bounds, before, 1e-6)
+          and len(a) == len(b) and all(near(p, q, 1e-5) for p, q in zip(a, b)))
+    mirror(e, horizontal=True)
+    check("mirroring twice gives the original placement",
+          near((e.x, e.y, e.scale_x, e.scale_y, e.rotation), (1.0, -1.0, 1.0, 1.0, 30.0), 1e-9))
+
+    img = Image.new("L", (40, 20), 255)
+    img.paste(0, (0, 0, 10, 20))                              # black stripe on the left quarter
+    png = os.path.join(tempfile.mkdtemp(), "stripe.png")
+    img.save(png, dpi=(100, 100))
+    r = Design()
+    loaders.load_image(png, r, 100)                          # 0.4 x 0.2 in
+    re = Element(r, x=0.5, y=-0.5)
+    mirror(re, horizontal=True)
+    out, _o = compile_layout([re, Element(d, x=3.0, y=-0.5)])  # two elements: the raster is redrawn
+    im = out.raster.image
+    px = im.width * 0.4 / (out.bounds[1] - out.bounds[0])    # pixels across the image element
+    row = int(im.height * 0.1 / (out.bounds[3] - out.bounds[2]))   # 0.1 in below the top: inside the image
+    black = [x for x in range(int(px)) if im.getpixel((x, row)) < 128]
+    check("raster mirror moves the stripe to the right", bool(black) and min(black) >= 0.7 * px
+          and max(black) <= px + 2, "(stripe %s..%s of %d px)" % (min(black or [0]), max(black or [0]), px))
+
+    a1, a2, a3 = Element(d, x=0.2, y=-0.3), Element(d, x=1.7, y=-1.1, scale_x=0.5), Element(d, x=4.0, y=-0.6)
+    frame = selection_bounds([a1, a2, a3])
+    align([a1, a2, a3], "left", frame)
+    left_ok = all(abs(e.bounds[0] - 0.2) < 1e-9 for e in (a1, a2, a3))
+    align([a1, a2, a3], "vcenter", (0.0, 10.0, -8.0, 0.0))
+    mid_ok = all(abs((e.bounds[2] + e.bounds[3]) / 2.0 + 4.0) < 1e-9 for e in (a1, a2, a3))
+    check("align left and to the middle of a frame", left_ok and mid_ok)
+
+    b1, b2, b3 = Element(d, x=0.0, y=-1.0), Element(d, x=3.5, y=-1.0, scale_x=0.5), Element(d, x=6.0, y=-1.0)
+    distribute([b3, b1, b2], horizontal=True)
+    g1 = b2.bounds[0] - b1.bounds[1]
+    g2 = b3.bounds[0] - b2.bounds[1]
+    check("distribute: equal gaps, ends stay", abs(g1 - g2) < 1e-9 and b1.x == 0.0 and b3.x == 6.0,
+          "(gaps %.4f, %.4f in)" % (g1, g2))
+    return errors
+
+
 def main():
     with open(MANIFEST) as f:
         baseline = json.load(f)["cases"]
@@ -392,6 +456,7 @@ def main():
     failures += test_shapes()
     failures += test_layers(baseline)
     failures += test_materials()
+    failures += test_arrange()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

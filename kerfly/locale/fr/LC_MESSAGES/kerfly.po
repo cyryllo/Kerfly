@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 00:51+0100\n"
+"POT-Creation-Date: 2026-11-04 17:59+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -87,6 +87,9 @@ msgstr "&Laser"
 
 msgid "&Material library…"
 msgstr "&Bibliothèque de matériaux…"
+
+msgid "&Mirror horizontally"
+msgstr "&Miroir horizontal"
 
 msgid "&Open design…"
 msgstr "&Ouvrir un dessin…"
@@ -178,6 +181,31 @@ msgstr "Ajustement de la luminosité de l'image : %s%%"
 
 msgid "Advanced"
 msgstr "Avancé"
+
+msgctxt "toolbar group"
+msgid "Align"
+msgstr "Aligner"
+
+msgid "Align and distribute"
+msgstr "Aligner et répartir"
+
+msgid "Align bottom"
+msgstr "Aligner en bas"
+
+msgid "Align centres horizontally"
+msgstr "Centrer horizontalement"
+
+msgid "Align centres vertically"
+msgstr "Centrer verticalement"
+
+msgid "Align left"
+msgstr "Aligner à gauche"
+
+msgid "Align right"
+msgstr "Aligner à droite"
+
+msgid "Align top"
+msgstr "Aligner en haut"
 
 msgid "All files"
 msgstr "Tous les fichiers"
@@ -353,6 +381,12 @@ msgstr "Distance parcourue par clic sur une flèche"
 msgid "Distance right from home"
 msgstr "Distance vers la droite depuis l'origine"
 
+msgid "Distribute horizontally"
+msgstr "Répartir horizontalement"
+
+msgid "Distribute vertically"
+msgstr "Répartir verticalement"
+
 msgid "Drawing tools"
 msgstr "Outils de dessin"
 
@@ -386,6 +420,12 @@ msgstr "Graver de bas en haut"
 msgid "Engrave outline"
 msgstr "Graver le contour"
 
+msgid "Equal gaps from left to right (three or more elements)"
+msgstr "Espaces égaux de gauche à droite (trois éléments ou plus)"
+
+msgid "Equal gaps from top to bottom (three or more elements)"
+msgstr "Espaces égaux de haut en bas (trois éléments ou plus)"
+
 #, python-format
 msgid "Estimated total: <b>%s</b>"
 msgstr "Durée totale estimée : <b>%s</b>"
@@ -416,6 +456,12 @@ msgstr "Déclencher brièvement le laser (cartes M3)"
 msgctxt "toolbar"
 msgid "Fit"
 msgstr "Ajuster"
+
+msgid "Flip the selected elements left to right"
+msgstr "Retourner les éléments sélectionnés de gauche à droite"
+
+msgid "Flip the selected elements top to bottom"
+msgstr "Retourner les éléments sélectionnés de haut en bas"
 
 msgid "Font"
 msgstr "Police"
@@ -625,6 +671,25 @@ msgid ""
 msgstr ""
 "Matériaux ajoutés : %d\n"
 "Mis à jour (même nom) : %d"
+
+msgctxt "toolbar"
+msgid ""
+"Mirror\n"
+"horizontal"
+msgstr ""
+"Miroir\n"
+"horizontal"
+
+msgctxt "toolbar"
+msgid ""
+"Mirror\n"
+"vertical"
+msgstr ""
+"Miroir\n"
+"vertical"
+
+msgid "Mirror &vertically"
+msgstr "Miroir &vertical"
 
 msgid "Mirror design"
 msgstr "Retourner le dessin en miroir"
@@ -978,6 +1043,9 @@ msgstr "Pas entre les lignes (po)"
 msgid "Select and move"
 msgstr "Sélectionner et déplacer"
 
+msgid "Select three or more elements to distribute them."
+msgstr "Sélectionnez au moins trois éléments pour les répartir."
+
 msgid "Send EGV file"
 msgstr "Envoyer le fichier EGV"
 
@@ -1303,6 +1371,9 @@ msgstr "projet"
 
 msgid "raster"
 msgstr "raster"
+
+msgid "several elements: to each other; one element: to the bed"
+msgstr "plusieurs éléments : entre eux ; un élément : par rapport au plateau"
 
 msgid "vector cut"
 msgstr "découpe vectorielle"

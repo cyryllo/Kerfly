@@ -569,6 +569,27 @@ def main():
     check("outside the work area: red, Start/Trace locked, unlocked when back",
           ok_before and locked and not_started and unlocked)
 
+    # 21. mirror, align, distribute from the window (several selected elements)
+    w = make_window()
+    w.load_design(os.path.join(FIX, "shapes.dxf"))
+    for x0, y0 in ((120, 20), (170, 60), (250, 100)):
+        w._preview_drawn("rectangle", QPointF(x0, y0), QPointF(x0 + 20, y0 + 15), False)
+    shapes = w.elements[1:]
+    w.preview.select_element(shapes)
+    w.align_selected("top")
+    tops = [round(e.bounds[3], 6) for e in shapes]
+    still_selected = len(w._selection()) == 3
+    w.distribute_selected(True)
+    gaps = [round(shapes[i + 1].bounds[0] - shapes[i].bounds[1], 6) for i in range(2)]
+    w.undo()
+    undone = [round(e.bounds[0] - shapes[0].bounds[1], 6) for e in shapes[1:2]] != gaps[:1]
+    w.preview.select_element(w.elements[0])
+    before = w.elements[0].scale_x
+    w.mirror_selected(True)
+    mirrored = w.elements[0].scale_x == -before
+    check("arrange: align top, distribute, undo, mirror", len(set(tops)) == 1 and still_selected
+          and gaps[0] == gaps[1] and undone and mirrored, "(tops %s, gaps %s)" % (tops, gaps))
+
     # 20. diagnostic log and report
     from kerfly.core import diag as _diag
     _diag.setup("test")

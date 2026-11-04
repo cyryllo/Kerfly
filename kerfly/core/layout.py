@@ -139,6 +139,75 @@ class Element:
                 self.scale_y *= width / cur_w
 
 
+def mirror(element, horizontal=True):
+    """Mirror an element on the bed, keeping its centre: horizontal flips left
+    and right, otherwise top and bottom. A mirror of a rotated element is the
+    same mirror of the unrotated one with the opposite rotation."""
+    cx, cy = element.centre
+    if horizontal:
+        element.scale_x = -element.scale_x
+    else:
+        element.scale_y = -element.scale_y
+    element.rotation = (-element.rotation) % 360
+    element.set_centre(cx, cy)
+
+
+ALIGN_EDGES = ("left", "hcenter", "right", "top", "vcenter", "bottom")
+
+
+def selection_bounds(elements):
+    """(xmin, xmax, ymin, ymax) around all the elements."""
+    return (min(e.bounds[0] for e in elements), max(e.bounds[1] for e in elements),
+            min(e.bounds[2] for e in elements), max(e.bounds[3] for e in elements))
+
+
+def align(elements, edge, frame):
+    """Move elements so their edge (one of ALIGN_EDGES) lines up with the same
+    edge of frame = (xmin, xmax, ymin, ymax) (bed inches, y up)."""
+    fx0, fx1, fy0, fy1 = frame
+    for e in elements:
+        x0, x1, y0, y1 = e.bounds
+        if edge == "left":
+            e.x += fx0 - x0
+        elif edge == "right":
+            e.x += fx1 - x1
+        elif edge == "hcenter":
+            e.x += (fx0 + fx1) / 2.0 - (x0 + x1) / 2.0
+        elif edge == "top":
+            e.y += fy1 - y1
+        elif edge == "bottom":
+            e.y += fy0 - y0
+        elif edge == "vcenter":
+            e.y += (fy0 + fy1) / 2.0 - (y0 + y1) / 2.0
+        else:
+            raise ValueError(edge)
+
+
+def distribute(elements, horizontal=True):
+    """Equal gaps between the elements' bounding boxes along x (horizontal) or
+    y; the first and last element (by position) stay where they are."""
+    if len(elements) < 3:
+        return
+    if horizontal:
+        order = sorted(elements, key=lambda e: e.bounds[0])
+        span = order[-1].bounds[1] - order[0].bounds[0]
+        sizes = sum(e.size[0] for e in order)
+        gap = (span - sizes) / (len(order) - 1)
+        pos = order[0].bounds[1] + gap
+        for e in order[1:-1]:
+            e.x += pos - e.bounds[0]
+            pos = e.bounds[1] + gap
+    else:
+        order = sorted(elements, key=lambda e: -e.bounds[3])          # from the top down
+        span = order[0].bounds[3] - order[-1].bounds[2]
+        sizes = sum(e.size[1] for e in order)
+        gap = (span - sizes) / (len(order) - 1)
+        pos = order[0].bounds[2] - gap
+        for e in order[1:-1]:
+            e.y += pos - e.bounds[3]
+            pos = e.bounds[2] - gap
+
+
 BED_TOLERANCE = 0.002       # inches; rounding of positions typed in mm
 
 

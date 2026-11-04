@@ -410,8 +410,13 @@ class PreviewView(QGraphicsView):
                 h.setVisible(False)
 
     def select_element(self, element):
+        """Select one element, or several when given a list."""
+        wanted = element if isinstance(element, (list, tuple)) else [element]
         for item in self._items:
-            item.setSelected(item.element is element)
+            item.setSelected(any(item.element is e for e in wanted))
+
+    def selected_elements(self):
+        return [i.element for i in self._selected_items()]
 
     # ---- drawing --------------------------------------------------------
     def raster_pixmap(self, element, values):

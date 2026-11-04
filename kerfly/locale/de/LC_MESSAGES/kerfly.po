@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 00:51+0100\n"
+"POT-Creation-Date: 2026-11-04 17:59+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -87,6 +87,9 @@ msgstr "&Laser"
 
 msgid "&Material library…"
 msgstr "&Materialbibliothek…"
+
+msgid "&Mirror horizontally"
+msgstr "&Horizontal spiegeln"
 
 msgid "&Open design…"
 msgstr "Entwurf ö&ffnen…"
@@ -178,6 +181,31 @@ msgstr "Bildhelligkeit wird angepasst: %s%%"
 
 msgid "Advanced"
 msgstr "Erweitert"
+
+msgctxt "toolbar group"
+msgid "Align"
+msgstr "Ausrichten"
+
+msgid "Align and distribute"
+msgstr "Ausrichten und verteilen"
+
+msgid "Align bottom"
+msgstr "Unten ausrichten"
+
+msgid "Align centres horizontally"
+msgstr "Horizontal zentrieren"
+
+msgid "Align centres vertically"
+msgstr "Vertikal zentrieren"
+
+msgid "Align left"
+msgstr "Links ausrichten"
+
+msgid "Align right"
+msgstr "Rechts ausrichten"
+
+msgid "Align top"
+msgstr "Oben ausrichten"
 
 msgid "All files"
 msgstr "Alle Dateien"
@@ -353,6 +381,12 @@ msgstr "Verfahrweg pro Klick auf einen Pfeil"
 msgid "Distance right from home"
 msgstr "Abstand nach rechts vom Referenzpunkt"
 
+msgid "Distribute horizontally"
+msgstr "Horizontal verteilen"
+
+msgid "Distribute vertically"
+msgstr "Vertikal verteilen"
+
 msgid "Drawing tools"
 msgstr "Zeichenwerkzeuge"
 
@@ -388,6 +422,12 @@ msgstr "Von unten nach oben gravieren"
 msgid "Engrave outline"
 msgstr "Kontur gravieren"
 
+msgid "Equal gaps from left to right (three or more elements)"
+msgstr "Gleiche Abstände von links nach rechts (drei oder mehr Elemente)"
+
+msgid "Equal gaps from top to bottom (three or more elements)"
+msgstr "Gleiche Abstände von oben nach unten (drei oder mehr Elemente)"
+
 #, python-format
 msgid "Estimated total: <b>%s</b>"
 msgstr "Geschätzte Gesamtzeit: <b>%s</b>"
@@ -418,6 +458,12 @@ msgstr "Laser kurz auslösen (M3-Platinen)"
 msgctxt "toolbar"
 msgid "Fit"
 msgstr "Einpassen"
+
+msgid "Flip the selected elements left to right"
+msgstr "Ausgewählte Elemente links–rechts spiegeln"
+
+msgid "Flip the selected elements top to bottom"
+msgstr "Ausgewählte Elemente oben–unten spiegeln"
 
 msgid "Font"
 msgstr "Schrift"
@@ -627,6 +673,25 @@ msgid ""
 msgstr ""
 "Hinzugefügte Materialien: %d\n"
 "Aktualisiert (gleicher Name): %d"
+
+msgctxt "toolbar"
+msgid ""
+"Mirror\n"
+"horizontal"
+msgstr ""
+"Horizontal\n"
+"spiegeln"
+
+msgctxt "toolbar"
+msgid ""
+"Mirror\n"
+"vertical"
+msgstr ""
+"Vertikal\n"
+"spiegeln"
+
+msgid "Mirror &vertically"
+msgstr "&Vertikal spiegeln"
 
 msgid "Mirror design"
 msgstr "Entwurf spiegeln"
@@ -984,6 +1049,9 @@ msgstr "Zeilenabstand (Zoll)"
 msgid "Select and move"
 msgstr "Auswählen und verschieben"
 
+msgid "Select three or more elements to distribute them."
+msgstr "Wählen Sie drei oder mehr Elemente aus, um sie zu verteilen."
+
 msgid "Send EGV file"
 msgstr "EGV-Datei senden"
 
@@ -1311,6 +1379,9 @@ msgstr "projekt"
 
 msgid "raster"
 msgstr "Raster"
+
+msgid "several elements: to each other; one element: to the bed"
+msgstr "mehrere Elemente: zueinander; ein Element: zum Arbeitsbett"
 
 msgid "vector cut"
 msgstr "Vektorschnitt"

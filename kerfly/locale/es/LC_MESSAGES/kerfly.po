@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 00:51+0100\n"
+"POT-Creation-Date: 2026-11-04 17:59+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -87,6 +87,9 @@ msgstr "&Láser"
 
 msgid "&Material library…"
 msgstr "&Biblioteca de materiales…"
+
+msgid "&Mirror horizontally"
+msgstr "&Reflejar horizontalmente"
 
 msgid "&Open design…"
 msgstr "&Abrir diseño…"
@@ -178,6 +181,31 @@ msgstr "Ajustando el oscurecimiento de la imagen: %s%%"
 
 msgid "Advanced"
 msgstr "Avanzado"
+
+msgctxt "toolbar group"
+msgid "Align"
+msgstr "Alinear"
+
+msgid "Align and distribute"
+msgstr "Alinear y distribuir"
+
+msgid "Align bottom"
+msgstr "Alinear abajo"
+
+msgid "Align centres horizontally"
+msgstr "Centrar horizontalmente"
+
+msgid "Align centres vertically"
+msgstr "Centrar verticalmente"
+
+msgid "Align left"
+msgstr "Alinear a la izquierda"
+
+msgid "Align right"
+msgstr "Alinear a la derecha"
+
+msgid "Align top"
+msgstr "Alinear arriba"
 
 msgid "All files"
 msgstr "Todos los archivos"
@@ -351,6 +379,12 @@ msgstr "Distancia por cada clic en una flecha"
 msgid "Distance right from home"
 msgstr "Distancia hacia la derecha desde el origen"
 
+msgid "Distribute horizontally"
+msgstr "Distribuir horizontalmente"
+
+msgid "Distribute vertically"
+msgstr "Distribuir verticalmente"
+
 msgid "Drawing tools"
 msgstr "Herramientas de dibujo"
 
@@ -384,6 +418,12 @@ msgstr "Grabar de abajo hacia arriba"
 msgid "Engrave outline"
 msgstr "Grabar contorno"
 
+msgid "Equal gaps from left to right (three or more elements)"
+msgstr "Espacios iguales de izquierda a derecha (tres o más elementos)"
+
+msgid "Equal gaps from top to bottom (three or more elements)"
+msgstr "Espacios iguales de arriba abajo (tres o más elementos)"
+
 #, python-format
 msgid "Estimated total: <b>%s</b>"
 msgstr "Tiempo total estimado: <b>%s</b>"
@@ -414,6 +454,12 @@ msgstr "Disparar el láser brevemente (placas M3)"
 msgctxt "toolbar"
 msgid "Fit"
 msgstr "Ajustar"
+
+msgid "Flip the selected elements left to right"
+msgstr "Reflejar los elementos seleccionados de izquierda a derecha"
+
+msgid "Flip the selected elements top to bottom"
+msgstr "Reflejar los elementos seleccionados de arriba abajo"
 
 msgid "Font"
 msgstr "Fuente"
@@ -623,6 +669,25 @@ msgid ""
 msgstr ""
 "Materiales añadidos: %d\n"
 "Actualizados (mismo nombre): %d"
+
+msgctxt "toolbar"
+msgid ""
+"Mirror\n"
+"horizontal"
+msgstr ""
+"Reflejar\n"
+"horizontal"
+
+msgctxt "toolbar"
+msgid ""
+"Mirror\n"
+"vertical"
+msgstr ""
+"Reflejar\n"
+"vertical"
+
+msgid "Mirror &vertically"
+msgstr "Reflejar &verticalmente"
 
 msgid "Mirror design"
 msgstr "Reflejar el diseño"
@@ -974,6 +1039,9 @@ msgstr "Paso entre líneas (pulg.)"
 msgid "Select and move"
 msgstr "Seleccionar y mover"
 
+msgid "Select three or more elements to distribute them."
+msgstr "Selecciona tres o más elementos para distribuirlos."
+
 msgid "Send EGV file"
 msgstr "Enviar archivo EGV"
 
@@ -1297,6 +1365,9 @@ msgstr "proyecto"
 
 msgid "raster"
 msgstr "ráster"
+
+msgid "several elements: to each other; one element: to the bed"
+msgstr "varios elementos: entre sí; un elemento: respecto a la mesa"
 
 msgid "vector cut"
 msgstr "corte vectorial"

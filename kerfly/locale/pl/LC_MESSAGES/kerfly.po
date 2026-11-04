@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 00:51+0100\n"
+"POT-Creation-Date: 2026-11-04 17:59+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -89,6 +89,9 @@ msgstr "&Laser"
 
 msgid "&Material library…"
 msgstr "&Baza materiałów…"
+
+msgid "&Mirror horizontally"
+msgstr "Odbij w &poziomie"
 
 msgid "&Open design…"
 msgstr "&Otwórz projekt…"
@@ -180,6 +183,31 @@ msgstr "Dopasowywanie jasności obrazu: %s%%"
 
 msgid "Advanced"
 msgstr "Zaawansowane"
+
+msgctxt "toolbar group"
+msgid "Align"
+msgstr "Wyrównaj"
+
+msgid "Align and distribute"
+msgstr "Wyrównaj i rozłóż"
+
+msgid "Align bottom"
+msgstr "Wyrównaj do dołu"
+
+msgid "Align centres horizontally"
+msgstr "Wyśrodkuj w poziomie"
+
+msgid "Align centres vertically"
+msgstr "Wyśrodkuj w pionie"
+
+msgid "Align left"
+msgstr "Wyrównaj do lewej"
+
+msgid "Align right"
+msgstr "Wyrównaj do prawej"
+
+msgid "Align top"
+msgstr "Wyrównaj do góry"
 
 msgid "All files"
 msgstr "Wszystkie pliki"
@@ -349,6 +377,12 @@ msgstr "Odległość ruchu po jednym kliknięciu strzałki"
 msgid "Distance right from home"
 msgstr "Odległość w prawo od pozycji bazowej"
 
+msgid "Distribute horizontally"
+msgstr "Rozłóż w poziomie"
+
+msgid "Distribute vertically"
+msgstr "Rozłóż w pionie"
+
 msgid "Drawing tools"
 msgstr "Narzędzia rysowania"
 
@@ -382,6 +416,12 @@ msgstr "Graweruj od dołu do góry"
 msgid "Engrave outline"
 msgstr "Obrys"
 
+msgid "Equal gaps from left to right (three or more elements)"
+msgstr "Równe odstępy od lewej do prawej (co najmniej trzy elementy)"
+
+msgid "Equal gaps from top to bottom (three or more elements)"
+msgstr "Równe odstępy od góry do dołu (co najmniej trzy elementy)"
+
 #, python-format
 msgid "Estimated total: <b>%s</b>"
 msgstr "Szacowany czas: <b>%s</b>"
@@ -412,6 +452,12 @@ msgstr "Krótko odpal laser (płyty M3)"
 msgctxt "toolbar"
 msgid "Fit"
 msgstr "Dopasuj"
+
+msgid "Flip the selected elements left to right"
+msgstr "Odbij zaznaczone elementy lewo–prawo"
+
+msgid "Flip the selected elements top to bottom"
+msgstr "Odbij zaznaczone elementy góra–dół"
 
 msgid "Font"
 msgstr "Czcionka"
@@ -621,6 +667,25 @@ msgid ""
 msgstr ""
 "Dodane materiały: %d\n"
 "Zaktualizowane (ta sama nazwa): %d"
+
+msgctxt "toolbar"
+msgid ""
+"Mirror\n"
+"horizontal"
+msgstr ""
+"Odbij\n"
+"w poziomie"
+
+msgctxt "toolbar"
+msgid ""
+"Mirror\n"
+"vertical"
+msgstr ""
+"Odbij\n"
+"w pionie"
+
+msgid "Mirror &vertically"
+msgstr "Odbij w p&ionie"
 
 msgid "Mirror design"
 msgstr "Odbicie lustrzane projektu"
@@ -972,6 +1037,9 @@ msgstr "Odstęp linii skanowania (cale)"
 msgid "Select and move"
 msgstr "Zaznacz i przesuń"
 
+msgid "Select three or more elements to distribute them."
+msgstr "Zaznacz co najmniej trzy elementy, aby je rozłożyć."
+
 msgid "Send EGV file"
 msgstr "Wyślij plik EGV"
 
@@ -1291,6 +1359,9 @@ msgstr "projekt"
 
 msgid "raster"
 msgstr "grawer"
+
+msgid "several elements: to each other; one element: to the bed"
+msgstr "kilka elementów: względem siebie; jeden element: względem stołu"
 
 msgid "vector cut"
 msgstr "cięcie"

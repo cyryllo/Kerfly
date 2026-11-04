@@ -7,6 +7,17 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
+## Unreleased
+
+- **Mirror** horizontally and vertically (toolbar group Arrange, Edit menu,
+  Ctrl+Shift+H / Ctrl+Shift+V). Works for vectors and images, also when they
+  are rotated.
+- **Align** (new toolbar group): left, centre, right, top, middle and bottom.
+  Several selected elements are aligned to each other, and a single element to
+  the bed. **Distribute** gives three or more elements equal gaps,
+  horizontally or vertically. Select several elements by dragging a frame
+  around them or with Ctrl+click.
+
 ## 0.3.0 (2026-11-04)
 
 - Elements outside the work area are drawn red. Start and Trace stay locked,

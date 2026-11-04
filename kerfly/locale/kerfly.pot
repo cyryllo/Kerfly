@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 00:51+0100\n"
+"POT-Creation-Date: 2026-11-04 17:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,6 +85,9 @@ msgid "&Laser"
 msgstr ""
 
 msgid "&Material library…"
+msgstr ""
+
+msgid "&Mirror horizontally"
 msgstr ""
 
 msgid "&Open design…"
@@ -170,6 +173,31 @@ msgid "Adjusting image darkness: %s%%"
 msgstr ""
 
 msgid "Advanced"
+msgstr ""
+
+msgctxt "toolbar group"
+msgid "Align"
+msgstr ""
+
+msgid "Align and distribute"
+msgstr ""
+
+msgid "Align bottom"
+msgstr ""
+
+msgid "Align centres horizontally"
+msgstr ""
+
+msgid "Align centres vertically"
+msgstr ""
+
+msgid "Align left"
+msgstr ""
+
+msgid "Align right"
+msgstr ""
+
+msgid "Align top"
 msgstr ""
 
 msgid "All files"
@@ -338,6 +366,12 @@ msgstr ""
 msgid "Distance right from home"
 msgstr ""
 
+msgid "Distribute horizontally"
+msgstr ""
+
+msgid "Distribute vertically"
+msgstr ""
+
 msgid "Drawing tools"
 msgstr ""
 
@@ -371,6 +405,12 @@ msgstr ""
 msgid "Engrave outline"
 msgstr ""
 
+msgid "Equal gaps from left to right (three or more elements)"
+msgstr ""
+
+msgid "Equal gaps from top to bottom (three or more elements)"
+msgstr ""
+
 #, python-format
 msgid "Estimated total: <b>%s</b>"
 msgstr ""
@@ -398,6 +438,12 @@ msgstr ""
 
 msgctxt "toolbar"
 msgid "Fit"
+msgstr ""
+
+msgid "Flip the selected elements left to right"
+msgstr ""
+
+msgid "Flip the selected elements top to bottom"
 msgstr ""
 
 msgid "Font"
@@ -605,6 +651,21 @@ msgstr ""
 msgid ""
 "Materials added: %d\n"
 "Materials updated (same name): %d"
+msgstr ""
+
+msgctxt "toolbar"
+msgid ""
+"Mirror\n"
+"horizontal"
+msgstr ""
+
+msgctxt "toolbar"
+msgid ""
+"Mirror\n"
+"vertical"
+msgstr ""
+
+msgid "Mirror &vertically"
 msgstr ""
 
 msgid "Mirror design"
@@ -943,6 +1004,9 @@ msgstr ""
 msgid "Select and move"
 msgstr ""
 
+msgid "Select three or more elements to distribute them."
+msgstr ""
+
 msgid "Send EGV file"
 msgstr ""
 
@@ -1236,6 +1300,9 @@ msgid "project"
 msgstr ""
 
 msgid "raster"
+msgstr ""
+
+msgid "several elements: to each other; one element: to the bed"
 msgstr ""
 
 msgid "vector cut"
