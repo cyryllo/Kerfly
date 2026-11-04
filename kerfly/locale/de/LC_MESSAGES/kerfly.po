@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 21:02+0100\n"
+"POT-Creation-Date: 2026-11-04 21:08+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -740,6 +740,9 @@ msgid "Join the selected elements into a group that is selected and moved as one
 msgstr ""
 "Ausgewählte Elemente zu einer Gruppe verbinden, die als Ganzes ausgewählt"
 " und verschoben wird"
+
+msgid "Jump to the next layer"
+msgstr "Zur nächsten Ebene springen"
 
 msgid "Kerfly projects"
 msgstr "Kerfly-Projekte"

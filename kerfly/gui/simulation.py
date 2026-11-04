@@ -14,7 +14,8 @@ from kerfly.core.simulate import timeline, total_seconds
 from kerfly.gui import icons
 from kerfly.i18n import _
 
-SPEEDS = (1, 2, 5, 10, 20, 50, 100)
+SPEEDS = (1, 2, 5, 10, 20, 50, 100, 200, 500, 1000)
+WATCH_SECONDS = 30.0             # the automatic speed plays the whole job in about this time
 COLORS = {"raster": QColor("#424242"), "engrave": QColor("#1565c0"), "cut": QColor("#d32f2f"),
           "gcode": QColor("#6a1b9a"), "move": QColor("#9e9e9e")}
 
@@ -55,14 +56,21 @@ class SimulationDialog(QDialog):
         self.speed = QComboBox()
         for n in SPEEDS:
             self.speed.addItem("%d×" % n, n)
-        self.speed.setCurrentIndex(SPEEDS.index(10))
+        # automatic speed: the whole job in about half a minute
+        wanted = self.total / WATCH_SECONDS if self.total else 1
+        self.speed.setCurrentIndex(min(range(len(SPEEDS)), key=lambda i: abs(SPEEDS[i] - wanted)))
         self.speed.setToolTip(_("Playback speed (1× = real time)"))
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 1000)
         self.slider.sliderMoved.connect(lambda v: self.seek(self.total * v / 1000.0))
         self.label = QLabel()
+        self.next_layer = QPushButton()
+        self.next_layer.setIcon(icons.tabler("player-track-next"))
+        self.next_layer.setToolTip(_("Jump to the next layer"))
+        self.next_layer.clicked.connect(self.skip_layer)
         row = QHBoxLayout()
         row.addWidget(self.play)
+        row.addWidget(self.next_layer)
         row.addWidget(self.slider, 1)
         row.addWidget(self.speed)
         v = QVBoxLayout(self)
@@ -90,6 +98,21 @@ class SimulationDialog(QDialog):
                 self.seek(0.0)
             self.timer.start()
             self.play.setIcon(icons.tabler("player-pause"))
+
+    def skip_layer(self):
+        """Go to the start of the next layer (or the end)."""
+        current = None
+        for st, end in zip(self.steps, self.ends):
+            if end > self.time:
+                current = (st.kind, st.layer)
+                break
+        t = 0.0
+        for st, end in zip(self.steps, self.ends):
+            if end > self.time and (st.kind, st.layer) != current:
+                self.seek(t)
+                return
+            t = end
+        self.seek(self.total)
 
     def _tick(self):
         self.seek(min(self.total, self.time + 0.033 * self.speed.currentData()))

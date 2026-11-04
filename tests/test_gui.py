@@ -875,8 +875,11 @@ def main():
     w.simulate_job()
     dlg = getattr(w, "_simulation", None)
     played = dlg is not None and dlg.total > 0 and dlg.timer.isActive()
+    auto_speed = dlg.speed.currentData() >= 1
+    dlg.skip_layer()
+    skipped = dlg.time > 0
     dlg.seek(dlg.total)
-    drawn = len(dlg.items) >= 2
+    drawn = len(dlg.items) >= 2 and auto_speed and skipped
     dlg.close()
     app.processEvents()
     check("simulation: plays, draws the path, closes", played and drawn, "(%.1f s)" % (dlg.total if dlg else 0))
