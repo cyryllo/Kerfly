@@ -113,6 +113,9 @@ class ToolOptionsBar(QWidget):
         """Buttons of the node tool, in sections, with icons. Those that need a
         selected node are greyed out until a node is clicked."""
         self._node_buttons = []
+        last = self.row.itemAt(self.row.count() - 1) if self.row.count() else None
+        if last is not None and last.spacerItem() is not None:
+            self.row.takeAt(self.row.count() - 1)     # the stretch goes after the node sections
         for section, actions in NODE_SECTIONS:
             box = QWidget()
             v = QVBoxLayout(box)
@@ -126,11 +129,12 @@ class ToolOptionsBar(QWidget):
                 b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
                 b.setToolTip("%s (%s)" % (_(tip), key))
                 b.setAutoRaise(True)
-                b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+                b.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
                 b.clicked.connect(lambda _c=False, c=code: self.node_action.emit(c))
                 v.addWidget(b)
                 self._node_buttons.append((b, needs_node))
             self._add(box, _(section))
+        self.row.addStretch(1)                           # keep the sections together on the left
         self.set_node_selection(0)
 
     def set_node_selection(self, count):

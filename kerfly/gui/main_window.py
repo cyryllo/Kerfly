@@ -795,7 +795,9 @@ class MainWindow(QMainWindow):
 
     def _node_selection_changed(self, count):
         self.tool_options.set_node_selection(count)
-        if self.preview.tool == "nodes" and self.preview.node_editor.path is not None:
+        if self.preview.tool == "nodes" and self.preview.node_editor.path is None:
+            self.status(_("Click a shape to edit its nodes."))
+        elif self.preview.tool == "nodes":
             if count == 0:
                 self.status(_("Click a node (small square) to select it; Shift+click for more. Then use the "
                               "buttons above."))
