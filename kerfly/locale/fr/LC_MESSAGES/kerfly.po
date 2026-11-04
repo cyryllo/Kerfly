@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 21:09+0100\n"
+"POT-Creation-Date: 2026-11-04 21:17+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -307,11 +307,11 @@ msgstr ""
 msgid "Click a shape to edit its nodes."
 msgstr "Cliquez sur une forme pour modifier ses nœuds."
 
-msgid "Click an element of the group first, then Ungroup."
-msgstr "Cliquez d'abord sur un élément du groupe, puis sur Dégrouper."
-
 msgid "Click an element on the bed to select it."
 msgstr "Cliquez sur un élément pour le sélectionner."
+
+msgid "Click the opened file or the group first, then Ungroup."
+msgstr "Cliquez d'abord sur le fichier ouvert ou le groupe, puis sur Dégrouper."
 
 msgid "Close / open"
 msgstr "Fermer / ouvrir"
@@ -1954,4 +1954,7 @@ msgstr "gravure vectorielle"
 #~ "des déplacements laser éteint. La "
 #~ "gravure raster est montrée à une "
 #~ "ligne par millimètre."
+
+#~ msgid "Click an element of the group first, then Ungroup."
+#~ msgstr "Cliquez d'abord sur un élément du groupe, puis sur Dégrouper."
 

@@ -896,8 +896,8 @@ def main():
     src = w.elements[0]
     w._edit_nodes_of(src)
     explained = len(w.elements) == 1 and w.preview.tool == "select" and "Ungroup" in w.statusBar().currentMessage()
-    w.preview.select_element(src)
-    w.ungroup_selected()
+    w.preview.scene().clearSelection()
+    w.ungroup_selected()                                                # nothing selected, one file: that one
     parts = list(w.elements)
     split = len(parts) > 1 and all(e.shape.kind == "path" and not e.group for e in parts)
     w.preview.select_element(parts[0])

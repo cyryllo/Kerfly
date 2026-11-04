@@ -1641,8 +1641,16 @@ class MainWindow(QMainWindow):
 
     def ungroup_selected(self):
         from kerfly.core.explode import has_vectors
-        files = [e for e in self._selection() if (e.shape is None or e.shape.kind == "text")
-                 and e.design is not None and has_vectors(e.design)]
+
+        def splittable(e):
+            return (e.shape is None or e.shape.kind == "text") and e.design is not None and has_vectors(e.design)
+        if not self._selection():                      # nothing selected: the only file or group is meant
+            files_all = [e for e in self.elements if splittable(e) and not e.group]
+            groups = {e.group for e in self.elements if e.group}
+            if len(files_all) + len(groups) == 1:
+                target = files_all or [e for e in self.elements if e.group]
+                self.preview.select_element(target)
+        files = [e for e in self._selection() if splittable(e)]
         if files and self.worker is None:              # an opened file splits into one shape per line
             for e in self._selection():
                 if e not in files and e.group:
@@ -1651,12 +1659,8 @@ class MainWindow(QMainWindow):
             self.break_apart_selected(grouped=False)
             return
         chosen = [e for e in self._selection() if e.group]
-        if not chosen and not self._selection():
-            groups = {e.group for e in self.elements if e.group}
-            if len(groups) == 1:                   # nothing selected, one group: that one is meant
-                chosen = [e for e in self.elements if e.group]
         if not chosen or self.worker is not None:
-            self.status(_("Click an element of the group first, then Ungroup."), error=True)
+            self.status(_("Click the opened file or the group first, then Ungroup."), error=True)
             return
         self._checkpoint()
         for e in chosen:
