@@ -322,9 +322,11 @@ class PreviewView(QGraphicsView):
         factor = 1.25 if event.angleDelta().y() > 0 else 1 / 1.25
         current = self.transform().m11()
         fitted = self._fit_scale()
-        if factor < 1 and fitted is not None and current * factor <= fitted * 1.001:
-            self.fit_all()                       # zoomed out to the limit: the whole bed again
-            return
+        if factor < 1 and fitted is not None and current * factor < fitted:
+            if current <= fitted * 1.001:
+                self.fit_all()                   # already at the limit: the whole bed, centred
+                return
+            factor = fitted / current            # last step: exactly to the limit, still about the cursor
         if current * factor < 400:
             self._user_zoomed = True             # keep the user's zoom when the window is resized
             # zoom about the point under the cursor: it stays where it is on the screen

@@ -92,8 +92,9 @@ Version numbers:
   - rotate and mirror are small icons in a new Transform group;
   - group and ungroup joined the Shapes group.
 - The bar above the bed view has a fixed height, so it no longer stretches.
-- The mouse wheel zooms about the point under the cursor, which stays in
-  place (also during the simulation). It zooms in as far as you like, but not further out than the
+- The mouse wheel zooms in and out about the point under the cursor, which
+  stays in place (also during the simulation); one more step out at the limit
+  centres the whole bed. It zooms in as far as you like, but not further out than the
   whole bed, so the bed cannot get lost.
 - The bed view follows the window size until you zoom or pan. Fitting counts
   only the bed and the elements, and waits until the view has a size, so the

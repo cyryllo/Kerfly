@@ -965,9 +965,14 @@ def main():
         QApplication.sendEvent(v.viewport(), ev)
     after = v.mapToScene(anchor)
     zoomed_in = v.transform().m11() > fit * 1.9 and abs(after.x() - under.x()) < 1 and abs(after.y() - under.y()) < 1
+    ev = QWheelEvent(QPointF(anchor), QPointF(v.viewport().mapToGlobal(anchor)), _QP(0, 0), _QP(0, -120),
+                     Qt.NoButton, Qt.NoModifier, Qt.NoScrollPhase, False)
+    QApplication.sendEvent(v.viewport(), ev)                            # one step out: still about the cursor
+    out_pt = v.mapToScene(anchor)
+    zoomed_in = zoomed_in and abs(out_pt.x() - under.x()) < 1 and abs(out_pt.y() - under.y()) < 1
     wheel(-10)
     back = abs(v.transform().m11() - fit) < 1e-6 and v._bed_visible()
-    check("zoom: not further out than the whole bed, zooms in about the cursor", out_limit and zoomed_in and back,
+    check("zoom: not further out than the whole bed, zooms in and out about the cursor", out_limit and zoomed_in and back,
           "(%s)" % [out_limit, zoomed_in, back])
     w.close()
 
