@@ -4,8 +4,8 @@ with how long each takes, for the bed view to play back.
 
 Layers run as in a job (raster, outline engrave, cut, G-code), vector paths in
 the order the job uses (inside first). A raster is shown as its scan lines,
-one line per millimetre (each standing for all the scan lines in that
-millimetre).
+one line every RASTER_ROW_MM (each standing for all the real scan lines in
+that band, so the time is right).
 
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
@@ -18,6 +18,7 @@ from .layers import CUT, ENGRAVE, GCODE, RASTER, compile_layer, run_order
 from .pathopt import optimize_paths
 
 RAPID_MM_S = 150.0               # travel speed between cuts (approximate)
+RASTER_ROW_MM = 0.2              # distance between the raster lines drawn by the simulation
 
 
 @dataclass
@@ -93,9 +94,9 @@ def _loops(coords, bed):
 
 
 def _raster_rows(design, bed, settings):
-    """Scan lines across the dark part of the raster, one per millimetre,
-    zigzag. Each stands for all the real scan lines in that millimetre, so it
-    is played more slowly by that many times."""
+    """Scan lines across the dark part of the raster, one every RASTER_ROW_MM,
+    zigzag. Each stands for all the real scan lines in its band, so it is
+    played more slowly by that many times."""
     im = design.raster.image
     if im is None:
         return []
@@ -104,11 +105,12 @@ def _raster_rows(design, bed, settings):
     dpi = design.input_dpi or 1000.0
     xmin, _xmax, _ymin, ymax = design.bounds
     step_mm = max(float(settings.raster_step) * 25.4, 0.01)
-    lines_per_row = max(1.0, 1.0 / step_mm)
+    row_mm = max(RASTER_ROW_MM, step_mm)
+    lines_per_row = max(1.0, row_mm / step_mm)
     px_per_mm = dpi / 25.4
     rows = []
     k = 0
-    y_mm = 0.5
+    y_mm = row_mm / 2.0
     while y_mm * px_per_mm < h:
         py = int(y_mm * px_per_mm)
         line = gray.crop((0, py, w, py + 1)).point(lambda v: 255 if v < 128 else 0)
@@ -120,7 +122,7 @@ def _raster_rows(design, bed, settings):
             a, b = bed(x0, y), bed(x1, y)
             rows.append(([a, b] if k % 2 == 0 else [b, a], lines_per_row))
             k += 1
-        y_mm += 1.0
+        y_mm += row_mm
     return rows
 
 

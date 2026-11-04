@@ -85,8 +85,8 @@ Version numbers:
   them: layers in job order, paths inside first, travel moves dashed.
   - Play / pause, a time slider, a "next layer" button, and speeds from 1×
     (real time) to 1000×. The speed is chosen automatically so the whole job
-    plays in about half a minute. Raster engraving is the slowest part of a
-    real job too.
+    plays in about half a minute. Raster engraving is drawn one line every
+    0.2 mm, and it is the slowest part of a real job too.
   - The time comes from the layer speeds and passes.
 - Toolbar reorganised so labels are not cut short:
   - rotate and mirror are small icons in a new Transform group;

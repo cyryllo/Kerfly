@@ -77,7 +77,7 @@ class SimulationDialog(QDialog):
         v.addLayout(row)
         v.addWidget(self.label)
         hint = QLabel(_("Grey dashed lines are moves with the laser off. Raster engraving is shown one line "
-                        "per millimetre."))
+                        "every 0.2 mm."))
         hint.setWordWrap(True)
         hint.setStyleSheet("color:#6b7280;")
         v.addWidget(hint)
