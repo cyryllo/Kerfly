@@ -24,7 +24,7 @@ TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(TESTS_DIR)
 sys.path.insert(0, ROOT_DIR)
 
-from PySide6.QtWidgets import QApplication, QFileDialog, QInputDialog, QLabel, QMessageBox, QToolButton  # noqa: E402
+from PySide6.QtWidgets import QApplication, QComboBox, QFileDialog, QInputDialog, QLabel, QMessageBox, QToolButton  # noqa: E402
 
 from kerfly.core import config  # noqa: E402
 from kerfly.gui.main_window import MainWindow  # noqa: E402
@@ -955,6 +955,24 @@ def main():
     back = abs(v.transform().m11() - fit) < 1e-6 and v._bed_visible()
     check("zoom: not further out than the whole bed, zoom in works", out_limit and zoomed_in and back,
           "(%s)" % [out_limit, zoomed_in, back])
+    w.close()
+
+    # 37. a drawn shape can go on any layer of the left panel; its operation follows the layer's kind
+    w = make_window(grid_mm="0")
+    w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
+    e = w.selected
+    extra = w.add_layer("cut")
+    combo = w.layer_assign_box.findChildren(QComboBox)[0]
+    names = [combo.itemText(i) for i in range(combo.count())]
+    eng = [l for l in w.layers if l.kind == "engrave"][0]
+    w._assign_shape_layer(eng.id)
+    to_outline = e.shape.operation == "engrave" and bool(e.design.vector_engrave.ecoords) and not e.design.vector_cut.ecoords
+    w._assign_shape_layer(extra.id)
+    to_extra_cut = e.shape.operation == "cut" and e.layers.get("cut") == extra.id
+    w.undo()
+    undone = e.shape.operation == "engrave" if e in w.elements else w.elements[-1].shape.operation == "engrave"
+    check("shape layer: all layers listed, outline layer makes it an outline, extra cut layer, undo",
+          len(names) >= 4 and to_outline and to_extra_cut and undone, "(%s, %s)" % (names, [to_outline, to_extra_cut, undone]))
     w.close()
 
     # 25. groups: select one selects all, move, rotate and duplicate together, saved, ungroup, undo

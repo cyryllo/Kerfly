@@ -20,6 +20,12 @@ Version numbers:
 
 ### New
 
+- **Any layer for a drawn shape.** The Layer list above the bed view shows
+  every layer of the left panel (cut, outline engrave, raster engrave and the
+  ones you added). A layer of another kind changes the shape's operation:
+  outline engrave, or fill for raster layers (closed shapes). A hatch stays a
+  hatch on an outline layer.
+
 - **Curves module.**
   - **Pen** tool (B, on the tool strip):
     - click for a corner, or press and drag for a smooth node with curve

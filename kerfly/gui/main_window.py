@@ -1951,6 +1951,9 @@ class MainWindow(QMainWindow):
                 w.setParent(None)
                 w.deleteLater()
         e = self.selected
+        if e is not None and e.shape is not None:
+            self._shape_layer_choice(e, grid)
+            return
         kinds = [k for k in (RASTER, ENGRAVE, CUT, GCODE) if e is not None and part_present(e.design, k)]
         self.layer_assign_section.setVisible(bool(kinds))
         for row, kind in enumerate(kinds[:2] if len(kinds) <= 2 else kinds):
@@ -1965,6 +1968,52 @@ class MainWindow(QMainWindow):
             combo.setToolTip(_(LAYER_KIND_NAMES[kind]))
             combo.currentIndexChanged.connect(lambda _i, c=combo, k=kind: self._assign_layer(k, c.currentData()))
             grid.addWidget(combo, row % 2, row // 2)
+
+    def _shape_layer_choice(self, e, grid):
+        """A drawn shape: one list with every layer of the panel on the left. A
+        layer of another kind changes what the laser does with the shape."""
+        self.layer_assign_section.setVisible(True)
+        combo = QComboBox()
+        for layer in self.layers:
+            if layer.kind == GCODE or (layer.kind == RASTER and not e.shape.closed):
+                continue                                 # an open line has no area to engrave
+            combo.addItem(layer.name, layer.id)
+            combo.setItemData(combo.count() - 1, QColor(layer.color), Qt.DecorationRole)
+        kind = OPERATION_KIND.get(e.shape.operation, CUT)
+        current = layer_of(e, kind, self.layers)
+        combo.setCurrentIndex(max(0, combo.findData(current.id if current else None)))
+        combo.setFixedWidth(chars_width(combo, 14) + 48)
+        combo.setToolTip(_("Layer of this shape: any layer from the panel on the left (cut, outline or "
+                           "engrave)"))
+        combo.currentIndexChanged.connect(lambda _i, c=combo: self._assign_shape_layer(c.currentData()))
+        grid.addWidget(combo, 0, 0)
+
+    def _assign_shape_layer(self, layer_id):
+        """Put the selected drawn shape on a layer, changing its operation when
+        the layer is of another kind (cut / outline / engrave)."""
+        e = self.selected
+        layer = next((l for l in self.layers if l.id == layer_id), None)
+        if e is None or e.shape is None or layer is None:
+            return
+        old_kind = OPERATION_KIND.get(e.shape.operation, CUT)
+        if layer.kind == old_kind:
+            self._assign_layer(layer.kind, layer_id)
+            return
+        spec = e.shape.copy()
+        if layer.kind == CUT:
+            spec.operation = "cut"
+        elif layer.kind == ENGRAVE:
+            spec.operation = "hatch" if spec.operation == "hatch" else "engrave"
+        else:
+            spec.operation = "fill"
+        self._apply_shape(e, spec)                       # one undo step for the whole change
+        e.layers.pop(old_kind, None)
+        if layer_id != self._default_layer[layer.kind].id:
+            e.layers[layer.kind] = layer_id
+        self._layer_cache.clear()
+        self._rebuild_layers_panel()
+        self.refresh_preview()
+        QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
 
     def _assign_layer(self, kind, layer_id):
         e = self.selected
