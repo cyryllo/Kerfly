@@ -1294,7 +1294,7 @@ def main():
     # changing a text on a path in the options bar, several times in a row (the bar kept an old copy
     # of the path, so every change moved the text further: +10, +20, +30 mm; the font jumped too)
     from PySide6.QtGui import QFont as _QFont
-    from PySide6.QtWidgets import QDoubleSpinBox as _QDSB, QFontComboBox as _QFCB
+    from PySide6.QtWidgets import QDoubleSpinBox as _QDSB
     w5.preview.select_element(t2)
     w5.selected = t2
     w5._update_tool_options(force=True)
@@ -1305,23 +1305,13 @@ def main():
         lefts.append(t2.bounds[0] * 25.4)
     steps_ok = all(abs((b - a) - 10.0) < 0.3 for a, b in zip(lefts, lefts[1:]))
     width0, left0 = t2.size[0], t2.bounds[0]
-    fonts = w5.tool_options.findChildren(_QFCB)
     before_font = t2.shape.font_family
-    if fonts:
-        # pick other fonts of this system until the shape really gets another one (font names and
-        # aliases differ between systems; Windows has no DejaVu fonts)
-        combo = fonts[0]
-        for i in range(min(combo.count(), 40)):
-            name = combo.itemText(i)
-            if name == before_font or name.startswith(("Wingdings", "Webdings", "Symbol", "Marlett")):
-                continue
-            combo.setCurrentIndex(i)
-            if t2.shape.font_family != before_font:
-                break
-            fonts = w5.tool_options.findChildren(_QFCB)
-            if not fonts:
-                break
-            combo = fonts[0]
+    # another font, set through the options bar the way its font list does it (on the Windows CI
+    # the font list can be empty without a screen, so the family name comes from the font database)
+    from PySide6.QtGui import QFontDatabase as _QFDB
+    other = next((f for f in _QFDB.families() if f != before_font and "Symbol" not in f
+                  and not f.startswith(("Wingdings", "Webdings", "Marlett"))), "Arial")
+    w5.tool_options._set("font_family", other)
     font_ok = t2.shape.font_family != before_font and abs(t2.bounds[0] - left0) * 25.4 < 1.0 \
         and abs(t2.bounds[2] * 25.4 + 57.0) < 0.6
     check("text on a path: changes in the options bar move it exactly, the font changes in place",
