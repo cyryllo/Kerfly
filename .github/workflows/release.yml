@@ -1,14 +1,13 @@
 # Build the Windows installer and the Linux AppImage, test them with
 # --self-test, and on a version tag (vX.Y.Z) publish them as a GitHub release
 # with the notes of that version from CHANGELOG.md.
-# Pushes to feature/packaging only build and test (the files are kept as
-# workflow artifacts), so the packaging can be tried without a release.
+# To try the packages without a release: Actions -> packages -> Run workflow,
+# on any branch (the files are kept as workflow artifacts).
 name: packages
 
 on:
   push:
     tags: ["v*"]
-    branches: ["feature/packaging"]
   workflow_dispatch:
 
 permissions:
