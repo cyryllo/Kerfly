@@ -1,0 +1,5 @@
+# Kerfly: let users talk to the K40 laser's USB board (Lihuiyu, CH341 chip)
+# without root. Installed by the Kerfly .deb, or by hand:
+#   sudo cp 99-kerfly-k40.rules /etc/udev/rules.d/ && sudo udevadm control --reload-rules
+# then unplug the laser and plug it in again.
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="5512", MODE="0666", TAG+="uaccess"

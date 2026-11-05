@@ -4,3 +4,5 @@ __pycache__/
 *.egv.tmp
 tests/output/
 dist/
+build/
+packaging/windows/K40_Driver_Install.exe

@@ -32,9 +32,11 @@ zadanie do lasera. Instrukcja dotyczy wersji 0.17.
 ## 1. Pierwsze uruchomienie
 
 1. Zainstaluj Kerfly według
-   [instrukcji instalacji](https://github.com/cyryllo/Kerfly/blob/main/INSTALL_pl.md).
-   Uruchamiasz go przez `start_kerfly.bat` (Windows) albo `./start_kerfly.sh`
-   (Linux).
+   [instrukcji instalacji](https://github.com/cyryllo/Kerfly/blob/main/INSTALL_pl.md):
+   instalatorem dla Windows albo AppImage dla Linuksa ze
+   [strony wydań](https://github.com/cyryllo/Kerfly/releases) (od 0.18) albo z
+   kodu źródłowego przez `start_kerfly.bat` (Windows) / `./start_kerfly.sh`
+   (Linux). Instalator dla Windows potrafi też zainstalować sterownik USB K40.
 2. Sprawdź instalację: `start_kerfly.bat --self-test` albo
    `./start_kerfly.sh --self-test`. Każda linia powinna mieć `OK`; linie
    `WARN` dotyczą rzeczy opcjonalnych albo niepodłączonego lasera.

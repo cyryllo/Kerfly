@@ -187,13 +187,17 @@ checked byte for byte.
   GRBL board). Windows: the boards usually use a CH340 USB chip; its driver
   goes into the installation guide.
 
-## Packaging (later)
+## Packaging
 
-- Linux: AppImage. PyInstaller collects the program and libraries, and
-  appimagetool packs the result. Builds run on an older glibc in GitHub
-  Actions. USB access needs a udev rule: Kerfly will offer to install it once
-  through `pkexec`. Inkscape stays external and optional (SVG text to paths).
-- Windows: PyInstaller `.exe` and an installer that also sets up the libusb
-  driver. Reference: Scorch's
-  [K40 Whisperer Driver Installer](https://github.com/scorchworks/K40-Whisperer-Driver-Installer).
-- Possibly a Debian `.deb` that installs the udev rule.
+- [x] Windows: PyInstaller program folder and an Inno Setup installer that can
+  also run Scorch's K40 USB driver installer (`packaging/windows/kerfly.iss`).
+- [x] Linux: AppImage from the PyInstaller folder, built on Ubuntu 22.04
+  (`packaging/linux/build-appimage.sh`).
+- [x] Release workflow (`.github/workflows/release.yml`): on a version tag
+  builds both, runs their self-test and publishes the release with the notes
+  from CHANGELOG.md.
+- [ ] Debian `.deb` that uses the system's Python libraries (a few MB) with the
+  udev rule, menu entry and icon, in an own signed APT repository on GitHub
+  Pages (`https://cyryllo.github.io/Kerfly/apt`), modelled on LamaDeck's.
+- [ ] AppImage: offer to install the udev rule once (through `pkexec`).
+

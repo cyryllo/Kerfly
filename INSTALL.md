@@ -1,9 +1,26 @@
 # Installing and running Kerfly
 
-Kerfly runs from source with Python. Installers (`.exe`, AppImage) will come
-later. A Polish version of this guide is in [INSTALL_pl.md](INSTALL_pl.md).
+A Polish version of this guide is in [INSTALL_pl.md](INSTALL_pl.md).
 
-## Windows 10 / 11
+## Ready-made packages (recommended)
+
+From version 0.18 every release on
+<https://github.com/cyryllo/Kerfly/releases> has packages that need no
+Python:
+
+- **Windows 10 / 11: `Kerfly-<version>-windows-setup.exe`.** Run it and follow
+  the steps. Tick **"Install the USB driver for the K40 laser"** the first
+  time (plug the laser in and switch it on first): it runs Scorch's K40 driver
+  installer, which installs the libusb-win32 driver. Skip it if K40 Whisperer
+  already worked on this PC. Kerfly then is in the Start menu. Windows may say
+  "Windows protected your PC" because the installer is not signed: choose
+  **More info → Run anyway**.
+- **Linux: `Kerfly-<version>-x86_64.AppImage`.** Make it executable and run
+  it (`chmod +x Kerfly-*.AppImage && ./Kerfly-*.AppImage`, or in the file
+  manager: Properties → Allow executing). For the laser's USB port add the
+  udev rule once, see [below](#from-source-linux-debian--ubuntu).
+
+## From source: Windows 10 / 11
 
 1. **Python 3.13** from <https://www.python.org/downloads/windows/> (the
    "Windows installer (64-bit)" of the latest 3.13 release). It is recommended
@@ -27,7 +44,7 @@ later. A Polish version of this guide is in [INSTALL_pl.md](INSTALL_pl.md).
    **`start_kerfly.bat`**. The first start installs the libraries. This needs
    internet and takes a few minutes.
 
-## Linux (Debian / Ubuntu)
+## From source: Linux (Debian / Ubuntu)
 
 ```bash
 sudo apt install python3-venv inkscape
@@ -50,6 +67,8 @@ then run in the Kerfly folder:
 
 - Windows (Command Prompt): `start_kerfly.bat --self-test`
 - Linux: `./start_kerfly.sh --self-test`
+- Installed with the Windows installer: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
+- AppImage: `./Kerfly-<version>-x86_64.AppImage --self-test`
 
 Kerfly prints one line per check: libraries, USB driver, whether the K40 is
 found (it is not moved), Inkscape, the settings folder, and that the window

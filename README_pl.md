@@ -110,8 +110,11 @@ okien. W Plasmie 6 okna przesuwa się klawiszem Meta.
 
 ## Instalacja
 
-Zobacz [INSTALL_pl.md](INSTALL_pl.md) ([wersja angielska](INSTALL.md)).
-Kerfly uruchamia się przez `start_kerfly.bat` w Windows albo
+Od wersji 0.18 każde [wydanie](https://github.com/cyryllo/Kerfly/releases) ma
+**instalator dla Windows** (`Kerfly-<wersja>-windows-setup.exe`, potrafi też
+zainstalować sterownik USB lasera K40) i **AppImage dla Linuksa**. Zobacz
+[INSTALL_pl.md](INSTALL_pl.md) ([wersja angielska](INSTALL.md)). Z kodu
+źródłowego Kerfly uruchamia się przez `start_kerfly.bat` w Windows albo
 `./start_kerfly.sh` w Linuksie. Pierwsze uruchomienie przygotowuje Pythona i
 biblioteki.
 

@@ -93,10 +93,29 @@ borrowed file keeps its MIT header, and the file is listed here.
 | pyusb | BSD-3-Clause |
 | pyclipper / Clipper | MIT / Boost Software License |
 | Inkscape (external program, called as a subprocess) | GPL-2.0-or-later |
-| PySide6 (planned) | LGPL-3.0 |
+| PySide6 / Qt | LGPL-3.0, GPL-2.0 or GPL-3.0 (Kerfly uses them under the GPL-3.0) |
 
-If a binary build (Windows `.exe`, AppImage) bundles any of these, it must
-include their license texts.
+## Windows installer and AppImage
+
+The ready-made packages (built by `.github/workflows/release.yml` from
+`packaging/`) contain, besides Kerfly:
+
+- **Python** and the libraries above, collected by **PyInstaller**
+  (bootloader: GPL-2.0 with an exception that allows any program to use it).
+  The licence texts of the libraries are in the package metadata folders
+  (`_internal/*.dist-info`), `LICENSE` (GPL-3.0) and `licenses/LGPL-3.0.txt`.
+  Qt and PySide6 are separate shared libraries, as the LGPL asks; their source
+  code is at <https://code.qt.io/>.
+- **Windows only: K40 USB driver installer** (`K40_Driver_Install.exe`), by
+  Scorch, a modified version of Zadig / libwdi by Pete Batard, GPL-3.0 (libwdi:
+  LGPL-2.1). It installs the libusb-win32 driver (LGPL-2.1 / GPL-2.0). Source:
+  <https://github.com/scorchworks/K40-Whisperer-Driver-Installer>. The installer
+  runs it only when the user ticks "Install the USB driver for the K40 laser".
+  The build checks its SHA-256 sum before bundling it.
+- **Windows only: the installer itself** is made with **Inno Setup**
+  (Jordan Russell and Martijn Laan, Inno Setup License, a free licence that
+  allows this use).
+- **AppImage only: the AppImage runtime** of appimagetool (MIT).
 
 ## Libraries installed with Kerfly
 

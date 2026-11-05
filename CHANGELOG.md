@@ -7,6 +7,18 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
+## Unreleased
+
+### New
+
+- **Ready-made packages.** Each release now has a **Windows installer**
+  (`Kerfly-<version>-windows-setup.exe`: Start menu entry, desktop icon,
+  uninstaller, and the option to install the K40 USB driver with Scorch's
+  driver installer) and a **Linux AppImage** (`Kerfly-<version>-x86_64.AppImage`,
+  runs without installing). No Python needed. GitHub Actions builds both from
+  `packaging/` when a version is tagged, runs the self-test of each, and
+  publishes the release with the notes from this changelog.
+
 ## 0.17.0 (2026-11-05)
 
 ### New

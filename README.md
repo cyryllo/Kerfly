@@ -101,9 +101,12 @@ Settings → Window Management → Window Behavior → Window Actions, or use Pl
 
 ## Installing
 
-See [INSTALL.md](INSTALL.md) ([Polish version](INSTALL_pl.md)). Start Kerfly
-with `start_kerfly.bat` on Windows or `./start_kerfly.sh` on Linux. The first
-start sets up Python and the libraries.
+From version 0.18 each [release](https://github.com/cyryllo/Kerfly/releases)
+has a **Windows installer** (`Kerfly-<version>-windows-setup.exe`, it can also
+install the K40 USB driver) and a **Linux AppImage**. See
+[INSTALL.md](INSTALL.md) ([Polish version](INSTALL_pl.md)). From source:
+start Kerfly with `start_kerfly.bat` on Windows or `./start_kerfly.sh` on
+Linux. The first start sets up Python and the libraries.
 
 To check an installation, run `start_kerfly.bat --self-test` (Windows) or
 `./start_kerfly.sh --self-test` (Linux). It reports the libraries, the USB

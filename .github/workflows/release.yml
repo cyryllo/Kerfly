@@ -1,0 +1,120 @@
+# Build the Windows installer and the Linux AppImage, test them with
+# --self-test, and on a version tag (vX.Y.Z) publish them as a GitHub release
+# with the notes of that version from CHANGELOG.md.
+# Pushes to feature/packaging only build and test (the files are kept as
+# workflow artifacts), so the packaging can be tried without a release.
+name: packages
+
+on:
+  push:
+    tags: ["v*"]
+    branches: ["feature/packaging"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Scorch's K40 USB driver installer (modified Zadig, GPL-3), bundled in the Windows installer;
+  # the build stops if the file on the server is not this exact one
+  DRIVER_URL: http://www.scorchworks.com/K40whisperer/K40_Driver_Install.exe
+  DRIVER_SHA256: 6c8e96f436c71f0ade67d7437f87b4d2a53f73eb1316013d87b5353a83d15d16
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Libraries
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pyinstaller
+          python -m pip install -r requirements-optional.txt
+          if ($LASTEXITCODE -ne 0) { Write-Host "pyclipper not installed (optional)"; $global:LASTEXITCODE = 0 }
+      - name: Program folder (PyInstaller)
+        run: python -m PyInstaller packaging/kerfly.spec --noconfirm
+      - name: Self-test of the packaged program
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: dist\Kerfly\kerfly-console.exe --self-test
+      - name: K40 USB driver installer (checked)
+        run: |
+          Invoke-WebRequest -Uri $env:DRIVER_URL -OutFile packaging\windows\K40_Driver_Install.exe
+          $hash = (Get-FileHash packaging\windows\K40_Driver_Install.exe -Algorithm SHA256).Hash.ToLower()
+          if ($hash -ne $env:DRIVER_SHA256) { Write-Error "Driver installer changed: $hash"; exit 1 }
+      - name: Installer (Inno Setup)
+        run: |
+          $version = python -c "import kerfly; print(kerfly.__version__)"
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress }
+          & $iscc /DAppVersion=$version packaging\windows\kerfly.iss
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/Kerfly-*-windows-setup.exe
+          if-no-files-found: error
+
+  linux:
+    runs-on: ubuntu-22.04          # older glibc: the AppImage also runs on older systems
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libxkbcommon0 libfontconfig1 libdbus-1-3 libusb-1.0-0
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pyinstaller
+          python -m pip install -r requirements-optional.txt || echo "pyclipper not installed (optional)"
+      - name: appimagetool
+        run: |
+          curl -fsSL -o appimagetool \
+            https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool
+      - name: AppImage
+        env:
+          PYTHON: python
+          APPIMAGETOOL: ./appimagetool
+        run: packaging/linux/build-appimage.sh
+      - name: Self-test of the AppImage
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          chmod +x dist/*.AppImage
+          dist/Kerfly-*-x86_64.AppImage --appimage-extract-and-run --self-test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: dist/Kerfly-*-x86_64.AppImage
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: packages
+          merge-multiple: true
+      - name: Notes from CHANGELOG.md
+        id: notes
+        run: |
+          python3 tools/release_notes.py "${GITHUB_REF_NAME}" > notes.md
+          echo "title=Kerfly ${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.notes.outputs.title }}
+          body_path: notes.md
+          files: packages/*

@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Kerfly
+GenericName=Laser cutter control
+GenericName[pl]=Sterowanie laserem
+Comment=Control K40 laser cutters: draw, place and cut
+Comment[pl]=Sterowanie laserami K40: rysowanie, układanie i cięcie
+Exec=kerfly %F
+Icon=kerfly
+Terminal=false
+Categories=Graphics;Engineering;
+MimeType=image/svg+xml;image/vnd.dxf;
+Keywords=laser;K40;engraving;cutting;
+StartupWMClass=Kerfly

@@ -32,8 +32,11 @@ sends the job to the laser. This guide is for version 0.17.
 ## 1. First start
 
 1. Install Kerfly as described in the
-   [installation guide](https://github.com/cyryllo/Kerfly/blob/main/INSTALL.md).
-   Start it with `start_kerfly.bat` (Windows) or `./start_kerfly.sh` (Linux).
+   [installation guide](https://github.com/cyryllo/Kerfly/blob/main/INSTALL.md):
+   the Windows installer or the Linux AppImage from the
+   [releases page](https://github.com/cyryllo/Kerfly/releases) (from 0.18), or
+   from source with `start_kerfly.bat` (Windows) / `./start_kerfly.sh` (Linux).
+   The Windows installer can also install the K40 USB driver.
 2. Check the installation: `start_kerfly.bat --self-test` or
    `./start_kerfly.sh --self-test`. Every line should say `OK`; `WARN` lines
    are optional parts or mean that the laser is not connected.

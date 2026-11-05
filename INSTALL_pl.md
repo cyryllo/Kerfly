@@ -1,10 +1,26 @@
 # Kerfly: instalacja i pierwsze uruchomienie
 
-Kerfly działa z kodu źródłowego, czyli przez Pythona. Gotowe instalatory
-(`.exe`, AppImage) powstaną później. Opis programu po polsku jest w
-[README_pl.md](README_pl.md).
+Opis programu po polsku jest w [README_pl.md](README_pl.md).
 
-## Windows 10 / 11
+## Gotowe paczki (zalecane)
+
+Od wersji 0.18 każde wydanie na <https://github.com/cyryllo/Kerfly/releases>
+ma paczki, które nie potrzebują Pythona:
+
+- **Windows 10 / 11: `Kerfly-<wersja>-windows-setup.exe`.** Uruchom go i
+  przejdź przez kolejne kroki. Za pierwszym razem zaznacz **„Zainstaluj
+  sterownik USB lasera K40”** (wcześniej podłącz i włącz laser): uruchomi się
+  instalator sterownika Scorcha, który instaluje sterownik libusb-win32. Pomiń
+  to, jeśli K40 Whisperer już działał na tym komputerze. Kerfly będzie w menu
+  Start. Windows może pokazać „System Windows ochronił ten komputer”, bo
+  instalator nie jest podpisany: wybierz **Więcej informacji → Uruchom mimo
+  to**.
+- **Linux: `Kerfly-<wersja>-x86_64.AppImage`.** Nadaj mu prawo uruchamiania i
+  uruchom (`chmod +x Kerfly-*.AppImage && ./Kerfly-*.AppImage` albo w menedżerze
+  plików: Właściwości → Zezwól na uruchamianie). Dla portu USB lasera dodaj
+  raz regułę udev, opis [niżej](#dostęp-do-lasera-bez-roota-jednorazowo).
+
+## Z kodu źródłowego: Windows 10 / 11
 
 ### 1. Python
 
@@ -50,7 +66,7 @@ Zamiast Zadig możesz też użyć instalatora sterownika od autora K40 Whisperer
      jest internet.
    - Kolejne uruchomienia startują od razu.
 
-## Linux (Debian / Ubuntu)
+## Z kodu źródłowego: Linux (Debian / Ubuntu)
 
 ```bash
 sudo apt install python3-venv inkscape
@@ -76,6 +92,8 @@ w folderze Kerfly uruchom:
 
 - Windows (Wiersz polecenia, `cmd`): `start_kerfly.bat --self-test`
 - Linux: `./start_kerfly.sh --self-test`
+- Z instalatora Windows: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
+- AppImage: `./Kerfly-<wersja>-x86_64.AppImage --self-test`
 
 Kerfly wypisze po jednej linii na każde sprawdzenie: biblioteki, sterownik
 USB, czy widzi laser (nie rusza nim), Inkscape, folder ustawień i czy okno
