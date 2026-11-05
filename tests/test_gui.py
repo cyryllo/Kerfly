@@ -1163,6 +1163,17 @@ def main():
           and any(getattr(b, "defaultAction", lambda: None)() is w.act_report_problem
                   for b in w.findChildren(QToolButton)))
 
+    # 43. no keyboard shortcut is used twice (Qt then runs neither action)
+    from PySide6.QtGui import QAction as _QAction
+    seen, twice = {}, []
+    for a in w.findChildren(_QAction):
+        for sc in a.shortcuts():
+            key = sc.toString()
+            if key in seen and seen[key] is not a:
+                twice.append("%s: %s / %s" % (key, seen[key].text(), a.text()))
+            seen.setdefault(key, a)
+    check("no keyboard shortcut is used twice", not twice, "(%s)" % "; ".join(twice))
+
     # 42. program icon: the logo renders, the bitmap icons exist
     from kerfly.gui import icons as _icons
     ico = os.path.join(ROOT_DIR, "kerfly", "gui", "icons", "kerfly.ico")

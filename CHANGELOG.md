@@ -25,7 +25,7 @@ Version numbers:
   instead of Python's). `tools/make_icons.py` renders `kerfly.png` and
   `kerfly.ico` from `kerfly/gui/icons/kerfly.svg`.
 - **Design follows the head** (square button under the unlock button, beside
-  the jog arrows; Ctrl+Shift+H; green when on).
+  the jog arrows; Ctrl+Alt+H; green when on).
   When on, the arrows, Go to X/Y and Home move the design together with the
   laser head, as in K40 Whisperer, and the arrows keep the design on the bed.
   The corner and centre buttons still only move the head. The setting is

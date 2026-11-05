@@ -233,7 +233,7 @@ class MainWindow(QMainWindow):
         self.act_place_head = self._action(_("Place design at the &head"), self.place_at_head, "Ctrl+H",
                                            _("Move all elements so the design starts at the laser head"))
         self.act_follow_head = self._action(
-            _("Design &follows the head"), self.toggle_follow_head, "Ctrl+Shift+H",
+            _("Design &follows the head"), self.toggle_follow_head, "Ctrl+Alt+H",
             _("The design moves with the laser head: the arrows, Go to X/Y and Home move both, "
               "as in K40 Whisperer. The corner buttons still only show the corners."))
         self.act_follow_head.setCheckable(True)
@@ -1175,7 +1175,7 @@ class MainWindow(QMainWindow):
         self.btn_follow_head.setDefaultAction(self.act_follow_head)
         self.btn_follow_head.setIconSize(QSize(28, 28))
         self.btn_follow_head.setFixedSize(56, 56)
-        self.act_follow_head.setToolTip("%s (Ctrl+Shift+H)\n%s" % (_("Design follows the head"),
+        self.act_follow_head.setToolTip("%s (Ctrl+Alt+H)\n%s" % (_("Design follows the head"),
                                                                     self.act_follow_head.statusTip()))
         for b in (self.btn_connect, self.btn_home, self.btn_unlock, self.btn_follow_head):
             machine.addWidget(b)
