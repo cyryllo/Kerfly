@@ -25,8 +25,8 @@ Inkscape.
 Narzędzia rysowania są na pasku po prawej stronie stołu, jak w LightBurnie:
 prostokąt (także z zaokrąglonymi rogami), elipsa, wielokąt foremny, linia,
 łamana, pióro (krzywe), rysowanie odręczne i tekst dowolną zainstalowaną
-czcionką. Każdy kształt można wyciąć, wygrawerować jako obrys, wypełnić liniami
-(kreskowanie) albo wygrawerować rastrowo. Narzędzie **Wypełnienie** (wiaderko)
+czcionką. Każdy kształt można wyciąć, wygrawerować jako obrys albo
+wygrawerować rastrowo. Narzędzie **Wypełnienie** (wiaderko)
 wypełnia zamknięte kształty grawerowanymi wzorami (linie, fale, plaster miodu,
 cegły…), a ich obrys nadal jest cięty, a tekst można ułożyć na ścieżce (linii,
 krzywej albo okręgu). Pozycja, rozmiar i obrót

@@ -212,6 +212,22 @@ def _fill_image(polys, x0, y0, w, h, dpi=FILL_DPI):
     return ImageChops.invert(mask.convert("L"))
 
 
+def hatch_as_fill(spec):
+    """A "hatch" shape (Kerfly 0.4-0.16) as the pattern fill that replaced it: an
+    outline shape filled with lines (or cross-hatch), without the outline. The
+    laser data are the same. Other specs are returned unchanged."""
+    if spec.operation != "hatch":
+        return spec
+    out = spec.copy()
+    out.operation = "engrave"
+    out.fill_pattern = "cross" if spec.hatch_cross else "lines"
+    out.fill_spacing = spec.hatch_spacing
+    out.fill_angle = spec.hatch_angle
+    out.fill_margin = 0.0
+    out.fill_outline = False
+    return out
+
+
 def has_pattern_fill(spec):
     """A pattern fill applies: closed shape, cut or outline, a known pattern."""
     from .patterns import PATTERN_CODES

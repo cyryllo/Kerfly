@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:11+0100\n"
+"POT-Creation-Date: 2026-11-05 17:19+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -426,9 +426,6 @@ msgstr "Creando líneas de barrido: %s%%"
 msgid "Cross-hatch"
 msgstr "Rayado cruzado"
 
-msgid "Cross-hatch: a second set of lines at 90°"
-msgstr "Rayado cruzado: un segundo juego de líneas a 90°"
-
 msgid "Curve"
 msgstr "Curva"
 
@@ -505,9 +502,6 @@ msgstr "Diferencia"
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr "Diferencia: recortar las demás formas seleccionadas de la primera"
 
-msgid "Direction of the lines"
-msgstr "Dirección de las líneas"
-
 msgid "Direction of the pattern"
 msgstr "Dirección del patrón"
 
@@ -518,9 +512,6 @@ msgid ""
 msgstr ""
 "Distancia %(d).2f %(u)s: ancho %(w).2f %(u)s, alto %(h).2f %(u)s, ángulo "
 "%(a).1f°"
-
-msgid "Distance between the lines"
-msgstr "Distancia entre las líneas"
 
 msgid "Distance down from home"
 msgstr "Distancia hacia abajo desde el origen"
@@ -646,9 +637,6 @@ msgstr ""
 msgid "Fill with a pattern"
 msgstr "Rellenar con un patrón"
 
-msgid "Fill with lines"
-msgstr "Rellenar con líneas"
-
 msgid ""
 "Fill: choose a pattern above, then click a closed shape (cut or outline) "
 "to fill it. Selected shapes get the pattern you choose. The outline stays"
@@ -736,15 +724,6 @@ msgstr "Semitonos (tramado) para imágenes en escala de grises"
 
 msgid "Halftone resolution (dpi)"
 msgstr "Resolución de semitonos (ppp)"
-
-msgid "Hatch"
-msgstr "Rayado"
-
-msgid "Hatch (lines)"
-msgstr "Rayado (líneas)"
-
-msgid "Hatch: fill the shape with engraved lines instead of only its outline"
-msgstr "Rayado: rellenar la forma con líneas grabadas en lugar de solo su contorno"
 
 #, python-format
 msgid "Head: X %s  Y %s %s"
@@ -2268,4 +2247,28 @@ msgstr "grabado vectorial"
 
 #~ msgid "Click an element of the group first, then Ungroup."
 #~ msgstr "Primero haz clic en un elemento del grupo y luego en Desagrupar."
+
+#~ msgid "Cross-hatch: a second set of lines at 90°"
+#~ msgstr "Rayado cruzado: un segundo juego de líneas a 90°"
+
+#~ msgid "Direction of the lines"
+#~ msgstr "Dirección de las líneas"
+
+#~ msgid "Distance between the lines"
+#~ msgstr "Distancia entre las líneas"
+
+#~ msgid "Fill with lines"
+#~ msgstr "Rellenar con líneas"
+
+#~ msgid "Hatch"
+#~ msgstr "Rayado"
+
+#~ msgid "Hatch (lines)"
+#~ msgstr "Rayado (líneas)"
+
+#~ msgid "Hatch: fill the shape with engraved lines instead of only its outline"
+#~ msgstr ""
+#~ "Rayado: rellenar la forma con líneas "
+#~ "grabadas en lugar de solo su "
+#~ "contorno"
 

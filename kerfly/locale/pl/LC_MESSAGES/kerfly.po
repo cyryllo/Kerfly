@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:11+0100\n"
+"POT-Creation-Date: 2026-11-05 17:19+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -422,9 +422,6 @@ msgstr "Tworzenie linii skanowania: %s%%"
 msgid "Cross-hatch"
 msgstr "Krzyżowe"
 
-msgid "Cross-hatch: a second set of lines at 90°"
-msgstr "Krzyżowe: druga warstwa linii pod kątem 90°"
-
 msgid "Curve"
 msgstr "Krzywa"
 
@@ -501,9 +498,6 @@ msgstr "Różnica"
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr "Różnica: wytnij pozostałe zaznaczone kształty z pierwszego"
 
-msgid "Direction of the lines"
-msgstr "Kierunek linii"
-
 msgid "Direction of the pattern"
 msgstr "Kierunek wzoru"
 
@@ -514,9 +508,6 @@ msgid ""
 msgstr ""
 "Odległość %(d).2f %(u)s: szerokość %(w).2f %(u)s, wysokość %(h).2f %(u)s,"
 " kąt %(a).1f°"
-
-msgid "Distance between the lines"
-msgstr "Odstęp między liniami"
 
 msgid "Distance down from home"
 msgstr "Odległość w dół od pozycji bazowej"
@@ -642,9 +633,6 @@ msgstr ""
 msgid "Fill with a pattern"
 msgstr "Wypełnij wzorem"
 
-msgid "Fill with lines"
-msgstr "Wypełnij liniami"
-
 msgid ""
 "Fill: choose a pattern above, then click a closed shape (cut or outline) "
 "to fill it. Selected shapes get the pattern you choose. The outline stays"
@@ -732,15 +720,6 @@ msgstr "Półtony (dithering) dla obrazów w odcieniach szarości"
 
 msgid "Halftone resolution (dpi)"
 msgstr "Rozdzielczość półtonów (dpi)"
-
-msgid "Hatch"
-msgstr "Kreskowanie"
-
-msgid "Hatch (lines)"
-msgstr "Kreskowanie (linie)"
-
-msgid "Hatch: fill the shape with engraved lines instead of only its outline"
-msgstr "Kreskowanie: wypełnij kształt grawerowanymi liniami zamiast samego obrysu"
 
 #, python-format
 msgid "Head: X %s  Y %s %s"
@@ -2253,4 +2232,27 @@ msgstr "obrys"
 
 #~ msgid "Click an element of the group first, then Ungroup."
 #~ msgstr "Najpierw kliknij element grupy, potem Rozgrupuj."
+
+#~ msgid "Cross-hatch: a second set of lines at 90°"
+#~ msgstr "Krzyżowe: druga warstwa linii pod kątem 90°"
+
+#~ msgid "Direction of the lines"
+#~ msgstr "Kierunek linii"
+
+#~ msgid "Distance between the lines"
+#~ msgstr "Odstęp między liniami"
+
+#~ msgid "Fill with lines"
+#~ msgstr "Wypełnij liniami"
+
+#~ msgid "Hatch"
+#~ msgstr "Kreskowanie"
+
+#~ msgid "Hatch (lines)"
+#~ msgstr "Kreskowanie (linie)"
+
+#~ msgid "Hatch: fill the shape with engraved lines instead of only its outline"
+#~ msgstr ""
+#~ "Kreskowanie: wypełnij kształt grawerowanymi "
+#~ "liniami zamiast samego obrysu"
 

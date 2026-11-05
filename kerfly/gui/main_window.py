@@ -654,7 +654,7 @@ class MainWindow(QMainWindow):
             self.shape_defaults[target] = spec
         else:
             return
-        if before != spec.operation:              # e.g. hatch shows its own settings
+        if before != spec.operation:              # e.g. the Fill or Bridges section appears
             QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
 
     # ---- Fill tool ----------------------------------------------------------
@@ -2496,7 +2496,7 @@ class MainWindow(QMainWindow):
         if layer.kind == CUT:
             spec.operation = "cut"
         elif layer.kind == ENGRAVE:
-            spec.operation = "hatch" if spec.operation == "hatch" else "engrave"
+            spec.operation = "engrave"
         else:
             spec.operation = "fill"
         self._apply_shape(e, spec)                       # one undo step for the whole change

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:11+0100\n"
+"POT-Creation-Date: 2026-11-05 17:19+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -424,9 +424,6 @@ msgstr "Création des lignes de balayage : %s%%"
 msgid "Cross-hatch"
 msgstr "Hachures croisées"
 
-msgid "Cross-hatch: a second set of lines at 90°"
-msgstr "Hachures croisées : un second jeu de lignes à 90°"
-
 msgid "Curve"
 msgstr "Courbe"
 
@@ -505,9 +502,6 @@ msgstr "Différence"
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr "Différence : découper les autres formes sélectionnées dans la première"
 
-msgid "Direction of the lines"
-msgstr "Direction des lignes"
-
 msgid "Direction of the pattern"
 msgstr "Direction du motif"
 
@@ -518,9 +512,6 @@ msgid ""
 msgstr ""
 "Distance %(d).2f %(u)s : largeur %(w).2f %(u)s, hauteur %(h).2f %(u)s, "
 "angle %(a).1f°"
-
-msgid "Distance between the lines"
-msgstr "Distance entre les lignes"
 
 msgid "Distance down from home"
 msgstr "Distance vers le bas depuis l'origine"
@@ -646,9 +637,6 @@ msgstr ""
 msgid "Fill with a pattern"
 msgstr "Remplir avec un motif"
 
-msgid "Fill with lines"
-msgstr "Remplir de lignes"
-
 msgid ""
 "Fill: choose a pattern above, then click a closed shape (cut or outline) "
 "to fill it. Selected shapes get the pattern you choose. The outline stays"
@@ -736,15 +724,6 @@ msgstr "Demi-teintes (tramage) pour les images en niveaux de gris"
 
 msgid "Halftone resolution (dpi)"
 msgstr "Résolution des demi-teintes (ppp)"
-
-msgid "Hatch"
-msgstr "Hachures"
-
-msgid "Hatch (lines)"
-msgstr "Hachures (lignes)"
-
-msgid "Hatch: fill the shape with engraved lines instead of only its outline"
-msgstr "Hachures : remplir la forme de lignes gravées au lieu de son seul contour"
 
 #, python-format
 msgid "Head: X %s  Y %s %s"
@@ -2280,4 +2259,28 @@ msgstr "gravure vectorielle"
 
 #~ msgid "Click an element of the group first, then Ungroup."
 #~ msgstr "Cliquez d'abord sur un élément du groupe, puis sur Dégrouper."
+
+#~ msgid "Cross-hatch: a second set of lines at 90°"
+#~ msgstr "Hachures croisées : un second jeu de lignes à 90°"
+
+#~ msgid "Direction of the lines"
+#~ msgstr "Direction des lignes"
+
+#~ msgid "Distance between the lines"
+#~ msgstr "Distance entre les lignes"
+
+#~ msgid "Fill with lines"
+#~ msgstr "Remplir de lignes"
+
+#~ msgid "Hatch"
+#~ msgstr "Hachures"
+
+#~ msgid "Hatch (lines)"
+#~ msgstr "Hachures (lignes)"
+
+#~ msgid "Hatch: fill the shape with engraved lines instead of only its outline"
+#~ msgstr ""
+#~ "Hachures : remplir la forme de "
+#~ "lignes gravées au lieu de son seul"
+#~ " contour"
 

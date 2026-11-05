@@ -729,6 +729,21 @@ def test_pattern_fill():
     check("point inside a shape", element_contains(e, 1.2, -1.1) and not element_contains(e, 0.9, -1.1)
           and not element_contains(Element(build_design(ring), shape=ring), 0.0, 0.0))
 
+    # hatch shapes (0.4-0.16) became "lines / cross-hatch without the outline": same laser data,
+    # and old projects open as such
+    from kerfly.core.shapes import hatch_as_fill
+    same = True
+    for cross in (False, True):
+        h = ShapeSpec(kind="ellipse", width=40, height=25, operation="hatch", hatch_spacing=0.3,
+                      hatch_angle=30.0, hatch_cross=cross)
+        a, b = build_design(h), build_design(hatch_as_fill(h))
+        same = same and a.vector_engrave.ecoords == b.vector_engrave.ecoords and not b.vector_cut.ecoords
+    old = project._shape_from_dict({"kind": "rectangle", "operation": "hatch", "hatch_spacing": 0.4,
+                                    "hatch_angle": 15.0, "hatch_cross": True})
+    check("old hatch: same laser data as cross-hatch / lines without outline, opens as a fill", same
+          and (old.operation, old.fill_pattern, old.fill_spacing, old.fill_angle, old.fill_outline)
+          == ("engrave", "cross", 0.4, 15.0, False))
+
     # saved and opened with a project
     spec = ShapeSpec(kind="rectangle", operation="engrave", fill_pattern="honeycomb", fill_spacing=4.5,
                      fill_angle=30.0, fill_margin=1.0, fill_outline=False)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:11+0100\n"
+"POT-Creation-Date: 2026-11-05 17:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -403,9 +403,6 @@ msgstr ""
 msgid "Cross-hatch"
 msgstr ""
 
-msgid "Cross-hatch: a second set of lines at 90°"
-msgstr ""
-
 msgid "Curve"
 msgstr ""
 
@@ -482,9 +479,6 @@ msgstr ""
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr ""
 
-msgid "Direction of the lines"
-msgstr ""
-
 msgid "Direction of the pattern"
 msgstr ""
 
@@ -492,9 +486,6 @@ msgstr ""
 msgid ""
 "Distance %(d).2f %(u)s: width %(w).2f %(u)s, height %(h).2f %(u)s, angle "
 "%(a).1f°"
-msgstr ""
-
-msgid "Distance between the lines"
 msgstr ""
 
 msgid "Distance down from home"
@@ -609,9 +600,6 @@ msgstr ""
 msgid "Fill with a pattern"
 msgstr ""
 
-msgid "Fill with lines"
-msgstr ""
-
 msgid ""
 "Fill: choose a pattern above, then click a closed shape (cut or outline) "
 "to fill it. Selected shapes get the pattern you choose. The outline stays"
@@ -688,15 +676,6 @@ msgid "Halftone (dither) grayscale images"
 msgstr ""
 
 msgid "Halftone resolution (dpi)"
-msgstr ""
-
-msgid "Hatch"
-msgstr ""
-
-msgid "Hatch (lines)"
-msgstr ""
-
-msgid "Hatch: fill the shape with engraved lines instead of only its outline"
 msgstr ""
 
 #, python-format

@@ -195,11 +195,6 @@ SVG or DXF file: each of its lines becomes a shape you can edit, and its
 pictures split into their separate parts. Double-click any element to edit
 its nodes.
 
-**Hatch (fill with lines).** Put a closed shape on an outline layer (see
-below), then press **Fill with lines** in the **Hatch** section of the
-options bar. Set the distance between the lines, their angle, and **#** for a
-second set at 90°. Holes in the shape stay empty.
-
 **Pattern fills.** *(not yet tested on a laser)* The **Fill with a pattern**
 tool (the bucket, Shift+F) fills closed shapes with engraved lines in a
 pattern: lines, cross-hatch, waves, zigzag, circles, honeycomb, diamonds or
@@ -215,7 +210,9 @@ bricks.
 3. The outline stays on its layer: a cut shape is still cut, and the pattern
    is engraved on an outline layer (for a cut shape a second **Layer** list
    chooses which). The square button next to the pattern list leaves the
-   outline out, so only the pattern is engraved.
+   outline out, so only the pattern is engraved: **Lines** or
+   **Cross-hatch** without the outline fill an area with engraved lines (this
+   was the separate Hatch section before 0.17; older projects open this way).
 
 A selected shape shows the same **Fill** section with the select tool: change
 the pattern there, or choose **No pattern** to remove it. Holes in the shape
@@ -266,7 +263,7 @@ out of the job.
 
 - **The layer decides what the laser does.** Select a drawn shape and choose
   its layer in the **Layer** list of the options bar: a cut layer cuts it, an
-  outline layer engraves its outline (or hatches it), a raster layer fills it.
+  outline layer engraves its outline (and its pattern fill), a raster layer fills it.
 - **More layers.** The **+** button under the layers adds another cut,
   outline or raster layer, for example a second cut layer with another speed.
   Layers run in the order raster, outline, cut.

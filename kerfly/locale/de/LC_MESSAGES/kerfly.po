@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:11+0100\n"
+"POT-Creation-Date: 2026-11-05 17:19+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -426,9 +426,6 @@ msgstr "Scanlinien werden erstellt: %s%%"
 msgid "Cross-hatch"
 msgstr "Kreuzschraffur"
 
-msgid "Cross-hatch: a second set of lines at 90°"
-msgstr "Kreuzschraffur: zweite Linienschar um 90° gedreht"
-
 msgid "Curve"
 msgstr "Kurve"
 
@@ -505,9 +502,6 @@ msgstr "Differenz"
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr "Differenz: die anderen ausgewählten Formen aus der ersten ausschneiden"
 
-msgid "Direction of the lines"
-msgstr "Richtung der Linien"
-
 msgid "Direction of the pattern"
 msgstr "Richtung des Musters"
 
@@ -518,9 +512,6 @@ msgid ""
 msgstr ""
 "Abstand %(d).2f %(u)s: Breite %(w).2f %(u)s, Höhe %(h).2f %(u)s, Winkel "
 "%(a).1f°"
-
-msgid "Distance between the lines"
-msgstr "Abstand zwischen den Linien"
 
 msgid "Distance down from home"
 msgstr "Abstand nach unten vom Referenzpunkt"
@@ -648,9 +639,6 @@ msgstr ""
 msgid "Fill with a pattern"
 msgstr "Mit Muster füllen"
 
-msgid "Fill with lines"
-msgstr "Mit Linien füllen"
-
 msgid ""
 "Fill: choose a pattern above, then click a closed shape (cut or outline) "
 "to fill it. Selected shapes get the pattern you choose. The outline stays"
@@ -738,15 +726,6 @@ msgstr "Graustufenbilder rastern (Dithering)"
 
 msgid "Halftone resolution (dpi)"
 msgstr "Halbtonauflösung (dpi)"
-
-msgid "Hatch"
-msgstr "Schraffur"
-
-msgid "Hatch (lines)"
-msgstr "Schraffur (Linien)"
-
-msgid "Hatch: fill the shape with engraved lines instead of only its outline"
-msgstr "Schraffur: die Form mit gravierten Linien füllen statt nur ihren Umriss"
 
 #, python-format
 msgid "Head: X %s  Y %s %s"
@@ -2280,4 +2259,25 @@ msgstr "Vektorgravur"
 
 #~ msgid "Click an element of the group first, then Ungroup."
 #~ msgstr "Zuerst ein Element der Gruppe anklicken, dann Aufheben."
+
+#~ msgid "Cross-hatch: a second set of lines at 90°"
+#~ msgstr "Kreuzschraffur: zweite Linienschar um 90° gedreht"
+
+#~ msgid "Direction of the lines"
+#~ msgstr "Richtung der Linien"
+
+#~ msgid "Distance between the lines"
+#~ msgstr "Abstand zwischen den Linien"
+
+#~ msgid "Fill with lines"
+#~ msgstr "Mit Linien füllen"
+
+#~ msgid "Hatch"
+#~ msgstr "Schraffur"
+
+#~ msgid "Hatch (lines)"
+#~ msgstr "Schraffur (Linien)"
+
+#~ msgid "Hatch: fill the shape with engraved lines instead of only its outline"
+#~ msgstr "Schraffur: die Form mit gravierten Linien füllen statt nur ihren Umriss"
 

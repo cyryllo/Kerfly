@@ -35,6 +35,14 @@ Version numbers:
   **Order**, PgUp / PgDown in the bed view) and Bring to front / Send to back
   (Ctrl+PgUp / Ctrl+PgDown, Edit menu). Groups move together.
 
+### Changed
+
+- **Hatch is part of the pattern fills.** The separate Hatch section of the
+  options bar is gone: choose the **Lines** or **Cross-hatch** pattern and
+  switch the outline off. The laser data are the same as before, and hatched
+  shapes of older projects open this way. The pattern size now goes down to
+  0.05 mm, as the hatch spacing did.
+
 ### Fixed
 
 - The window could not be made narrower than about 1550 px while a text was

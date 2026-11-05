@@ -846,22 +846,22 @@ def main():
     check("ruler: snapped corners, 50 mm diagonal", "50.00" in msg or "50,00" in msg, "(%s)" % msg)
     w.close()
 
-    # 31. hatch operation from the options bar
+    # 31. lines without the outline (the former hatch) from the Fill section of the options bar:
+    # its settings appear, only engraved lines, no cut; no separate Hatch section any more
     w = make_window(grid_mm="0")
     w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
     spec = w.selected.shape.copy()
-    spec.operation = "hatch"
+    spec.fill_pattern, spec.fill_spacing, spec.fill_outline = "lines", 0.5, False
     w._tool_options_changed(spec)
     for _i in range(5):
         app.processEvents()
     labels = [l.text() for l in w.tool_options.findChildren(QLabel)]
     e = w.selected
-    from kerfly.gui.layers_panel import KIND_NAMES as _KN
-    hatch_ok = e.design.vector_engrave.ecoords and not e.design.vector_cut.ecoords and e.shape.operation == "hatch"
-    check("hatch: from the options bar, its settings appear, lines go to the engrave layer",
-          hatch_ok and any(t in ("Hatch", "Kreskowanie") for t in labels), "(%s)" % labels)
-    spec = w.selected.shape.copy()
-    spec.operation = "cut"
+    lines_ok = e.design.vector_engrave.ecoords and not e.design.vector_cut.ecoords
+    check("fill with lines, no outline (former hatch): settings shown, engraved lines only, no Hatch section",
+          lines_ok and "Fill" in labels and "Hatch" not in labels, "(%s)" % labels)
+    spec = w.selected.shape.copy()                       # back to a plain cut shape for the bridges
+    spec.fill_pattern, spec.fill_outline, spec.operation = "", True, "cut"
     w._tool_options_changed(spec)
     for _i in range(5):
         app.processEvents()

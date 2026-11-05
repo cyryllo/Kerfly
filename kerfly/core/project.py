@@ -49,7 +49,8 @@ def _shape_from_dict(d):
     spec.points = [tuple(p) for p in (d.get("points") or [])]
     spec.subpaths = [{"closed": bool(sp.get("closed")), "nodes": [list(n) for n in sp.get("nodes", [])]}
                      for sp in (d.get("subpaths") or [])]
-    return spec
+    from .shapes import hatch_as_fill
+    return hatch_as_fill(spec)                  # hatch of older projects: now a pattern fill
 
 
 def save_project(path, elements, layers, info=None):

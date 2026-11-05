@@ -197,11 +197,6 @@ element. **Rozgrupuj** (Ctrl+Alt+G) dzieli grupę, a także otwarty plik SVG
 albo DXF: każda jego linia staje się kształtem do edycji, a obrazy dzielą się
 na osobne części. Dwuklik na dowolnym elemencie otwiera edycję węzłów.
 
-**Kreskowanie (wypełnienie liniami).** Przenieś zamknięty kształt na warstwę
-obrysu (opis niżej) i naciśnij **Wypełnij liniami** w sekcji **Kreskowanie**
-na pasku opcji. Ustaw odstęp linii, ich kąt i **#** dla drugiej warstwy linii
-pod kątem 90°. Dziury w kształcie zostają puste.
-
 **Wypełnienia wzorami.** *(jeszcze nie sprawdzone na laserze)* Narzędzie
 **Wypełnij wzorem** (wiaderko, Shift+F) wypełnia zamknięte kształty
 grawerowanymi liniami we wzór: linie, krzyżowe, fale, zygzak, okręgi, plaster
@@ -217,7 +212,9 @@ miodu, romby albo cegły.
 3. Obrys zostaje na swojej warstwie: kształt do cięcia dalej jest cięty, a wzór
    jest grawerowany na warstwie obrysu (dla kształtu do cięcia druga lista
    **Warstwa** wybiera, na której). Kwadratowy przycisk obok listy wzorów
-   wyłącza obrys, wtedy graweruje się sam wzór.
+   wyłącza obrys, wtedy graweruje się sam wzór: **Linie** albo **Krzyżowe**
+   bez obrysu wypełniają obszar grawerowanymi liniami (przed wersją 0.17 była
+   to osobna sekcja Kreskowanie; starsze projekty otwierają się właśnie tak).
 
 Zaznaczony kształt pokazuje tę samą sekcję **Wypełnienie** także przy
 narzędziu zaznaczania: tam zmienisz wzór albo wybierzesz **Bez wzoru**, żeby go
@@ -268,7 +265,7 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
 
 - **Warstwa decyduje, co robi laser.** Zaznacz narysowany kształt i wybierz
   jego warstwę na liście **Warstwa** na pasku opcji: warstwa cięcia go
-  wycina, warstwa obrysu graweruje jego obrys (albo kreskuje), warstwa
+  wycina, warstwa obrysu graweruje jego obrys (i wypełnienie wzorem), warstwa
   graweru go wypełnia.
 - **Więcej warstw.** Przycisk **+** pod warstwami dodaje kolejną warstwę
   cięcia, obrysu albo graweru, np. drugą warstwę cięcia z inną prędkością.
