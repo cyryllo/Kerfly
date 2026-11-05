@@ -42,6 +42,9 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - [x] `--self-test` and GitHub Actions on clean Windows and Ubuntu machines
 - [x] Elements outside the work area drawn red; Start and Trace locked
 - [x] Diagnostic log and report (Help menu, Report button)
+- [x] First test on a real laser (Windows 10, M3 board) and its fixes: raster
+  position in layouts, trace start, position after Stop; safety check that
+  the head stays on the bed before a job is sent
 
 ## Next: complete the K40 Whisperer feature set in the new window
 

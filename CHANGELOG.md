@@ -7,7 +7,7 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
-## Unreleased
+## 0.15.0 (2026-11-05)
 
 Fixes from the first test on a real laser (Windows 10, LASER-M3 board).
 
