@@ -214,13 +214,16 @@ def test_layout(baseline):
     ea = Element(a, x=0.0, y=0.0)
     eb = Element(b, x=3.0, y=-1.0, scale_x=2.0, scale_y=2.0)
     out, origin = compile_layout([ea, eb])
-    xmin, xmax, ymin, ymax = out.bounds
+    # the merged design has its own frame from (0, 0), like a loaded file; origin = bed top-left
+    xmin, ymax = origin
+    w, h = out.bounds[1] - out.bounds[0], out.bounds[3] - out.bounds[2]
+    ymin = ymax - h
     cut_loops = len({row[2] for row in out.vector_cut.ecoords})
     src_loops = len({row[2] for row in a.vector_cut.ecoords})
     im = out.raster.image
-    ok_bounds = abs(xmin) < 1e-9 and abs(xmax - 4.2) < 1e-9 and abs(ymax) < 1e-9 \
-        and abs(ymin - min(-1.8, ea.bounds[2])) < 1e-9
-    check("two elements: bounds", ok_bounds and origin == (xmin, ymax), "(%s)" % (out.bounds,))
+    ok_bounds = out.bounds[0] == 0.0 and out.bounds[2] == 0.0 and abs(xmin) < 1e-9 \
+        and abs(w - 4.2) < 1e-9 and abs(ymax) < 1e-9 and abs(ymin - min(-1.8, ea.bounds[2])) < 1e-9
+    check("two elements: bounds", ok_bounds, "(%s, origin %s)" % (out.bounds, origin))
     check("two elements: vector loops kept", cut_loops == src_loops)
     # the dark disc of the synthetic image (centre 300,200 px) lands at
     # x = 3.0 + 2*0.3 in, y = -1.0 - 2*0.2 in
@@ -353,12 +356,72 @@ def test_layers(baseline):
     lay = default_layers()
     cut_layer = [l for l in lay if l.kind == "cut"][0]
     d, o = compile_layer([ce, re_], cut_layer, lay)
-    xs = [row[0] for row in d.vector_cut.ecoords]
-    ys = [row[1] for row in d.vector_cut.ecoords]
-    ok = abs(min(xs) - 1.0) < 1e-6 and abs(max(ys) + 3.0) < 1e-6 and d.bounds[0] == 1.0 and o == (1.0, -0.5)
+    # design frame -> bed: the design's top-left corner is at the origin
+    xs = [row[0] - d.bounds[0] + o[0] for row in d.vector_cut.ecoords]
+    ys = [row[1] - d.bounds[3] + o[1] for row in d.vector_cut.ecoords]
+    ok = abs(min(xs) - 1.0) < 1e-6 and abs(max(ys) + 3.0) < 1e-6 and d.bounds[0] == 0.0 and o == (1.0, -0.5)
     print("%-5s layers: lone untransformed part of a bigger layout keeps its bed position %s"
           % ("OK" if ok else "FAIL", (round(min(xs), 4), round(max(ys), 4))))
     errors += 0 if ok else 1
+    return errors
+
+
+def test_job_position():
+    """The laser data put every part where the layout shows it. The raster scan
+    lines are measured from the bottom of the image, so a merged layout whose
+    frame does not start at y = 0 was engraved too high (real laser test,
+    November 2026: the head ran up into the frame)."""
+    from PIL import Image
+    from kerfly.core.layers import RASTER, compile_layer, default_layers
+    from kerfly.core.layout import Element, compile_layout
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s job position: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    def photo(x, y, **kw):
+        d = Design()
+        d.input_dpi = 1000.0
+        d.raster.set_image(Image.new("L", (1000, 500), 0))          # 1 x 0.5 in, all black
+        d.bounds = (0.0, 1.0, 0.0, 0.5)
+        return Element(d, x=x, y=y, **kw)
+
+    def cut(x, y):
+        d = Design()
+        d.vector_cut.set_ecoords([[0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1], [0, 0, 1]])
+        d.bounds = (0.0, 1.0, 0.0, 1.0)
+        return Element(d, x=x, y=y)
+
+    layers = default_layers()
+    raster_layer = [l for l in layers if l.kind == RASTER][0]
+    settings = JobSettings()
+    cases = [("photo alone", [photo(2.0, -3.0)]),
+             ("photo below a cut shape", [photo(2.0, -2.0), cut(4.0, -1.0)]),
+             ("scaled photo", [photo(2.0, -3.0, scale_x=0.5, scale_y=0.5)]),
+             ("rotated photo with a cut shape", [photo(2.0, -3.0, rotation=90), cut(0.5, -0.5)])]
+    for name, elements in cases:
+        d, origin = compile_layer(elements, raster_layer, layers)
+        raster.make_raster_coords(d, settings)
+        xmin, _xmax, _ymin, ymax = d.origin_bounds(settings)
+        # where the job sends the head for the first scan line (as build_job / egv do it)
+        first_y = origin[1] + d.raster.ecoords[0][1] - ymax
+        first_x = origin[0] + min(r[0] for r in d.raster.ecoords)
+        top, left = elements[0].bounds[3], elements[0].bounds[0]
+        check("raster starts at the photo: " + name,
+              abs(first_y - top) < 0.003 and abs(first_x - left) < 0.003,
+              "(head %.3f, %.3f in; photo top-left %.3f, %.3f in)" % (first_x, first_y, left, top))
+
+    # trace boundary of a photo and a cut shape stays around them (it used to reach far above)
+    elements = [photo(2.0, -2.0), cut(4.0, -1.0)]
+    d, origin = compile_layout(elements)
+    raster.make_raster_coords(d, settings)
+    trace = job.make_trace_path(d, settings)
+    xmin, _xmax, _ymin, ymax = d.origin_bounds(settings)
+    ys = [origin[1] + p[1] - ymax for p in trace]
+    check("trace stays within the layout", max(ys) < -1.0 + 0.003 and min(ys) > -2.5 - 0.003,
+          "(y %.3f .. %.3f in, layout -2.500 .. -1.000)" % (min(ys), max(ys)))
     return errors
 
 
@@ -408,13 +471,16 @@ def test_arrange():
     loaders.load_dxf(DXF, d)
     e = Element(d, x=1.0, y=-1.0, rotation=30)
     before = e.bounds
-    plain, _o = compile_layout([Element(d, x=1.0, y=-1.0, rotation=30, scale_x=1.0000001)])
+    def bed_rows(design, origin):                              # design frame -> bed coordinates
+        return [(r[0] - design.bounds[0] + origin[0], r[1] - design.bounds[3] + origin[1])
+                for r in design.vector_cut.ecoords]
+    plain, o1 = compile_layout([Element(d, x=1.0, y=-1.0, rotation=30, scale_x=1.0000001)])
     mirror(e, horizontal=True)
-    flipped, _o = compile_layout([e])
+    flipped, o2 = compile_layout([e])
     # every point is reflected about the vertical line through the centre
     cx = (before[0] + before[1]) / 2.0
-    a = sorted((round(2 * cx - r[0], 6), round(r[1], 6)) for r in plain.vector_cut.ecoords)
-    b = sorted((round(r[0], 6), round(r[1], 6)) for r in flipped.vector_cut.ecoords)
+    a = sorted((round(2 * cx - x, 6), round(y, 6)) for x, y in bed_rows(plain, o1))
+    b = sorted((round(x, 6), round(y, 6)) for x, y in bed_rows(flipped, o2))
     check("horizontal mirror of a rotated element reflects every point", near(e.bounds, before, 1e-6)
           and len(a) == len(b) and all(near(p, q, 1e-5) for p, q in zip(a, b)))
     mirror(e, horizontal=True)
@@ -640,6 +706,7 @@ def main():
     failures += test_layout(baseline)
     failures += test_shapes()
     failures += test_layers(baseline)
+    failures += test_job_position()
     failures += test_materials()
     failures += test_arrange()
     failures += test_snap()

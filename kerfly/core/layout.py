@@ -11,6 +11,10 @@ and the position of the top-left corner of its bounding box on the bed.
 compile_layout() merges the elements into one Design for the job generator.
 A single element that is not scaled or rotated is passed through unchanged,
 so its laser data is byte-identical to loading the file on its own.
+Otherwise the merged Design gets its own frame with the lower-left corner at
+(0, 0), like every loaded file: K40 Whisperer's raster code measures the scan
+lines from the bottom of the image, so a Design whose bottom is not at y = 0
+would be engraved too high on the bed. The bed position is the returned origin.
 
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
@@ -358,34 +362,46 @@ def _transformed_raster(element, dpi):
     return im, (xmin, ymax)
 
 
-def compile_layout(elements, passthrough=True):
+def compile_layout(elements, passthrough=True, frame=None):
     """Merge elements into one Design. Returns (design, origin) where origin is
     the bed position (x, y) of the design's top-left corner, i.e. where the
     laser head must be when the job starts. Returns (None, None) if empty.
 
     A single untransformed element is passed through in its own design
-    coordinates (identical laser data to K40 Whisperer). passthrough=False
-    always gives bed coordinates: needed when the design is one part of a
-    bigger layout whose bounds (bed coordinates) it will share."""
+    coordinates (identical laser data to K40 Whisperer). Otherwise the design
+    has bounds (0, width, 0, height): a bed point (x, y) is at
+    (x - frame xmin, y - frame ymin) in it.
+
+    passthrough=False never passes an element through: needed when the design
+    is one part of a bigger layout. frame: bed bounds (xmin, xmax, ymin, ymax)
+    to use instead of the elements' own, so that parts of one layout compiled
+    separately share one frame and one origin."""
     elements = [e for e in elements if e is not None and e.visible]
     if not elements:
         return None, None
-    if passthrough and len(elements) == 1 and elements[0].is_identity:
+    if passthrough and frame is None and len(elements) == 1 and elements[0].is_identity:
         e = elements[0]
         return e.design, (e.x, e.y)
 
     from PIL import Image
     out = Design()
     out.input_dpi = max(e.design.input_dpi for e in elements)
-    xmin = min(e.bounds[0] for e in elements)
-    xmax = max(e.bounds[1] for e in elements)
-    ymin = min(e.bounds[2] for e in elements)
-    ymax = max(e.bounds[3] for e in elements)
-    out.bounds = (xmin, xmax, ymin, ymax)
+    if frame is None:
+        xmin = min(e.bounds[0] for e in elements)
+        xmax = max(e.bounds[1] for e in elements)
+        ymin = min(e.bounds[2] for e in elements)
+        ymax = max(e.bounds[3] for e in elements)
+    else:
+        xmin, xmax, ymin, ymax = frame
+    out.bounds = (0.0, xmax - xmin, 0.0, ymax - ymin)
 
     vcut, veng, gcode = [], [], []
     for e in elements:
-        f = e.transform()
+        to_bed = e.transform()
+
+        def f(x, y, to_bed=to_bed):
+            bx, by = to_bed(x, y)
+            return bx - xmin, by - ymin
         for target, source in ((vcut, e.design.vector_cut.ecoords),
                                (veng, e.design.vector_engrave.ecoords),
                                (gcode, e.design.gcode.ecoords)):

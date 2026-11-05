@@ -7,6 +7,24 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
+## Unreleased
+
+Fixes from the first test on a real laser (Windows 10, LASER-M3 board).
+
+### Fixed (laser output)
+
+- **Raster engraving too high on the bed.** A picture was engraved too high
+  when the layout had other elements too (for example a picture and a cut
+  outline), or when the picture was scaled or rotated. The engraving moved up
+  by the distance between the bottom of the layout and the home position, and
+  the head could run into the frame. Cut and outline engraving were in the
+  right place. The trace boundary of such a layout reached too high for the
+  same reason. Cause: K40 Whisperer measures raster scan lines from the bottom
+  of the picture, but a layout of several elements was built in bed
+  coordinates. A layout is now built from (0, 0) like a loaded file. A single
+  unchanged element was not affected and is still byte-identical to K40
+  Whisperer.
+
 ## 0.14.0 (2026-11-04)
 
 ### Fixed (laser output)

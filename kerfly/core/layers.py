@@ -122,7 +122,7 @@ def layout_frame(visible):
 
 def compile_layer(elements, layer, layers):
     """(design, origin) with only this layer's parts of the visible elements,
-    keeping the bounds of the whole layout so all layers share one origin."""
+    in the frame of the whole layout so all layers share one origin."""
     visible = [e for e in elements if e.visible]
     full_bounds, full_origin = layout_frame(visible)
     if full_bounds is None:
@@ -137,30 +137,10 @@ def compile_layer(elements, layer, layers):
         return None, full_origin
     if len(visible) == 1 and len(parts) == 1 and visible[0].is_identity:
         return parts[0].design, full_origin       # untransformed single element: pass through
-    # bed coordinates, like the layout bounds below (a lone untransformed part must not keep
-    # its own design coordinates: it would be cut at the wrong place)
-    design, origin = compile_layout(parts, passthrough=False)
-    if design is not None:
-        # same bounds (and so the same job origin) as the whole layout
-        if layer.kind == RASTER and design.raster.image is not None and design.bounds != full_bounds:
-            design = _expand_raster(design, full_bounds)
-        design.bounds = full_bounds
+    # the frame of the whole layout (a lone untransformed part must not keep its own
+    # design coordinates: it would be cut at the wrong place)
+    design, _origin = compile_layout(parts, passthrough=False, frame=full_bounds)
     return design, full_origin
-
-
-def _expand_raster(design, bounds):
-    """Place a layer's raster on a canvas covering the whole layout's bounds."""
-    from PIL import Image
-    dpi = design.input_dpi
-    xmin, xmax, ymin, ymax = bounds
-    canvas = Image.new("L", (max(1, int(round((xmax - xmin) * dpi))), max(1, int(round((ymax - ymin) * dpi)))), 255)
-    dx = int(round((design.bounds[0] - xmin) * dpi))
-    dy = int(round((ymax - design.bounds[3]) * dpi))
-    canvas.paste(design.raster.image, (dx, dy))
-    out = _part_design(design, set(KINDS))
-    out.raster = ECoord()
-    out.raster.set_image(canvas)
-    return out
 
 
 def run_order(layers):
