@@ -25,6 +25,14 @@ Fixes from the first test on a real laser (Windows 10, LASER-M3 board).
   unchanged element was not affected and is still byte-identical to K40
   Whisperer.
 
+### New
+
+- **Safety check before sending.** Kerfly checks every head position of the
+  generated laser data (job and trace boundary). If the head would leave the
+  laser bed by more than 1 mm, nothing is sent and a message says which
+  edge and by how much. Not checked: the X direction with home in the upper
+  right, and the Y direction on the rotary.
+
 ## 0.14.0 (2026-11-04)
 
 ### Fixed (laser output)

@@ -422,6 +422,24 @@ def test_job_position():
     ys = [origin[1] + p[1] - ymax for p in trace]
     check("trace stays within the layout", max(ys) < -1.0 + 0.003 and min(ys) > -2.5 - 0.003,
           "(y %.3f .. %.3f in, layout -2.500 .. -1.000)" % (min(ys), max(ys)))
+
+    # safety check before sending: the whole job stays on a 12 x 8 in bed ...
+    from kerfly.core.layers import build_layers_job
+    chunks, origin = build_layers_job([photo(2.0, -2.0), cut(4.0, -1.0)], default_layers(), settings)
+    reach = chunks[0].reach
+    check("safety check: a correct job passes", reach is not None
+          and job.reach_problem(reach, origin, 12.0, 8.0, settings) is None
+          and abs(origin[1] + reach[3] - (-1.0)) < 0.003, "(reach %s)" % (reach,))
+    # ... and stops the old fault: a raster design in bed coordinates (bottom not at 0)
+    bad = Design()
+    bad.input_dpi = 1000.0
+    bad.raster.set_image(Image.new("L", (1000, 500), 0))
+    bad.bounds = (2.0, 3.0, -2.5, -2.0)
+    raster.make_raster_coords(bad, settings)
+    reach = job.build_job(bad, settings, job.RASTER_ENG)[0].reach
+    problem = job.reach_problem(reach, (2.0, -2.0), 12.0, 8.0, settings)
+    check("safety check: a job running above the bed is refused",
+          problem is not None and problem[0] == "top", "(%s)" % (problem,))
     return errors
 
 

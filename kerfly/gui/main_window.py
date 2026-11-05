@@ -2881,11 +2881,13 @@ class MainWindow(QMainWindow):
         if trace:
             worker = JobWorker(self.design, settings, job.TRACE_ENG,
                                laser=None if output_file else self.laser,
-                               output_file=output_file, send_options=send_options, parent=self)
+                               output_file=output_file, send_options=send_options, parent=self,
+                               origin=self.origin, bed=config.bed_size_inches(self.values))
         else:
             worker = LayersJobWorker(self.elements, self.layers, settings, self._layer_cache,
                                      laser=None if output_file else self.laser,
-                                     output_file=output_file, send_options=send_options, parent=self)
+                                     output_file=output_file, send_options=send_options, parent=self,
+                                     bed=config.bed_size_inches(self.values))
         self._run_worker(worker, _("Preparing job\u2026"))
 
     def _run_worker(self, worker, message):

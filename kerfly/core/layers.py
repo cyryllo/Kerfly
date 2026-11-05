@@ -192,6 +192,10 @@ def build_layers_job(elements, layers, settings, progress=None, update_gui=None,
             if len(joined.data) > 4:
                 joined.data[-4] = ord("@")
             joined.data.extend(part[0].data[1:])
+            r = job.Reach()
+            r.merge(joined.reach)
+            r.merge(part[0].reach)
+            joined.reach = r.box
     if not settings.power_per_stage and joined is not None:
         chunks = [joined]
     if not chunks:

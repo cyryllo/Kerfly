@@ -30,6 +30,8 @@ class TaskWorker(QThread):
         self.send_options = send_options or {}
         self.stop = [False]
         self.pause = PauseControl(on_paused=self.paused.emit)
+        self.bed = None                        # (width, height) inches, for the safety check
+        self.origin = None                     # bed position of the head at the job start
 
     # called from the GUI thread
     def request_stop(self):
@@ -60,6 +62,26 @@ class TaskWorker(QThread):
         """Do the work; return the success message."""
         raise NotImplementedError
 
+    def _check_reach(self, chunks):
+        """Refuse to send a job that would move the head off the bed. Uses
+        self.bed = (width, height) in inches and self.origin, the bed position
+        of the head at the start (either None: not checked)."""
+        if self.bed is None or self.origin is None:
+            return
+        for chunk in chunks:
+            problem = job.reach_problem(chunk.reach, self.origin, self.bed[0], self.bed[1], self.settings)
+            if problem is not None:
+                side, mm = problem
+                text = {"top": _("Safety check: the job would move the head %.1f mm above the top edge "
+                                 "of the laser bed. Nothing was sent."),
+                        "bottom": _("Safety check: the job would move the head %.1f mm below the bottom "
+                                    "edge of the laser bed. Nothing was sent."),
+                        "left": _("Safety check: the job would move the head %.1f mm past the left edge "
+                                  "of the laser bed. Nothing was sent."),
+                        "right": _("Safety check: the job would move the head %.1f mm past the right edge "
+                                   "of the laser bed. Nothing was sent.")}[side]
+                raise job.NoLaserData(text % mm)
+
     def run(self):
         try:
             self.finished_job.emit(True, self.task())
@@ -84,9 +106,11 @@ class JobWorker(TaskWorker):
     """
 
     def __init__(self, design, settings, operation, laser=None, output_file=None,
-                 send_options=None, parent=None):
+                 send_options=None, parent=None, origin=None, bed=None):
         super().__init__(laser=None if output_file else laser, send_options=send_options,
                          parent=parent)
+        self.origin = origin
+        self.bed = bed
         self.design = design
         self.settings = settings
         self.operation = operation
@@ -109,6 +133,7 @@ class JobWorker(TaskWorker):
             with open(self.output_file, "wb") as f:
                 f.write(job.egv_file_bytes(chunks[0].data))
             return _("Data saved to: %s") % self.output_file
+        self._check_reach(chunks)
         total = 0.0
         for chunk in chunks:
             total += self.laser.send(chunk.data, power=chunk.power, update_gui=self._update_gui,
@@ -154,8 +179,9 @@ class LayersJobWorker(TaskWorker):
     The cached layer designs are modified while running."""
 
     def __init__(self, elements, layers, settings, cache, laser=None, output_file=None,
-                 send_options=None, parent=None):
+                 send_options=None, parent=None, bed=None):
         super().__init__(laser=None if output_file else laser, send_options=send_options, parent=parent)
+        self.bed = bed
         self.elements = list(elements)
         self.layers = [layer.copy() for layer in layers]
         self.settings = settings
@@ -164,7 +190,7 @@ class LayersJobWorker(TaskWorker):
 
     def task(self):
         from kerfly.core.layers import build_layers_job
-        chunks, _origin = build_layers_job(self.elements, self.layers, self.settings,
+        chunks, self.origin = build_layers_job(self.elements, self.layers, self.settings,
                                            progress=self._progress, update_gui=self._update_gui,
                                            stop=self.stop, cache=self.cache)
         if self.output_file is not None:
@@ -174,6 +200,7 @@ class LayersJobWorker(TaskWorker):
             with open(self.output_file, "wb") as f:
                 f.write(job.egv_file_bytes(chunks[0].data))
             return _("Data saved to: %s") % self.output_file
+        self._check_reach(chunks)
         total = 0.0
         for chunk in chunks:
             total += self.laser.send(chunk.data, power=chunk.power, update_gui=self._update_gui,

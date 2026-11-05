@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-04 21:19+0100\n"
+"POT-Creation-Date: 2026-11-05 11:43+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -1218,6 +1218,38 @@ msgstr "Pliki SVG"
 
 msgid "SVG import scale"
 msgstr "Skala importu SVG"
+
+#, python-format
+msgid ""
+"Safety check: the job would move the head %.1f mm above the top edge of "
+"the laser bed. Nothing was sent."
+msgstr ""
+"Kontrola bezpieczeństwa: zadanie przesunęłoby głowicę %.1f mm ponad górną"
+" krawędź stołu lasera. Nic nie zostało wysłane."
+
+#, python-format
+msgid ""
+"Safety check: the job would move the head %.1f mm below the bottom edge "
+"of the laser bed. Nothing was sent."
+msgstr ""
+"Kontrola bezpieczeństwa: zadanie przesunęłoby głowicę %.1f mm poniżej "
+"dolnej krawędzi stołu lasera. Nic nie zostało wysłane."
+
+#, python-format
+msgid ""
+"Safety check: the job would move the head %.1f mm past the left edge of "
+"the laser bed. Nothing was sent."
+msgstr ""
+"Kontrola bezpieczeństwa: zadanie przesunęłoby głowicę %.1f mm za lewą "
+"krawędź stołu lasera. Nic nie zostało wysłane."
+
+#, python-format
+msgid ""
+"Safety check: the job would move the head %.1f mm past the right edge of "
+"the laser bed. Nothing was sent."
+msgstr ""
+"Kontrola bezpieczeństwa: zadanie przesunęłoby głowicę %.1f mm za prawą "
+"krawędź stołu lasera. Nic nie zostało wysłane."
 
 msgctxt "toolbar"
 msgid "Save"

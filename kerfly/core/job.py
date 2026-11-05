@@ -44,6 +44,59 @@ class JobChunk:
     data: List[int]
     power: Optional[float] = None
     stage: str = ""
+    # how far the job moves the head from where it starts, inches:
+    # (dx_min, dx_max, dy_min, dy_max); None if unknown. See reach_problem()
+    reach: Optional[tuple] = None
+
+
+class Reach:
+    """Smallest and largest head offset (inches, y up) from the job start,
+    collected from the coordinates handed to the EGV generator."""
+
+    def __init__(self):
+        self.box = None
+
+    def add(self, coords, startx, starty):
+        if not coords:
+            return
+        xs = [row[0] - startx for row in coords]
+        ys = [row[1] - starty for row in coords]
+        box = (min(xs), max(xs), min(ys), max(ys))
+        self.merge(box)
+
+    def merge(self, box):
+        if box is None:
+            return
+        if self.box is None:
+            self.box = box
+        else:
+            a = self.box
+            self.box = (min(a[0], box[0]), max(a[1], box[1]), min(a[2], box[2]), max(a[3], box[3]))
+
+
+REACH_TOLERANCE = 0.04           # inches (1 mm): rounding, not a real overrun
+
+
+def reach_problem(reach, origin, bed_w, bed_h, settings):
+    """None if every head position of the job is on the bed, else a tuple
+    (side, millimetres) for the worst overrun: side is "top", "bottom",
+    "left" or "right". origin: bed position of the head at the job start
+    (inches, y <= 0). Not checked: x with home in the upper right (mirrored
+    machine coordinates) and y on the rotary (the rotary turns the work)."""
+    if reach is None:
+        return None
+    dx_min, dx_max, dy_min, dy_max = reach
+    out = []
+    if not settings.home_upper_right:
+        out.append(("left", -(origin[0] + dx_min)))
+        out.append(("right", origin[0] + dx_max - bed_w))
+    if not settings.rotary:
+        out.append(("top", origin[1] + dy_max))
+        out.append(("bottom", -bed_h - (origin[1] + dy_min)))
+    side, over = max(out, key=lambda o: o[1], default=(None, 0.0))
+    if over > REACH_TOLERANCE:
+        return side, over * 25.4
+    return None
 
 
 def mirror_rotate_vector_coords(coords, design, settings):
@@ -214,6 +267,7 @@ def build_job(design, settings, operation_type, trace_coords=None,
 
     Rapid_Feed = settings.rapid_feed * feed_factor if settings.rotary else 0.0
 
+    reach = Reach()
     Raster_Eng_data = []
     Vector_Eng_data = []
     Trace_Eng_data = []
@@ -231,6 +285,7 @@ def build_job(design, settings, operation_type, trace_coords=None,
         if settings.mirror or settings.rotate:
             coords = mirror_rotate_vector_coords(coords, design, settings)
         coords, startx, starty = scale_vector_coords(coords, startx, starty, settings)
+        reach.add(coords, startx, starty)
         Vector_Cut_data = _make_egv(coords, startx, starty, Feed_Rate, settings, 0,
                                     FlipXoffset, Rapid_Feed, True, update_gui, stop)
 
@@ -245,11 +300,13 @@ def build_job(design, settings, operation_type, trace_coords=None,
         if settings.mirror or settings.rotate:
             coords = mirror_rotate_vector_coords(coords, design, settings)
         coords, startx, starty = scale_vector_coords(coords, startx, starty, settings)
+        reach.add(coords, startx, starty)
         Vector_Eng_data = _make_egv(coords, startx, starty, Feed_Rate, settings, 0,
                                     FlipXoffset, Rapid_Feed, True, update_gui, stop)
 
     if operation_type.find(TRACE_ENG) > -1 and trace_coords:
         Feed_Rate = settings.trace_feed * feed_factor
+        reach.add(trace_coords, startx, starty)
         progress("Generating EGV data...")
         Trace_Eng_data = _make_egv(trace_coords, startx, starty, Feed_Rate, settings, 0,
                                    FlipXoffset, Rapid_Feed, settings.trace_with_laser,
@@ -261,6 +318,7 @@ def build_job(design, settings, operation_type, trace_coords=None,
         if not settings.engrave_up:
             Raster_step = -Raster_step
         raster_starty = settings.xy_scale[1] * starty
+        reach.add(design.raster.ecoords, 0, raster_starty)
         progress("Generating EGV data...")
         egv_inst = egv(target=lambda s: Raster_Eng_data.append(s))
         egv_inst.make_egv_data(
@@ -284,6 +342,7 @@ def build_job(design, settings, operation_type, trace_coords=None,
         if settings.mirror or settings.rotate:
             coords = mirror_rotate_vector_coords(coords, design, settings)
         coords, startx, starty = scale_vector_coords(coords, startx, starty, settings)
+        reach.add(coords, startx, starty)
         G_code_Cut_data = _make_egv(coords, startx, starty, None, settings, 0,
                                     FlipXoffset, Rapid_Feed, True, update_gui, stop)
 
@@ -306,6 +365,8 @@ def build_job(design, settings, operation_type, trace_coords=None,
             if power_fraction > 1:
                 power_fraction = 0
             chunks.append(JobChunk(data, power_fraction * settings.max_power, name))
+        for c in chunks:
+            c.reach = reach.box
         return chunks
 
     # all stages joined into one stream; power settings are not included
@@ -315,7 +376,7 @@ def build_job(design, settings, operation_type, trace_coords=None,
             _join_passes(data, stage_data, passes)
     if len(data) < 4:
         raise NoLaserData("No laser data was generated.")
-    return [JobChunk(data)]
+    return [JobChunk(data, reach=reach.box)]
 
 
 def egv_file_bytes(data):
