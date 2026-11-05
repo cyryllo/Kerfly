@@ -55,6 +55,10 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - [ ] Batch mode and post-job actions (`post_disp`, `post_exec`)
 - [x] Open and send EGV files
 - [ ] Rotary settings window parity
+- [x] Design follows the head (toggle under the unlock button)
+- [ ] Idea: a toggle so that the plain arrow keys move the laser head (now
+  Ctrl+arrows do; plain arrows move the selected element). Ignore key
+  auto-repeat, so holding a key does not queue up moves; never in text fields
 
 ## Import more file types
 
