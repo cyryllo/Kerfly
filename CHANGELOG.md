@@ -37,8 +37,10 @@ Version numbers:
   border along the outline. The cuts are cut before the outline. Selected
   shapes get the chosen hinge at once; saved in projects, one undo step.
 - **Tool strip in groups**: selecting, drawing, and operations on shapes
-  (text on a path, fill, living hinge, measure). The fields of the fill and
-  hinge sections have icons.
+  (text on a path, fill, living hinge, measure).
+- **Icons beside every field** of the options bar (rotation, bridges, corner
+  radius, sides, font size, letter spacing, fill, hinge, text on a path), with
+  a tooltip saying what the field does.
 - **Order of elements**: Bring forward / Send backward (toolbar group
   **Order**, PgUp / PgDown in the bed view) and Bring to front / Send to back
   (Ctrl+PgUp / Ctrl+PgDown, Edit menu). Groups move together.

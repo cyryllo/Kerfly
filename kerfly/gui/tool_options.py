@@ -178,8 +178,10 @@ class ToolOptionsBar(QWidget):
             count.valueChanged.connect(lambda v: self._set("tabs", v))
             width = self._dspin("tab_width", 0.1, 20.0, " mm", decimals=1)
             width.setToolTip(_("Width of each bridge"))
-            tg.addWidget(count, 0, 0)
-            tg.addWidget(width, 1, 0)
+            tg.addWidget(self._icon_label("hash", count.toolTip()), 0, 0)
+            tg.addWidget(count, 0, 1)
+            tg.addWidget(self._icon_label("arrows-horizontal", width.toolTip()), 1, 0)
+            tg.addWidget(width, 1, 1)
             self._add(tb, _("Bridges"))
 
         if self.spec.operation in ("cut", "engrave") and self.spec.closed:
@@ -190,14 +192,17 @@ class ToolOptionsBar(QWidget):
 
         kind = self.spec.kind
         if kind == "rectangle":
-            self._add(self._dspin("corner_radius", 0.0, 1000.0, " mm"), _("Corner radius"))
+            radius = self._dspin("corner_radius", 0.0, 1000.0, " mm")
+            radius.setToolTip(_("Corner radius: 0 for sharp corners"))
+            self._add(self._with_icon("border-radius", radius), _("Corner radius"))
         elif kind == "polygon":
             sides = QSpinBox()
             sides.setRange(3, 64)
             sides.setValue(self.spec.sides)
             sides.setKeyboardTracking(False)
+            sides.setToolTip(_("Number of sides of the regular polygon"))
             sides.valueChanged.connect(lambda v: self._set("sides", v))
-            self._add(sides, _("Sides"))
+            self._add(self._with_icon("hexagon", sides), _("Sides"))
         elif kind == "text":
             text = QPlainTextEdit(self.spec.text)
             text.setPlaceholderText(_("Text"))
@@ -218,13 +223,15 @@ class ToolOptionsBar(QWidget):
             font.setFixedWidth(chars_width(font, 16) + 28)
             font.setToolTip(_("Font"))
             font.currentFontChanged.connect(lambda f: self._set("font_family", f.family()))
-            g.addWidget(font, 0, 0, 1, 3)
+            g.addWidget(font, 0, 0, 1, 4)
             spacing = self._dspin("text_spacing", -50.0, 200.0, " mm", decimals=2)
             spacing.setSingleStep(0.1)
             spacing.setToolTip(_("Letter spacing: space added between the letters (0: as the font sets it)"))
-            g.addWidget(self._icon_label("letter-spacing", spacing.toolTip()), 0, 3)
-            g.addWidget(spacing, 0, 4)
-            g.addWidget(self._dspin("font_size", 0.5, 500.0, " mm"), 1, 0)
+            g.addWidget(self._icon_label("letter-spacing", spacing.toolTip()), 0, 4)
+            g.addWidget(spacing, 0, 5)
+            size = self._dspin("font_size", 0.5, 500.0, " mm")
+            g.addWidget(self._icon_label("text-size", size.toolTip()), 1, 0)
+            g.addWidget(size, 1, 1)
             for i, (attr, icon, tip) in enumerate((("bold", "bold", N_("Bold")),
                                                    ("italic", "italic", N_("Italic")))):
                 b = QToolButton()
@@ -234,7 +241,7 @@ class ToolOptionsBar(QWidget):
                 b.setChecked(getattr(self.spec, attr))
                 b.setToolTip(_(tip))
                 b.toggled.connect(lambda on, a=attr: self._set(a, on))
-                g.addWidget(b, 1, 1 + i)
+                g.addWidget(b, 1, 2 + i)
             self._add(font_box, _("Font"))
             if self.spec.text_path:
                 pb = QWidget()
@@ -360,6 +367,16 @@ class ToolOptionsBar(QWidget):
                 g.addWidget(self._icon_label(icon, field.toolTip()), 1, 2 * col)
                 g.addWidget(field, 1, 2 * col + 1)
         self._add(box, _("Fill"))
+
+    def _with_icon(self, icon, field):
+        """A field with its icon in front (both with the field's tooltip)."""
+        box = QWidget()
+        h = QHBoxLayout(box)
+        h.setContentsMargins(0, 0, 0, 0)
+        h.setSpacing(4)
+        h.addWidget(self._icon_label(icon, field.toolTip()))
+        h.addWidget(field)
+        return box
 
     @staticmethod
     def _icon_label(icon, tip):

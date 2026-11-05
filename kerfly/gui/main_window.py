@@ -1495,7 +1495,14 @@ class MainWindow(QMainWindow):
         self.sel_rotation.setToolTip(_("Rotation, counter-clockwise. You can also drag the round handle "
                                        "above the element (hold Shift for 15\u00b0 steps)."))
         self.sel_rotation.valueChanged.connect(lambda _v: self._selection_field_changed("rotation"))
-        rot.addWidget(self.sel_rotation)
+        angle_row = QHBoxLayout()
+        angle_row.setSpacing(4)
+        angle_icon = QLabel()
+        angle_icon.setPixmap(icons.tabler("angle").pixmap(18, 18))
+        angle_icon.setToolTip(self.sel_rotation.toolTip())
+        angle_row.addWidget(angle_icon)
+        angle_row.addWidget(self.sel_rotation)
+        rot.addLayout(angle_row)
         buttons = QHBoxLayout()
         buttons.setSpacing(2)
         buttons.addWidget(self._icon_button("rotate-2", _("Rotate 90\u00b0 counter-clockwise"),

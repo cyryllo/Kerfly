@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:26+0100\n"
+"POT-Creation-Date: 2026-11-05 17:33+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -398,6 +398,9 @@ msgstr "Text wird in Pfade umgewandelt."
 
 msgid "Corner radius"
 msgstr "Eckenradius"
+
+msgid "Corner radius: 0 for sharp corners"
+msgstr "Eckenradius: 0 für spitze Ecken"
 
 #, python-format
 msgid "Could not open %s"
@@ -1134,6 +1137,9 @@ msgstr "Nichts zu zeichnen."
 
 msgid "Number of passes:"
 msgstr "Anzahl der Durchgänge:"
+
+msgid "Number of sides of the regular polygon"
+msgstr "Anzahl der Seiten des regelmäßigen Vielecks"
 
 msgid "Only closed shapes on a cut or outline layer can be filled with a pattern."
 msgstr ""
