@@ -14,7 +14,7 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
 </div>
 
 <div class="buttons">
-  <a class="button primary" href="{{ site.repo }}/releases/latest">Download</a>
+  <a class="button primary" href="{{ site.repo }}/releases/latest">Download (Windows, Linux)</a>
   <a class="button" href="{{ '/guide.html' | relative_url }}">User guide</a>
   <a class="button" href="{{ site.repo }}/blob/main/INSTALL.md">Installation</a>
   <a class="button" href="{{ site.repo }}">Source code</a>
@@ -39,25 +39,29 @@ core, Kerfly adds a modern window with drawing and editing tools.
   <div class="feature"><h3>Patterns, hinges, bridges</h3><p>Fill shapes with engraved patterns (waves, honeycomb, bricks, ...) while their outline is still cut, cut living hinges that let plywood bend, leave bridges that hold cut parts in the sheet, combine shapes.</p></div>
   <div class="feature"><h3>Safe to run</h3><p>Trace the outline first, simulate the job, see the time. Kerfly refuses jobs that would run the head off the bed.</p></div>
   <div class="feature"><h3>Like K40 Whisperer, if you want</h3><p>Uses the same settings file. Let the design follow the head, or keep it in place on the bed: your choice.</p></div>
-  <div class="feature"><h3>Your language</h3><p>English, Polish, German, Spanish and French. Runs on Linux (Debian, Ubuntu) and Windows 10 / 11.</p></div>
+  <div class="feature"><h3>Your language</h3><p>English, Polish, German, Spanish and French. Runs on Windows 10 / 11 (installer) and Linux (AppImage, most distributions).</p></div>
 </div>
 
 ## Getting started
 
+Open the <a href="{{ site.repo }}/releases/latest">latest release</a> and download the package for your system. No Python needed.
+
 <ol class="steps">
-  <li><a href="{{ site.repo }}/releases/latest">Download</a> the latest version (Source code, zip) and unpack it.</li>
-  <li>Windows: install Python and the USB driver; Linux: add the USB rule. The <a href="{{ site.repo }}/blob/main/INSTALL.md">installation guide</a> explains each step.</li>
-  <li>Start <code>start_kerfly.bat</code> (Windows) or <code>./start_kerfly.sh</code> (Linux). The first start sets everything up.</li>
+  <li><strong>Windows 10 / 11:</strong> run <code>Kerfly-&lt;version&gt;-windows-setup.exe</code>. The first time, tick <em>Install the USB driver for the K40 laser</em> (skip it if K40 Whisperer already worked on this PC). If Windows says it protected your PC, choose <em>More info → Run anyway</em> (the installer is not signed). Kerfly is then in the Start menu.</li>
+  <li><strong>Linux:</strong> make <code>Kerfly-&lt;version&gt;-x86_64.AppImage</code> executable and run it. Add the udev rule for the laser's USB port once.</li>
   <li>Read the <a href="{{ '/guide.html' | relative_url }}">user guide</a>: connect the laser, place a design, trace, start.</li>
 </ol>
+
+The <a href="{{ site.repo }}/blob/main/INSTALL.md">installation guide</a> explains each step, also running Kerfly from source with Python (<code>start_kerfly.bat</code> / <code>./start_kerfly.sh</code>).
 
 ## Status
 
 Kerfly is in **early development**. The first test on a real laser was in
 November 2026 (Windows 10, M3 board): cutting kept its size, the jog, pause
-and stop worked, and the problems found were fixed in version 0.15. Planned
-next: image tracing, kerf compensation, more patterns, more file formats,
-and installers for Windows and Linux. See the
+and stop worked, and the problems found were fixed in version 0.15. Since
+version 0.18 every release has a Windows installer and a Linux AppImage.
+Planned next: image tracing, kerf compensation, more patterns, more file
+formats, and a Debian package with its own APT repository. See the
 [roadmap]({{ site.repo }}/blob/main/ROADMAP.md) and the
 [changes]({{ site.repo }}/blob/main/CHANGELOG.md).
 

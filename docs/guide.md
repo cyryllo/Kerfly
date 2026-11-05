@@ -39,9 +39,14 @@ sends the job to the laser. This guide is for version 0.18.
    The Windows installer can also install the K40 USB driver. On Linux (also
    with the AppImage) add the udev rule for the laser's USB port once, as the
    installation guide shows.
-2. Check the installation: `start_kerfly.bat --self-test` or
-   `./start_kerfly.sh --self-test`. Every line should say `OK`; `WARN` lines
-   are optional parts or mean that the laser is not connected.
+2. Check the installation with the self-test (in a command window /
+   terminal):
+   - Windows installer: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
+   - AppImage: `./Kerfly-<version>-x86_64.AppImage --self-test`
+   - from source: `start_kerfly.bat --self-test` or `./start_kerfly.sh --self-test`
+
+   Every line should say `OK`; `WARN` lines are optional parts or mean that
+   the laser is not connected.
 3. Open **Settings → Settings… → Machine** and choose your **Controller
    board** (printed on the board, for example LASER-M2 or LASER-M3), the
    **units** and the **bed size**.

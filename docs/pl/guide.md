@@ -39,9 +39,13 @@ zadanie do lasera. Instrukcja dotyczy wersji 0.18.
    (Linux). Instalator dla Windows potrafi też zainstalować sterownik USB K40.
    W Linuksie (także z AppImage) dodaj raz regułę udev dla portu USB lasera,
    jak pokazuje instrukcja instalacji.
-2. Sprawdź instalację: `start_kerfly.bat --self-test` albo
-   `./start_kerfly.sh --self-test`. Każda linia powinna mieć `OK`; linie
-   `WARN` dotyczą rzeczy opcjonalnych albo niepodłączonego lasera.
+2. Sprawdź instalację autotestem (w wierszu poleceń / terminalu):
+   - z instalatora Windows: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
+   - AppImage: `./Kerfly-<wersja>-x86_64.AppImage --self-test`
+   - z kodu źródłowego: `start_kerfly.bat --self-test` albo `./start_kerfly.sh --self-test`
+
+   Każda linia powinna mieć `OK`; linie `WARN` dotyczą rzeczy opcjonalnych
+   albo niepodłączonego lasera.
 3. Otwórz **Ustawienia → Ustawienia… → Maszyna** i wybierz **Płytę
    sterującą** (napis na płycie, np. LASER-M2 albo LASER-M3), **jednostki** i
    **rozmiar stołu**.

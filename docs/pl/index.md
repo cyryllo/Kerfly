@@ -15,7 +15,7 @@ description: Kerfly to darmowy program do sterowania laserami CO2 K40 z płytami
 </div>
 
 <div class="buttons">
-  <a class="button primary" href="{{ site.repo }}/releases/latest">Pobierz</a>
+  <a class="button primary" href="{{ site.repo }}/releases/latest">Pobierz (Windows, Linux)</a>
   <a class="button" href="{{ '/pl/guide.html' | relative_url }}">Instrukcja obsługi</a>
   <a class="button" href="{{ site.repo }}/blob/main/INSTALL_pl.md">Instalacja</a>
   <a class="button" href="{{ site.repo }}">Kod źródłowy</a>
@@ -41,26 +41,30 @@ do rysowania i edycji.
   <div class="feature"><h3>Wzory, zawiasy, mostki</h3><p>Wypełnianie kształtów grawerowanymi wzorami (fale, plaster miodu, cegły…), a ich obrys nadal jest cięty; zawiasy giętkie, dzięki którym sklejka się wygina; mostki trzymające wycięte elementy w arkuszu; łączenie kształtów.</p></div>
   <div class="feature"><h3>Bezpieczna praca</h3><p>Najpierw objazd konturu, symulacja zadania, szacowany czas. Kerfly nie wyśle zadania, które wyprowadziłoby głowicę poza stół.</p></div>
   <div class="feature"><h3>Jak w K40 Whisperer, jeśli chcesz</h3><p>Ten sam plik ustawień. Projekt może podążać za głowicą albo zostać na swoim miejscu na stole: wybór należy do Ciebie.</p></div>
-  <div class="feature"><h3>Po polsku</h3><p>Polski, angielski, niemiecki, hiszpański i francuski. Działa w Linuksie (Debian, Ubuntu) i Windows 10 / 11.</p></div>
+  <div class="feature"><h3>Po polsku</h3><p>Polski, angielski, niemiecki, hiszpański i francuski. Działa w Windows 10 / 11 (instalator) i Linuksie (AppImage, większość dystrybucji).</p></div>
 </div>
 
 ## Jak zacząć
 
+Otwórz <a href="{{ site.repo }}/releases/latest">najnowsze wydanie</a> i pobierz paczkę dla swojego systemu. Python nie jest potrzebny.
+
 <ol class="steps">
-  <li><a href="{{ site.repo }}/releases/latest">Pobierz</a> najnowszą wersję (Source code, zip) i rozpakuj ją.</li>
-  <li>Windows: zainstaluj Pythona i sterownik USB; Linux: dodaj regułę USB. <a href="{{ site.repo }}/blob/main/INSTALL_pl.md">Instrukcja instalacji</a> opisuje każdy krok.</li>
-  <li>Uruchom <code>start_kerfly.bat</code> (Windows) albo <code>./start_kerfly.sh</code> (Linux). Pierwsze uruchomienie wszystko przygotuje.</li>
+  <li><strong>Windows 10 / 11:</strong> uruchom <code>Kerfly-&lt;wersja&gt;-windows-setup.exe</code>. Za pierwszym razem zaznacz <em>Zainstaluj sterownik USB lasera K40</em> (pomiń, jeśli K40 Whisperer już działał na tym komputerze). Jeśli Windows napisze, że ochronił komputer, wybierz <em>Więcej informacji → Uruchom mimo to</em> (instalator nie jest podpisany). Kerfly będzie w menu Start.</li>
+  <li><strong>Linux:</strong> nadaj plikowi <code>Kerfly-&lt;wersja&gt;-x86_64.AppImage</code> prawo uruchamiania i uruchom go. Raz dodaj regułę udev dla portu USB lasera.</li>
   <li>Przeczytaj <a href="{{ '/pl/guide.html' | relative_url }}">instrukcję obsługi</a>: połącz laser, ułóż projekt, objedź kontur, start.</li>
 </ol>
+
+<a href="{{ site.repo }}/blob/main/INSTALL_pl.md">Instrukcja instalacji</a> opisuje każdy krok, także uruchamianie Kerfly z kodu źródłowego przez Pythona (<code>start_kerfly.bat</code> / <code>./start_kerfly.sh</code>).
 
 ## Stan projektu
 
 Kerfly jest we **wczesnej fazie rozwoju**. Pierwszy test na prawdziwym laserze
 odbył się w listopadzie 2026 (Windows 10, płyta M3): cięcie trzymało
 wymiary, strzałki, pauza i stop działały, a znalezione problemy poprawiła
-wersja 0.15. Następne w planach: wektoryzacja obrazów, więcej wzorów,
-kompensacja kerfu, więcej formatów plików oraz instalatory dla Windows i
-Linuksa. Zobacz [plan]({{ site.repo }}/blob/main/ROADMAP.md) (po angielsku) i
+wersja 0.15. Od wersji 0.18 każde wydanie ma instalator dla Windows i
+AppImage dla Linuksa. Następne w planach: wektoryzacja obrazów, więcej wzorów,
+kompensacja kerfu, więcej formatów plików oraz paczka dla Debiana z własnym
+repozytorium APT. Zobacz [plan]({{ site.repo }}/blob/main/ROADMAP.md) (po angielsku) i
 [listę zmian]({{ site.repo }}/blob/main/CHANGELOG.md).
 
 ## Pomoc i uwagi
