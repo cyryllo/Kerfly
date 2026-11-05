@@ -73,7 +73,8 @@ are used. **File → Save settings as default** keeps changed settings.
   crosshair is the laser head. Elements that stick out of the bed are drawn
   red, and the job cannot start until they are moved back.
 - **Drawing tools** (right): select, edit nodes, rectangle, ellipse, polygon,
-  line, polyline, pen, freehand, measure, text, fill with a pattern.
+  line, polyline, pen, freehand, measure, text, text on a path, fill with a
+  pattern.
 
 Mouse in the bed view: the wheel zooms in and out (not further than the
 whole bed); the middle or right button drags the view; **Ctrl+0** fits the
@@ -161,6 +162,7 @@ before or after drawing.
 | Freehand | F | Draw with the button held; end near the start to close the shape |
 | Measure | M | Drag between two points: distance, width, height and angle |
 | Text | T | Click, then type in the **Content** field; choose the font, size, bold and italic |
+| Text on a path | Shift+T | Type the text in the options bar, then click a line, curve or shape (see below) |
 | Fill with a pattern | Shift+F | Choose a pattern in the options bar, then click closed shapes to fill them (see below) |
 
 **Snapping.** Drawing and moving snap to the corners, centres and edges of
@@ -220,15 +222,19 @@ the pattern there, or choose **No pattern** to remove it. Holes in the shape
 (for example in letters) stay empty. An opened SVG or DXF file must be
 ungrouped first (Edit → Ungroup), so that its lines become shapes.
 
-**Text on a path.** *(not yet tested on a laser)* Select a text and a shape
-(line, curve, circle, ...; Ctrl+click selects both), then choose **Edit → Put
-text on path** (toolbar **Shapes**, the arc with letters). Every letter stands
-on the line, turned along it: on an open line the text is centred, on a
-closed shape it is centred at the top. The shape stays; delete it if it
-should not be cut. The **Text on path** section of the options bar moves the
-text along the path, puts it on the **other side** of the line, or makes it
-**straight text** again. Editing the text or its font keeps it on the path,
-also after moving it.
+**Text on a path.** *(not yet tested on a laser)* Choose the **Text on a
+path** tool (Shift+T, the arc with letters on the right), type the text and
+choose its font in the options bar, then click a line, curve or shape: the
+text is put on it, every letter standing on the line and turned along it. On
+an open line the text is centred, on a closed shape it is centred at the top.
+**Drag the text to slide it along the line**; on a circle it goes round. The
+**Text on path** section of the options bar sets the start along the path, the
+**distance** between the line and the letters, puts the text on the **other
+side**, or makes it **straight text** again; the **↔** field of the **Font**
+section adds space between the letters (also for ordinary text). The shape
+stays; delete it if it should not be cut. An existing text is put on a shape
+with **Edit → Put text on path** (select both). The arrow keys and the X/Y
+fields move the text together with its path.
 
 ![Text on a circle and on a curve](img/en/textpath.png)
 
@@ -343,7 +349,7 @@ Kerfly is available in English, Polish, German, Spanish and French.
 | Alt (held) | Snap to nothing for a moment |
 | Ctrl+, | Settings |
 | F1 | This user guide |
-| S, N, R, E, P, L, Shift+L, B, F, M, T, Shift+F | Drawing tools (see section 5) |
+| S, N, R, E, P, L, Shift+L, B, F, M, T, Shift+T, Shift+F | Drawing tools (see section 5) |
 
 <a id="s10"></a>
 

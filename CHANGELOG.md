@@ -20,13 +20,15 @@ Version numbers:
   outline layer (a second Layer list chooses which); the outline can also be
   left out. Holes stay empty. A selected shape shows the Fill section to
   change or remove its pattern. Saved in projects, one undo step.
-- **Text on a path.** Select a text and a shape (line, curve, circle, ...)
-  and choose **Edit → Put text on path** (toolbar Shapes). Every letter
-  stands on the line, turned along it, with the font's kerning; centred on
-  open lines, at the top of closed shapes. The options bar moves the text
-  along the path, puts it on the other side, or makes it straight again.
-  Editing the text keeps it on the path, also after moving it; saved in
-  projects.
+- **Text on a path.** The **Text on a path** tool (Shift+T, on the tool
+  strip): type the text in the options bar and click a line, curve or shape.
+  Every letter stands on the line, turned along it, with the font's kerning;
+  centred on open lines, at the top of closed shapes. Dragging the text
+  slides it along the line (round and round on a circle). The options bar
+  sets the start along the path, the distance from the line, the other side,
+  or makes it straight again. An existing text is put on a shape with
+  **Edit → Put text on path**. Saved in projects.
+- **Letter spacing** for every text (the ↔ field of the Font section).
 - **Order of elements**: Bring forward / Send backward (toolbar group
   **Order**, PgUp / PgDown in the bed view) and Bring to front / Send to back
   (Ctrl+PgUp / Ctrl+PgDown, Edit menu). Groups move together.

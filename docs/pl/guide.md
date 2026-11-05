@@ -76,7 +76,7 @@ ustawienia jako domyślne**.
   zadanie nie ruszy, dopóki ich nie przesuniesz z powrotem.
 - **Narzędzia rysowania** (prawa strona): zaznaczanie, edycja węzłów,
   prostokąt, elipsa, wielokąt, linia, łamana, pióro, rysowanie odręczne,
-  miarka, tekst, wypełnienie wzorem.
+  miarka, tekst, tekst na ścieżce, wypełnienie wzorem.
 
 Mysz na stole: kółko przybliża i oddala (nie dalej niż cały stół); środkowy
 albo prawy przycisk przesuwa widok; **Ctrl+0** dopasowuje stół do okna.
@@ -164,6 +164,7 @@ narysowaniem i po nim.
 | Odręcznie | F | Rysuj z wciśniętym przyciskiem; skończ blisko początku, żeby zamknąć kształt |
 | Miarka | M | Przeciągnij między dwoma punktami: odległość, szerokość, wysokość i kąt |
 | Tekst | T | Kliknij i wpisz tekst w polu **Treść**; wybierz czcionkę, rozmiar, pogrubienie i kursywę |
+| Tekst na ścieżce | Shift+T | Wpisz tekst na pasku opcji, potem kliknij linię, krzywą albo kształt (opis niżej) |
 | Wypełnij wzorem | Shift+F | Wybierz wzór na pasku opcji i klikaj zamknięte kształty, żeby je wypełnić (opis niżej) |
 
 **Przyciąganie.** Rysowanie i przesuwanie przyciąga do narożników, środków i
@@ -224,15 +225,19 @@ usunąć. Dziury w kształcie (np. w literach) zostają puste. Otwarty plik SVG
 albo DXF trzeba najpierw rozgrupować (Edycja → Rozgrupuj), żeby jego linie
 stały się kształtami.
 
-**Tekst na ścieżce.** *(jeszcze nie sprawdzone na laserze)* Zaznacz tekst i
-kształt (linię, krzywą, okrąg…; Ctrl+klik zaznacza oba) i wybierz **Edycja →
-Umieść tekst na ścieżce** (na pasku **Kształty**, łuk z literami). Każda litera
-stoi na linii, obrócona wzdłuż niej: na otwartej linii tekst jest
-wyśrodkowany, na zamkniętym kształcie wyśrodkowany na górze. Kształt zostaje;
-usuń go, jeśli nie ma być cięty. Sekcja **Tekst na ścieżce** na pasku opcji
-przesuwa tekst wzdłuż ścieżki, przenosi go na **drugą stronę** linii albo
-zamienia z powrotem w **prosty tekst**. Zmiana treści albo czcionki zostawia
-tekst na ścieżce, także po jego przesunięciu.
+**Tekst na ścieżce.** *(jeszcze nie sprawdzone na laserze)* Wybierz narzędzie
+**Tekst na ścieżce** (Shift+T, łuk z literami po prawej), wpisz tekst i
+wybierz czcionkę na pasku opcji, potem kliknij linię, krzywą albo kształt:
+tekst stanie na nim, każda litera na linii i obrócona wzdłuż niej. Na otwartej
+linii tekst jest wyśrodkowany, na zamkniętym kształcie wyśrodkowany na górze.
+**Przeciągnij tekst, żeby przesunąć go wzdłuż linii**; na okręgu jedzie
+dookoła. Sekcja **Tekst na ścieżce** na pasku opcji ustawia początek na
+ścieżce, **odległość** między linią a literami, przenosi tekst na **drugą
+stronę** albo zamienia go z powrotem w **prosty tekst**; pole **↔** w sekcji
+**Czcionka** dodaje odstęp między literami (także w zwykłym tekście). Kształt
+zostaje; usuń go, jeśli nie ma być cięty. Istniejący tekst ustawisz na
+kształcie przez **Edycja → Umieść tekst na ścieżce** (zaznacz oba). Strzałki i
+pola X/Y przesuwają tekst razem z jego ścieżką.
 
 ![Tekst na okręgu i na krzywej](../img/pl/textpath.png)
 
@@ -350,7 +355,7 @@ francusku.
 | Alt (przytrzymany) | Chwilowo bez przyciągania |
 | Ctrl+, | Ustawienia |
 | F1 | Ta instrukcja |
-| S, N, R, E, P, L, Shift+L, B, F, M, T, Shift+F | Narzędzia rysowania (punkt 5) |
+| S, N, R, E, P, L, Shift+L, B, F, M, T, Shift+T, Shift+F | Narzędzia rysowania (punkt 5) |
 
 <a id="s10"></a>
 

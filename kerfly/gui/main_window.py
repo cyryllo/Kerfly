@@ -4,6 +4,7 @@ Kerfly main window.
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
+import math
 import os
 import re
 from dataclasses import replace
@@ -155,6 +156,8 @@ class MainWindow(QMainWindow):
                                for kind in ("rectangle", "ellipse", "polygon", "line", "polyline", "text")}
         self.shape_defaults["pen"] = ShapeSpec(kind="path", operation="cut")
         self.shape_defaults["freehand"] = self.shape_defaults["pen"]
+        # Text on a path tool: the text it puts on the clicked shape
+        self.shape_defaults["textpath"] = ShapeSpec(kind="text", operation="engrave", text=_("Text"))
         self.preview.signals.drawn.connect(self._preview_drawn)
         self.preview.signals.selected.connect(self._preview_selected)
         self.preview.signals.polyline_drawn.connect(self._preview_polyline_drawn)
@@ -163,7 +166,7 @@ class MainWindow(QMainWindow):
         self.preview.signals.edit_nodes.connect(self._edit_nodes_of)
         self.preview.signals.node_selection.connect(self._node_selection_changed)
         self.preview.signals.measured.connect(self._preview_measured)
-        self.preview.signals.fill_clicked.connect(self._fill_clicked)
+        self.preview.signals.shape_picked.connect(self._shape_picked)
         # what the Fill tool gives to the shapes it is clicked on
         self.fill_defaults = ShapeSpec(kind="rectangle", fill_pattern="lines", fill_spacing=2.0)
         self.preview.node_points_provider = self._node_points
@@ -424,7 +427,6 @@ class MainWindow(QMainWindow):
                 (self.act_group, "squares-selected"),
                 (self.act_boolean["union"], "layers-union"),
                 (self.act_boolean["difference"], "layers-subtract"),
-                (self.act_text_path, icons.text_on_path_icon()),
                 (self.act_ungroup, "squares"),
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
@@ -530,9 +532,10 @@ class MainWindow(QMainWindow):
                  ("freehand", "scribble", N_("Freehand"), "F"),
                  ("measure", "ruler-measure", N_("Measure"), "M"),
                  ("text", "typography", N_("Text"), "T"),
+                 ("textpath", icons.text_on_path_icon(), N_("Text on a path"), "Shift+T"),
                  ("fill", "bucket-droplet", N_("Fill with a pattern"), "Shift+F")]
         for key, icon, name, shortcut in tools:
-            act = QAction(icons.tabler(icon), _(name), self)
+            act = QAction(icons.tabler(icon) if isinstance(icon, str) else icon, _(name), self)
             act.setCheckable(True)
             act.setShortcut(QKeySequence(shortcut))
             act.setShortcutContext(Qt.WidgetWithChildrenShortcut)    # only while the bed view has focus
@@ -561,6 +564,9 @@ class MainWindow(QMainWindow):
             self.status(_("Pen: click for a corner, press and drag for a smooth curve. Click the first point to "
                           "close the shape; double-click or Enter finishes an open path. Backspace removes the "
                           "last node, Shift keeps 45\u00b0 angles, Esc cancels."))
+        if tool == "textpath":
+            self.status(_("Text on a path: type the text above, then click a line, curve or shape to put it on. "
+                          "Drag the text afterwards to slide it along the line."))
         if tool == "fill":
             self.status(_("Fill: choose a pattern above, then click a closed shape (cut or outline) to fill it. "
                           "Selected shapes get the pattern you choose. The outline stays on its layer; the "
@@ -591,6 +597,12 @@ class MainWindow(QMainWindow):
             if force or getattr(self, "_options_target", None) != "fill":
                 self._options_target, self._options_element = "fill", None
                 self.tool_options.show_fill_tool(self.fill_defaults)
+            return
+        if self.preview.tool == "textpath":                 # the text to put on a path, also with a selection
+            if force or getattr(self, "_options_target", None) != "textpath":
+                self._options_target, self._options_element = "textpath", None
+                title = NEW_KIND_TITLES["textpath"]
+                self.tool_options.show_spec(self.shape_defaults["textpath"], _(title))
             return
         e = self.selected
         if e is not None and e.shape is not None:
@@ -647,6 +659,85 @@ class MainWindow(QMainWindow):
         if spec.operation == "hatch":
             spec.operation = "engrave"
         self._apply_shape(e, spec, checkpoint=checkpoint)
+
+    def _shape_picked(self, tool, point):
+        if tool == "textpath":
+            self._text_path_clicked(point)
+        else:
+            self._fill_clicked(point)
+
+    def _bed_point(self, point):
+        """Scene mm (x right, y down on screen) -> bed inches (y up)."""
+        bed_w, _bed_h = config.bed_size_inches(self.values)
+        x = point.x() / 25.4
+        if self.job_settings().home_upper_right:
+            x = bed_w - x
+        return x, -point.y() / 25.4
+
+    def _shape_lines(self, e):
+        """The drawn element's polylines on the bed (inches), with their design frame."""
+        from kerfly.core.shapes import _bounds_mm, outlines
+        polys = [p for p in outlines(e.shape) if len(p) >= 2]
+        if not polys:
+            return []
+        xmin, _xmax, ymin, ymax = _bounds_mm(polys)
+        h_in = (ymax - ymin) / 25.4
+        f = e.transform()
+        return [[f((px - xmin) / 25.4, h_in - (py - ymin) / 25.4) for px, py in p] for p in polys]
+
+    def _line_at(self, point, tolerance_mm=None):
+        """The drawn element (not a text) whose line is nearest to the point, if it
+        is close enough (a few pixels on screen), or one whose closed outline holds it."""
+        from kerfly.core.shapes import element_contains
+        x, y = self._bed_point(point)
+        if tolerance_mm is None:
+            scale = abs(self.preview.transform().m11()) or 1.0          # pixels per mm
+            tolerance_mm = max(1.0, 8.0 / scale)
+        tol = tolerance_mm / 25.4
+        best, best_d = None, None
+        for e in self.elements:
+            if not e.visible or e.shape is None or e.shape.kind == "text":
+                continue
+            b = e.bounds
+            if not (b[0] - tol <= x <= b[1] + tol and b[2] - tol <= y <= b[3] + tol):
+                continue
+            d = None
+            for line in self._shape_lines(e):
+                for (x1, y1), (x2, y2) in zip(line, line[1:]):
+                    ex, ey = x2 - x1, y2 - y1
+                    ll = ex * ex + ey * ey
+                    t = 0.0 if ll == 0 else max(0.0, min(1.0, ((x - x1) * ex + (y - y1) * ey) / ll))
+                    dd = math.hypot(x1 + t * ex - x, y1 + t * ey - y)
+                    d = dd if d is None else min(d, dd)
+            if d is not None and d > tol and element_contains(e, x, y):
+                d = tol * 0.999                                          # inside a closed shape: it counts
+            if d is not None and d <= tol and (best_d is None or d < best_d):
+                best, best_d = e, d
+        return best
+
+    def _text_path_clicked(self, point):
+        """Text on a path tool: put a new text (from the options bar) on the clicked shape."""
+        guide = self._line_at(point)
+        if guide is None:
+            self.status(_("Click a line, curve or shape to put the text on. Opened files must be ungrouped first "
+                          "(Edit → Ungroup)."), error=True)
+            return
+        spec = self.shape_defaults["textpath"].copy()
+        if not (spec.text or "").strip():
+            self.status(_("Type the text in the bar above first."), error=True)
+            return
+        update_text_spec(spec)
+        name = KIND_NAMES["text"]
+        text = Element(build_design(spec), name=_(name), shape=spec)
+        self._checkpoint()
+        self.elements.append(text)
+        self._place_on_path(text, guide)
+        self.set_tool("select")
+        self.preview.select_element(text)
+        self.selected = text
+        self._update_tool_options(force=True)
+        self.status(_("Text put on the path. Drag it to slide it along the line; the bar above changes the text, "
+                      "the spacing, the distance from the line and the side."))
 
     def _fill_clicked(self, point):
         """The Fill tool was clicked at a point of the bed view (scene mm)."""
@@ -709,8 +800,6 @@ class MainWindow(QMainWindow):
 
     def put_text_on_path(self):
         """Edit → Put text on path: the selected text along the selected shape."""
-        from kerfly.core.shapes import _bounds_mm, outlines
-        from kerfly.gui.text_shapes import prepare_path, text_length
         chosen = self._selection()
         texts = [e for e in chosen if e.shape is not None and e.shape.kind == "text"]
         guides = [e for e in chosen if e.shape is not None and e.shape.kind != "text"]
@@ -718,30 +807,30 @@ class MainWindow(QMainWindow):
             self.status(_("Select one text and one shape (line, curve, circle, ...) to put the text on, then "
                           "choose Put text on path again (Ctrl+click selects both)."), error=True)
             return
-        text, guide = texts[0], guides[0]
-        polys = [p for p in outlines(guide.shape) if len(p) >= 2]
-        if not polys:
+        self._checkpoint()
+        if not self._place_on_path(texts[0], guides[0]):
+            self._undo.pop()
+            return
+        self.preview.select_element(texts[0])
+        self.selected = texts[0]
+        self.status(_("Text put on the path. The path stays: delete it if it should not be cut. Move the text "
+                      "along the path or to the other side in the bar above."))
+
+    def _place_on_path(self, text, guide):
+        """Set the text element along the longest line of the guide element (no undo step)."""
+        from kerfly.gui.text_shapes import prepare_path, text_length
+        lines = self._shape_lines(guide)
+        if not lines:
             self.status(_("That shape has no line to put the text on."), error=True)
-            return
-        try:
-            bed_w, _bed_h = config.bed_size_inches(self.values)
-            ur = self.job_settings().home_upper_right
-        except ValueError as ex:
-            self.status(str(ex), error=True)
-            return
-        xmin, _xmax, ymin, ymax = _bounds_mm(polys)
-        h_in = (ymax - ymin) / 25.4
-        f = guide.transform()
-        longest = max(polys, key=lambda p: sum(abs(b[0] - a[0]) + abs(b[1] - a[1]) for a, b in zip(p, p[1:])))
-        screen = []
-        for px, py in longest:                        # shape mm -> design inches -> bed -> screen mm
-            bx, by = f((px - xmin) / 25.4, h_in - (py - ymin) / 25.4)
-            screen.append(((bed_w - bx) * 25.4 if ur else bx * 25.4, -by * 25.4))
+            return False
+        bed_w, _bed_h = config.bed_size_inches(self.values)
+        ur = self.job_settings().home_upper_right
+        longest = max(lines, key=lambda p: sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(p, p[1:])))
+        screen = [((bed_w - bx) * 25.4 if ur else bx * 25.4, -by * 25.4) for bx, by in longest]
         closed = guide.shape.closed and len(longest) > 3
         spec = text.shape.copy()
         spec.text_path, spec.text_path_offset = prepare_path(screen, closed, text_length(spec))
         spec.text_path_flip = False
-        self._checkpoint()
         update_text_spec(spec)
         # the outlines start at (0, 0): the path was only moved (maybe reversed, or a ring started
         # elsewhere), so its smallest x and y show where the element's top-left corner is
@@ -756,10 +845,7 @@ class MainWindow(QMainWindow):
         self._keep_on_bed(text)
         self._compiled = None
         self._layout_changed()
-        self.preview.select_element(text)
-        self.selected = text
-        self.status(_("Text put on the path. The path stays: delete it if it should not be cut. Move the text "
-                      "along the path or to the other side in the bar above."))
+        return True
 
     def _preview_drawn(self, tool, start, end, shift):
         """A shape was drawn in the bed view (scene mm, y down)."""
@@ -1835,6 +1921,17 @@ class MainWindow(QMainWindow):
         chosen = self._selection()
         if element not in chosen:
             chosen = [element]
+        if chosen == [element] and element.shape is not None and element.shape.kind == "text" \
+                and element.shape.text_path and element.is_identity:
+            # text on a path: dragging slides it along the path (it stays on the line)
+            from kerfly.gui.text_shapes import slide_along_path
+            sx = dx * 25.4 * (-1 if self.job_settings().home_upper_right else 1)
+            sy = -dy * 25.4
+            spec = element.shape.copy()
+            spec.text_path_offset = slide_along_path(spec, sx, sy)
+            self._apply_shape(element, spec)
+            QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
+            return
         self._checkpoint()
         for e in chosen:
             e.x += dx

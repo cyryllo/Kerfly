@@ -28,7 +28,8 @@ PATTERN_NAMES = [("lines", N_("Lines")), ("cross", N_("Cross-hatch")), ("waves",
 NEW_KIND_TITLES = {"rectangle": N_("New rectangle"), "ellipse": N_("New ellipse"),
                    "polygon": N_("New polygon"), "line": N_("New line"),
                    "polyline": N_("New polyline"), "pen": N_("New path"),
-                   "freehand": N_("New freehand line"), "text": N_("New text")}
+                   "freehand": N_("New freehand line"), "text": N_("New text"),
+                   "textpath": N_("New text on a path")}
 
 
 def ribbon_section(content, caption):
@@ -245,6 +246,11 @@ class ToolOptionsBar(QWidget):
             font.setToolTip(_("Font"))
             font.currentFontChanged.connect(lambda f: self._set("font_family", f.family()))
             g.addWidget(font, 0, 0, 1, 3)
+            spacing = self._dspin("text_spacing", -50.0, 200.0, " mm", decimals=2)
+            spacing.setSingleStep(0.1)
+            spacing.setToolTip(_("Space between the letters (0: as the font sets it)"))
+            g.addWidget(QLabel("\u2194"), 0, 3)
+            g.addWidget(spacing, 0, 4)
             g.addWidget(self._dspin("font_size", 0.5, 500.0, " mm"), 1, 0)
             for i, (attr, icon, tip) in enumerate((("bold", "bold", N_("Bold")),
                                                    ("italic", "italic", N_("Italic")))):
@@ -277,9 +283,13 @@ class ToolOptionsBar(QWidget):
                 straight.setText(_("Straight text"))
                 straight.setToolTip(_("Take the text off the path: back to a straight line of text"))
                 straight.clicked.connect(lambda: self._set("text_path", []))
+                distance = self._dspin("text_path_distance", -500.0, 500.0, " mm")
+                distance.setSingleStep(0.5)
+                distance.setToolTip(_("Distance between the line and the foot of the letters"))
                 pg.addWidget(offset, 0, 0)
                 pg.addWidget(flip, 0, 1)
-                pg.addWidget(straight, 1, 0, 1, 2)
+                pg.addWidget(distance, 1, 0)
+                pg.addWidget(straight, 1, 1)
                 self._add(pb, _("Text on path"))
         self.row.addStretch(1)
 

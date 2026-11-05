@@ -68,6 +68,8 @@ class ShapeSpec:
     text_path: list = field(default_factory=list)
     text_path_offset: float = 0.0
     text_path_flip: bool = False
+    text_path_distance: float = 0.0   # mm between the path and the foot of the letters
+    text_spacing: float = 0.0         # mm added between the letters (any text)
     # polyline: corner points (mm, y down, relative to the top-left of their
     # bounding box) and whether the last point joins the first
     points: list = field(default_factory=list)

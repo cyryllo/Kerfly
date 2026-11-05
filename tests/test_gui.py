@@ -1251,6 +1251,30 @@ def main():
     spec.text_path = []
     w5._apply_shape(text, spec)
     straight = not text.shape.text_path and abs(text.size[1] * 25.4 - 7.3) < 2.0
+    # the Text on a path tool: click near the line -> a new text on it; dragging slides it
+    # along the line (it stays on it); spacing makes it longer; distance lifts it off the line
+    w5.set_tool("textpath")
+    tool_bar_text = w5._options_target == "textpath"
+    w5.shape_defaults["textpath"].text = "ABC"
+    n0 = len(w5.elements)
+    w5._shape_picked("textpath", _QPointF(70, 61))           # 1 mm below the line
+    t2 = w5.elements[-1]
+    made = len(w5.elements) == n0 + 1 and t2.shape.text == "ABC" and bool(t2.shape.text_path) \
+        and w5.preview.tool == "select"
+    left0 = t2.bounds[0]
+    w5.preview.select_element(t2)
+    w5.selected = t2
+    w5._preview_moved(t2, 15 / 25.4, 8 / 25.4)               # drag right (and a bit up)
+    slid = abs((t2.bounds[0] - left0) * 25.4 - 15.0) < 0.6 and abs(t2.bounds[2] * 25.4 + 60.0) < 0.6
+    w_before = t2.size[0]
+    spec = t2.shape.copy()
+    spec.text_spacing = 2.0
+    spec.text_path_distance = 3.0
+    w5._apply_shape(t2, spec)
+    spaced = t2.size[0] * 25.4 > w_before * 25.4 + 3.5 and abs(t2.bounds[2] * 25.4 + 57.0) < 0.6
+    check("text on a path tool: click puts a text on the line, drag slides along it, spacing, distance",
+          tool_bar_text and made and slid and spaced, "(%s)" % ([tool_bar_text, made, slid, spaced],))
+
     # the options of a selected text (all its sections) scroll instead of widening the window
     w5.preview.select_element(text)
     w5.selected = text

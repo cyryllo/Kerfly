@@ -29,6 +29,9 @@ SNAP_LABELS = {snapping.CORNER: N_("corner"), snapping.CENTRE: N_("centre"),
 MM = 25.4
 MAX_PREVIEW_PIXELS = 3000   # longest side of a raster preview image
 
+# tools that work on a shape clicked in the bed view (they draw nothing)
+PICK_TOOLS = ("fill", "textpath")
+
 COLORS = {
     "bed": QColor("#e9ebee"),
     "bed_border": QColor("#b8bec7"),
@@ -72,7 +75,7 @@ class ViewSignals(QObject):
     measured = Signal(float, float)               # dx, dy of the ruler in mm (screen right / down)
     edit_nodes = Signal(object)                   # element double-clicked with the select tool
     node_selection = Signal(int)                  # number of selected nodes in the node tool
-    fill_clicked = Signal(QPointF)                # fill tool clicked at this point (scene mm)
+    shape_picked = Signal(str, QPointF)          # fill / text-on-path tool clicked here (scene mm)
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -381,7 +384,7 @@ class PreviewView(QGraphicsView):
             return
         drawing = tool != "select"
         self.setDragMode(QGraphicsView.NoDrag if drawing else QGraphicsView.RubberBandDrag)
-        cursor = Qt.PointingHandCursor if tool == "fill" else Qt.CrossCursor if drawing else Qt.ArrowCursor
+        cursor = Qt.PointingHandCursor if tool in PICK_TOOLS else Qt.CrossCursor if drawing else Qt.ArrowCursor
         self.viewport().setCursor(cursor)
 
     # ---- snapping: other elements first, then the grid ------------------------
@@ -718,8 +721,8 @@ class PreviewView(QGraphicsView):
         super().mouseDoubleClickEvent(event)
 
     def mousePressEvent(self, event):
-        if self.tool == "fill" and event.button() == Qt.LeftButton:
-            self.signals.fill_clicked.emit(self.mapToScene(event.position().toPoint()))
+        if self.tool in PICK_TOOLS and event.button() == Qt.LeftButton:
+            self.signals.shape_picked.emit(self.tool, self.mapToScene(event.position().toPoint()))
             event.accept()
             return
         if self.tool == "measure" and event.button() == Qt.LeftButton:
@@ -772,7 +775,7 @@ class PreviewView(QGraphicsView):
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        if self.tool not in ("select", "nodes", "fill") and self._draw_start is None and not self._poly_points \
+        if self.tool not in ("select", "nodes") + PICK_TOOLS and self._draw_start is None and not self._poly_points \
                 and not self._pen and self._freehand is None and self._measure_start is None \
                 and not event.buttons():
             self.snap_point(self.mapToScene(event.position().toPoint()))     # shows where a click lands
