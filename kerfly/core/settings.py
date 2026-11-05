@@ -70,6 +70,9 @@ class JobSettings:
     trace_with_laser: bool = False    # trace_w_laser
     trace_gap: float = 0.0            # in the units given by `units`
     trace_power: float = 0.5
+    # Kerfly: start the trace loop at the corner nearest the head. Off: K40 Whisperer's
+    # start point (with pyclipper the upper right corner), byte-identical laser data.
+    trace_from_corner: bool = False
 
     @property
     def feed_factor(self):

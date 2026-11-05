@@ -5,6 +5,8 @@ Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import os
+import re
+from dataclasses import replace
 
 from PySide6.QtCore import QItemSelectionModel, QSize, Qt, QTimer
 from PySide6.QtCore import QLocale
@@ -45,6 +47,7 @@ from kerfly.gui.layers_panel import LayersPanel
 from kerfly.gui.materials_dialog import MaterialsDialog
 from kerfly.gui.worker import EgvSendWorker, JobWorker, LayersJobWorker, RasterLayersWorker
 
+_PERCENT_RE = re.compile(r"(\d+(?:\.\d+)?)\s*%\s*$")   # progress percentage at the end of a message
 IMAGE_PATTERNS = " ".join("*" + e for e in loaders.IMAGE_EXTENSIONS)
 
 
@@ -1338,11 +1341,20 @@ class MainWindow(QMainWindow):
         self._update_unit_suffixes()
 
     def _build_status(self):
+        # progress of the current step (filled by the percentages in the status messages) ...
         self.progress = QProgressBar()
         self.progress.setMaximumWidth(220)
-        self.progress.setRange(0, 0)
+        self.progress.setRange(0, 100)
+        self.progress.setFormat("%p%")
         self.progress.hide()
         self.statusBar().addPermanentWidget(self.progress)
+        # ... and a small moving bar on its right: Kerfly is working
+        self.busy_indicator = QProgressBar()
+        self.busy_indicator.setRange(0, 0)
+        self.busy_indicator.setTextVisible(False)
+        self.busy_indicator.setFixedWidth(4 * self.fontMetrics().height())
+        self.busy_indicator.hide()
+        self.statusBar().addPermanentWidget(self.busy_indicator)
         self.statusBar().showMessage(_("Ready"))
 
     # ------------------------------------------------------------ state
@@ -2145,7 +2157,9 @@ class MainWindow(QMainWindow):
                 and is_true(self.values.get("show_power", "1")))
 
     def job_settings(self):
-        return config.job_settings_from_values(self.values, power_per_stage=self.power_per_stage())
+        s = config.job_settings_from_values(self.values, power_per_stage=self.power_per_stage())
+        # the trace starts at the corner where the head is (K40 Whisperer: upper right first)
+        return replace(s, trace_from_corner=True)
 
     def send_options(self):
         v = self.values
@@ -2307,14 +2321,24 @@ class MainWindow(QMainWindow):
         for a in self.tool_actions.values():
             a.setEnabled(not busy)
         self.tool_options.setEnabled(not busy)
+        self.progress.setValue(0)
         self.progress.setVisible(busy)
+        self.busy_indicator.setVisible(busy)
         self._update_bed_check()
 
     def status(self, message, error=False):
-        if error:
-            diag_log.warning("status: %s", message)
-        elif not message.endswith("%") and "%: " not in message:
-            diag_log.info("status: %s", message)     # progress percentages are left out
+        m = _PERCENT_RE.search(message)
+        if m and hasattr(self, "progress"):            # "Sending Data to Laser = 42.0%" etc.
+            self.progress.setValue(max(0, min(100, int(float(m.group(1))))))
+        # the log gets each message once in a row: the laser library repeats some
+        # (e.g. "Waiting for the laser to finish." while polling), which filled the log
+        if message != getattr(self, "_last_logged_status", None):
+            if error:
+                diag_log.warning("status: %s", message)
+                self._last_logged_status = message
+            elif not message.endswith("%") and "%: " not in message:
+                diag_log.info("status: %s", message)     # progress percentages are left out
+                self._last_logged_status = message
         self.statusBar().setStyleSheet("color:#c62828;" if error else "")
         self.statusBar().showMessage(tr_message(message))
 
@@ -2938,11 +2962,18 @@ class MainWindow(QMainWindow):
     def _job_finished(self, ok, message):
         was_laser_job = isinstance(self.worker, (JobWorker, LayersJobWorker, EgvSendWorker)) \
             and self.worker.laser is not None
+        interrupted = was_laser_job and not ok and self.worker.sending
         self.worker.wait()
         self.worker = None
         self._set_paused(False)
         self.set_busy(False)
         self.status(message, error=not ok)
+        if interrupted:
+            # the K40 does not report where the head is: after a stop it is somewhere in the job,
+            # not back at the start where Kerfly assumes it
+            diag_log.warning("job interrupted: head position unknown until Home")
+            self.status(_("%s The laser head position is now unknown: press Home before the next job.")
+                        % tr_message(message), error=True)
         if was_laser_job and self.laser.connected:
             if is_true(self.values.get("post_home", "0")):
                 try:

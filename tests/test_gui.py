@@ -1106,6 +1106,34 @@ def main():
     check("diagnostic report: checks, settings and log", "Kerfly diagnostic report" in text
           and "== Checks" in text and "board_name = " in text and "laser: test entry for the report" in text,
           "(%d bytes)" % len(text))
+
+    # 39. a status message repeated by the laser library is logged once (it filled the log on the
+    # first laser test); progress percentages fill the progress bar; an interrupted job warns
+    before = _diag.read_log().count("Waiting for the laser to finish.")
+    for _i in range(5):
+        w.status("Waiting for the laser to finish.")
+    after = _diag.read_log().count("Waiting for the laser to finish.")
+    check("repeated status logged once", after - before == 1, "(%d new lines)" % (after - before))
+    w.set_busy(True)
+    w.status("Sending Data to Laser = 42.0%")
+    pct = w.progress.value()
+    w.status("Creating Scan Lines: 7.5 %")
+    pct2 = w.progress.value()
+    busy_shown = not w.progress.isHidden() and not w.busy_indicator.isHidden()
+    w.set_busy(False)
+    check("progress bar follows the percentages", pct == 42 and pct2 == 7 and busy_shown
+          and w.busy_indicator.isHidden(), "(%s, %s)" % (pct, pct2))
+    from kerfly.gui.worker import LayersJobWorker as _LJW
+    for sent in (False, True):
+        wk = _LJW(w.elements, w.layers, w.job_settings(), {}, laser=w.laser)
+        wk.sending = sent
+        w.worker = wk
+        w._job_finished(False, "Action Stopped by User.")
+        msg = w.statusBar().currentMessage()
+        if sent:
+            check("stopped job: head position unknown, press Home", "Home" in msg, "(%s)" % msg)
+        else:
+            check("job refused before sending: no position warning", "Home" not in msg, "(%s)" % msg)
     sys.stdout, sys.stderr = sys.__stdout__, sys.__stderr__
 
     # Let every worker thread finish: a QThread still running when the process

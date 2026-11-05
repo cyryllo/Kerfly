@@ -32,6 +32,7 @@ class TaskWorker(QThread):
         self.pause = PauseControl(on_paused=self.paused.emit)
         self.bed = None                        # (width, height) inches, for the safety check
         self.origin = None                     # bed position of the head at the job start
+        self.sending = False                   # data went to the laser (the head may have moved)
 
     # called from the GUI thread
     def request_stop(self):
@@ -134,6 +135,7 @@ class JobWorker(TaskWorker):
                 f.write(job.egv_file_bytes(chunks[0].data))
             return _("Data saved to: %s") % self.output_file
         self._check_reach(chunks)
+        self.sending = True
         total = 0.0
         for chunk in chunks:
             total += self.laser.send(chunk.data, power=chunk.power, update_gui=self._update_gui,
@@ -151,6 +153,7 @@ class EgvSendWorker(TaskWorker):
         self.settings = settings
 
     def task(self):
+        self.sending = True
         try:
             total = self.laser.send(list(self.egv.data), update_gui=self._update_gui,
                                     stop=self.stop, passes=self.passes, **self.send_options)
@@ -201,6 +204,7 @@ class LayersJobWorker(TaskWorker):
                 f.write(job.egv_file_bytes(chunks[0].data))
             return _("Data saved to: %s") % self.output_file
         self._check_reach(chunks)
+        self.sending = True
         total = 0.0
         for chunk in chunks:
             total += self.laser.send(chunk.data, power=chunk.power, update_gui=self._update_gui,

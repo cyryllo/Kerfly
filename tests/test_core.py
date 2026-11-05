@@ -13,6 +13,7 @@ import os
 import shutil
 import sys
 import tempfile
+from dataclasses import replace
 
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(TESTS_DIR)
@@ -422,6 +423,23 @@ def test_job_position():
     ys = [origin[1] + p[1] - ymax for p in trace]
     check("trace stays within the layout", max(ys) < -1.0 + 0.003 and min(ys) > -2.5 - 0.003,
           "(y %.3f .. %.3f in, layout -2.500 .. -1.000)" % (min(ys), max(ys)))
+
+    # the trace loop starts at the corner where the head is (top-left), with and without
+    # pyclipper (pyclipper started it at the upper right: the head ran along the top edge first)
+    rect = Design()
+    rect.vector_cut.set_ecoords([[0, 0, 1], [2, 0, 1], [2, 1, 1], [0, 1, 1], [0, 0, 1]])
+    rect.bounds = (0.0, 2.0, 0.0, 1.0)
+    starts = []
+    saved = job.PYCLIPPER
+    for clip in (False, saved):
+        job.PYCLIPPER = clip
+        try:
+            t = job.make_trace_path(rect, replace(settings, trace_from_corner=True))
+        finally:
+            job.PYCLIPPER = saved
+        starts.append((round(t[0][0], 3), round(t[0][1], 3)) + ((t[0][:2] == t[-1][:2]),))
+    check("trace starts at the top-left corner", all(st == (0.0, 1.0, True) for st in starts),
+          "(start, closed: %s)" % (starts,))
 
     # safety check before sending: the whole job stays on a 12 x 8 in bed ...
     from kerfly.core.layers import build_layers_job

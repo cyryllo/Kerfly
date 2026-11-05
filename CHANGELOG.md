@@ -24,6 +24,12 @@ Fixes from the first test on a real laser (Windows 10, LASER-M3 board).
   coordinates. A layout is now built from (0, 0) like a loaded file. A single
   unchanged element was not affected and is still byte-identical to K40
   Whisperer.
+- **Trace boundary starts where the head is.** The trace first ran along the
+  top edge to the upper right corner and back, then went round. It now starts
+  at the corner nearest the head (upper left). The old start point came from
+  the pyclipper library (used for the trace gap); K40 Whisperer does the
+  same. The K40 Whisperer window (`k40_whisperer.py`) keeps the old start, so
+  its laser data stay byte-identical.
 
 ### New
 
@@ -32,6 +38,18 @@ Fixes from the first test on a real laser (Windows 10, LASER-M3 board).
   laser bed by more than 1 mm, nothing is sent and a message says which
   edge and by how much. Not checked: the X direction with home in the upper
   right, and the Y direction on the rotary.
+- **Head position after Stop.** The K40 does not report where the head is.
+  After a job is stopped while sending, the status bar says that the head
+  position is unknown and to press Home before the next job.
+- **Progress bar fills with the percentage** of the current step (preparing
+  the data, sending to the laser). The small moving bar on its right still
+  shows that Kerfly is working.
+
+### Fixed
+
+- The diagnostic log got the same status message thousands of times
+  ("Waiting for the laser to finish." while the laser runs), so the report
+  only held the last minutes. Each message is now logged once in a row.
 
 ## 0.14.0 (2026-11-04)
 

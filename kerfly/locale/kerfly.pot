@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 11:43+0100\n"
+"POT-Creation-Date: 2026-11-05 11:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,6 +36,10 @@ msgstr ""
 
 #, python-format
 msgid "%s (copy)"
+msgstr ""
+
+#, python-format
+msgid "%s The laser head position is now unknown: press Home before the next job."
 msgstr ""
 
 #, python-format

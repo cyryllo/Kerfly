@@ -158,6 +158,20 @@ def offset_ecoords(ecoords_in, offset_val):
     return ecoords_out
 
 
+def start_loop_near(loop, x, y):
+    """The closed loop [[x, y, n], ...] (last point = first point) rotated so it
+    starts at its point nearest to (x, y); the same path, other start."""
+    if len(loop) < 3:
+        return loop
+    closed = loop[0][:2] == loop[-1][:2]
+    pts = loop[:-1] if closed else loop
+    i = min(range(len(pts)), key=lambda k: (pts[k][0] - x) ** 2 + (pts[k][1] - y) ** 2)
+    out = [p[:] for p in pts[i:] + pts[:i]]
+    if closed:
+        out.append(out[0][:])
+    return out
+
+
 def make_trace_path(design, settings, progress=_no_progress, stop=None):
     """Convex hull around everything in the design, offset by the trace gap,
     for running the head (optionally with the laser) around the job outline."""
@@ -206,6 +220,10 @@ def make_trace_path(design, settings, progress=_no_progress, stop=None):
         trace_coords = my_hull.convexHullecoords(all_coords)
         gap = settings.trace_gap / settings.units_scale
         trace_coords = offset_ecoords(trace_coords, gap)
+        if settings.trace_from_corner:
+            # start the loop at its corner nearest the job start (the head), so the head
+            # does not first run along an edge to wherever the loop happens to begin
+            trace_coords = start_loop_near(trace_coords, startx, starty)
 
     trace_coords, startx, starty = scale_vector_coords(trace_coords, startx, starty, settings)
     return trace_coords
