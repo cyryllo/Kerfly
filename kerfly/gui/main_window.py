@@ -235,7 +235,7 @@ class MainWindow(QMainWindow):
               "as in K40 Whisperer. The corner buttons still only show the corners."))
         self.act_follow_head.setCheckable(True)
         self.act_follow_head.setChecked(is_true(self.values.get("follow_head", "0")))
-        self.act_follow_head.setIcon(icons.tabler("link"))
+        self.act_follow_head.setIcon(icons.follow_head_icon())
         self.act_save_egv = self._action(_("Save &EGV file\u2026"), self.save_egv, "Ctrl+Shift+E",
                                          _("Write the selected operations to an EGV file"))
         self.act_send_egv = self._action(_("Send EGV file to laser\u2026"), self.send_egv_file, None,
@@ -1167,7 +1167,14 @@ class MainWindow(QMainWindow):
                                           self.home, 56, 28)
         self.btn_unlock = self._icon_button("lock-open", _("Unlock rail: release the motors so the head "
                                                            "can be moved by hand"), self.unlock, 56, 28)
-        for b in (self.btn_connect, self.btn_home, self.btn_unlock):
+        # design follows the head: square toggle under the lock, its meaning in the tooltip
+        self.btn_follow_head = QToolButton()
+        self.btn_follow_head.setDefaultAction(self.act_follow_head)
+        self.btn_follow_head.setIconSize(QSize(28, 28))
+        self.btn_follow_head.setFixedSize(56, 56)
+        self.act_follow_head.setToolTip("%s (Ctrl+Shift+H)\n%s" % (_("Design follows the head"),
+                                                                    self.act_follow_head.statusTip()))
+        for b in (self.btn_connect, self.btn_home, self.btn_unlock, self.btn_follow_head):
             machine.addWidget(b)
         machine.addStretch(1)
 
@@ -1221,16 +1228,6 @@ class MainWindow(QMainWindow):
         row.addStretch(1)
         row.addWidget(QLabel(_("Step:")))
         row.addWidget(self.jog_step)
-        row.addStretch(1)
-        v.addLayout(row)
-        self.btn_follow_head = QToolButton()
-        self.btn_follow_head.setDefaultAction(self.act_follow_head)
-        self.btn_follow_head.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.btn_follow_head.setText(_("Design follows the head"))
-        self.btn_follow_head.setToolTip(self.act_follow_head.statusTip())
-        row = QHBoxLayout()
-        row.addStretch(1)
-        row.addWidget(self.btn_follow_head)
         row.addStretch(1)
         v.addLayout(row)
         self.head_label = QLabel()

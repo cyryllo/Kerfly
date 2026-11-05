@@ -150,3 +150,34 @@ def tabler(name, color="#2b2f36"):
         icon.addPixmap(pm)
     _tabler_cache[key] = icon
     return icon
+
+
+def _tabler_render(name, color, p, rect):
+    from PySide6.QtCore import QByteArray
+    from PySide6.QtSvg import QSvgRenderer
+    with open(_os.path.join(_TABLER_DIR, name + ".svg"), encoding="utf-8") as f:
+        svg = f.read().replace("currentColor", color)
+    QSvgRenderer(QByteArray(svg.encode("utf-8"))).render(p, rect)
+
+
+def follow_head_icon(off="#2b2f36", on="#2e7d32"):
+    """"Design follows the head": the "to head" crosshair with a chain link in
+    the lower right corner. Grey when off, green when the button is checked."""
+    from PySide6.QtCore import QRectF
+    icon = QIcon()
+    for state, color in ((QIcon.Off, off), (QIcon.On, on)):
+        for size in (24, 32, 48, 64):
+            pm = QPixmap(size, size)
+            pm.fill(Qt.transparent)
+            p = QPainter(pm)
+            p.setRenderHint(QPainter.Antialiasing, True)
+            _tabler_render("current-location", color, p, QRectF(0, 0, size * 0.78, size * 0.78))
+            b = size * 0.52                                  # badge in the lower right corner
+            badge = QRectF(size - b, size - b, b, b)
+            p.setPen(Qt.NoPen)
+            p.setBrush(QBrush(QColor("#ffffff")))
+            p.drawEllipse(badge)
+            _tabler_render("link", color, p, badge.adjusted(b * 0.1, b * 0.1, -b * 0.1, -b * 0.1))
+            p.end()
+            icon.addPixmap(pm, QIcon.Normal, state)
+    return icon

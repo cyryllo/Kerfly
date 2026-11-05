@@ -52,8 +52,8 @@ dostęp do poleceń. Sterowanie maszyną (połączenie, bazowanie, objazd kontur
 start, stop) jest w panelu po lewej. Na początku zadania głowica najpierw
 podjeżdża do projektu. **Ustaw projekt przy głowicy** zachowuje sposób pracy z
 K40 Whisperera, w którym projekt zaczyna się tam, gdzie stoi głowica, a
-przycisk **Projekt podąża za głowicą** (pod strzałkami) trzyma go przy głowicy,
-gdy ją przesuwasz.
+przycisk **Projekt podąża za głowicą** (z łańcuchem, pod kłódką) trzyma go przy
+głowicy, gdy ją przesuwasz.
 
 Kerfly przesuwa głowicę strzałkami, do narożników projektu albo do podanej
 pozycji. Wykonuje grawer rastrowy, grawer wektorowy, cięcie, G-code i objazd
