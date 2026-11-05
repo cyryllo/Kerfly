@@ -1220,6 +1220,50 @@ def main():
     w4._dirty = False
     w4.close()
 
+    # 46. text on a path: centred above a line, stays in place when edited and after moving it,
+    # other side below the line, back to straight text; saved in projects
+    from kerfly.gui.text_shapes import update_text_spec as _uts
+    from kerfly.core import project as _project
+    w5 = make_window(grid_mm="0", follow_head="0")
+    w5._add_drawn_element(_Spec(kind="line", width=100, height=0, operation="cut"), "line", 20, 60)
+    t = _Spec(kind="text", text="KERFLY", font_size=10, operation="engrave")
+    _uts(t)
+    w5._add_drawn_element(t, "text", 10, 150)
+    guide, text = w5.elements
+    w5.preview.select_element([guide, text])
+    w5.selected = text
+    w5.put_text_on_path()
+    b = [v * 25.4 for v in text.bounds]
+    centred = abs((b[0] + b[1]) / 2 - 70.0) < 2.0 and abs(b[2] + 60.0) < 0.6 and b[3] > -60.0
+    text.x += 10 / 25.4                                   # moved 10 mm right, then edited
+    spec = text.shape.copy()
+    spec.text = "KERFLY!"
+    w5._apply_shape(text, spec)
+    b2 = [v * 25.4 for v in text.bounds]
+    kept = abs(b2[0] - (b[0] + 10.0)) < 0.6 and abs(b2[2] - b[2]) < 0.6
+    spec = text.shape.copy()
+    spec.text_path_flip = True
+    w5._apply_shape(text, spec)
+    below = text.bounds[3] * 25.4 <= -60.0 + 0.6
+    saved = _project._shape_from_dict(_project._shape_to_dict(text.shape))
+    in_project = saved.text_path_flip and len(saved.text_path) == len(text.shape.text_path)
+    spec = text.shape.copy()
+    spec.text_path = []
+    w5._apply_shape(text, spec)
+    straight = not text.shape.text_path and abs(text.size[1] * 25.4 - 7.3) < 2.0
+    # the options of a selected text (all its sections) scroll instead of widening the window
+    w5.preview.select_element(text)
+    w5.selected = text
+    w5._update_tool_options(force=True)
+    narrow = w5.minimumSizeHint().width() < 1100
+    check("text on a path: centred, kept when edited / moved, other side, saved, straight again",
+          centred and kept and below and in_project and straight,
+          "(%s)" % ([centred, kept, below, in_project, straight],))
+    check("options bar scrolls: a selected text does not make the window wider",
+          narrow, "(minimum width %d px)" % w5.minimumSizeHint().width())
+    w5._dirty = False
+    w5.close()
+
     # 43. no keyboard shortcut is used twice (Qt then runs neither action)
     from PySide6.QtGui import QAction as _QAction
     seen, twice = {}, []

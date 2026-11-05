@@ -235,3 +235,35 @@ def pattern_icon(code, size=40, color="#1565c0"):
     icon = QIcon(pm)
     _pattern_cache[key] = icon
     return icon
+
+
+def text_on_path_icon(color="#2b2f36"):
+    """Text on a path: an arc with letters standing on it, turned along it."""
+    import math as _m
+    from PySide6.QtGui import QFont
+    pm, p = _canvas()
+    ink = QColor(color)
+    p.setPen(QPen(ink, 3.2, Qt.SolidLine, Qt.RoundCap))
+    p.setBrush(Qt.NoBrush)
+    cx, cy, r = 32.0, 84.0, 46.0                       # arc: part of a circle below the icon
+    arc = QPainterPath()
+    for i, a in enumerate(range(225, 316, 5)):
+        x, y = cx + r * _m.cos(_m.radians(a)), cy + r * _m.sin(_m.radians(a))
+        arc.moveTo(x, y) if i == 0 else arc.lineTo(x, y)
+    p.drawPath(arc)
+    font = QFont()
+    font.setPixelSize(27)
+    font.setBold(True)
+    p.setPen(Qt.NoPen)
+    p.setBrush(QBrush(ink))
+    for letter, a in (("a", 247), ("b", 270), ("c", 293)):
+        x, y = cx + (r + 4) * _m.cos(_m.radians(a)), cy + (r + 4) * _m.sin(_m.radians(a))
+        glyph = QPainterPath()
+        glyph.addText(QPointF(-8, 0), font, letter)
+        p.save()
+        p.translate(x, y)
+        p.rotate(a + 90)
+        p.drawPath(glyph)
+        p.restore()
+    p.end()
+    return QIcon(pm)

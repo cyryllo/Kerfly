@@ -102,6 +102,29 @@ def take(lang):
     f.grab().save(os.path.join(out, "fill.png"))
     f._dirty = False
     f.close()
+
+    # text on a path: around the top of a circle, and above a curve
+    from kerfly.core import curves
+    tp = MainWindow(values)
+    tp.resize(*WINDOW)
+    tp.show()
+    tp._add_drawn_element(ShapeSpec(kind="ellipse", width=80, height=80, operation="cut"), "ellipse", 20, 25)
+    wave = ShapeSpec(kind="path", operation="cut",
+                     subpaths=[{"nodes": [curves.node(0, 30, None, (25, -10)), curves.node(110, 20, (85, 40), None)],
+                                "closed": False}])
+    tp._add_drawn_element(wave, "pen", 120, 40)
+    for guide, words, size in ((0, "KERFLY · LASER", 9), (1, "Text on a path" if lang == "en" else "Tekst na ścieżce", 8)):
+        t = ShapeSpec(kind="text", text=words, font_size=size, bold=True, operation="engrave")
+        update_text_spec(t)
+        tp._add_drawn_element(t, "text", 40, 160)
+        tp.preview.select_element([tp.elements[guide], tp.elements[-1]])
+        tp.selected = tp.elements[-1]
+        tp.put_text_on_path()
+    tp._update_tool_options(force=True)
+    settle()
+    tp.grab().save(os.path.join(out, "textpath.png"))
+    tp._dirty = False
+    tp.close()
     print("screenshots (%s) written" % lang)
 
 

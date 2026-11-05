@@ -28,7 +28,8 @@ prostokąt (także z zaokrąglonymi rogami), elipsa, wielokąt foremny, linia,
 czcionką. Każdy kształt można wyciąć, wygrawerować jako obrys, wypełnić liniami
 (kreskowanie) albo wygrawerować rastrowo. Narzędzie **Wypełnienie** (wiaderko)
 wypełnia zamknięte kształty grawerowanymi wzorami (linie, fale, plaster miodu,
-cegły…), a ich obrys nadal jest cięty. Pozycja, rozmiar i obrót
+cegły…), a ich obrys nadal jest cięty, a tekst można ułożyć na ścieżce (linii,
+krzywej albo okręgu). Pozycja, rozmiar i obrót
 zaznaczonego elementu oraz opcje kształtu lub narzędzia (warstwa, promień
 rogów, tekst, czcionka) są na pasku nad stołem.
 

@@ -63,7 +63,8 @@ ustawienia jako domyślne**.
 
 - **Pasek opcji** (pod paskiem narzędzi): pozycja, rozmiar i obrót
   zaznaczonego elementu, jego warstwa i opcje zaznaczonego kształtu albo
-  narzędzia (np. tekst i czcionka).
+  narzędzia (np. tekst i czcionka). Gdy sekcje nie mieszczą się w oknie,
+  przewijają się w bok.
 
   ![Pasek opcji z zaznaczonym tekstem](../img/pl/options.png)
 
@@ -222,6 +223,18 @@ narzędziu zaznaczania: tam zmienisz wzór albo wybierzesz **Bez wzoru**, żeby 
 usunąć. Dziury w kształcie (np. w literach) zostają puste. Otwarty plik SVG
 albo DXF trzeba najpierw rozgrupować (Edycja → Rozgrupuj), żeby jego linie
 stały się kształtami.
+
+**Tekst na ścieżce.** *(jeszcze nie sprawdzone na laserze)* Zaznacz tekst i
+kształt (linię, krzywą, okrąg…; Ctrl+klik zaznacza oba) i wybierz **Edycja →
+Umieść tekst na ścieżce** (na pasku **Kształty**, łuk z literami). Każda litera
+stoi na linii, obrócona wzdłuż niej: na otwartej linii tekst jest
+wyśrodkowany, na zamkniętym kształcie wyśrodkowany na górze. Kształt zostaje;
+usuń go, jeśli nie ma być cięty. Sekcja **Tekst na ścieżce** na pasku opcji
+przesuwa tekst wzdłuż ścieżki, przenosi go na **drugą stronę** linii albo
+zamienia z powrotem w **prosty tekst**. Zmiana treści albo czcionki zostawia
+tekst na ścieżce, także po jego przesunięciu.
+
+![Tekst na okręgu i na krzywej](../img/pl/textpath.png)
 
 **Mostki.** Zamknięty kształt na warstwie cięcia może mieć małe nieprzecięte
 mostki, które trzymają element w arkuszu: ustaw ich liczbę i szerokość w

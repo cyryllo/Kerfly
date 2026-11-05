@@ -25,7 +25,7 @@ LightBurn's: rectangle (with rounded corners), ellipse, regular polygon, line
 and text in any installed font. Each shape is cut, engraved as an outline, or
 filled as a raster engraving. The **Fill** tool (bucket) fills closed shapes
 with engraved patterns (lines, waves, honeycomb, bricks, ...) while their
-outline is still cut. Position, size and rotation of the selected element,
+outline is still cut, and text can be put on a path (a line, curve or circle). Position, size and rotation of the selected element,
 and the options of the selected shape or tool (operation, corner radius,
 text, font), are shown in a ribbon-style bar above the bed view.
 

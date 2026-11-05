@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 16:28+0100\n"
+"POT-Creation-Date: 2026-11-05 16:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1066,6 +1066,9 @@ msgctxt "toolbar group"
 msgid "Order"
 msgstr ""
 
+msgid "Other side: the text runs the other way, on the other side of the line"
+msgstr ""
+
 msgid "Out of memory."
 msgstr ""
 
@@ -1184,6 +1187,9 @@ msgid "Proportions are kept"
 msgstr ""
 
 msgid "Proportions are not kept: width and height change separately"
+msgstr ""
+
+msgid "Put text on &path"
 msgstr ""
 
 msgid "Put the selected elements on top of all others"
@@ -1365,6 +1371,11 @@ msgstr ""
 msgid "Select and move"
 msgstr ""
 
+msgid ""
+"Select one text and one shape (line, curve, circle, ...) to put the text "
+"on, then choose Put text on path again (Ctrl+click selects both)."
+msgstr ""
+
 msgid "Select the elements to move up or down first."
 msgstr ""
 
@@ -1402,6 +1413,11 @@ msgstr ""
 
 #, python-format
 msgid "Sending data to laser: %s%%"
+msgstr ""
+
+msgid ""
+"Set the selected text along the selected shape (line, curve, circle, "
+"...); the shape stays"
 msgstr ""
 
 msgid "Settings"
@@ -1509,10 +1525,16 @@ msgstr ""
 msgid "Straight"
 msgstr ""
 
+msgid "Straight text"
+msgstr ""
+
 msgid "Symmetric"
 msgstr ""
 
 msgid "System default"
+msgstr ""
+
+msgid "Take the text off the path: back to a straight line of text"
 msgstr ""
 
 msgid "Test fire"
@@ -1531,10 +1553,21 @@ msgstr ""
 msgid "Text height"
 msgstr ""
 
+msgid "Text on path"
+msgstr ""
+
+msgid ""
+"Text put on the path. The path stays: delete it if it should not be cut. "
+"Move the text along the path or to the other side in the bar above."
+msgstr ""
+
 msgid "Text; press Enter for a new line"
 msgstr ""
 
 msgid "That corner of the design is outside the laser bed."
+msgstr ""
+
+msgid "That shape has no line to put the text on."
 msgstr ""
 
 msgid ""
@@ -1763,6 +1796,9 @@ msgid "Waves"
 msgstr ""
 
 msgid "What kind of problem is it?"
+msgstr ""
+
+msgid "Where the text starts along the path"
 msgstr ""
 
 msgid "Width"

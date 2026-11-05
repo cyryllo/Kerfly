@@ -20,9 +20,23 @@ Version numbers:
   outline layer (a second Layer list chooses which); the outline can also be
   left out. Holes stay empty. A selected shape shows the Fill section to
   change or remove its pattern. Saved in projects, one undo step.
+- **Text on a path.** Select a text and a shape (line, curve, circle, ...)
+  and choose **Edit → Put text on path** (toolbar Shapes). Every letter
+  stands on the line, turned along it, with the font's kerning; centred on
+  open lines, at the top of closed shapes. The options bar moves the text
+  along the path, puts it on the other side, or makes it straight again.
+  Editing the text keeps it on the path, also after moving it; saved in
+  projects.
 - **Order of elements**: Bring forward / Send backward (toolbar group
   **Order**, PgUp / PgDown in the bed view) and Bring to front / Send to back
   (Ctrl+PgUp / Ctrl+PgDown, Edit menu). Groups move together.
+
+### Fixed
+
+- The window could not be made narrower than about 1550 px while a text was
+  selected (its options did not fit), so on smaller screens it was wider than
+  the screen. The options bar now scrolls sideways when its sections do not
+  fit.
 
 ## 0.16.0 (2026-11-05)
 

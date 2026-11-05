@@ -96,7 +96,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Line, regular polygon, polyline / free polygon~~ (done) | `toolline.py`, `toolpolyline.py`, `toolpolygon.py` |
 | ~~Freehand drawing~~ (done, smoothed into curves) | `tooldraw.py` |
 | ~~Bezier / vector path (pen tool)~~ (done) | `toolvector.py` |
-| ~~Text (system fonts)~~ (done); text on a path | `tooltext.py`, `toollinetext.py` |
+| ~~Text (system fonts)~~ (done); ~~text on a path~~ (done) | `tooltext.py`, `toollinetext.py` |
 | ~~Node editing with Bezier handles, for drawn shapes and broken-apart SVG / DXF~~ (done) | `toolnodeedit.py`, `toolnodemove.py` |
 | Cut a region out of an image | `toolimagecut.py` |
 | ~~Tabs (bridges) on cut paths~~ (done: count and width per outline) | `tooltabedit.py` |

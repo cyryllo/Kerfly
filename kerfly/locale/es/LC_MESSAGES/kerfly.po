@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 16:28+0100\n"
+"POT-Creation-Date: 2026-11-05 16:36+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -1123,6 +1123,9 @@ msgctxt "toolbar group"
 msgid "Order"
 msgstr "Orden"
 
+msgid "Other side: the text runs the other way, on the other side of the line"
+msgstr "Otro lado: el texto va en sentido contrario, al otro lado de la línea"
+
 msgid "Out of memory."
 msgstr "Memoria insuficiente."
 
@@ -1253,6 +1256,9 @@ msgstr "Se mantienen las proporciones"
 
 msgid "Proportions are not kept: width and height change separately"
 msgstr "No se mantienen las proporciones: ancho y alto cambian por separado"
+
+msgid "Put text on &path"
+msgstr "Poner texto en &trazado"
 
 msgid "Put the selected elements on top of all others"
 msgstr "Poner los elementos seleccionados encima de todos los demás"
@@ -1449,6 +1455,14 @@ msgstr "Selecciona un archivo abierto o un texto con líneas para separarlo."
 msgid "Select and move"
 msgstr "Seleccionar y mover"
 
+msgid ""
+"Select one text and one shape (line, curve, circle, ...) to put the text "
+"on, then choose Put text on path again (Ctrl+click selects both)."
+msgstr ""
+"Seleccione un texto y una forma (línea, curva, círculo, ...) donde "
+"ponerlo y vuelva a elegir Poner texto en trazado (Ctrl+clic selecciona "
+"ambos)."
+
 msgid "Select the elements to move up or down first."
 msgstr "Seleccione primero los elementos que quiere subir o bajar."
 
@@ -1487,6 +1501,13 @@ msgstr "Enviando %s…"
 #, python-format
 msgid "Sending data to laser: %s%%"
 msgstr "Enviando datos al láser: %s%%"
+
+msgid ""
+"Set the selected text along the selected shape (line, curve, circle, "
+"...); the shape stays"
+msgstr ""
+"Colocar el texto seleccionado a lo largo de la forma seleccionada (línea,"
+" curva, círculo, ...); la forma se queda"
 
 msgid "Settings"
 msgstr "Configuración"
@@ -1604,11 +1625,17 @@ msgstr "Deteniendo…"
 msgid "Straight"
 msgstr "Recto"
 
+msgid "Straight text"
+msgstr "Texto recto"
+
 msgid "Symmetric"
 msgstr "Simétrico"
 
 msgid "System default"
 msgstr "Predeterminado del sistema"
+
+msgid "Take the text off the path: back to a straight line of text"
+msgstr "Quitar el texto del trazado: de nuevo una línea de texto recta"
 
 msgid "Test fire"
 msgstr "Disparo de prueba"
@@ -1626,11 +1653,25 @@ msgstr "Archivos de texto"
 msgid "Text height"
 msgstr "Altura del texto"
 
+msgid "Text on path"
+msgstr "Texto en trazado"
+
+msgid ""
+"Text put on the path. The path stays: delete it if it should not be cut. "
+"Move the text along the path or to the other side in the bar above."
+msgstr ""
+"El texto está en el trazado. El trazado se queda: bórrelo si no se debe "
+"cortar. Arriba puede mover el texto a lo largo del trazado o al otro "
+"lado."
+
 msgid "Text; press Enter for a new line"
 msgstr "Texto; Intro para una línea nueva"
 
 msgid "That corner of the design is outside the laser bed."
 msgstr "Esa esquina del diseño está fuera del área de trabajo."
+
+msgid "That shape has no line to put the text on."
+msgstr "Esa forma no tiene una línea para poner el texto."
 
 msgid ""
 "The DXF file does not say which units it uses.\n"
@@ -1896,6 +1937,9 @@ msgstr "Ondas"
 
 msgid "What kind of problem is it?"
 msgstr "¿Qué tipo de problema es?"
+
+msgid "Where the text starts along the path"
+msgstr "Dónde empieza el texto a lo largo del trazado"
 
 msgid "Width"
 msgstr "Ancho"

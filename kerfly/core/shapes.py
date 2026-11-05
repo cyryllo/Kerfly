@@ -63,6 +63,11 @@ class ShapeSpec:
     # text outlines (list of closed polylines, mm, y down) produced by the GUI
     # from the font; kept so the design can be rebuilt without the GUI
     text_outlines: list = field(default_factory=list)
+    # text on a path: the path (mm, y down, in the same frame as text_outlines), where the
+    # text starts along it (mm) and whether it runs the other way (on the other side)
+    text_path: list = field(default_factory=list)
+    text_path_offset: float = 0.0
+    text_path_flip: bool = False
     # polyline: corner points (mm, y down, relative to the top-left of their
     # bounding box) and whether the last point joins the first
     points: list = field(default_factory=list)
@@ -73,6 +78,7 @@ class ShapeSpec:
     def copy(self):
         from .curves import copy_path
         return replace(self, text_outlines=[list(p) for p in self.text_outlines],
+                       text_path=[tuple(p) for p in self.text_path],
                        points=[tuple(p) for p in self.points], subpaths=copy_path(self.subpaths))
 
     @property

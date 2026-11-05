@@ -120,14 +120,33 @@ class MainWindow(QMainWindow):
         self.top_bar = QWidget()
         self.top_bar.setObjectName("top_bar")
         self.top_bar.setAttribute(Qt.WA_StyledBackground, True)
-        self.top_bar_layout = QHBoxLayout(self.top_bar)
+        # the sections scroll sideways when they do not fit, instead of making the window wider
+        # than the screen (a text with all its sections needs about 1700 px)
+        bar_scroll = QScrollArea()
+        bar_scroll.setObjectName("top_bar_scroll")
+        bar_scroll.setFrameShape(QFrame.NoFrame)
+        bar_scroll.setWidgetResizable(True)
+        bar_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        bar_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        bar_scroll.setStyleSheet("QScrollArea#top_bar_scroll, QScrollArea#top_bar_scroll > QWidget > QWidget "
+                                 "{ background: transparent; }")
+        inner = QWidget()
+        self.top_bar_layout = QHBoxLayout(inner)
         self.top_bar_layout.setContentsMargins(6, 5, 6, 5)
         self.top_bar_layout.setSpacing(6)
         self.top_bar_layout.addWidget(self.tool_options, 1)
-        # fixed height: two rows of fields plus the section captions, whatever is shown
+        bar_scroll.setWidget(inner)
+        outer = QHBoxLayout(self.top_bar)
+        outer.setContentsMargins(0, 0, 0, 0)
+        outer.addWidget(bar_scroll)
+        self.top_bar_scroll = bar_scroll
+        # fixed height: two rows of fields plus the section captions, whatever is shown,
+        # and room for the sideways scroll bar
         probe, cap = QDoubleSpinBox(), QLabel("X")
         cap.setObjectName("ribbon_caption")
-        self.top_bar.setFixedHeight(2 * probe.sizeHint().height() + cap.sizeHint().height() + 4 + 2 + 10 + 4)
+        scroll_h = bar_scroll.horizontalScrollBar().sizeHint().height()
+        self.top_bar.setFixedHeight(2 * probe.sizeHint().height() + cap.sizeHint().height() + 4 + 2 + 10 + 4
+                                    + scroll_h)
         central_layout.addWidget(self.top_bar)
         central_layout.addWidget(self.preview, 1)
         self.setCentralWidget(central)
@@ -192,6 +211,9 @@ class MainWindow(QMainWindow):
             act.setShortcutContext(Qt.WidgetWithChildrenShortcut)    # only while the bed view has focus
             self.preview.addAction(act)
             self.act_order[how] = act
+        self.act_text_path = self._action(
+            _("Put text on &path"), self.put_text_on_path, None,
+            _("Set the selected text along the selected shape (line, curve, circle, ...); the shape stays"))
         self.act_center = self._action(_("&Centre on the bed"), self.center_on_bed, "Ctrl+E",
                                        _("Centre the selected element, or the whole design, on the bed"))
         self.act_snap_objects = self._action(_("Snap to &objects"), self.toggle_snap_objects, "Ctrl+;",
@@ -304,6 +326,7 @@ class MainWindow(QMainWindow):
                   self.act_order["front"], self.act_order["back"], None, self.act_center, self.act_place_head,
                   self.act_follow_head):
             m.addSeparator() if a is None else m.addAction(a)
+        m.addAction(self.act_text_path)
         sub2 = m.addMenu(_("Combine shapes"))
         for a in self.act_boolean.values():
             sub2.addAction(a)
@@ -401,6 +424,7 @@ class MainWindow(QMainWindow):
                 (self.act_group, "squares-selected"),
                 (self.act_boolean["union"], "layers-union"),
                 (self.act_boolean["difference"], "layers-subtract"),
+                (self.act_text_path, icons.text_on_path_icon()),
                 (self.act_ungroup, "squares"),
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
@@ -438,7 +462,7 @@ class MainWindow(QMainWindow):
                 grid.setSpacing(1)
                 per_row = (len(entries) + 1) // 2
                 for n, (action, icon) in enumerate(entries):
-                    action.setIcon(icons.tabler(icon))
+                    action.setIcon(icons.tabler(icon) if isinstance(icon, str) else icon)
                     button = QToolButton()
                     button.setDefaultAction(action)
                     button.setToolButtonStyle(Qt.ToolButtonIconOnly)
@@ -596,8 +620,9 @@ class MainWindow(QMainWindow):
         if target == "selected" and self.selected is not None and self.selected.shape is not None:
             before = self.selected.shape.operation
             had_fill = bool(self.selected.shape.fill_pattern)
+            had_path = bool(self.selected.shape.text_path)
             self._apply_shape(self.selected, spec)
-            if had_fill != bool(spec.fill_pattern):    # the fill settings appear / go
+            if had_fill != bool(spec.fill_pattern) or had_path != bool(spec.text_path):   # sections appear / go
                 QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
         elif target in self.shape_defaults:
             before = self.shape_defaults[target].operation
@@ -659,17 +684,82 @@ class MainWindow(QMainWindow):
             self.status(_("Pattern removed."))
 
     def _apply_shape(self, element, spec, checkpoint=True):
-        """Rebuild a drawn element from a changed spec, keeping its top-left corner."""
+        """Rebuild a drawn element from a changed spec, keeping its top-left corner
+        (text on a path: keeping its path in place)."""
         if checkpoint:
             self._checkpoint()
+        anchor = spec.text_path[0] if spec.kind == "text" and spec.text_path else None
+        old_w = element.size[0]
         if spec.kind == "text":
             update_text_spec(spec)
         x, y = element.x, element.y
         element.shape = spec
         element.design = build_design(spec)
         element.x, element.y = x, y
+        if anchor is not None and spec.text_path and element.is_identity:
+            # the outlines start at (0, 0) again: move the element so the path stays where it was
+            dx, dy = anchor[0] - spec.text_path[0][0], anchor[1] - spec.text_path[0][1]     # mm, screen
+            if self.job_settings().home_upper_right:
+                element.x = x + old_w - element.size[0] - dx / 25.4
+            else:
+                element.x = x + dx / 25.4
+            element.y = y - dy / 25.4
         self._keep_on_bed(element)
         self._layout_changed()
+
+    def put_text_on_path(self):
+        """Edit → Put text on path: the selected text along the selected shape."""
+        from kerfly.core.shapes import _bounds_mm, outlines
+        from kerfly.gui.text_shapes import prepare_path, text_length
+        chosen = self._selection()
+        texts = [e for e in chosen if e.shape is not None and e.shape.kind == "text"]
+        guides = [e for e in chosen if e.shape is not None and e.shape.kind != "text"]
+        if len(texts) != 1 or not guides:
+            self.status(_("Select one text and one shape (line, curve, circle, ...) to put the text on, then "
+                          "choose Put text on path again (Ctrl+click selects both)."), error=True)
+            return
+        text, guide = texts[0], guides[0]
+        polys = [p for p in outlines(guide.shape) if len(p) >= 2]
+        if not polys:
+            self.status(_("That shape has no line to put the text on."), error=True)
+            return
+        try:
+            bed_w, _bed_h = config.bed_size_inches(self.values)
+            ur = self.job_settings().home_upper_right
+        except ValueError as ex:
+            self.status(str(ex), error=True)
+            return
+        xmin, _xmax, ymin, ymax = _bounds_mm(polys)
+        h_in = (ymax - ymin) / 25.4
+        f = guide.transform()
+        longest = max(polys, key=lambda p: sum(abs(b[0] - a[0]) + abs(b[1] - a[1]) for a, b in zip(p, p[1:])))
+        screen = []
+        for px, py in longest:                        # shape mm -> design inches -> bed -> screen mm
+            bx, by = f((px - xmin) / 25.4, h_in - (py - ymin) / 25.4)
+            screen.append(((bed_w - bx) * 25.4 if ur else bx * 25.4, -by * 25.4))
+        closed = guide.shape.closed and len(longest) > 3
+        spec = text.shape.copy()
+        spec.text_path, spec.text_path_offset = prepare_path(screen, closed, text_length(spec))
+        spec.text_path_flip = False
+        self._checkpoint()
+        update_text_spec(spec)
+        # the outlines start at (0, 0): the path was only moved (maybe reversed, or a ring started
+        # elsewhere), so its smallest x and y show where the element's top-left corner is
+        mx = min(x for x, _ in screen) - min(x for x, _ in spec.text_path)
+        my = min(y for _, y in screen) - min(y for _, y in spec.text_path)
+        text.rotation, text.scale_x, text.scale_y = 0.0, 1.0, 1.0
+        text.shape = spec
+        text.design = build_design(spec)
+        w_in = text.size[0]
+        text.x = bed_w - mx / 25.4 - w_in if ur else mx / 25.4
+        text.y = -my / 25.4
+        self._keep_on_bed(text)
+        self._compiled = None
+        self._layout_changed()
+        self.preview.select_element(text)
+        self.selected = text
+        self.status(_("Text put on the path. The path stays: delete it if it should not be cut. Move the text "
+                      "along the path or to the other side in the bar above."))
 
     def _preview_drawn(self, tool, start, end, shift):
         """A shape was drawn in the bed view (scene mm, y down)."""

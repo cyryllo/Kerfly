@@ -61,7 +61,8 @@ are used. **File → Save settings as default** keeps changed settings.
 
 - **Options bar** (under the toolbar): position, size and rotation of the
   selected element, its layer, and the options of the selected shape or
-  drawing tool (for example the text and font).
+  drawing tool (for example the text and font). When its sections do not fit
+  the window, they scroll sideways.
 
   ![Options bar with a text selected](img/en/options.png)
 
@@ -218,6 +219,18 @@ A selected shape shows the same **Fill** section with the select tool: change
 the pattern there, or choose **No pattern** to remove it. Holes in the shape
 (for example in letters) stay empty. An opened SVG or DXF file must be
 ungrouped first (Edit → Ungroup), so that its lines become shapes.
+
+**Text on a path.** *(not yet tested on a laser)* Select a text and a shape
+(line, curve, circle, ...; Ctrl+click selects both), then choose **Edit → Put
+text on path** (toolbar **Shapes**, the arc with letters). Every letter stands
+on the line, turned along it: on an open line the text is centred, on a
+closed shape it is centred at the top. The shape stays; delete it if it
+should not be cut. The **Text on path** section of the options bar moves the
+text along the path, puts it on the **other side** of the line, or makes it
+**straight text** again. Editing the text or its font keeps it on the path,
+also after moving it.
+
+![Text on a circle and on a curve](img/en/textpath.png)
 
 **Bridges (tabs).** A closed shape on a cut layer can keep small uncut
 bridges that hold the part in the sheet: set their number and width in the
