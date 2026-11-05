@@ -51,6 +51,13 @@ class ShapeSpec:
     fill_angle: float = 0.0       # degrees counter-clockwise
     fill_margin: float = 0.0      # mm kept free inside the outline
     fill_outline: bool = True     # the outline is cut / engraved too
+    # living hinge in a closed shape (kerfly.core.patterns.hinge_lines), always cut; "" = none
+    hinge_pattern: str = ""
+    hinge_cut: float = 20.0       # mm: length of one cut
+    hinge_gap: float = 3.0        # mm: uncut material between two cuts in a row
+    hinge_spacing: float = 1.5    # mm between the rows of cuts
+    hinge_angle: float = 90.0     # degrees: direction of the cuts (90: up and down)
+    hinge_margin: float = 4.0     # mm of solid material along the outline
     tabs: int = 0                 # cut: bridges per closed outline that hold the part in the sheet
     tab_width: float = 1.0        # cut: width of each bridge, mm
     corner_radius: float = 0.0    # rectangle, mm
@@ -228,6 +235,13 @@ def hatch_as_fill(spec):
     return out
 
 
+def has_hinge(spec):
+    """A living hinge applies: closed shape, cut or outline, a known hinge pattern."""
+    from .patterns import HINGE_CODES
+    return bool(spec.hinge_pattern) and spec.hinge_pattern in HINGE_CODES and spec.closed \
+        and spec.operation in ("cut", "engrave")
+
+
 def has_pattern_fill(spec):
     """A pattern fill applies: closed shape, cut or outline, a known pattern."""
     from .patterns import PATTERN_CODES
@@ -273,6 +287,15 @@ def build_design(spec):
                     fill_segments.append([x1, y1, x2, y2])
             if not spec.fill_outline:
                 polys = []
+        hinge_segments = []
+        if has_hinge(spec):
+            from .patterns import hinge_lines
+            for line in hinge_lines(spec.hinge_pattern, outlines(spec), max(0.5, float(spec.hinge_cut)),
+                                    max(0.2, float(spec.hinge_gap)), max(0.2, float(spec.hinge_spacing)),
+                                    -float(spec.hinge_angle), max(0.0, float(spec.hinge_margin))):
+                pts = [to_design(x, y) for x, y in line]
+                for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
+                    hinge_segments.append([x1, y1, x2, y2])
         if spec.operation == "cut" and spec.tabs > 0:
             pieces = []
             for p in polys:
@@ -287,8 +310,11 @@ def build_design(spec):
             segments += fill_segments                   # outline and fill on the same outline layer
             fill_segments = []
             design.vector_engrave.make_ecoords(segments, scale=1.0)
+            if hinge_segments:                          # the hinge is always cut
+                design.vector_cut.make_ecoords(hinge_segments, scale=1.0)
         else:
-            design.vector_cut.make_ecoords(segments, scale=1.0)
+            # hinge cuts first: they are inside, and the part must not fall out before them
+            design.vector_cut.make_ecoords(hinge_segments + segments, scale=1.0)
         if fill_segments:                               # cut outline: the fill is a separate engrave part
             design.vector_engrave.make_ecoords(fill_segments, scale=1.0)
     design.bounds = (0.0, (xmax - xmin) / MM, 0.0, h_in)

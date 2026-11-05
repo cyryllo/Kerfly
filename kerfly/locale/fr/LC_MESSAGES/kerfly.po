@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:19+0100\n"
+"POT-Creation-Date: 2026-11-05 17:26+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -175,6 +175,13 @@ msgstr ""
 msgid "A job is running. Stop it and quit?"
 msgstr "Une tâche est en cours. L'arrêter et quitter ?"
 
+msgid ""
+"A living hinge needs a closed shape (not a text) on a cut or outline "
+"layer."
+msgstr ""
+"Une charnière flexible a besoin d'une forme fermée (pas un texte) sur un "
+"calque de découpe ou de contour."
+
 msgid "About Kerfly"
 msgstr "À propos de Kerfly"
 
@@ -275,6 +282,9 @@ msgstr "Décomposer"
 msgid "Bricks"
 msgstr "Briques"
 
+msgid "Bridge: uncut material between two cuts in a row"
+msgstr "Pont : matière non découpée entre deux coupes d'une rangée"
+
 msgid "Bridges"
 msgstr "Attaches"
 
@@ -350,6 +360,9 @@ msgstr "Cliquez sur une forme pour modifier ses nœuds."
 
 msgid "Click an element on the bed to select it."
 msgstr "Cliquez sur un élément pour le sélectionner."
+
+msgid "Click inside a closed shape to cut a hinge into it."
+msgstr "Cliquez à l'intérieur d'une forme fermée pour y découper une charnière."
 
 msgid "Click inside a shape to fill it."
 msgstr "Cliquez à l'intérieur d'une forme pour la remplir."
@@ -502,6 +515,9 @@ msgstr "Différence"
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr "Différence : découper les autres formes sélectionnées dans la première"
 
+msgid "Direction of the cuts (90°: up and down; the sheet bends across them)"
+msgstr "Direction des coupes (90° : de haut en bas ; la plaque se plie en travers)"
+
 msgid "Direction of the pattern"
 msgstr "Direction du motif"
 
@@ -512,6 +528,9 @@ msgid ""
 msgstr ""
 "Distance %(d).2f %(u)s : largeur %(w).2f %(u)s, hauteur %(h).2f %(u)s, "
 "angle %(a).1f°"
+
+msgid "Distance between the rows of cuts (smaller: bends more)"
+msgstr "Distance entre les rangées de coupes (plus petite : plie davantage)"
 
 msgid "Distance down from home"
 msgstr "Distance vers le bas depuis l'origine"
@@ -739,6 +758,14 @@ msgctxt "toolbar group"
 msgid "Help"
 msgstr "Aide"
 
+msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
+msgstr ""
+"Charnière découpée dans la forme. Cliquez sur une autre forme ou changez "
+"les coupes ci-dessus."
+
+msgid "Hinge removed."
+msgstr "Charnière supprimée."
+
 msgid "Home is in the upper right corner"
 msgstr "L'origine est dans le coin supérieur droit"
 
@@ -872,6 +899,9 @@ msgstr "Calques"
 msgid "Leather 2 mm"
 msgstr "Cuir 2 mm"
 
+msgid "Length of one cut"
+msgstr "Longueur d'une coupe"
+
 msgid "Letter spacing: space added between the letters (0: as the font sets it)"
 msgstr ""
 "Espacement des lettres : espace ajouté entre les lettres (0 : celui de la"
@@ -891,6 +921,23 @@ msgstr "Ligne"
 
 msgid "Lines"
 msgstr "Lignes"
+
+msgid "Living hinge"
+msgstr "Charnière flexible"
+
+msgid ""
+"Living hinge: choose the cuts above, then click a closed shape to cut "
+"them into it. Selected shapes get the hinge you choose. The border stays "
+"solid."
+msgstr ""
+"Charnière flexible : choisissez les coupes ci-dessus, puis cliquez sur "
+"une forme fermée pour les y découper. Les formes sélectionnées reçoivent "
+"la charnière choisie. Le bord reste plein."
+
+msgid "Living hinge: rows of cuts that let the sheet bend across them"
+msgstr ""
+"Charnière flexible : rangées de coupes qui permettent de plier la plaque "
+"en travers"
 
 msgid "Loading cancelled"
 msgstr "Chargement annulé"
@@ -1058,6 +1105,9 @@ msgstr "Pas d'angle aux nœuds sélectionnés : la courbe y passe en douceur"
 msgid "No design loaded"
 msgstr "Aucun dessin chargé"
 
+msgid "No hinge"
+msgstr "Aucune charnière"
+
 msgid "No laser data was generated."
 msgstr "Aucune donnée laser n'a été générée."
 
@@ -1093,6 +1143,13 @@ msgid ""
 msgstr ""
 "Seules les formes dessinées peuvent être remplies. Dégroupez d'abord le "
 "fichier ouvert (Édition → Dégrouper) pour remplir ses formes."
+
+msgid ""
+"Only drawn shapes can get a hinge. Ungroup an opened file first (Edit → "
+"Ungroup)."
+msgstr ""
+"Seules les formes dessinées peuvent recevoir une charnière. Dégroupez "
+"d'abord le fichier ouvert (Édition → Dégrouper)."
 
 msgctxt "toolbar"
 msgid "Open"
@@ -1585,6 +1642,9 @@ msgstr ""
 "plateau, en dessinant et en déplaçant. Maintenez Alt pour ne rien "
 "aimanter un instant."
 
+msgid "Solid border: no cuts this close to the outline"
+msgstr "Bord plein : aucune coupe aussi près du contour"
+
 msgid "Space kept free between the pattern and the outline"
 msgstr "Espace laissé libre entre le motif et le contour"
 
@@ -1640,6 +1700,9 @@ msgstr "Arrêt en cours…"
 
 msgid "Straight"
 msgstr "Droit"
+
+msgid "Straight cuts"
+msgstr "Coupes droites"
 
 msgid "Straight text"
 msgstr "Texte droit"
@@ -1977,6 +2040,9 @@ msgstr "Attente de la fin du laser."
 msgid "Waves"
 msgstr "Vagues"
 
+msgid "Wavy cuts"
+msgstr "Coupes ondulées"
+
 msgid "What kind of problem is it?"
 msgstr "De quel problème s'agit-il ?"
 
@@ -2014,6 +2080,9 @@ msgstr "Facteur d'échelle Y"
 
 msgid "Zigzag"
 msgstr "Zigzag"
+
+msgid "Zigzag cuts"
+msgstr "Coupes en zigzag"
 
 msgid "centre"
 msgstr "centre"

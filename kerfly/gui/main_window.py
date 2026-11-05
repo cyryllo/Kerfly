@@ -169,6 +169,8 @@ class MainWindow(QMainWindow):
         self.preview.signals.shape_picked.connect(self._shape_picked)
         # what the Fill tool gives to the shapes it is clicked on
         self.fill_defaults = ShapeSpec(kind="rectangle", fill_pattern="lines", fill_spacing=2.0)
+        # what the Living hinge tool gives to the shapes it is clicked on
+        self.hinge_defaults = ShapeSpec(kind="rectangle", hinge_pattern="straight")
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
@@ -521,8 +523,10 @@ class MainWindow(QMainWindow):
         strip.setToolButtonStyle(Qt.ToolButtonIconOnly)
         self.tool_group = QActionGroup(self)
         self.tool_actions = {}
+        # three groups: selecting, drawing, and the extra operations on shapes (None: separator)
         tools = [("select", "pointer", N_("Select and move"), "S"),
                  ("nodes", "vector", N_("Edit nodes"), "N"),
+                 None,
                  ("rectangle", "square", N_("Rectangle"), "R"),
                  ("ellipse", "circle", N_("Ellipse"), "E"),
                  ("polygon", "hexagon", N_("Polygon"), "P"),
@@ -530,11 +534,17 @@ class MainWindow(QMainWindow):
                  ("polyline", "polygon", N_("Polyline"), "Shift+L"),
                  ("pen", "vector-bezier-2", N_("Pen (curves)"), "B"),
                  ("freehand", "scribble", N_("Freehand"), "F"),
-                 ("measure", "ruler-measure", N_("Measure"), "M"),
                  ("text", "typography", N_("Text"), "T"),
+                 None,
                  ("textpath", icons.text_on_path_icon(), N_("Text on a path"), "Shift+T"),
-                 ("fill", "bucket-droplet", N_("Fill with a pattern"), "Shift+F")]
-        for key, icon, name, shortcut in tools:
+                 ("fill", "bucket-droplet", N_("Fill with a pattern"), "Shift+F"),
+                 ("hinge", icons.hinge_icon(), N_("Living hinge"), "Shift+H"),
+                 ("measure", "ruler-measure", N_("Measure"), "M")]
+        for entry in tools:
+            if entry is None:
+                strip.addSeparator()
+                continue
+            key, icon, name, shortcut = entry
             act = QAction(icons.tabler(icon) if isinstance(icon, str) else icon, _(name), self)
             act.setCheckable(True)
             act.setShortcut(QKeySequence(shortcut))
@@ -564,6 +574,9 @@ class MainWindow(QMainWindow):
             self.status(_("Pen: click for a corner, press and drag for a smooth curve. Click the first point to "
                           "close the shape; double-click or Enter finishes an open path. Backspace removes the "
                           "last node, Shift keeps 45\u00b0 angles, Esc cancels."))
+        if tool == "hinge":
+            self.status(_("Living hinge: choose the cuts above, then click a closed shape to cut them into it. "
+                          "Selected shapes get the hinge you choose. The border stays solid."))
         if tool == "textpath":
             self.status(_("Text on a path: click a line, curve or shape to put the selected text on it (no text "
                           "selected: type a new one above first). Drag the text afterwards to slide it along the "
@@ -599,6 +612,11 @@ class MainWindow(QMainWindow):
                 self._options_target, self._options_element = "fill", None
                 self.tool_options.show_fill_tool(self.fill_defaults)
             return
+        if self.preview.tool == "hinge":
+            if force or getattr(self, "_options_target", None) != "hinge":
+                self._options_target, self._options_element = "hinge", None
+                self.tool_options.show_hinge_tool(self.hinge_defaults)
+            return
         if self.preview.tool == "textpath":
             e = self.selected
             if e is not None and e.shape is not None and e.shape.kind == "text":
@@ -629,6 +647,14 @@ class MainWindow(QMainWindow):
 
     def _tool_options_changed(self, spec):
         target = getattr(self, "_options_target", None)
+        if target == "hinge":
+            self.hinge_defaults = spec
+            chosen = [e for e in self._selection() if self._hingeable(e)]
+            if chosen:                                   # selected shapes take the chosen hinge
+                self._checkpoint()
+                for e in chosen:
+                    self._hinge_element(e, checkpoint=False)
+            return
         if target == "fill":
             self.fill_defaults = spec
             chosen = [e for e in self._selection() if self._fillable(e)]
@@ -641,13 +667,15 @@ class MainWindow(QMainWindow):
             before = self.selected.shape.operation
             had_fill = bool(self.selected.shape.fill_pattern)
             had_path = bool(self.selected.shape.text_path)
+            had_hinge = bool(self.selected.shape.hinge_pattern)
             if had_path and spec.text_path:
                 # the bar's copy of the path is from before the last change (every change moves
                 # the path's frame): the element's own path is the right one
                 spec.text_path = [tuple(p) for p in self.selected.shape.text_path]
             self._apply_shape(self.selected, spec)
             self.tool_options.spec = self.selected.shape.copy()      # the bar edits what is on the bed now
-            if had_fill != bool(spec.fill_pattern) or had_path != bool(spec.text_path):   # sections appear / go
+            if had_fill != bool(spec.fill_pattern) or had_path != bool(spec.text_path) \
+                    or had_hinge != bool(spec.hinge_pattern):                              # sections appear / go
                 QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
         elif target in self.shape_defaults:
             before = self.shape_defaults[target].operation
@@ -676,6 +704,8 @@ class MainWindow(QMainWindow):
     def _shape_picked(self, tool, point):
         if tool == "textpath":
             self._text_path_clicked(point)
+        elif tool == "hinge":
+            self._hinge_clicked(point)
         else:
             self._fill_clicked(point)
 
@@ -766,26 +796,62 @@ class MainWindow(QMainWindow):
         self.status(_("Text put on the path. Drag it to slide it along the line; the bar above changes the text, "
                       "the spacing, the distance from the line and the side."))
 
-    def _fill_clicked(self, point):
-        """The Fill tool was clicked at a point of the bed view (scene mm)."""
+    def _element_inside(self, point):
+        """The element whose area holds the clicked point (scene mm): inside its closed
+        outline first, else inside its frame; the smallest one when several do. None if none."""
         from kerfly.core.shapes import element_contains
         try:
-            settings = self.job_settings()
-            bed_w, _bed_h = config.bed_size_inches(self.values)
+            x, y = self._bed_point(point)
         except ValueError as ex:
             self.status(str(ex), error=True)
-            return
-        x = point.x() / 25.4
-        if settings.home_upper_right:
-            x = bed_w - x
-        y = -point.y() / 25.4
+            return None
         hits = [e for e in self.elements if e.visible and e.bounds[0] <= x <= e.bounds[1]
                 and e.bounds[2] <= y <= e.bounds[3]]
         if not hits:
+            return None
+        inside = [e for e in hits if element_contains(e, x, y)]
+        return min(inside or hits, key=lambda h: (h.bounds[1] - h.bounds[0]) * (h.bounds[3] - h.bounds[2]))
+
+    # ---- Living hinge tool -------------------------------------------------------
+    @staticmethod
+    def _hingeable(e):
+        return e.shape is not None and e.shape.kind != "text" and e.shape.closed \
+            and e.shape.operation in ("cut", "engrave")
+
+    def _hinge_element(self, e, checkpoint=True):
+        spec = e.shape.copy()
+        d = self.hinge_defaults
+        for attr in ("hinge_pattern", "hinge_cut", "hinge_gap", "hinge_spacing", "hinge_angle", "hinge_margin"):
+            setattr(spec, attr, getattr(d, attr))
+        self._apply_shape(e, spec, checkpoint=checkpoint)
+
+    def _hinge_clicked(self, point):
+        """The Living hinge tool was clicked at a point of the bed view (scene mm)."""
+        e = self._element_inside(point)
+        if e is None:
+            self.status(_("Click inside a closed shape to cut a hinge into it."), error=True)
+            return
+        if e.shape is None:
+            self.status(_("Only drawn shapes can get a hinge. Ungroup an opened file first (Edit → Ungroup)."),
+                        error=True)
+            return
+        if not self._hingeable(e):
+            self.status(_("A living hinge needs a closed shape (not a text) on a cut or outline layer."), error=True)
+            return
+        self._hinge_element(e)
+        self.preview.select_element(e)
+        self.selected = e
+        if self.hinge_defaults.hinge_pattern:
+            self.status(_("Hinge cut into the shape. Click another shape, or change the cuts above."))
+        else:
+            self.status(_("Hinge removed."))
+
+    def _fill_clicked(self, point):
+        """The Fill tool was clicked at a point of the bed view (scene mm)."""
+        e = self._element_inside(point)
+        if e is None:
             self.status(_("Click inside a shape to fill it."), error=True)
             return
-        inside = [e for e in hits if element_contains(e, x, y)]
-        e = min(inside or hits, key=lambda h: (h.bounds[1] - h.bounds[0]) * (h.bounds[3] - h.bounds[2]))
         if e.shape is None:
             self.status(_("Only drawn shapes can be filled. Ungroup an opened file first (Edit → Ungroup) to "
                           "fill its shapes."), error=True)

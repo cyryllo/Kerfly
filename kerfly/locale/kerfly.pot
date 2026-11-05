@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:19+0100\n"
+"POT-Creation-Date: 2026-11-05 17:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -166,6 +166,11 @@ msgstr ""
 msgid "A job is running. Stop it and quit?"
 msgstr ""
 
+msgid ""
+"A living hinge needs a closed shape (not a text) on a cut or outline "
+"layer."
+msgstr ""
+
 msgid "About Kerfly"
 msgstr ""
 
@@ -266,6 +271,9 @@ msgstr ""
 msgid "Bricks"
 msgstr ""
 
+msgid "Bridge: uncut material between two cuts in a row"
+msgstr ""
+
 msgid "Bridges"
 msgstr ""
 
@@ -330,6 +338,9 @@ msgid "Click a shape to edit its nodes."
 msgstr ""
 
 msgid "Click an element on the bed to select it."
+msgstr ""
+
+msgid "Click inside a closed shape to cut a hinge into it."
 msgstr ""
 
 msgid "Click inside a shape to fill it."
@@ -479,6 +490,9 @@ msgstr ""
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr ""
 
+msgid "Direction of the cuts (90°: up and down; the sheet bends across them)"
+msgstr ""
+
 msgid "Direction of the pattern"
 msgstr ""
 
@@ -486,6 +500,9 @@ msgstr ""
 msgid ""
 "Distance %(d).2f %(u)s: width %(w).2f %(u)s, height %(h).2f %(u)s, angle "
 "%(a).1f°"
+msgstr ""
+
+msgid "Distance between the rows of cuts (smaller: bends more)"
 msgstr ""
 
 msgid "Distance down from home"
@@ -692,6 +709,12 @@ msgctxt "toolbar group"
 msgid "Help"
 msgstr ""
 
+msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
+msgstr ""
+
+msgid "Hinge removed."
+msgstr ""
+
 msgid "Home is in the upper right corner"
 msgstr ""
 
@@ -818,6 +841,9 @@ msgstr ""
 msgid "Leather 2 mm"
 msgstr ""
 
+msgid "Length of one cut"
+msgstr ""
+
 msgid "Letter spacing: space added between the letters (0: as the font sets it)"
 msgstr ""
 
@@ -834,6 +860,18 @@ msgid "Line"
 msgstr ""
 
 msgid "Lines"
+msgstr ""
+
+msgid "Living hinge"
+msgstr ""
+
+msgid ""
+"Living hinge: choose the cuts above, then click a closed shape to cut "
+"them into it. Selected shapes get the hinge you choose. The border stays "
+"solid."
+msgstr ""
+
+msgid "Living hinge: rows of cuts that let the sheet bend across them"
 msgstr ""
 
 msgid "Loading cancelled"
@@ -998,6 +1036,9 @@ msgstr ""
 msgid "No design loaded"
 msgstr ""
 
+msgid "No hinge"
+msgstr ""
+
 msgid "No laser data was generated."
 msgstr ""
 
@@ -1028,6 +1069,11 @@ msgstr ""
 msgid ""
 "Only drawn shapes can be filled. Ungroup an opened file first (Edit → "
 "Ungroup) to fill its shapes."
+msgstr ""
+
+msgid ""
+"Only drawn shapes can get a hinge. Ungroup an opened file first (Edit → "
+"Ungroup)."
 msgstr ""
 
 msgctxt "toolbar"
@@ -1475,6 +1521,9 @@ msgid ""
 "bed, when drawing and moving. Hold Alt to snap nothing for a moment."
 msgstr ""
 
+msgid "Solid border: no cuts this close to the outline"
+msgstr ""
+
 msgid "Space kept free between the pattern and the outline"
 msgstr ""
 
@@ -1523,6 +1572,9 @@ msgid "Stopping…"
 msgstr ""
 
 msgid "Straight"
+msgstr ""
+
+msgid "Straight cuts"
 msgstr ""
 
 msgid "Straight text"
@@ -1812,6 +1864,9 @@ msgstr ""
 msgid "Waves"
 msgstr ""
 
+msgid "Wavy cuts"
+msgstr ""
+
 msgid "What kind of problem is it?"
 msgstr ""
 
@@ -1845,6 +1900,9 @@ msgid "Y scale factor"
 msgstr ""
 
 msgid "Zigzag"
+msgstr ""
+
+msgid "Zigzag cuts"
 msgstr ""
 
 msgid "centre"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:19+0100\n"
+"POT-Creation-Date: 2026-11-05 17:26+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -175,6 +175,13 @@ msgstr ""
 msgid "A job is running. Stop it and quit?"
 msgstr "Ein Auftrag läuft. Anhalten und beenden?"
 
+msgid ""
+"A living hinge needs a closed shape (not a text) on a cut or outline "
+"layer."
+msgstr ""
+"Ein Biegescharnier braucht eine geschlossene Form (keinen Text) auf einer"
+" Schnitt- oder Konturebene."
+
 msgid "About Kerfly"
 msgstr "Über Kerfly"
 
@@ -275,6 +282,9 @@ msgstr "Zerlegen"
 msgid "Bricks"
 msgstr "Ziegel"
 
+msgid "Bridge: uncut material between two cuts in a row"
+msgstr "Steg: ungeschnittenes Material zwischen zwei Schnitten einer Reihe"
+
 msgid "Bridges"
 msgstr "Haltestege"
 
@@ -352,6 +362,9 @@ msgstr "Eine Form anklicken, um ihre Knoten zu bearbeiten."
 
 msgid "Click an element on the bed to select it."
 msgstr "Klicken Sie auf ein Element, um es auszuwählen."
+
+msgid "Click inside a closed shape to cut a hinge into it."
+msgstr "In eine geschlossene Form klicken, um ein Scharnier hineinzuschneiden."
 
 msgid "Click inside a shape to fill it."
 msgstr "Zum Füllen in eine Form klicken."
@@ -502,6 +515,11 @@ msgstr "Differenz"
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr "Differenz: die anderen ausgewählten Formen aus der ersten ausschneiden"
 
+msgid "Direction of the cuts (90°: up and down; the sheet bends across them)"
+msgstr ""
+"Richtung der Schnitte (90°: auf und ab; das Material biegt sich quer zu "
+"ihnen)"
+
 msgid "Direction of the pattern"
 msgstr "Richtung des Musters"
 
@@ -512,6 +530,9 @@ msgid ""
 msgstr ""
 "Abstand %(d).2f %(u)s: Breite %(w).2f %(u)s, Höhe %(h).2f %(u)s, Winkel "
 "%(a).1f°"
+
+msgid "Distance between the rows of cuts (smaller: bends more)"
+msgstr "Abstand zwischen den Schnittreihen (kleiner: biegt sich stärker)"
 
 msgid "Distance down from home"
 msgstr "Abstand nach unten vom Referenzpunkt"
@@ -741,6 +762,14 @@ msgctxt "toolbar group"
 msgid "Help"
 msgstr "Hilfe"
 
+msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
+msgstr ""
+"Scharnier in die Form geschnitten. Eine weitere Form anklicken oder oben "
+"die Schnitte ändern."
+
+msgid "Hinge removed."
+msgstr "Scharnier entfernt."
+
 msgid "Home is in the upper right corner"
 msgstr "Referenzpunkt oben rechts"
 
@@ -873,6 +902,9 @@ msgstr "Ebenen"
 msgid "Leather 2 mm"
 msgstr "Leder 2 mm"
 
+msgid "Length of one cut"
+msgstr "Länge eines Schnitts"
+
 msgid "Letter spacing: space added between the letters (0: as the font sets it)"
 msgstr ""
 "Buchstabenabstand: zusätzlicher Raum zwischen den Buchstaben (0: wie die "
@@ -892,6 +924,23 @@ msgstr "Linie"
 
 msgid "Lines"
 msgstr "Linien"
+
+msgid "Living hinge"
+msgstr "Biegescharnier"
+
+msgid ""
+"Living hinge: choose the cuts above, then click a closed shape to cut "
+"them into it. Selected shapes get the hinge you choose. The border stays "
+"solid."
+msgstr ""
+"Biegescharnier: oben die Schnitte wählen, dann eine geschlossene Form "
+"anklicken. Ausgewählte Formen erhalten das gewählte Scharnier. Der Rand "
+"bleibt voll."
+
+msgid "Living hinge: rows of cuts that let the sheet bend across them"
+msgstr ""
+"Biegescharnier: Schnittreihen, durch die sich das Material quer zu ihnen "
+"biegt"
 
 msgid "Loading cancelled"
 msgstr "Laden abgebrochen"
@@ -1059,6 +1108,9 @@ msgstr "Keine Ecke an den ausgewählten Knoten: die Kurve läuft glatt hindurch"
 msgid "No design loaded"
 msgstr "Kein Entwurf geladen"
 
+msgid "No hinge"
+msgstr "Kein Scharnier"
+
 msgid "No laser data was generated."
 msgstr "Es wurden keine Laserdaten erzeugt."
 
@@ -1094,6 +1146,13 @@ msgid ""
 msgstr ""
 "Nur gezeichnete Formen können gefüllt werden. Eine geöffnete Datei zuerst"
 " aufheben (Bearbeiten → Gruppierung aufheben), um ihre Formen zu füllen."
+
+msgid ""
+"Only drawn shapes can get a hinge. Ungroup an opened file first (Edit → "
+"Ungroup)."
+msgstr ""
+"Nur gezeichnete Formen können ein Scharnier erhalten. Eine geöffnete "
+"Datei zuerst aufheben (Bearbeiten → Gruppierung aufheben)."
 
 msgctxt "toolbar"
 msgid "Open"
@@ -1587,6 +1646,9 @@ msgstr ""
 "anderer Elemente und des Betts fangen. Alt gedrückt halten, um kurz "
 "nichts zu fangen."
 
+msgid "Solid border: no cuts this close to the outline"
+msgstr "Voller Rand: keine Schnitte so nah an der Kontur"
+
 msgid "Space kept free between the pattern and the outline"
 msgstr "Freier Abstand zwischen Muster und Kontur"
 
@@ -1642,6 +1704,9 @@ msgstr "Wird angehalten…"
 
 msgid "Straight"
 msgstr "Gerade"
+
+msgid "Straight cuts"
+msgstr "Gerade Schnitte"
 
 msgid "Straight text"
 msgstr "Gerader Text"
@@ -1979,6 +2044,9 @@ msgstr "Warten, bis der Laser fertig ist."
 msgid "Waves"
 msgstr "Wellen"
 
+msgid "Wavy cuts"
+msgstr "Wellenschnitte"
+
 msgid "What kind of problem is it?"
 msgstr "Was für ein Problem ist es?"
 
@@ -2016,6 +2084,9 @@ msgstr "Skalierungsfaktor Y"
 
 msgid "Zigzag"
 msgstr "Zickzack"
+
+msgid "Zigzag cuts"
+msgstr "Zickzackschnitte"
 
 msgid "centre"
 msgstr "Mitte"

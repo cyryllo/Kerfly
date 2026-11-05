@@ -25,7 +25,8 @@ LightBurn's: rectangle (with rounded corners), ellipse, regular polygon, line
 and text in any installed font. Each shape is cut, engraved as an outline, or
 filled as a raster engraving. The **Fill** tool (bucket) fills closed shapes
 with engraved patterns (lines, waves, honeycomb, bricks, ...) while their
-outline is still cut, and text can be put on a path (a line, curve or circle). Position, size and rotation of the selected element,
+outline is still cut, the **Living hinge** tool cuts flexible hinges into
+shapes, and text can be put on a path (a line, curve or circle). Position, size and rotation of the selected element,
 and the options of the selected shape or tool (operation, corner radius,
 text, font), are shown in a ribbon-style bar above the bed view.
 
@@ -65,8 +66,8 @@ for the whole job, and refuses jobs that would run it into the frame.
 The original K40 Whisperer window (`k40_whisperer.py`) is still included and
 uses the same core. Batch mode is not in the new window yet.
 
-Planned: the remaining K40 Whisperer features, more file formats, living
-hinges, image tracing and kerf compensation. See [ROADMAP.md](ROADMAP.md).
+Planned: the remaining K40 Whisperer features, more file formats, image
+tracing and kerf compensation. See [ROADMAP.md](ROADMAP.md).
 
 The laser output (EGV data sent over USB) is checked byte-for-byte against the
 original 0.71 after every change. See [Regression tests](#regression-tests).

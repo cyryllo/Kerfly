@@ -125,6 +125,25 @@ def take(lang):
     tp.grab().save(os.path.join(out, "textpath.png"))
     tp._dirty = False
     tp.close()
+
+    # living hinges, with the tool in use
+    hg = MainWindow(values)
+    hg.resize(*WINDOW)
+    hg.show()
+    hg._add_drawn_element(ShapeSpec(kind="rectangle", width=120, height=60, corner_radius=4, operation="cut"),
+                          "rectangle", 10, 10)
+    hg._add_drawn_element(ShapeSpec(kind="rectangle", width=80, height=60, corner_radius=4, operation="cut"),
+                          "rectangle", 140, 10)
+    hg._add_drawn_element(ShapeSpec(kind="ellipse", width=100, height=60, operation="cut"), "ellipse", 10, 80)
+    hg.set_tool("hinge")
+    for (x, y), pattern in (((70, 40), "straight"), ((180, 40), "wave"), ((60, 110), "zigzag")):
+        hg.hinge_defaults.hinge_pattern = pattern
+        hg._hinge_clicked(QPointF(x, y))
+    hg._update_tool_options(force=True)
+    settle()
+    hg.grab().save(os.path.join(out, "hinge.png"))
+    hg._dirty = False
+    hg.close()
     print("screenshots (%s) written" % lang)
 
 

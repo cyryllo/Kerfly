@@ -24,6 +24,8 @@ KIND_NAMES = {"rectangle": N_("Rectangle"), "ellipse": N_("Ellipse"), "polygon":
 PATTERN_NAMES = [("lines", N_("Lines")), ("cross", N_("Cross-hatch")), ("waves", N_("Waves")),
                  ("zigzag", N_("Zigzag")), ("circles", N_("Circles")), ("honeycomb", N_("Honeycomb")),
                  ("diamonds", N_("Diamonds")), ("bricks", N_("Bricks"))]
+# living hinges (kerfly.core.patterns.HINGES), names for the GUI
+HINGE_NAMES = [("straight", N_("Straight cuts")), ("wave", N_("Wavy cuts")), ("zigzag", N_("Zigzag cuts"))]
 NEW_KIND_TITLES = {"rectangle": N_("New rectangle"), "ellipse": N_("New ellipse"),
                    "polygon": N_("New polygon"), "line": N_("New line"),
                    "polyline": N_("New polyline"), "pen": N_("New path"),
@@ -182,6 +184,8 @@ class ToolOptionsBar(QWidget):
 
         if self.spec.operation in ("cut", "engrave") and self.spec.closed:
             self._add_fill_section()
+            if self.spec.hinge_pattern:                  # added with the Living hinge tool
+                self._add_hinge_section()
 
 
         kind = self.spec.kind
@@ -273,6 +277,50 @@ class ToolOptionsBar(QWidget):
         self._add_fill_section(tool=True)       # what to do is said in the status bar
         self.row.addStretch(1)
 
+    def show_hinge_tool(self, spec):
+        """Options of the Living hinge tool: the cuts given to the shapes it is clicked on."""
+        self.spec = spec.copy()
+        self._clear()
+        self._add_hinge_section(tool=True)      # what to do is said in the status bar
+        self.row.addStretch(1)
+
+    def _add_hinge_section(self, tool=False):
+        """Living hinge of a closed shape: pattern, cut length, bridge, row spacing,
+        direction, solid border."""
+        box = QWidget()
+        g = QGridLayout(box)
+        g.setContentsMargins(0, 0, 0, 0)
+        g.setHorizontalSpacing(4)
+        g.setVerticalSpacing(4)
+        pattern = QComboBox()
+        pattern.setIconSize(QSize(22, 22))
+        pattern.addItem(_("No hinge"), "")
+        for code, name in HINGE_NAMES:
+            pattern.addItem(icons.hinge_pattern_icon(code), _(name), code)
+        pattern.setCurrentIndex(max(0, pattern.findData(self.spec.hinge_pattern)))
+        pattern.setToolTip(_("Living hinge: rows of cuts that let the sheet bend across them"))
+        pattern.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        pattern.currentIndexChanged.connect(lambda _i: self._set("hinge_pattern", pattern.currentData()))
+        g.addWidget(pattern, 0, 0, 1, 4)
+        if self.spec.hinge_pattern or tool:
+            # (field, from, to, unit, icon, tooltip, row, column)
+            fields = (("hinge_cut", 1.0, 500.0, " mm", "ruler-measure", N_("Length of one cut"), 0, 4),
+                      ("hinge_gap", 0.2, 50.0, " mm", "link",
+                       N_("Bridge: uncut material between two cuts in a row"), 0, 6),
+                      ("hinge_spacing", 0.2, 50.0, " mm", "line-height",
+                       N_("Distance between the rows of cuts (smaller: bends more)"), 1, 0),
+                      ("hinge_angle", -180.0, 180.0, "\u00b0", "rotate-2",
+                       N_("Direction of the cuts (90\u00b0: up and down; the sheet bends across them)"), 1, 2),
+                      ("hinge_margin", 0.0, 100.0, " mm", "circle-dashed",
+                       N_("Solid border: no cuts this close to the outline"), 1, 4))
+            for attr, lo, hi, unit, icon, tip, row, col in fields:
+                w = self._dspin(attr, lo, hi, unit)
+                w.setSingleStep(90.0 if attr == "hinge_angle" else 0.5)
+                w.setToolTip(_(tip))
+                g.addWidget(self._icon_label(icon, _(tip)), row, col)
+                g.addWidget(w, row, col + 1)
+        self._add(box, _("Living hinge"))
+
     def _add_fill_section(self, tool=False):
         """Pattern fill of a closed shape: pattern, spacing, angle, margin, outline."""
         box = QWidget()
@@ -289,7 +337,7 @@ class ToolOptionsBar(QWidget):
         pattern.setToolTip(_("Fill the shape with engraved lines in a pattern; the outline keeps its own layer"))
         pattern.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         pattern.currentIndexChanged.connect(lambda _i: self._set("fill_pattern", pattern.currentData()))
-        g.addWidget(pattern, 0, 0, 1, 2)
+        g.addWidget(pattern, 0, 0, 1, 5)
         if self.spec.fill_pattern or tool:
             spacing = self._dspin("fill_spacing", 0.05, 50.0, " mm", decimals=2)
             spacing.setSingleStep(0.1)
@@ -307,10 +355,10 @@ class ToolOptionsBar(QWidget):
             outline.setChecked(self.spec.fill_outline)
             outline.setToolTip(_("Cut or engrave the outline too (off: only the pattern)"))
             outline.toggled.connect(lambda v: self._set("fill_outline", v))
-            g.addWidget(outline, 0, 2)
-            g.addWidget(spacing, 1, 0)
-            g.addWidget(angle, 1, 1)
-            g.addWidget(margin, 1, 2)
+            g.addWidget(outline, 0, 5)
+            for col, (icon, field) in enumerate((("line-height", spacing), ("rotate-2", angle), ("circle-dashed", margin))):
+                g.addWidget(self._icon_label(icon, field.toolTip()), 1, 2 * col)
+                g.addWidget(field, 1, 2 * col + 1)
         self._add(box, _("Fill"))
 
     @staticmethod

@@ -30,7 +30,7 @@ MM = 25.4
 MAX_PREVIEW_PIXELS = 3000   # longest side of a raster preview image
 
 # tools that work on a shape clicked in the bed view (they draw nothing)
-PICK_TOOLS = ("fill", "textpath")
+PICK_TOOLS = ("fill", "textpath", "hinge")
 
 COLORS = {
     "bed": QColor("#e9ebee"),
@@ -75,7 +75,7 @@ class ViewSignals(QObject):
     measured = Signal(float, float)               # dx, dy of the ruler in mm (screen right / down)
     edit_nodes = Signal(object)                   # element double-clicked with the select tool
     node_selection = Signal(int)                  # number of selected nodes in the node tool
-    shape_picked = Signal(str, QPointF)          # fill / text-on-path tool clicked here (scene mm)
+    shape_picked = Signal(str, QPointF)          # fill / text-on-path / hinge tool clicked here (scene mm)
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):

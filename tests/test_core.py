@@ -744,6 +744,32 @@ def test_pattern_fill():
           and (old.operation, old.fill_pattern, old.fill_spacing, old.fill_angle, old.fill_outline)
           == ("engrave", "cross", 0.4, 15.0, False))
 
+    # living hinges: cuts stay inside with a solid border, are cut before the outline (the part must
+    # not fall out first), are cut even when the outline is engraved; open lines get none
+    rect = [(0, 0), (120, 0), (120, 60), (0, 60), (0, 0)]
+    for code in patterns.HINGE_CODES:
+        cuts = patterns.hinge_lines(code, [rect], 20.0, 3.0, 1.5, 90.0, 4.0)
+        pts = [p for line in cuts for p in line]
+        inside = all(4.0 - 0.02 <= x <= 116.0 + 0.02 and 4.0 - 0.02 <= y <= 56.0 + 0.02 for x, y in pts)
+        lengths = [sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(l, l[1:])) for l in cuts]
+        check("hinge %s: cuts inside, solid border" % code, len(cuts) > 100 and inside and max(lengths) >= 19.9,
+              "(%d cuts)" % len(cuts))
+    hspec = ShapeSpec(kind="rectangle", width=120, height=60, operation="cut", hinge_pattern="straight")
+    hd = build_design(hspec)
+    plain_cut = build_design(ShapeSpec(kind="rectangle", width=120, height=60, operation="cut"))
+    first_loop = hd.vector_cut.ecoords[0][2]
+    outline_rows = [r for r in hd.vector_cut.ecoords if r[2] == max(q[2] for q in hd.vector_cut.ecoords)]
+    he = build_design(ShapeSpec(kind="rectangle", width=120, height=60, operation="engrave", hinge_pattern="wave"))
+    hl = build_design(ShapeSpec(kind="line", width=50, height=0, operation="cut", hinge_pattern="straight"))
+    check("hinge: cut before the outline, engraved outline still cut hinge, none on lines, same size",
+          len(hd.vector_cut.ecoords) > len(plain_cut.vector_cut.ecoords) and len(outline_rows) >= 4
+          and first_loop != outline_rows[0][2] and he.vector_engrave.ecoords and he.vector_cut.ecoords
+          and not hl.vector_cut.ecoords[5:] and hd.bounds == plain_cut.bounds)
+    back = project._shape_from_dict(project._shape_to_dict(ShapeSpec(kind="ellipse", hinge_pattern="zigzag",
+                                                                     hinge_cut=15.0, hinge_spacing=2.0)))
+    check("hinge settings saved in projects", (back.hinge_pattern, back.hinge_cut, back.hinge_spacing)
+          == ("zigzag", 15.0, 2.0))
+
     # saved and opened with a project
     spec = ShapeSpec(kind="rectangle", operation="engrave", fill_pattern="honeycomb", fill_spacing=4.5,
                      fill_angle=30.0, fill_margin=1.0, fill_outline=False)

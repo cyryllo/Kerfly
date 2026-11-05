@@ -363,3 +363,45 @@ def chain_polylines(polylines, tol=1e-6):
             chain[:0] = prv[::-1][:-1]
         out.append(chain)
     return out
+
+
+# ---- living hinges: rows of cuts that let a sheet bend -------------------------------
+# hinge code -> English name (translated in the GUI)
+HINGES = (("straight", "Straight cuts"), ("wave", "Wavy cuts"), ("zigzag", "Zigzag cuts"))
+HINGE_CODES = tuple(code for code, _name in HINGES)
+
+
+def hinge_lines(pattern, polygons, cut, gap, spacing, angle_deg=90.0, margin=3.0):
+    """Cut lines of a living hinge inside the closed polygons: rows of cuts
+    `cut` long with `gap` of uncut material between them (the bridges that hold
+    the sheet together), rows `spacing` apart, every second row shifted by half
+    a cut, so the sheet bends across the cuts. The cuts run at angle_deg
+    (90: up and down, so the sheet bends round an upright axis) and stay
+    `margin` away from the outline, which leaves a solid border.
+    Raises ValueError for an unknown pattern or non-positive sizes."""
+    if cut <= 0 or gap <= 0 or spacing <= 0:
+        raise ValueError("hinge sizes must be positive")
+    rings = _closed_rings(polygons)
+    if not rings:
+        return []
+    half, to_world = _frame(rings, angle_deg)
+    period = cut + gap
+    amp = 0.3 * spacing                                  # waves and zigzags stay apart from the next row
+    local = []
+    for k, v in enumerate(_rows(half, spacing)):
+        start = -half - period - ((k % 2) * period / 2.0)
+        n = int((2 * half + 2 * period) / period) + 2
+        for j in range(n):
+            u0 = start + j * period
+            if pattern == "straight":
+                local.append([(u0, v), (u0 + cut, v)])
+            elif pattern == "wave":
+                steps = max(8, int(cut / max(spacing / 2.0, 0.5)))
+                local.append([(u0 + cut * i / steps, v + amp * math.sin(2 * math.pi * i / steps))
+                              for i in range(steps + 1)])
+            elif pattern == "zigzag":
+                local.append([(u0, v), (u0 + cut * 0.25, v + amp), (u0 + cut * 0.75, v - amp), (u0 + cut, v)])
+            else:
+                raise ValueError("unknown hinge pattern: %r" % (pattern,))
+    world = [[to_world(u, w) for u, w in line] for line in local]
+    return clip_polylines(world, rings, max(0.0, margin))

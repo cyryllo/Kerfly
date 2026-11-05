@@ -38,7 +38,7 @@ do rysowania i edycji.
   <div class="feature"><h3>Rysowanie i edycja</h3><p>Prostokąty, elipsy, wielokąty, linie, krzywe, rysowanie odręczne i tekst dowolną zainstalowaną czcionką, także wzdłuż krzywej albo okręgu. Edycja węzłów narysowanych kształtów i otwartych plików SVG oraz DXF.</p></div>
   <div class="feature"><h3>Warstwy jak w LightBurnie</h3><p>Grawer rastrowy, obrys i cięcie, każde z własną prędkością, liczbą przejść i mocą. Baza materiałów ustawia wszystko jednym wyborem.</p></div>
   <div class="feature"><h3>Wiele formatów</h3><p>SVG (z Inkscape albo bez), DXF, G-code i obrazy: PNG, JPG, BMP, TIFF, GIF, WebP. Projekt trzyma wszystko w jednym pliku.</p></div>
-  <div class="feature"><h3>Wzory, mostki, kształty</h3><p>Wypełnianie kształtów grawerowanymi wzorami (fale, plaster miodu, cegły…), a ich obrys nadal jest cięty; mostki trzymające wycięte elementy w arkuszu; łączenie kształtów (suma, różnica, część wspólna).</p></div>
+  <div class="feature"><h3>Wzory, zawiasy, mostki</h3><p>Wypełnianie kształtów grawerowanymi wzorami (fale, plaster miodu, cegły…), a ich obrys nadal jest cięty; zawiasy giętkie, dzięki którym sklejka się wygina; mostki trzymające wycięte elementy w arkuszu; łączenie kształtów.</p></div>
   <div class="feature"><h3>Bezpieczna praca</h3><p>Najpierw objazd konturu, symulacja zadania, szacowany czas. Kerfly nie wyśle zadania, które wyprowadziłoby głowicę poza stół.</p></div>
   <div class="feature"><h3>Jak w K40 Whisperer, jeśli chcesz</h3><p>Ten sam plik ustawień. Projekt może podążać za głowicą albo zostać na swoim miejscu na stole: wybór należy do Ciebie.</p></div>
   <div class="feature"><h3>Po polsku</h3><p>Polski, angielski, niemiecki, hiszpański i francuski. Działa w Linuksie (Debian, Ubuntu) i Windows 10 / 11.</p></div>
@@ -58,7 +58,7 @@ do rysowania i edycji.
 Kerfly jest we **wczesnej fazie rozwoju**. Pierwszy test na prawdziwym laserze
 odbył się w listopadzie 2026 (Windows 10, płyta M3): cięcie trzymało
 wymiary, strzałki, pauza i stop działały, a znalezione problemy poprawiła
-wersja 0.15. Następne w planach: zawiasy giętkie, wektoryzacja obrazów,
+wersja 0.15. Następne w planach: wektoryzacja obrazów, więcej wzorów,
 kompensacja kerfu, więcej formatów plików oraz instalatory dla Windows i
 Linuksa. Zobacz [plan]({{ site.repo }}/blob/main/ROADMAP.md) (po angielsku) i
 [listę zmian]({{ site.repo }}/blob/main/CHANGELOG.md).

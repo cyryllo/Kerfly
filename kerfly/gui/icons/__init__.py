@@ -267,3 +267,54 @@ def text_on_path_icon(color="#2b2f36"):
         p.restore()
     p.end()
     return QIcon(pm)
+
+
+def hinge_icon(color="#2b2f36"):
+    """Living hinge: a sheet with rows of staggered cuts."""
+    pm, p = _canvas()
+    ink = QColor(color)
+    p.setPen(QPen(ink, 3.0, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+    p.setBrush(Qt.NoBrush)
+    p.drawRoundedRect(8, 10, 48, 44, 4, 4)
+    p.setPen(QPen(ink, 2.6, Qt.SolidLine, Qt.RoundCap))
+    for i, x in enumerate(range(17, 50, 6)):
+        if i % 2 == 0:
+            p.drawLine(x, 16, x, 28)
+            p.drawLine(x, 34, x, 48)
+        else:
+            p.drawLine(x, 16, x, 21)
+            p.drawLine(x, 27, x, 41)
+            p.drawLine(x, 47, x, 48)
+    p.end()
+    return QIcon(pm)
+
+
+_hinge_cache = {}
+
+
+def hinge_pattern_icon(code, size=40, color="#c62828"):
+    """Small preview of a living hinge pattern."""
+    key = (code, size, color)
+    if key in _hinge_cache:
+        return _hinge_cache[key]
+    from kerfly.core.patterns import hinge_lines
+    pm = QPixmap(size * 2, size * 2)
+    pm.setDevicePixelRatio(2.0)
+    pm.fill(Qt.transparent)
+    p = QPainter(pm)
+    p.setRenderHint(QPainter.Antialiasing, True)
+    m = 2.0
+    square = [(m, m), (size - m, m), (size - m, size - m), (m, size - m), (m, m)]
+    p.setPen(QPen(QColor(color), 1.4, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+    for line in hinge_lines(code, [square], size / 3.0, size / 10.0, size / 7.0, 90.0, 3.0):
+        path = QPainterPath()
+        path.moveTo(*line[0])
+        for x, y in line[1:]:
+            path.lineTo(x, y)
+        p.drawPath(path)
+    p.setPen(QPen(QColor("#2b2f36"), 1.4))
+    p.drawRoundedRect(m, m, size - 2 * m, size - 2 * m, 4, 4)
+    p.end()
+    icon = QIcon(pm)
+    _hinge_cache[key] = icon
+    return icon

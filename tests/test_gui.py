@@ -1326,6 +1326,32 @@ def main():
     w5._dirty = False
     w5.close()
 
+    # 47. Living hinge tool: click a closed shape -> cuts inside (one undo step), the Living hinge
+    # section shows on that shape; a text gets none
+    w6 = make_window(grid_mm="0")
+    w6._add_drawn_element(_Spec(kind="rectangle", width=120, height=60, operation="cut"), "rectangle", 20, 20)
+    box = w6.elements[0]
+    w6.preview.select_element([])
+    w6.selected = None
+    w6.set_tool("hinge")
+    tool_bar = w6._options_target == "hinge"
+    plain_n = len(box.design.vector_cut.ecoords)
+    u0 = len(w6._undo)
+    w6._shape_picked("hinge", _QPointF(80, 50))
+    cut_in = box.shape.hinge_pattern == "straight" and len(box.design.vector_cut.ecoords) > plain_n * 20 \
+        and len(w6._undo) == u0 + 1
+    w6.set_tool("select")
+    w6.preview.select_element(box)
+    w6.selected = box
+    w6._update_tool_options(force=True)
+    section = any(c.findData("zigzag") >= 0 for c in w6.tool_options.findChildren(QComboBox))
+    w6.undo()
+    undone = not w6.elements[0].shape.hinge_pattern
+    check("living hinge tool: click cuts a hinge (one undo step), its section on the shape, undo",
+          tool_bar and cut_in and section and undone, "(%s)" % ([tool_bar, cut_in, section, undone],))
+    w6._dirty = False
+    w6.close()
+
     # 43. no keyboard shortcut is used twice (Qt then runs neither action)
     from PySide6.QtGui import QAction as _QAction
     seen, twice = {}, []

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:19+0100\n"
+"POT-Creation-Date: 2026-11-05 17:26+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -175,6 +175,13 @@ msgstr ""
 msgid "A job is running. Stop it and quit?"
 msgstr "Hay un trabajo en curso. ¿Detenerlo y salir?"
 
+msgid ""
+"A living hinge needs a closed shape (not a text) on a cut or outline "
+"layer."
+msgstr ""
+"Una bisagra flexible necesita una forma cerrada (no un texto) en una capa"
+" de corte o de contorno."
+
 msgid "About Kerfly"
 msgstr "Acerca de Kerfly"
 
@@ -275,6 +282,9 @@ msgstr "Separar en formas"
 msgid "Bricks"
 msgstr "Ladrillos"
 
+msgid "Bridge: uncut material between two cuts in a row"
+msgstr "Puente: material sin cortar entre dos cortes de una fila"
+
 msgid "Bridges"
 msgstr "Puentes"
 
@@ -350,6 +360,9 @@ msgstr "Haz clic en una forma para editar sus nodos."
 
 msgid "Click an element on the bed to select it."
 msgstr "Haga clic en un elemento para seleccionarlo."
+
+msgid "Click inside a closed shape to cut a hinge into it."
+msgstr "Haga clic dentro de una forma cerrada para cortar en ella una bisagra."
 
 msgid "Click inside a shape to fill it."
 msgstr "Haga clic dentro de una forma para rellenarla."
@@ -502,6 +515,11 @@ msgstr "Diferencia"
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr "Diferencia: recortar las demás formas seleccionadas de la primera"
 
+msgid "Direction of the cuts (90°: up and down; the sheet bends across them)"
+msgstr ""
+"Dirección de los cortes (90°: arriba y abajo; la plancha se dobla a "
+"través de ellos)"
+
 msgid "Direction of the pattern"
 msgstr "Dirección del patrón"
 
@@ -512,6 +530,9 @@ msgid ""
 msgstr ""
 "Distancia %(d).2f %(u)s: ancho %(w).2f %(u)s, alto %(h).2f %(u)s, ángulo "
 "%(a).1f°"
+
+msgid "Distance between the rows of cuts (smaller: bends more)"
+msgstr "Distancia entre las filas de cortes (menor: se dobla más)"
 
 msgid "Distance down from home"
 msgstr "Distancia hacia abajo desde el origen"
@@ -739,6 +760,14 @@ msgctxt "toolbar group"
 msgid "Help"
 msgstr "Ayuda"
 
+msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
+msgstr ""
+"Bisagra cortada en la forma. Haga clic en otra forma o cambie los cortes "
+"arriba."
+
+msgid "Hinge removed."
+msgstr "Bisagra eliminada."
+
 msgid "Home is in the upper right corner"
 msgstr "El origen está en la esquina superior derecha"
 
@@ -871,6 +900,9 @@ msgstr "Capas"
 msgid "Leather 2 mm"
 msgstr "Cuero 2 mm"
 
+msgid "Length of one cut"
+msgstr "Longitud de un corte"
+
 msgid "Letter spacing: space added between the letters (0: as the font sets it)"
 msgstr "Espaciado de letras: espacio añadido entre las letras (0: el de la fuente)"
 
@@ -888,6 +920,23 @@ msgstr "Línea"
 
 msgid "Lines"
 msgstr "Líneas"
+
+msgid "Living hinge"
+msgstr "Bisagra flexible"
+
+msgid ""
+"Living hinge: choose the cuts above, then click a closed shape to cut "
+"them into it. Selected shapes get the hinge you choose. The border stays "
+"solid."
+msgstr ""
+"Bisagra flexible: elija los cortes arriba y haga clic en una forma "
+"cerrada para cortarlos en ella. Las formas seleccionadas reciben la "
+"bisagra elegida. El borde queda macizo."
+
+msgid "Living hinge: rows of cuts that let the sheet bend across them"
+msgstr ""
+"Bisagra flexible: filas de cortes que permiten doblar la plancha a través"
+" de ellos"
 
 msgid "Loading cancelled"
 msgstr "Carga cancelada"
@@ -1055,6 +1104,9 @@ msgstr "Sin esquina en los nodos seleccionados: la curva pasa suavemente"
 msgid "No design loaded"
 msgstr "No hay ningún diseño cargado"
 
+msgid "No hinge"
+msgstr "Sin bisagra"
+
 msgid "No laser data was generated."
 msgstr "No se generaron datos para el láser."
 
@@ -1090,6 +1142,13 @@ msgid ""
 msgstr ""
 "Solo se pueden rellenar las formas dibujadas. Desagrupe primero el "
 "archivo abierto (Editar → Desagrupar) para rellenar sus formas."
+
+msgid ""
+"Only drawn shapes can get a hinge. Ungroup an opened file first (Edit → "
+"Ungroup)."
+msgstr ""
+"Solo las formas dibujadas pueden tener bisagra. Desagrupe primero el "
+"archivo abierto (Editar → Desagrupar)."
 
 msgctxt "toolbar"
 msgid "Open"
@@ -1575,6 +1634,9 @@ msgstr ""
 "de la mesa, al dibujar y mover. Mantén Alt para no ajustar a nada por un "
 "momento."
 
+msgid "Solid border: no cuts this close to the outline"
+msgstr "Borde macizo: sin cortes tan cerca del contorno"
+
 msgid "Space kept free between the pattern and the outline"
 msgstr "Espacio libre entre el patrón y el contorno"
 
@@ -1630,6 +1692,9 @@ msgstr "Deteniendo…"
 
 msgid "Straight"
 msgstr "Recto"
+
+msgid "Straight cuts"
+msgstr "Cortes rectos"
 
 msgid "Straight text"
 msgstr "Texto recto"
@@ -1965,6 +2030,9 @@ msgstr "Esperando a que el láser termine."
 msgid "Waves"
 msgstr "Ondas"
 
+msgid "Wavy cuts"
+msgstr "Cortes ondulados"
+
 msgid "What kind of problem is it?"
 msgstr "¿Qué tipo de problema es?"
 
@@ -2002,6 +2070,9 @@ msgstr "Factor de escala Y"
 
 msgid "Zigzag"
 msgstr "Zigzag"
+
+msgid "Zigzag cuts"
+msgstr "Cortes en zigzag"
 
 msgid "centre"
 msgstr "centro"

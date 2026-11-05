@@ -74,9 +74,10 @@ ustawienia jako domyślne**.
 - **Stół** (środek): stół lasera z Twoimi elementami. Pomarańczowy celownik
   to głowica lasera. Elementy wystające poza stół są rysowane na czerwono i
   zadanie nie ruszy, dopóki ich nie przesuniesz z powrotem.
-- **Narzędzia rysowania** (prawa strona): zaznaczanie, edycja węzłów,
-  prostokąt, elipsa, wielokąt, linia, łamana, pióro, rysowanie odręczne,
-  miarka, tekst, tekst na ścieżce, wypełnienie wzorem.
+- **Narzędzia** (prawa strona), w trzech grupach: zaznaczanie (zaznaczanie,
+  edycja węzłów); rysowanie (prostokąt, elipsa, wielokąt, linia, łamana,
+  pióro, odręcznie, tekst); operacje na kształtach (tekst na ścieżce,
+  wypełnienie wzorem, zawias giętki, miarka).
 
 Mysz na stole: kółko przybliża i oddala (nie dalej niż cały stół); środkowy
 albo prawy przycisk przesuwa widok; **Ctrl+0** dopasowuje stół do okna.
@@ -166,6 +167,7 @@ narysowaniem i po nim.
 | Tekst | T | Kliknij i wpisz tekst w polu **Treść**; wybierz czcionkę, rozmiar, pogrubienie i kursywę |
 | Tekst na ścieżce | Shift+T | Wpisz tekst na pasku opcji, potem kliknij linię, krzywą albo kształt (opis niżej) |
 | Wypełnij wzorem | Shift+F | Wybierz wzór na pasku opcji i klikaj zamknięte kształty, żeby je wypełnić (opis niżej) |
+| Zawias giętki | Shift+H | Wybierz nacięcia na pasku opcji i klikaj zamknięte kształty, żeby naciąć w nich zawias (opis niżej) |
 
 **Przyciąganie.** Rysowanie i przesuwanie przyciąga do narożników, środków i
 krawędzi innych elementów i do stołu (**Widok → Przyciągaj do obiektów**,
@@ -241,6 +243,22 @@ kształcie przez **Edycja → Umieść tekst na ścieżce** (zaznacz oba). Strza
 pola X/Y przesuwają tekst razem z jego ścieżką.
 
 ![Tekst na okręgu i na krzywej](../img/pl/textpath.png)
+
+**Zawiasy giętkie.** *(jeszcze nie sprawdzone na laserze)* Zawias giętki to
+pole nacięć, dzięki którym sklejka albo MDF się wygina, np. na zaokrąglonych
+rogach pudełka. Wybierz narzędzie **Zawias giętki** (Shift+H, arkusz z
+nacięciami), wybierz nacięcia na pasku opcji (proste, faliste albo zygzakiem)
+i kliknij zamknięty kształt: nacięcia zostaną wycięte w jego środku, przed
+obrysem. Pola sekcji **Zawias giętki**, każde z ikoną i opisem po najechaniu,
+ustawiają długość jednego nacięcia, **mostek** nieprzeciętego materiału między
+dwoma nacięciami, odstęp rzędów (mniejszy bardziej się wygina), kierunek
+nacięć (90°: góra–dół, arkusz wygina się w poprzek nich) i **pełny brzeg**
+wzdłuż obrysu. Zaznaczone kształty od razu dostają wybrany zawias; kształt z
+zawiasem pokazuje tę sekcję także przy narzędziu zaznaczania, gdzie **Bez
+zawiasu** go usuwa. Najpierw spróbuj na małym kawałku: to, jak bardzo arkusz
+się wygina, zależy od materiału.
+
+![Zawiasy giętkie: nacięcia proste, faliste i zygzakiem](../img/pl/hinge.png)
 
 **Mostki.** Zamknięty kształt na warstwie cięcia może mieć małe nieprzecięte
 mostki, które trzymają element w arkuszu: ustaw ich liczbę i szerokość w
@@ -356,7 +374,7 @@ francusku.
 | Alt (przytrzymany) | Chwilowo bez przyciągania |
 | Ctrl+, | Ustawienia |
 | F1 | Ta instrukcja |
-| S, N, R, E, P, L, Shift+L, B, F, M, T, Shift+T, Shift+F | Narzędzia rysowania (punkt 5) |
+| S, N, R, E, P, L, Shift+L, B, F, T, Shift+T, Shift+F, Shift+H, M | Narzędzia (punkt 5) |
 
 <a id="s10"></a>
 

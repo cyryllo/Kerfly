@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:19+0100\n"
+"POT-Creation-Date: 2026-11-05 17:26+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -177,6 +177,13 @@ msgstr ""
 msgid "A job is running. Stop it and quit?"
 msgstr "Zadanie jest w toku. Zatrzymać je i zakończyć program?"
 
+msgid ""
+"A living hinge needs a closed shape (not a text) on a cut or outline "
+"layer."
+msgstr ""
+"Zawias giętki wymaga zamkniętego kształtu (nie tekstu) na warstwie cięcia"
+" albo obrysu."
+
 msgid "About Kerfly"
 msgstr "O programie Kerfly"
 
@@ -277,6 +284,9 @@ msgstr "Rozbij na kształty"
 msgid "Bricks"
 msgstr "Cegły"
 
+msgid "Bridge: uncut material between two cuts in a row"
+msgstr "Mostek: nieprzecięty materiał między dwoma nacięciami w rzędzie"
+
 msgid "Bridges"
 msgstr "Mostki"
 
@@ -350,6 +360,9 @@ msgstr "Kliknij kształt, aby edytować jego węzły."
 
 msgid "Click an element on the bed to select it."
 msgstr "Kliknij element na stole, aby go zaznaczyć."
+
+msgid "Click inside a closed shape to cut a hinge into it."
+msgstr "Kliknij wewnątrz zamkniętego kształtu, żeby naciąć w nim zawias."
 
 msgid "Click inside a shape to fill it."
 msgstr "Kliknij wewnątrz kształtu, żeby go wypełnić."
@@ -498,6 +511,9 @@ msgstr "Różnica"
 msgid "Difference: cut the other selected shapes out of the first one"
 msgstr "Różnica: wytnij pozostałe zaznaczone kształty z pierwszego"
 
+msgid "Direction of the cuts (90°: up and down; the sheet bends across them)"
+msgstr "Kierunek nacięć (90°: góra–dół; arkusz wygina się w poprzek nich)"
+
 msgid "Direction of the pattern"
 msgstr "Kierunek wzoru"
 
@@ -508,6 +524,9 @@ msgid ""
 msgstr ""
 "Odległość %(d).2f %(u)s: szerokość %(w).2f %(u)s, wysokość %(h).2f %(u)s,"
 " kąt %(a).1f°"
+
+msgid "Distance between the rows of cuts (smaller: bends more)"
+msgstr "Odstęp między rzędami nacięć (mniejszy: bardziej się wygina)"
 
 msgid "Distance down from home"
 msgstr "Odległość w dół od pozycji bazowej"
@@ -735,6 +754,14 @@ msgctxt "toolbar group"
 msgid "Help"
 msgstr "Pomoc"
 
+msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
+msgstr ""
+"Zawias nacięty w kształcie. Kliknij kolejny kształt albo zmień nacięcia "
+"powyżej."
+
+msgid "Hinge removed."
+msgstr "Usunięto zawias."
+
 msgid "Home is in the upper right corner"
 msgstr "Pozycja bazowa w prawym górnym rogu"
 
@@ -865,6 +892,9 @@ msgstr "Warstwy"
 msgid "Leather 2 mm"
 msgstr "Skóra 2 mm"
 
+msgid "Length of one cut"
+msgstr "Długość jednego nacięcia"
+
 msgid "Letter spacing: space added between the letters (0: as the font sets it)"
 msgstr ""
 "Odstęp liter: miejsce dodane między literami (0: taki, jak ustawia "
@@ -884,6 +914,23 @@ msgstr "Linia"
 
 msgid "Lines"
 msgstr "Linie"
+
+msgid "Living hinge"
+msgstr "Zawias giętki"
+
+msgid ""
+"Living hinge: choose the cuts above, then click a closed shape to cut "
+"them into it. Selected shapes get the hinge you choose. The border stays "
+"solid."
+msgstr ""
+"Zawias giętki: wybierz nacięcia powyżej, potem kliknij zamknięty kształt,"
+" żeby je w nim naciąć. Zaznaczone kształty dostają wybrany zawias. Brzeg "
+"zostaje pełny."
+
+msgid "Living hinge: rows of cuts that let the sheet bend across them"
+msgstr ""
+"Zawias giętki: rzędy nacięć, dzięki którym arkusz wygina się w poprzek "
+"nich"
 
 msgid "Loading cancelled"
 msgstr "Anulowano wczytywanie"
@@ -1054,6 +1101,9 @@ msgstr "Bez narożnika w zaznaczonych węzłach: krzywa przechodzi przez nie gł
 msgid "No design loaded"
 msgstr "Nie wczytano projektu"
 
+msgid "No hinge"
+msgstr "Bez zawiasu"
+
 msgid "No laser data was generated."
 msgstr "Nie wygenerowano danych dla lasera."
 
@@ -1089,6 +1139,13 @@ msgid ""
 msgstr ""
 "Wypełniać można tylko narysowane kształty. Otwarty plik najpierw "
 "rozgrupuj (Edycja → Rozgrupuj), żeby wypełnić jego kształty."
+
+msgid ""
+"Only drawn shapes can get a hinge. Ungroup an opened file first (Edit → "
+"Ungroup)."
+msgstr ""
+"Zawias mogą dostać tylko narysowane kształty. Otwarty plik najpierw "
+"rozgrupuj (Edycja → Rozgrupuj)."
 
 msgctxt "toolbar"
 msgid "Open"
@@ -1574,6 +1631,9 @@ msgstr ""
 "stołu, przy rysowaniu i przesuwaniu. Przytrzymaj Alt, aby chwilowo nic "
 "nie przyciągało."
 
+msgid "Solid border: no cuts this close to the outline"
+msgstr "Pełny brzeg: bez nacięć tak blisko obrysu"
+
 msgid "Space kept free between the pattern and the outline"
 msgstr "Wolne miejsce między wzorem a obrysem"
 
@@ -1627,6 +1687,9 @@ msgstr "Zatrzymywanie…"
 
 msgid "Straight"
 msgstr "Prosty"
+
+msgid "Straight cuts"
+msgstr "Proste nacięcia"
 
 msgid "Straight text"
 msgstr "Prosty tekst"
@@ -1957,6 +2020,9 @@ msgstr "Oczekiwanie na zakończenie pracy lasera."
 msgid "Waves"
 msgstr "Fale"
 
+msgid "Wavy cuts"
+msgstr "Faliste nacięcia"
+
 msgid "What kind of problem is it?"
 msgstr "Jaki to problem?"
 
@@ -1993,6 +2059,9 @@ msgstr "Współczynnik skali Y"
 
 msgid "Zigzag"
 msgstr "Zygzak"
+
+msgid "Zigzag cuts"
+msgstr "Nacięcia zygzakiem"
 
 msgid "centre"
 msgstr "środek"

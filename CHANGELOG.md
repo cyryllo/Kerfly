@@ -31,6 +31,14 @@ Version numbers:
   **Edit → Put text on path**. Saved in projects.
 - **Letter spacing** for every text (the field with the AV icon in the Font
   section). The fields of a text on a path have icons too.
+- **Living hinges.** The **Living hinge** tool (Shift+H) cuts a field of cuts
+  into a closed shape so the sheet can bend: straight, wavy or zigzag cuts,
+  with cut length, bridge between cuts, row spacing, direction and a solid
+  border along the outline. The cuts are cut before the outline. Selected
+  shapes get the chosen hinge at once; saved in projects, one undo step.
+- **Tool strip in groups**: selecting, drawing, and operations on shapes
+  (text on a path, fill, living hinge, measure). The fields of the fill and
+  hinge sections have icons.
 - **Order of elements**: Bring forward / Send backward (toolbar group
   **Order**, PgUp / PgDown in the bed view) and Bring to front / Send to back
   (Ctrl+PgUp / Ctrl+PgDown, Edit menu). Groups move together.

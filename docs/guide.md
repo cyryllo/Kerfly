@@ -72,9 +72,10 @@ are used. **File → Save settings as default** keeps changed settings.
 - **Bed view** (middle): the laser bed with your elements. The orange
   crosshair is the laser head. Elements that stick out of the bed are drawn
   red, and the job cannot start until they are moved back.
-- **Drawing tools** (right): select, edit nodes, rectangle, ellipse, polygon,
-  line, polyline, pen, freehand, measure, text, text on a path, fill with a
-  pattern.
+- **Tools** (right), in three groups: selecting (select, edit nodes); drawing
+  (rectangle, ellipse, polygon, line, polyline, pen, freehand, text); and
+  operations on shapes (text on a path, fill with a pattern, living hinge,
+  measure).
 
 Mouse in the bed view: the wheel zooms in and out (not further than the
 whole bed); the middle or right button drags the view; **Ctrl+0** fits the
@@ -164,6 +165,7 @@ before or after drawing.
 | Text | T | Click, then type in the **Content** field; choose the font, size, bold and italic |
 | Text on a path | Shift+T | Type the text in the options bar, then click a line, curve or shape (see below) |
 | Fill with a pattern | Shift+F | Choose a pattern in the options bar, then click closed shapes to fill them (see below) |
+| Living hinge | Shift+H | Choose the cuts in the options bar, then click closed shapes to cut a hinge into them (see below) |
 
 **Snapping.** Drawing and moving snap to the corners, centres and edges of
 other elements and to the bed (**View → Snap to objects**, Ctrl+;), and to
@@ -238,6 +240,21 @@ with **Edit → Put text on path** (select both). The arrow keys and the X/Y
 fields move the text together with its path.
 
 ![Text on a circle and on a curve](img/en/textpath.png)
+
+**Living hinges.** *(not yet tested on a laser)* A living hinge is a field of
+cuts that lets a sheet of plywood or MDF bend, for example round the corners
+of a box. Choose the **Living hinge** tool (Shift+H, the sheet with cuts),
+choose the cuts in the options bar (straight, wavy or zigzag), then click a
+closed shape: the cuts are cut inside it, before its outline. The fields of
+the **Living hinge** section, each with an icon and a tooltip, set the length
+of one cut, the **bridge** of uncut material between two cuts, the distance
+between the rows (smaller bends more), the direction of the cuts (90°: up and
+down, the sheet bends across them) and the **solid border** kept along the
+outline. Selected shapes get the hinge you choose at once; a shape with a
+hinge shows the section with the select tool too, where **No hinge** removes
+it. Try a small piece first: how far the sheet bends depends on the material.
+
+![Living hinges: straight, wavy and zigzag cuts](img/en/hinge.png)
 
 **Bridges (tabs).** A closed shape on a cut layer can keep small uncut
 bridges that hold the part in the sheet: set their number and width in the
@@ -350,7 +367,7 @@ Kerfly is available in English, Polish, German, Spanish and French.
 | Alt (held) | Snap to nothing for a moment |
 | Ctrl+, | Settings |
 | F1 | This user guide |
-| S, N, R, E, P, L, Shift+L, B, F, M, T, Shift+T, Shift+F | Drawing tools (see section 5) |
+| S, N, R, E, P, L, Shift+L, B, F, T, Shift+T, Shift+F, Shift+H, M | Tools (see section 5) |
 
 <a id="s10"></a>
 

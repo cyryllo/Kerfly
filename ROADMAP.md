@@ -107,7 +107,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 |---|---|
 | Text from Hershey / TrueType / SHX fonts (no Inkscape) | `extra/hershey.py`, `tools/ttfparser.py`, `tools/shxparser.py`, `tools/jhfparser.py` |
 | ~~Hatch fill~~ (done; since 0.17 part of the pattern fills: Lines / Cross-hatch without the outline); pattern fills (step 1 done, see below) | `fill/fills.py`, `fill/patterns.py` (`fill/patternfill.py` is obsolete in MeerK40t) |
-| Living hinges | `tools/livinghinges.py`, `tools/living_hinge_optimizer.py` |
+| ~~Living hinges~~ (step 1 done: Living hinge tool, straight / wavy / zigzag cuts, cut length, bridge, row spacing, direction, solid border); more hinge patterns later | `tools/livinghinges.py`, `tools/living_hinge_optimizer.py` |
 | Image dithering (more methods than Floyd-Steinberg) | `image/dither.py` |
 | Image adjustments (contrast, sharpen, crop, split) | `image/imagetools.py`, `extra/imageactions.py`, `gui/imagesplitter.py` |
 | Bitmap to vector (trace) | `extra/potrace.py`, `extra/vtracer.py`, `extra/vectrace.py` |
