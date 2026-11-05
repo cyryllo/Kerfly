@@ -7,7 +7,7 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
-## Unreleased
+## 0.16.0 (2026-11-05)
 
 ### New
 
@@ -38,6 +38,12 @@ Version numbers:
   laser head, as in K40 Whisperer, and the arrows keep the design on the bed.
   The corner and centre buttons still only move the head. The setting is
   kept.
+
+### Changed
+
+- The jog pad buttons are larger (76 px squares), as tall as the machine
+  buttons beside them.
+- A test checks that no keyboard shortcut is used twice.
 
 ## 0.15.0 (2026-11-05)
 

@@ -16,7 +16,7 @@ sterowania laserem. Oryginalne wydanie ma w tym repozytorium tag
 
 ## Stan projektu
 
-Wczesna faza rozwoju (0.15). Pierwszy test na prawdziwym K40 (Windows 10,
+Wczesna faza rozwoju (0.16). Pierwszy test na prawdziwym K40 (Windows 10,
 płyta M3) odbył się w listopadzie 2026, a poprawki po nim weszły do wersji
 0.15.0. Kerfly ma nowe okno w Qt (PySide6). Otwiera pliki SVG, DXF i G-code
 oraz obrazy (PNG, JPG, BMP, TIFF, GIF, WebP) do grawerowania rastrowego, bez
