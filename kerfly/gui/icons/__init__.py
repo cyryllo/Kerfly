@@ -201,3 +201,37 @@ def app_icon():
         p.end()
         icon.addPixmap(pm)
     return icon
+
+
+_pattern_cache = {}
+
+
+def pattern_icon(code, size=40, color="#1565c0"):
+    """Small preview of a fill pattern: a rounded square filled with it."""
+    key = (code, size, color)
+    icon = _pattern_cache.get(key)
+    if icon is not None:
+        return icon
+    from kerfly.core.patterns import pattern_lines
+    pm = QPixmap(size * 2, size * 2)
+    pm.setDevicePixelRatio(2.0)
+    pm.fill(Qt.transparent)
+    p = QPainter(pm)
+    p.setRenderHint(QPainter.Antialiasing, True)
+    m = 2.0
+    square = [(m, m), (size - m, m), (size - m, size - m), (m, size - m), (m, m)]
+    spacing = {"honeycomb": size / 4.0, "bricks": size / 6.0, "circles": size / 7.0}.get(code, size / 7.0)
+    p.setPen(QPen(QColor(color), 1.4, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+    for line in pattern_lines(code, [square], spacing, 0.0, 0.0):
+        path = QPainterPath()
+        path.moveTo(*line[0])
+        for x, y in line[1:]:
+            path.lineTo(x, y)
+        p.drawPath(path)
+    p.setPen(QPen(QColor("#2b2f36"), 1.4))
+    p.setBrush(Qt.NoBrush)
+    p.drawRoundedRect(m, m, size - 2 * m, size - 2 * m, 4, 4)
+    p.end()
+    icon = QIcon(pm)
+    _pattern_cache[key] = icon
+    return icon

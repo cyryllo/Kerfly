@@ -79,6 +79,29 @@ def take(lang):
     strip.grab().save(os.path.join(out, "tools.png"))
     w._dirty = False
     w.close()
+
+    # pattern fills, with the Fill tool in use
+    from PySide6.QtCore import QPointF
+    f = MainWindow(values)
+    f.resize(*WINDOW)
+    f.show()
+    shapes = [(ShapeSpec(kind="rectangle", width=70, height=50, corner_radius=6, operation="cut"), "rectangle", 10, 10),
+              (ShapeSpec(kind="ellipse", width=70, height=50, operation="cut"), "ellipse", 95, 10),
+              (ShapeSpec(kind="polygon", width=55, height=55, sides=6, operation="engrave"), "polygon", 180, 8),
+              (ShapeSpec(kind="ellipse", width=50, height=50, operation="cut"), "ellipse", 20, 80),
+              (ShapeSpec(kind="rectangle", width=70, height=45, operation="cut"), "rectangle", 95, 82)]
+    for spec, tool, left, top in shapes:
+        f._add_drawn_element(spec, tool, left, top)
+    f.set_tool("fill")
+    for (x, y), pattern, spacing in (((45, 35), "honeycomb", 6), ((130, 35), "waves", 4), ((207, 35), "bricks", 5),
+                                     ((45, 105), "circles", 4), ((130, 105), "diamonds", 5)):
+        f.fill_defaults.fill_pattern, f.fill_defaults.fill_spacing = pattern, spacing
+        f._fill_clicked(QPointF(x, y))
+    f._update_tool_options(force=True)
+    settle()
+    f.grab().save(os.path.join(out, "fill.png"))
+    f._dirty = False
+    f.close()
     print("screenshots (%s) written" % lang)
 
 

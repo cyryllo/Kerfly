@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 12:22+0100\n"
+"POT-Creation-Date: 2026-11-05 16:24+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -266,6 +266,9 @@ msgstr "Parcourir le contour avec le laser allumé"
 msgid "Break apart"
 msgstr "Décomposer"
 
+msgid "Bricks"
+msgstr "Briques"
+
 msgid "Bridges"
 msgstr "Attaches"
 
@@ -313,6 +316,9 @@ msgstr ""
 "Choisissez un matériau pour régler la vitesse, les passes et la puissance"
 " de tous les calques"
 
+msgid "Circles"
+msgstr "Cercles"
+
 msgid ""
 "Click a node (small square) to select it; Shift+click for more. Then use "
 "the buttons above."
@@ -325,6 +331,9 @@ msgstr "Cliquez sur une forme pour modifier ses nœuds."
 
 msgid "Click an element on the bed to select it."
 msgstr "Cliquez sur un élément pour le sélectionner."
+
+msgid "Click inside a shape to fill it."
+msgstr "Cliquez à l'intérieur d'une forme pour la remplir."
 
 msgid "Click the opened file or the group first, then Ungroup."
 msgstr "Cliquez d'abord sur le fichier ouvert ou le groupe, puis sur Dégrouper."
@@ -393,6 +402,9 @@ msgstr "Création de l'image en demi-teintes."
 msgid "Creating scan lines: %s%%"
 msgstr "Création des lignes de balayage : %s%%"
 
+msgid "Cross-hatch"
+msgstr "Hachures croisées"
+
 msgid "Cross-hatch: a second set of lines at 90°"
 msgstr "Hachures croisées : un second jeu de lignes à 90°"
 
@@ -410,6 +422,9 @@ msgstr "Découper d'abord les formes intérieures"
 
 msgid "Cut open"
 msgstr "Ouvrir"
+
+msgid "Cut or engrave the outline too (off: only the pattern)"
+msgstr "Découper ou graver aussi le contour (désactivé : seulement le motif)"
 
 msgid "Cut the shape open at the selected node"
 msgstr "Ouvrir la forme au nœud sélectionné"
@@ -462,6 +477,9 @@ msgstr "Import du dessin"
 msgid "Diagnostic report saved: %s"
 msgstr "Rapport de diagnostic enregistré : %s"
 
+msgid "Diamonds"
+msgstr "Losanges"
+
 msgid "Difference"
 msgstr "Différence"
 
@@ -470,6 +488,9 @@ msgstr "Différence : découper les autres formes sélectionnées dans la premi�
 
 msgid "Direction of the lines"
 msgstr "Direction des lignes"
+
+msgid "Direction of the pattern"
+msgstr "Direction du motif"
 
 #, python-format
 msgid ""
@@ -583,11 +604,36 @@ msgctxt "toolbar group"
 msgid "File"
 msgstr "Fichier"
 
+msgid "Fill"
+msgstr "Remplissage"
+
 msgid "Fill (raster)"
 msgstr "Remplissage (raster)"
 
+msgid ""
+"Fill the shape with engraved lines in a pattern; the outline keeps its "
+"own layer"
+msgstr ""
+"Remplir la forme de lignes gravées selon un motif ; le contour garde son "
+"calque"
+
+msgid "Fill with a pattern"
+msgstr "Remplir avec un motif"
+
 msgid "Fill with lines"
 msgstr "Remplir de lignes"
+
+msgid ""
+"Fill: choose a pattern above, then click a closed shape (cut or outline) "
+"to fill it. Selected shapes get the pattern you choose. The outline stays"
+" on its layer; the pattern is engraved."
+msgstr ""
+"Remplissage : choisissez un motif ci-dessus, puis cliquez sur une forme "
+"fermée (découpe ou contour). Les formes sélectionnées reçoivent le motif "
+"choisi. Le contour reste sur son calque ; le motif est gravé."
+
+msgid "Filled. Click another shape, or change the pattern above."
+msgstr "Rempli. Cliquez sur une autre forme ou changez le motif ci-dessus."
 
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Déclencher brièvement le laser (cartes M3)"
@@ -703,6 +749,9 @@ msgstr "Origine : ramener la tête dans le coin d'origine"
 msgid "Homed"
 msgstr "Tête à l'origine"
 
+msgid "Honeycomb"
+msgstr "Nid d'abeille"
+
 msgid "Image size"
 msgstr "Taille de l'image"
 
@@ -802,6 +851,9 @@ msgstr "Couleur du calque ; cliquez pour la changer"
 msgid "Layer name; click to rename"
 msgstr "Nom du calque ; cliquez pour le renommer"
 
+msgid "Layer of the fill pattern (outline engraving)"
+msgstr "Calque du motif de remplissage (gravure de contour)"
+
 msgid ""
 "Layer of this shape: any layer from the panel on the left (cut, outline "
 "or engrave)"
@@ -826,6 +878,9 @@ msgstr "Poids de la courbe de niveaux"
 
 msgid "Line"
 msgstr "Ligne"
+
+msgid "Lines"
+msgstr "Lignes"
 
 msgid "Loading cancelled"
 msgstr "Chargement annulé"
@@ -987,6 +1042,9 @@ msgstr "Aucun dessin chargé"
 msgid "No laser data was generated."
 msgstr "Aucune donnée laser n'a été générée."
 
+msgid "No pattern"
+msgstr "Aucun motif"
+
 msgid "Node"
 msgstr "Nœud"
 
@@ -1004,6 +1062,18 @@ msgstr "Rien à dessiner."
 
 msgid "Number of passes:"
 msgstr "Nombre de passes :"
+
+msgid "Only closed shapes on a cut or outline layer can be filled with a pattern."
+msgstr ""
+"Seules les formes fermées sur un calque de découpe ou de contour peuvent "
+"être remplies d'un motif."
+
+msgid ""
+"Only drawn shapes can be filled. Ungroup an opened file first (Edit → "
+"Ungroup) to fill its shapes."
+msgstr ""
+"Seules les formes dessinées peuvent être remplies. Dégroupez d'abord le "
+"fichier ouvert (Édition → Dégrouper) pour remplir ses formes."
 
 msgctxt "toolbar"
 msgid "Open"
@@ -1053,6 +1123,9 @@ msgstr "Chemin"
 
 msgid "Paths from a G-code file; speeds come from the file (F words)"
 msgstr "Chemins d'un fichier G-code ; les vitesses viennent du fichier (mots F)"
+
+msgid "Pattern removed."
+msgstr "Motif supprimé."
 
 msgid "Pause or stop the running job"
 msgstr "Mettre en pause ou arrêter la tâche en cours"
@@ -1426,6 +1499,9 @@ msgctxt "toolbar"
 msgid "Simulate"
 msgstr "Simuler"
 
+msgid "Size of the pattern: distance between its lines"
+msgstr "Taille du motif : distance entre ses lignes"
+
 msgid "Smooth"
 msgstr "Lisse"
 
@@ -1442,6 +1518,9 @@ msgstr ""
 "Aimanter aux coins, centres, milieux et lignes des autres éléments et du "
 "plateau, en dessinant et en déplaçant. Maintenez Alt pour ne rien "
 "aimanter un instant."
+
+msgid "Space kept free between the pattern and the outline"
+msgstr "Espace laissé libre entre le motif et le contour"
 
 #, python-format
 msgid "Speed (%s)"
@@ -1785,6 +1864,9 @@ msgstr "Attendre la fin du laser"
 msgid "Waiting for the laser to finish."
 msgstr "Attente de la fin du laser."
 
+msgid "Waves"
+msgstr "Vagues"
+
 msgid "What kind of problem is it?"
 msgstr "De quel problème s'agit-il ?"
 
@@ -1819,6 +1901,9 @@ msgstr "Y"
 
 msgid "Y scale factor"
 msgstr "Facteur d'échelle Y"
+
+msgid "Zigzag"
+msgstr "Zigzag"
 
 msgid "centre"
 msgstr "centre"

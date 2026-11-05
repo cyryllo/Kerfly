@@ -21,6 +21,10 @@ OPERATION_NAMES = [("cut", N_("Cut")), ("engrave", N_("Engrave outline")), ("hat
 KIND_NAMES = {"rectangle": N_("Rectangle"), "ellipse": N_("Ellipse"), "polygon": N_("Polygon"),
               "line": N_("Line"), "polyline": N_("Polyline"), "path": N_("Path"), "pen": N_("Path"), "freehand": N_("Freehand"),
               "text": N_("Text")}
+# fill patterns (kerfly.core.patterns.PATTERNS), names for the GUI
+PATTERN_NAMES = [("lines", N_("Lines")), ("cross", N_("Cross-hatch")), ("waves", N_("Waves")),
+                 ("zigzag", N_("Zigzag")), ("circles", N_("Circles")), ("honeycomb", N_("Honeycomb")),
+                 ("diamonds", N_("Diamonds")), ("bricks", N_("Bricks"))]
 NEW_KIND_TITLES = {"rectangle": N_("New rectangle"), "ellipse": N_("New ellipse"),
                    "polygon": N_("New polygon"), "line": N_("New line"),
                    "polyline": N_("New polyline"), "pen": N_("New path"),
@@ -176,6 +180,9 @@ class ToolOptionsBar(QWidget):
             tg.addWidget(width, 1, 0)
             self._add(tb, _("Bridges"))
 
+        if self.spec.operation in ("cut", "engrave") and self.spec.closed:
+            self._add_fill_section()
+
         if self.spec.operation in ("engrave", "hatch") and self.spec.closed:
             hb = QWidget()
             hg = QGridLayout(hb)
@@ -251,6 +258,53 @@ class ToolOptionsBar(QWidget):
                 g.addWidget(b, 1, 1 + i)
             self._add(font_box, _("Font"))
         self.row.addStretch(1)
+
+    def show_fill_tool(self, spec):
+        """Options of the Fill tool: the pattern given to the shapes it is clicked on."""
+        self.spec = spec.copy()
+        self._clear()
+        self._add_fill_section(tool=True)       # what to do is said in the status bar
+        self.row.addStretch(1)
+
+    def _add_fill_section(self, tool=False):
+        """Pattern fill of a closed shape: pattern, spacing, angle, margin, outline."""
+        box = QWidget()
+        g = QGridLayout(box)
+        g.setContentsMargins(0, 0, 0, 0)
+        g.setHorizontalSpacing(4)
+        g.setVerticalSpacing(4)
+        pattern = QComboBox()
+        pattern.setIconSize(QSize(22, 22))
+        pattern.addItem(_("No pattern"), "")
+        for code, name in PATTERN_NAMES:
+            pattern.addItem(icons.pattern_icon(code), _(name), code)
+        pattern.setCurrentIndex(max(0, pattern.findData(self.spec.fill_pattern)))
+        pattern.setToolTip(_("Fill the shape with engraved lines in a pattern; the outline keeps its own layer"))
+        pattern.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        pattern.currentIndexChanged.connect(lambda _i: self._set("fill_pattern", pattern.currentData()))
+        g.addWidget(pattern, 0, 0, 1, 2)
+        if self.spec.fill_pattern or tool:
+            spacing = self._dspin("fill_spacing", 0.2, 50.0, " mm", decimals=1)
+            spacing.setSingleStep(0.5)
+            spacing.setToolTip(_("Size of the pattern: distance between its lines"))
+            angle = self._dspin("fill_angle", -180.0, 180.0, "\u00b0")
+            angle.setSingleStep(15.0)
+            angle.setToolTip(_("Direction of the pattern"))
+            margin = self._dspin("fill_margin", 0.0, 20.0, " mm", decimals=1)
+            margin.setSingleStep(0.5)
+            margin.setToolTip(_("Space kept free between the pattern and the outline"))
+            outline = QToolButton()
+            outline.setIcon(icons.tabler("square"))
+            outline.setIconSize(QSize(18, 18))
+            outline.setCheckable(True)
+            outline.setChecked(self.spec.fill_outline)
+            outline.setToolTip(_("Cut or engrave the outline too (off: only the pattern)"))
+            outline.toggled.connect(lambda v: self._set("fill_outline", v))
+            g.addWidget(outline, 0, 2)
+            g.addWidget(spacing, 1, 0)
+            g.addWidget(angle, 1, 1)
+            g.addWidget(margin, 1, 2)
+        self._add(box, _("Fill"))
 
     def _dspin(self, attr, lo, hi, suffix, decimals=1):
         w = QDoubleSpinBox()

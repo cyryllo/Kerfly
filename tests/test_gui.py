@@ -1163,6 +1163,38 @@ def main():
           and any(getattr(b, "defaultAction", lambda: None)() is w.act_report_problem
                   for b in w.findChildren(QToolButton)))
 
+    # 44. Fill tool: click a closed shape to fill it with a pattern (one undo step), the outline
+    # stays a cut; the options bar shows the patterns; an opened file must be ungrouped first
+    from PySide6.QtCore import QPointF as _QPointF
+    from kerfly.core.shapes import ShapeSpec as _Spec
+    w3 = make_window(grid_mm="0")
+    w3._add_drawn_element(_Spec(kind="ellipse", width=60, height=40, operation="cut"), "ellipse", 20, 20)
+    w3._add_drawn_element(_Spec(kind="rectangle", width=30, height=30, operation="cut"), "rectangle", 120, 20)
+    shape, square = w3.elements[0], w3.elements[1]       # the square is selected (just drawn)
+    w3.set_tool("fill")
+    combos = [c for c in w3.tool_options.findChildren(QComboBox) if c.findData("honeycomb") >= 0]
+    if combos:
+        combos[0].setCurrentIndex(combos[0].findData("honeycomb"))
+    selected_got_it = square.shape.fill_pattern == "honeycomb" and shape.shape.fill_pattern == ""
+    undo0 = len(w3._undo)
+    w3._fill_clicked(_QPointF(50, 40))                    # inside the ellipse
+    filled = shape.shape.fill_pattern == "honeycomb" and bool(shape.design.vector_cut.ecoords) \
+        and len(shape.design.vector_engrave.ecoords) > 50 and len(w3._undo) == undo0 + 1
+    w3.undo()
+    shape = w3.elements[0]
+    undone = shape.shape.fill_pattern == "" and not shape.design.vector_engrave.ecoords
+    w3.load_design(os.path.join(FIX, "shapes.dxf"), add=True)
+    file_el = [e for e in w3.elements if e.shape is None]
+    if file_el:
+        b = file_el[0].bounds
+        w3._fill_clicked(_QPointF((b[0] + b[1]) / 2 * 25.4, -(b[2] + b[3]) / 2 * 25.4))
+    msg = w3.statusBar().currentMessage()
+    check("fill tool: patterns, click fills (one undo step), outline stays, files need Ungroup",
+          bool(combos) and selected_got_it and filled and undone and bool(file_el) and "Ungroup" in msg,
+          "(%s)" % ([bool(combos), selected_got_it, filled, undone, msg[:40]],))
+    w3._dirty = False
+    w3.close()
+
     # 43. no keyboard shortcut is used twice (Qt then runs neither action)
     from PySide6.QtGui import QAction as _QAction
     seen, twice = {}, []

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 12:22+0100\n"
+"POT-Creation-Date: 2026-11-05 16:24+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -266,6 +266,9 @@ msgstr "Recorrer el contorno con el láser encendido"
 msgid "Break apart"
 msgstr "Separar en formas"
 
+msgid "Bricks"
+msgstr "Ladrillos"
+
 msgid "Bridges"
 msgstr "Puentes"
 
@@ -313,6 +316,9 @@ msgstr ""
 "Elija un material para ajustar la velocidad, las pasadas y la potencia de"
 " todas las capas"
 
+msgid "Circles"
+msgstr "Círculos"
+
 msgid ""
 "Click a node (small square) to select it; Shift+click for more. Then use "
 "the buttons above."
@@ -325,6 +331,9 @@ msgstr "Haz clic en una forma para editar sus nodos."
 
 msgid "Click an element on the bed to select it."
 msgstr "Haga clic en un elemento para seleccionarlo."
+
+msgid "Click inside a shape to fill it."
+msgstr "Haga clic dentro de una forma para rellenarla."
 
 msgid "Click the opened file or the group first, then Ungroup."
 msgstr ""
@@ -395,6 +404,9 @@ msgstr "Creando imagen de semitonos."
 msgid "Creating scan lines: %s%%"
 msgstr "Creando líneas de barrido: %s%%"
 
+msgid "Cross-hatch"
+msgstr "Rayado cruzado"
+
 msgid "Cross-hatch: a second set of lines at 90°"
 msgstr "Rayado cruzado: un segundo juego de líneas a 90°"
 
@@ -412,6 +424,9 @@ msgstr "Cortar primero las formas interiores"
 
 msgid "Cut open"
 msgstr "Abrir"
+
+msgid "Cut or engrave the outline too (off: only the pattern)"
+msgstr "Cortar o grabar también el contorno (desactivado: solo el patrón)"
 
 msgid "Cut the shape open at the selected node"
 msgstr "Abrir la forma en el nodo seleccionado"
@@ -462,6 +477,9 @@ msgstr "Importación del diseño"
 msgid "Diagnostic report saved: %s"
 msgstr "Informe de diagnóstico guardado: %s"
 
+msgid "Diamonds"
+msgstr "Rombos"
+
 msgid "Difference"
 msgstr "Diferencia"
 
@@ -470,6 +488,9 @@ msgstr "Diferencia: recortar las demás formas seleccionadas de la primera"
 
 msgid "Direction of the lines"
 msgstr "Dirección de las líneas"
+
+msgid "Direction of the pattern"
+msgstr "Dirección del patrón"
 
 #, python-format
 msgid ""
@@ -583,11 +604,36 @@ msgctxt "toolbar group"
 msgid "File"
 msgstr "Archivo"
 
+msgid "Fill"
+msgstr "Relleno"
+
 msgid "Fill (raster)"
 msgstr "Relleno (ráster)"
 
+msgid ""
+"Fill the shape with engraved lines in a pattern; the outline keeps its "
+"own layer"
+msgstr ""
+"Rellenar la forma con líneas grabadas en un patrón; el contorno mantiene "
+"su capa"
+
+msgid "Fill with a pattern"
+msgstr "Rellenar con un patrón"
+
 msgid "Fill with lines"
 msgstr "Rellenar con líneas"
+
+msgid ""
+"Fill: choose a pattern above, then click a closed shape (cut or outline) "
+"to fill it. Selected shapes get the pattern you choose. The outline stays"
+" on its layer; the pattern is engraved."
+msgstr ""
+"Relleno: elija un patrón arriba y haga clic en una forma cerrada (corte o"
+" contorno) para rellenarla. Las formas seleccionadas reciben el patrón "
+"elegido. El contorno se queda en su capa; el patrón se graba."
+
+msgid "Filled. Click another shape, or change the pattern above."
+msgstr "Rellenado. Haga clic en otra forma o cambie el patrón arriba."
 
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Disparar el láser brevemente (placas M3)"
@@ -703,6 +749,9 @@ msgstr "Origen: llevar el cabezal a la esquina de origen"
 msgid "Homed"
 msgstr "Cabezal en el origen"
 
+msgid "Honeycomb"
+msgstr "Panal"
+
 msgid "Image size"
 msgstr "Tamaño de la imagen"
 
@@ -801,6 +850,9 @@ msgstr "Color de la capa; haga clic para cambiarlo"
 msgid "Layer name; click to rename"
 msgstr "Nombre de la capa; haga clic para renombrarla"
 
+msgid "Layer of the fill pattern (outline engraving)"
+msgstr "Capa del patrón de relleno (grabado de contorno)"
+
 msgid ""
 "Layer of this shape: any layer from the panel on the left (cut, outline "
 "or engrave)"
@@ -825,6 +877,9 @@ msgstr "Peso de la curva de niveles"
 
 msgid "Line"
 msgstr "Línea"
+
+msgid "Lines"
+msgstr "Líneas"
 
 msgid "Loading cancelled"
 msgstr "Carga cancelada"
@@ -986,6 +1041,9 @@ msgstr "No hay ningún diseño cargado"
 msgid "No laser data was generated."
 msgstr "No se generaron datos para el láser."
 
+msgid "No pattern"
+msgstr "Sin patrón"
+
 msgid "Node"
 msgstr "Nodo"
 
@@ -1003,6 +1061,18 @@ msgstr "No hay nada que dibujar."
 
 msgid "Number of passes:"
 msgstr "Número de pasadas:"
+
+msgid "Only closed shapes on a cut or outline layer can be filled with a pattern."
+msgstr ""
+"Solo las formas cerradas en una capa de corte o de contorno se pueden "
+"rellenar con un patrón."
+
+msgid ""
+"Only drawn shapes can be filled. Ungroup an opened file first (Edit → "
+"Ungroup) to fill its shapes."
+msgstr ""
+"Solo se pueden rellenar las formas dibujadas. Desagrupe primero el "
+"archivo abierto (Editar → Desagrupar) para rellenar sus formas."
 
 msgctxt "toolbar"
 msgid "Open"
@@ -1054,6 +1124,9 @@ msgid "Paths from a G-code file; speeds come from the file (F words)"
 msgstr ""
 "Trayectorias de un archivo de código G; las velocidades vienen del "
 "archivo (palabras F)"
+
+msgid "Pattern removed."
+msgstr "Patrón eliminado."
 
 msgid "Pause or stop the running job"
 msgstr "Pausar o detener el trabajo en curso"
@@ -1418,6 +1491,9 @@ msgctxt "toolbar"
 msgid "Simulate"
 msgstr "Simular"
 
+msgid "Size of the pattern: distance between its lines"
+msgstr "Tamaño del patrón: distancia entre sus líneas"
+
 msgid "Smooth"
 msgstr "Suave"
 
@@ -1434,6 +1510,9 @@ msgstr ""
 "Ajustar a esquinas, centros, puntos medios y líneas de otros elementos y "
 "de la mesa, al dibujar y mover. Mantén Alt para no ajustar a nada por un "
 "momento."
+
+msgid "Space kept free between the pattern and the outline"
+msgstr "Espacio libre entre el patrón y el contorno"
 
 #, python-format
 msgid "Speed (%s)"
@@ -1775,6 +1854,9 @@ msgstr "Esperar a que el láser termine"
 msgid "Waiting for the laser to finish."
 msgstr "Esperando a que el láser termine."
 
+msgid "Waves"
+msgstr "Ondas"
+
 msgid "What kind of problem is it?"
 msgstr "¿Qué tipo de problema es?"
 
@@ -1809,6 +1891,9 @@ msgstr "Y"
 
 msgid "Y scale factor"
 msgstr "Factor de escala Y"
+
+msgid "Zigzag"
+msgstr "Zigzag"
 
 msgid "centre"
 msgstr "centro"

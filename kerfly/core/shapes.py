@@ -13,6 +13,11 @@ Operations:
     "fill"     area filled as a raster engraving (even-odd rule, so letters
                like "O" keep their holes)
 
+A closed cut or outline shape can also get a pattern fill (fill_pattern,
+kerfly.core.patterns): engraved lines inside it, as an extra vector engrave
+part, so the outline keeps its own layer (for example: the edge is cut, the
+inside gets engraved waves). fill_outline=False leaves the outline out.
+
 Units: millimetres in the spec; designs are in inches, y up, as everywhere in
 the core.
 
@@ -40,6 +45,12 @@ class ShapeSpec:
     hatch_spacing: float = 0.5    # hatch: distance between lines, mm
     hatch_angle: float = 45.0     # hatch: line direction, degrees counter-clockwise
     hatch_cross: bool = False     # hatch: second set of lines at 90 degrees
+    # pattern fill of a closed cut / outline shape (kerfly.core.patterns); "" = none
+    fill_pattern: str = ""
+    fill_spacing: float = 2.0     # mm: distance between the lines / size of one repeat
+    fill_angle: float = 0.0       # degrees counter-clockwise
+    fill_margin: float = 0.0      # mm kept free inside the outline
+    fill_outline: bool = True     # the outline is cut / engraved too
     tabs: int = 0                 # cut: bridges per closed outline that hold the part in the sheet
     tab_width: float = 1.0        # cut: width of each bridge, mm
     corner_radius: float = 0.0    # rectangle, mm
@@ -193,6 +204,13 @@ def _fill_image(polys, x0, y0, w, h, dpi=FILL_DPI):
     return ImageChops.invert(mask.convert("L"))
 
 
+def has_pattern_fill(spec):
+    """A pattern fill applies: closed shape, cut or outline, a known pattern."""
+    from .patterns import PATTERN_CODES
+    return bool(spec.fill_pattern) and spec.fill_pattern in PATTERN_CODES and spec.closed \
+        and spec.operation in ("cut", "engrave")
+
+
 def build_design(spec):
     """Design for a shape. Bounds are the shape's bounding box."""
     polys = outlines(spec)
@@ -220,6 +238,17 @@ def build_design(spec):
         design.raster.set_image(_fill_image(polys, xmin, ymin, xmax - xmin, ymax - ymin))
     else:
         segments = []
+        fill_segments = []
+        if has_pattern_fill(spec):
+            from .patterns import pattern_lines
+            # y down in the shape, so a positive angle turns counter-clockwise on the bed
+            for line in pattern_lines(spec.fill_pattern, polys, max(0.05, float(spec.fill_spacing)),
+                                      -float(spec.fill_angle), max(0.0, float(spec.fill_margin))):
+                pts = [to_design(x, y) for x, y in line]
+                for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
+                    fill_segments.append([x1, y1, x2, y2])
+            if not spec.fill_outline:
+                polys = []
         if spec.operation == "cut" and spec.tabs > 0:
             pieces = []
             for p in polys:
@@ -230,7 +259,34 @@ def build_design(spec):
             pts = [to_design(x, y) for x, y in p]
             for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
                 segments.append([x1, y1, x2, y2])
-        target = design.vector_engrave if spec.operation in ("engrave", "hatch") else design.vector_cut
-        target.make_ecoords(segments, scale=1.0)
+        if spec.operation in ("engrave", "hatch"):
+            segments += fill_segments                   # outline and fill on the same outline layer
+            fill_segments = []
+            design.vector_engrave.make_ecoords(segments, scale=1.0)
+        else:
+            design.vector_cut.make_ecoords(segments, scale=1.0)
+        if fill_segments:                               # cut outline: the fill is a separate engrave part
+            design.vector_engrave.make_ecoords(fill_segments, scale=1.0)
     design.bounds = (0.0, (xmax - xmin) / MM, 0.0, h_in)
     return design
+
+
+def element_contains(element, x, y):
+    """Whether the bed point (x, y) (inches, y up) lies inside the closed
+    outlines of a drawn element (even-odd: not in its holes)."""
+    spec = element.shape
+    if spec is None or not spec.closed:
+        return False
+    polys = [p for p in outlines(spec) if len(p) > 2]
+    if not polys:
+        return False
+    xmin, _xmax, ymin, ymax = _bounds_mm(polys)
+    h_in = (ymax - ymin) / MM
+    f = element.transform()
+    inside = False
+    for poly in polys:
+        pts = [f((px - xmin) / MM, h_in - (py - ymin) / MM) for px, py in poly]
+        for (x1, y1), (x2, y2) in zip(pts, pts[1:] + pts[:1]):
+            if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+                inside = not inside
+    return inside

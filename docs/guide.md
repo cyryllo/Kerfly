@@ -72,7 +72,7 @@ are used. **File → Save settings as default** keeps changed settings.
   crosshair is the laser head. Elements that stick out of the bed are drawn
   red, and the job cannot start until they are moved back.
 - **Drawing tools** (right): select, edit nodes, rectangle, ellipse, polygon,
-  line, polyline, pen, freehand, measure, text.
+  line, polyline, pen, freehand, measure, text, fill with a pattern.
 
 Mouse in the bed view: the wheel zooms in and out (not further than the
 whole bed); the middle or right button drags the view; **Ctrl+0** fits the
@@ -160,6 +160,7 @@ before or after drawing.
 | Freehand | F | Draw with the button held; end near the start to close the shape |
 | Measure | M | Drag between two points: distance, width, height and angle |
 | Text | T | Click, then type in the **Content** field; choose the font, size, bold and italic |
+| Fill with a pattern | Shift+F | Choose a pattern in the options bar, then click closed shapes to fill them (see below) |
 
 **Snapping.** Drawing and moving snap to the corners, centres and edges of
 other elements and to the bed (**View → Snap to objects**, Ctrl+;), and to
@@ -187,6 +188,28 @@ its nodes.
 below), then press **Fill with lines** in the **Hatch** section of the
 options bar. Set the distance between the lines, their angle, and **#** for a
 second set at 90°. Holes in the shape stay empty.
+
+**Pattern fills.** *(not yet tested on a laser)* The **Fill with a pattern**
+tool (the bucket, Shift+F) fills closed shapes with engraved lines in a
+pattern: lines, cross-hatch, waves, zigzag, circles, honeycomb, diamonds or
+bricks.
+
+![Shapes filled with patterns](img/en/fill.png)
+
+1. Choose the tool and a pattern in the **Fill** section of the options bar.
+   Set its size (the distance between its lines), its angle and a margin
+   kept free inside the outline.
+2. Click a closed shape on a cut or outline layer. Click more shapes to fill
+   them too; shapes that are selected get the pattern you choose at once.
+3. The outline stays on its layer: a cut shape is still cut, and the pattern
+   is engraved on an outline layer (for a cut shape a second **Layer** list
+   chooses which). The square button next to the pattern list leaves the
+   outline out, so only the pattern is engraved.
+
+A selected shape shows the same **Fill** section with the select tool: change
+the pattern there, or choose **No pattern** to remove it. Holes in the shape
+(for example in letters) stay empty. An opened SVG or DXF file must be
+ungrouped first (Edit → Ungroup), so that its lines become shapes.
 
 **Bridges (tabs).** A closed shape on a cut layer can keep small uncut
 bridges that hold the part in the sheet: set their number and width in the
@@ -298,7 +321,7 @@ Kerfly is available in English, Polish, German, Spanish and French.
 | Alt (held) | Snap to nothing for a moment |
 | Ctrl+, | Settings |
 | F1 | This user guide |
-| S, N, R, E, P, L, Shift+L, B, F, M, T | Drawing tools (see section 5) |
+| S, N, R, E, P, L, Shift+L, B, F, M, T, Shift+F | Drawing tools (see section 5) |
 
 <a id="s10"></a>
 

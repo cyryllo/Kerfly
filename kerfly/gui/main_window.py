@@ -144,6 +144,9 @@ class MainWindow(QMainWindow):
         self.preview.signals.edit_nodes.connect(self._edit_nodes_of)
         self.preview.signals.node_selection.connect(self._node_selection_changed)
         self.preview.signals.measured.connect(self._preview_measured)
+        self.preview.signals.fill_clicked.connect(self._fill_clicked)
+        # what the Fill tool gives to the shapes it is clicked on
+        self.fill_defaults = ShapeSpec(kind="rectangle", fill_pattern="lines", fill_spacing=2.0)
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
@@ -487,7 +490,8 @@ class MainWindow(QMainWindow):
                  ("pen", "vector-bezier-2", N_("Pen (curves)"), "B"),
                  ("freehand", "scribble", N_("Freehand"), "F"),
                  ("measure", "ruler-measure", N_("Measure"), "M"),
-                 ("text", "typography", N_("Text"), "T")]
+                 ("text", "typography", N_("Text"), "T"),
+                 ("fill", "bucket-droplet", N_("Fill with a pattern"), "Shift+F")]
         for key, icon, name, shortcut in tools:
             act = QAction(icons.tabler(icon), _(name), self)
             act.setCheckable(True)
@@ -518,6 +522,10 @@ class MainWindow(QMainWindow):
             self.status(_("Pen: click for a corner, press and drag for a smooth curve. Click the first point to "
                           "close the shape; double-click or Enter finishes an open path. Backspace removes the "
                           "last node, Shift keeps 45\u00b0 angles, Esc cancels."))
+        if tool == "fill":
+            self.status(_("Fill: choose a pattern above, then click a closed shape (cut or outline) to fill it. "
+                          "Selected shapes get the pattern you choose. The outline stays on its layer; the "
+                          "pattern is engraved."))
         if tool == "polyline":
             self.status(_("Polyline: click the corners. Click the first point to close the shape; double-click or "
                           "press Enter to finish an open line. Backspace removes the last corner, Shift keeps "
@@ -540,6 +548,11 @@ class MainWindow(QMainWindow):
             ed = self.preview.node_editor
             self.tool_options.set_node_selection(len(ed.selected) if ed.path is not None else 0)
             return
+        if self.preview.tool == "fill":
+            if force or getattr(self, "_options_target", None) != "fill":
+                self._options_target, self._options_element = "fill", None
+                self.tool_options.show_fill_tool(self.fill_defaults)
+            return
         e = self.selected
         if e is not None and e.shape is not None:
             if not force and getattr(self, "_options_target", None) == "selected" \
@@ -557,9 +570,20 @@ class MainWindow(QMainWindow):
 
     def _tool_options_changed(self, spec):
         target = getattr(self, "_options_target", None)
+        if target == "fill":
+            self.fill_defaults = spec
+            chosen = [e for e in self._selection() if self._fillable(e)]
+            if chosen:                                   # selected shapes take the chosen pattern
+                self._checkpoint()
+                for e in chosen:
+                    self._fill_element(e, checkpoint=False)
+            return
         if target == "selected" and self.selected is not None and self.selected.shape is not None:
             before = self.selected.shape.operation
+            had_fill = bool(self.selected.shape.fill_pattern)
             self._apply_shape(self.selected, spec)
+            if had_fill != bool(spec.fill_pattern):    # the fill settings appear / go
+                QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
         elif target in self.shape_defaults:
             before = self.shape_defaults[target].operation
             self.shape_defaults[target] = spec
@@ -568,9 +592,61 @@ class MainWindow(QMainWindow):
         if before != spec.operation:              # e.g. hatch shows its own settings
             QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
 
-    def _apply_shape(self, element, spec):
+    # ---- Fill tool ----------------------------------------------------------
+    @staticmethod
+    def _fillable(e):
+        return e.shape is not None and e.shape.closed and e.shape.operation in ("cut", "engrave", "hatch")
+
+    def _fill_element(self, e, checkpoint=True):
+        """Give the Fill tool's pattern to a drawn closed shape (a hatch becomes
+        an outline with the pattern)."""
+        spec = e.shape.copy()
+        d = self.fill_defaults
+        spec.fill_pattern, spec.fill_spacing, spec.fill_angle = d.fill_pattern, d.fill_spacing, d.fill_angle
+        spec.fill_margin, spec.fill_outline = d.fill_margin, d.fill_outline
+        if spec.operation == "hatch":
+            spec.operation = "engrave"
+        self._apply_shape(e, spec, checkpoint=checkpoint)
+
+    def _fill_clicked(self, point):
+        """The Fill tool was clicked at a point of the bed view (scene mm)."""
+        from kerfly.core.shapes import element_contains
+        try:
+            settings = self.job_settings()
+            bed_w, _bed_h = config.bed_size_inches(self.values)
+        except ValueError as ex:
+            self.status(str(ex), error=True)
+            return
+        x = point.x() / 25.4
+        if settings.home_upper_right:
+            x = bed_w - x
+        y = -point.y() / 25.4
+        hits = [e for e in self.elements if e.visible and e.bounds[0] <= x <= e.bounds[1]
+                and e.bounds[2] <= y <= e.bounds[3]]
+        if not hits:
+            self.status(_("Click inside a shape to fill it."), error=True)
+            return
+        inside = [e for e in hits if element_contains(e, x, y)]
+        e = min(inside or hits, key=lambda h: (h.bounds[1] - h.bounds[0]) * (h.bounds[3] - h.bounds[2]))
+        if e.shape is None:
+            self.status(_("Only drawn shapes can be filled. Ungroup an opened file first (Edit → Ungroup) to "
+                          "fill its shapes."), error=True)
+            return
+        if not self._fillable(e):
+            self.status(_("Only closed shapes on a cut or outline layer can be filled with a pattern."), error=True)
+            return
+        self._fill_element(e)
+        self.preview.select_element(e)
+        self.selected = e
+        if self.fill_defaults.fill_pattern:
+            self.status(_("Filled. Click another shape, or change the pattern above."))
+        else:
+            self.status(_("Pattern removed."))
+
+    def _apply_shape(self, element, spec, checkpoint=True):
         """Rebuild a drawn element from a changed spec, keeping its top-left corner."""
-        self._checkpoint()
+        if checkpoint:
+            self._checkpoint()
         if spec.kind == "text":
             update_text_spec(spec)
         x, y = element.x, element.y
@@ -2128,6 +2204,20 @@ class MainWindow(QMainWindow):
                            "engrave)"))
         combo.currentIndexChanged.connect(lambda _i, c=combo: self._assign_shape_layer(c.currentData()))
         grid.addWidget(combo, 0, 0)
+        from kerfly.core.shapes import has_pattern_fill
+        if has_pattern_fill(e.shape) and e.shape.operation == "cut":
+            # the pattern is a separate outline-engrave part: its own layer
+            fill = QComboBox()
+            for layer in self.layers:
+                if layer.kind == ENGRAVE:
+                    fill.addItem(layer.name, layer.id)
+                    fill.setItemData(fill.count() - 1, QColor(layer.color), Qt.DecorationRole)
+            current = layer_of(e, ENGRAVE, self.layers)
+            fill.setCurrentIndex(max(0, fill.findData(current.id if current else None)))
+            fill.setFixedWidth(chars_width(fill, 14) + 48)
+            fill.setToolTip(_("Layer of the fill pattern (outline engraving)"))
+            fill.currentIndexChanged.connect(lambda _i, c=fill: self._assign_layer(ENGRAVE, c.currentData()))
+            grid.addWidget(fill, 1, 0)
 
     def _assign_shape_layer(self, layer_id):
         """Put the selected drawn shape on a layer, changing its operation when

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 12:22+0100\n"
+"POT-Creation-Date: 2026-11-05 16:24+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -268,6 +268,9 @@ msgstr "Objazd konturu z włączonym laserem"
 msgid "Break apart"
 msgstr "Rozbij na kształty"
 
+msgid "Bricks"
+msgstr "Cegły"
+
 msgid "Bridges"
 msgstr "Mostki"
 
@@ -313,6 +316,9 @@ msgstr "Wyśrodkuj zaznaczony element albo cały projekt na stole"
 msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr "Wybierz materiał, aby ustawić prędkość, przejścia i moc wszystkich warstw"
 
+msgid "Circles"
+msgstr "Okręgi"
+
 msgid ""
 "Click a node (small square) to select it; Shift+click for more. Then use "
 "the buttons above."
@@ -325,6 +331,9 @@ msgstr "Kliknij kształt, aby edytować jego węzły."
 
 msgid "Click an element on the bed to select it."
 msgstr "Kliknij element na stole, aby go zaznaczyć."
+
+msgid "Click inside a shape to fill it."
+msgstr "Kliknij wewnątrz kształtu, żeby go wypełnić."
 
 msgid "Click the opened file or the group first, then Ungroup."
 msgstr "Najpierw kliknij otwarty plik albo grupę, potem Rozgrupuj."
@@ -391,6 +400,9 @@ msgstr "Tworzenie obrazu półtonowego."
 msgid "Creating scan lines: %s%%"
 msgstr "Tworzenie linii skanowania: %s%%"
 
+msgid "Cross-hatch"
+msgstr "Krzyżowe"
+
 msgid "Cross-hatch: a second set of lines at 90°"
 msgstr "Krzyżowe: druga warstwa linii pod kątem 90°"
 
@@ -408,6 +420,9 @@ msgstr "Najpierw wycinaj kształty wewnętrzne"
 
 msgid "Cut open"
 msgstr "Rozetnij"
+
+msgid "Cut or engrave the outline too (off: only the pattern)"
+msgstr "Tnij albo graweruj także obrys (wyłączone: sam wzór)"
 
 msgid "Cut the shape open at the selected node"
 msgstr "Rozetnij kształt w zaznaczonym węźle"
@@ -458,6 +473,9 @@ msgstr "Import projektu"
 msgid "Diagnostic report saved: %s"
 msgstr "Zapisano raport diagnostyczny: %s"
 
+msgid "Diamonds"
+msgstr "Romby"
+
 msgid "Difference"
 msgstr "Różnica"
 
@@ -466,6 +484,9 @@ msgstr "Różnica: wytnij pozostałe zaznaczone kształty z pierwszego"
 
 msgid "Direction of the lines"
 msgstr "Kierunek linii"
+
+msgid "Direction of the pattern"
+msgstr "Kierunek wzoru"
 
 #, python-format
 msgid ""
@@ -579,11 +600,36 @@ msgctxt "toolbar group"
 msgid "File"
 msgstr "Plik"
 
+msgid "Fill"
+msgstr "Wypełnienie"
+
 msgid "Fill (raster)"
 msgstr "Grawer"
 
+msgid ""
+"Fill the shape with engraved lines in a pattern; the outline keeps its "
+"own layer"
+msgstr ""
+"Wypełnij kształt grawerowanymi liniami we wzór; obrys zostaje na swojej "
+"warstwie"
+
+msgid "Fill with a pattern"
+msgstr "Wypełnij wzorem"
+
 msgid "Fill with lines"
 msgstr "Wypełnij liniami"
+
+msgid ""
+"Fill: choose a pattern above, then click a closed shape (cut or outline) "
+"to fill it. Selected shapes get the pattern you choose. The outline stays"
+" on its layer; the pattern is engraved."
+msgstr ""
+"Wypełnienie: wybierz wzór powyżej, potem kliknij zamknięty kształt "
+"(cięcie albo obrys), żeby go wypełnić. Zaznaczone kształty dostają "
+"wybrany wzór. Obrys zostaje na swojej warstwie, a wzór jest grawerowany."
+
+msgid "Filled. Click another shape, or change the pattern above."
+msgstr "Wypełniono. Kliknij kolejny kształt albo zmień wzór powyżej."
 
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Krótko odpal laser (płyty M3)"
@@ -699,6 +745,9 @@ msgstr "Bazowanie: przesuń głowicę do pozycji bazowej"
 msgid "Homed"
 msgstr "Głowica w pozycji bazowej"
 
+msgid "Honeycomb"
+msgstr "Plaster miodu"
+
 msgid "Image size"
 msgstr "Rozmiar obrazu"
 
@@ -795,6 +844,9 @@ msgstr "Kolor warstwy; kliknij, aby zmienić"
 msgid "Layer name; click to rename"
 msgstr "Nazwa warstwy; kliknij, aby zmienić"
 
+msgid "Layer of the fill pattern (outline engraving)"
+msgstr "Warstwa wzoru wypełnienia (obrys)"
+
 msgid ""
 "Layer of this shape: any layer from the panel on the left (cut, outline "
 "or engrave)"
@@ -819,6 +871,9 @@ msgstr "Waga krzywej poziomów"
 
 msgid "Line"
 msgstr "Linia"
+
+msgid "Lines"
+msgstr "Linie"
 
 msgid "Loading cancelled"
 msgstr "Anulowano wczytywanie"
@@ -983,6 +1038,9 @@ msgstr "Nie wczytano projektu"
 msgid "No laser data was generated."
 msgstr "Nie wygenerowano danych dla lasera."
 
+msgid "No pattern"
+msgstr "Bez wzoru"
+
 msgid "Node"
 msgstr "Węzeł"
 
@@ -1000,6 +1058,18 @@ msgstr "Nie ma czego narysować."
 
 msgid "Number of passes:"
 msgstr "Liczba przejść:"
+
+msgid "Only closed shapes on a cut or outline layer can be filled with a pattern."
+msgstr ""
+"Wzorem można wypełnić tylko zamknięte kształty na warstwie cięcia albo "
+"obrysu."
+
+msgid ""
+"Only drawn shapes can be filled. Ungroup an opened file first (Edit → "
+"Ungroup) to fill its shapes."
+msgstr ""
+"Wypełniać można tylko narysowane kształty. Otwarty plik najpierw "
+"rozgrupuj (Edycja → Rozgrupuj), żeby wypełnić jego kształty."
 
 msgctxt "toolbar"
 msgid "Open"
@@ -1049,6 +1119,9 @@ msgstr "Ścieżka"
 
 msgid "Paths from a G-code file; speeds come from the file (F words)"
 msgstr "Ścieżki z pliku G-code; prędkości są zapisane w pliku (polecenia F)"
+
+msgid "Pattern removed."
+msgstr "Usunięto wzór."
 
 msgid "Pause or stop the running job"
 msgstr "Wstrzymaj lub zatrzymaj trwające zadanie"
@@ -1415,6 +1488,9 @@ msgctxt "toolbar"
 msgid "Simulate"
 msgstr "Symulacja"
 
+msgid "Size of the pattern: distance between its lines"
+msgstr "Rozmiar wzoru: odstęp między jego liniami"
+
 msgid "Smooth"
 msgstr "Gładki"
 
@@ -1431,6 +1507,9 @@ msgstr ""
 "Przyciągaj do narożników, środków, połówek i linii innych elementów oraz "
 "stołu, przy rysowaniu i przesuwaniu. Przytrzymaj Alt, aby chwilowo nic "
 "nie przyciągało."
+
+msgid "Space kept free between the pattern and the outline"
+msgstr "Wolne miejsce między wzorem a obrysem"
 
 #, python-format
 msgid "Speed (%s)"
@@ -1768,6 +1847,9 @@ msgstr "Czekaj na zakończenie pracy lasera"
 msgid "Waiting for the laser to finish."
 msgstr "Oczekiwanie na zakończenie pracy lasera."
 
+msgid "Waves"
+msgstr "Fale"
+
 msgid "What kind of problem is it?"
 msgstr "Jaki to problem?"
 
@@ -1801,6 +1883,9 @@ msgstr "Y"
 
 msgid "Y scale factor"
 msgstr "Współczynnik skali Y"
+
+msgid "Zigzag"
+msgstr "Zygzak"
 
 msgid "centre"
 msgstr "środek"

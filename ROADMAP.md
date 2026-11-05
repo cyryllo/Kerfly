@@ -106,7 +106,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Feature | MeerK40t reference |
 |---|---|
 | Text from Hershey / TrueType / SHX fonts (no Inkscape) | `extra/hershey.py`, `tools/ttfparser.py`, `tools/shxparser.py`, `tools/jhfparser.py` |
-| ~~Hatch fill~~ (done: spacing, angle, cross-hatch); pattern fills (planned below) | `fill/fills.py`, `fill/patterns.py` (`fill/patternfill.py` is obsolete in MeerK40t) |
+| ~~Hatch fill~~ (done: spacing, angle, cross-hatch); pattern fills (step 1 done, see below) | `fill/fills.py`, `fill/patterns.py` (`fill/patternfill.py` is obsolete in MeerK40t) |
 | Living hinges | `tools/livinghinges.py`, `tools/living_hinge_optimizer.py` |
 | Image dithering (more methods than Floyd-Steinberg) | `image/dither.py` |
 | Image adjustments (contrast, sharpen, crop, split) | `image/imagetools.py`, `extra/imageactions.py`, `gui/imagesplitter.py` |
@@ -115,10 +115,19 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Boolean operations on shapes~~ (done: union, difference, intersection, exclusion) | `tools/polybool.py`, `extra/cag.py` |
 | Kerf test and material test generators (material test: planned after the first laser test) | `tools/kerftest.py`, `gui/materialtest.py` |
 
-### Pattern fills (planned)
+### Pattern fills
 
 Any closed shape (drawn, or from an ungrouped SVG / DXF) can be filled with a
 pattern, clipped to its outline; holes stay empty.
+
+- [x] Step 1 (0.17): Fill tool (bucket, Shift+F), Fill section in the options
+  bar, outline kept on its own layer (or left out), spacing / angle / margin,
+  eight patterns: lines, cross-hatch, waves, zigzag, circles, honeycomb,
+  diamonds, bricks. Own clipping code (`kerfly/core/patterns.py`), no
+  optional library needed.
+- [ ] Step 2: more patterns (below), concentric rings following the outline
+  (needs path offset, shared with kerf compensation), custom tile, line width
+  of the motif.
 
 - **The outline stays.** It keeps its own layer (cut or outline), and the fill
   is a separate part on a vector engrave layer, with its own speed and power.

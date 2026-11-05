@@ -72,6 +72,7 @@ class ViewSignals(QObject):
     measured = Signal(float, float)               # dx, dy of the ruler in mm (screen right / down)
     edit_nodes = Signal(object)                   # element double-clicked with the select tool
     node_selection = Signal(int)                  # number of selected nodes in the node tool
+    fill_clicked = Signal(QPointF)                # fill tool clicked at this point (scene mm)
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -380,7 +381,8 @@ class PreviewView(QGraphicsView):
             return
         drawing = tool != "select"
         self.setDragMode(QGraphicsView.NoDrag if drawing else QGraphicsView.RubberBandDrag)
-        self.viewport().setCursor(Qt.CrossCursor if drawing else Qt.ArrowCursor)
+        cursor = Qt.PointingHandCursor if tool == "fill" else Qt.CrossCursor if drawing else Qt.ArrowCursor
+        self.viewport().setCursor(cursor)
 
     # ---- snapping: other elements first, then the grid ------------------------
     @staticmethod
@@ -716,6 +718,10 @@ class PreviewView(QGraphicsView):
         super().mouseDoubleClickEvent(event)
 
     def mousePressEvent(self, event):
+        if self.tool == "fill" and event.button() == Qt.LeftButton:
+            self.signals.fill_clicked.emit(self.mapToScene(event.position().toPoint()))
+            event.accept()
+            return
         if self.tool == "measure" and event.button() == Qt.LeftButton:
             self._clear_measure()
             self._measure_start = self.snap_point(self.mapToScene(event.position().toPoint()))
@@ -766,7 +772,7 @@ class PreviewView(QGraphicsView):
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        if self.tool not in ("select", "nodes") and self._draw_start is None and not self._poly_points \
+        if self.tool not in ("select", "nodes", "fill") and self._draw_start is None and not self._poly_points \
                 and not self._pen and self._freehand is None and self._measure_start is None \
                 and not event.buttons():
             self.snap_point(self.mapToScene(event.position().toPoint()))     # shows where a click lands

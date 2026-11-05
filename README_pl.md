@@ -26,7 +26,9 @@ Narzędzia rysowania są na pasku po prawej stronie stołu, jak w LightBurnie:
 prostokąt (także z zaokrąglonymi rogami), elipsa, wielokąt foremny, linia,
 łamana, pióro (krzywe), rysowanie odręczne i tekst dowolną zainstalowaną
 czcionką. Każdy kształt można wyciąć, wygrawerować jako obrys, wypełnić liniami
-(kreskowanie) albo wygrawerować rastrowo. Pozycja, rozmiar i obrót
+(kreskowanie) albo wygrawerować rastrowo. Narzędzie **Wypełnienie** (wiaderko)
+wypełnia zamknięte kształty grawerowanymi wzorami (linie, fale, plaster miodu,
+cegły…), a ich obrys nadal jest cięty. Pozycja, rozmiar i obrót
 zaznaczonego elementu oraz opcje kształtu lub narzędzia (warstwa, promień
 rogów, tekst, czcionka) są na pasku nad stołem.
 

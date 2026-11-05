@@ -671,6 +671,73 @@ def test_curves():
     return errors
 
 
+def test_pattern_fill():
+    """Pattern fills: every pattern stays inside the shape, out of its holes and
+    `margin` away from the outline; the outline keeps its own part; saved in projects."""
+    import math
+    from kerfly.core import patterns, project
+    from kerfly.core.layout import Element
+    from kerfly.core.shapes import ShapeSpec, build_design, element_contains
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s pattern fill: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    outer = [(0, 0), (100, 0), (100, 60), (0, 60), (0, 0)]
+    hole = [(30, 20), (70, 20), (70, 40), (30, 40), (30, 20)]
+
+    def dist_to_outline(x, y):
+        best = 1e9
+        for ring in (outer, hole):
+            for (x1, y1), (x2, y2) in zip(ring, ring[1:]):
+                ex, ey = x2 - x1, y2 - y1
+                t = max(0.0, min(1.0, ((x - x1) * ex + (y - y1) * ey) / (ex * ex + ey * ey)))
+                best = min(best, math.hypot(x1 + t * ex - x, y1 + t * ey - y))
+        return best
+
+    for code in patterns.PATTERN_CODES:
+        for margin in (0.0, 2.0):
+            lines = patterns.pattern_lines(code, [outer, hole], 5.0, 20.0, margin)
+            pts = [p for line in lines for p in line]
+            # points on the polylines and in the middle of every piece
+            mids = [((a[0] + b[0]) / 2, (a[1] + b[1]) / 2) for line in lines for a, b in zip(line, line[1:])]
+            bad_hole = [p for p in mids if 30 < p[0] < 70 and 20 < p[1] < 40]
+            bad_out = [p for p in pts + mids if not (-1e-6 <= p[0] <= 100 + 1e-6 and -1e-6 <= p[1] <= 60 + 1e-6)]
+            near = min((dist_to_outline(*p) for p in pts + mids), default=0.0)
+            ok = len(lines) > 3 and not bad_hole and not bad_out and (margin == 0 or near >= margin - 0.02)
+            check("%s, margin %g mm: inside, holes empty" % (code, margin), ok,
+                  "(%d lines, closest %.3f mm)" % (len(lines), near))
+
+    # shapes: the cut outline stays a cut part, the pattern is an engrave part
+    cut = build_design(ShapeSpec(kind="ellipse", width=60, height=40, operation="cut",
+                                 fill_pattern="waves", fill_spacing=3.0))
+    plain = build_design(ShapeSpec(kind="ellipse", width=60, height=40, operation="cut"))
+    no_outline = build_design(ShapeSpec(kind="ellipse", width=60, height=40, operation="cut",
+                                        fill_pattern="waves", fill_spacing=3.0, fill_outline=False))
+    line = build_design(ShapeSpec(kind="line", width=30, height=0, operation="cut", fill_pattern="waves"))
+    check("cut outline + engraved pattern; outline can be left out",
+          cut.vector_cut.ecoords == plain.vector_cut.ecoords and len(cut.vector_engrave.ecoords) > 100
+          and not no_outline.vector_cut.ecoords and len(no_outline.vector_engrave.ecoords) > 100
+          and not line.vector_engrave.ecoords and cut.bounds == plain.bounds)
+
+    # the Fill tool finds shapes by point, not inside their holes
+    ring = ShapeSpec(kind="path", subpaths=[], operation="cut")
+    rect = ShapeSpec(kind="rectangle", width=20, height=10, operation="cut")
+    e = Element(build_design(rect), x=1.0, y=-1.0, shape=rect)
+    check("point inside a shape", element_contains(e, 1.2, -1.1) and not element_contains(e, 0.9, -1.1)
+          and not element_contains(Element(build_design(ring), shape=ring), 0.0, 0.0))
+
+    # saved and opened with a project
+    spec = ShapeSpec(kind="rectangle", operation="engrave", fill_pattern="honeycomb", fill_spacing=4.5,
+                     fill_angle=30.0, fill_margin=1.0, fill_outline=False)
+    back = project._shape_from_dict(project._shape_to_dict(spec))
+    check("fill settings saved in projects", (back.fill_pattern, back.fill_spacing, back.fill_angle, back.fill_margin,
+                                              back.fill_outline) == ("honeycomb", 4.5, 30.0, 1.0, False))
+    return errors
+
+
 def test_simulate():
     """Job simulation: layer order, travel moves, durations from the layer speeds."""
     from kerfly.core.layers import default_layers, CUT
@@ -765,6 +832,7 @@ def main():
     failures += test_snap()
     failures += test_curves()
     failures += test_simulate()
+    failures += test_pattern_fill()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

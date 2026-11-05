@@ -7,6 +7,20 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
+## Unreleased
+
+### New
+
+- **Pattern fills.** The new **Fill with a pattern** tool (bucket, Shift+F, on
+  the tool strip) fills closed shapes with engraved lines in a pattern: lines,
+  cross-hatch, waves, zigzag, circles, honeycomb, diamonds or bricks, with
+  size, angle and a margin from the outline. Click a shape to fill it;
+  selected shapes get the chosen pattern at once. The outline keeps its own
+  layer, so a cut shape is still cut and the pattern is engraved on an
+  outline layer (a second Layer list chooses which); the outline can also be
+  left out. Holes stay empty. A selected shape shows the Fill section to
+  change or remove its pattern. Saved in projects, one undo step.
+
 ## 0.16.0 (2026-11-05)
 
 ### New

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 12:22+0100\n"
+"POT-Creation-Date: 2026-11-05 16:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -257,6 +257,9 @@ msgstr ""
 msgid "Break apart"
 msgstr ""
 
+msgid "Bricks"
+msgstr ""
+
 msgid "Bridges"
 msgstr ""
 
@@ -298,6 +301,9 @@ msgstr ""
 msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr ""
 
+msgid "Circles"
+msgstr ""
+
 msgid ""
 "Click a node (small square) to select it; Shift+click for more. Then use "
 "the buttons above."
@@ -307,6 +313,9 @@ msgid "Click a shape to edit its nodes."
 msgstr ""
 
 msgid "Click an element on the bed to select it."
+msgstr ""
+
+msgid "Click inside a shape to fill it."
 msgstr ""
 
 msgid "Click the opened file or the group first, then Ungroup."
@@ -374,6 +383,9 @@ msgstr ""
 msgid "Creating scan lines: %s%%"
 msgstr ""
 
+msgid "Cross-hatch"
+msgstr ""
+
 msgid "Cross-hatch: a second set of lines at 90°"
 msgstr ""
 
@@ -390,6 +402,9 @@ msgid "Cut inside shapes first"
 msgstr ""
 
 msgid "Cut open"
+msgstr ""
+
+msgid "Cut or engrave the outline too (off: only the pattern)"
 msgstr ""
 
 msgid "Cut the shape open at the selected node"
@@ -441,6 +456,9 @@ msgstr ""
 msgid "Diagnostic report saved: %s"
 msgstr ""
 
+msgid "Diamonds"
+msgstr ""
+
 msgid "Difference"
 msgstr ""
 
@@ -448,6 +466,9 @@ msgid "Difference: cut the other selected shapes out of the first one"
 msgstr ""
 
 msgid "Direction of the lines"
+msgstr ""
+
+msgid "Direction of the pattern"
 msgstr ""
 
 #, python-format
@@ -552,10 +573,30 @@ msgctxt "toolbar group"
 msgid "File"
 msgstr ""
 
+msgid "Fill"
+msgstr ""
+
 msgid "Fill (raster)"
 msgstr ""
 
+msgid ""
+"Fill the shape with engraved lines in a pattern; the outline keeps its "
+"own layer"
+msgstr ""
+
+msgid "Fill with a pattern"
+msgstr ""
+
 msgid "Fill with lines"
+msgstr ""
+
+msgid ""
+"Fill: choose a pattern above, then click a closed shape (cut or outline) "
+"to fill it. Selected shapes get the pattern you choose. The outline stays"
+" on its layer; the pattern is engraved."
+msgstr ""
+
+msgid "Filled. Click another shape, or change the pattern above."
 msgstr ""
 
 msgid "Fire the laser briefly (M3 boards)"
@@ -665,6 +706,9 @@ msgstr ""
 msgid "Homed"
 msgstr ""
 
+msgid "Honeycomb"
+msgstr ""
+
 msgid "Image size"
 msgstr ""
 
@@ -759,6 +803,9 @@ msgstr ""
 msgid "Layer name; click to rename"
 msgstr ""
 
+msgid "Layer of the fill pattern (outline engraving)"
+msgstr ""
+
 msgid ""
 "Layer of this shape: any layer from the panel on the left (cut, outline "
 "or engrave)"
@@ -780,6 +827,9 @@ msgid "Levels curve weight"
 msgstr ""
 
 msgid "Line"
+msgstr ""
+
+msgid "Lines"
 msgstr ""
 
 msgid "Loading cancelled"
@@ -938,6 +988,9 @@ msgstr ""
 msgid "No laser data was generated."
 msgstr ""
 
+msgid "No pattern"
+msgstr ""
+
 msgid "Node"
 msgstr ""
 
@@ -954,6 +1007,14 @@ msgid "Nothing to draw."
 msgstr ""
 
 msgid "Number of passes:"
+msgstr ""
+
+msgid "Only closed shapes on a cut or outline layer can be filled with a pattern."
+msgstr ""
+
+msgid ""
+"Only drawn shapes can be filled. Ungroup an opened file first (Edit → "
+"Ungroup) to fill its shapes."
 msgstr ""
 
 msgctxt "toolbar"
@@ -1003,6 +1064,9 @@ msgid "Path"
 msgstr ""
 
 msgid "Paths from a G-code file; speeds come from the file (F words)"
+msgstr ""
+
+msgid "Pattern removed."
 msgstr ""
 
 msgid "Pause or stop the running job"
@@ -1341,6 +1405,9 @@ msgctxt "toolbar"
 msgid "Simulate"
 msgstr ""
 
+msgid "Size of the pattern: distance between its lines"
+msgstr ""
+
 msgid "Smooth"
 msgstr ""
 
@@ -1353,6 +1420,9 @@ msgstr ""
 msgid ""
 "Snap to corners, centres, middles and lines of other elements and of the "
 "bed, when drawing and moving. Hold Alt to snap nothing for a moment."
+msgstr ""
+
+msgid "Space kept free between the pattern and the outline"
 msgstr ""
 
 #, python-format
@@ -1652,6 +1722,9 @@ msgstr ""
 msgid "Waiting for the laser to finish."
 msgstr ""
 
+msgid "Waves"
+msgstr ""
+
 msgid "What kind of problem is it?"
 msgstr ""
 
@@ -1682,6 +1755,9 @@ msgid "Y"
 msgstr ""
 
 msgid "Y scale factor"
+msgstr ""
+
+msgid "Zigzag"
 msgstr ""
 
 msgid "centre"

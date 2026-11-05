@@ -75,7 +75,7 @@ ustawienia jako domyślne**.
   zadanie nie ruszy, dopóki ich nie przesuniesz z powrotem.
 - **Narzędzia rysowania** (prawa strona): zaznaczanie, edycja węzłów,
   prostokąt, elipsa, wielokąt, linia, łamana, pióro, rysowanie odręczne,
-  miarka, tekst.
+  miarka, tekst, wypełnienie wzorem.
 
 Mysz na stole: kółko przybliża i oddala (nie dalej niż cały stół); środkowy
 albo prawy przycisk przesuwa widok; **Ctrl+0** dopasowuje stół do okna.
@@ -163,6 +163,7 @@ narysowaniem i po nim.
 | Odręcznie | F | Rysuj z wciśniętym przyciskiem; skończ blisko początku, żeby zamknąć kształt |
 | Miarka | M | Przeciągnij między dwoma punktami: odległość, szerokość, wysokość i kąt |
 | Tekst | T | Kliknij i wpisz tekst w polu **Treść**; wybierz czcionkę, rozmiar, pogrubienie i kursywę |
+| Wypełnij wzorem | Shift+F | Wybierz wzór na pasku opcji i klikaj zamknięte kształty, żeby je wypełnić (opis niżej) |
 
 **Przyciąganie.** Rysowanie i przesuwanie przyciąga do narożników, środków i
 krawędzi innych elementów i do stołu (**Widok → Przyciągaj do obiektów**,
@@ -190,6 +191,29 @@ na osobne części. Dwuklik na dowolnym elemencie otwiera edycję węzłów.
 obrysu (opis niżej) i naciśnij **Wypełnij liniami** w sekcji **Kreskowanie**
 na pasku opcji. Ustaw odstęp linii, ich kąt i **#** dla drugiej warstwy linii
 pod kątem 90°. Dziury w kształcie zostają puste.
+
+**Wypełnienia wzorami.** *(jeszcze nie sprawdzone na laserze)* Narzędzie
+**Wypełnij wzorem** (wiaderko, Shift+F) wypełnia zamknięte kształty
+grawerowanymi liniami we wzór: linie, krzyżowe, fale, zygzak, okręgi, plaster
+miodu, romby albo cegły.
+
+![Kształty wypełnione wzorami](../img/pl/fill.png)
+
+1. Wybierz narzędzie i wzór w sekcji **Wypełnienie** na pasku opcji. Ustaw
+   jego rozmiar (odstęp między liniami), kąt i margines, czyli wolne miejsce
+   wewnątrz obrysu.
+2. Kliknij zamknięty kształt na warstwie cięcia albo obrysu. Klikaj kolejne,
+   żeby też je wypełnić; zaznaczone kształty od razu dostają wybrany wzór.
+3. Obrys zostaje na swojej warstwie: kształt do cięcia dalej jest cięty, a wzór
+   jest grawerowany na warstwie obrysu (dla kształtu do cięcia druga lista
+   **Warstwa** wybiera, na której). Kwadratowy przycisk obok listy wzorów
+   wyłącza obrys, wtedy graweruje się sam wzór.
+
+Zaznaczony kształt pokazuje tę samą sekcję **Wypełnienie** także przy
+narzędziu zaznaczania: tam zmienisz wzór albo wybierzesz **Bez wzoru**, żeby go
+usunąć. Dziury w kształcie (np. w literach) zostają puste. Otwarty plik SVG
+albo DXF trzeba najpierw rozgrupować (Edycja → Rozgrupuj), żeby jego linie
+stały się kształtami.
 
 **Mostki.** Zamknięty kształt na warstwie cięcia może mieć małe nieprzecięte
 mostki, które trzymają element w arkuszu: ustaw ich liczbę i szerokość w
@@ -304,7 +328,7 @@ francusku.
 | Alt (przytrzymany) | Chwilowo bez przyciągania |
 | Ctrl+, | Ustawienia |
 | F1 | Ta instrukcja |
-| S, N, R, E, P, L, Shift+L, B, F, M, T | Narzędzia rysowania (punkt 5) |
+| S, N, R, E, P, L, Shift+L, B, F, M, T, Shift+F | Narzędzia rysowania (punkt 5) |
 
 <a id="s10"></a>
 
