@@ -1163,6 +1163,16 @@ def main():
           and any(getattr(b, "defaultAction", lambda: None)() is w.act_report_problem
                   for b in w.findChildren(QToolButton)))
 
+    # 42. program icon: the logo renders, the bitmap icons exist
+    from kerfly.gui import icons as _icons
+    ico = os.path.join(ROOT_DIR, "kerfly", "gui", "icons", "kerfly.ico")
+    png = os.path.join(ROOT_DIR, "kerfly", "gui", "icons", "kerfly.png")
+    app_icon = _icons.app_icon()
+    check("program icon: logo renders, kerfly.ico and kerfly.png exist",
+          not app_icon.isNull() and not app_icon.pixmap(32, 32).toImage().isNull()
+          and app_icon.pixmap(32, 32).toImage().pixelColor(16, 3).alpha() > 0
+          and os.path.getsize(ico) > 1000 and os.path.getsize(png) > 1000)
+
     # 41. "Design follows the head": arrows and Home move the design too, corners only the head,
     # one undo step for switching it on, nothing moves when it is off
     w2 = make_window(follow_head="0", jog_step="10")

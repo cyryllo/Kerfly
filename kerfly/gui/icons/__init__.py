@@ -181,3 +181,23 @@ def follow_head_icon(off="#2b2f36", on="#2e7d32"):
             p.end()
             icon.addPixmap(pm, QIcon.Normal, state)
     return icon
+
+
+APP_ICON_SVG = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "kerfly.svg")
+
+
+def app_icon():
+    """Kerfly's logo as the window and taskbar icon."""
+    from PySide6.QtCore import QRectF
+    from PySide6.QtSvg import QSvgRenderer
+    renderer = QSvgRenderer(APP_ICON_SVG)
+    icon = QIcon()
+    for size in (16, 24, 32, 48, 64, 128, 256):
+        pm = QPixmap(size, size)
+        pm.fill(Qt.transparent)
+        p = QPainter(pm)
+        p.setRenderHint(QPainter.Antialiasing, True)
+        renderer.render(p, QRectF(0, 0, size, size))
+        p.end()
+        icon.addPixmap(pm)
+    return icon

@@ -107,8 +107,18 @@ def main(argv=None):
     from kerfly import __version__
     from kerfly.core import diag
     diag.setup(__version__)
+    if sys.platform == "win32":
+        # own taskbar entry and icon instead of python.exe's
+        try:
+            import ctypes
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Kerfly.Kerfly")
+        except Exception:
+            pass
     app = QApplication(argv)
     app.setApplicationName("Kerfly")
+    app.setDesktopFileName("kerfly")             # Wayland / KDE: match kerfly.desktop if installed
+    from kerfly.gui import icons
+    app.setWindowIcon(icons.app_icon())
     app.setStyle("Fusion")
     apply_desktop_font(app)
     app.setStyleSheet(STYLE)

@@ -1,4 +1,4 @@
-# Kerfly
+# <img src="kerfly/gui/icons/kerfly.svg" width="48" alt="" align="center"> Kerfly
 
 [![tests](https://github.com/cyryllo/Kerfly/actions/workflows/tests.yml/badge.svg)](https://github.com/cyryllo/Kerfly/actions/workflows/tests.yml)
 

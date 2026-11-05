@@ -20,6 +20,10 @@ Version numbers:
   can be written in English or Polish.
 - **README in Polish** (`README_pl.md`), with a screenshot of the Polish
   window.
+- **Logo and program icon**: a K whose upper arm is a laser beam. It is the
+  window and taskbar icon (on Windows Kerfly gets its own taskbar entry
+  instead of Python's). `tools/make_icons.py` renders `kerfly.png` and
+  `kerfly.ico` from `kerfly/gui/icons/kerfly.svg`.
 - **Design follows the head** (square button under the unlock button, beside
   the jog arrows; Ctrl+Shift+H; green when on).
   When on, the arrows, Go to X/Y and Home move the design together with the
