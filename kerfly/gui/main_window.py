@@ -182,6 +182,16 @@ class MainWindow(QMainWindow):
         self.act_undo = self._action(_("&Undo"), self.undo, "Ctrl+Z")
         self.act_redo = self._action(_("&Redo"), self.redo, "Ctrl+Shift+Z")
         self.act_duplicate = self._action(_("D&uplicate element"), self.duplicate_selected, "Ctrl+D")
+        self.act_order = {}
+        for how, text, key, tip in (
+                ("forward", N_("Bring &forward"), "PgUp", N_("Move the selected elements one step up: in front of the next one")),
+                ("backward", N_("Send &backward"), "PgDown", N_("Move the selected elements one step down: behind the previous one")),
+                ("front", N_("Bring to &front"), "Ctrl+PgUp", N_("Put the selected elements on top of all others")),
+                ("back", N_("Send to bac&k"), "Ctrl+PgDown", N_("Put the selected elements under all others"))):
+            act = self._action(_(text), lambda _c=False, h=how: self.reorder_selected(h), key, _(tip))
+            act.setShortcutContext(Qt.WidgetWithChildrenShortcut)    # only while the bed view has focus
+            self.preview.addAction(act)
+            self.act_order[how] = act
         self.act_center = self._action(_("&Centre on the bed"), self.center_on_bed, "Ctrl+E",
                                        _("Centre the selected element, or the whole design, on the bed"))
         self.act_snap_objects = self._action(_("Snap to &objects"), self.toggle_snap_objects, "Ctrl+;",
@@ -290,7 +300,8 @@ class MainWindow(QMainWindow):
         m = mb.addMenu(_("&Edit"))
         for a in (self.act_undo, self.act_redo, None, self.act_duplicate, self.act_delete, None,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v, None,
-                  self.act_group, self.act_ungroup, None, self.act_center, self.act_place_head,
+                  self.act_group, self.act_ungroup, None, self.act_order["forward"], self.act_order["backward"],
+                  self.act_order["front"], self.act_order["back"], None, self.act_center, self.act_place_head,
                   self.act_follow_head):
             m.addSeparator() if a is None else m.addAction(a)
         sub2 = m.addMenu(_("Combine shapes"))
@@ -371,6 +382,10 @@ class MainWindow(QMainWindow):
             (C_("toolbar group", "Arrange"), [
                 (self.act_center, "focus-centered", C_("toolbar", "Centre")),
                 (self.act_place_head, "current-location", C_("toolbar", "To head")),
+            ]),
+            (C_("toolbar group", "Order"), "grid", [
+                (self.act_order["forward"], "stack-forward"),
+                (self.act_order["backward"], "stack-backward"),
             ]),
             (C_("toolbar group", "Align"), "grid", [
                 (self.act_align["left"], "layout-align-left"),
@@ -1781,6 +1796,39 @@ class MainWindow(QMainWindow):
             chosen = [e for e in self.elements if e in chosen or (e.group and e.group in groups)]
         return chosen
 
+    def reorder_selected(self, how):
+        """Move the selected elements (with their groups) up or down in the
+        order: later elements lie on top in the bed view."""
+        if self.worker is not None:
+            return
+        chosen = self._selection()
+        if not chosen:
+            self.status(_("Select the elements to move up or down first."), error=True)
+            return
+        picked = [e in chosen for e in self.elements]
+        order = list(self.elements)
+        if how == "front":
+            order = [e for e, p in zip(order, picked) if not p] + [e for e, p in zip(order, picked) if p]
+        elif how == "back":
+            order = [e for e, p in zip(order, picked) if p] + [e for e, p in zip(order, picked) if not p]
+        else:
+            flags = list(picked)
+            rng = range(len(order) - 2, -1, -1) if how == "forward" else range(1, len(order))
+            for i in rng:
+                j = i + 1 if how == "forward" else i - 1
+                if flags[i] and not flags[j]:
+                    order[i], order[j] = order[j], order[i]
+                    flags[i], flags[j] = flags[j], flags[i]
+        if order == self.elements:
+            self.status(_("Already on top.") if how in ("forward", "front") else _("Already at the bottom."))
+            return
+        self._checkpoint()
+        self.elements = order
+        self._compiled = None
+        self._layer_cache.clear()
+        self._layout_changed()
+        self.preview.select_element(chosen)
+
     def _new_group_id(self):
         import uuid
         return uuid.uuid4().hex[:8]
@@ -2449,7 +2497,7 @@ class MainWindow(QMainWindow):
                   self.act_settings, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v,
                   self.act_group, self.act_ungroup, self.act_distribute_h, self.act_distribute_v, self.act_place_head,
-                  self.act_follow_head, self.act_undo,
+                  self.act_follow_head, self.act_undo] + list(self.act_order.values()) + [
                   self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()) \
                 + list(self.act_align.values()) + list(self.act_boolean.values()):
             a.setEnabled(not busy)

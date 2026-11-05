@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 16:24+0100\n"
+"POT-Creation-Date: 2026-11-05 16:28+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -237,6 +237,12 @@ msgstr "Wyrównaj do góry"
 msgid "All files"
 msgstr "Wszystkie pliki"
 
+msgid "Already at the bottom."
+msgstr "Już na spodzie."
+
+msgid "Already on top."
+msgstr "Już na wierzchu."
+
 msgid "Another problem"
 msgstr "Inny problem"
 
@@ -278,6 +284,12 @@ msgid "Bridges per outline: short uncut gaps that hold the part in the sheet"
 msgstr ""
 "Mostki na kontur: krótkie nieprzecięte odcinki, które trzymają detal w "
 "arkuszu"
+
+msgid "Bring &forward"
+msgstr "Przesuń do &przodu"
+
+msgid "Bring to &front"
+msgstr "Przesuń na &wierzch"
 
 #, python-format
 msgid "Broken apart into %d shapes (grouped; use Ungroup to separate them)."
@@ -993,6 +1005,12 @@ msgstr "Przesuń głowicę o jeden krok w prawo"
 msgid "Move the laser head up by one step"
 msgstr "Przesuń głowicę o jeden krok w górę"
 
+msgid "Move the selected elements one step down: behind the previous one"
+msgstr "Przesuń zaznaczone elementy o krok w dół: pod poprzedni"
+
+msgid "Move the selected elements one step up: in front of the next one"
+msgstr "Przesuń zaznaczone elementy o krok w górę: nad następny"
+
 msgid "Name:"
 msgstr "Nazwa:"
 
@@ -1097,6 +1115,10 @@ msgstr "Otwarto %s"
 #, python-format
 msgid "Opening %s"
 msgstr "Otwieranie %s"
+
+msgctxt "toolbar group"
+msgid "Order"
+msgstr "Kolejność"
 
 msgid "Out of memory."
 msgstr "Brak pamięci."
@@ -1226,6 +1248,12 @@ msgstr "Proporcje są zachowane"
 
 msgid "Proportions are not kept: width and height change separately"
 msgstr "Proporcje nie są zachowane: szerokość i wysokość zmieniają się osobno"
+
+msgid "Put the selected elements on top of all others"
+msgstr "Połóż zaznaczone elementy nad wszystkimi innymi"
+
+msgid "Put the selected elements under all others"
+msgstr "Połóż zaznaczone elementy pod wszystkimi innymi"
 
 msgid "Rail unlocked"
 msgstr "Osie odblokowane"
@@ -1418,6 +1446,9 @@ msgstr "Zaznacz otwarty plik albo tekst z liniami, aby go rozbić."
 msgid "Select and move"
 msgstr "Zaznacz i przesuń"
 
+msgid "Select the elements to move up or down first."
+msgstr "Najpierw zaznacz elementy do przesunięcia w górę albo w dół."
+
 msgid "Select three or more elements to distribute them."
 msgstr "Zaznacz co najmniej trzy elementy, aby je rozłożyć."
 
@@ -1431,6 +1462,9 @@ msgstr "Zaznacz co najmniej dwa kształty o zamkniętym obrysie."
 msgid "Selected nodes: %d. Drag them, or use the buttons above."
 msgstr "Zaznaczone węzły: %d. Przeciągnij je albo użyj przycisków u góry."
 
+msgid "Send &backward"
+msgstr "Przesuń do &tyłu"
+
 msgid "Send EGV file"
 msgstr "Wyślij plik EGV"
 
@@ -1439,6 +1473,9 @@ msgstr "Wyślij plik EGV do lasera…"
 
 msgid "Send an existing EGV file to the laser"
 msgstr "Wyślij istniejący plik EGV do lasera"
+
+msgid "Send to bac&k"
+msgstr "Przesuń na &spód"
 
 #, python-format
 msgid "Sending %s…"

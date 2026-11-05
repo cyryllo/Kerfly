@@ -1195,6 +1195,31 @@ def main():
     w3._dirty = False
     w3.close()
 
+    # 45. order of elements: forward / backward one step, to the front / back, groups move together
+    w4 = make_window(grid_mm="0")
+    for i in range(4):
+        w4._add_drawn_element(_Spec(kind="rectangle", width=20, height=20), "rectangle", 10 + 30 * i, 10)
+    a, b, c, d = w4.elements
+    w4.preview.select_element(b)
+    w4.selected = b
+    w4.reorder_selected("forward")
+    step = w4.elements == [a, c, b, d]
+    w4.reorder_selected("front")
+    front = w4.elements == [a, c, d, b]
+    w4.reorder_selected("forward")
+    already = w4.statusBar().currentMessage() == _("Already on top.") and w4.elements == [a, c, d, b]
+    w4.reorder_selected("back")
+    back = w4.elements == [b, a, c, d]
+    w4.undo()
+    undone = w4.elements == [a, c, d, b]
+    on_bar = any(getattr(t, "defaultAction", lambda: None)() is w4.act_order["forward"]
+                 for t in w4.findChildren(QToolButton))
+    check("element order: forward, to the front, already on top, to the back, undo, toolbar",
+          step and front and already and back and undone and on_bar,
+          "(%s)" % ([step, front, already, back, undone, on_bar],))
+    w4._dirty = False
+    w4.close()
+
     # 43. no keyboard shortcut is used twice (Qt then runs neither action)
     from PySide6.QtGui import QAction as _QAction
     seen, twice = {}, []

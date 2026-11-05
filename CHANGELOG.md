@@ -20,6 +20,9 @@ Version numbers:
   outline layer (a second Layer list chooses which); the outline can also be
   left out. Holes stay empty. A selected shape shows the Fill section to
   change or remove its pattern. Saved in projects, one undo step.
+- **Order of elements**: Bring forward / Send backward (toolbar group
+  **Order**, PgUp / PgDown in the bed view) and Bring to front / Send to back
+  (Ctrl+PgUp / Ctrl+PgDown, Edit menu). Groups move together.
 
 ## 0.16.0 (2026-11-05)
 
