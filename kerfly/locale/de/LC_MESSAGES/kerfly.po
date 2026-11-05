@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 16:52+0100\n"
+"POT-Creation-Date: 2026-11-05 17:01+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -519,14 +519,18 @@ msgstr ""
 "Abstand %(d).2f %(u)s: Breite %(w).2f %(u)s, Höhe %(h).2f %(u)s, Winkel "
 "%(a).1f°"
 
-msgid "Distance between the line and the foot of the letters"
-msgstr "Abstand zwischen der Linie und dem Fuß der Buchstaben"
-
 msgid "Distance between the lines"
 msgstr "Abstand zwischen den Linien"
 
 msgid "Distance down from home"
 msgstr "Abstand nach unten vom Referenzpunkt"
+
+msgid ""
+"Distance from the line: space between the line and the foot of the "
+"letters (minus: the letters cross the line)"
+msgstr ""
+"Abstand zur Linie: Raum zwischen der Linie und dem Fuß der Buchstaben "
+"(negativ: die Buchstaben kreuzen die Linie)"
 
 msgid "Distance moved by one arrow click"
 msgstr "Verfahrweg pro Klick auf einen Pfeil"
@@ -890,6 +894,11 @@ msgstr "Ebenen"
 msgid "Leather 2 mm"
 msgstr "Leder 2 mm"
 
+msgid "Letter spacing: space added between the letters (0: as the font sets it)"
+msgstr ""
+"Buchstabenabstand: zusätzlicher Raum zwischen den Buchstaben (0: wie die "
+"Schrift ihn setzt)"
+
 msgid "Levels curve slope, dark end"
 msgstr "Steigung der Tonwertkurve, dunkles Ende"
 
@@ -1230,6 +1239,13 @@ msgstr ""
 "Linienzug: Ecken anklicken. Den ersten Punkt anklicken, um die Form zu "
 "schließen; Doppelklick oder Enter beendet eine offene Linie. Rücktaste "
 "entfernt die letzte Ecke, Umschalt hält 45°-Winkel, Esc bricht ab."
+
+msgid ""
+"Position along the path: where the text starts (you can also drag the "
+"text with the mouse)"
+msgstr ""
+"Position auf dem Pfad: wo der Text beginnt (der Text lässt sich auch mit "
+"der Maus ziehen)"
 
 msgid "Position and size"
 msgstr "Position und Größe"
@@ -1591,9 +1607,6 @@ msgstr ""
 "Beim Zeichnen und Verschieben an Ecken, Mitten, Seitenmitten und Linien "
 "anderer Elemente und des Betts fangen. Alt gedrückt halten, um kurz "
 "nichts zu fangen."
-
-msgid "Space between the letters (0: as the font sets it)"
-msgstr "Abstand zwischen den Buchstaben (0: wie die Schrift ihn setzt)"
 
 msgid "Space kept free between the pattern and the outline"
 msgstr "Freier Abstand zwischen Muster und Kontur"
@@ -1987,9 +2000,6 @@ msgstr "Wellen"
 
 msgid "What kind of problem is it?"
 msgstr "Was für ein Problem ist es?"
-
-msgid "Where the text starts along the path"
-msgstr "Wo der Text auf dem Pfad beginnt"
 
 msgid "Width"
 msgstr "Breite"

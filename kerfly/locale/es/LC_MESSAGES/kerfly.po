@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 16:52+0100\n"
+"POT-Creation-Date: 2026-11-05 17:01+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -519,14 +519,18 @@ msgstr ""
 "Distancia %(d).2f %(u)s: ancho %(w).2f %(u)s, alto %(h).2f %(u)s, ángulo "
 "%(a).1f°"
 
-msgid "Distance between the line and the foot of the letters"
-msgstr "Distancia entre la línea y el pie de las letras"
-
 msgid "Distance between the lines"
 msgstr "Distancia entre las líneas"
 
 msgid "Distance down from home"
 msgstr "Distancia hacia abajo desde el origen"
+
+msgid ""
+"Distance from the line: space between the line and the foot of the "
+"letters (minus: the letters cross the line)"
+msgstr ""
+"Distancia a la línea: espacio entre la línea y el pie de las letras "
+"(negativa: las letras cruzan la línea)"
 
 msgid "Distance moved by one arrow click"
 msgstr "Distancia por cada clic en una flecha"
@@ -888,6 +892,9 @@ msgstr "Capas"
 msgid "Leather 2 mm"
 msgstr "Cuero 2 mm"
 
+msgid "Letter spacing: space added between the letters (0: as the font sets it)"
+msgstr "Espaciado de letras: espacio añadido entre las letras (0: el de la fuente)"
+
 msgid "Levels curve slope, dark end"
 msgstr "Pendiente de la curva de niveles, extremo oscuro"
 
@@ -1226,6 +1233,13 @@ msgstr ""
 "Polilínea: haz clic en las esquinas. Haz clic en el primer punto para "
 "cerrar la forma; doble clic o Intro termina una línea abierta. Retroceso "
 "quita la última esquina, Mayús mantiene ángulos de 45°, Esc cancela."
+
+msgid ""
+"Position along the path: where the text starts (you can also drag the "
+"text with the mouse)"
+msgstr ""
+"Posición en el trazado: dónde empieza el texto (también se puede "
+"arrastrar el texto con el ratón)"
 
 msgid "Position and size"
 msgstr "Posición y tamaño"
@@ -1581,9 +1595,6 @@ msgstr ""
 "Ajustar a esquinas, centros, puntos medios y líneas de otros elementos y "
 "de la mesa, al dibujar y mover. Mantén Alt para no ajustar a nada por un "
 "momento."
-
-msgid "Space between the letters (0: as the font sets it)"
-msgstr "Espacio entre las letras (0: el de la fuente)"
 
 msgid "Space kept free between the pattern and the outline"
 msgstr "Espacio libre entre el patrón y el contorno"
@@ -1975,9 +1986,6 @@ msgstr "Ondas"
 
 msgid "What kind of problem is it?"
 msgstr "¿Qué tipo de problema es?"
-
-msgid "Where the text starts along the path"
-msgstr "Dónde empieza el texto a lo largo del trazado"
 
 msgid "Width"
 msgstr "Ancho"

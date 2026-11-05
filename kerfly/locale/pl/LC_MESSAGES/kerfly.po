@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 16:52+0100\n"
+"POT-Creation-Date: 2026-11-05 17:01+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -515,14 +515,18 @@ msgstr ""
 "Odległość %(d).2f %(u)s: szerokość %(w).2f %(u)s, wysokość %(h).2f %(u)s,"
 " kąt %(a).1f°"
 
-msgid "Distance between the line and the foot of the letters"
-msgstr "Odległość między linią a podstawą liter"
-
 msgid "Distance between the lines"
 msgstr "Odstęp między liniami"
 
 msgid "Distance down from home"
 msgstr "Odległość w dół od pozycji bazowej"
+
+msgid ""
+"Distance from the line: space between the line and the foot of the "
+"letters (minus: the letters cross the line)"
+msgstr ""
+"Odległość od linii: odstęp między linią a podstawą liter (na minusie "
+"litery przecinają linię)"
 
 msgid "Distance moved by one arrow click"
 msgstr "Odległość ruchu po jednym kliknięciu strzałki"
@@ -882,6 +886,11 @@ msgstr "Warstwy"
 msgid "Leather 2 mm"
 msgstr "Skóra 2 mm"
 
+msgid "Letter spacing: space added between the letters (0: as the font sets it)"
+msgstr ""
+"Odstęp liter: miejsce dodane między literami (0: taki, jak ustawia "
+"czcionka)"
+
 msgid "Levels curve slope, dark end"
 msgstr "Nachylenie krzywej poziomów, ciemny koniec"
 
@@ -1221,6 +1230,13 @@ msgstr ""
 "Łamana: klikaj kolejne narożniki. Kliknij pierwszy punkt, aby zamknąć "
 "kształt; dwuklik albo Enter kończy otwartą linię. Backspace usuwa ostatni"
 " narożnik, Shift trzyma kąty co 45°, Esc anuluje."
+
+msgid ""
+"Position along the path: where the text starts (you can also drag the "
+"text with the mouse)"
+msgstr ""
+"Położenie na ścieżce: gdzie zaczyna się tekst (tekst można też "
+"przeciągnąć myszą)"
 
 msgid "Position and size"
 msgstr "Pozycja i rozmiar"
@@ -1578,9 +1594,6 @@ msgstr ""
 "Przyciągaj do narożników, środków, połówek i linii innych elementów oraz "
 "stołu, przy rysowaniu i przesuwaniu. Przytrzymaj Alt, aby chwilowo nic "
 "nie przyciągało."
-
-msgid "Space between the letters (0: as the font sets it)"
-msgstr "Odstęp między literami (0: taki, jak ustawia czcionka)"
 
 msgid "Space kept free between the pattern and the outline"
 msgstr "Wolne miejsce między wzorem a obrysem"
@@ -1966,9 +1979,6 @@ msgstr "Fale"
 
 msgid "What kind of problem is it?"
 msgstr "Jaki to problem?"
-
-msgid "Where the text starts along the path"
-msgstr "Gdzie zaczyna się tekst na ścieżce"
 
 msgid "Width"
 msgstr "Szerokość"

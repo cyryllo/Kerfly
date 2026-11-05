@@ -633,7 +633,12 @@ class MainWindow(QMainWindow):
             before = self.selected.shape.operation
             had_fill = bool(self.selected.shape.fill_pattern)
             had_path = bool(self.selected.shape.text_path)
+            if had_path and spec.text_path:
+                # the bar's copy of the path is from before the last change (every change moves
+                # the path's frame): the element's own path is the right one
+                spec.text_path = [tuple(p) for p in self.selected.shape.text_path]
             self._apply_shape(self.selected, spec)
+            self.tool_options.spec = self.selected.shape.copy()      # the bar edits what is on the bed now
             if had_fill != bool(spec.fill_pattern) or had_path != bool(spec.text_path):   # sections appear / go
                 QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
         elif target in self.shape_defaults:

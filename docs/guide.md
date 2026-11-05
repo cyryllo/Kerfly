@@ -228,10 +228,12 @@ choose its font in the options bar, then click a line, curve or shape: the
 text is put on it, every letter standing on the line and turned along it. On
 an open line the text is centred, on a closed shape it is centred at the top.
 **Drag the text to slide it along the line**; on a circle it goes round. The
-**Text on path** section of the options bar sets the start along the path, the
-**distance** between the line and the letters, puts the text on the **other
-side**, or makes it **straight text** again; the **↔** field of the **Font**
-section adds space between the letters (also for ordinary text). The shape
+**Text on path** section of the options bar has the **position along the
+path** (route icon), the **distance from the line** (line-height icon; below
+zero the letters cross the line), the **other side** button and **Straight
+text**; the **letter spacing** field (AV icon) of the **Font** section adds
+space between the letters, also for ordinary text. Hold the mouse over a
+field to see what it does. The shape
 stays; delete it if it should not be cut. An existing text is put on a shape
 with **Edit → Put text on path** (select both). The arrow keys and the X/Y
 fields move the text together with its path.

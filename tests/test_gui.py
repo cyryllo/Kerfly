@@ -1275,6 +1275,29 @@ def main():
     check("text on a path tool: click puts a text on the line, drag slides along it, spacing, distance",
           tool_bar_text and made and slid and spaced, "(%s)" % ([tool_bar_text, made, slid, spaced],))
 
+    # changing a text on a path in the options bar, several times in a row (the bar kept an old copy
+    # of the path, so every change moved the text further: +10, +20, +30 mm; the font jumped too)
+    from PySide6.QtGui import QFont as _QFont
+    from PySide6.QtWidgets import QDoubleSpinBox as _QDSB, QFontComboBox as _QFCB
+    w5.preview.select_element(t2)
+    w5.selected = t2
+    w5._update_tool_options(force=True)
+    off = [sp for sp in w5.tool_options.findChildren(_QDSB) if sp.toolTip().startswith(_("Position along the path"))]
+    lefts = []
+    for _i in range(3):
+        off[0].setValue(off[0].value() + 10.0)
+        lefts.append(t2.bounds[0] * 25.4)
+    steps_ok = all(abs((b - a) - 10.0) < 0.3 for a, b in zip(lefts, lefts[1:]))
+    width0, left0 = t2.size[0], t2.bounds[0]
+    fonts = w5.tool_options.findChildren(_QFCB)
+    if fonts:
+        fonts[0].setCurrentFont(_QFont("DejaVu Serif"))
+    font_ok = t2.shape.font_family == "DejaVu Serif" and abs(t2.size[0] - width0) > 0.01 \
+        and abs(t2.bounds[0] - left0) * 25.4 < 1.0 and abs(t2.bounds[2] * 25.4 + 57.0) < 0.6
+    check("text on a path: changes in the options bar move it exactly, the font changes in place",
+          bool(off) and steps_ok and font_ok, "(steps %s, font %s)" % ([round(b - a, 2) for a, b in zip(lefts, lefts[1:])],
+                                                                      t2.shape.font_family))
+
     # the options of a selected text (all its sections) scroll instead of widening the window
     w5.preview.select_element(text)
     w5.selected = text

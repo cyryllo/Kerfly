@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 16:52+0100\n"
+"POT-Creation-Date: 2026-11-05 17:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -494,13 +494,15 @@ msgid ""
 "%(a).1f°"
 msgstr ""
 
-msgid "Distance between the line and the foot of the letters"
-msgstr ""
-
 msgid "Distance between the lines"
 msgstr ""
 
 msgid "Distance down from home"
+msgstr ""
+
+msgid ""
+"Distance from the line: space between the line and the foot of the "
+"letters (minus: the letters cross the line)"
 msgstr ""
 
 msgid "Distance moved by one arrow click"
@@ -837,6 +839,9 @@ msgstr ""
 msgid "Leather 2 mm"
 msgstr ""
 
+msgid "Letter spacing: space added between the letters (0: as the font sets it)"
+msgstr ""
+
 msgid "Levels curve slope, dark end"
 msgstr ""
 
@@ -1155,6 +1160,11 @@ msgid ""
 "Polyline: click the corners. Click the first point to close the shape; "
 "double-click or press Enter to finish an open line. Backspace removes the"
 " last corner, Shift keeps 45° angles, Esc cancels."
+msgstr ""
+
+msgid ""
+"Position along the path: where the text starts (you can also drag the "
+"text with the mouse)"
 msgstr ""
 
 msgid "Position and size"
@@ -1484,9 +1494,6 @@ msgstr ""
 msgid ""
 "Snap to corners, centres, middles and lines of other elements and of the "
 "bed, when drawing and moving. Hold Alt to snap nothing for a moment."
-msgstr ""
-
-msgid "Space between the letters (0: as the font sets it)"
 msgstr ""
 
 msgid "Space kept free between the pattern and the outline"
@@ -1826,9 +1833,6 @@ msgid "Waves"
 msgstr ""
 
 msgid "What kind of problem is it?"
-msgstr ""
-
-msgid "Where the text starts along the path"
 msgstr ""
 
 msgid "Width"

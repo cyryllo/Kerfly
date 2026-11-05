@@ -248,8 +248,8 @@ class ToolOptionsBar(QWidget):
             g.addWidget(font, 0, 0, 1, 3)
             spacing = self._dspin("text_spacing", -50.0, 200.0, " mm", decimals=2)
             spacing.setSingleStep(0.1)
-            spacing.setToolTip(_("Space between the letters (0: as the font sets it)"))
-            g.addWidget(QLabel("\u2194"), 0, 3)
+            spacing.setToolTip(_("Letter spacing: space added between the letters (0: as the font sets it)"))
+            g.addWidget(self._icon_label("letter-spacing", spacing.toolTip()), 0, 3)
             g.addWidget(spacing, 0, 4)
             g.addWidget(self._dspin("font_size", 0.5, 500.0, " mm"), 1, 0)
             for i, (attr, icon, tip) in enumerate((("bold", "bold", N_("Bold")),
@@ -271,7 +271,8 @@ class ToolOptionsBar(QWidget):
                 pg.setVerticalSpacing(4)
                 offset = self._dspin("text_path_offset", -5000.0, 5000.0, " mm")
                 offset.setSingleStep(1.0)
-                offset.setToolTip(_("Where the text starts along the path"))
+                offset.setToolTip(_("Position along the path: where the text starts (you can also drag the text "
+                                    "with the mouse)"))
                 flip = QToolButton()
                 flip.setIcon(icons.tabler("flip-vertical"))
                 flip.setIconSize(QSize(18, 18))
@@ -285,11 +286,14 @@ class ToolOptionsBar(QWidget):
                 straight.clicked.connect(lambda: self._set("text_path", []))
                 distance = self._dspin("text_path_distance", -500.0, 500.0, " mm")
                 distance.setSingleStep(0.5)
-                distance.setToolTip(_("Distance between the line and the foot of the letters"))
-                pg.addWidget(offset, 0, 0)
-                pg.addWidget(flip, 0, 1)
-                pg.addWidget(distance, 1, 0)
-                pg.addWidget(straight, 1, 1)
+                distance.setToolTip(_("Distance from the line: space between the line and the foot of the letters "
+                                      "(minus: the letters cross the line)"))
+                pg.addWidget(self._icon_label("route", offset.toolTip()), 0, 0)
+                pg.addWidget(offset, 0, 1)
+                pg.addWidget(flip, 0, 2)
+                pg.addWidget(self._icon_label("line-height", distance.toolTip()), 1, 0)
+                pg.addWidget(distance, 1, 1)
+                pg.addWidget(straight, 1, 2)
                 self._add(pb, _("Text on path"))
         self.row.addStretch(1)
 
@@ -339,6 +343,14 @@ class ToolOptionsBar(QWidget):
             g.addWidget(angle, 1, 1)
             g.addWidget(margin, 1, 2)
         self._add(box, _("Fill"))
+
+    @staticmethod
+    def _icon_label(icon, tip):
+        """A small icon in front of a field, saying what it is (with the field's tooltip)."""
+        label = QLabel()
+        label.setPixmap(icons.tabler(icon).pixmap(18, 18))
+        label.setToolTip(tip)
+        return label
 
     def _dspin(self, attr, lo, hi, suffix, decimals=1):
         w = QDoubleSpinBox()

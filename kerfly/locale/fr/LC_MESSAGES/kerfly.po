@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 16:52+0100\n"
+"POT-Creation-Date: 2026-11-05 17:01+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -519,14 +519,18 @@ msgstr ""
 "Distance %(d).2f %(u)s : largeur %(w).2f %(u)s, hauteur %(h).2f %(u)s, "
 "angle %(a).1f°"
 
-msgid "Distance between the line and the foot of the letters"
-msgstr "Distance entre la ligne et le pied des lettres"
-
 msgid "Distance between the lines"
 msgstr "Distance entre les lignes"
 
 msgid "Distance down from home"
 msgstr "Distance vers le bas depuis l'origine"
+
+msgid ""
+"Distance from the line: space between the line and the foot of the "
+"letters (minus: the letters cross the line)"
+msgstr ""
+"Distance à la ligne : espace entre la ligne et le pied des lettres "
+"(négative : les lettres croisent la ligne)"
 
 msgid "Distance moved by one arrow click"
 msgstr "Distance parcourue par clic sur une flèche"
@@ -889,6 +893,11 @@ msgstr "Calques"
 msgid "Leather 2 mm"
 msgstr "Cuir 2 mm"
 
+msgid "Letter spacing: space added between the letters (0: as the font sets it)"
+msgstr ""
+"Espacement des lettres : espace ajouté entre les lettres (0 : celui de la"
+" police)"
+
 msgid "Levels curve slope, dark end"
 msgstr "Pente de la courbe de niveaux, extrémité sombre"
 
@@ -1226,6 +1235,13 @@ msgstr ""
 "fermer la forme ; double-clic ou Entrée termine une ligne ouverte. Retour"
 " arrière supprime le dernier coin, Maj garde des angles de 45°, Échap "
 "annule."
+
+msgid ""
+"Position along the path: where the text starts (you can also drag the "
+"text with the mouse)"
+msgstr ""
+"Position sur le chemin : où commence le texte (on peut aussi faire "
+"glisser le texte à la souris)"
 
 msgid "Position and size"
 msgstr "Position et taille"
@@ -1589,9 +1605,6 @@ msgstr ""
 "Aimanter aux coins, centres, milieux et lignes des autres éléments et du "
 "plateau, en dessinant et en déplaçant. Maintenez Alt pour ne rien "
 "aimanter un instant."
-
-msgid "Space between the letters (0: as the font sets it)"
-msgstr "Espace entre les lettres (0 : celui de la police)"
 
 msgid "Space kept free between the pattern and the outline"
 msgstr "Espace laissé libre entre le motif et le contour"
@@ -1985,9 +1998,6 @@ msgstr "Vagues"
 
 msgid "What kind of problem is it?"
 msgstr "De quel problème s'agit-il ?"
-
-msgid "Where the text starts along the path"
-msgstr "Où le texte commence le long du chemin"
 
 msgid "Width"
 msgstr "Largeur"

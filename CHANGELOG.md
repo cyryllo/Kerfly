@@ -28,7 +28,8 @@ Version numbers:
   sets the start along the path, the distance from the line, the other side,
   or makes it straight again. An existing text is put on a shape with
   **Edit → Put text on path**. Saved in projects.
-- **Letter spacing** for every text (the ↔ field of the Font section).
+- **Letter spacing** for every text (the field with the AV icon in the Font
+  section). The fields of a text on a path have icons too.
 - **Order of elements**: Bring forward / Send backward (toolbar group
   **Order**, PgUp / PgDown in the bed view) and Bring to front / Send to back
   (Ctrl+PgUp / Ctrl+PgDown, Edit menu). Groups move together.

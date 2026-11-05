@@ -231,10 +231,12 @@ wybierz czcionkę na pasku opcji, potem kliknij linię, krzywą albo kształt:
 tekst stanie na nim, każda litera na linii i obrócona wzdłuż niej. Na otwartej
 linii tekst jest wyśrodkowany, na zamkniętym kształcie wyśrodkowany na górze.
 **Przeciągnij tekst, żeby przesunąć go wzdłuż linii**; na okręgu jedzie
-dookoła. Sekcja **Tekst na ścieżce** na pasku opcji ustawia początek na
-ścieżce, **odległość** między linią a literami, przenosi tekst na **drugą
-stronę** albo zamienia go z powrotem w **prosty tekst**; pole **↔** w sekcji
-**Czcionka** dodaje odstęp między literami (także w zwykłym tekście). Kształt
+dookoła. Sekcja **Tekst na ścieżce** na pasku opcji ma **położenie na
+ścieżce** (ikona trasy), **odległość od linii** (ikona wysokości linii; poniżej
+zera litery przecinają linię), przycisk **druga strona** i **Prosty tekst**;
+pole **odstępu liter** (ikona AV) w sekcji **Czcionka** dodaje odstęp między
+literami, także w zwykłym tekście. Po najechaniu myszą na pole widać, co
+robi. Kształt
 zostaje; usuń go, jeśli nie ma być cięty. Istniejący tekst ustawisz na
 kształcie przez **Edycja → Umieść tekst na ścieżce** (zaznacz oba). Strzałki i
 pola X/Y przesuwają tekst razem z jego ścieżką.
