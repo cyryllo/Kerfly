@@ -73,8 +73,8 @@ Oryginalne okno K40 Whisperera (`k40_whisperer.py`) nadal jest dołączone i
 korzysta z tego samego rdzenia. Trybu wsadowego (batch) nie ma jeszcze w
 nowym oknie.
 
-Plany: pozostałe funkcje K40 Whisperera, więcej formatów plików, wypełnienia
-wzorami, zawiasy giętkie, wektoryzacja bitmap. Zobacz
+Plany: pozostałe funkcje K40 Whisperera, więcej formatów plików, zawiasy
+giętkie, wektoryzacja bitmap i kompensacja kerfu. Zobacz
 [ROADMAP.md](ROADMAP.md) (po angielsku).
 
 Dane dla lasera (EGV wysyłane przez USB) są po każdej zmianie porównywane bajt
