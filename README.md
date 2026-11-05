@@ -46,7 +46,8 @@ View), in the style of MeerK40t, gives one-click access to the editing
 commands. Machine control (connect, home, trace, start, stop) is in the panel
 on the left. When a job starts, the laser head first
 moves to the design. "Place design at the head" keeps the K40 Whisperer way of
-working, where the design starts where the head is.
+working, where the design starts where the head is, and **Design follows the
+head** (the button under the arrows) keeps it there while you move the head.
 
 It can jog the head, move it to the design corners or to a given position,
 and run raster engrave, vector engrave, vector cut, G-code and boundary trace

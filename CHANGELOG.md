@@ -20,6 +20,11 @@ Version numbers:
   can be written in English or Polish.
 - **README in Polish** (`README_pl.md`), with a screenshot of the Polish
   window.
+- **Design follows the head** (button under the jog arrows, Ctrl+Shift+H).
+  When on, the arrows, Go to X/Y and Home move the design together with the
+  laser head, as in K40 Whisperer, and the arrows keep the design on the bed.
+  The corner and centre buttons still only move the head. The setting is
+  kept.
 
 ## 0.15.0 (2026-11-05)
 

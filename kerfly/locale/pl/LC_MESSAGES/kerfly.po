@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 11:57+0100\n"
+"POT-Creation-Date: 2026-11-05 12:03+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -441,6 +441,12 @@ msgstr "Usuń tę warstwę (jej części wrócą do warstwy domyślnej)"
 
 msgid "Design"
 msgstr "Projekt"
+
+msgid "Design &follows the head"
+msgstr "Projekt &podąża za głowicą"
+
+msgid "Design follows the head"
+msgstr "Projekt podąża za głowicą"
 
 msgid "Design import"
 msgstr "Import projektu"
@@ -1523,6 +1529,21 @@ msgstr "Projekt w tym miejscu nie mieści się na stole lasera."
 
 msgid "The design does not move."
 msgstr "Projekt się nie przesuwa."
+
+msgid ""
+"The design moves with the laser head: the arrows, Go to X/Y and Home move"
+" both, as in K40 Whisperer. The corner buttons still only show the "
+"corners."
+msgstr ""
+"Projekt przesuwa się razem z głowicą lasera: strzałki, Idź do X/Y i "
+"Bazowanie przesuwają oba, jak w K40 Whisperer. Przyciski narożników nadal"
+" tylko pokazują narożniki."
+
+msgid "The design now moves with the laser head."
+msgstr "Projekt przesuwa się teraz razem z głowicą lasera."
+
+msgid "The design stays in place when the laser head moves."
+msgstr "Projekt zostaje na miejscu, gdy głowica się przesuwa."
 
 msgid "The file does not say how large the image is. Set its size."
 msgstr "Plik nie określa rozmiaru obrazu. Ustaw jego wymiary."

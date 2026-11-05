@@ -1162,6 +1162,33 @@ def main():
           w.act_report_problem in [a for m in w.menuBar().actions() for a in m.menu().actions()]
           and any(getattr(b, "defaultAction", lambda: None)() is w.act_report_problem
                   for b in w.findChildren(QToolButton)))
+
+    # 41. "Design follows the head": arrows and Home move the design too, corners only the head,
+    # one undo step for switching it on, nothing moves when it is off
+    w2 = make_window(follow_head="0", jog_step="10")
+    w2.load_design(os.path.join(FIX, "shapes.dxf"))
+    start = (w2.elements[0].x, w2.elements[0].y)
+    w2.jog(1, 0)
+    stays = (w2.elements[0].x, w2.elements[0].y) == start
+    undo_before = len(w2._undo)
+    w2.act_follow_head.trigger()
+    at_head = w2.origin == w2.head and len(w2._undo) == undo_before + 1
+    w2.jog(1, 0)
+    w2.jog(0, -1)
+    follows = w2.origin == w2.head and abs(w2.head[0] - 20 / 25.4) < 0.002 and len(w2._undo) == undo_before + 1
+    w2.move_to_corner("LR")
+    corner_only = w2.origin != w2.head
+    w2.home()
+    homed = w2.origin == (0.0, 0.0) == w2.head
+    w2.jog(-1, 0)                                         # already at the left edge: stays on the bed
+    on_bed = w2.origin == (0.0, 0.0)
+    w2.act_follow_head.trigger()
+    saved = w2.values["follow_head"] == "0"
+    check("design follows the head: arrows, corners, Home, undo, setting",
+          stays and at_head and follows and corner_only and homed and on_bed and saved,
+          "(%s)" % ([stays, at_head, follows, corner_only, homed, on_bed, saved],))
+    w2._dirty = False
+    w2.close()
     sys.stdout, sys.stderr = sys.__stdout__, sys.__stderr__
 
     # Let every worker thread finish: a QThread still running when the process

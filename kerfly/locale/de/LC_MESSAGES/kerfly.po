@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 11:57+0100\n"
+"POT-Creation-Date: 2026-11-05 12:03+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -445,6 +445,12 @@ msgstr "Diese Ebene löschen (ihre Teile kommen zurück in die Standardebene)"
 
 msgid "Design"
 msgstr "Entwurf"
+
+msgid "Design &follows the head"
+msgstr "Entwurf &folgt dem Laserkopf"
+
+msgid "Design follows the head"
+msgstr "Entwurf folgt dem Laserkopf"
 
 msgid "Design import"
 msgstr "Entwurfsimport"
@@ -1536,6 +1542,21 @@ msgstr "Der Entwurf passt an dieser Position nicht auf die Arbeitsfläche."
 
 msgid "The design does not move."
 msgstr "Der Entwurf bleibt an seinem Platz."
+
+msgid ""
+"The design moves with the laser head: the arrows, Go to X/Y and Home move"
+" both, as in K40 Whisperer. The corner buttons still only show the "
+"corners."
+msgstr ""
+"Der Entwurf bewegt sich mit dem Laserkopf: Pfeile, Gehe zu X/Y und "
+"Referenzfahrt bewegen beide, wie in K40 Whisperer. Die Eck-Schaltflächen "
+"zeigen weiterhin nur die Ecken."
+
+msgid "The design now moves with the laser head."
+msgstr "Der Entwurf bewegt sich jetzt mit dem Laserkopf."
+
+msgid "The design stays in place when the laser head moves."
+msgstr "Der Entwurf bleibt an seinem Platz, wenn sich der Laserkopf bewegt."
 
 msgid "The file does not say how large the image is. Set its size."
 msgstr "Die Datei gibt die Bildgröße nicht an. Legen Sie die Größe fest."

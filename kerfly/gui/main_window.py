@@ -229,6 +229,13 @@ class MainWindow(QMainWindow):
                                                "bottom ones stay in place"))
         self.act_place_head = self._action(_("Place design at the &head"), self.place_at_head, "Ctrl+H",
                                            _("Move all elements so the design starts at the laser head"))
+        self.act_follow_head = self._action(
+            _("Design &follows the head"), self.toggle_follow_head, "Ctrl+Shift+H",
+            _("The design moves with the laser head: the arrows, Go to X/Y and Home move both, "
+              "as in K40 Whisperer. The corner buttons still only show the corners."))
+        self.act_follow_head.setCheckable(True)
+        self.act_follow_head.setChecked(is_true(self.values.get("follow_head", "0")))
+        self.act_follow_head.setIcon(icons.tabler("link"))
         self.act_save_egv = self._action(_("Save &EGV file\u2026"), self.save_egv, "Ctrl+Shift+E",
                                          _("Write the selected operations to an EGV file"))
         self.act_send_egv = self._action(_("Send EGV file to laser\u2026"), self.send_egv_file, None,
@@ -275,7 +282,8 @@ class MainWindow(QMainWindow):
         m = mb.addMenu(_("&Edit"))
         for a in (self.act_undo, self.act_redo, None, self.act_duplicate, self.act_delete, None,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v, None,
-                  self.act_group, self.act_ungroup, None, self.act_center, self.act_place_head):
+                  self.act_group, self.act_ungroup, None, self.act_center, self.act_place_head,
+                  self.act_follow_head):
             m.addSeparator() if a is None else m.addAction(a)
         sub2 = m.addMenu(_("Combine shapes"))
         for a in self.act_boolean.values():
@@ -1215,6 +1223,16 @@ class MainWindow(QMainWindow):
         row.addWidget(self.jog_step)
         row.addStretch(1)
         v.addLayout(row)
+        self.btn_follow_head = QToolButton()
+        self.btn_follow_head.setDefaultAction(self.act_follow_head)
+        self.btn_follow_head.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.btn_follow_head.setText(_("Design follows the head"))
+        self.btn_follow_head.setToolTip(self.act_follow_head.statusTip())
+        row = QHBoxLayout()
+        row.addStretch(1)
+        row.addWidget(self.btn_follow_head)
+        row.addStretch(1)
+        v.addLayout(row)
         self.head_label = QLabel()
         self.head_label.setAlignment(Qt.AlignHCenter)
         v.addWidget(self.head_label)
@@ -1823,14 +1841,33 @@ class MainWindow(QMainWindow):
 
     def place_at_head(self):
         """Move all elements together so the design's top-left is at the laser head."""
+        self._design_to_head(checkpoint=True)
+
+    def _design_to_head(self, checkpoint):
         if not self.elements or self.worker is not None:
             return
         ox, oy = self.origin
-        self._checkpoint()
+        if (ox, oy) == self.head:
+            return
+        if checkpoint:
+            self._checkpoint()
         for e in self.elements:
             e.x += self.head[0] - ox
             e.y += self.head[1] - oy
+        self._compiled = None
         self._layout_changed()
+
+    def follow_head(self):
+        return self.act_follow_head.isChecked()
+
+    def toggle_follow_head(self, on):
+        """Design follows the head: switching it on brings the design to the head."""
+        self._set_value("follow_head", "1" if on else "0")
+        if on:
+            self.place_at_head()
+            self.status(_("The design now moves with the laser head."))
+        else:
+            self.status(_("The design stays in place when the laser head moves."))
 
     def _update_selection_panel(self):
         e = self.selected
@@ -2317,7 +2354,8 @@ class MainWindow(QMainWindow):
                   self.act_connect, self.act_release, self.act_home, self.act_unlock,
                   self.act_settings, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v,
-                  self.act_group, self.act_ungroup, self.act_distribute_h, self.act_distribute_v, self.act_place_head, self.act_undo,
+                  self.act_group, self.act_ungroup, self.act_distribute_h, self.act_distribute_v, self.act_place_head,
+                  self.act_follow_head, self.act_undo,
                   self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()) \
                 + list(self.act_align.values()) + list(self.act_boolean.values()):
             a.setEnabled(not busy)
@@ -2733,6 +2771,8 @@ class MainWindow(QMainWindow):
         if self.laser.connected and not self._laser_call(self.laser.home, _("Homed")):
             return
         self.head = (0.0, 0.0)
+        if self.follow_head():
+            self._design_to_head(checkpoint=False)
         self.refresh_preview()
 
     def unlock(self):
@@ -2765,11 +2805,17 @@ class MainWindow(QMainWindow):
         dy = round(dy_units * f, 3)
         if settings.home_upper_right:
             dx = -dx
-        x, y = clamp_head_position(self.head[0], self.head[1], dx, dy, bed_w, bed_h)
+        design_w = design_h = 0.0
+        if self.follow_head() and self.elements and not settings.home_upper_right:
+            b = self.design.bounds                     # the design moves along: keep it on the bed
+            design_w, design_h = b[1] - b[0], b[3] - b[2]
+        x, y = clamp_head_position(self.head[0], self.head[1], dx, dy, bed_w, bed_h, design_w, design_h)
         self.move_head_to(x, y)
 
-    def move_head_to(self, x, y):
-        """Move the laser head to a bed position (inches, y <= 0). Returns True on success."""
+    def move_head_to(self, x, y, follow=True):
+        """Move the laser head to a bed position (inches, y <= 0). Returns True on success.
+        With "Design follows the head" on, the design moves along (follow=False: it stays,
+        e.g. for the corner buttons)."""
         try:
             settings = self.job_settings()
         except ValueError as e:
@@ -2784,6 +2830,8 @@ class MainWindow(QMainWindow):
                 self.status(_("Rapid move failed: %s") % e, error=True)
                 return False
         self.head = (self.head[0] + dx / 1000.0, self.head[1] + dy / 1000.0)
+        if follow and self.follow_head():
+            self._design_to_head(checkpoint=False)
         self.refresh_preview()
         return True
 
@@ -2804,7 +2852,7 @@ class MainWindow(QMainWindow):
             self.status(_("That corner of the design is outside the laser bed."), error=True)
             return
         x, y = clamp_head_position(ox, oy, offset[0] / 1000.0, offset[1] / 1000.0, bed_w, bed_h)
-        self.move_head_to(x, y)
+        self.move_head_to(x, y, follow=False)              # the corner buttons only show the corner
 
     def goto_position(self):
         """Home, then move to the X/Y set in the panel (distance from home, Y downwards)."""
@@ -2898,7 +2946,7 @@ class MainWindow(QMainWindow):
             return
         if output_file is None and self.head != self.origin:
             # the job starts where the head is: first move it to the design
-            if not self.move_head_to(*self.origin):
+            if not self.move_head_to(*self.origin, follow=False):
                 return
         diag_log.info("job: %s to %s; board %s; origin %s; elements %s; layers %s",
                       "trace" if trace else "start", output_file or "laser", self.values.get("board_name"),

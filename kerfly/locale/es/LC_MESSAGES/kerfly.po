@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 11:57+0100\n"
+"POT-Creation-Date: 2026-11-05 12:03+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -445,6 +445,12 @@ msgstr "Eliminar esta capa (sus partes vuelven a la capa predeterminada)"
 
 msgid "Design"
 msgstr "Diseño"
+
+msgid "Design &follows the head"
+msgstr "El diseño &sigue al cabezal"
+
+msgid "Design follows the head"
+msgstr "El diseño sigue al cabezal"
 
 msgid "Design import"
 msgstr "Importación del diseño"
@@ -1528,6 +1534,21 @@ msgstr "El diseño no cabe en el área de trabajo en esta posición."
 
 msgid "The design does not move."
 msgstr "El diseño no se mueve."
+
+msgid ""
+"The design moves with the laser head: the arrows, Go to X/Y and Home move"
+" both, as in K40 Whisperer. The corner buttons still only show the "
+"corners."
+msgstr ""
+"El diseño se mueve con el cabezal del láser: las flechas, Ir a X/Y y "
+"Origen mueven ambos, como en K40 Whisperer. Los botones de las esquinas "
+"siguen mostrando solo las esquinas."
+
+msgid "The design now moves with the laser head."
+msgstr "Ahora el diseño se mueve con el cabezal del láser."
+
+msgid "The design stays in place when the laser head moves."
+msgstr "El diseño se queda en su sitio cuando se mueve el cabezal."
 
 msgid "The file does not say how large the image is. Set its size."
 msgstr "El archivo no indica el tamaño de la imagen. Indique su tamaño."

@@ -58,6 +58,7 @@ SETTINGS_KEYS = [
     ("grid_mm", TEXT),       # Kerfly only: snap grid in mm, 0 = off
     ("snap_objects", BOOL),  # Kerfly only: snap to corners, centres and lines of other elements
     ("use_inkscape", BOOL),  # Kerfly only: render SVG rasters with Inkscape when installed
+    ("follow_head", BOOL),   # Kerfly only: the design moves with the head (arrows, Go to, Home)
 ]
 SETTINGS_KINDS = dict(SETTINGS_KEYS)
 
@@ -88,6 +89,7 @@ DEFAULT_VALUES = {
     "grid_mm": "0",
     "snap_objects": "1",
     "use_inkscape": "1",
+    "follow_head": "0",
 }
 
 BOARD_NAMES = ["LASER-M2", "LASER-M1", "LASER-M", "LASER-B2", "LASER-B1", "LASER-B",

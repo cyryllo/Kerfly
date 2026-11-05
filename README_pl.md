@@ -51,7 +51,9 @@ opisanymi grupami (Plik, Edycja, Układ, Widok), w stylu MeerK40t, daje szybki
 dostęp do poleceń. Sterowanie maszyną (połączenie, bazowanie, objazd konturu,
 start, stop) jest w panelu po lewej. Na początku zadania głowica najpierw
 podjeżdża do projektu. **Ustaw projekt przy głowicy** zachowuje sposób pracy z
-K40 Whisperera, w którym projekt zaczyna się tam, gdzie stoi głowica.
+K40 Whisperera, w którym projekt zaczyna się tam, gdzie stoi głowica, a
+przycisk **Projekt podąża za głowicą** (pod strzałkami) trzyma go przy głowicy,
+gdy ją przesuwasz.
 
 Kerfly przesuwa głowicę strzałkami, do narożników projektu albo do podanej
 pozycji. Wykonuje grawer rastrowy, grawer wektorowy, cięcie, G-code i objazd
