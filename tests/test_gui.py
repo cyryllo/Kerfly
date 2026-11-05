@@ -1250,7 +1250,8 @@ def main():
     spec = text.shape.copy()
     spec.text_path = []
     w5._apply_shape(text, spec)
-    straight = not text.shape.text_path and abs(text.size[1] * 25.4 - 7.3) < 2.0
+    # height of a 10 mm text in whatever font the system has (Windows has no DejaVu Sans)
+    straight = not text.shape.text_path and 4.0 < text.size[1] * 25.4 < 14.0
     # the Text on a path tool: click near the line -> a new text on it; dragging slides it
     # along the line (it stays on it); spacing makes it longer; distance lifts it off the line
     w5.preview.select_element([])                           # no text selected: the tool makes a new one
@@ -1305,9 +1306,17 @@ def main():
     steps_ok = all(abs((b - a) - 10.0) < 0.3 for a, b in zip(lefts, lefts[1:]))
     width0, left0 = t2.size[0], t2.bounds[0]
     fonts = w5.tool_options.findChildren(_QFCB)
+    other = ""
     if fonts:
-        fonts[0].setCurrentFont(_QFont("DejaVu Serif"))
-    font_ok = t2.shape.font_family == "DejaVu Serif" and abs(t2.size[0] - width0) > 0.01 \
+        # another font that this system really has (Windows has no DejaVu fonts)
+        combo = fonts[0]
+        names = [combo.itemText(i) for i in range(combo.count())]
+        other = next((n for n in names if n != t2.shape.font_family and not n.startswith(("Wingdings", "Webdings",
+                                                                                            "Symbol", "Marlett")) and
+                      _QFont(n).exactMatch()), "")
+        if other:
+            combo.setCurrentFont(_QFont(other))
+    font_ok = bool(other) and t2.shape.font_family == other and abs(t2.size[0] - width0) > 0.01 \
         and abs(t2.bounds[0] - left0) * 25.4 < 1.0 and abs(t2.bounds[2] * 25.4 + 57.0) < 0.6
     check("text on a path: changes in the options bar move it exactly, the font changes in place",
           bool(off) and steps_ok and font_ok, "(steps %s, font %s)" % ([round(b - a, 2) for a, b in zip(lefts, lefts[1:])],
