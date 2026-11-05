@@ -1,0 +1,40 @@
+name: Feature idea
+description: Something Kerfly should do, or do in an easier way.
+title: "[Idea] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for the idea. You can write in English or Polish.
+        Planned features are listed in [ROADMAP.md](https://github.com/cyryllo/Kerfly/blob/main/ROADMAP.md):
+        if yours is there, a comment on how you would use it still helps.
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: What do you want to make or do?
+      description: The job or the work, not the button yet.
+      placeholder: I make coasters with a cut edge and an engraved pattern inside, and draw the pattern by hand every time.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: How could Kerfly help?
+      placeholder: A Fill tool that fills a shape with a pattern (waves, honeycomb, ...) and keeps the outline as a cut.
+    validations:
+      required: true
+
+  - type: textarea
+    id: elsewhere
+    attributes:
+      label: Does another program do this?
+      description: K40 Whisperer, MeerK40t, LightBurn, Inkscape, ... and what you like or dislike about it.
+
+  - type: textarea
+    id: pictures
+    attributes:
+      label: Sketch, screenshots or example files
+      placeholder: Drag pictures or files here

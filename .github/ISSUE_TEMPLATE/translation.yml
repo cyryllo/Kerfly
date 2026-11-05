@@ -1,0 +1,50 @@
+name: Translation fix
+description: A wrong, unclear or missing text in Kerfly's window, in any language.
+title: "[Translation] "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you. The German, Spanish and French texts are machine translations waiting for a
+        native speaker, so every fix helps. Translators can also edit the `.po` files in
+        `kerfly/locale/<language>/LC_MESSAGES/` directly and open a pull request.
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      options:
+        - Polish
+        - German
+        - Spanish
+        - French
+        - English
+        - A new language
+    validations:
+      required: true
+
+  - type: textarea
+    id: texts
+    attributes:
+      label: Texts to change
+      description: Where the text is (menu, button, message), what it says now, and what it should say.
+      placeholder: |
+        Where: Settings window, Laser tab
+        Now: "Referenzfahrt beim Verbinden"
+        Better: "Beim Verbinden Referenzfahrt ausführen"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Kerfly version
+      description: Help → About Kerfly
+      placeholder: "0.15.0"
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      placeholder: Drag screenshots here

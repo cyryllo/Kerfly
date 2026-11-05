@@ -456,6 +456,17 @@ def test_job_position():
     raster.make_raster_coords(bad, settings)
     reach = job.build_job(bad, settings, job.RASTER_ENG)[0].reach
     problem = job.reach_problem(reach, (2.0, -2.0), 12.0, 8.0, settings)
+    # bug report form address (field ids of .github/ISSUE_TEMPLATE/*.yml)
+    from urllib.parse import parse_qs, urlparse
+    from kerfly.core import diag
+    q = parse_qs(urlparse(diag.issue_url("laser", "9.9.9", "LASER-M3")).query)
+    forms = os.path.join(ROOT_DIR, ".github", "ISSUE_TEMPLATE")
+    ok = q.get("template") == ["laser_problem.yml"] and q.get("version") == ["9.9.9"] \
+        and q.get("board") == ["LASER-M3"] and q.get("system", [""])[0] != ""
+    for kind, fname in diag.ISSUE_TEMPLATES.items():
+        text = open(os.path.join(forms, fname), encoding="utf-8").read()
+        ok = ok and all("id: %s\n" % f in text for f in ("version", "system", "board", "report"))
+    check("bug report form: version, system and board filled in", ok, "(%s)" % q)
     check("safety check: a job running above the bed is refused",
           problem is not None and problem[0] == "top", "(%s)" % (problem,))
     return errors

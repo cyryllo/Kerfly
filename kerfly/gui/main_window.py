@@ -262,6 +262,9 @@ class MainWindow(QMainWindow):
         self.act_report = self._action(_("Save &diagnostic report…"), self.save_report, None,
                                        _("Save a report with the laser log and settings, to attach to a bug report"))
         self.act_log_folder = self._action(_("Open the &log folder"), self.open_log_folder)
+        self.act_report_problem = self._action(
+            _("Report a &problem on GitHub\u2026"), self.report_problem, None,
+            _("Save the diagnostic report and open the bug report form on GitHub"))
 
         mb = self.menuBar()
         m = mb.addMenu(_("&File"))
@@ -303,6 +306,7 @@ class MainWindow(QMainWindow):
         for a in (self.act_materials, self.act_export_materials, self.act_import_materials):
             m.addAction(a)
         m = mb.addMenu(_("&Help"))
+        m.addAction(self.act_report_problem)
         m.addAction(self.act_report)
         m.addAction(self.act_log_folder)
         m.addSeparator()
@@ -378,6 +382,7 @@ class MainWindow(QMainWindow):
                 (self.act_settings, "settings", C_("toolbar", "Settings")),
             ]),
             (C_("toolbar group", "Help"), [
+                (self.act_report_problem, "bug", C_("toolbar", "Bug report")),
                 (self.act_report, "file-report", C_("toolbar", "Report")),
             ]),
         ]
@@ -3006,6 +3011,11 @@ class MainWindow(QMainWindow):
 
     # ------------------------------------------------------------ diagnostics
     def save_report(self):
+        self._write_report()
+
+    def _write_report(self):
+        """Ask where to save the diagnostic report and save it; returns the
+        file name, or None if cancelled or not saved."""
         from datetime import datetime
         from kerfly import selftest
         from kerfly.core import diag
@@ -3014,7 +3024,7 @@ class MainWindow(QMainWindow):
         name, _unused = QFileDialog.getSaveFileName(self, _("Save diagnostic report"), default,
                                                     _("Text files") + " (*.txt)")
         if not name:
-            return
+            return None
         QApplication.setOverrideCursor(Qt.WaitCursor)
         try:
             diag.log.info("diagnostic report requested; laser connected: %s", self.laser.connected)
@@ -3024,9 +3034,46 @@ class MainWindow(QMainWindow):
         except OSError as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, _("Save diagnostic report"), str(e))
-            return
+            return None
         QApplication.restoreOverrideCursor()
         self.status(_("Diagnostic report saved: %s") % name)
+        return name
+
+    def report_problem(self):
+        """Save the diagnostic report, then open the GitHub issue form with the
+        version, system and board filled in; the report is dragged into it."""
+        from PySide6.QtCore import QUrl
+        from PySide6.QtGui import QDesktopServices
+        from kerfly.core import diag
+        box = QMessageBox(self)
+        box.setWindowTitle(_("Report a problem"))
+        box.setIcon(QMessageBox.Question)
+        box.setText(_("What kind of problem is it?"))
+        box.setInformativeText(_("Kerfly saves a diagnostic report and opens the report form on GitHub "
+                                 "in your browser (a free GitHub account is needed to send it)."))
+        laser = box.addButton(_("The laser did something wrong"), QMessageBox.AcceptRole)
+        other = box.addButton(_("Another problem"), QMessageBox.AcceptRole)
+        box.addButton(QMessageBox.Cancel)
+        box.exec()
+        if box.clickedButton() not in (laser, other):
+            return
+        name = self._write_report()
+        if not name:
+            return
+        kind = "laser" if box.clickedButton() is laser else "bug"
+        QDesktopServices.openUrl(QUrl(diag.issue_url(kind, __version__, self.values.get("board_name", ""))))
+        info = QMessageBox(self)
+        info.setWindowTitle(_("Report a problem"))
+        info.setIcon(QMessageBox.Information)
+        info.setText(_("The report form is opening in your browser. Please drag the diagnostic report "
+                       "into its \"Diagnostic report\" field:"))
+        info.setInformativeText(name)
+        info.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        folder = info.addButton(_("Show the report file"), QMessageBox.ActionRole)
+        info.addButton(QMessageBox.Close)
+        info.exec()
+        if info.clickedButton() is folder:
+            QDesktopServices.openUrl(QUrl.fromLocalFile(os.path.dirname(name)))
 
     def open_log_folder(self):
         from PySide6.QtCore import QUrl

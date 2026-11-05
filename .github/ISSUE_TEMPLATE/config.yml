@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Installation guide
+    url: https://github.com/cyryllo/Kerfly/blob/main/INSTALL.md
+    about: Installing Kerfly on Windows and Linux, the USB driver, the self-test.
+  - name: Instrukcja instalacji (po polsku)
+    url: https://github.com/cyryllo/Kerfly/blob/main/INSTALL_pl.md
+    about: Instalacja Kerfly w Windows i Linuksie, sterownik USB, autotest.

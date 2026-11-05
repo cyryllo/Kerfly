@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 11:45+0100\n"
+"POT-Creation-Date: 2026-11-05 11:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -223,6 +223,9 @@ msgstr ""
 msgid "All files"
 msgstr ""
 
+msgid "Another problem"
+msgstr ""
+
 msgctxt "toolbar group"
 msgid "Arrange"
 msgstr ""
@@ -262,6 +265,10 @@ msgid "Broken apart into %d shapes (grouped; use Ungroup to separate them)."
 msgstr ""
 
 msgid "Browse…"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Bug report"
 msgstr ""
 
 msgid "Calculate raster time"
@@ -711,6 +718,11 @@ msgstr ""
 msgid "Kerfly projects"
 msgstr ""
 
+msgid ""
+"Kerfly saves a diagnostic report and opens the report form on GitHub in "
+"your browser (a free GitHub account is needed to send it)."
+msgstr ""
+
 msgid "Language"
 msgstr ""
 
@@ -1125,6 +1137,12 @@ msgctxt "toolbar"
 msgid "Report"
 msgstr ""
 
+msgid "Report a &problem on GitHub…"
+msgstr ""
+
+msgid "Report a problem"
+msgstr ""
+
 msgid "Resolution:"
 msgstr ""
 
@@ -1228,6 +1246,9 @@ msgstr ""
 msgid "Save the changes to the project first?"
 msgstr ""
 
+msgid "Save the diagnostic report and open the bug report form on GitHub"
+msgstr ""
+
 msgid "Save the layout, layers and files in one .kerfly file"
 msgstr ""
 
@@ -1293,6 +1314,9 @@ msgstr ""
 
 msgctxt "toolbar group"
 msgid "Shapes"
+msgstr ""
+
+msgid "Show the report file"
 msgstr ""
 
 msgid "Side"
@@ -1428,10 +1452,18 @@ msgid ""
 "trying."
 msgstr ""
 
+msgid "The laser did something wrong"
+msgstr ""
+
 msgid "The laser stopped responding after the job was complete."
 msgstr ""
 
 msgid "The new language will be used after restarting Kerfly."
+msgstr ""
+
+msgid ""
+"The report form is opening in your browser. Please drag the diagnostic "
+"report into its \"Diagnostic report\" field:"
 msgstr ""
 
 #, python-format
@@ -1594,6 +1626,9 @@ msgid "Wait for the laser to finish"
 msgstr ""
 
 msgid "Waiting for the laser to finish."
+msgstr ""
+
+msgid "What kind of problem is it?"
 msgstr ""
 
 msgid "Width"

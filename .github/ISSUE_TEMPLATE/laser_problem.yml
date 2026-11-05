@@ -1,0 +1,121 @@
+name: Laser problem
+description: The laser moved, cut or engraved wrongly (wrong place, size, power or speed, head ran into the frame).
+title: "[Laser] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting. You can write in English or Polish.
+
+        **Quickest way:** in Kerfly choose **Help → Report a problem on GitHub…**. It saves the
+        diagnostic report and opens this form with the version, system and board filled in.
+
+        If the head hit the frame or the laser fired outside the work, switch the laser off
+        before anything else.
+
+  - type: checkboxes
+    id: operations
+    attributes:
+      label: What was in the job?
+      options:
+        - label: Raster engraving (picture, filled shape)
+        - label: Outline engraving (vector engrave, hatch)
+        - label: Cutting
+        - label: Trace boundary
+        - label: G-code
+        - label: An EGV file sent with File → Send EGV file
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What the laser did, and what you expected (the preview shows where it should go).
+      placeholder: |
+        Expected: the picture at the place shown in the preview, under the cut circle.
+        Actual: the head went about 100 mm up and engraved there. The cut was in the right place.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to repeat it
+      placeholder: |
+        1. Open a picture and draw a circle next to it
+        2. Put the circle on the Cut layer
+        3. Press Start
+    validations:
+      required: true
+
+  - type: dropdown
+    id: hit-frame
+    attributes:
+      label: Did the head run into the frame or past the bed?
+      options:
+        - "No"
+        - "Yes"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: simulation
+    attributes:
+      label: Did "Simulate job" (View → Simulate job, Ctrl+Shift+J) show the right path?
+      options:
+        - "Did not try"
+        - "Yes, the simulation was right"
+        - "No, the simulation was wrong too"
+
+  - type: input
+    id: version
+    attributes:
+      label: Kerfly version
+      description: Help → About Kerfly
+      placeholder: "0.15.0"
+    validations:
+      required: true
+
+  - type: input
+    id: system
+    attributes:
+      label: Operating system
+      placeholder: "Windows 10 / Windows 11 / Debian 13 / Ubuntu 24.04"
+    validations:
+      required: true
+
+  - type: input
+    id: board
+    attributes:
+      label: Controller board
+      description: Settings → Controller board (also printed on the board, for example LASER-M2 or LASER-M3)
+      placeholder: "LASER-M3"
+
+  - type: textarea
+    id: report
+    attributes:
+      label: Diagnostic report
+      description: |
+        In Kerfly choose **Help → Save diagnostic report…** right after the problem, then drag
+        the `.txt` file into this field. It holds the settings, the self-test and the log of what
+        was sent to the laser. Without it we can rarely find the cause.
+      placeholder: Drag kerfly-report-….txt here
+    validations:
+      required: true
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Design and photos
+      description: |
+        The project helps most: **File → Save project** (`.kerfly`), then drag it here (zip it first:
+        GitHub accepts .zip but not .kerfly). A photo of the result and a screenshot of the preview
+        show the difference at once.
+      placeholder: Drag project.zip, photos and screenshots here
+
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else?
+      description: Material, speed and power, whether K40 Whisperer does the same, ...

@@ -7,6 +7,20 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
+## Unreleased
+
+### New
+
+- **Report a problem on GitHub** (Help menu, **Bug report** button). Kerfly
+  saves the diagnostic report and opens the report form on GitHub with the
+  version, system and board filled in; the report file is dragged into it.
+- **Report forms on GitHub** for laser problems (wrong place, power or speed,
+  head running into the frame), other bugs, feature ideas and translation
+  fixes. They ask for the diagnostic report, the design and photos. Reports
+  can be written in English or Polish.
+- **README in Polish** (`README_pl.md`), with a screenshot of the Polish
+  window.
+
 ## 0.15.0 (2026-11-05)
 
 Fixes from the first test on a real laser (Windows 10, LASER-M3 board).

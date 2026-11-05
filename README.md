@@ -2,6 +2,8 @@
 
 [![tests](https://github.com/cyryllo/Kerfly/actions/workflows/tests.yml/badge.svg)](https://github.com/cyryllo/Kerfly/actions/workflows/tests.yml)
 
+**Po polsku:** [README_pl.md](README_pl.md) · [instrukcja instalacji](INSTALL_pl.md)
+
 Kerfly is laser cutter control software for K40-class CO2 lasers with Lihuiyu
 (M2 Nano family) controller boards. It runs on Linux (Debian first) and Windows.
 
@@ -103,6 +105,16 @@ To check an installation, run `start_kerfly.bat --self-test` (Windows) or
 driver, whether a K40 is connected (without moving it), Inkscape, the
 settings folder, and whether the window opens a design. Please include its
 output in bug reports.
+
+## Reporting problems
+
+In Kerfly choose **Help → Report a problem on GitHub…** (or the **Bug report**
+button). Kerfly saves a diagnostic report (settings, self-test and the log of
+what was sent to the laser) and opens the
+[report form](https://github.com/cyryllo/Kerfly/issues/new/choose) with the
+version, system and board filled in; drag the report file into the form.
+There are forms for laser problems (wrong place, power or speed), other bugs,
+feature ideas and translation fixes. You can write in English or Polish.
 
 ## Running from source (Debian / Ubuntu)
 

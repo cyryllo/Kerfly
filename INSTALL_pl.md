@@ -1,7 +1,8 @@
 # Kerfly: instalacja i pierwsze uruchomienie
 
 Kerfly działa z kodu źródłowego, czyli przez Pythona. Gotowe instalatory
-(`.exe`, AppImage) powstaną później.
+(`.exe`, AppImage) powstaną później. Opis programu po polsku jest w
+[README_pl.md](README_pl.md).
 
 ## Windows 10 / 11
 
@@ -89,14 +90,21 @@ błędu.
 - **Shift** przy rysowaniu daje kwadrat, koło albo linie co 45°.
 - **Ctrl+klik** albo ramka zaznacza kilka elementów, a **Ctrl+Shift+G**
   grupuje.
-- Pełna tabela jest w README (po angielsku).
+- Pełna tabela jest w [README_pl.md](README_pl.md).
 
 ## Gdy coś pójdzie nie tak
 
 Kerfly zapisuje dziennik wszystkich komend lasera i błędów (`kerfly.log` w
 folderze ustawień: `~/.config/kerfly/` na Linuksie, `%APPDATA%\Kerfly\` na
-Windows). Wybierz **Pomoc → Zapisz raport diagnostyczny…** (albo przycisk
-**Raport**) i dołącz plik do zgłoszenia błędu.
+Windows).
+
+Żeby zgłosić problem, wybierz **Pomoc → Zgłoś problem na GitHubie…** (albo
+przycisk **Zgłoś błąd**). Kerfly zapisze raport diagnostyczny i otworzy
+formularz zgłoszenia na GitHubie z wpisaną wersją, systemem i płytą.
+Przeciągnij plik raportu do pola „Diagnostic report”. Do wysłania potrzebne
+jest darmowe konto GitHub. Formularz jest po angielsku, ale zgłoszenie można
+napisać po polsku. Sam raport zapisuje **Pomoc → Zapisz raport
+diagnostyczny…** (albo przycisk **Raport**).
 
 ## Pierwszy test na laserze (lista kontrolna)
 

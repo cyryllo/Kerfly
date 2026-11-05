@@ -1,0 +1,88 @@
+name: Bug report
+description: Something in Kerfly does not work (window, editor, opening or saving files, error messages). For wrong laser movement use "Laser problem".
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting. You can write in English or Polish.
+
+        **Quickest way:** in Kerfly choose **Help → Report a problem on GitHub…**. It saves the
+        diagnostic report and opens this form with the version, system and board filled in.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what Kerfly did, and what you expected. Copy error messages as text.
+      placeholder: |
+        I ungrouped an opened SVG and pressed Undo. The shapes disappeared instead of coming back
+        as one file.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to repeat it
+      placeholder: |
+        1. File → Open, choose drawing.svg
+        2. Arrange → Ungroup
+        3. Edit → Undo
+    validations:
+      required: true
+
+  - type: dropdown
+    id: how-often
+    attributes:
+      label: How often does it happen?
+      options:
+        - "Every time"
+        - "Sometimes"
+        - "Once so far"
+
+  - type: input
+    id: version
+    attributes:
+      label: Kerfly version
+      description: Help → About Kerfly
+      placeholder: "0.15.0"
+    validations:
+      required: true
+
+  - type: input
+    id: system
+    attributes:
+      label: Operating system
+      placeholder: "Windows 10 / Windows 11 / Debian 13 / Ubuntu 24.04"
+    validations:
+      required: true
+
+  - type: input
+    id: board
+    attributes:
+      label: Controller board
+      description: If a laser is connected (Settings → Controller board)
+      placeholder: "LASER-M2 / LASER-M3 / no laser"
+
+  - type: textarea
+    id: report
+    attributes:
+      label: Diagnostic report
+      description: |
+        In Kerfly choose **Help → Save diagnostic report…**, then drag the `.txt` file into this
+        field. If Kerfly does not start at all, paste the output of `start_kerfly.bat --self-test`
+        (Windows) or `./start_kerfly.sh --self-test` (Linux) instead.
+      placeholder: Drag kerfly-report-….txt here
+    validations:
+      required: true
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Files and screenshots
+      description: |
+        The file or project that shows the problem (zip it: GitHub accepts .zip, .svg, .dxf, .png,
+        .jpg and .txt) and screenshots.
+      placeholder: Drag files and screenshots here

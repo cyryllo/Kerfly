@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 11:45+0100\n"
+"POT-Creation-Date: 2026-11-05 11:57+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -234,6 +234,9 @@ msgstr "Wyrównaj do góry"
 msgid "All files"
 msgstr "Wszystkie pliki"
 
+msgid "Another problem"
+msgstr "Inny problem"
+
 msgctxt "toolbar group"
 msgid "Arrange"
 msgstr "Układ"
@@ -276,6 +279,10 @@ msgstr "Rozbito na kształty (%d); są zgrupowane, Rozgrupuj je rozdzieli."
 
 msgid "Browse…"
 msgstr "Przeglądaj…"
+
+msgctxt "toolbar"
+msgid "Bug report"
+msgstr "Zgłoś błąd"
 
 msgid "Calculate raster time"
 msgstr "Oblicz czas rastra"
@@ -745,6 +752,13 @@ msgstr "Przeskocz do następnej warstwy"
 msgid "Kerfly projects"
 msgstr "Projekty Kerfly"
 
+msgid ""
+"Kerfly saves a diagnostic report and opens the report form on GitHub in "
+"your browser (a free GitHub account is needed to send it)."
+msgstr ""
+"Kerfly zapisze raport diagnostyczny i otworzy w przeglądarce formularz "
+"zgłoszenia na GitHubie (do wysłania potrzebne jest darmowe konto GitHub)."
+
 msgid "Language"
 msgstr "Język"
 
@@ -1179,6 +1193,12 @@ msgctxt "toolbar"
 msgid "Report"
 msgstr "Raport"
 
+msgid "Report a &problem on GitHub…"
+msgstr "Zgłoś &problem na GitHubie…"
+
+msgid "Report a problem"
+msgstr "Zgłoś problem"
+
 msgid "Resolution:"
 msgstr "Rozdzielczość:"
 
@@ -1296,6 +1316,11 @@ msgstr "Zapisz ustawienia jako domyślne"
 msgid "Save the changes to the project first?"
 msgstr "Zapisać najpierw zmiany w projekcie?"
 
+msgid "Save the diagnostic report and open the bug report form on GitHub"
+msgstr ""
+"Zapisz raport diagnostyczny i otwórz formularz zgłoszenia błędu na "
+"GitHubie"
+
 msgid "Save the layout, layers and files in one .kerfly file"
 msgstr "Zapisz układ, warstwy i pliki w jednym pliku .kerfly"
 
@@ -1364,6 +1389,9 @@ msgstr "Kształt"
 msgctxt "toolbar group"
 msgid "Shapes"
 msgstr "Kształty"
+
+msgid "Show the report file"
+msgstr "Pokaż plik raportu"
 
 msgid "Side"
 msgstr "Odcinek"
@@ -1511,11 +1539,21 @@ msgid ""
 "trying."
 msgstr "Laser nie odpowiada (prób: %s). Naciśnij Stop, aby przestać próbować."
 
+msgid "The laser did something wrong"
+msgstr "Laser zrobił coś źle"
+
 msgid "The laser stopped responding after the job was complete."
 msgstr "Laser przestał odpowiadać po zakończeniu zadania."
 
 msgid "The new language will be used after restarting Kerfly."
 msgstr "Nowy język zostanie użyty po ponownym uruchomieniu Kerfly."
+
+msgid ""
+"The report form is opening in your browser. Please drag the diagnostic "
+"report into its \"Diagnostic report\" field:"
+msgstr ""
+"Formularz zgłoszenia otwiera się w przeglądarce. Przeciągnij raport "
+"diagnostyczny do jego pola „Diagnostic report”:"
 
 #, python-format
 msgid "There are many data transmission errors (%s). Press Stop to stop trying."
@@ -1702,6 +1740,9 @@ msgstr "Czekaj na zakończenie pracy lasera"
 
 msgid "Waiting for the laser to finish."
 msgstr "Oczekiwanie na zakończenie pracy lasera."
+
+msgid "What kind of problem is it?"
+msgstr "Jaki to problem?"
 
 msgid "Width"
 msgstr "Szerokość"

@@ -60,8 +60,14 @@ that the laser is not connected. Send this output along with any bug report.
 
 Kerfly keeps a log of every laser command and error (`kerfly.log` in the
 settings folder: `~/.config/kerfly/` on Linux, `%APPDATA%\Kerfly\` on
-Windows). Use **Help → Save diagnostic report…** (or the **Report** button)
-and attach the file to the bug report.
+Windows).
+
+To report a problem, choose **Help → Report a problem on GitHub…** (or the
+**Bug report** button). Kerfly saves a diagnostic report and opens the report
+form on GitHub with the version, system and board filled in. Drag the report
+file into the form's "Diagnostic report" field. A free GitHub account is
+needed to send it. The report alone is saved with **Help → Save diagnostic
+report…** (or the **Report** button).
 
 ## First run with a laser
 

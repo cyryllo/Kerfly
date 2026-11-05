@@ -1134,6 +1134,34 @@ def main():
             check("stopped job: head position unknown, press Home", "Home" in msg, "(%s)" % msg)
         else:
             check("job refused before sending: no position warning", "Home" not in msg, "(%s)" % msg)
+
+    # 40. Help → Report a problem: saves the report, opens the laser problem form with the version filled in
+    from PySide6.QtGui import QDesktopServices as _QDS
+    opened = []
+    _orig_open, _orig_exec = _QDS.openUrl, QMessageBox.exec
+    _QDS.openUrl = staticmethod(lambda url: opened.append(url.toString()) or True)
+
+    def _click(box, wanted=(_("The laser did something wrong"), "Close", _("Close"))):
+        for b in box.buttons():
+            if b.text().replace("&", "") in wanted:
+                b.click()
+                break
+        return 0
+    QMessageBox.exec = _click
+    try:
+        if os.path.exists(report):
+            os.remove(report)
+        w.report_problem()
+    finally:
+        _QDS.openUrl, QMessageBox.exec = _orig_open, _orig_exec
+    url = opened[0] if opened else ""
+    check("report a problem: report saved, laser form opened with version and board",
+          os.path.exists(report) and "issues/new?template=laser_problem.yml" in url
+          and "version=" + __import__("kerfly").__version__ in url and "board=" in url, "(%s)" % url[:90])
+    check("report a problem: in the Help menu and the toolbar",
+          w.act_report_problem in [a for m in w.menuBar().actions() for a in m.menu().actions()]
+          and any(getattr(b, "defaultAction", lambda: None)() is w.act_report_problem
+                  for b in w.findChildren(QToolButton)))
     sys.stdout, sys.stderr = sys.__stdout__, sys.__stderr__
 
     # Let every worker thread finish: a QThread still running when the process

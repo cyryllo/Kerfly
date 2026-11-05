@@ -129,3 +129,35 @@ def build_report(version, values=None, checks=None):
         lines.append("%s = %s" % (key, values[key]))
     lines += ["", "== Log (%s)" % log_path(), read_log()]
     return "\n".join(lines)
+
+
+ISSUES_URL = "https://github.com/cyryllo/Kerfly/issues/new"
+ISSUE_TEMPLATES = {"laser": "laser_problem.yml", "bug": "bug_report.yml"}
+
+
+def system_name():
+    """Short name of the operating system for a bug report, e.g. "Windows 10
+    (10.0.19045)" or "Debian GNU/Linux 13 (trixie)"."""
+    system = platform.system()
+    if system == "Windows":
+        return "Windows %s (%s)" % (platform.release(), platform.version())
+    if system == "Linux":
+        try:
+            pretty = platform.freedesktop_os_release().get("PRETTY_NAME")
+            if pretty:
+                return pretty
+        except (OSError, AttributeError):
+            pass
+    if system == "Darwin":
+        return "macOS %s" % platform.mac_ver()[0]
+    return platform.platform()
+
+
+def issue_url(kind, version, board=""):
+    """Address of the GitHub issue form ("laser" or "bug") with the version,
+    system and board filled in (the form fields have these ids)."""
+    from urllib.parse import urlencode
+    fields = {"template": ISSUE_TEMPLATES[kind], "version": version, "system": system_name()}
+    if board:
+        fields["board"] = board
+    return ISSUES_URL + "?" + urlencode(fields)
