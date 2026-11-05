@@ -47,6 +47,9 @@ from kerfly.gui.layers_panel import LayersPanel
 from kerfly.gui.materials_dialog import MaterialsDialog
 from kerfly.gui.worker import EgvSendWorker, JobWorker, LayersJobWorker, RasterLayersWorker
 
+# jog pad: 3 rows as tall as the machine column beside it (4 buttons of 56 px, spacing 4)
+JOG_BUTTON = (4 * 56 + 3 * 4 - 2 * 4) // 3
+JOG_ICON = 44
 _PERCENT_RE = re.compile(r"(\d+(?:\.\d+)?)\s*%\s*$")   # progress percentage at the end of a message
 IMAGE_PATTERNS = " ".join("*" + e for e in loaders.IMAGE_EXTENSIONS)
 
@@ -1189,8 +1192,8 @@ class MainWindow(QMainWindow):
         for d, (name, r, c, sc, tip) in arrows.items():
             b = QPushButton()
             b.setIcon(icons.arrow_icon(name))
-            b.setIconSize(QSize(34, 34))
-            b.setFixedSize(64, 56)
+            b.setIconSize(QSize(JOG_ICON, JOG_ICON))
+            b.setFixedSize(JOG_BUTTON, JOG_BUTTON)
             b.setToolTip("%s (%s)" % (_(tip), sc))
             b.clicked.connect(lambda _checked=False, d=d: self.jog(*d))
             grid.addWidget(b, r, c)
@@ -1207,8 +1210,8 @@ class MainWindow(QMainWindow):
         for key, r, c, tip, sc in corners:
             b = QPushButton()
             b.setIcon(icons.centre_icon() if key == "CC" else icons.corner_icon(key))
-            b.setIconSize(QSize(34, 34))
-            b.setFixedSize(64, 56)
+            b.setIconSize(QSize(JOG_ICON, JOG_ICON))
+            b.setFixedSize(JOG_BUTTON, JOG_BUTTON)
             b.setToolTip("%s (%s).\n%s" % (_(tip), sc, _("The design does not move.")))
             b.clicked.connect(lambda _checked=False, k=key: self.move_to_corner(k))
             grid.addWidget(b, r, c)
