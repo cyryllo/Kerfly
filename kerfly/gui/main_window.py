@@ -565,8 +565,9 @@ class MainWindow(QMainWindow):
                           "close the shape; double-click or Enter finishes an open path. Backspace removes the "
                           "last node, Shift keeps 45\u00b0 angles, Esc cancels."))
         if tool == "textpath":
-            self.status(_("Text on a path: type the text above, then click a line, curve or shape to put it on. "
-                          "Drag the text afterwards to slide it along the line."))
+            self.status(_("Text on a path: click a line, curve or shape to put the selected text on it (no text "
+                          "selected: type a new one above first). Drag the text afterwards to slide it along the "
+                          "line."))
         if tool == "fill":
             self.status(_("Fill: choose a pattern above, then click a closed shape (cut or outline) to fill it. "
                           "Selected shapes get the pattern you choose. The outline stays on its layer; the "
@@ -598,8 +599,15 @@ class MainWindow(QMainWindow):
                 self._options_target, self._options_element = "fill", None
                 self.tool_options.show_fill_tool(self.fill_defaults)
             return
-        if self.preview.tool == "textpath":                 # the text to put on a path, also with a selection
-            if force or getattr(self, "_options_target", None) != "textpath":
+        if self.preview.tool == "textpath":
+            e = self.selected
+            if e is not None and e.shape is not None and e.shape.kind == "text":
+                # a selected text is the one the tool puts on the clicked shape: show it
+                if force or getattr(self, "_options_target", None) != "selected" \
+                        or getattr(self, "_options_element", None) is not e:
+                    self._options_target, self._options_element = "selected", e
+                    self.tool_options.show_spec(e.shape, e.name)
+            elif force or getattr(self, "_options_target", None) != "textpath":
                 self._options_target, self._options_element = "textpath", None
                 title = NEW_KIND_TITLES["textpath"]
                 self.tool_options.show_spec(self.shape_defaults["textpath"], _(title))
@@ -721,11 +729,25 @@ class MainWindow(QMainWindow):
         return best
 
     def _text_path_clicked(self, point):
-        """Text on a path tool: put a new text (from the options bar) on the clicked shape."""
+        """Text on a path tool: put the selected text on the clicked shape, or a new text
+        (from the options bar) when no text is selected."""
         guide = self._line_at(point)
         if guide is None:
             self.status(_("Click a line, curve or shape to put the text on. Opened files must be ungrouped first "
                           "(Edit → Ungroup)."), error=True)
+            return
+        chosen = self.selected
+        if chosen is not None and chosen.shape is not None and chosen.shape.kind == "text":
+            self._checkpoint()                          # move the selected text onto the shape (no copy)
+            if not self._place_on_path(chosen, guide):
+                self._undo.pop()
+                return
+            self.set_tool("select")
+            self.preview.select_element(chosen)
+            self.selected = chosen
+            self._update_tool_options(force=True)
+            self.status(_("Text put on the path. Drag it to slide it along the line; the bar above changes the "
+                          "text, the spacing, the distance from the line and the side."))
             return
         spec = self.shape_defaults["textpath"].copy()
         if not (spec.text or "").strip():

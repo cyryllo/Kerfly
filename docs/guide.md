@@ -227,6 +227,8 @@ path** tool (Shift+T, the arc with letters on the right), type the text and
 choose its font in the options bar, then click a line, curve or shape: the
 text is put on it, every letter standing on the line and turned along it. On
 an open line the text is centred, on a closed shape it is centred at the top.
+If a text is selected when you click, that text is moved onto the shape (for
+example one written with the Text tool), so no copy stays behind.
 **Drag the text to slide it along the line**; on a circle it goes round. The
 **Text on path** section of the options bar has the **position along the
 path** (route icon), the **distance from the line** (line-height icon; below

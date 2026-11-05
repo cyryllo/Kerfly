@@ -1253,6 +1253,8 @@ def main():
     straight = not text.shape.text_path and abs(text.size[1] * 25.4 - 7.3) < 2.0
     # the Text on a path tool: click near the line -> a new text on it; dragging slides it
     # along the line (it stays on it); spacing makes it longer; distance lifts it off the line
+    w5.preview.select_element([])                           # no text selected: the tool makes a new one
+    w5.selected = None
     w5.set_tool("textpath")
     tool_bar_text = w5._options_target == "textpath"
     w5.shape_defaults["textpath"].text = "ABC"
@@ -1274,6 +1276,19 @@ def main():
     spaced = t2.size[0] * 25.4 > w_before * 25.4 + 3.5 and abs(t2.bounds[2] * 25.4 + 57.0) < 0.6
     check("text on a path tool: click puts a text on the line, drag slides along it, spacing, distance",
           tool_bar_text and made and slid and spaced, "(%s)" % ([tool_bar_text, made, slid, spaced],))
+    # a selected text is moved onto the clicked shape: no second copy stays behind
+    t3 = _Spec(kind="text", text="MOVE ME", font_size=8, operation="engrave")
+    _uts(t3)
+    w5._add_drawn_element(t3, "text", 20, 120)               # drawn: selected
+    plain_text = w5.elements[-1]
+    n1 = len(w5.elements)
+    w5.set_tool("textpath")
+    shows_it = w5._options_element is plain_text
+    w5._shape_picked("textpath", _QPointF(30, 60))
+    moved_on = len(w5.elements) == n1 and bool(plain_text.shape.text_path) \
+        and abs(plain_text.bounds[2] * 25.4 + 60.0) < 0.6
+    check("text on a path tool: the selected text goes onto the shape (no copy left)", shows_it and moved_on,
+          "(%s)" % ([shows_it, moved_on, len(w5.elements) - n1],))
 
     # changing a text on a path in the options bar, several times in a row (the bar kept an old copy
     # of the path, so every change moved the text further: +10, +20, +30 mm; the font jumped too)

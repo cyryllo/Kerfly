@@ -230,6 +230,8 @@ stały się kształtami.
 wybierz czcionkę na pasku opcji, potem kliknij linię, krzywą albo kształt:
 tekst stanie na nim, każda litera na linii i obrócona wzdłuż niej. Na otwartej
 linii tekst jest wyśrodkowany, na zamkniętym kształcie wyśrodkowany na górze.
+Jeśli przy kliknięciu zaznaczony jest jakiś tekst (np. napisany narzędziem
+Tekst), to właśnie on przechodzi na kształt i nie zostaje żadna kopia.
 **Przeciągnij tekst, żeby przesunąć go wzdłuż linii**; na okręgu jedzie
 dookoła. Sekcja **Tekst na ścieżce** na pasku opcji ma **położenie na
 ścieżce** (ikona trasy), **odległość od linii** (ikona wysokości linii; poniżej

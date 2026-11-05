@@ -21,7 +21,8 @@ Version numbers:
   left out. Holes stay empty. A selected shape shows the Fill section to
   change or remove its pattern. Saved in projects, one undo step.
 - **Text on a path.** The **Text on a path** tool (Shift+T, on the tool
-  strip): type the text in the options bar and click a line, curve or shape.
+  strip): click a line, curve or shape to put the selected text on it, or,
+  with no text selected, a new one typed in the options bar.
   Every letter stands on the line, turned along it, with the font's kerning;
   centred on open lines, at the top of closed shapes. Dragging the text
   slides it along the line (round and round on a circle). The options bar
