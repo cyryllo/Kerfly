@@ -157,6 +157,36 @@ pattern, clipped to its outline; holes stay empty.
   concentric), `fill/fills.py` (scanline, Eulerian and spiral fills; wobbles:
   circle, sine wave, sawtooth, jigsaw, gear, meander, dashed).
 
+## Milestone: GRBL lasers (after the K40 milestone)
+
+Start only when everything on the K40 works and is confirmed on the machine
+(the K40 milestone: the remaining K40 Whisperer features above and the
+packages below). GRBL is a second, separate driver next to the K40 one: the
+design still becomes cut lines, engrave lines and a raster, and only the
+driver turns them into commands. The K40 path stays unchanged and is still
+checked byte for byte.
+
+- [ ] **Step 1: export G-code for GRBL** (File → Save G-code, toolbar button).
+  Vectors as `G0` / `G1` with feed rate, power as `S`, laser mode `M4`
+  (power follows the speed, clean corners); raster line by line with the
+  power from the pixel brightness, white parts skipped, overscan at the line
+  ends. Usable at once with other senders (LaserGRBL, UGS). Tests: the
+  generated G-code checked against expected files.
+- [ ] **Step 2: direct control over the serial port** (`pyserial`).
+  Connect and read the board settings (`$$`: bed size, `$30` maximum power,
+  `$32` laser mode); home `$H`, unlock `$X`, jog with `$J=`, trace boundary,
+  start; pause, resume and stop with the real-time commands `!`, `~`,
+  Ctrl-X; streaming that keeps the board's buffer full; alarms and errors
+  shown as messages. GRBL reports the real head position, so the "position
+  unknown after Stop" problem of the K40 goes away. Tests: a fake GRBL board,
+  like the fake USB device for the K40.
+- [ ] **Step 3: machine profiles.** Settings → Machine: K40 (Lihuiyu) or GRBL,
+  each with its own bed size, power range, speeds and options (air assist
+  `M8`); the window shows only what the chosen machine can do.
+- [ ] **Step 4: test on a real GRBL machine** (diode laser or a K40 with a
+  GRBL board). Windows: the boards usually use a CH340 USB chip; its driver
+  goes into the installation guide.
+
 ## Packaging (later)
 
 - Linux: AppImage. PyInstaller collects the program and libraries, and
