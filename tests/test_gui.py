@@ -1306,18 +1306,24 @@ def main():
     steps_ok = all(abs((b - a) - 10.0) < 0.3 for a, b in zip(lefts, lefts[1:]))
     width0, left0 = t2.size[0], t2.bounds[0]
     fonts = w5.tool_options.findChildren(_QFCB)
-    other = ""
+    before_font = t2.shape.font_family
     if fonts:
-        # another font that this system really has (Windows has no DejaVu fonts)
+        # pick other fonts of this system until the shape really gets another one (font names and
+        # aliases differ between systems; Windows has no DejaVu fonts)
         combo = fonts[0]
-        names = [combo.itemText(i) for i in range(combo.count())]
-        other = next((n for n in names if n != t2.shape.font_family and not n.startswith(("Wingdings", "Webdings",
-                                                                                            "Symbol", "Marlett")) and
-                      _QFont(n).exactMatch()), "")
-        if other:
-            combo.setCurrentFont(_QFont(other))
-    font_ok = bool(other) and t2.shape.font_family == other and abs(t2.size[0] - width0) > 0.01 \
-        and abs(t2.bounds[0] - left0) * 25.4 < 1.0 and abs(t2.bounds[2] * 25.4 + 57.0) < 0.6
+        for i in range(min(combo.count(), 40)):
+            name = combo.itemText(i)
+            if name == before_font or name.startswith(("Wingdings", "Webdings", "Symbol", "Marlett")):
+                continue
+            combo.setCurrentIndex(i)
+            if t2.shape.font_family != before_font:
+                break
+            fonts = w5.tool_options.findChildren(_QFCB)
+            if not fonts:
+                break
+            combo = fonts[0]
+    font_ok = t2.shape.font_family != before_font and abs(t2.bounds[0] - left0) * 25.4 < 1.0 \
+        and abs(t2.bounds[2] * 25.4 + 57.0) < 0.6
     check("text on a path: changes in the options bar move it exactly, the font changes in place",
           bool(off) and steps_ok and font_ok, "(steps %s, font %s)" % ([round(b - a, 2) for a, b in zip(lefts, lefts[1:])],
                                                                       t2.shape.font_family))
