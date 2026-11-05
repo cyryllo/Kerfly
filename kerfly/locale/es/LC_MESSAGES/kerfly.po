@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 12:03+0100\n"
+"POT-Creation-Date: 2026-11-05 12:22+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -136,6 +136,9 @@ msgstr "&Deshacer"
 
 msgid "&Unlock rail"
 msgstr "&Desbloquear ejes"
+
+msgid "&User guide"
+msgstr "&Guía de usuario"
 
 msgid "&View"
 msgstr "&Ver"
@@ -1016,6 +1019,9 @@ msgstr "Abrir diseño"
 
 msgid "Open the &log folder"
 msgstr "Abrir la carpeta del &registro"
+
+msgid "Open the user guide on the Kerfly website"
+msgstr "Abrir la guía de usuario en el sitio web de Kerfly"
 
 #, python-format
 msgid "Opened %s"

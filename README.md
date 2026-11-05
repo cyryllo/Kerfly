@@ -2,7 +2,7 @@
 
 [![tests](https://github.com/cyryllo/Kerfly/actions/workflows/tests.yml/badge.svg)](https://github.com/cyryllo/Kerfly/actions/workflows/tests.yml)
 
-**Po polsku:** [README_pl.md](README_pl.md) · [instrukcja instalacji](INSTALL_pl.md)
+**Website and user guide:** [cyryllo.github.io/Kerfly](https://cyryllo.github.io/Kerfly/) · **Po polsku:** [README_pl.md](README_pl.md) · [instrukcja instalacji](INSTALL_pl.md) · [instrukcja obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html)
 
 Kerfly is laser cutter control software for K40-class CO2 lasers with Lihuiyu
 (M2 Nano family) controller boards. It runs on Linux (Debian first) and Windows.

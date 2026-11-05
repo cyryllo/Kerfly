@@ -1,0 +1,325 @@
+---
+layout: default
+title: User guide
+lang: en
+other_lang: pl/guide.html
+---
+
+# Kerfly user guide
+
+Kerfly controls K40-class CO2 lasers with Lihuiyu (M2 Nano family) boards:
+it places your designs on the laser bed, lets you draw and edit them, and
+sends the job to the laser. This guide is for version 0.16.
+
+> Kerfly is in early development. The first test on a real laser was in
+> November 2026. Features marked *(not yet tested on a laser)* work in the
+> program and in the tests, but have not been run on real hardware yet.
+> Always keep a hand near the laser's power switch.
+
+- [1. First start](#s1)
+- [2. The window](#s2)
+- [3. Moving the laser head](#s3)
+- [4. Opening files](#s4)
+- [5. Drawing and editing](#s5)
+- [6. Layers and materials](#s6)
+- [7. Running a job](#s7)
+- [8. Settings](#s8)
+- [9. Keyboard shortcuts](#s9)
+- [10. When something goes wrong](#s10)
+
+<a id="s1"></a>
+
+## 1. First start
+
+1. Install Kerfly as described in the
+   [installation guide](https://github.com/cyryllo/Kerfly/blob/main/INSTALL.md).
+   Start it with `start_kerfly.bat` (Windows) or `./start_kerfly.sh` (Linux).
+2. Check the installation: `start_kerfly.bat --self-test` or
+   `./start_kerfly.sh --self-test`. Every line should say `OK`; `WARN` lines
+   are optional parts or mean that the laser is not connected.
+3. Open **Settings → Settings… → Machine** and choose your **Controller
+   board** (printed on the board, for example LASER-M2 or LASER-M3), the
+   **units** and the **bed size**.
+4. Switch the laser on, connect the USB cable and press the **plug** button
+   (Connect, Ctrl+I) on the **Laser** tab. By default Kerfly then homes the
+   head (moves it to the upper left corner).
+
+Kerfly reads and writes the same settings file as K40 Whisperer
+(`k40_whisperer.txt` in your home folder), so your K40 Whisperer settings
+are used. **File → Save settings as default** keeps changed settings.
+
+<a id="s2"></a>
+
+## 2. The window
+
+![Kerfly main window](screenshot.png)
+
+- **Toolbar** (top): file, edit, arrange, view, settings and help commands in
+  labelled groups.
+
+  ![Toolbar](img/en/toolbar.png)
+
+- **Options bar** (under the toolbar): position, size and rotation of the
+  selected element, its layer, and the options of the selected shape or
+  drawing tool (for example the text and font).
+
+  ![Options bar with a text selected](img/en/options.png)
+
+- **Left panel**: the **Design** tab lists the elements on the bed; the
+  **Laser** tab moves the head. Under the tabs are the **Layers** and the job
+  buttons (trace, start, pause, stop).
+- **Bed view** (middle): the laser bed with your elements. The orange
+  crosshair is the laser head. Elements that stick out of the bed are drawn
+  red, and the job cannot start until they are moved back.
+- **Drawing tools** (right): select, edit nodes, rectangle, ellipse, polygon,
+  line, polyline, pen, freehand, measure, text.
+
+Mouse in the bed view: the wheel zooms in and out (not further than the
+whole bed); the middle or right button drags the view; **Ctrl+0** fits the
+bed to the window.
+
+<a id="s3"></a>
+
+## 3. Moving the laser head
+
+![Laser tab](img/en/laser.png)
+
+The **Laser** tab has the machine buttons on the left and the jog pad on the
+right.
+
+| Button | What it does |
+|---|---|
+| Plug | Connect to the laser (Ctrl+I) |
+| House | **Home**: move the head to the home corner |
+| Open lock | **Unlock rail**: release the motors so the head can be moved by hand |
+| Crosshair with a chain link | **Design follows the head** (Ctrl+Alt+H), see below |
+| Arrows | Move the head by one **Step** (the field under the pad). **Ctrl+arrow keys** do the same from the keyboard |
+| Dotted corners and centre | Move the head to that corner or the centre of the design, to see where it will be cut. The design does not move. Ctrl+7, Ctrl+9, Ctrl+5, Ctrl+1, Ctrl+3 |
+| Go to X / Y, **Go** | Home, then move the head to that position (distance from the home corner; Ctrl+G) |
+
+The plain arrow keys (without Ctrl) move the **selected element** on the bed,
+not the head.
+
+**Where the job starts.** The design stays where it is on the bed (as in
+LightBurn or MeerK40t): when a job starts, the head first drives to the
+design. To work the K40 Whisperer way, where the design starts at the head:
+
+- **Edit → Place design at the head** (Ctrl+H, toolbar **To head**) moves the
+  design to the head once.
+- **Design follows the head** (the button with the chain link, green when
+  on) keeps the design at the head: the arrows, Go to X/Y and Home move the
+  head and the design together, and the arrows do not push the design off
+  the bed. The corner buttons still only move the head. *(not yet tested on
+  a laser)*
+
+The K40 does not report where its head is. Kerfly counts the moves it sends;
+after the motors were unlocked, the head was moved by hand, or a job was
+stopped, press **Home** before the next job. After a stopped job Kerfly says
+so in the status bar.
+
+<a id="s4"></a>
+
+## 4. Opening files
+
+**File → Open design…** (Ctrl+O) replaces everything on the bed;
+**File → Add design…** (Ctrl+Shift+O) puts another file next to the others.
+
+| File | What becomes of it |
+|---|---|
+| SVG | Red lines are cut, blue lines engraved as outlines, everything else (fills, pictures, black lines) is raster engraved, as in K40 Whisperer. Inkscape is used when installed, otherwise the built-in renderer; Inkscape is needed for SVG text that is cut or engraved as an outline |
+| DXF | Cut lines; blue entities and layers named *engrave* become outline engraving |
+| PNG, JPG, BMP, TIFF, GIF, WebP | Raster engraving: dark pixels are engraved. Kerfly shows the image size; set the resolution or the width and height |
+| G-code (.ngc, .gcode, .nc, .g, .tap) | Run as G-code |
+| Kerfly project (.kerfly) | The whole layout, layers and drawn shapes |
+
+**File → Save project** (Ctrl+S) saves the layout, the layers, the drawn
+shapes and copies of the opened files in one `.kerfly` file, so it can be
+moved to the computer at the laser. **Reload design** (F5) reads the opened
+files again after you changed them in another program.
+
+<a id="s5"></a>
+
+## 5. Drawing and editing
+
+![Drawing tools](img/en/tools.png)
+
+Choose a tool on the right (or press its key), then draw on the bed with the
+mouse. The options of the tool are in the options bar; you can change them
+before or after drawing.
+
+| Tool | Key | How |
+|---|---|---|
+| Select and move | S | Click to select, drag to move; handles scale and rotate. Drag a frame around several elements, or Ctrl+click |
+| Edit nodes | N | Drag nodes and the round curve handles (Ctrl: one handle alone). Double-click a side to add a node, a node to remove it. Keys: I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / open, B break |
+| Rectangle | R | Drag. Shift: square. Option: corner radius |
+| Ellipse | E | Drag. Shift: circle |
+| Polygon | P | Drag. Option: number of sides |
+| Line | L | Drag. Shift: steps of 45° |
+| Polyline | Shift+L | Click the corners. Click the first point to close; double-click or Enter for an open line; Backspace removes the last corner; Esc cancels |
+| Pen (curves) | B | Click for a corner, press and drag for a smooth curve. Click the first point to close; double-click or Enter to finish |
+| Freehand | F | Draw with the button held; end near the start to close the shape |
+| Measure | M | Drag between two points: distance, width, height and angle |
+| Text | T | Click, then type in the **Content** field; choose the font, size, bold and italic |
+
+**Snapping.** Drawing and moving snap to the corners, centres and edges of
+other elements and to the bed (**View → Snap to objects**, Ctrl+;), and to
+the grid when it is on (**View → Snap to grid**, Ctrl+'; **View → Grid
+size**). Hold **Alt** to snap to nothing for a moment.
+
+**Moving precisely.** Type the position, size and angle in the options bar
+(the chain button keeps the proportions), or use the arrow keys: 1 mm or one
+grid step, with Shift 10 times as far.
+
+**Arranging.** The **Edit** menu and the toolbar have: undo and redo
+(Ctrl+Z, Ctrl+Shift+Z), duplicate (Ctrl+D), delete (Del), rotate 90°
+(Ctrl+L, Ctrl+R), mirror (Ctrl+Shift+H, Ctrl+Shift+V), centre on the bed
+(Ctrl+E), align and distribute, and **Combine shapes**: union, difference,
+intersection and exclusion of closed shapes.
+
+**Groups.** **Group** (Ctrl+Shift+G) makes several elements move together;
+clicking one member selects the whole group, a second click selects that
+member alone. **Ungroup** (Ctrl+Alt+G) splits a group, and also an opened
+SVG or DXF file: each of its lines becomes a shape you can edit, and its
+pictures split into their separate parts. Double-click any element to edit
+its nodes.
+
+**Hatch (fill with lines).** Put a closed shape on an outline layer (see
+below), then press **Fill with lines** in the **Hatch** section of the
+options bar. Set the distance between the lines, their angle, and **#** for a
+second set at 90°. Holes in the shape stay empty.
+
+**Bridges (tabs).** A closed shape on a cut layer can keep small uncut
+bridges that hold the part in the sheet: set their number and width in the
+**Bridges** section.
+
+**Element list.** The **Design** tab lists all elements with the colours of
+their layers. Click a row to select it on the bed (Ctrl / Shift: several);
+untick it to leave it out of the job.
+
+![Design tab](img/en/design.png)
+
+<a id="s6"></a>
+
+## 6. Layers and materials
+
+![Layers](img/en/layers.png)
+
+Every element has up to three parts: a **raster engrave** part (pictures and
+fills), a **vector engrave** (outline) part and a **vector cut** part. Each
+part goes to a **layer**. A layer has its own speed, number of passes,
+power (M3 boards with power control) and colour. Untick a layer to leave it
+out of the job.
+
+- **The layer decides what the laser does.** Select a drawn shape and choose
+  its layer in the **Layer** list of the options bar: a cut layer cuts it, an
+  outline layer engraves its outline (or hatches it), a raster layer fills it.
+- **More layers.** The **+** button under the layers adds another cut,
+  outline or raster layer, for example a second cut layer with another speed.
+  Layers run in the order raster, outline, cut.
+- **Time.** The **Time** column shows how long each layer takes; for raster
+  layers press the calculator button. **View → Simulate job…**
+  (Ctrl+Shift+J) plays the head's moves on the bed.
+- **Materials.** **Settings → Material library…** stores speeds, passes and
+  powers per material (for example "Plywood 3 mm"). Choosing a material in
+  the **Material** list above the layers sets all layers at once. The library
+  can be exported and imported to share it.
+
+<a id="s7"></a>
+
+## 7. Running a job
+
+1. Connect and home the laser, put the material in and focus.
+2. Place the design on the bed (or let it follow the head, see section 3).
+3. **Trace boundary** (the dashed-outline button, Laser menu) drives the head
+   around the design, with the laser off unless set in the settings, so you
+   can check where it will be cut. It starts at the corner nearest the head.
+4. **Start** (F9) runs all ticked layers. **Pause** stops the laser for a
+   moment and the same button resumes it. **Stop** (Esc) ends the job
+   immediately; then press **Home** before the next job.
+5. The progress bar at the bottom shows the percentage of the current step
+   (preparing the data, sending it to the laser).
+
+**Safety check.** Before anything is sent, Kerfly checks that the head stays
+on the bed during the whole job and the trace. If it would leave the bed by
+more than 1 mm, nothing is sent and the status bar says which edge and by how
+much. *(not yet tested on a laser)*
+
+**Test fire** (M3 boards, Laser tab): fires the laser briefly with the power
+and time set next to the button.
+
+**EGV files.** **File → Save EGV file…** writes the job to a file (not with
+M3 power per operation); **File → Send EGV file to laser…** sends an existing
+EGV file.
+
+<a id="s8"></a>
+
+## 8. Settings
+
+**Settings → Settings…** (Ctrl+,) has five tabs:
+
+| Tab | Settings |
+|---|---|
+| Machine | controller board, units, bed size, home in the upper right corner, home when connecting, unlock the rail and beep after a job, X/Y scale factors, M3 power per operation and maximum power |
+| Raster | halftone (dither) and its resolution, invert colours, mirror, rotate 90°, engrave bottom to top, scan line step, levels curve |
+| Vector | cut inside shapes first, boundary trace with the laser on, trace gap and speed |
+| Rotary | rotary attachment, its scale factor and rapid speed |
+| Advanced | language (after a restart), Inkscape, reduced memory use, USB data preparation, waiting for the laser, USB timeout and retries |
+
+Kerfly is available in English, Polish, German, Spanish and French.
+
+<a id="s9"></a>
+
+## 9. Keyboard shortcuts
+
+| Keys | Action |
+|---|---|
+| Ctrl+O / Ctrl+Shift+O | Open design / add design |
+| F5 | Reload design |
+| Ctrl+S / Ctrl+Shift+S | Save project / save project as |
+| Ctrl+Shift+E | Save EGV file |
+| Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
+| Ctrl+D / Del | Duplicate / delete |
+| Ctrl+L / Ctrl+R | Rotate 90° left / right |
+| Ctrl+Shift+H / Ctrl+Shift+V | Mirror horizontally / vertically |
+| Ctrl+Shift+G / Ctrl+Alt+G | Group / ungroup |
+| Ctrl+E | Centre on the bed |
+| Ctrl+H | Place design at the head |
+| Ctrl+Alt+H | Design follows the head (on / off) |
+| Arrow keys (Shift: ×10) | Move the selected element |
+| Ctrl+arrow keys | Move the laser head by one step |
+| Ctrl+7, 9, 5, 1, 3 | Head to the design's upper left, upper right, centre, lower left, lower right |
+| Ctrl+G | Go to the X/Y position |
+| Ctrl+I | Connect to the laser |
+| Home | Home the head |
+| F9 / Esc | Start / stop |
+| Ctrl+0 | Fit the bed to the window |
+| Ctrl+Shift+J | Simulate the job |
+| Ctrl+' / Ctrl+; | Snap to grid / snap to objects |
+| Alt (held) | Snap to nothing for a moment |
+| Ctrl+, | Settings |
+| F1 | This user guide |
+| S, N, R, E, P, L, Shift+L, B, F, M, T | Drawing tools (see section 5) |
+
+<a id="s10"></a>
+
+## 10. When something goes wrong
+
+**Help → User guide** (F1) opens this guide.
+
+- **Help → Report a problem on GitHub…** (toolbar **Bug report**) saves a
+  diagnostic report and opens the report form with your version, system and
+  board filled in. Drag the report file into the form's *Diagnostic report*
+  field. You can write in English or Polish. A free GitHub account is needed.
+- **Help → Save diagnostic report…** (toolbar **Report**) only saves the
+  report: settings, self-test and the log of everything sent to the laser.
+- **Help → Open the log folder** shows `kerfly.log`.
+
+Common problems:
+
+| Problem | What to do |
+|---|---|
+| "Laser is not initialized" | Press the plug button (Ctrl+I). On Linux check the udev rule (see the installation guide); on Windows the libusb driver |
+| The head is not where the program shows it | Press Home. This happens after Unlock rail, after moving the head by hand and after Stop |
+| An element is drawn red, Start does not work | The element sticks out of the bed: move it back |
+| SVG text is missing or not cut | Install Inkscape: it turns SVG text into paths |
+| The laser stops responding | **Laser → Unfreeze laser**, then **Release USB** and connect again |

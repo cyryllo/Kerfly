@@ -2,7 +2,7 @@
 
 [![tests](https://github.com/cyryllo/Kerfly/actions/workflows/tests.yml/badge.svg)](https://github.com/cyryllo/Kerfly/actions/workflows/tests.yml)
 
-**English:** [README.md](README.md)
+**Strona i instrukcja obsługi:** [cyryllo.github.io/Kerfly/pl](https://cyryllo.github.io/Kerfly/pl/) · **English:** [README.md](README.md)
 
 Kerfly to program do sterowania laserami CO2 klasy K40 z płytami Lihuiyu
 (rodzina M2 Nano). Działa na Linuksie (przede wszystkim Debian) i Windows.

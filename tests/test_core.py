@@ -467,6 +467,12 @@ def test_job_position():
         text = open(os.path.join(forms, fname), encoding="utf-8").read()
         ok = ok and all("id: %s\n" % f in text for f in ("version", "system", "board", "report"))
     check("bug report form: version, system and board filled in", ok, "(%s)" % q)
+    # the user guide address points to a page that exists in docs/ (the website)
+    pages = {lang: diag.guide_url(lang)[len(diag.WEBSITE_URL):] for lang in ("en", "pl", "de")}
+    check("user guide: page in the language, English otherwise",
+          pages == {"en": "guide.html", "pl": "pl/guide.html", "de": "guide.html"}
+          and all(os.path.exists(os.path.join(ROOT_DIR, "docs", p.replace(".html", ".md"))) for p in pages.values()),
+          "(%s)" % pages)
     check("safety check: a job running above the bed is refused",
           problem is not None and problem[0] == "top", "(%s)" % (problem,))
     return errors

@@ -272,6 +272,8 @@ class MainWindow(QMainWindow):
         self.act_report = self._action(_("Save &diagnostic report…"), self.save_report, None,
                                        _("Save a report with the laser log and settings, to attach to a bug report"))
         self.act_log_folder = self._action(_("Open the &log folder"), self.open_log_folder)
+        self.act_guide = self._action(_("&User guide"), self.open_guide, "F1",
+                                      _("Open the user guide on the Kerfly website"))
         self.act_report_problem = self._action(
             _("Report a &problem on GitHub\u2026"), self.report_problem, None,
             _("Save the diagnostic report and open the bug report form on GitHub"))
@@ -317,6 +319,8 @@ class MainWindow(QMainWindow):
         for a in (self.act_materials, self.act_export_materials, self.act_import_materials):
             m.addAction(a)
         m = mb.addMenu(_("&Help"))
+        m.addAction(self.act_guide)
+        m.addSeparator()
         m.addAction(self.act_report_problem)
         m.addAction(self.act_report)
         m.addAction(self.act_log_folder)
@@ -3086,6 +3090,13 @@ class MainWindow(QMainWindow):
         QApplication.restoreOverrideCursor()
         self.status(_("Diagnostic report saved: %s") % name)
         return name
+
+    def open_guide(self):
+        from PySide6.QtCore import QUrl
+        from PySide6.QtGui import QDesktopServices
+        from kerfly.core import diag
+        from kerfly.i18n import current_language
+        QDesktopServices.openUrl(QUrl(diag.guide_url(current_language())))
 
     def report_problem(self):
         """Save the diagnostic report, then open the GitHub issue form with the

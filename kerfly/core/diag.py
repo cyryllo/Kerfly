@@ -132,6 +132,15 @@ def build_report(version, values=None, checks=None):
 
 
 ISSUES_URL = "https://github.com/cyryllo/Kerfly/issues/new"
+WEBSITE_URL = "https://cyryllo.github.io/Kerfly/"
+GUIDE_LANGUAGES = ("pl",)                  # languages with their own user guide; others: English
+
+
+def guide_url(language):
+    """The user guide on the project website, in this language if it has one."""
+    if language in GUIDE_LANGUAGES:
+        return WEBSITE_URL + language + "/guide.html"
+    return WEBSITE_URL + "guide.html"
 ISSUE_TEMPLATES = {"laser": "laser_problem.yml", "bug": "bug_report.yml"}
 
 

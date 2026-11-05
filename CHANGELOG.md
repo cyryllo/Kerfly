@@ -20,6 +20,14 @@ Version numbers:
   can be written in English or Polish.
 - **README in Polish** (`README_pl.md`), with a screenshot of the Polish
   window.
+- **User guide** in English and Polish (`docs/guide.md`, `docs/pl/guide.md`):
+  first start, the window, moving the head, files, drawing, layers, running
+  a job, settings, all keyboard shortcuts, troubleshooting. **Help → User
+  guide** (F1) opens it in the program's language.
+- **Project website** <https://cyryllo.github.io/Kerfly/> (English and
+  Polish), built from `docs/` by GitHub Actions on every push.
+- `tools/make_screenshots.py` takes all screenshots of the README and the
+  guide in English and Polish from the real window.
 - **Logo and program icon**: a K whose upper arm is a laser beam. It is the
   window and taskbar icon (on Windows Kerfly gets its own taskbar entry
   instead of Python's). `tools/make_icons.py` renders `kerfly.png` and

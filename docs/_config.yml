@@ -1,0 +1,11 @@
+# Kerfly project website (GitHub Pages, built from this folder by
+# .github/workflows/pages.yml). Pages in English at the top level, Polish in pl/.
+title: Kerfly
+description: Free laser control software for K40 lasers (Lihuiyu M2 Nano boards), for Linux and Windows.
+url: "https://cyryllo.github.io"
+baseurl: "/Kerfly"
+repo: "https://github.com/cyryllo/Kerfly"
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
