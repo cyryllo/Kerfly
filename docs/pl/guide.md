@@ -37,6 +37,8 @@ zadanie do lasera. Instrukcja dotyczy wersji 0.18.
    [strony wydań](https://github.com/cyryllo/Kerfly/releases) (od 0.18) albo z
    kodu źródłowego przez `start_kerfly.bat` (Windows) / `./start_kerfly.sh`
    (Linux). Instalator dla Windows potrafi też zainstalować sterownik USB K40.
+   W Linuksie (także z AppImage) dodaj raz regułę udev dla portu USB lasera,
+   jak pokazuje instrukcja instalacji.
 2. Sprawdź instalację: `start_kerfly.bat --self-test` albo
    `./start_kerfly.sh --self-test`. Każda linia powinna mieć `OK`; linie
    `WARN` dotyczą rzeczy opcjonalnych albo niepodłączonego lasera.
@@ -175,7 +177,9 @@ narysowaniem i po nim.
 krawędzi innych elementów i do stołu (**Widok → Przyciągaj do obiektów**,
 Ctrl+;) oraz do siatki, gdy jest włączona (**Widok → Przyciągaj do siatki**,
 Ctrl+'; **Widok → Rozmiar siatki**). Przytrzymaj **Alt**, żeby na chwilę nic
-nie przyciągało.
+nie przyciągało. Kerfly nie zapamiętuje jeszcze siatki sam: żeby była
+włączona przy każdym starcie, włącz ją i wybierz **Plik → Zapisz ustawienia
+jako domyślne**.
 
 **Dokładne przesuwanie.** Wpisz pozycję, rozmiar i kąt na pasku opcji
 (przycisk z łańcuchem zachowuje proporcje) albo użyj strzałek: 1 mm albo

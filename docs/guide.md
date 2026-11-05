@@ -36,7 +36,9 @@ sends the job to the laser. This guide is for version 0.18.
    the Windows installer or the Linux AppImage from the
    [releases page](https://github.com/cyryllo/Kerfly/releases) (from 0.18), or
    from source with `start_kerfly.bat` (Windows) / `./start_kerfly.sh` (Linux).
-   The Windows installer can also install the K40 USB driver.
+   The Windows installer can also install the K40 USB driver. On Linux (also
+   with the AppImage) add the udev rule for the laser's USB port once, as the
+   installation guide shows.
 2. Check the installation: `start_kerfly.bat --self-test` or
    `./start_kerfly.sh --self-test`. Every line should say `OK`; `WARN` lines
    are optional parts or mean that the laser is not connected.
@@ -173,7 +175,9 @@ before or after drawing.
 **Snapping.** Drawing and moving snap to the corners, centres and edges of
 other elements and to the bed (**View → Snap to objects**, Ctrl+;), and to
 the grid when it is on (**View → Snap to grid**, Ctrl+'; **View → Grid
-size**). Hold **Alt** to snap to nothing for a moment.
+size**). Hold **Alt** to snap to nothing for a moment. Kerfly does not yet
+remember the grid by itself: to have it on at every start, turn it on and
+choose **File → Save settings as default**.
 
 **Moving precisely.** Type the position, size and angle in the options bar
 (the chain button keeps the proportions), or use the arrow keys: 1 mm or one
