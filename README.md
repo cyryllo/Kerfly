@@ -53,8 +53,7 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
 - **Your language.** English, Polish, German, Spanish and French (Settings →
   Advanced → Language).
 
-Kerfly is in early development (0.19). It is tested on a real K40 (Windows 10,
-M3 board). Changes are in [CHANGELOG.md](CHANGELOG.md), plans in
+**Kerfly 1.0 is stable and ready for everyday work.** Changes are in [CHANGELOG.md](CHANGELOG.md), plans in
 [ROADMAP.md](ROADMAP.md).
 
 ## Drawing and editing: mouse and keys

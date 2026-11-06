@@ -9,12 +9,10 @@ other_lang: guide.html
 
 Kerfly steruje laserami CO2 klasy K40 z płytami Lihuiyu (rodzina M2 Nano):
 układa projekty na stole lasera, pozwala je rysować i edytować oraz wysyła
-zadanie do lasera. Instrukcja dotyczy wersji 0.19.
+zadanie do lasera. Instrukcja dotyczy wersji 1.0.
 
-> Kerfly jest we wczesnej fazie rozwoju. Pierwszy test na prawdziwym laserze
-> odbył się w listopadzie 2026. Funkcje oznaczone *(jeszcze nie sprawdzone na
-> laserze)* działają w programie i w testach, ale nie były jeszcze
-> uruchamiane na sprzęcie. Zawsze trzymaj rękę przy wyłączniku lasera.
+> Zawsze trzymaj rękę przy wyłączniku lasera i nigdy nie zostawiaj
+> pracującego lasera bez nadzoru.
 
 - [1. Pierwsze uruchomienie](#s1)
 - [2. Okno programu](#s2)
@@ -120,8 +118,7 @@ projektu. Jeśli wolisz, żeby projekt zaczynał się przy głowicy:
 - **Projekt podąża za głowicą** (przycisk z łańcuchem, zielony po
   włączeniu) trzyma projekt przy głowicy: strzałki, Idź do X/Y i Bazowanie
   przesuwają głowicę razem z projektem, a strzałki nie wypchną projektu poza
-  stół. Przyciski narożników nadal przesuwają tylko głowicę. *(jeszcze nie
-  sprawdzone na laserze)*
+  stół. Przyciski narożników nadal przesuwają tylko głowicę.
 
 K40 nie podaje, gdzie jest głowica. Kerfly liczy ruchy, które wysłał; po
 odblokowaniu osi, ręcznym przesunięciu głowicy albo zatrzymaniu zadania
@@ -203,8 +200,7 @@ cięte przed zewnętrznymi, żeby element nie wypadł przed wycięciem otworów.
 Przyciski ze strzałkami obok listy elementów (zakładka Projekt) przesuwają
 zaznaczone elementy: **Wyżej (wcześniej)** i **Niżej (później)** o jedno
 miejsce (PgUp, PgDown, gdy aktywny jest stół), **Na początek** i **Na koniec**
-na górę albo na dół listy (Ctrl+PgUp, Ctrl+PgDown). Grupy przesuwają się razem. *(jeszcze nie
-sprawdzone na laserze)*
+na górę albo na dół listy (Ctrl+PgUp, Ctrl+PgDown). Grupy przesuwają się razem.
 
 **Grupy.** **Grupuj** (Ctrl+Shift+G) sprawia, że kilka elementów przesuwa
 się razem; klik w jeden z nich zaznacza całą grupę, drugi klik tylko ten
@@ -212,7 +208,7 @@ element. **Rozgrupuj** (Ctrl+Alt+G) dzieli grupę, a także otwarty plik SVG
 albo DXF: każda jego linia staje się kształtem do edycji, a obrazy dzielą się
 na osobne części. Dwuklik na dowolnym elemencie otwiera edycję węzłów.
 
-**Wypełnienia wzorami.** *(jeszcze nie sprawdzone na laserze)* Narzędzie
+**Wypełnienia wzorami.** Narzędzie
 **Wypełnij wzorem** (wiaderko, Shift+F) wypełnia zamknięte kształty
 grawerowanymi liniami we wzór: linie, krzyżowe, fale, zygzak, okręgi, plaster
 miodu, romby albo cegły.
@@ -240,7 +236,7 @@ usunąć. Dziury w kształcie (np. w literach) zostają puste. Otwarty plik SVG
 albo DXF trzeba najpierw rozgrupować (Edycja → Rozgrupuj), żeby jego linie
 stały się kształtami.
 
-**Tekst na ścieżce.** *(jeszcze nie sprawdzone na laserze)* Wybierz narzędzie
+**Tekst na ścieżce.** Wybierz narzędzie
 **Tekst na ścieżce** (Shift+T, łuk z literami po prawej), wpisz tekst i
 wybierz czcionkę na pasku opcji, potem kliknij linię, krzywą albo kształt:
 tekst stanie na nim, każda litera na linii i obrócona wzdłuż niej. Na otwartej
@@ -260,7 +256,7 @@ pola X/Y przesuwają tekst razem z jego ścieżką.
 
 ![Tekst na okręgu i na krzywej](../img/pl/textpath.png)
 
-**Zawiasy giętkie.** *(jeszcze nie sprawdzone na laserze)* Zawias giętki to
+**Zawiasy giętkie.** Zawias giętki to
 pole nacięć, dzięki którym sklejka albo MDF się wygina, np. na zaokrąglonych
 rogach pudełka. Wybierz narzędzie **Zawias giętki** (Shift+H, arkusz z
 nacięciami), wybierz nacięcia na pasku opcji (proste, faliste albo zygzakiem)
@@ -325,7 +321,7 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
    ustawieniach, żeby sprawdzić, gdzie będzie cięcie. Objeżdża prostokąt
    wokół projektu, zaczynając od narożnika najbliższego głowicy (Ustawienia →
    Wektory: wyłącz „Objazd konturu jako prostokąt”, żeby jechać wzdłuż
-   obwiedni). *(prostokąt: jeszcze nie sprawdzony na laserze)*
+   obwiedni).
 4. **Start** (F9) wykonuje wszystkie zaznaczone warstwy. **Pauza** na chwilę
    zatrzymuje laser, a ten sam przycisk wznawia pracę. **Stop** (Esc)
    natychmiast kończy zadanie; potem naciśnij **Bazowanie** przed następnym
@@ -336,7 +332,7 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
 **Kontrola bezpieczeństwa.** Zanim cokolwiek zostanie wysłane, Kerfly
 sprawdza, czy głowica przez całe zadanie i objazd zostaje na stole. Jeśli
 wyjechałaby poza stół o więcej niż 1 mm, nic nie zostanie wysłane, a pasek
-stanu poda krawędź i odległość. *(jeszcze nie sprawdzone na laserze)*
+stanu poda krawędź i odległość.
 
 **Strzał testowy** (płyty M3, zakładka Laser): krótko odpala laser z mocą i
 czasem ustawionymi obok przycisku.

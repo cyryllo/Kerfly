@@ -54,11 +54,8 @@ Otwórz <a href="{{ site.repo }}/releases/latest">najnowsze wydanie</a> i pobier
 
 ## Stan projektu
 
-Kerfly jest we **wczesnej fazie rozwoju**. Pierwszy test na prawdziwym laserze
-odbył się w listopadzie 2026 (Windows 10, płyta M3): cięcie trzymało
-wymiary, strzałki, pauza i stop działały, a znalezione problemy poprawiła
-wersja 0.15. Od wersji 0.18 każde wydanie ma instalator dla Windows i
-AppImage dla Linuksa. Następne w planach: wektoryzacja obrazów, więcej wzorów,
+**Kerfly 1.0 jest wersją stabilną, gotową do codziennej pracy** z laserem.
+Następne w planach: wektoryzacja obrazów, więcej wzorów,
 kompensacja kerfu, więcej formatów plików oraz paczka dla Debiana z własnym
 repozytorium APT. Zobacz [plan]({{ site.repo }}/blob/main/ROADMAP.md) (po angielsku) i
 [listę zmian]({{ site.repo }}/blob/main/CHANGELOG.md).

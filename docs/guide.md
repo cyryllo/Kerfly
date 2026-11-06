@@ -9,12 +9,10 @@ other_lang: pl/guide.html
 
 Kerfly controls K40-class CO2 lasers with Lihuiyu (M2 Nano family) boards:
 it places your designs on the laser bed, lets you draw and edit them, and
-sends the job to the laser. This guide is for version 0.19.
+sends the job to the laser. This guide is for version 1.0.
 
-> Kerfly is in early development. The first test on a real laser was in
-> November 2026. Features marked *(not yet tested on a laser)* work in the
-> program and in the tests, but have not been run on real hardware yet.
-> Always keep a hand near the laser's power switch.
+> Always keep a hand near the laser's power switch, and never leave a
+> running laser unattended.
 
 - [1. First start](#s1)
 - [2. The window](#s2)
@@ -122,8 +120,7 @@ design. To start the design where the head is instead:
 - **Design follows the head** (the button with the chain link, green when
   on) keeps the design at the head: the arrows, Go to X/Y and Home move the
   head and the design together, and the arrows do not push the design off
-  the bed. The corner buttons still only move the head. *(not yet tested on
-  a laser)*
+  the bed. The corner buttons still only move the head.
 
 The K40 does not report where its head is. Kerfly counts the moves it sends;
 after the motors were unlocked, the head was moved by hand, or a job was
@@ -205,7 +202,7 @@ element list (Design tab) move the selected elements: **Move up (earlier)**
 and **Move down (later)** one place (PgUp, PgDown while the bed view has the
 focus), **To the start** and **To the end** to the top or the bottom of the
 list (Ctrl+PgUp, Ctrl+PgDown).
-Groups move together. *(not yet tested on a laser)*
+Groups move together.
 
 **Groups.** **Group** (Ctrl+Shift+G) makes several elements move together;
 clicking one member selects the whole group, a second click selects that
@@ -214,7 +211,7 @@ SVG or DXF file: each of its lines becomes a shape you can edit, and its
 pictures split into their separate parts. Double-click any element to edit
 its nodes.
 
-**Pattern fills.** *(not yet tested on a laser)* The **Fill with a pattern**
+**Pattern fills.** The **Fill with a pattern**
 tool (the bucket, Shift+F) fills closed shapes with engraved lines in a
 pattern: lines, cross-hatch, waves, zigzag, circles, honeycomb, diamonds or
 bricks.
@@ -241,7 +238,7 @@ the pattern there, or choose **No pattern** to remove it. Holes in the shape
 (for example in letters) stay empty. An opened SVG or DXF file must be
 ungrouped first (Edit → Ungroup), so that its lines become shapes.
 
-**Text on a path.** *(not yet tested on a laser)* Choose the **Text on a
+**Text on a path.** Choose the **Text on a
 path** tool (Shift+T, the arc with letters on the right), type the text and
 choose its font in the options bar, then click a line, curve or shape: the
 text is put on it, every letter standing on the line and turned along it. On
@@ -261,7 +258,7 @@ fields move the text together with its path.
 
 ![Text on a circle and on a curve](img/en/textpath.png)
 
-**Living hinges.** *(not yet tested on a laser)* A living hinge is a field of
+**Living hinges.** A living hinge is a field of
 cuts that lets a sheet of plywood or MDF bend, for example round the corners
 of a box. Choose the **Living hinge** tool (Shift+H, the sheet with cuts),
 choose the cuts in the options bar (straight, wavy or zigzag), then click a
@@ -325,7 +322,6 @@ out of the job.
    can check where it will be cut. It runs round the rectangle around the
    design, starting at the corner nearest the head (Settings → Vector: switch
    off "Boundary trace as a rectangle" to follow the outline instead).
-   *(rectangle: not yet tested on a laser)*
 4. **Start** (F9) runs all ticked layers. **Pause** stops the laser for a
    moment and the same button resumes it. **Stop** (Esc) ends the job
    immediately; then press **Home** before the next job.
@@ -335,7 +331,7 @@ out of the job.
 **Safety check.** Before anything is sent, Kerfly checks that the head stays
 on the bed during the whole job and the trace. If it would leave the bed by
 more than 1 mm, nothing is sent and the status bar says which edge and by how
-much. *(not yet tested on a laser)*
+much.
 
 **Test fire** (M3 boards, Laser tab): fires the laser briefly with the power
 and time set next to the button.

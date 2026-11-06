@@ -2,12 +2,21 @@
 
 Version numbers:
 
-- the **second number** goes up with every release (by 10 when a new module
-  is added);
-- the **third number** goes up for releases that only fix bugs;
-- **1.0.0** will be the first release declared stable.
+- **1.0.0** is the first stable release;
+- the **second number** goes up with every release that adds features (by
+  10 when a new module is added);
+- the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.0.0 (2026-11-06)
+
+The first stable release: Kerfly is ready for everyday work with K40 lasers.
+
+Kerfly 1.0 runs K40 lasers with Lihuiyu (M2 Nano family) boards on
+Windows 10 / 11 (installer) and Linux (AppImage): drawing and node editing,
+layers and a material library, pattern fills, living hinges, text on a path,
+bridges, SVG, DXF, G-code and pictures, projects in one file, boundary trace,
+simulation and job time, and a check that the head stays on the bed before
+anything is sent.
 
 ### Documentation
 

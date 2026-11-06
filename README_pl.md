@@ -54,8 +54,7 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
 - **Twój język.** Polski, angielski, niemiecki, hiszpański i francuski
   (Ustawienia → Zaawansowane → Język).
 
-Kerfly jest we wczesnej fazie rozwoju (0.19). Jest sprawdzany na prawdziwym
-K40 (Windows 10, płyta M3). Zmiany są w [CHANGELOG.md](CHANGELOG.md), plany w
+**Kerfly 1.0 jest wersją stabilną, gotową do codziennej pracy.** Zmiany są w [CHANGELOG.md](CHANGELOG.md), plany w
 [ROADMAP.md](ROADMAP.md) (po angielsku).
 
 ## Rysowanie i edycja: mysz i klawisze

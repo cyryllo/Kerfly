@@ -53,10 +53,7 @@ The <a href="{{ site.repo }}/blob/main/INSTALL.md">installation guide</a> explai
 
 ## Status
 
-Kerfly is in **early development**. The first test on a real laser was in
-November 2026 (Windows 10, M3 board): cutting kept its size, the jog, pause
-and stop worked, and the problems found were fixed in version 0.15. Since
-version 0.18 every release has a Windows installer and a Linux AppImage.
+**Kerfly 1.0 is stable and ready for everyday work** with your laser.
 Planned next: image tracing, kerf compensation, more patterns, more file
 formats, and a Debian package with its own APT repository. See the
 [roadmap]({{ site.repo }}/blob/main/ROADMAP.md) and the
