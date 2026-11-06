@@ -107,6 +107,10 @@ class Session:
     def fail(self, step, text):
         self.failures.append("%s: %s" % (step, text))
         print("FAIL  %s: %s" % (step, text))
+        if os.environ.get("GITHUB_ACTIONS") and len(self.failures) <= 10:
+            # shown on the run's page without logging in (the log itself needs an account)
+            detail = (" ".join(text.split()))[-900:]
+            print("::error title=release test::%s: %s" % (step[:120], detail.replace("%", "%25")))
 
     def _patch_system_dialogs(self):
         s = self
