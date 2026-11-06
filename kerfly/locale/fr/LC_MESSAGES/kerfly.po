@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-06 18:59+0100\n"
+"POT-Creation-Date: 2026-11-06 20:07+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -1658,6 +1658,9 @@ msgstr "Lisse"
 msgid "Smooth, with both handles of the same length"
 msgstr "Lisse, avec deux poignées de même longueur"
 
+msgid "Snap grid (mm, 0 = off)"
+msgstr "Grille magnétique (mm, 0 = désactivée)"
+
 msgid "Snap to &objects"
 msgstr "Aimanter aux &objets"
 
@@ -1668,6 +1671,9 @@ msgstr ""
 "Aimanter aux coins, centres, milieux et lignes des autres éléments et du "
 "plateau, en dessinant et en déplaçant. Maintenez Alt pour ne rien "
 "aimanter un instant."
+
+msgid "Snap to other objects"
+msgstr "Aimanter aux autres objets"
 
 msgid "Solid border: no cuts this close to the outline"
 msgstr "Bord plein : aucune coupe aussi près du contour"
@@ -1829,6 +1835,9 @@ msgstr "Le dessin ne tient pas sur le plateau à cette position."
 
 msgid "The design does not move."
 msgstr "Le dessin ne bouge pas."
+
+msgid "The design follows the laser head"
+msgstr "Le motif suit la tête laser"
 
 msgid ""
 "The design moves with the laser head: the arrows, Go to X/Y and Home move"
@@ -2064,6 +2073,9 @@ msgstr "Gravure vectorielle"
 
 msgid "Vector engrave: determining order…"
 msgstr "Gravure vectorielle : calcul de l'ordre…"
+
+msgid "View"
+msgstr "Affichage"
 
 msgctxt "toolbar group"
 msgid "View"

@@ -1395,6 +1395,40 @@ def main():
         win._dirty = False
         win.close()
 
+    # 52. grid, snapping and "design follows the head" are remembered for the next start at once
+    # (without "Save settings as default"); switching the grid on again uses the last size; the
+    # Settings dialog (View tab) changes them too
+    from kerfly.gui import viewstate as _viewstate
+    v1 = make_window(grid_mm="0")
+    v1.remember_geometry = True
+    v1.set_grid(2)
+    v1.toggle_snap(False)
+    v1.act_snap.setChecked(False)
+    v1.act_snap_objects.trigger()                           # off
+    v1.act_follow_head.trigger()                            # on
+    grid_off = v1.values["grid_mm"] == "0"
+    v1._dirty = False
+    v1.close()
+    vals = _viewstate.load(dict(config.DEFAULT_VALUES))
+    v2 = MainWindow(vals)
+    OPEN_WINDOWS.append(v2)
+    v2.remember_geometry = True
+    remembered = (not v2.act_snap.isChecked() and not v2.act_snap_objects.isChecked()
+                  and v2.act_follow_head.isChecked())
+    v2.act_snap.trigger()                                    # grid on again: the last size
+    last_size = v2._grid_mm() == 2.0
+    v2.values["grid_mm"] = "10"                              # as the Settings dialog sets it
+    v2.values["snap_objects"] = "1"
+    v2._sync_view_actions()
+    from_dialog = v2.act_snap.isChecked() and v2.act_snap_objects.isChecked() \
+        and _viewstate.load({})["grid_mm"] in ("10", "10.0")
+    v2._dirty = False
+    OPEN_WINDOWS.remove(v2)
+    v2.close()
+    check("view settings remembered at once (grid on/off and size, snapping, follow head), Settings tab",
+          grid_off and remembered and last_size and from_dialog,
+          "(%s)" % ([grid_off, remembered, last_size, from_dialog],))
+
     # 50. the element list shows a single element too (it was hidden until there were two)
     w9 = make_window(grid_mm="0")
     w9._add_drawn_element(_Spec(kind="rectangle", width=20, height=20), "rectangle", 10, 10)

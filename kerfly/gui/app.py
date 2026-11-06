@@ -127,6 +127,8 @@ def main(argv=None):
     app.setStyleSheet(STYLE)
 
     values = config.load_user_settings()
+    from kerfly.gui import viewstate
+    viewstate.load(values)                     # grid, snapping, follow head: as left last time
     language = i18n.setup(values.get("language", ""))
     install_qt_translations(app, language)
     from PySide6.QtCore import qVersion

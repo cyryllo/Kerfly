@@ -179,9 +179,10 @@ before or after drawing.
 **Snapping.** Drawing and moving snap to the corners, centres and edges of
 other elements and to the bed (**View → Snap to objects**, Ctrl+;), and to
 the grid when it is on (**View → Snap to grid**, Ctrl+'; **View → Grid
-size**). Hold **Alt** to snap to nothing for a moment. Kerfly does not yet
-remember the grid by itself: to have it on at every start, turn it on and
-choose **File → Save settings as default**.
+size**). Hold **Alt** to snap to nothing for a moment. Kerfly remembers the
+grid (on or off, and its size), snapping to objects and **Design follows the
+head** by itself for the next start; they can also be set in **Settings →
+View**.
 
 **Moving precisely.** Type the position, size and angle in the options bar
 (the chain button keeps the proportions), or use the arrow keys: 1 mm or one

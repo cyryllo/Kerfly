@@ -7,6 +7,14 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Changed
+
+- The snap grid (on or off, and its size), snapping to objects and "Design
+  follows the head" are remembered for the next start at once, without
+  "Save settings as default". Settings has a new View tab with them.
+
 ## 1.0.1 (2026-11-06)
 
 ### Fixed (found by the new release tests)

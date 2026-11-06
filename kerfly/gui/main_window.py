@@ -1937,22 +1937,49 @@ class MainWindow(QMainWindow):
             return 0.0
 
     def _grid_size_choice(self):
-        return self._grid_mm() or getattr(self, "_last_grid", 5.0)
+        """The grid size to switch on: the one in use, or the last one used."""
+        try:
+            last = float(self.values.get("grid_last_mm") or 5.0)
+        except ValueError:
+            last = 5.0
+        return self._grid_mm() or (last if last > 0 else 5.0)
+
+    def _remember_view(self):
+        """Grid, snapping and "design follows the head" are kept for the next start at once
+        (Kerfly's window.ini; tests and the self-test leave it alone)."""
+        if getattr(self, "remember_geometry", False):
+            from kerfly.gui import viewstate
+            viewstate.save(self.values)
 
     def toggle_snap(self, checked):
         self.values["grid_mm"] = _num_text(self._grid_size_choice()) if checked else "0"
+        self._remember_view()
         self.refresh_preview()
 
     def toggle_snap_objects(self, checked):
         self.values["snap_objects"] = "1" if checked else "0"
         self.preview.snap_objects = bool(checked)
         self.preview.hide_snap_marker()
+        self._remember_view()
 
     def set_grid(self, mm):
-        self._last_grid = float(mm)
+        self.values["grid_last_mm"] = _num_text(mm)
         self.values["grid_mm"] = _num_text(mm)
         self.act_snap.setChecked(True)
+        self._remember_view()
         self.refresh_preview()
+
+    def _sync_view_actions(self):
+        """The View menu and the follow-head button show the settings (after the Settings dialog)."""
+        grid = self._grid_mm()
+        if grid > 0:
+            self.values["grid_last_mm"] = _num_text(grid)
+        self.act_snap.setChecked(grid > 0)
+        on = is_true(self.values.get("snap_objects", "1"))
+        self.act_snap_objects.setChecked(on)
+        self.preview.snap_objects = on
+        self.act_follow_head.setChecked(is_true(self.values.get("follow_head", "0")))
+        self._remember_view()
 
     def _snap(self, element):
         g = self._grid_mm() / 25.4
@@ -2369,6 +2396,7 @@ class MainWindow(QMainWindow):
     def toggle_follow_head(self, on):
         """Design follows the head: switching it on brings the design to the head."""
         self._set_value("follow_head", "1" if on else "0")
+        self._remember_view()
         if on:
             self.place_at_head()
             self.status(_("The design now moves with the laser head."))
@@ -3261,6 +3289,8 @@ class MainWindow(QMainWindow):
                 if self._default_layer.get(layer.kind) is not layer:
                     layer.speed = round(layer.speed * factor, 1)
         self._layers_from_values()
+        if changed & {"grid_mm", "snap_objects", "follow_head"}:
+            self._sync_view_actions()
         if changed & RASTER_KEYS:
             for e in self.elements:
                 e.design.raster.reset_path()

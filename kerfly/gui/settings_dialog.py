@@ -46,6 +46,11 @@ TABS = [
         ("trace_gap", N_("Boundary trace gap"), "float", (0, 100, 1, "len")),
         ("trace_speed", N_("Boundary trace speed"), "float", (0.1, 1000, 1, "speed")),
     ]),
+    (N_("View"), [
+        ("grid_mm", N_("Snap grid (mm, 0 = off)"), "float", (0, 100, 1, None)),
+        ("snap_objects", N_("Snap to other objects"), "bool", None),
+        ("follow_head", N_("The design follows the laser head"), "bool", None),
+    ]),
     (N_("Rotary"), [
         ("rotary", N_("Rotary attachment in use"), "bool", None),
         ("LaserRscale", N_("Rotary scale factor"), "float", (0.01, 100, 4, None)),

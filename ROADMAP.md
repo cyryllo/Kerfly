@@ -56,14 +56,9 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - [x] Open and send EGV files
 - [ ] Rotary settings window parity
 - [x] Design follows the head (toggle under the unlock button)
-- [ ] Remember the view settings without "Save settings as default": the snap
-  grid (on / off and its size), snap to objects, design follows the head.
-  Now the grid is off again after every start unless the settings were saved
-  as default. Keep them in Kerfly's own settings file, saved at once when
-  they change; also a "Grid" option in Settings to have it on from the start.
-- [ ] Idea: a toggle so that the plain arrow keys move the laser head (now
-  Ctrl+arrows do; plain arrows move the selected element). Ignore key
-  auto-repeat, so holding a key does not queue up moves; never in text fields
+- [x] Remember the view settings without "Save settings as default": snap
+  grid on / off and its size, snap to objects, design follows the head
+  (saved at once in Kerfly's window.ini); Settings → View has them too
 
 ## Import more file types
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-06 18:59+0100\n"
+"POT-Creation-Date: 2026-11-06 20:07+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -1641,6 +1641,9 @@ msgstr "Gładki"
 msgid "Smooth, with both handles of the same length"
 msgstr "Gładki, z oboma uchwytami tej samej długości"
 
+msgid "Snap grid (mm, 0 = off)"
+msgstr "Siatka przyciągania (mm, 0 = wyłączona)"
+
 msgid "Snap to &objects"
 msgstr "Przyciągaj do &obiektów"
 
@@ -1651,6 +1654,9 @@ msgstr ""
 "Przyciągaj do narożników, środków, połówek i linii innych elementów oraz "
 "stołu, przy rysowaniu i przesuwaniu. Przytrzymaj Alt, aby chwilowo nic "
 "nie przyciągało."
+
+msgid "Snap to other objects"
+msgstr "Przyciągaj do innych obiektów"
 
 msgid "Solid border: no cuts this close to the outline"
 msgstr "Pełny brzeg: bez nacięć tak blisko obrysu"
@@ -1805,6 +1811,9 @@ msgstr "Projekt w tym miejscu nie mieści się na stole lasera."
 
 msgid "The design does not move."
 msgstr "Projekt się nie przesuwa."
+
+msgid "The design follows the laser head"
+msgstr "Projekt podąża za głowicą lasera"
 
 msgid ""
 "The design moves with the laser head: the arrows, Go to X/Y and Home move"
@@ -2036,6 +2045,9 @@ msgstr "Obrys"
 
 msgid "Vector engrave: determining order…"
 msgstr "Obrys: ustalanie kolejności…"
+
+msgid "View"
+msgstr "Widok"
 
 msgctxt "toolbar group"
 msgid "View"

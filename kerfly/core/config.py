@@ -59,6 +59,7 @@ SETTINGS_KEYS = [
     ("snap_objects", BOOL),  # Kerfly only: snap to corners, centres and lines of other elements
     ("use_inkscape", BOOL),  # Kerfly only: render SVG rasters with Inkscape when installed
     ("follow_head", BOOL),   # Kerfly only: the design moves with the head (arrows, Go to, Home)
+    ("grid_last_mm", TEXT),  # Kerfly only: grid size switched on by View → Snap to grid
     ("trace_rect", BOOL),    # Kerfly only: trace the bounding rectangle (off: K40 Whisperer's outline)
 ]
 SETTINGS_KINDS = dict(SETTINGS_KEYS)
@@ -91,6 +92,7 @@ DEFAULT_VALUES = {
     "snap_objects": "1",
     "use_inkscape": "1",
     "follow_head": "0",
+    "grid_last_mm": "5",
     "trace_rect": "1",
 }
 

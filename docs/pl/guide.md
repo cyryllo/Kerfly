@@ -179,9 +179,9 @@ narysowaniem i po nim.
 krawędzi innych elementów i do stołu (**Widok → Przyciągaj do obiektów**,
 Ctrl+;) oraz do siatki, gdy jest włączona (**Widok → Przyciągaj do siatki**,
 Ctrl+'; **Widok → Rozmiar siatki**). Przytrzymaj **Alt**, żeby na chwilę nic
-nie przyciągało. Kerfly nie zapamiętuje jeszcze siatki sam: żeby była
-włączona przy każdym starcie, włącz ją i wybierz **Plik → Zapisz ustawienia
-jako domyślne**.
+nie przyciągało. Kerfly sam zapamiętuje na następny start siatkę (włączoną
+albo nie i jej rozmiar), przyciąganie do obiektów i **Projekt podąża za
+głowicą**; można je też ustawić w **Ustawienia → Widok**.
 
 **Dokładne przesuwanie.** Wpisz pozycję, rozmiar i kąt na pasku opcji
 (przycisk z łańcuchem zachowuje proporcje) albo użyj strzałek: 1 mm albo

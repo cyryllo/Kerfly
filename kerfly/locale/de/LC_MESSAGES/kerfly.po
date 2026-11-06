@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-06 18:59+0100\n"
+"POT-Creation-Date: 2026-11-06 20:07+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -1660,6 +1660,9 @@ msgstr "Glatt"
 msgid "Smooth, with both handles of the same length"
 msgstr "Glatt, beide Griffe gleich lang"
 
+msgid "Snap grid (mm, 0 = off)"
+msgstr "Fangraster (mm, 0 = aus)"
+
 msgid "Snap to &objects"
 msgstr "An &Objekten fangen"
 
@@ -1670,6 +1673,9 @@ msgstr ""
 "Beim Zeichnen und Verschieben an Ecken, Mitten, Seitenmitten und Linien "
 "anderer Elemente und des Betts fangen. Alt gedrückt halten, um kurz "
 "nichts zu fangen."
+
+msgid "Snap to other objects"
+msgstr "An anderen Objekten fangen"
 
 msgid "Solid border: no cuts this close to the outline"
 msgstr "Voller Rand: keine Schnitte so nah an der Kontur"
@@ -1831,6 +1837,9 @@ msgstr "Der Entwurf passt an dieser Position nicht auf die Arbeitsfläche."
 
 msgid "The design does not move."
 msgstr "Der Entwurf bleibt an seinem Platz."
+
+msgid "The design follows the laser head"
+msgstr "Das Design folgt dem Laserkopf"
 
 msgid ""
 "The design moves with the laser head: the arrows, Go to X/Y and Home move"
@@ -2066,6 +2075,9 @@ msgstr "Vektorgravur"
 
 msgid "Vector engrave: determining order…"
 msgstr "Vektorgravur: Reihenfolge wird ermittelt…"
+
+msgid "View"
+msgstr "Ansicht"
 
 msgctxt "toolbar group"
 msgid "View"
