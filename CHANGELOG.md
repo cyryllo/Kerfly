@@ -20,6 +20,9 @@ Fixes from the second laser test (Windows 10, the 0.18.0 installer).
   Windows installer also brings its own `libusb0.dll` (libusb-win32 1.2.6.0,
   the version of the K40 driver), used only when Windows has none. The log
   and the self-test say where it was found, or where Kerfly looked.
+- **Fill / Living hinge tools with several shapes selected:** only the first
+  choice reached all of them (the selection was lost); the pattern shown
+  first could not be applied. Every choice now reaches all selected shapes.
 
 ## 0.18.0 (2026-11-05)
 

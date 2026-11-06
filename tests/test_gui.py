@@ -1175,6 +1175,7 @@ def main():
     combos = [c for c in w3.tool_options.findChildren(QComboBox) if c.findData("honeycomb") >= 0]
     if combos:
         combos[0].setCurrentIndex(combos[0].findData("honeycomb"))
+        combos[0].activated.emit(combos[0].currentIndex())          # as a mouse choice does
     selected_got_it = square.shape.fill_pattern == "honeycomb" and shape.shape.fill_pattern == ""
     undo0 = len(w3._undo)
     w3._fill_clicked(_QPointF(50, 40))                    # inside the ellipse
@@ -1356,6 +1357,28 @@ def main():
           tool_bar and cut_in and section and undone, "(%s)" % ([tool_bar, cut_in, section, undone],))
     w6._dirty = False
     w6.close()
+
+    # 48. Fill tool with several shapes selected: the pattern shown first can be chosen, and every
+    # later choice reaches all of them (the selection was lost after the first change)
+    w7 = make_window(grid_mm="0")
+    for i in range(3):
+        w7._add_drawn_element(_Spec(kind="rectangle", width=30, height=30, operation="cut"), "rectangle",
+                              10 + 40 * i, 10)
+    boxes = list(w7.elements)
+    w7.preview.select_element(boxes)
+    w7.selected = boxes[-1]
+    w7.set_tool("fill")
+    combo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("waves") >= 0][0]
+    seen = []
+    for code in ("lines", "waves", "honeycomb"):                    # "lines" is the one shown first
+        combo.setCurrentIndex(combo.findData(code))
+        combo.activated.emit(combo.currentIndex())
+        seen.append([e.shape.fill_pattern for e in w7.elements])
+    multi_ok = seen == [["lines"] * 3, ["waves"] * 3, ["honeycomb"] * 3]
+    check("fill tool with several shapes: the shown pattern applies, each choice reaches all of them",
+          multi_ok, "(%s)" % seen)
+    w7._dirty = False
+    w7.close()
 
     # 43. no keyboard shortcut is used twice (Qt then runs neither action)
     from PySide6.QtGui import QAction as _QAction

@@ -307,7 +307,9 @@ class ToolOptionsBar(QWidget):
         pattern.setCurrentIndex(max(0, pattern.findData(self.spec.hinge_pattern)))
         pattern.setToolTip(_("Living hinge: rows of cuts that let the sheet bend across them"))
         pattern.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        pattern.currentIndexChanged.connect(lambda _i: self._set("hinge_pattern", pattern.currentData()))
+        # tool: every choice counts, also the one already shown (it may not be on the shapes yet)
+        (pattern.activated if tool else pattern.currentIndexChanged).connect(
+            lambda _i: self._set("hinge_pattern", pattern.currentData()))
         g.addWidget(pattern, 0, 0, 1, 4)
         if self.spec.hinge_pattern or tool:
             # (field, from, to, unit, icon, tooltip, row, column)
@@ -343,7 +345,9 @@ class ToolOptionsBar(QWidget):
         pattern.setCurrentIndex(max(0, pattern.findData(self.spec.fill_pattern)))
         pattern.setToolTip(_("Fill the shape with engraved lines in a pattern; the outline keeps its own layer"))
         pattern.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        pattern.currentIndexChanged.connect(lambda _i: self._set("fill_pattern", pattern.currentData()))
+        # tool: every choice counts, also the one already shown (it may not be on the shapes yet)
+        (pattern.activated if tool else pattern.currentIndexChanged).connect(
+            lambda _i: self._set("fill_pattern", pattern.currentData()))
         g.addWidget(pattern, 0, 0, 1, 5)
         if self.spec.fill_pattern or tool:
             spacing = self._dspin("fill_spacing", 0.05, 50.0, " mm", decimals=2)

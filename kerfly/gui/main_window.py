@@ -654,6 +654,7 @@ class MainWindow(QMainWindow):
                 self._checkpoint()
                 for e in chosen:
                     self._hinge_element(e, checkpoint=False)
+                self._keep_selection(chosen)
             return
         if target == "fill":
             self.fill_defaults = spec
@@ -662,6 +663,7 @@ class MainWindow(QMainWindow):
                 self._checkpoint()
                 for e in chosen:
                     self._fill_element(e, checkpoint=False)
+                self._keep_selection(chosen)
             return
         if target == "selected" and self.selected is not None and self.selected.shape is not None:
             before = self.selected.shape.operation
@@ -811,6 +813,13 @@ class MainWindow(QMainWindow):
             return None
         inside = [e for e in hits if element_contains(e, x, y)]
         return min(inside or hits, key=lambda h: (h.bounds[1] - h.bounds[0]) * (h.bounds[3] - h.bounds[2]))
+
+    def _keep_selection(self, chosen):
+        """Select these elements again after they were rebuilt (the bed view redraws
+        them and kept only one selected: the next change reached only that one)."""
+        current = self.selected if self.selected in chosen else chosen[-1]
+        self.preview.select_element(list(chosen))
+        self.selected = current
 
     # ---- Living hinge tool -------------------------------------------------------
     @staticmethod
