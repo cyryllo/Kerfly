@@ -7,7 +7,7 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.1.0 (2026-11-06)
 
 ### Changed
 
