@@ -15,7 +15,7 @@ control. The original release is tagged `upstream-0.71` in this repository.
 
 ## Status
 
-Early development (0.18). The first test on a real K40 (Windows 10, M3 board)
+Early development (0.19). The first test on a real K40 (Windows 10, M3 board)
 was done in November 2026; its fixes are in 0.15.0. Kerfly has a new Qt
 (PySide6) window. It can open SVG, DXF and G-code files, and bitmap images
 (PNG, JPG, BMP, TIFF, GIF, WebP) for raster engraving without Inkscape.

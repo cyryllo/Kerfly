@@ -9,7 +9,7 @@ other_lang: pl/guide.html
 
 Kerfly controls K40-class CO2 lasers with Lihuiyu (M2 Nano family) boards:
 it places your designs on the laser bed, lets you draw and edit them, and
-sends the job to the laser. This guide is for version 0.18.
+sends the job to the laser. This guide is for version 0.19.
 
 > Kerfly is in early development. The first test on a real laser was in
 > November 2026. Features marked *(not yet tested on a laser)* work in the

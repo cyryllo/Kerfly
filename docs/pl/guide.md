@@ -9,7 +9,7 @@ other_lang: guide.html
 
 Kerfly steruje laserami CO2 klasy K40 z płytami Lihuiyu (rodzina M2 Nano):
 układa projekty na stole lasera, pozwala je rysować i edytować oraz wysyła
-zadanie do lasera. Instrukcja dotyczy wersji 0.18.
+zadanie do lasera. Instrukcja dotyczy wersji 0.19.
 
 > Kerfly jest we wczesnej fazie rozwoju. Pierwszy test na prawdziwym laserze
 > odbył się w listopadzie 2026. Funkcje oznaczone *(jeszcze nie sprawdzone na
