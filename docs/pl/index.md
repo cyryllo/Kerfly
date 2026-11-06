@@ -18,18 +18,14 @@ description: Kerfly to darmowy program do sterowania laserami CO2 K40 z płytami
   <a class="button primary" href="{{ site.repo }}/releases/latest">Pobierz (Windows, Linux)</a>
   <a class="button" href="{{ '/pl/guide.html' | relative_url }}">Instrukcja obsługi</a>
   <a class="button" href="{{ site.repo }}/blob/main/INSTALL_pl.md">Instalacja</a>
-  <a class="button" href="{{ site.repo }}">Kod źródłowy</a>
 </div>
 
 <div class="shot"><img src="{{ '/screenshot_pl.png' | relative_url }}" alt="Główne okno Kerfly z rysunkiem na stole lasera"></div>
 
 Kerfly steruje laserami CO2 klasy K40 z **płytami Lihuiyu** (rodzina M2 Nano:
 M1, M2, M3, B1, …), czyli popularnymi niebiesko-białymi laserami biurkowymi
-sprzedawanymi pod wieloma nazwami. Powstał z **[K40 Whisperera](https://www.scorchworks.com/K40whisperer/k40whisperer.html)**
-autorstwa Scorcha i zachowuje jego sterowanie laserem bez zmian: dane
-wysyłane do lasera są po każdej zmianie porównywane bajt w bajt z K40
-Whispererem. Wokół tego rdzenia Kerfly dodaje nowoczesne okno z narzędziami
-do rysowania i edycji.
+sprzedawanymi pod wieloma nazwami. Rysujesz, układasz i uruchamiasz zadania
+w jednym oknie, od pierwszego szkicu do wyciętej części.
 
 ## Co potrafi
 
@@ -40,7 +36,7 @@ do rysowania i edycji.
   <div class="feature"><h3>Wiele formatów</h3><p>SVG (z Inkscape albo bez), DXF, G-code i obrazy: PNG, JPG, BMP, TIFF, GIF, WebP. Projekt trzyma wszystko w jednym pliku.</p></div>
   <div class="feature"><h3>Wzory, zawiasy, mostki</h3><p>Wypełnianie kształtów grawerowanymi wzorami (fale, plaster miodu, cegły…), a ich obrys nadal jest cięty; zawiasy giętkie, dzięki którym sklejka się wygina; mostki trzymające wycięte elementy w arkuszu; łączenie kształtów.</p></div>
   <div class="feature"><h3>Bezpieczna praca</h3><p>Najpierw objazd konturu, symulacja zadania, szacowany czas. Kerfly nie wyśle zadania, które wyprowadziłoby głowicę poza stół.</p></div>
-  <div class="feature"><h3>Jak w K40 Whisperer, jeśli chcesz</h3><p>Ten sam plik ustawień. Projekt może podążać za głowicą albo zostać na swoim miejscu na stole: wybór należy do Ciebie.</p></div>
+  <div class="feature"><h3>Twój sposób pracy</h3><p>Projekt może zostać na swoim miejscu na stole, a głowica do niego podjedzie, albo podążać za głowicą: wybór należy do Ciebie.</p></div>
   <div class="feature"><h3>Po polsku</h3><p>Polski, angielski, niemiecki, hiszpański i francuski. Działa w Windows 10 / 11 (instalator) i Linuksie (AppImage, większość dystrybucji).</p></div>
 </div>
 
@@ -49,12 +45,12 @@ do rysowania i edycji.
 Otwórz <a href="{{ site.repo }}/releases/latest">najnowsze wydanie</a> i pobierz paczkę dla swojego systemu. Python nie jest potrzebny.
 
 <ol class="steps">
-  <li><strong>Windows 10 / 11:</strong> uruchom <code>Kerfly-&lt;wersja&gt;-windows-setup.exe</code>. Za pierwszym razem zaznacz <em>Zainstaluj sterownik USB lasera K40</em> (pomiń, jeśli K40 Whisperer już działał na tym komputerze). Jeśli Windows napisze, że ochronił komputer, wybierz <em>Więcej informacji → Uruchom mimo to</em> (instalator nie jest podpisany). Kerfly będzie w menu Start.</li>
-  <li><strong>Linux:</strong> nadaj plikowi <code>Kerfly-&lt;wersja&gt;-x86_64.AppImage</code> prawo uruchamiania i uruchom go. Raz dodaj regułę udev dla portu USB lasera.</li>
+  <li><strong>Windows 10 / 11:</strong> uruchom <code>Kerfly-&lt;wersja&gt;-windows-setup.exe</code>. Instalator nie jest podpisany, więc Windows może pokazać <em>System Windows ochronił ten komputer</em>: wybierz <em>Więcej informacji → Uruchom mimo to</em>. Za pierwszym razem zaznacz <em>Zainstaluj sterownik USB lasera K40</em>. Kerfly będzie w menu Start.</li>
+  <li><strong>Linux:</strong> nadaj plikowi <code>Kerfly-&lt;wersja&gt;-x86_64.AppImage</code> prawo uruchamiania i uruchom go. Raz dodaj <a href="{{ site.repo }}/blob/main/INSTALL_pl.md#linux-appimage">regułę dla portu USB lasera</a> (trzy polecenia).</li>
   <li>Przeczytaj <a href="{{ '/pl/guide.html' | relative_url }}">instrukcję obsługi</a>: połącz laser, ułóż projekt, objedź kontur, start.</li>
 </ol>
 
-<a href="{{ site.repo }}/blob/main/INSTALL_pl.md">Instrukcja instalacji</a> opisuje każdy krok, także uruchamianie Kerfly z kodu źródłowego przez Pythona (<code>start_kerfly.bat</code> / <code>./start_kerfly.sh</code>).
+<a href="{{ site.repo }}/blob/main/INSTALL_pl.md">Instrukcja instalacji</a> opisuje każdy krok.
 
 ## Stan projektu
 

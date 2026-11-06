@@ -9,6 +9,14 @@ Version numbers:
 
 ## Unreleased
 
+### Documentation
+
+- README, installation guide, user guide and website describe only the two
+  ready-made packages: the Windows installer (with the "Windows protected
+  your PC" warning of an unsigned installer) and the Linux AppImage with the
+  rule for the laser's USB port. Running from source, tests, translations
+  and packaging moved to the new DEVELOPMENT.md, linked at the bottom.
+
 ### Fixed
 
 - Fill and Living hinge tools: clicking a shape that was already selected

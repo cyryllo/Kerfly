@@ -1,159 +1,96 @@
-# Kerfly: instalacja i pierwsze uruchomienie
+# Kerfly: instalacja
 
 Opis programu po polsku jest w [README_pl.md](README_pl.md).
 
-## Gotowe paczki (zalecane)
+Kerfly ma dwie gotowe paczki. Pobierz tę dla swojego systemu ze
+[strony wydań](https://github.com/cyryllo/Kerfly/releases/latest). Nic więcej
+nie jest potrzebne.
 
-Od wersji 0.18 każde wydanie na <https://github.com/cyryllo/Kerfly/releases>
-ma paczki, które nie potrzebują Pythona:
+## Windows 10 / 11: instalator
 
-- **Windows 10 / 11: `Kerfly-<wersja>-windows-setup.exe`.** Uruchom go i
-  przejdź przez kolejne kroki. Za pierwszym razem zaznacz **„Zainstaluj
-  sterownik USB lasera K40”** (wcześniej podłącz i włącz laser): uruchomi się
-  instalator sterownika Scorcha, który instaluje sterownik libusb-win32. Pomiń
-  to, jeśli K40 Whisperer już działał na tym komputerze. Kerfly będzie w menu
-  Start. Windows może pokazać „System Windows ochronił ten komputer”, bo
-  instalator nie jest podpisany: wybierz **Więcej informacji → Uruchom mimo
-  to**.
-- **Linux: `Kerfly-<wersja>-x86_64.AppImage`.** Nadaj mu prawo uruchamiania i
-  uruchom (`chmod +x Kerfly-*.AppImage && ./Kerfly-*.AppImage` albo w menedżerze
-  plików: Właściwości → Zezwól na uruchamianie). Dla portu USB lasera dodaj
-  raz regułę udev, opis [niżej](#dostęp-do-lasera-bez-roota-jednorazowo).
+1. Pobierz **`Kerfly-<wersja>-windows-setup.exe`**.
+2. Podłącz kabel USB lasera i włącz laser.
+3. Uruchom instalator. Windows może pokazać **„System Windows ochronił ten
+   komputer”**: instalator nie jest podpisany (certyfikat do podpisu jest
+   płatny), więc Windows nie zna wydawcy. Wybierz **Więcej informacji →
+   Uruchom mimo to**.
+4. Za pierwszym razem zaznacz **„Zainstaluj sterownik USB lasera K40”**.
+   Instaluje on sterownik libusb-win32, którego potrzebuje laser. Jeśli
+   Kerfly albo inny program do tego lasera już z nim działał na tym
+   komputerze, sterownik jest i możesz tego nie zaznaczać. Po zmianie
+   sterownika LaserDRW i CorelLaser nie będą działać z laserem.
+5. Uruchom Kerfly z menu Start (albo ikoną na pulpicie, jeśli ją wybrałeś).
 
-## Z kodu źródłowego: Windows 10 / 11
+## Linux: AppImage
 
-### 1. Python
+1. Pobierz **`Kerfly-<wersja>-x86_64.AppImage`**.
+2. Nadaj mu prawo uruchamiania: w menedżerze plików Właściwości → Zezwól na
+   uruchamianie jako program, albo w terminalu:
 
-1. Pobierz **Python 3.13** (zalecany, bo wszystkie biblioteki mają dla niego gotowe paczki):
-   <https://www.python.org/downloads/windows/>. Wybierz „Windows installer (64-bit)”
-   z najnowszego wydania 3.13.
-2. W pierwszym oknie instalatora **zaznacz „Add python.exe to PATH”**, potem
-   kliknij „Install Now”.
+   ```bash
+   chmod +x Kerfly-*.AppImage
+   ```
 
-### 2. Inkscape (opcjonalnie)
+3. Daj swojemu użytkownikowi dostęp do portu USB lasera. Wystarczy raz na
+   komputer, potem wyloguj się i zaloguj ponownie:
 
-Kerfly otwiera pliki SVG sam. Inkscape (<https://inkscape.org/release/>) jest
-potrzebny tylko wtedy, gdy SVG zawiera **tekst do cięcia lub grawerowania
-konturu** (Kerfly zamienia go wtedy na ścieżki przez Inkscape). Jeśli Inkscape
-jest zainstalowany, Kerfly użyje go też do rastra, tak jak K40 Whisperer.
+   ```bash
+   sudo groupadd -f lasercutter
+   sudo usermod -a -G lasercutter $USER
+   echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="5512", ENV{DEVTYPE}=="usb_device", MODE="0664", GROUP="lasercutter"' | sudo tee /etc/udev/rules.d/97-ctc-lasercutter.rules
+   ```
 
-### 3. Sterownik USB lasera (jednorazowo)
-
-Płyta K40 (M2 Nano, układ CH341) potrzebuje sterownika **libusb-win32**:
-
-- Jeśli na tym komputerze działał już **K40 Whisperer**, sterownik jest
-  zainstalowany. Pomiń ten krok.
-- W przeciwnym razie:
-  1. Pobierz **Zadig** ze strony <https://zadig.akeo.ie/>.
-  2. Podłącz i włącz laser.
-  3. W Zadig wybierz menu **Options → List All Devices**.
-  4. Z listy wybierz urządzenie **USB-EPP/I2C… CH341A** (ID `1A86 5512`).
-  5. Po prawej stronie strzałki wybierz **libusb-win32**.
-  6. Kliknij **Replace Driver** (lub **Install Driver**).
-
-Uwaga: po tej zmianie LaserDRW i CorelLaser nie będą działać z laserem, bo
-używają innego sterownika. Przywrócisz go w Menedżerze urządzeń (Aktualizuj
-sterownik → Wybierz z listy).
-
-Zamiast Zadig możesz też użyć instalatora sterownika od autora K40 Whisperer:
-<https://github.com/scorchworks/K40-Whisperer-Driver-Installer>.
-
-### 4. Kerfly
-
-1. Rozpakuj paczkę `kerfly-….zip`, np. do `C:\Kerfly`.
-2. Kliknij dwukrotnie **`start_kerfly.bat`**.
-   - Pierwsze uruchomienie trwa kilka minut, bo instaluje biblioteki. Potrzebny
-     jest internet.
-   - Kolejne uruchomienia startują od razu.
-
-## Z kodu źródłowego: Linux (Debian / Ubuntu)
-
-```bash
-sudo apt install python3-venv inkscape
-unzip kerfly-*.zip -d ~/Kerfly     # albo: git clone https://github.com/cyryllo/Kerfly
-cd ~/Kerfly/kerfly-*
-./start_kerfly.sh
-```
-
-### Dostęp do lasera bez roota (jednorazowo)
-
-```bash
-sudo groupadd -f lasercutter
-sudo usermod -a -G lasercutter $USER
-echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="5512", ENV{DEVTYPE}=="usb_device", MODE="0664", GROUP="lasercutter"' | sudo tee /etc/udev/rules.d/97-ctc-lasercutter.rules
-```
-
-Potem wyloguj się i zaloguj ponownie (albo uruchom komputer ponownie).
+   Sama grupa `dialout` nie wystarczy: płyta lasera nie jest portem
+   szeregowym.
+4. Uruchom AppImage (dwuklik albo `./Kerfly-*.AppImage`).
 
 ## Autotest
 
 Przed pierwszym zadaniem sprawdź instalację. Podłącz i włącz laser, a potem
-w folderze Kerfly uruchom:
+uruchom w wierszu poleceń (Windows) albo w terminalu (Linux):
 
-- Windows (Wiersz polecenia, `cmd`): `start_kerfly.bat --self-test`
-- Linux: `./start_kerfly.sh --self-test`
-- Z instalatora Windows: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
-- AppImage: `./Kerfly-<wersja>-x86_64.AppImage --self-test`
+- Windows: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
+- Linux: `./Kerfly-<wersja>-x86_64.AppImage --self-test`
 
 Kerfly wypisze po jednej linii na każde sprawdzenie: biblioteki, sterownik
 USB, czy widzi laser (nie rusza nim), Inkscape, folder ustawień i czy okno
 otwiera projekt. Linie `FAIL` trzeba naprawić. Linie `WARN` dotyczą rzeczy
-opcjonalnych albo niepodłączonego lasera. Wynik dołącz do każdego zgłoszenia
-błędu.
+opcjonalnych albo niepodłączonego lasera.
 
-## Rysowanie: najważniejsze skróty
+## Pierwsze uruchomienie z laserem
 
-- **Alt** (przytrzymany) chwilowo wyłącza przyciąganie przy rysowaniu,
-  przesuwaniu i edycji węzłów.
-- **Shift** przy rysowaniu daje kwadrat, koło albo linie co 45°.
-- **Ctrl+klik** albo ramka zaznacza kilka elementów, a **Ctrl+Shift+G**
-  grupuje.
-- Pełna tabela jest w [README_pl.md](README_pl.md).
+Trzymaj rękę przy wyłączniku lasera.
 
-## Gdy coś pójdzie nie tak
+1. **Ustawienia → Maszyna**: wybierz swoją płytę (np. LASER-M2 albo M3),
+   wymiary stołu i jednostki.
+2. Zakładka **Laser → Połącz** (ikona wtyczki). Głowica zjedzie do pozycji
+   bazowej (lewy górny róg).
+3. Przesuń głowicę strzałkami i sprawdź, czy kierunki się zgadzają.
+4. Narysuj prostokąt 20 × 20 mm i uruchom **Objazd konturu** przy wyłączonym
+   laserze.
+5. Zrób małe cięcie przy niskiej mocy na skrawku materiału. Sprawdź **Pauzę**
+   (drugie kliknięcie wznawia) i **Stop**.
 
-Kerfly zapisuje dziennik wszystkich komend lasera i błędów (`kerfly.log` w
-folderze ustawień: `~/.config/kerfly/` na Linuksie, `%APPDATA%\Kerfly\` na
-Windows).
+Resztę opisuje [instrukcja obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
+
+## Gdy coś nie działa
+
+- **„Błąd USB … sterownik libUSB nie jest zainstalowany”**: na Windows
+  uruchom instalator jeszcze raz i zaznacz sterownik USB; na Linuksie dodaj
+  regułę z kroku 3 i zaloguj się ponownie.
+- **Brakuje tekstu z SVG albo nie jest cięty**: zainstaluj
+  [Inkscape](https://inkscape.org/release/) (opcjonalny). Kerfly otwiera pliki
+  SVG sam, ale do zamiany tekstu z SVG na linie potrzebuje Inkscape. Kerfly
+  sam go znajdzie, a jeśli nie, wskaż go w Ustawienia → Zaawansowane.
 
 Żeby zgłosić problem, wybierz **Pomoc → Zgłoś problem na GitHubie…** (albo
 przycisk **Zgłoś błąd**). Kerfly zapisze raport diagnostyczny i otworzy
 formularz zgłoszenia na GitHubie z wpisaną wersją, systemem i płytą.
 Przeciągnij plik raportu do pola „Diagnostic report”. Do wysłania potrzebne
 jest darmowe konto GitHub. Formularz jest po angielsku, ale zgłoszenie można
-napisać po polsku. Sam raport zapisuje **Pomoc → Zapisz raport
-diagnostyczny…** (albo przycisk **Raport**).
+napisać po polsku.
 
-## Pierwszy test na laserze (lista kontrolna)
+---
 
-Kerfly wysyła do lasera te same dane co K40 Whisperer 0.71, co sprawdzają
-testy. Sterowanie maszyną (połączenie, ruchy, pauza) sprawdzamy jednak na
-sprzęcie po raz pierwszy. Trzymaj rękę przy wyłączniku lasera.
-
-1. **Ustawienia → Maszyna**: wybierz swoją płytę (np. LASER-M2 albo M3),
-   wymiary stołu i jednostki.
-2. Zakładka **Laser → Połącz** (ikona wtyczki). Głowica powinna zjechać do
-   pozycji bazowej (lewy górny róg).
-3. **Strzałki**: przesuń głowicę o 10 mm w każdą stronę. Sprawdź, czy kierunki
-   się zgadzają.
-4. Otwórz prosty projekt (np. narysuj prostokąt 20×20 mm).
-5. **Objazd konturu** (ikona ramki obok Start) przy wyłączonym laserze albo
-   zamkniętej osłonie. Głowica powinna objechać prostokąt w miejscu, które
-   widzisz na podglądzie.
-6. Małe cięcie przy **niskiej mocy** na skrawku materiału.
-7. W trakcie zadania sprawdź **Pauzę** (zatrzymuje się, drugie kliknięcie
-   wznawia) i **Stop** (kończy od razu).
-8. Jeśli coś zachowa się inaczej niż w K40 Whisperer, zapisz, co dokładnie
-   zrobiłeś. Oryginalne okno K40 Whisperer też jest w paczce i korzysta z tego
-   samego środowiska. Uruchomisz je w folderze Kerfly poleceniem
-   `.venv\Scripts\python k40_whisperer.py` (Windows) albo
-   `.venv/bin/python k40_whisperer.py` (Linux, wymaga `python3-tk`).
-
-## Gdy coś nie działa
-
-- **„USB error … libUSB driver not installed”**: brakuje sterownika (krok 3
-  dla Windows) albo reguły udev (Linux).
-- **Pliki SVG się nie otwierają**: zainstaluj Inkscape albo wskaż go w
-  Ustawienia → Zaawansowane.
-- **Windows: „Python was not found”**: zainstaluj Pythona z zaznaczoną opcją
-  „Add python.exe to PATH”.
+Uruchamianie ze źródeł, budowanie paczek i testy:
+[DEVELOPMENT.md](DEVELOPMENT.md) (po angielsku).

@@ -1,92 +1,60 @@
-# Installing and running Kerfly
+# Installing Kerfly
 
 A Polish version of this guide is in [INSTALL_pl.md](INSTALL_pl.md).
 
-## Ready-made packages (recommended)
+Kerfly comes in two ready-made packages. Download the one for your system
+from the [releases page](https://github.com/cyryllo/Kerfly/releases/latest).
+Nothing else is needed.
 
-From version 0.18 every release on
-<https://github.com/cyryllo/Kerfly/releases> has packages that need no
-Python:
+## Windows 10 / 11: the installer
 
-- **Windows 10 / 11: `Kerfly-<version>-windows-setup.exe`.** Run it and follow
-  the steps. Tick **"Install the USB driver for the K40 laser"** the first
-  time (plug the laser in and switch it on first): it runs Scorch's K40 driver
-  installer, which installs the libusb-win32 driver. Skip it if K40 Whisperer
-  already worked on this PC. Kerfly then is in the Start menu. Windows may say
-  "Windows protected your PC" because the installer is not signed: choose
-  **More info → Run anyway**.
-- **Linux: `Kerfly-<version>-x86_64.AppImage`.** Make it executable and run
-  it (`chmod +x Kerfly-*.AppImage && ./Kerfly-*.AppImage`, or in the file
-  manager: Properties → Allow executing). For the laser's USB port add the
-  udev rule once, see [below](#from-source-linux-debian--ubuntu).
+1. Download **`Kerfly-<version>-windows-setup.exe`**.
+2. Plug in the laser's USB cable and switch the laser on.
+3. Run the installer. Windows may say **"Windows protected your PC"**: the
+   installer is not signed (a signing certificate is paid), so Windows does
+   not know its publisher. Choose **More info → Run anyway**.
+4. The first time, tick **"Install the USB driver for the K40 laser"**. It
+   installs the libusb-win32 driver the laser needs. If Kerfly or another
+   program for this laser already worked with it on this PC, the driver is
+   there and you can leave it unticked. After the driver change, LaserDRW and
+   CorelLaser no longer work with the laser.
+5. Start Kerfly from the Start menu (or the desktop icon, if you chose one).
 
-## From source: Windows 10 / 11
+## Linux: the AppImage
 
-1. **Python 3.13** from <https://www.python.org/downloads/windows/> (the
-   "Windows installer (64-bit)" of the latest 3.13 release). It is recommended
-   because every library has ready-made packages for it. In the installer,
-   tick **"Add python.exe to PATH"**.
-2. **Inkscape** (optional) from <https://inkscape.org/release/>. Kerfly
-   reads SVG files by itself. Inkscape is needed only for SVG text that is cut
-   or engraved as an outline, which Inkscape turns into paths. When it is
-   installed, Kerfly also uses it for rasters, as K40 Whisperer does.
-3. **USB driver** for the K40 board (M2 Nano, CH341 chip), once:
-   - If K40 Whisperer already worked on this PC, the driver is installed.
-   - Otherwise, use **Zadig** (<https://zadig.akeo.ie/>):
-     1. Choose **Options → List All Devices**.
-     2. Select **USB-EPP/I2C… CH341A** (ID `1A86 5512`).
-     3. Choose **libusb-win32** and click **Replace Driver**.
+1. Download **`Kerfly-<version>-x86_64.AppImage`**.
+2. Make it executable: in the file manager choose Properties → Allow
+   executing as a program, or in a terminal:
 
-     LaserDRW and CorelLaser will no longer work with the laser after this.
-     To switch back, use Device Manager. Another option is Scorch's
-     [driver installer](https://github.com/scorchworks/K40-Whisperer-Driver-Installer).
-4. Unzip Kerfly (for example to `C:\Kerfly`) and double-click
-   **`start_kerfly.bat`**. The first start installs the libraries. This needs
-   internet and takes a few minutes.
+   ```bash
+   chmod +x Kerfly-*.AppImage
+   ```
 
-## From source: Linux (Debian / Ubuntu)
+3. Let your user reach the laser's USB port. Do this once per computer, then
+   log out and back in:
 
-```bash
-sudo apt install python3-venv inkscape
-git clone https://github.com/cyryllo/Kerfly && cd Kerfly
-./start_kerfly.sh
-```
+   ```bash
+   sudo groupadd -f lasercutter
+   sudo usermod -a -G lasercutter $USER
+   echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="5512", ENV{DEVTYPE}=="usb_device", MODE="0664", GROUP="lasercutter"' | sudo tee /etc/udev/rules.d/97-ctc-lasercutter.rules
+   ```
 
-To use the laser without root, run this once, then log out and back in:
-
-```bash
-sudo groupadd -f lasercutter
-sudo usermod -a -G lasercutter $USER
-echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="5512", ENV{DEVTYPE}=="usb_device", MODE="0664", GROUP="lasercutter"' | sudo tee /etc/udev/rules.d/97-ctc-lasercutter.rules
-```
+   The `dialout` group is not enough: the laser's board is not a serial
+   port.
+4. Run the AppImage (double-click it, or `./Kerfly-*.AppImage`).
 
 ## Self-test
 
 Before the first job, check the installation. Plug in and switch on the laser,
-then run in the Kerfly folder:
+then run in a command window (Windows) or a terminal (Linux):
 
-- Windows (Command Prompt): `start_kerfly.bat --self-test`
-- Linux: `./start_kerfly.sh --self-test`
-- Installed with the Windows installer: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
-- AppImage: `./Kerfly-<version>-x86_64.AppImage --self-test`
+- Windows: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
+- Linux: `./Kerfly-<version>-x86_64.AppImage --self-test`
 
-Kerfly prints one line per check: libraries, USB driver, whether the K40 is
+Kerfly prints one line per check: libraries, USB driver, whether the laser is
 found (it is not moved), Inkscape, the settings folder, and that the window
-opens a design. `FAIL` lines must be fixed; `WARN` lines are optional or mean
-that the laser is not connected. Send this output along with any bug report.
-
-## When something goes wrong
-
-Kerfly keeps a log of every laser command and error (`kerfly.log` in the
-settings folder: `~/.config/kerfly/` on Linux, `%APPDATA%\Kerfly\` on
-Windows).
-
-To report a problem, choose **Help → Report a problem on GitHub…** (or the
-**Bug report** button). Kerfly saves a diagnostic report and opens the report
-form on GitHub with the version, system and board filled in. Drag the report
-file into the form's "Diagnostic report" field. A free GitHub account is
-needed to send it. The report alone is saved with **Help → Save diagnostic
-report…** (or the **Report** button).
+opens a design. `FAIL` lines must be fixed; `WARN` lines are optional parts or
+mean that the laser is not connected.
 
 ## First run with a laser
 
@@ -100,9 +68,26 @@ Keep a hand on the laser's power switch.
 5. Cut a small test at low power on scrap material. Try **Pause** (the second
    click resumes) and **Stop**.
 
-## Troubleshooting
+The [user guide](https://cyryllo.github.io/Kerfly/guide.html) explains the
+rest.
 
-- **"USB error … libUSB driver not installed"**: install the driver
-  (Windows, step 3) or the udev rule (Linux).
-- **SVG files do not open**: install Inkscape, or set its path in Settings →
-  Advanced.
+## When something goes wrong
+
+- **"USB error … libUSB driver not installed"**: on Windows run the installer
+  again and tick the USB driver; on Linux add the rule from step 3 and log in
+  again.
+- **SVG text is missing or not cut**: install [Inkscape](https://inkscape.org/release/)
+  (optional). Kerfly opens SVG files by itself, but it needs Inkscape to turn
+  SVG text into lines. When Inkscape is installed, Kerfly finds it; otherwise
+  set its path in Settings → Advanced.
+
+To report a problem, choose **Help → Report a problem on GitHub…** (or the
+**Bug report** button). Kerfly saves a diagnostic report and opens the report
+form on GitHub with the version, system and board filled in. Drag the report
+file into the form's "Diagnostic report" field. A free GitHub account is
+needed to send it. You can write in English or Polish.
+
+---
+
+Running Kerfly from source, building the packages and running the tests:
+[DEVELOPMENT.md](DEVELOPMENT.md).

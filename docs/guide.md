@@ -32,18 +32,19 @@ sends the job to the laser. This guide is for version 0.19.
 ## 1. First start
 
 1. Install Kerfly as described in the
-   [installation guide](https://github.com/cyryllo/Kerfly/blob/main/INSTALL.md):
-   the Windows installer or the Linux AppImage from the
-   [releases page](https://github.com/cyryllo/Kerfly/releases) (from 0.18), or
-   from source with `start_kerfly.bat` (Windows) / `./start_kerfly.sh` (Linux).
-   The Windows installer can also install the K40 USB driver. On Linux (also
-   with the AppImage) add the udev rule for the laser's USB port once, as the
-   installation guide shows.
+   [installation guide](https://github.com/cyryllo/Kerfly/blob/main/INSTALL.md),
+   from the [releases page](https://github.com/cyryllo/Kerfly/releases):
+   - **Windows 10 / 11:** run `Kerfly-<version>-windows-setup.exe`. The
+     installer is not signed, so Windows may say "Windows protected your PC":
+     choose **More info → Run anyway**. The first time, tick the USB driver
+     for the K40 laser.
+   - **Linux:** make `Kerfly-<version>-x86_64.AppImage` executable and run
+     it. Add the udev rule for the laser's USB port once, as the installation
+     guide shows.
 2. Check the installation with the self-test (in a command window /
    terminal):
    - Windows installer: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
    - AppImage: `./Kerfly-<version>-x86_64.AppImage --self-test`
-   - from source: `start_kerfly.bat --self-test` or `./start_kerfly.sh --self-test`
 
    Every line should say `OK`; `WARN` lines are optional parts or mean that
    the laser is not connected.
@@ -54,9 +55,8 @@ sends the job to the laser. This guide is for version 0.19.
    (Connect, Ctrl+I) on the **Laser** tab. By default Kerfly then homes the
    head (moves it to the upper left corner).
 
-Kerfly reads and writes the same settings file as K40 Whisperer
-(`k40_whisperer.txt` in your home folder), so your K40 Whisperer settings
-are used. **File → Save settings as default** keeps changed settings.
+Kerfly keeps its settings in `k40_whisperer.txt` in your home folder.
+**File → Save settings as default** keeps changed settings.
 
 <a id="s2"></a>
 
@@ -115,7 +115,7 @@ not the head.
 
 **Where the job starts.** The design stays where it is on the bed (as in
 LightBurn or MeerK40t): when a job starts, the head first drives to the
-design. To work the K40 Whisperer way, where the design starts at the head:
+design. To start the design where the head is instead:
 
 - **Edit → Place design at the head** (Ctrl+H, toolbar **To head**) moves the
   design to the head once.
@@ -141,7 +141,7 @@ and the default layers (it asks to save unsaved changes first).
 
 | File | What becomes of it |
 |---|---|
-| SVG | Red lines are cut, blue lines engraved as outlines, everything else (fills, pictures, black lines) is raster engraved, as in K40 Whisperer. Inkscape is used when installed, otherwise the built-in renderer; Inkscape is needed for SVG text that is cut or engraved as an outline |
+| SVG | Red lines are cut, blue lines engraved as outlines, everything else (fills, pictures, black lines) is raster engraved. Inkscape is used when installed, otherwise the built-in renderer; Inkscape is needed for SVG text that is cut or engraved as an outline |
 | DXF | Cut lines; blue entities and layers named *engrave* become outline engraving |
 | PNG, JPG, BMP, TIFF, GIF, WebP | Raster engraving: dark pixels are engraved. Kerfly shows the image size; set the resolution or the width and height |
 | G-code (.ngc, .gcode, .nc, .g, .tap) | Run as G-code |
@@ -324,8 +324,8 @@ out of the job.
    around the design, with the laser off unless set in the settings, so you
    can check where it will be cut. It runs round the rectangle around the
    design, starting at the corner nearest the head (Settings → Vector: switch
-   off "Boundary trace as a rectangle" to follow the outline, as K40
-   Whisperer does). *(rectangle: not yet tested on a laser)*
+   off "Boundary trace as a rectangle" to follow the outline instead).
+   *(rectangle: not yet tested on a laser)*
 4. **Start** (F9) runs all ticked layers. **Pause** stops the laser for a
    moment and the same button resumes it. **Stop** (Esc) ends the job
    immediately; then press **Home** before the next job.

@@ -32,17 +32,18 @@ zadanie do lasera. Instrukcja dotyczy wersji 0.19.
 ## 1. Pierwsze uruchomienie
 
 1. Zainstaluj Kerfly według
-   [instrukcji instalacji](https://github.com/cyryllo/Kerfly/blob/main/INSTALL_pl.md):
-   instalatorem dla Windows albo AppImage dla Linuksa ze
-   [strony wydań](https://github.com/cyryllo/Kerfly/releases) (od 0.18) albo z
-   kodu źródłowego przez `start_kerfly.bat` (Windows) / `./start_kerfly.sh`
-   (Linux). Instalator dla Windows potrafi też zainstalować sterownik USB K40.
-   W Linuksie (także z AppImage) dodaj raz regułę udev dla portu USB lasera,
-   jak pokazuje instrukcja instalacji.
+   [instrukcji instalacji](https://github.com/cyryllo/Kerfly/blob/main/INSTALL_pl.md),
+   ze [strony wydań](https://github.com/cyryllo/Kerfly/releases):
+   - **Windows 10 / 11:** uruchom `Kerfly-<wersja>-windows-setup.exe`.
+     Instalator nie jest podpisany, więc Windows może pokazać „System Windows
+     ochronił ten komputer”: wybierz **Więcej informacji → Uruchom mimo to**.
+     Za pierwszym razem zaznacz sterownik USB dla lasera K40.
+   - **Linux:** nadaj plikowi `Kerfly-<wersja>-x86_64.AppImage` prawo
+     uruchamiania i uruchom go. Raz dodaj regułę udev dla portu USB lasera,
+     jak pokazuje instrukcja instalacji.
 2. Sprawdź instalację autotestem (w wierszu poleceń / terminalu):
    - z instalatora Windows: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
    - AppImage: `./Kerfly-<wersja>-x86_64.AppImage --self-test`
-   - z kodu źródłowego: `start_kerfly.bat --self-test` albo `./start_kerfly.sh --self-test`
 
    Każda linia powinna mieć `OK`; linie `WARN` dotyczą rzeczy opcjonalnych
    albo niepodłączonego lasera.
@@ -53,10 +54,9 @@ zadanie do lasera. Instrukcja dotyczy wersji 0.19.
    laserem, Ctrl+I) na zakładce **Laser**. Domyślnie Kerfly od razu bazuje
    głowicę (przesuwa ją do lewego górnego rogu).
 
-Kerfly czyta i zapisuje ten sam plik ustawień co K40 Whisperer
-(`k40_whisperer.txt` w folderze domowym), więc działa z Twoimi ustawieniami
-z K40 Whisperera. Zmienione ustawienia zachowasz przez **Plik → Zapisz
-ustawienia jako domyślne**.
+Kerfly trzyma ustawienia w pliku `k40_whisperer.txt` w folderze domowym.
+Zmienione ustawienia zachowasz przez **Plik → Zapisz ustawienia jako
+domyślne**.
 
 <a id="s2"></a>
 
@@ -113,8 +113,7 @@ stole, nie głowicę.
 
 **Gdzie zaczyna się zadanie.** Projekt zostaje tam, gdzie leży na stole (jak w
 LightBurnie czy MeerK40t): na początku zadania głowica najpierw podjeżdża do
-projektu. Jeśli wolisz sposób pracy z K40 Whisperera, w którym projekt zaczyna
-się przy głowicy:
+projektu. Jeśli wolisz, żeby projekt zaczynał się przy głowicy:
 
 - **Edycja → Ustaw projekt przy głowicy** (Ctrl+H, na pasku **Do głowicy**)
   jednorazowo przesuwa projekt do głowicy.
@@ -141,7 +140,7 @@ pozostałych.
 
 | Plik | Co z niego powstaje |
 |---|---|
-| SVG | Czerwone linie są cięte, niebieskie grawerowane jako obrys, a cała reszta (wypełnienia, obrazy, czarne linie) grawerowana rastrowo, jak w K40 Whisperer. Kerfly używa Inkscape, jeśli jest zainstalowany, a bez niego własnego renderera; Inkscape jest potrzebny do tekstu w SVG, który ma być cięty albo grawerowany jako obrys |
+| SVG | Czerwone linie są cięte, niebieskie grawerowane jako obrys, a cała reszta (wypełnienia, obrazy, czarne linie) grawerowana rastrowo. Kerfly używa Inkscape, jeśli jest zainstalowany, a bez niego własnego renderera; Inkscape jest potrzebny do tekstu w SVG, który ma być cięty albo grawerowany jako obrys |
 | DXF | Linie cięcia; niebieskie obiekty i warstwy o nazwie *engrave* to obrys |
 | PNG, JPG, BMP, TIFF, GIF, WebP | Grawer rastrowy: ciemne piksele są grawerowane. Kerfly pokazuje rozmiar obrazu; ustaw rozdzielczość albo szerokość i wysokość |
 | G-code (.ngc, .gcode, .nc, .g, .tap) | Wykonywany jako G-code |
@@ -326,8 +325,7 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
    ustawieniach, żeby sprawdzić, gdzie będzie cięcie. Objeżdża prostokąt
    wokół projektu, zaczynając od narożnika najbliższego głowicy (Ustawienia →
    Wektory: wyłącz „Objazd konturu jako prostokąt”, żeby jechać wzdłuż
-   obwiedni, jak w K40 Whisperer). *(prostokąt: jeszcze nie sprawdzony na
-   laserze)*
+   obwiedni). *(prostokąt: jeszcze nie sprawdzony na laserze)*
 4. **Start** (F9) wykonuje wszystkie zaznaczone warstwy. **Pauza** na chwilę
    zatrzymuje laser, a ten sam przycisk wznawia pracę. **Stop** (Esc)
    natychmiast kończy zadanie; potem naciśnij **Bazowanie** przed następnym

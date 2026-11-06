@@ -45,13 +45,15 @@
 <footer class="site-footer">
   <div class="wrap">
     {% if pl %}
-    Kerfly jest wolnym oprogramowaniem na licencji GPL-3.0-or-later, opartym na
-    <a href="https://www.scorchworks.com/K40whisperer/k40whisperer.html">K40 Whisperer</a> autorstwa Scorcha.
+    Kerfly jest wolnym oprogramowaniem na licencji GPL-3.0-or-later, forkiem
+    <a href="https://www.scorchworks.com/K40whisperer/k40whisperer.html">K40 Whisperera</a> autorstwa Scorcha.
     Program steruje laserem i jest dostarczany bez gwarancji: nie zostawiaj pracującego lasera bez nadzoru.
+    · <a href="{{ site.repo }}/blob/main/DEVELOPMENT.md">Dla programistów</a>
     {% else %}
-    Kerfly is free software under the GPL-3.0-or-later, based on
+    Kerfly is free software under the GPL-3.0-or-later, a fork of
     <a href="https://www.scorchworks.com/K40whisperer/k40whisperer.html">K40 Whisperer</a> by Scorch.
     It controls a laser and comes without any warranty: never leave a running laser unattended.
+    · <a href="{{ site.repo }}/blob/main/DEVELOPMENT.md">For developers</a>
     {% endif %}
   </div>
 </footer>

@@ -30,9 +30,9 @@ def main():
     print("\n### Downloads\n")
     print("- **Windows 10 / 11:** `Kerfly-%s-windows-setup.exe` (installs Kerfly and, if you tick it, the K40 "
           "USB driver). Windows may warn about an unknown publisher: choose *More info → Run anyway*." % version)
-    print("- **Linux:** `Kerfly-%s-x86_64.AppImage`: make it executable and run it. For the laser's USB "
-          "port see [INSTALL.md](https://github.com/cyryllo/Kerfly/blob/v%s/INSTALL.md)." % (version, version))
-    print("- **From source:** the source code archives below, with `start_kerfly.bat` / `start_kerfly.sh`.")
+    print("- **Linux:** `Kerfly-%s-x86_64.AppImage`: make it executable and run it. Add the rule for the "
+          "laser's USB port once, see [INSTALL.md](https://github.com/cyryllo/Kerfly/blob/v%s/INSTALL.md#linux-the-appimage)."
+          % (version, version))
     print("\nUser guide: https://cyryllo.github.io/Kerfly/guide.html "
           "([Polish](https://cyryllo.github.io/Kerfly/pl/guide.html))")
 

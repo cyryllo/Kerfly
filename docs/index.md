@@ -17,17 +17,14 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
   <a class="button primary" href="{{ site.repo }}/releases/latest">Download (Windows, Linux)</a>
   <a class="button" href="{{ '/guide.html' | relative_url }}">User guide</a>
   <a class="button" href="{{ site.repo }}/blob/main/INSTALL.md">Installation</a>
-  <a class="button" href="{{ site.repo }}">Source code</a>
 </div>
 
 <div class="shot"><img src="{{ '/screenshot.png' | relative_url }}" alt="Kerfly main window with a drawing on the laser bed"></div>
 
 Kerfly runs K40-class CO2 lasers with **Lihuiyu boards** (M2 Nano family:
 M1, M2, M3, B1, ...): the blue-and-white desktop lasers sold under many
-names. It is a fork of **[K40 Whisperer](https://www.scorchworks.com/K40whisperer/k40whisperer.html)**
-by Scorch and keeps its laser control unchanged: the data sent to the laser is
-checked byte for byte against K40 Whisperer after every change. Around that
-core, Kerfly adds a modern window with drawing and editing tools.
+names. Draw, lay out and run your jobs in one window, from the first sketch
+to the cut part.
 
 ## What it can do
 
@@ -38,7 +35,7 @@ core, Kerfly adds a modern window with drawing and editing tools.
   <div class="feature"><h3>Many file types</h3><p>SVG (with or without Inkscape), DXF, G-code, and pictures: PNG, JPG, BMP, TIFF, GIF, WebP. Projects keep everything in one file.</p></div>
   <div class="feature"><h3>Patterns, hinges, bridges</h3><p>Fill shapes with engraved patterns (waves, honeycomb, bricks, ...) while their outline is still cut, cut living hinges that let plywood bend, leave bridges that hold cut parts in the sheet, combine shapes.</p></div>
   <div class="feature"><h3>Safe to run</h3><p>Trace the outline first, simulate the job, see the time. Kerfly refuses jobs that would run the head off the bed.</p></div>
-  <div class="feature"><h3>Like K40 Whisperer, if you want</h3><p>Uses the same settings file. Let the design follow the head, or keep it in place on the bed: your choice.</p></div>
+  <div class="feature"><h3>Your way of working</h3><p>Keep the design in place on the bed and let the head drive to it, or let the design follow the head: your choice.</p></div>
   <div class="feature"><h3>Your language</h3><p>English, Polish, German, Spanish and French. Runs on Windows 10 / 11 (installer) and Linux (AppImage, most distributions).</p></div>
 </div>
 
@@ -47,12 +44,12 @@ core, Kerfly adds a modern window with drawing and editing tools.
 Open the <a href="{{ site.repo }}/releases/latest">latest release</a> and download the package for your system. No Python needed.
 
 <ol class="steps">
-  <li><strong>Windows 10 / 11:</strong> run <code>Kerfly-&lt;version&gt;-windows-setup.exe</code>. The first time, tick <em>Install the USB driver for the K40 laser</em> (skip it if K40 Whisperer already worked on this PC). If Windows says it protected your PC, choose <em>More info → Run anyway</em> (the installer is not signed). Kerfly is then in the Start menu.</li>
-  <li><strong>Linux:</strong> make <code>Kerfly-&lt;version&gt;-x86_64.AppImage</code> executable and run it. Add the udev rule for the laser's USB port once.</li>
+  <li><strong>Windows 10 / 11:</strong> run <code>Kerfly-&lt;version&gt;-windows-setup.exe</code>. The installer is not signed, so Windows may say <em>Windows protected your PC</em>: choose <em>More info → Run anyway</em>. The first time, tick <em>Install the USB driver for the K40 laser</em>. Kerfly is then in the Start menu.</li>
+  <li><strong>Linux:</strong> make <code>Kerfly-&lt;version&gt;-x86_64.AppImage</code> executable and run it. Add the <a href="{{ site.repo }}/blob/main/INSTALL.md#linux-the-appimage">rule for the laser's USB port</a> once (three commands).</li>
   <li>Read the <a href="{{ '/guide.html' | relative_url }}">user guide</a>: connect the laser, place a design, trace, start.</li>
 </ol>
 
-The <a href="{{ site.repo }}/blob/main/INSTALL.md">installation guide</a> explains each step, also running Kerfly from source with Python (<code>start_kerfly.bat</code> / <code>./start_kerfly.sh</code>).
+The <a href="{{ site.repo }}/blob/main/INSTALL.md">installation guide</a> explains each step.
 
 ## Status
 

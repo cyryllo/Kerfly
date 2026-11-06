@@ -72,8 +72,9 @@ body:
       label: Diagnostic report
       description: |
         In Kerfly choose **Help → Save diagnostic report…**, then drag the `.txt` file into this
-        field. If Kerfly does not start at all, paste the output of `start_kerfly.bat --self-test`
-        (Windows) or `./start_kerfly.sh --self-test` (Linux) instead.
+        field. If Kerfly does not start at all, paste the output of the self-test instead:
+        `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test` (Windows) or
+        `./Kerfly-<version>-x86_64.AppImage --self-test` (Linux).
       placeholder: Drag kerfly-report-….txt here
     validations:
       required: true
