@@ -45,7 +45,7 @@ a = Analysis(
     [os.path.join(ROOT, "kerfly.py")],
     pathex=[ROOT],
     datas=datas,
-    hiddenimports=["PySide6.QtSvg", "usb.backend.libusb1", "usb.backend.libusb0"],
+    hiddenimports=["PySide6.QtSvg", "usb.backend.libusb1", "usb.backend.libusb0", "kerfly.releasecheck"],
     excludes=[
         "tkinter", "_tkinter",                 # only the original K40 Whisperer window uses Tk
         "PySide6.QtWebEngineCore", "PySide6.QtWebEngineWidgets", "PySide6.QtQml", "PySide6.QtQuick",

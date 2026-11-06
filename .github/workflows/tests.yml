@@ -10,7 +10,7 @@ on:
 jobs:
   windows:
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -49,17 +49,35 @@ jobs:
         if: always()
         shell: cmd
         run: .venv\Scripts\python tests\regression.py
+      - name: Reference results (laser data, cut order, bed pictures)
+        if: always()
+        shell: cmd
+        run: .venv\Scripts\python tests\test_references.py
+      - name: Release test (whole session, real clicks, Full HD screen)
+        if: always()
+        shell: cmd
+        env:
+          QT_QPA_PLATFORM: offscreen:configfile=tests/fullhd.json
+        run: .venv\Scripts\python -X faulthandler tests\test_release.py
+      - name: Release check of the program
+        if: always()
+        shell: cmd
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: .venv\Scripts\python kerfly.py --release-test
       - name: Keep the regression output when it differs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: regression-output-windows
-          path: tests/output/
+          path: |
+            tests/output/
+            tests/references/out/
           if-no-files-found: ignore
 
   linux:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -87,10 +105,30 @@ jobs:
       - name: Laser output identical to K40 Whisperer 0.71
         if: always()
         run: xvfb-run -a .venv/bin/python tests/regression.py
+      - name: Reference results (laser data, cut order, bed pictures)
+        if: always()
+        run: .venv/bin/python tests/test_references.py
+      - name: Release test (whole session, real clicks, Full HD screen)
+        if: always()
+        env:
+          QT_QPA_PLATFORM: xcb
+        run: xvfb-run -a -s "-screen 0 1920x1080x24" .venv/bin/python -X faulthandler tests/test_release.py
+      - name: Random sessions (fixed seeds)
+        if: always()
+        env:
+          QT_QPA_PLATFORM: xcb
+        run: xvfb-run -a -s "-screen 0 1920x1080x24" .venv/bin/python -X faulthandler tests/test_random.py --seed 1 --runs 3 --steps 300
+      - name: Release check of the program
+        if: always()
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: .venv/bin/python kerfly.py --release-test
       - name: Keep the regression output when it differs
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: regression-output-linux
-          path: tests/output/
+          path: |
+            tests/output/
+            tests/references/out/
           if-no-files-found: ignore

@@ -24,7 +24,45 @@ env:
   LIBUSB_SHA256: ac19715e6ace496d1a41df3714038ab0ad9b8059834ed65c55ff4e0b9ba0d2e9
 
 jobs:
+  # the release tests must pass before any package is built
+  release-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: System libraries for Qt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends xvfb libegl1 libgl1 libxkbcommon-x11-0 \
+            libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-shape0 libxcb-xinerama0 \
+            libxcb-randr0 libxcb-render-util0 libxcb-image0 libfontconfig1 libdbus-1-3 libusb-1.0-0
+      - name: Libraries
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r requirements.txt -r requirements-optional.txt
+      - name: Reference results
+        run: .venv/bin/python tests/test_references.py
+      - name: Release test (whole session, real clicks, Full HD screen)
+        env:
+          QT_QPA_PLATFORM: xcb
+        run: xvfb-run -a -s "-screen 0 1920x1080x24" .venv/bin/python -X faulthandler tests/test_release.py
+      - name: Random sessions
+        env:
+          QT_QPA_PLATFORM: xcb
+        run: xvfb-run -a -s "-screen 0 1920x1080x24" .venv/bin/python -X faulthandler tests/test_random.py --seed 1 --runs 5 --steps 300
+      - name: Keep the differing pictures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: references-out
+          path: tests/references/out/
+          if-no-files-found: ignore
+
   windows:
+    needs: release-tests
     runs-on: windows-latest
     timeout-minutes: 40
     steps:
@@ -60,6 +98,12 @@ jobs:
           Write-Host $out
           if ($LASTEXITCODE -ne 0) { exit 1 }
           if ($out -notmatch "OK\s+USB driver") { Write-Error "the packaged program did not load libusb0.dll"; exit 1 }
+      - name: Release check of the packaged program (fonts, Qt plugins, libraries)
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          & dist\Kerfly\kerfly-console.exe --release-test
+          if ($LASTEXITCODE -ne 0) { exit 1 }
       - name: K40 USB driver installer (checked)
         run: |
           Invoke-WebRequest -Uri $env:DRIVER_URL -OutFile packaging\windows\K40_Driver_Install.exe
@@ -79,6 +123,7 @@ jobs:
           if-no-files-found: error
 
   linux:
+    needs: release-tests
     runs-on: ubuntu-22.04          # older glibc: the AppImage also runs on older systems
     timeout-minutes: 40
     steps:
@@ -109,6 +154,10 @@ jobs:
         run: |
           chmod +x dist/*.AppImage
           dist/Kerfly-*-x86_64.AppImage --appimage-extract-and-run --self-test
+      - name: Release check of the AppImage (fonts, Qt plugins, libraries)
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: dist/Kerfly-*-x86_64.AppImage --appimage-extract-and-run --release-test
       - uses: actions/upload-artifact@v4
         with:
           name: linux

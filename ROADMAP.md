@@ -196,15 +196,15 @@ the main test; these tests catch what is easy to miss.
 - [x] **Step 3: coverage list.** The test fails when a toolbar button, menu
   command, tool or options field was never used by the session: a new
   function cannot be released without its release test.
-- [ ] **Step 4: random sessions.** Thousands of random steps (draw, select,
+- [x] **Step 4: random sessions.** Thousands of random steps (draw, select,
   change an option, move, undo, ...) with a fixed seed, the step 1 checks
   after each one; a failure prints the seed and the steps to repeat it.
-- [ ] **Step 5: reference results.** For a set of sample projects (every
+- [x] **Step 5: reference results.** For a set of sample projects (every
   shape, fill pattern, hinge, text on a path, bridges, raster): pictures of
   the bed view and of the simulation, and the exact laser data (as in
   `tests/regression.py`), compared with saved references, so a changed
   outline, cut order or cut preview shows up.
-- [ ] **Step 6: run them where it counts.** The release workflow runs the
+- [x] **Step 6: run them where it counts.** The release workflow runs the
   release tests on Linux and Windows before building the packages (a failed
   test stops the release), and the built programs run a short
   `--release-test` (fonts, Inkscape, USB library in the installed program).

@@ -90,6 +90,26 @@ control was never used: **a new function needs its steps in
 setting it shows (`widget.setProperty("spec_attr", name)`), so the checks
 cover it.
 
+More release tests:
+
+```bash
+# random sessions: many random steps with real input, after each the same checks;
+# a failure prints the seed and the steps, to repeat it exactly
+QT_QPA_PLATFORM=xcb xvfb-run -a -s "-screen 0 1920x1080x24" .venv/bin/python tests/test_random.py --seed 1 --runs 3 --steps 300
+# reference results of the sample projects (tests/fixtures/release, made by
+# tools/make_release_samples.py): exact laser data, cut order and lengths, bed pictures
+.venv/bin/python tests/test_references.py              # --update after a deliberate change
+.venv/bin/python tests/test_references.py --screenshots /tmp/shots   # Full HD pictures to look at
+# the built program checks itself (fonts, Qt plugins, libraries) with a short session
+Kerfly --release-test                                  # Windows: kerfly-console.exe --release-test
+```
+
+Without X11 (Windows) the release test runs on a Full HD screen of Qt's
+offscreen platform: `QT_QPA_PLATFORM=offscreen:configfile=tests/fullhd.json`.
+GitHub Actions runs all of them on every push; for a version tag the
+release tests must pass before the packages are built, and the built
+installer and AppImage run `--release-test`.
+
 ## Screenshots
 
 After a change to the window, refresh the screenshots of the README and the

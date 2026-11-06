@@ -104,6 +104,9 @@ def main(argv=None):
     if "--self-test" in argv:
         from kerfly import selftest
         return selftest.run()
+    if "--release-test" in argv:                   # a built package works through a short session
+        from kerfly import releasecheck
+        return releasecheck.run()
     from kerfly import __version__
     from kerfly.core import diag
     diag.setup(__version__)

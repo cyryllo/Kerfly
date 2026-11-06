@@ -338,6 +338,9 @@ CHECKS = (check_bar, check_selection_fields, check_element_list, check_layer_cho
 
 def check_window(w, job=True):
     """All checks; a list of problems (empty: the window tells the truth)."""
+    from PySide6.QtWidgets import QApplication
+    for _i in range(3):
+        QApplication.processEvents()              # widgets added to a shown window appear a moment later
     problems = []
     for check in CHECKS:
         if check is check_job and not job:
