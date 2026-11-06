@@ -7,7 +7,7 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
-## Unreleased
+## 0.19.1 (2026-11-06)
 
 ### Changed
 
