@@ -22,7 +22,7 @@ import time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = os.path.join(ROOT, "docs")
 LANGUAGES = ("en", "pl")
-WINDOW = (1640, 989)          # narrower hides the Help group of the (Polish) toolbar
+WINDOW = (1840, 989)          # narrower hides the Help group of the (Polish) toolbar
 
 
 def take(lang):
@@ -144,6 +144,22 @@ def take(lang):
     hg.grab().save(os.path.join(out, "hinge.png"))
     hg._dirty = False
     hg.close()
+    # the stamp generator's window
+    from kerfly.gui.generators import GeneratorDialog
+    st = MainWindow(values)
+    st.resize(*WINDOW)
+    dlg = GeneratorDialog(st, "stamp", remember=False)
+    dlg.widgets["preset"].setCurrentIndex(dlg.widgets["preset"].findData("58x22"))
+    dlg.widgets["picture"].edit.setText(os.path.join(ROOT, "kerfly", "gui", "icons", "kerfly.svg"))
+    dlg.show()
+    dlg.resize(1000, 640)
+    settle()
+    dlg._preview()
+    settle()
+    dlg.grab().save(os.path.join(out, "stamp.png"))
+    dlg.close()
+    st._dirty = False
+    st.close()
     print("screenshots (%s) written" % lang)
 
 

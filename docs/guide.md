@@ -287,6 +287,41 @@ untick it to leave it out of the job.
 
 ![Design tab](img/en/design.png)
 
+**Generators.** The **Generators** group of the toolbar (and the
+**Generators** menu) makes ready designs from a few numbers. Each one opens a
+window with its settings and a preview; Enter in a field updates the
+preview, **Insert** puts the design on the bed at the laser head as one
+group (drag it into place; one **Undo** takes it away). The last numbers are
+remembered.
+
+- **Material test**: a grid of fields, each with its own speed (columns) and
+  power or number of passes (rows), each field on a layer of its own, the
+  values engraved beside them. Cut or engrave it, then pick the best field.
+  Power changes only on M3 boards; on other boards the rows change the passes.
+- **Finger-joint box**: bottom, four walls and a lid (or an open box) that fit
+  together with fingers; outside or inside sizes, material thickness, finger
+  width and the kerf (the parts grow by half of it so the fingers fit
+  tightly).
+- **Kerf test**: a comb cut into pieces (push them together and measure:
+  kerf = (length − measured) / pieces) and a plate with slots of the
+  material's thickness plus a clearance each, to find the tightest fit.
+- **Gear**: a spur gear with involute teeth (teeth, module, pressure angle)
+  and a hole for the axle.
+- **Puzzle**: a jigsaw puzzle cut of any size and number of pieces;
+  **Variant** turns the tabs other ways.
+- **Ruler**: a mark every millimetre, numbers every centimetre.
+- **QR code**: a text or web address as a code to engrave (raster).
+- **Stamp**: a rubber stamp. Choose the size (usual self-inking sizes or your
+  own), type the lines, choose the font, a picture (logo) and a frame, then
+  **Generate stamp**: the colours are inverted (the background is burnt away,
+  the text stays raised) and the stamp is mirrored, so it prints the right
+  way round. A cut line around it cuts the stamp out of the rubber.
+- **Test card**: every operation on a piece of 3 mm plywood (a 50 mm square
+  with a 20 mm hole, a 100 mm ruler, raster, patterns, a hinge, text on a
+  path, bridges), to check the laser.
+
+![Stamp generator](img/en/stamp.png)
+
 <a id="s6"></a>
 
 ## 6. Layers and materials

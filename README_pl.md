@@ -41,6 +41,9 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
   grawerowanymi wzorami (linie, fale, plaster miodu, cegły…), a ich obrys
   nadal jest cięty. Narzędzie **Zawias giętki** nacina zawiasy, dzięki którym
   sklejka się wygina.
+- **Generatory.** Gotowe projekty z kilku liczb: test materiału, pudełko na
+  wczepy, test kerfu, koło zębate, puzzle, linijka, kod QR, gumowa pieczątka
+  (odwrócona i odbita) i karta testowa lasera.
 - **Warstwy jak w LightBurnie.** Grawer rastrowy, obrys i cięcie, każda z
   własną prędkością, liczbą przejść, mocą (płyty M3) i kolorem. Baza
   materiałów (np. „Sklejka 3 mm”) ustawia wszystkie warstwy jednym wyborem.

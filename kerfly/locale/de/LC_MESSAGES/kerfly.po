@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-06 20:12+0100\n"
+"POT-Creation-Date: 2026-11-06 21:07+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -20,6 +20,16 @@ msgstr ""
 
 msgid " + raster"
 msgstr " + Raster"
+
+#, python-format
+msgid "%(name)s inserted: %(n)d shapes. Drag it into place; Undo takes it away."
+msgstr ""
+"%(name)s eingefügt: %(n)d Formen. An die richtige Stelle ziehen; "
+"Rückgängig entfernt alles."
+
+#, python-format
+msgid "%(w).1f × %(h).1f mm, %(n)d shapes, %(l)d layers"
+msgstr "%(w).1f × %(h).1f mm, %(n)d Formen, %(l)d Ebenen"
 
 #, python-format
 msgid "%d element"
@@ -76,6 +86,9 @@ msgstr "&Datei"
 
 msgid "&Fit to window"
 msgstr "An &Fenster anpassen"
+
+msgid "&Generators"
+msgstr "&Generatoren"
 
 msgid "&Go to X/Y position"
 msgstr "&Gehe zu X/Y-Position"
@@ -185,8 +198,27 @@ msgstr ""
 "Ein Biegescharnier braucht eine geschlossene Form (keinen Text) auf einer"
 " Schnitt- oder Konturebene."
 
+msgid "A logo or picture (PNG, JPG or SVG); empty: none"
+msgstr "Logo oder Bild (PNG, JPG oder SVG); leer: keins"
+
+msgid "A stamp prints its mirror image: mirror it left to right"
+msgstr "Ein Stempel druckt sein Spiegelbild: links-rechts spiegeln"
+
+msgid "A usual size of self-inking stamps, or your own size below"
+msgstr "Übliche Größe von Selbstfärbestempeln oder eigene Größe unten"
+
 msgid "About Kerfly"
 msgstr "Über Kerfly"
+
+msgid ""
+"About how wide one finger is (each edge gets an odd number of equal "
+"fingers)"
+msgstr ""
+"Ungefähre Breite eines Zinkens (jede Kante bekommt eine ungerade Zahl "
+"gleicher Zinken)"
+
+msgid "Above the text"
+msgstr "Über dem Text"
 
 msgid "Acrylic 3 mm"
 msgstr "Acryl 3 mm"
@@ -254,12 +286,21 @@ msgstr "Bereits am Ende der Liste."
 msgid "Already at the start of the list."
 msgstr "Bereits am Anfang der Liste."
 
+msgid "Another number: the tabs point other ways"
+msgstr "Andere Zahl: die Nasen zeigen in andere Richtungen"
+
 msgid "Another problem"
 msgstr "Ein anderes Problem"
 
 msgctxt "toolbar group"
 msgid "Arrange"
 msgstr "Anordnen"
+
+msgid "Axle hole"
+msgstr "Achsloch"
+
+msgid "Back"
+msgstr "Rückwand"
 
 msgid "Bed height"
 msgstr "Höhe der Arbeitsfläche"
@@ -272,6 +313,12 @@ msgstr "Signalton nach dem Auftrag"
 
 msgid "Bold"
 msgstr "Fett"
+
+msgid "Bold letters stamp more clearly"
+msgstr "Fette Buchstaben stempeln deutlicher"
+
+msgid "Bottom"
+msgstr "Boden"
 
 msgid "Boundary trace as a rectangle (off: along the outline of the design)"
 msgstr "Umfahrung als Rechteck (aus: entlang der Kontur des Entwurfs)"
@@ -313,6 +360,13 @@ msgctxt "toolbar"
 msgid "Bug report"
 msgstr "Fehler melden"
 
+msgid ""
+"Burn the background away so the text stays raised (off: burn the text "
+"itself)"
+msgstr ""
+"Den Hintergrund wegbrennen, damit der Text erhaben bleibt (aus: den Text "
+"selbst brennen)"
+
 msgid "Calculate raster time"
 msgstr "Rasterzeit berechnen"
 
@@ -338,13 +392,34 @@ msgstr ""
 "Ausgewähltes Element oder den ganzen Entwurf auf der Arbeitsfläche "
 "zentrieren"
 
+msgid "Choose a file"
+msgstr "Datei wählen"
+
 msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr ""
 "Material wählen, um Geschwindigkeit, Durchgänge und Leistung aller Ebenen"
 " einzustellen"
 
+msgid "Choose a picture"
+msgstr "Bild wählen"
+
+msgid "Circle"
+msgstr "Kreis"
+
 msgid "Circles"
 msgstr "Kreise"
+
+msgid "Clearance from"
+msgstr "Spiel von"
+
+msgid "Clearance of the first slot"
+msgstr "Spiel des ersten Schlitzes"
+
+msgid "Clearance of the last slot"
+msgstr "Spiel des letzten Schlitzes"
+
+msgid "Clearance to"
+msgstr "Spiel bis"
 
 msgid ""
 "Click a line, curve or shape to put the text on. Opened files must be "
@@ -380,6 +455,24 @@ msgstr "Schließen / öffnen"
 
 msgid "Close an open shape, or open a closed one"
 msgstr "Offene Form schließen oder geschlossene öffnen"
+
+msgid "Columns"
+msgstr "Spalten"
+
+msgid "Columns (speeds)"
+msgstr "Spalten (Geschwindigkeiten)"
+
+msgid "Comb"
+msgstr "Kamm"
+
+msgid "Comb cut"
+msgstr "Kammschnitt"
+
+msgid "Comb length"
+msgstr "Kammlänge"
+
+msgid "Comb pieces"
+msgstr "Kammteile"
 
 msgid "Combine shapes"
 msgstr "Formen kombinieren"
@@ -463,8 +556,20 @@ msgstr "Auftrennen"
 msgid "Cut or engrave the outline too (off: only the pattern)"
 msgstr "Auch die Kontur schneiden oder gravieren (aus: nur das Muster)"
 
+msgid "Cut the outline"
+msgstr "Umriss schneiden"
+
+msgid "Cut the rectangle around the puzzle too"
+msgstr "Auch das Rechteck um das Puzzle schneiden"
+
+msgid "Cut the ruler out of the sheet"
+msgstr "Das Lineal aus der Platte schneiden"
+
 msgid "Cut the shape open at the selected node"
 msgstr "Form am ausgewählten Knoten auftrennen"
+
+msgid "Cut the stamp out of the sheet"
+msgstr "Den Stempel aus der Platte schneiden"
 
 msgid "D&uplicate element"
 msgstr "Element &duplizieren"
@@ -496,6 +601,12 @@ msgstr "Löschen"
 msgid "Delete this layer (its parts go back to the default layer)"
 msgstr "Diese Ebene löschen (ihre Teile kommen zurück in die Standardebene)"
 
+msgid "Depth"
+msgstr "Tiefe"
+
+msgid "Depth of the box (front to back)"
+msgstr "Tiefe der Box (vorne nach hinten)"
+
 msgid "Design"
 msgstr "Entwurf"
 
@@ -511,6 +622,9 @@ msgstr "Entwurfsimport"
 #, python-format
 msgid "Diagnostic report saved: %s"
 msgstr "Diagnosebericht gespeichert: %s"
+
+msgid "Diameter of the hole in the middle (0: none)"
+msgstr "Durchmesser des Lochs in der Mitte (0: keins)"
 
 msgid "Diamonds"
 msgstr "Rauten"
@@ -622,11 +736,33 @@ msgstr ""
 msgid "Ellipse"
 msgstr "Ellipse"
 
+msgid "Empty modules around the code (scanners need some)"
+msgstr "Leere Module um den Code (Scanner brauchen etwas Rand)"
+
 msgid "Engrave bottom to top"
 msgstr "Von unten nach oben gravieren"
 
 msgid "Engrave outline"
 msgstr "Kontur gravieren"
+
+msgid "Engrave the clearances under the slots"
+msgstr "Das Spiel unter die Schlitze gravieren"
+
+msgid "Engrave the numbers"
+msgstr "Die Zahlen gravieren"
+
+msgid ""
+"Engrave the speeds above the columns and the powers or passes beside the "
+"rows"
+msgstr ""
+"Geschwindigkeiten über die Spalten und Leistungen oder Durchgänge neben "
+"die Zeilen gravieren"
+
+msgid "Engrave the values"
+msgstr "Werte gravieren"
+
+msgid "Error correction"
+msgstr "Fehlerkorrektur"
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
@@ -650,6 +786,12 @@ msgstr "Materialbibliothek exportieren"
 
 msgid "Export…"
 msgstr "Exportieren…"
+
+msgid "Field"
+msgstr "Feld"
+
+msgid "Field size"
+msgstr "Feldgröße"
 
 msgctxt "toolbar group"
 msgid "File"
@@ -683,6 +825,19 @@ msgstr ""
 msgid "Filled. Click another shape, or change the pattern above."
 msgstr "Gefüllt. Eine weitere Form anklicken oder oben das Muster ändern."
 
+msgid "Finger width"
+msgstr "Zinkenbreite"
+
+msgid "Finger-joint box"
+msgstr "Box mit Fingerzinken"
+
+msgid ""
+"Finger-joint box: the bottom, four walls and a lid that fit together with"
+" fingers"
+msgstr ""
+"Box mit Fingerzinken: Boden, vier Wände und Deckel, die mit Zinken "
+"zusammenpassen"
+
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Laser kurz auslösen (M3-Platinen)"
 
@@ -699,6 +854,15 @@ msgstr "Ausgewählte Elemente oben–unten spiegeln"
 msgid "Font"
 msgstr "Schrift"
 
+msgid "Font of the text"
+msgstr "Schrift des Textes"
+
+msgid "Frame"
+msgstr "Rahmen"
+
+msgid "Free border"
+msgstr "Freier Rand"
+
 msgid "Freehand"
 msgstr "Freihand"
 
@@ -710,11 +874,26 @@ msgstr ""
 "die Form zu schließen. Die Linie wird zu Kurven geglättet, die mit Knoten"
 " bearbeiten änderbar sind."
 
+msgid "Front"
+msgstr "Vorderwand"
+
 msgid "G-code"
 msgstr "G-Code"
 
 msgid "G-code files"
 msgstr "G-Code-Dateien"
+
+msgid "Gap"
+msgstr "Abstand"
+
+msgid "Gear"
+msgstr "Zahnrad"
+
+msgid "Gear: a spur gear with involute teeth and a hole for the axle"
+msgstr "Zahnrad: Stirnrad mit Evolventenverzahnung und Achsloch"
+
+msgid "Generate stamp"
+msgstr "Stempel erzeugen"
 
 #, python-format
 msgid "Generating laser data: %s%%"
@@ -722,6 +901,10 @@ msgstr "Laserdaten werden erzeugt: %s%%"
 
 msgid "Generating laser data…"
 msgstr "Laserdaten werden erzeugt…"
+
+msgctxt "toolbar group"
+msgid "Generators"
+msgstr "Generatoren"
 
 msgid "Go"
 msgstr "Los"
@@ -766,12 +949,30 @@ msgstr "Kopf: X %s  Y %s %s"
 msgid "Height"
 msgstr "Höhe"
 
+msgid "Height of the box"
+msgstr "Höhe der Box"
+
+msgid "Height of the letters (0: as large as fits)"
+msgstr "Buchstabenhöhe (0: so groß, wie es passt)"
+
+msgid "Height of the puzzle"
+msgstr "Höhe des Puzzles"
+
+msgid "Height of the stamp (own size)"
+msgstr "Höhe des Stempels (eigene Größe)"
+
 msgid "Height:"
 msgstr "Höhe:"
 
 msgctxt "toolbar group"
 msgid "Help"
 msgstr "Hilfe"
+
+msgid "High (25 %)"
+msgstr "Hoch (25 %)"
+
+msgid "Highest (30 %)"
+msgstr "Höchste (30 %)"
 
 msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
 msgstr ""
@@ -780,6 +981,9 @@ msgstr ""
 
 msgid "Hinge removed."
 msgstr "Scharnier entfernt."
+
+msgid "Hole 20 mm"
+msgstr "Loch 20 mm"
 
 msgid "Home is in the upper right corner"
 msgstr "Referenzpunkt oben rechts"
@@ -798,6 +1002,22 @@ msgstr "Referenzfahrt abgeschlossen"
 
 msgid "Honeycomb"
 msgstr "Waben"
+
+msgid "How many different powers or passes"
+msgstr "Wie viele verschiedene Leistungen oder Durchgänge"
+
+msgid "How many different speeds"
+msgstr "Wie viele verschiedene Geschwindigkeiten"
+
+msgid "How many slots"
+msgstr "Wie viele Schlitze"
+
+msgid ""
+"How much of the code can be damaged and still read; more makes the code "
+"denser"
+msgstr ""
+"Wie viel vom Code beschädigt sein darf und er trotzdem lesbar bleibt; "
+"mehr macht den Code dichter"
 
 msgid "Image size"
 msgstr "Bildgröße"
@@ -823,15 +1043,24 @@ msgstr "Inkscape-Programm"
 msgid "Inkscape timeout (minutes)"
 msgstr "Inkscape-Zeitlimit (Minuten)"
 
+msgid "Inside sizes"
+msgstr "Innenmaße"
+
 msgid "Intersection"
 msgstr "Schnittmenge"
 
 msgid "Intersection: keep only where the selected shapes overlap"
 msgstr "Schnittmenge: nur behalten, wo sich die Formen überlappen"
 
+msgid "Into how many pieces the comb is cut"
+msgstr "In wie viele Teile der Kamm geschnitten wird"
+
 #, python-format
 msgid "Invalid value for setting '%s': %r"
 msgstr "Ungültiger Wert für Einstellung '%s': %r"
+
+msgid "Invert (for rubber)"
+msgstr "Invertieren (für Gummi)"
 
 msgid "Invert raster colors"
 msgstr "Rasterfarben umkehren"
@@ -860,6 +1089,19 @@ msgstr ""
 msgid "Jump to the next layer"
 msgstr "Zur nächsten Ebene springen"
 
+msgid "Kerf"
+msgstr "Schnittbreite"
+
+msgid "Kerf test"
+msgstr "Schnittbreitentest"
+
+msgid ""
+"Kerf test: a comb to measure how wide the laser cuts, and slots to find "
+"the tightest fit for the material"
+msgstr ""
+"Schnittbreitentest: ein Kamm, um die Schnittbreite des Lasers zu messen, "
+"und Schlitze für die engste Passung"
+
 msgid ""
 "Kerfly can add a rule to the system so that the laser's USB port can be "
 "used without root. The system asks for the administrator password once. "
@@ -878,6 +1120,9 @@ msgid ""
 msgstr ""
 "Kerfly speichert einen Diagnosebericht und öffnet das Meldeformular auf "
 "GitHub im Browser (zum Absenden ist ein kostenloses GitHub-Konto nötig)."
+
+msgid "Label"
+msgstr "Beschriftung"
 
 msgid "Language"
 msgstr "Sprache"
@@ -922,8 +1167,23 @@ msgstr "Ebenen"
 msgid "Leather 2 mm"
 msgstr "Leder 2 mm"
 
+msgid "Left of the text"
+msgstr "Links vom Text"
+
+msgid "Left side"
+msgstr "Linke Seite"
+
+msgid "Length"
+msgstr "Länge"
+
 msgid "Length of one cut"
 msgstr "Länge eines Schnitts"
+
+msgid "Length of the comb before cutting"
+msgstr "Länge des Kamms vor dem Schneiden"
+
+msgid "Length of the scale"
+msgstr "Länge der Skala"
 
 msgid "Letter spacing: space added between the letters (0: as the font sets it)"
 msgstr ""
@@ -938,6 +1198,9 @@ msgstr "Steigung der Tonwertkurve, helles Ende"
 
 msgid "Levels curve weight"
 msgstr "Gewichtung der Tonwertkurve"
+
+msgid "Lid"
+msgstr "Deckel"
 
 msgid "Line"
 msgstr "Linie"
@@ -972,6 +1235,9 @@ msgstr ""
 msgid "Loading cancelled"
 msgstr "Laden abgebrochen"
 
+msgid "Low (7 %)"
+msgstr "Niedrig (7 %)"
+
 msgid "Lower left corner"
 msgstr "Untere linke Ecke"
 
@@ -996,6 +1262,12 @@ msgstr "Seiten an den ausgewählten Knoten zu Kurven mit ziehbaren Griffen mache
 msgid "Make the sides at the selected nodes straight lines"
 msgstr "Seiten an den ausgewählten Knoten zu Geraden machen"
 
+msgid "Margin"
+msgstr "Rand"
+
+msgid "Marks"
+msgstr "Skalenstriche"
+
 msgid "Material"
 msgstr "Material"
 
@@ -1012,6 +1284,19 @@ msgstr "Materialbibliothek gespeichert in %s"
 
 msgid "Material library: add, edit and delete materials"
 msgstr "Materialbibliothek: Materialien hinzufügen, bearbeiten und löschen"
+
+msgid "Material test"
+msgstr "Materialtest"
+
+msgid ""
+"Material test: a grid of fields, each with its own speed and power (or "
+"passes), to find the right settings for a material"
+msgstr ""
+"Materialtest: ein Raster von Feldern mit je eigener Geschwindigkeit und "
+"Leistung (oder Durchgängen), um die richtigen Einstellungen zu finden"
+
+msgid "Material thickness"
+msgstr "Materialstärke"
 
 msgid "Material:"
 msgstr "Material:"
@@ -1042,11 +1327,20 @@ msgstr ""
 "Messen: von einem Punkt zum anderen ziehen. Punkte fangen an Ecken, "
 "Mitten und Linien wie beim Zeichnen (Alt: freie Punkte)."
 
+msgid "Medium (15 %)"
+msgstr "Mittel (15 %)"
+
+msgid "Mirror"
+msgstr "Spiegeln"
+
 msgid "Mirror &vertically"
 msgstr "&Vertikal spiegeln"
 
 msgid "Mirror design"
 msgstr "Entwurf spiegeln"
+
+msgid "Module"
+msgstr "Modul"
 
 msgid "Move &down (later)"
 msgstr "Nach &unten (später)"
@@ -1194,11 +1488,23 @@ msgstr "Nichts zu tun: Entwurf laden und mindestens einen Vorgang auswählen."
 msgid "Nothing to draw."
 msgstr "Nichts zu zeichnen."
 
+msgid "Number"
+msgstr "Zahl"
+
 msgid "Number of passes:"
 msgstr "Anzahl der Durchgänge:"
 
 msgid "Number of sides of the regular polygon"
 msgstr "Anzahl der Seiten des regelmäßigen Vielecks"
+
+msgid "Number of teeth"
+msgstr "Zähnezahl"
+
+msgid "Numbers"
+msgstr "Zahlen"
+
+msgid "Numbers in"
+msgstr "Zahlen in"
 
 msgid "Only closed shapes on a cut or outline layer can be filled with a pattern."
 msgstr ""
@@ -1232,6 +1538,9 @@ msgstr "Datei öffnen und alles auf der Arbeitsfläche ersetzen"
 msgid "Open design"
 msgstr "Entwurf öffnen"
 
+msgid "Open line"
+msgstr "Offene Linie"
+
 msgid "Open the &log folder"
 msgstr "&Protokollordner öffnen"
 
@@ -1245,6 +1554,9 @@ msgstr "%s geöffnet"
 #, python-format
 msgid "Opening %s"
 msgstr "%s wird geöffnet"
+
+msgid "Operation"
+msgstr "Vorgang"
 
 msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr ""
@@ -1261,8 +1573,23 @@ msgstr "Außerhalb der Arbeitsfläche!"
 msgid "Outside the work area: %s. Move it onto the bed to start."
 msgstr "Außerhalb des Arbeitsbereichs: %s. Zum Starten auf das Bett verschieben."
 
+msgid "Own size"
+msgstr "Eigene Größe"
+
 msgid "Passes"
 msgstr "Durchgänge"
+
+msgid "Passes from"
+msgstr "Durchgänge von"
+
+msgid "Passes of the first row"
+msgstr "Durchgänge der ersten Zeile"
+
+msgid "Passes of the last row"
+msgstr "Durchgänge der letzten Zeile"
+
+msgid "Passes to"
+msgstr "Durchgänge bis"
 
 msgid "Passes:"
 msgstr "Durchgänge:"
@@ -1274,6 +1601,9 @@ msgid "Paths from a G-code file; speeds come from the file (F words)"
 msgstr ""
 "Pfade aus einer G-Code-Datei; die Geschwindigkeiten stehen in der Datei "
 "(F-Wörter)"
+
+msgid "Pattern fill"
+msgstr "Musterfüllung"
 
 msgid "Pattern removed."
 msgstr "Muster entfernt."
@@ -1305,6 +1635,24 @@ msgstr ""
 "Ersten Punkt anklicken, um die Form zu schließen; Doppelklick oder Enter "
 "beendet einen offenen Pfad. Rücktaste entfernt den letzten Knoten, "
 "Umschalt hält 45°-Winkel, Esc bricht ab."
+
+msgid "Pentagon"
+msgstr "Fünfeck"
+
+msgid "Picture"
+msgstr "Bild"
+
+msgid "Picture place"
+msgstr "Bildposition"
+
+msgid "Pictures (*.png *.jpg *.jpeg *.bmp *.svg);;All files (*)"
+msgstr "Bilder (*.png *.jpg *.jpeg *.bmp *.svg);;Alle Dateien (*)"
+
+msgid "Pieces from left to right"
+msgstr "Teile von links nach rechts"
+
+msgid "Pieces from top to bottom"
+msgstr "Teile von oben nach unten"
 
 msgid "Place design at the &head"
 msgstr "Entwurf am &Laserkopf platzieren"
@@ -1352,6 +1700,21 @@ msgstr "Position und Größe"
 msgid "Power"
 msgstr "Leistung"
 
+msgid "Power (M3 boards)"
+msgstr "Leistung (M3-Platinen)"
+
+msgid "Power from (%)"
+msgstr "Leistung von (%)"
+
+msgid "Power of the first row"
+msgstr "Leistung der ersten Zeile"
+
+msgid "Power of the last row"
+msgstr "Leistung der letzten Zeile"
+
+msgid "Power to (%)"
+msgstr "Leistung bis (%)"
+
 msgid "Power:"
 msgstr "Leistung:"
 
@@ -1371,6 +1734,9 @@ msgstr "Raster wird vorbereitet…"
 #, python-format
 msgid "Preprocessing raster data: %s%%"
 msgstr "Rasterdaten werden vorverarbeitet: %s%%"
+
+msgid "Pressure angle"
+msgstr "Eingriffswinkel"
 
 #, python-format
 msgid "Project opened: %s"
@@ -1394,6 +1760,24 @@ msgstr ""
 msgid "Put text on &path"
 msgstr "Text auf &Pfad setzen"
 
+msgid "Puzzle"
+msgstr "Puzzle"
+
+msgid "Puzzle cuts"
+msgstr "Puzzleschnitte"
+
+msgid "Puzzle outline"
+msgstr "Puzzleumriss"
+
+msgid "Puzzle: a jigsaw puzzle cut, for example over an engraved picture"
+msgstr "Puzzle: ein Puzzle-Schnitt, zum Beispiel über einem gravierten Bild"
+
+msgid "QR code"
+msgstr "QR-Code"
+
+msgid "QR code: a text or web address as a code to engrave (raster)"
+msgstr "QR-Code: ein Text oder eine Webadresse als Code zum Gravieren (Raster)"
+
 msgid "Rail unlocked"
 msgstr "Achsen freigegeben"
 
@@ -1404,11 +1788,17 @@ msgstr "Eilbewegung fehlgeschlagen: %s"
 msgid "Raster"
 msgstr "Raster"
 
+msgid "Raster block"
+msgstr "Rasterblock"
+
 msgid "Raster engrave"
 msgstr "Rastergravur"
 
 msgid "Raster prepared"
 msgstr "Raster vorbereitet"
+
+msgid "Raster text"
+msgstr "Rastertext"
 
 msgid "Ready"
 msgstr "Bereit"
@@ -1462,6 +1852,9 @@ msgstr "Auftrag fortsetzen"
 msgid "Resumed"
 msgstr "Fortgesetzt"
 
+msgid "Right side"
+msgstr "Rechte Seite"
+
 msgid "Rotary"
 msgstr "Drehachse"
 
@@ -1492,6 +1885,27 @@ msgid ""
 msgstr ""
 "Drehung gegen den Uhrzeigersinn. Sie können auch den runden Griff über "
 "dem Element ziehen (mit Umschalt in 15°-Schritten)."
+
+msgid "Rounded corners of the frame and outline"
+msgstr "Abgerundete Ecken von Rahmen und Umriss"
+
+msgid "Rows"
+msgstr "Zeilen"
+
+msgid "Rows change"
+msgstr "Zeilen ändern"
+
+msgid "Ruler"
+msgstr "Lineal"
+
+msgid "Ruler 100 mm"
+msgstr "Lineal 100 mm"
+
+msgid "Ruler outline"
+msgstr "Linealumriss"
+
+msgid "Ruler: a mark every millimetre, numbers every centimetre"
+msgstr "Lineal: ein Strich je Millimeter, Zahlen je Zentimeter"
 
 msgid "SVG files"
 msgstr "SVG-Dateien"
@@ -1658,6 +2072,9 @@ msgstr "Einstellungen gespeichert in %s"
 msgid "Shape"
 msgstr "Form"
 
+msgid "Shape of the teeth (20° is usual; meshing gears need the same angle)"
+msgstr "Form der Zähne (20° ist üblich; kämmende Räder brauchen denselben Winkel)"
+
 msgctxt "toolbar group"
 msgid "Shapes"
 msgstr "Formen"
@@ -1675,8 +2092,30 @@ msgctxt "toolbar"
 msgid "Simulate"
 msgstr "Simulieren"
 
+msgid "Six parts with a lid (off: an open box of five parts)"
+msgstr "Sechs Teile mit Deckel (aus: offene Box aus fünf Teilen)"
+
+msgid "Size"
+msgstr "Größe"
+
 msgid "Size of the pattern: distance between its lines"
 msgstr "Größe des Musters: Abstand zwischen seinen Linien"
+
+msgid "Size of the round tabs, as a percentage of a piece"
+msgstr "Größe der runden Nasen als Prozentsatz eines Teils"
+
+msgid ""
+"Size of the teeth: the pitch diameter is the module times the number of "
+"teeth; gears that mesh need the same module"
+msgstr ""
+"Größe der Zähne: der Teilkreisdurchmesser ist Modul mal Zähnezahl; "
+"kämmende Räder brauchen dasselbe Modul"
+
+msgid "Slot plate"
+msgstr "Schlitzplatte"
+
+msgid "Slots"
+msgstr "Schlitze"
 
 msgid "Smooth"
 msgstr "Glatt"
@@ -1704,12 +2143,38 @@ msgstr "An anderen Objekten fangen"
 msgid "Solid border: no cuts this close to the outline"
 msgstr "Voller Rand: keine Schnitte so nah an der Kontur"
 
+msgid "Space between the fields"
+msgstr "Abstand zwischen den Feldern"
+
+msgid "Space between the frame and the text"
+msgstr "Abstand zwischen Rahmen und Text"
+
 msgid "Space kept free between the pattern and the outline"
 msgstr "Freier Abstand zwischen Muster und Kontur"
 
 #, python-format
 msgid "Speed (%s)"
 msgstr "Geschw. (%s)"
+
+#, python-format
+msgid "Speed (%s) / passes"
+msgstr "Geschwindigkeit (%s) / Durchgänge"
+
+#, python-format
+msgid "Speed (%s) / power (%%)"
+msgstr "Geschwindigkeit (%s) / Leistung (%%)"
+
+msgid "Speed from"
+msgstr "Geschwindigkeit von"
+
+msgid "Speed of the first column"
+msgstr "Geschwindigkeit der ersten Spalte"
+
+msgid "Speed of the last column"
+msgstr "Geschwindigkeit der letzten Spalte"
+
+msgid "Speed to"
+msgstr "Geschwindigkeit bis"
 
 msgid "Speed:"
 msgstr "Geschwindigkeit:"
@@ -1735,6 +2200,26 @@ msgid ""
 msgstr ""
 "Drei oder mehr ausgewählte Elemente gleichmäßig von oben nach unten "
 "verteilen; das obere und untere bleiben stehen"
+
+msgid "Square 50 mm"
+msgstr "Quadrat 50 mm"
+
+msgid "Stamp"
+msgstr "Stempel"
+
+msgid "Stamp outline"
+msgstr "Stempelumriss"
+
+msgid "Stamp size"
+msgstr "Stempelgröße"
+
+msgid ""
+"Stamp: text, a picture and a frame for a rubber stamp; the background is "
+"burnt away and the stamp is mirrored, so it prints the right way round"
+msgstr ""
+"Stempel: Text, Bild und Rahmen für einen Gummistempel; der Hintergrund "
+"wird weggebrannt und der Stempel gespiegelt, damit er richtig herum "
+"druckt"
 
 msgid "Start"
 msgstr "Start"
@@ -1777,8 +2262,26 @@ msgstr "Symmetrisch"
 msgid "System default"
 msgstr "Systemstandard"
 
+msgid "Tab size (%)"
+msgstr "Nasengröße (%)"
+
 msgid "Take the text off the path: back to a straight line of text"
 msgstr "Den Text vom Pfad nehmen: wieder eine gerade Textzeile"
+
+msgid "Teeth"
+msgstr "Zähne"
+
+msgid "Test card"
+msgstr "Testkarte"
+
+msgid ""
+"Test card: every operation on a piece of 3 mm plywood of about 160 × 100 "
+"mm, to check the laser: size (a 50 mm square with a 20 mm hole), a 100 mm"
+" ruler, raster, patterns, a hinge, text on a path, bridges"
+msgstr ""
+"Testkarte: jede Operation auf einem Stück 3-mm-Sperrholz von etwa 160 × "
+"100 mm, um den Laser zu prüfen: Maß (50-mm-Quadrat mit 20-mm-Loch), 100"
+"-mm-Lineal, Raster, Muster, Scharnier, Text auf Pfad, Stege"
 
 msgid "Test fire"
 msgstr "Testschuss"
@@ -1811,6 +2314,9 @@ msgstr ""
 
 msgid "Text on path"
 msgstr "Text auf Pfad"
+
+msgid "Text or address"
+msgstr "Text oder Adresse"
 
 msgid ""
 "Text put on the path. Drag it to slide it along the line; the bar above "
@@ -1906,8 +2412,14 @@ msgstr ""
 "Der Laser wurde gefunden, aber dieser Benutzer darf seinen USB-Anschluss "
 "nicht verwenden."
 
+msgid "The lines of the stamp"
+msgstr "Die Zeilen des Stempels"
+
 msgid "The new language will be used after restarting Kerfly."
 msgstr "Die neue Sprache wird nach einem Neustart von Kerfly verwendet."
+
+msgid "The numbers count centimetres or millimetres"
+msgstr "Die Zahlen zählen Zentimeter oder Millimeter"
 
 msgid ""
 "The report form is opening in your browser. Please drag the diagnostic "
@@ -1933,6 +2445,12 @@ msgstr ""
 "Kerfly sich trotzdem nicht verbinden kann, ziehen Sie das USB-Kabel des "
 "Lasers ab und stecken Sie es wieder ein."
 
+msgid "The sizes are the inside of the box (off: the outside)"
+msgstr "Die Maße sind innen (aus: außen)"
+
+msgid "The stamp is too small."
+msgstr "Der Stempel ist zu klein."
+
 #, python-format
 msgid "There are many data transmission errors (%s). Press Stop to stop trying."
 msgstr "Viele Datenübertragungsfehler (%s). Mit Stopp abbrechen."
@@ -1956,6 +2474,12 @@ msgstr ""
 "Diese Elemente sind in dieser Richtung auf einer Linie zentriert, es gibt"
 " nichts zu verteilen. Verwenden Sie die andere Richtung oder verschieben "
 "Sie zuerst eines davon."
+
+msgid "Thickness of the sheet"
+msgstr "Plattenstärke"
+
+msgid "Thickness of the sheet: the slots are this wide plus the clearance"
+msgstr "Plattenstärke: die Schlitze sind so breit plus das Spiel"
 
 msgid "Thickness:"
 msgstr "Dicke:"
@@ -2116,6 +2640,9 @@ msgstr "Inkscape für SVG-Dateien verwenden, wenn installiert (sonst integriert)
 msgid "Used with M3 boards (power per layer)"
 msgstr "Für M3-Platinen (Leistung je Ebene)"
 
+msgid "Variant"
+msgstr "Variante"
+
 msgid "Vector"
 msgstr "Vektor"
 
@@ -2150,8 +2677,21 @@ msgstr "Wellen"
 msgid "Wavy cuts"
 msgstr "Wellenschnitte"
 
+msgid ""
+"What changes from row to row: the power (only M3 boards set it) or the "
+"number of passes"
+msgstr ""
+"Was sich von Zeile zu Zeile ändert: die Leistung (nur M3-Platinen stellen"
+" sie ein) oder die Zahl der Durchgänge"
+
 msgid "What kind of problem is it?"
 msgstr "Was für ein Problem ist es?"
+
+msgid "What the code holds, for example a web address"
+msgstr "Was der Code enthält, zum Beispiel eine Webadresse"
+
+msgid "What the laser does with the fields"
+msgstr "Was der Laser mit den Feldern macht"
 
 msgid ""
 "Where the band is: its middle from the middle of the shape (minus: left /"
@@ -2160,17 +2700,51 @@ msgstr ""
 "Wo das Band liegt: seine Mitte von der Mitte der Form (minus: links / "
 "oben, plus: rechts / unten)"
 
+msgid "Where the picture goes"
+msgstr "Wo das Bild hinkommt"
+
 msgid "Width"
 msgstr "Breite"
+
+msgid "Width and height of one field"
+msgstr "Breite und Höhe eines Feldes"
 
 msgid "Width of each bridge"
 msgstr "Breite jedes Haltestegs"
 
+msgid "Width of the box (left to right)"
+msgstr "Breite der Box (links nach rechts)"
+
+msgid "Width of the code with its free border"
+msgstr "Breite des Codes mit freiem Rand"
+
 msgid "Width of the hinge band, across the cuts (0: the whole shape)"
 msgstr "Breite des Scharnierbands, quer zu den Schnitten (0: die ganze Form)"
 
+msgid ""
+"Width of the laser's cut: the parts grow by half of it so the fingers fit"
+" tightly (measure it with the kerf test)"
+msgstr ""
+"Schnittbreite des Lasers: die Teile wachsen um die Hälfte, damit die "
+"Zinken fest sitzen (mit dem Schnittbreitentest messen)"
+
+msgid "Width of the puzzle"
+msgstr "Breite des Puzzles"
+
+msgid "Width of the raised frame around it (0: none)"
+msgstr "Breite des erhabenen Rahmens (0: keiner)"
+
+msgid "Width of the ruler"
+msgstr "Breite des Lineals"
+
+msgid "Width of the stamp (own size)"
+msgstr "Breite des Stempels (eigene Größe)"
+
 msgid "Width:"
 msgstr "Breite:"
+
+msgid "With a lid"
+msgstr "Mit Deckel"
 
 msgid "Write the selected operations to an EGV file"
 msgstr "Ausgewählte Vorgänge in eine EGV-Datei schreiben"
@@ -2195,6 +2769,15 @@ msgstr "Y"
 msgid "Y scale factor"
 msgstr "Skalierungsfaktor Y"
 
+msgid ""
+"YOUR COMPANY\n"
+"Street 1, 00-000 City\n"
+"phone 123 456 789"
+msgstr ""
+"IHRE FIRMA\n"
+"Musterstraße 1, 00000 Stadt\n"
+"Tel. 123 456 789"
+
 msgid "Zigzag"
 msgstr "Zickzack"
 
@@ -2218,6 +2801,10 @@ msgstr "G-Code"
 
 msgid "in line"
 msgstr "in Linie"
+
+#, python-format
+msgid "kerf = (%s mm - measured) / %d"
+msgstr "Schnittbreite = (%s mm - gemessen) / %d"
 
 msgid "middle"
 msgstr "Seitenmitte"
@@ -2498,4 +3085,7 @@ msgstr "Vektorgravur"
 #~ msgctxt "toolbar group"
 #~ msgid "Order"
 #~ msgstr "Reihenfolge"
+
+#~ msgid "Size of the round tabs, in % of a piece"
+#~ msgstr "Größe der runden Nasen, in % eines Teils"
 

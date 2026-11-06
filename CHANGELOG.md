@@ -17,6 +17,21 @@ Version numbers:
 
 ### Added
 
+- **Generators** (new toolbar group and menu): ready designs from a few
+  numbers, each with a preview and the last numbers remembered, inserted at
+  the laser head as one group and one undo step:
+  - **Material test**: fields with their own speed and power (or passes),
+    each on a layer of its own, the values engraved;
+  - **Finger-joint box**: bottom, walls and lid with fingers, inside or
+    outside sizes, kerf compensation;
+  - **Kerf test**: a comb to measure the kerf and slots to find the fit;
+  - **Gear** with involute teeth; **Puzzle**; **Ruler**; **QR code**;
+  - **Stamp**: text, a picture and a frame in the usual stamp sizes,
+    inverted and mirrored for rubber, with the cut outline;
+  - **Test card**: every operation on a piece of plywood, to check the laser.
+
+  QR codes use the new library segno (BSD licence), installed with Kerfly
+  and included in the packages.
 - Linux: **Laser → Allow USB access for the laser…** adds the rule for the
   laser's USB port with one click (the system asks for the password once),
   so the AppImage needs no terminal commands. Kerfly offers it by itself

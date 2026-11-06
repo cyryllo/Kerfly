@@ -116,9 +116,9 @@ installer and AppImage run `--release-test` before they are released.
 ## Laser test card
 
 Before a feature release (1.x.0) the test card is cut on the machine; a
-fix-only release (1.x.y) needs only the automatic tests. Open
-`tests/fixtures/release_card.kerfly` (made by `tools/make_release_samples.py`)
-in the built program, put a piece of 3 mm plywood of about 160 x 100 mm on
+fix-only release (1.x.y) needs only the automatic tests. Insert it with
+**Generators → Test card** in the built program (the same design is saved in
+`tests/fixtures/release_card.kerfly` by `tools/make_release_samples.py`), put a piece of 3 mm plywood of about 160 x 100 mm on
 the bed, Trace boundary, then Start. Write down the board, material, speed
 and power. Then check:
 

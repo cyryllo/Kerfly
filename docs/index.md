@@ -34,6 +34,7 @@ to the cut part.
   <div class="feature"><h3>Layers like LightBurn</h3><p>Raster engraving, outline engraving and cutting, each with its own speed, passes and power. A material library sets them all at once.</p></div>
   <div class="feature"><h3>Many file types</h3><p>SVG (with or without Inkscape), DXF, G-code, and pictures: PNG, JPG, BMP, TIFF, GIF, WebP. Projects keep everything in one file.</p></div>
   <div class="feature"><h3>Patterns, hinges, bridges</h3><p>Fill shapes with engraved patterns (waves, honeycomb, bricks, ...) while their outline is still cut, cut living hinges that let plywood bend, leave bridges that hold cut parts in the sheet, combine shapes.</p></div>
+  <div class="feature"><h3>Generators</h3><p>Ready designs from a few numbers: material test, finger-joint box, kerf test, gear, puzzle, ruler, QR code, rubber stamp and a test card for the laser.</p></div>
   <div class="feature"><h3>Safe to run</h3><p>Trace the outline first, simulate the job, see the time. Kerfly refuses jobs that would run the head off the bed.</p></div>
   <div class="feature"><h3>Your way of working</h3><p>Keep the design in place on the bed and let the head drive to it, or let the design follow the head: your choice.</p></div>
   <div class="feature"><h3>Your language</h3><p>English, Polish, German, Spanish and French. Runs on Windows 10 / 11 (installer) and Linux (AppImage, most distributions).</p></div>

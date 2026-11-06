@@ -35,6 +35,7 @@ w jednym oknie, od pierwszego szkicu do wyciętej części.
   <div class="feature"><h3>Warstwy jak w LightBurnie</h3><p>Grawer rastrowy, obrys i cięcie, każde z własną prędkością, liczbą przejść i mocą. Baza materiałów ustawia wszystko jednym wyborem.</p></div>
   <div class="feature"><h3>Wiele formatów</h3><p>SVG (z Inkscape albo bez), DXF, G-code i obrazy: PNG, JPG, BMP, TIFF, GIF, WebP. Projekt trzyma wszystko w jednym pliku.</p></div>
   <div class="feature"><h3>Wzory, zawiasy, mostki</h3><p>Wypełnianie kształtów grawerowanymi wzorami (fale, plaster miodu, cegły…), a ich obrys nadal jest cięty; zawiasy giętkie, dzięki którym sklejka się wygina; mostki trzymające wycięte elementy w arkuszu; łączenie kształtów.</p></div>
+  <div class="feature"><h3>Generatory</h3><p>Gotowe projekty z kilku liczb: test materiału, pudełko na wczepy, test kerfu, koło zębate, puzzle, linijka, kod QR, gumowa pieczątka i karta testowa lasera.</p></div>
   <div class="feature"><h3>Bezpieczna praca</h3><p>Najpierw objazd konturu, symulacja zadania, szacowany czas. Kerfly nie wyśle zadania, które wyprowadziłoby głowicę poza stół.</p></div>
   <div class="feature"><h3>Twój sposób pracy</h3><p>Projekt może zostać na swoim miejscu na stole, a głowica do niego podjedzie, albo podążać za głowicą: wybór należy do Ciebie.</p></div>
   <div class="feature"><h3>Po polsku</h3><p>Polski, angielski, niemiecki, hiszpański i francuski. Działa w Windows 10 / 11 (instalator) i Linuksie (AppImage, większość dystrybucji).</p></div>

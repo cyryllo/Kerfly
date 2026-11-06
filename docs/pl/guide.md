@@ -287,6 +287,41 @@ kilka); odznaczenie pola wyłącza element z zadania.
 
 ![Zakładka Projekt](../img/pl/design.png)
 
+**Generatory.** Grupa **Generatory** na pasku narzędzi (i menu
+**Generatory**) tworzy gotowe projekty z kilku liczb. Każdy otwiera okno z
+ustawieniami i podglądem; Enter w polu odświeża podgląd, a **Wstaw** kładzie
+projekt na stole przy głowicy jako jedną grupę (przeciągnij go na miejsce;
+jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
+
+- **Test materiału**: siatka pól, każde z własną prędkością (kolumny) i mocą
+  albo liczbą przejść (rzędy), każde pole na osobnej warstwie, z
+  wygrawerowanymi wartościami. Wytnij albo wygraweruj i wybierz najlepsze
+  pole. Moc zmienia się tylko na płytach M3; na innych rzędy zmieniają liczbę
+  przejść.
+- **Pudełko na wczepy**: dno, cztery ścianki i wieko (albo otwarte pudełko)
+  łączone wczepami; wymiary zewnętrzne lub wewnętrzne, grubość materiału,
+  szerokość wczepu i kerf (części rosną o jego połowę, żeby wczepy pasowały
+  ciasno).
+- **Test kerfu**: grzebień cięty na części (zsuń je i zmierz: kerf =
+  (długość − zmierzone) / liczba części) i płytka ze szczelinami o grubości
+  materiału plus luz, żeby znaleźć najciaśniejsze pasowanie.
+- **Koło zębate**: walcowe, z zębami ewolwentowymi (liczba zębów, moduł, kąt
+  przyporu) i otworem na oś.
+- **Puzzle**: układanka dowolnej wielkości i liczby elementów; **Wariant**
+  odwraca wypustki.
+- **Linijka**: kreska co milimetr, liczby co centymetr.
+- **Kod QR**: tekst albo adres strony jako kod do graweru (raster).
+- **Pieczątka**: gumowa pieczątka. Wybierz rozmiar (typowe pieczątki
+  samotuszujące albo własny), wpisz linie, wybierz czcionkę, obrazek (logo)
+  i ramkę, potem **Generuj pieczątkę**: kolory są odwracane (tło zostaje
+  wypalone, tekst zostaje wypukły), a pieczątka odbita, żeby odbijała się
+  prawidłowo. Linia cięcia dookoła wycina pieczątkę z gumy.
+- **Karta testowa**: każda operacja na kawałku sklejki 3 mm (kwadrat 50 mm
+  z otworem 20 mm, linijka 100 mm, raster, wzory, zawias, tekst na ścieżce,
+  mostki), do sprawdzenia lasera.
+
+![Generator pieczątek](../img/pl/stamp.png)
+
 <a id="s6"></a>
 
 ## 6. Warstwy i materiały

@@ -136,42 +136,12 @@ def texts():
 
 
 def card():
-    """The laser test card (tests/fixtures/release_card.kerfly): every operation on a
-    piece of 3 mm plywood of about 150 x 105 mm, cut before a feature release.
-    What to measure and look at: DEVELOPMENT.md, "Laser test card"."""
+    """The laser test card (tests/fixtures/release_card.kerfly), made by the Test card
+    generator (Generators → Test card); what to measure: DEVELOPMENT.md, "Laser test card"."""
+    from kerfly.core.generators import test_card
     w = window()
-    # 1. size: a 50 mm square with a 20 mm hole in its middle (the hole is cut first)
-    add(w, 5, 5, kind="rectangle", width=50, height=50, operation="cut")
-    add(w, 20, 20, kind="ellipse", width=20, height=20, operation="cut")
-    # 2. ruler: 100 mm with a mark every 10 mm (outline engraving)
-    ruler = [{"nodes": [curves.node(0, 0, None, None), curves.node(100, 0, None, None)], "closed": False}]
-    for n in range(11):                              # one element: the line and its marks
-        ruler.append({"nodes": [curves.node(10 * n, 0, None, None),
-                                curves.node(10 * n, 4 if n % 5 else 6, None, None)], "closed": False})
-    add(w, 62, 6, kind="path", operation="engrave", subpaths=ruler)
-    add(w, 104, 13, kind="text", text="100 mm", font_size=3, operation="engrave")
-    # 3. raster: a filled block and a filled text
-    add(w, 62, 22, kind="rectangle", width=30, height=10, corner_radius=2, operation="fill")
-    add(w, 98, 22, kind="text", text="Kerfly", font_size=8, bold=True, operation="fill")
-    # 4. fill patterns: four small squares, outline cut
-    for n, pattern in enumerate(("lines", "honeycomb", "waves", "circles")):
-        add(w, 62 + 22 * n, 38, kind="rectangle", width=18, height=18, operation="cut",
-            fill_pattern=pattern, fill_spacing=2.0, fill_margin=0.5)
-    # 5. living hinge
-    add(w, 5, 62, kind="rectangle", width=60, height=30, corner_radius=2, operation="cut",
-        hinge_pattern="straight", hinge_cut=12, hinge_gap=2.5, hinge_spacing=1.5, hinge_margin=3)
-    # 6. text on a path: around the top of a circle
-    circle = add(w, 75, 62, kind="ellipse", width=30, height=30, operation="cut")
-    add(w, 75, 100, kind="text", text="KERFLY TEST", font_size=4, operation="engrave", text_path_distance=1)
-    w.preview.select_element([circle, w.elements[-1]])
-    w.put_text_on_path()
-    # 7. bridges: the part stays in the sheet
-    add(w, 112, 62, kind="rectangle", width=25, height=18, operation="cut", tabs=2, tab_width=1.5)
-    # 8. turned outline engraving
-    p = add(w, 114, 84, kind="polygon", width=16, height=16, sides=5, operation="engrave")
-    w._rotate(p, 20)
-    # 9. an open line cut (it starts at the end nearer the head)
-    add(w, 5, 100, kind="line", width=60, height=0, operation="cut")
+    w.head = (5 / 25.4, -5 / 25.4)
+    w.insert_generated(test_card())
     path = os.path.join(ROOT, "tests", "fixtures", "release_card.kerfly")
     project.save_project(path, w.elements, w.layers)
     print("written", os.path.relpath(path, ROOT), "(%d elements)" % len(w.elements))
