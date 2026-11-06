@@ -24,6 +24,17 @@ Fixes from the second laser test (Windows 10, the 0.18.0 installer).
   choice reached all of them (the selection was lost); the pattern shown
   first could not be applied. Every choice now reaches all selected shapes.
 
+### Changed
+
+- **The element list is the order of the job.** Within a layer the laser
+  does the element at the top of the list first; K40 Whisperer's path sorting
+  had mixed the elements by distance (a triangle, ellipse and rectangle were
+  cut as triangle, rectangle, ellipse). Inside one element inner shapes are
+  still cut first. The order buttons are now **Move up (earlier)**, **Move
+  down (later)**, **To the start** and **To the end** (PgUp, PgDown, Ctrl+PgUp,
+  Ctrl+PgDown); the simulation shows the same order. A single opened file is
+  cut as before (byte-identical to K40 Whisperer).
+
 ## 0.18.0 (2026-11-05)
 
 ### New

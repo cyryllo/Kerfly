@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:33+0100\n"
+"POT-Creation-Date: 2026-11-06 13:34+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -242,11 +242,11 @@ msgstr "Oben ausrichten"
 msgid "All files"
 msgstr "Alle Dateien"
 
-msgid "Already at the bottom."
-msgstr "Bereits ganz unten."
+msgid "Already at the end of the list."
+msgstr "Bereits am Ende der Liste."
 
-msgid "Already on top."
-msgstr "Bereits ganz oben."
+msgid "Already at the start of the list."
+msgstr "Bereits am Anfang der Liste."
 
 msgid "Another problem"
 msgstr "Ein anderes Problem"
@@ -292,12 +292,6 @@ msgid "Bridges per outline: short uncut gaps that hold the part in the sheet"
 msgstr ""
 "Haltestege je Umriss: kurze ungeschnittene Stellen, die das Teil in der "
 "Platte halten"
-
-msgid "Bring &forward"
-msgstr "Eine Ebene nach &vorne"
-
-msgid "Bring to &front"
-msgstr "In den &Vordergrund"
 
 #, python-format
 msgid "Broken apart into %d shapes (grouped; use Ungroup to separate them)."
@@ -1024,6 +1018,12 @@ msgstr "&Vertikal spiegeln"
 msgid "Mirror design"
 msgstr "Entwurf spiegeln"
 
+msgid "Move &down (later)"
+msgstr "Nach &unten (später)"
+
+msgid "Move &up (earlier)"
+msgstr "Nach &oben (früher)"
+
 msgid "Move all elements so the design starts at the laser head"
 msgstr "Alle Elemente so verschieben, dass der Entwurf am Laserkopf beginnt"
 
@@ -1060,11 +1060,33 @@ msgstr "Laserkopf einen Schritt nach rechts bewegen"
 msgid "Move the laser head up by one step"
 msgstr "Laserkopf einen Schritt nach oben bewegen"
 
-msgid "Move the selected elements one step down: behind the previous one"
-msgstr "Die ausgewählten Elemente eine Stufe nach unten: hinter das vorherige"
+msgid ""
+"Move the selected elements one place down the element list: the laser "
+"does them later"
+msgstr ""
+"Die ausgewählten Elemente eine Stelle nach unten in der Liste: der Laser "
+"bearbeitet sie später"
 
-msgid "Move the selected elements one step up: in front of the next one"
-msgstr "Die ausgewählten Elemente eine Stufe nach oben: vor das nächste"
+msgid ""
+"Move the selected elements one place up the element list: the laser does "
+"them earlier"
+msgstr ""
+"Die ausgewählten Elemente eine Stelle nach oben in der Liste: der Laser "
+"bearbeitet sie früher"
+
+msgid ""
+"Move the selected elements to the bottom of the element list: the laser "
+"does them last"
+msgstr ""
+"Die ausgewählten Elemente ans Ende der Liste: der Laser bearbeitet sie "
+"zuletzt"
+
+msgid ""
+"Move the selected elements to the top of the element list: the laser does"
+" them first"
+msgstr ""
+"Die ausgewählten Elemente an den Anfang der Liste: der Laser bearbeitet "
+"sie zuerst"
 
 msgid "Name:"
 msgstr "Name:"
@@ -1339,12 +1361,6 @@ msgstr ""
 msgid "Put text on &path"
 msgstr "Text auf &Pfad setzen"
 
-msgid "Put the selected elements on top of all others"
-msgstr "Die ausgewählten Elemente über alle anderen legen"
-
-msgid "Put the selected elements under all others"
-msgstr "Die ausgewählten Elemente unter alle anderen legen"
-
 msgid "Rail unlocked"
 msgstr "Achsen freigegeben"
 
@@ -1560,9 +1576,6 @@ msgstr "Wählen Sie zwei oder mehr Formen mit geschlossenen Umrissen aus."
 msgid "Selected nodes: %d. Drag them, or use the buttons above."
 msgstr "Ausgewählte Knoten: %d. Ziehen oder die Schaltflächen oben verwenden."
 
-msgid "Send &backward"
-msgstr "Eine Ebene nach &hinten"
-
 msgid "Send EGV file"
 msgstr "EGV-Datei senden"
 
@@ -1571,9 +1584,6 @@ msgstr "EGV-Datei an den Laser senden…"
 
 msgid "Send an existing EGV file to the laser"
 msgstr "Eine vorhandene EGV-Datei an den Laser senden"
-
-msgid "Send to bac&k"
-msgstr "In den &Hintergrund"
 
 #, python-format
 msgid "Sending %s…"
@@ -1918,6 +1928,12 @@ msgid "To head"
 msgstr ""
 "Zum\n"
 "Kopf"
+
+msgid "To the &end (last)"
+msgstr "Ans &Ende (zuletzt)"
+
+msgid "To the &start (first)"
+msgstr "An den &Anfang (zuerst)"
 
 msgid "Trace boundary"
 msgstr "Umriss abfahren"
@@ -2357,4 +2373,34 @@ msgstr "Vektorgravur"
 
 #~ msgid "Hatch: fill the shape with engraved lines instead of only its outline"
 #~ msgstr "Schraffur: die Form mit gravierten Linien füllen statt nur ihren Umriss"
+
+#~ msgid "Already at the bottom."
+#~ msgstr "Bereits ganz unten."
+
+#~ msgid "Already on top."
+#~ msgstr "Bereits ganz oben."
+
+#~ msgid "Bring &forward"
+#~ msgstr "Eine Ebene nach &vorne"
+
+#~ msgid "Bring to &front"
+#~ msgstr "In den &Vordergrund"
+
+#~ msgid "Move the selected elements one step down: behind the previous one"
+#~ msgstr "Die ausgewählten Elemente eine Stufe nach unten: hinter das vorherige"
+
+#~ msgid "Move the selected elements one step up: in front of the next one"
+#~ msgstr "Die ausgewählten Elemente eine Stufe nach oben: vor das nächste"
+
+#~ msgid "Put the selected elements on top of all others"
+#~ msgstr "Die ausgewählten Elemente über alle anderen legen"
+
+#~ msgid "Put the selected elements under all others"
+#~ msgstr "Die ausgewählten Elemente unter alle anderen legen"
+
+#~ msgid "Send &backward"
+#~ msgstr "Eine Ebene nach &hinten"
+
+#~ msgid "Send to bac&k"
+#~ msgstr "In den &Hintergrund"
 

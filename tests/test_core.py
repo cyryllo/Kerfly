@@ -779,6 +779,48 @@ def test_pattern_fill():
     return errors
 
 
+def test_cut_order():
+    """Within a layer the elements are cut in the order of the element list
+    (K40 Whisperer's path sorting mixed them by distance: triangle, rectangle,
+    ellipse instead of triangle, ellipse, rectangle on the second laser test).
+    Inside an element, inner shapes still come first."""
+    from kerfly.core.layers import CUT, build_layers_job, default_layers
+    from kerfly.core.layout import Element
+    from kerfly.core.shapes import ShapeSpec, build_design
+    errors = 0
+    specs = [("triangle", ShapeSpec(kind="polygon", width=30, height=30, sides=3), 60, 50),
+             ("ellipse", ShapeSpec(kind="ellipse", width=25, height=25), 220, 20),
+             ("rectangle", ShapeSpec(kind="rectangle", width=20, height=20), 100, 90)]
+    elements = [Element(build_design(sp), x=x / 25.4, y=-y / 25.4, shape=sp) for _n, sp, x, y in specs]
+    # a ring (outer and inner circle) as one element: the inner circle must be cut first
+    ring = Element(build_design(ShapeSpec(kind="ellipse", width=40, height=40)), x=150 / 25.4, y=-120 / 25.4)
+    hole = build_design(ShapeSpec(kind="ellipse", width=10, height=10)).vector_cut.ecoords
+    ring.design.vector_cut.set_ecoords(ring.design.vector_cut.ecoords
+                                       + [[r[0] + 10 / 25.4, r[1] + 10 / 25.4, r[2] + 100] for r in hole])
+    elements.append(ring)
+    layers = default_layers()
+    cache = {}
+    build_layers_job(elements, layers, JobSettings(), cache=cache)
+    cut_layer = [l for l in layers if l.kind == CUT][0]
+    rows = cache[cut_layer.id].vector_cut.ecoords
+    loops = []
+    for r in rows:
+        if not loops or loops[-1][0] != r[2]:
+            loops.append((r[2], []))
+        loops[-1][1].append(r)
+    names = []
+    for _loop, pts in loops:
+        w = (max(p[0] for p in pts) - min(p[0] for p in pts)) * 25.4
+        names.append({30: "triangle", 25: "ellipse", 20: "rectangle", 10: "ring hole", 40: "ring outside"}.get(round(w),
+                                                                                           "ring outside"))
+    expected = ["triangle", "ellipse", "rectangle", "ring hole", "ring outside"]
+    ok = names == expected and len({l for l, _p in loops}) == len(loops)
+    print("%-5s cut order: as in the element list, holes first inside an element %s"
+          % ("OK" if ok else "FAIL", names))
+    errors += 0 if ok else 1
+    return errors
+
+
 def test_usblib():
     """Windows: libusb0.dll is looked for in System32 and next to the program,
     the first one that loads is used, and the log says where Kerfly looked."""
@@ -909,6 +951,7 @@ def main():
     failures += test_curves()
     failures += test_simulate()
     failures += test_usblib()
+    failures += test_cut_order()
     failures += test_pattern_fill()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:33+0100\n"
+"POT-Creation-Date: 2026-11-06 13:34+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -242,11 +242,11 @@ msgstr "Aligner en haut"
 msgid "All files"
 msgstr "Tous les fichiers"
 
-msgid "Already at the bottom."
-msgstr "Déjà tout en bas."
+msgid "Already at the end of the list."
+msgstr "Déjà à la fin de la liste."
 
-msgid "Already on top."
-msgstr "Déjà tout en haut."
+msgid "Already at the start of the list."
+msgstr "Déjà au début de la liste."
 
 msgid "Another problem"
 msgstr "Un autre problème"
@@ -292,12 +292,6 @@ msgid "Bridges per outline: short uncut gaps that hold the part in the sheet"
 msgstr ""
 "Attaches par contour : courts passages non découpés qui retiennent la "
 "pièce dans la plaque"
-
-msgid "Bring &forward"
-msgstr "&Avancer"
-
-msgid "Bring to &front"
-msgstr "Mettre au &premier plan"
 
 #, python-format
 msgid "Broken apart into %d shapes (grouped; use Ungroup to separate them)."
@@ -1021,6 +1015,12 @@ msgstr "Miroir &vertical"
 msgid "Mirror design"
 msgstr "Retourner le dessin en miroir"
 
+msgid "Move &down (later)"
+msgstr "&Descendre (plus tard)"
+
+msgid "Move &up (earlier)"
+msgstr "&Monter (plus tôt)"
+
 msgid "Move all elements so the design starts at the laser head"
 msgstr "Déplacer tous les éléments pour que le dessin commence à la tête laser"
 
@@ -1057,11 +1057,33 @@ msgstr "Déplacer la tête d'un pas vers la droite"
 msgid "Move the laser head up by one step"
 msgstr "Déplacer la tête d'un pas vers le haut"
 
-msgid "Move the selected elements one step down: behind the previous one"
-msgstr "Descendre d'un cran les éléments sélectionnés : derrière le précédent"
+msgid ""
+"Move the selected elements one place down the element list: the laser "
+"does them later"
+msgstr ""
+"Descendre d'une place dans la liste les éléments sélectionnés : le laser "
+"les traite plus tard"
 
-msgid "Move the selected elements one step up: in front of the next one"
-msgstr "Monter d'un cran les éléments sélectionnés : devant le suivant"
+msgid ""
+"Move the selected elements one place up the element list: the laser does "
+"them earlier"
+msgstr ""
+"Monter d'une place dans la liste les éléments sélectionnés : le laser les"
+" traite plus tôt"
+
+msgid ""
+"Move the selected elements to the bottom of the element list: the laser "
+"does them last"
+msgstr ""
+"Mettre les éléments sélectionnés en bas de la liste : le laser les traite"
+" en dernier"
+
+msgid ""
+"Move the selected elements to the top of the element list: the laser does"
+" them first"
+msgstr ""
+"Mettre les éléments sélectionnés en haut de la liste : le laser les "
+"traite en premier"
 
 msgid "Name:"
 msgstr "Nom :"
@@ -1333,12 +1355,6 @@ msgstr ""
 msgid "Put text on &path"
 msgstr "Mettre le texte sur un &chemin"
 
-msgid "Put the selected elements on top of all others"
-msgstr "Placer les éléments sélectionnés au-dessus de tous les autres"
-
-msgid "Put the selected elements under all others"
-msgstr "Placer les éléments sélectionnés sous tous les autres"
-
 msgid "Rail unlocked"
 msgstr "Axes déverrouillés"
 
@@ -1558,9 +1574,6 @@ msgstr ""
 "Nœuds sélectionnés : %d. Faites-les glisser ou utilisez les boutons en "
 "haut."
 
-msgid "Send &backward"
-msgstr "&Reculer"
-
 msgid "Send EGV file"
 msgstr "Envoyer le fichier EGV"
 
@@ -1569,9 +1582,6 @@ msgstr "Envoyer un fichier EGV au laser…"
 
 msgid "Send an existing EGV file to the laser"
 msgstr "Envoyer un fichier EGV existant au laser"
-
-msgid "Send to bac&k"
-msgstr "Mettre à l'&arrière-plan"
 
 #, python-format
 msgid "Sending %s…"
@@ -1915,6 +1925,12 @@ msgid "To head"
 msgstr ""
 "À la\n"
 "tête"
+
+msgid "To the &end (last)"
+msgstr "À la &fin (derniers)"
+
+msgid "To the &start (first)"
+msgstr "Au &début (premiers)"
 
 msgid "Trace boundary"
 msgstr "Parcourir le contour"
@@ -2358,4 +2374,34 @@ msgstr "gravure vectorielle"
 #~ "Hachures : remplir la forme de "
 #~ "lignes gravées au lieu de son seul"
 #~ " contour"
+
+#~ msgid "Already at the bottom."
+#~ msgstr "Déjà tout en bas."
+
+#~ msgid "Already on top."
+#~ msgstr "Déjà tout en haut."
+
+#~ msgid "Bring &forward"
+#~ msgstr "&Avancer"
+
+#~ msgid "Bring to &front"
+#~ msgstr "Mettre au &premier plan"
+
+#~ msgid "Move the selected elements one step down: behind the previous one"
+#~ msgstr "Descendre d'un cran les éléments sélectionnés : derrière le précédent"
+
+#~ msgid "Move the selected elements one step up: in front of the next one"
+#~ msgstr "Monter d'un cran les éléments sélectionnés : devant le suivant"
+
+#~ msgid "Put the selected elements on top of all others"
+#~ msgstr "Placer les éléments sélectionnés au-dessus de tous les autres"
+
+#~ msgid "Put the selected elements under all others"
+#~ msgstr "Placer les éléments sélectionnés sous tous les autres"
+
+#~ msgid "Send &backward"
+#~ msgstr "&Reculer"
+
+#~ msgid "Send to bac&k"
+#~ msgstr "Mettre à l'&arrière-plan"
 

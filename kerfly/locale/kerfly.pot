@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-05 17:33+0100\n"
+"POT-Creation-Date: 2026-11-06 13:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -231,10 +231,10 @@ msgstr ""
 msgid "All files"
 msgstr ""
 
-msgid "Already at the bottom."
+msgid "Already at the end of the list."
 msgstr ""
 
-msgid "Already on top."
+msgid "Already at the start of the list."
 msgstr ""
 
 msgid "Another problem"
@@ -278,12 +278,6 @@ msgid "Bridges"
 msgstr ""
 
 msgid "Bridges per outline: short uncut gaps that hold the part in the sheet"
-msgstr ""
-
-msgid "Bring &forward"
-msgstr ""
-
-msgid "Bring to &front"
 msgstr ""
 
 #, python-format
@@ -952,6 +946,12 @@ msgstr ""
 msgid "Mirror design"
 msgstr ""
 
+msgid "Move &down (later)"
+msgstr ""
+
+msgid "Move &up (earlier)"
+msgstr ""
+
 msgid "Move all elements so the design starts at the laser head"
 msgstr ""
 
@@ -988,10 +988,24 @@ msgstr ""
 msgid "Move the laser head up by one step"
 msgstr ""
 
-msgid "Move the selected elements one step down: behind the previous one"
+msgid ""
+"Move the selected elements one place down the element list: the laser "
+"does them later"
 msgstr ""
 
-msgid "Move the selected elements one step up: in front of the next one"
+msgid ""
+"Move the selected elements one place up the element list: the laser does "
+"them earlier"
+msgstr ""
+
+msgid ""
+"Move the selected elements to the bottom of the element list: the laser "
+"does them last"
+msgstr ""
+
+msgid ""
+"Move the selected elements to the top of the element list: the laser does"
+" them first"
 msgstr ""
 
 msgid "Name:"
@@ -1244,12 +1258,6 @@ msgstr ""
 msgid "Put text on &path"
 msgstr ""
 
-msgid "Put the selected elements on top of all others"
-msgstr ""
-
-msgid "Put the selected elements under all others"
-msgstr ""
-
 msgid "Rail unlocked"
 msgstr ""
 
@@ -1444,9 +1452,6 @@ msgstr ""
 msgid "Selected nodes: %d. Drag them, or use the buttons above."
 msgstr ""
 
-msgid "Send &backward"
-msgstr ""
-
 msgid "Send EGV file"
 msgstr ""
 
@@ -1454,9 +1459,6 @@ msgid "Send EGV file to laser…"
 msgstr ""
 
 msgid "Send an existing EGV file to the laser"
-msgstr ""
-
-msgid "Send to bac&k"
 msgstr ""
 
 #, python-format
@@ -1746,6 +1748,12 @@ msgstr ""
 
 msgctxt "toolbar"
 msgid "To head"
+msgstr ""
+
+msgid "To the &end (last)"
+msgstr ""
+
+msgid "To the &start (first)"
 msgstr ""
 
 msgid "Trace boundary"

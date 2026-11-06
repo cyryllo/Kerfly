@@ -194,13 +194,15 @@ grid step, with Shift 10 times as far.
 (Ctrl+E), align and distribute, and **Combine shapes**: union, difference,
 intersection and exclusion of closed shapes.
 
-**Order.** Elements lower in the element list lie on top in the bed view.
-**Bring forward** and **Send backward** (toolbar **Order**, PgUp and PgDown
-while the bed view has the focus) move the selected elements one step;
-**Bring to front** and **Send to back** (Ctrl+PgUp, Ctrl+PgDown) move them
-on top of or under all others. Groups move together. When **Cut inside
-shapes first** is off (Settings → Vector), this is also the order in which
-the elements are cut.
+**Order.** The element list is the order of the job: within each layer the
+laser does the element at the top of the list first. (The layers themselves
+always run in the order raster engraving, outline engraving, cutting.) Inside
+one element, inner shapes are still cut before the outer ones, so a part
+does not fall out before its holes are cut. **Move up (earlier)** and **Move
+down (later)** (toolbar **Order**, PgUp and PgDown while the bed view has the
+focus) move the selected elements one place; **To the start** and **To the
+end** (Ctrl+PgUp, Ctrl+PgDown) move them to the top or the bottom of the list.
+Groups move together. *(not yet tested on a laser)*
 
 **Groups.** **Group** (Ctrl+Shift+G) makes several elements move together;
 clicking one member selects the whole group, a second click selects that
@@ -363,7 +365,7 @@ Kerfly is available in English, Polish, German, Spanish and French.
 | Ctrl+Shift+H / Ctrl+Shift+V | Mirror horizontally / vertically |
 | Ctrl+Shift+G / Ctrl+Alt+G | Group / ungroup |
 | Ctrl+E | Centre on the bed |
-| PgUp / PgDown | Bring forward / send backward (Ctrl: to the front / back) |
+| PgUp / PgDown | Move up (earlier) / down (later) in the element list (Ctrl: to the start / end) |
 | Ctrl+H | Place design at the head |
 | Ctrl+Alt+H | Design follows the head (on / off) |
 | Arrow keys (Shift: ×10) | Move the selected element |

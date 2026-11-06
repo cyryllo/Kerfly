@@ -396,6 +396,7 @@ def compile_layout(elements, passthrough=True, frame=None):
     out.bounds = (0.0, xmax - xmin, 0.0, ymax - ymin)
 
     vcut, veng, gcode = [], [], []
+    starts = {id(vcut): [], id(veng): [], id(gcode): []}   # where each element's rows begin
     for e in elements:
         to_bed = e.transform()
 
@@ -406,11 +407,14 @@ def compile_layout(elements, passthrough=True, frame=None):
                                (veng, e.design.vector_engrave.ecoords),
                                (gcode, e.design.gcode.ecoords)):
             if source:
+                starts[id(target)].append(len(target))
                 target.extend(_transform_ecoords(source, f, _max_loop(target) + 1 if target else 0))
     if vcut:
         out.vector_cut.set_ecoords(vcut)
+        out.vector_cut.element_starts = starts[id(vcut)]     # the job keeps this order (layers.py)
     if veng:
         out.vector_engrave.set_ecoords(veng)
+        out.vector_engrave.element_starts = starts[id(veng)]
     if gcode:
         out.gcode.set_ecoords(gcode, data_sorted=True)
 

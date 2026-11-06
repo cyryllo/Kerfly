@@ -195,13 +195,15 @@ Ctrl+R), odbicie (Ctrl+Shift+H, Ctrl+Shift+V), wyśrodkowanie na stole
 (Ctrl+E), wyrównywanie i rozkładanie oraz **Łącz kształty**: sumę, różnicę,
 część wspólną i wykluczenie zamkniętych kształtów.
 
-**Kolejność.** Elementy niżej na liście elementów leżą na stole na wierzchu.
-**Przesuń do przodu** i **Przesuń do tyłu** (na pasku **Kolejność**, PgUp i
-PgDown, gdy aktywny jest stół) przesuwają zaznaczone elementy o krok;
-**Przesuń na wierzch** i **Przesuń na spód** (Ctrl+PgUp, Ctrl+PgDown) kładą je
-nad albo pod wszystkimi innymi. Grupy przesuwają się razem. Gdy opcja
-**Najpierw wycinaj kształty wewnętrzne** jest wyłączona (Ustawienia →
-Wektory), to jest też kolejność cięcia elementów.
+**Kolejność.** Lista elementów to kolejność zadania: w każdej warstwie laser
+najpierw wykonuje element z góry listy. (Same warstwy zawsze idą w kolejności:
+grawer, obrys, cięcie.) Wewnątrz jednego elementu kształty wewnętrzne nadal są
+cięte przed zewnętrznymi, żeby element nie wypadł przed wycięciem otworów.
+**Wyżej (wcześniej)** i **Niżej (później)** (na pasku **Kolejność**, PgUp i
+PgDown, gdy aktywny jest stół) przesuwają zaznaczone elementy o jedno
+miejsce; **Na początek** i **Na koniec** (Ctrl+PgUp, Ctrl+PgDown) przenoszą je
+na górę albo na dół listy. Grupy przesuwają się razem. *(jeszcze nie
+sprawdzone na laserze)*
 
 **Grupy.** **Grupuj** (Ctrl+Shift+G) sprawia, że kilka elementów przesuwa
 się razem; klik w jeden z nich zaznacza całą grupę, drugi klik tylko ten
@@ -368,7 +370,7 @@ francusku.
 | Ctrl+Shift+H / Ctrl+Shift+V | Odbij w poziomie / w pionie |
 | Ctrl+Shift+G / Ctrl+Alt+G | Grupuj / rozgrupuj |
 | Ctrl+E | Wyśrodkuj na stole |
-| PgUp / PgDown | Przesuń do przodu / do tyłu (Ctrl: na wierzch / na spód) |
+| PgUp / PgDown | Wyżej (wcześniej) / niżej (później) na liście elementów (Ctrl: na początek / na koniec) |
 | Ctrl+H | Ustaw projekt przy głowicy |
 | Ctrl+Alt+H | Projekt podąża za głowicą (wł. / wył.) |
 | Strzałki (Shift: ×10) | Przesuń zaznaczony element |

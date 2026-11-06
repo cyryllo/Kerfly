@@ -14,7 +14,7 @@ import copy
 import math
 from dataclasses import dataclass
 
-from .layers import CUT, ENGRAVE, GCODE, RASTER, compile_layer, run_order
+from .layers import CUT, ENGRAVE, GCODE, RASTER, compile_layer, element_order, run_order
 from .pathopt import optimize_paths
 
 RAPID_MM_S = 150.0               # travel speed between cuts (approximate)
@@ -61,7 +61,10 @@ def timeline(elements, layers, settings, units="mm", start=(0.0, 0.0)):
                       GCODE: design.gcode}[layer.kind].ecoords
             coords = copy.deepcopy(source)
             if coords and settings.inside_first and layer.kind != GCODE:
-                coords = optimize_paths(coords, inside_check=layer.kind == CUT)
+                part = design.vector_cut if layer.kind == CUT else design.vector_engrave
+                ordered = None if part.sorted else element_order(part, inside_check=layer.kind == CUT)
+                coords = ordered if ordered is not None else (
+                    coords if part.sorted else optimize_paths(coords, inside_check=layer.kind == CUT))
             paths = _loops(coords, bed)
         for _p in range(passes):
             for path, step_factor in paths:

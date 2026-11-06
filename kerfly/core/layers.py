@@ -143,6 +143,31 @@ def compile_layer(elements, layer, layers):
     return design, full_origin
 
 
+def element_order(ecoord, inside_check):
+    """Rows of a layer made of several elements, in the order of the element
+    list: each element's own paths are ordered as K40 Whisperer does (inside
+    shapes first, short travel), but the elements are not mixed, so they are
+    cut in the order the user set. Loop numbers stay unique. None when the
+    data are not made of several elements (K40 Whisperer's order then)."""
+    from .pathopt import optimize_paths
+    import copy
+    starts = getattr(ecoord, "element_starts", None)
+    rows = ecoord.ecoords
+    if not starts or len(starts) < 2 or not rows:
+        return None
+    out = []
+    for a, b in zip(starts, starts[1:] + [len(rows)]):
+        part = copy.deepcopy(rows[a:b])
+        if not part:
+            continue
+        part = optimize_paths(part, inside_check=inside_check)
+        base = min(r[2] for r in part)
+        offset = (max(r[2] for r in out) + 1) if out else 0
+        for r in part:
+            out.append([r[0], r[1], r[2] - base + offset] + list(r[3:]))
+    return out
+
+
 def run_order(layers):
     return sorted(layers, key=lambda layer: KINDS.index(layer.kind))
 
@@ -172,6 +197,13 @@ def build_layers_job(elements, layers, settings, progress=None, update_gui=None,
         if origin_l is not None:
             origin = origin_l
         s = layer_settings(settings, layer)
+        if s.inside_first and layer.kind in (CUT, ENGRAVE):
+            part = design.vector_cut if layer.kind == CUT else design.vector_engrave
+            if not part.sorted:
+                rows = element_order(part, inside_check=layer.kind == CUT)
+                if rows is not None:
+                    part.set_ecoords(rows, data_sorted=True)
+                    part.sorted = True        # what build_job checks (set_ecoords only sets data_sorted)
         if layer.kind == RASTER:
             raster.make_raster_coords(design, s, progress, stop)
             if not design.raster.ecoords:
