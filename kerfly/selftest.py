@@ -64,20 +64,22 @@ def _check_usb(r):
         r.add(FAIL, "USB library", str(e))
         return
     # nano_library connects with pyusb's default backend; on Windows that is
-    # libusb0.dll from the libusb-win32 driver (or one next to python.exe)
-    if os.name == "nt" and usb.backend.libusb0.get_backend() is None:
+    # libusb0.dll from the libusb-win32 driver (System32, or one next to the program)
+    from kerfly.core.usblib import ensure_libusb
+    found, where = ensure_libusb()
+    if os.name == "nt" and not found:
         os.environ["PATH"] = os.path.dirname(sys.executable) + os.pathsep + os.environ["PATH"]
     try:
         devices = list(usb.core.find(idVendor=0x1A86, idProduct=0x5512, find_all=True))
     except usb.core.NoBackendError:
         hint = ("install the libusb-win32 driver with Zadig (see INSTALL.md)" if os.name == "nt"
                 else "install libusb (Debian: sudo apt install libusb-1.0-0)")
-        r.add(WARN, "USB driver", "no libusb found: " + hint)
+        r.add(WARN, "USB driver", "no libusb found: " + hint + ("" if os.name != "nt" else " [%s]" % where))
         return
     except Exception as e:
         r.add(WARN, "K40 laser", "could not list USB devices: %s" % e)
         return
-    r.add(OK, "USB driver", "libusb found")
+    r.add(OK, "USB driver", "libusb found" + (" (%s)" % where if os.name == "nt" else ""))
     if devices:
         where = ", ".join("bus %s address %s" % (d.bus, d.address) for d in devices)
         r.add(OK, "K40 laser", "found (%s)" % where)

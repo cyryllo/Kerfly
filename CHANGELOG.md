@@ -7,6 +7,20 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
+## Unreleased
+
+Fixes from the second laser test (Windows 10, the 0.18.0 installer).
+
+### Fixed
+
+- **The installed program could not connect to the laser** ("USB error: No
+  backend available") while the same PC worked from source: the packed
+  program did not find `libusb0.dll`. Kerfly now looks for it itself (where
+  pyusb looks, then `C:\Windows\System32`, then next to the program) and the
+  Windows installer also brings its own `libusb0.dll` (libusb-win32 1.2.6.0,
+  the version of the K40 driver), used only when Windows has none. The log
+  and the self-test say where it was found, or where Kerfly looked.
+
 ## 0.18.0 (2026-11-05)
 
 ### New

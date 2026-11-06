@@ -18,6 +18,10 @@ env:
   # the build stops if the file on the server is not this exact one
   DRIVER_URL: http://www.scorchworks.com/K40whisperer/K40_Driver_Install.exe
   DRIVER_SHA256: 6c8e96f436c71f0ade67d7437f87b4d2a53f73eb1316013d87b5353a83d15d16
+  # libusb0.dll of libusb-win32 1.2.6.0 (LGPL, the version those driver installers set up), put
+  # next to Kerfly.exe as K40 Whisperer does: used only when Windows has none of its own
+  LIBUSB_URL: https://sourceforge.net/projects/libusb-win32/files/libusb-win32-releases/1.2.6.0/libusb-win32-bin-1.2.6.0.zip/download
+  LIBUSB_SHA256: ac19715e6ace496d1a41df3714038ab0ad9b8059834ed65c55ff4e0b9ba0d2e9
 
 jobs:
   windows:
@@ -36,10 +40,26 @@ jobs:
           if ($LASTEXITCODE -ne 0) { Write-Host "pyclipper not installed (optional)"; $global:LASTEXITCODE = 0 }
       - name: Program folder (PyInstaller)
         run: python -m PyInstaller packaging/kerfly.spec --noconfirm
-      - name: Self-test of the packaged program
+      - name: libusb0.dll next to Kerfly.exe (checked)
+        run: |
+          for ($i = 1; $i -le 4; $i++) {
+            try { Invoke-WebRequest -Uri $env:LIBUSB_URL -OutFile libusb-win32.zip -UserAgent "Wget"; break }
+            catch { if ($i -eq 4) { throw }; Start-Sleep -Seconds 15 }
+          }
+          $hash = (Get-FileHash libusb-win32.zip -Algorithm SHA256).Hash.ToLower()
+          if ($hash -ne $env:LIBUSB_SHA256) { Write-Error "libusb-win32 archive changed: $hash"; exit 1 }
+          Expand-Archive libusb-win32.zip -DestinationPath libusb-win32
+          Copy-Item libusb-win32\libusb-win32-bin-1.2.6.0\bin\amd64\libusb0.dll dist\Kerfly\
+          New-Item -ItemType Directory -Force dist\Kerfly\licenses | Out-Null
+          Copy-Item libusb-win32\libusb-win32-bin-1.2.6.0\COPYING_LGPL.txt dist\Kerfly\licenses\libusb-win32-LGPL.txt
+      - name: Self-test of the packaged program (must load libusb0.dll)
         env:
           QT_QPA_PLATFORM: offscreen
-        run: dist\Kerfly\kerfly-console.exe --self-test
+        run: |
+          $out = & dist\Kerfly\kerfly-console.exe --self-test 2>&1 | Out-String
+          Write-Host $out
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          if ($out -notmatch "OK\s+USB driver") { Write-Error "the packaged program did not load libusb0.dll"; exit 1 }
       - name: K40 USB driver installer (checked)
         run: |
           Invoke-WebRequest -Uri $env:DRIVER_URL -OutFile packaging\windows\K40_Driver_Install.exe

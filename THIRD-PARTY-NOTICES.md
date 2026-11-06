@@ -112,6 +112,11 @@ The ready-made packages (built by `.github/workflows/release.yml` from
   <https://github.com/scorchworks/K40-Whisperer-Driver-Installer>. The installer
   runs it only when the user ticks "Install the USB driver for the K40 laser".
   The build checks its SHA-256 sum before bundling it.
+- **Windows only: `libusb0.dll`** of **libusb-win32 1.2.6.0** (Travis Lee
+  Robinson, Stephan Meyer and others; LGPL-3.0, text in
+  `licenses/libusb-win32-LGPL.txt`), next to `Kerfly.exe`, as K40 Whisperer
+  ships it. Kerfly uses it only when Windows has no `libusb0.dll` of its own.
+  Source: <https://sourceforge.net/projects/libusb-win32/>.
 - **Windows only: the installer itself** is made with **Inno Setup**
   (Jordan Russell and Martijn Laan, Inno Setup License, a free licence that
   allows this use).

@@ -779,6 +779,41 @@ def test_pattern_fill():
     return errors
 
 
+def test_usblib():
+    """Windows: libusb0.dll is looked for in System32 and next to the program,
+    the first one that loads is used, and the log says where Kerfly looked."""
+    import usb.backend.libusb0 as libusb0
+    from kerfly.core import usblib
+    errors = 0
+    tmp = tempfile.mkdtemp()
+    fake_dll = os.path.join(tmp, "libusb0.dll")
+    open(fake_dll, "wb").close()
+    saved = (os.name, libusb0.get_backend, usblib.candidates, usblib._result)
+    calls = []
+
+    def fake_get_backend(find_library=None):
+        calls.append(find_library("libusb0") if find_library else None)
+        return object() if find_library and find_library("libusb0") == fake_dll else None
+    try:
+        usblib.os.name = "nt"
+        libusb0.get_backend = fake_get_backend
+        usblib.candidates = lambda: [os.path.join(tmp, "System32", "libusb0.dll"), fake_dll]
+        usblib._result = None
+        found, text = usblib.ensure_libusb()
+        ok1 = found and fake_dll in text and calls[-1] == fake_dll
+        usblib.candidates = lambda: [os.path.join(tmp, "nowhere", "libusb0.dll")]
+        usblib._result = None
+        found2, text2 = usblib.ensure_libusb()
+        ok2 = not found2 and "nowhere" in text2 and "missing" in text2
+    finally:
+        usblib.os.name, libusb0.get_backend, usblib.candidates, usblib._result = saved
+    for name, ok, detail in (("USB library loaded from the first place that works", ok1, ""),
+                             ("USB library missing: the log lists where Kerfly looked", ok2, "")):
+        print("%-5s usb: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+    return errors
+
+
 def test_simulate():
     """Job simulation: layer order, travel moves, durations from the layer speeds."""
     from kerfly.core.layers import default_layers, CUT
@@ -873,6 +908,7 @@ def main():
     failures += test_snap()
     failures += test_curves()
     failures += test_simulate()
+    failures += test_usblib()
     failures += test_pattern_fill()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))

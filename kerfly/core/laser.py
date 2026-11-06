@@ -79,8 +79,10 @@ class LaserController:
     def connect(self, init_home=True):
         """Open the USB device. Raises LaserError with a readable message."""
         from nano_library import K40_CLASS   # needs pyusb; imported lazily
+        from kerfly.core.usblib import ensure_libusb
         self.release()
         log.info("laser: connect (home after connecting: %s)", init_home)
+        ensure_libusb()                       # Windows: find libusb0.dll (also in System32, next to the program)
         k40 = K40_CLASS()
         try:
             k40.initialize_device()
