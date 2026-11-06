@@ -349,6 +349,16 @@ class MainWindow(QMainWindow):
         sub = m.addMenu(_("Align and distribute"))
         for a in list(self.act_align.values()) + [None, self.act_distribute_h, self.act_distribute_v]:
             sub.addSeparator() if a is None else sub.addAction(a)
+        # generators: ready-made designs from a few numbers
+        from kerfly.gui.generators import GENERATORS
+        self.act_generators = {}
+        m = mb.addMenu(_("&Generators"))
+        for key, title, icon, tip, _fields, _make in GENERATORS:
+            act = self._action(_(title) + "…", lambda _c=False, k=key: self.open_generator(k), tip=_(tip))
+            act.setToolTip("%s\n%s" % (_(title), _(tip)))
+            act.setIcon(icons.tabler(icon))
+            self.act_generators[key] = act
+            m.addAction(act)
         m = mb.addMenu(_("&Laser"))
         self.laser_menu = m
         for a in (self.act_connect, self.act_release, None, self.act_home, self.act_unlock,
@@ -445,6 +455,8 @@ class MainWindow(QMainWindow):
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
             ]),
+            (C_("toolbar group", "Generators"), "grid",
+             [(act, act.icon()) for act in self.act_generators.values()]),
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
                 (self.act_simulate, "movie", C_("toolbar", "Simulate")),
@@ -2241,6 +2253,84 @@ class MainWindow(QMainWindow):
         self._layer_cache.clear()
         self._layout_changed()
         self.preview.select_element(chosen)
+
+    # ---- generators ----------------------------------------------------------
+    def open_generator(self, key):
+        """Ask for a generator's numbers (with a preview), then insert the design."""
+        from kerfly.gui.generators import GeneratorDialog
+        if self.worker is not None:
+            return
+        dlg = GeneratorDialog(self, key, remember=getattr(self, "remember_geometry", False))
+        if dlg.exec():
+            self.insert_generated(dlg.result_design())
+
+    def insert_generated(self, design):
+        """Put a generated design on the bed at the laser head, as one group and one undo
+        step, with the layers it brings along."""
+        from kerfly.core.generators import KIND_OF_OPERATION
+        if not design.items:
+            return []
+        self._checkpoint()
+        layer_of_key = {}
+        for spec in design.layers:
+            layer = Layer(spec.kind, name=spec.name, color=spec.color or EXTRA_COLORS[0],
+                          speed=spec.speed, passes=int(spec.passes), power=spec.power)
+            index = max(i for i, l in enumerate(self.layers) if l.kind == spec.kind) + 1
+            self.layers.insert(index, layer)
+            layer_of_key[spec.key] = layer
+        group = self._new_group_id() if len(design.items) > 1 else ""
+        hx, hy = self.head
+        made = []
+        for item in design.items:
+            spec = item.spec.copy()
+            if spec.kind == "text":
+                update_text_spec(spec)
+            built = build_design(spec)
+            xmin, xmax, ymin, ymax = built.bounds
+            if xmax - xmin <= 0 and ymax - ymin <= 0:
+                continue
+            e = Element(built, name=_(item.name) if item.name else _(KIND_NAMES.get(spec.kind, "Path")),
+                        shape=spec, group=group)
+            e.x, e.y = hx + item.left / 25.4, hy - item.top / 25.4
+            if item.layer in layer_of_key:
+                e.layers[KIND_OF_OPERATION.get(spec.operation, CUT)] = layer_of_key[item.layer].id
+            made.append((item, e))
+        for item, e in made:                             # texts that run along another shape
+            if item.on_path_of >= 0 and item.on_path_of < len(design.items):
+                guide = next((g for it, g in made if it is design.items[item.on_path_of]), None)
+                if guide is not None:
+                    self._place_on_path(e, guide)
+        elements = [e for _item, e in made]
+        self.elements.extend(elements)
+        self._shift_onto_bed(elements)
+        self.selected = None
+        self._compiled = None
+        self._layer_cache.clear()
+        self._rebuild_layers_panel()
+        self._layout_changed()
+        self.preview.select_element(elements)
+        self.status(_("%(name)s inserted: %(n)d shapes. Drag it into place; Undo takes it away.")
+                    % {"name": _(design.name), "n": len(elements)})
+        return elements
+
+    def _shift_onto_bed(self, elements):
+        """Move elements together so all of them lie on the bed, if they fit."""
+        if not elements:
+            return
+        bed_w, bed_h = config.bed_size_inches(self.values)
+        x0 = min(e.bounds[0] for e in elements)
+        x1 = max(e.bounds[1] for e in elements)
+        y0 = min(e.bounds[2] for e in elements)
+        y1 = max(e.bounds[3] for e in elements)
+        dx = -x0 if x0 < 0 else min(0.0, bed_w - x1)
+        dy = -y1 if y1 > 0 else max(0.0, -bed_h - y0)
+        if x1 - x0 > bed_w:
+            dx = -x0
+        if y1 - y0 > bed_h:
+            dy = -y1
+        for e in elements:
+            e.x += dx
+            e.y += dy
 
     def _new_group_id(self):
         import uuid

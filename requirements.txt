@@ -3,3 +3,4 @@ pyusb
 pillow
 PySide6-Essentials
 svgelements
+segno

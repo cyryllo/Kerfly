@@ -92,6 +92,7 @@ borrowed file keeps its MIT header, and the file is listed here.
 | Pillow | MIT-CMU (HPND) |
 | pyusb | BSD-3-Clause |
 | pyclipper / Clipper | MIT / Boost Software License |
+| segno | BSD-3-Clause |
 | Inkscape (external program, called as a subprocess) | GPL-2.0-or-later |
 | PySide6 / Qt | LGPL-3.0, GPL-2.0 or GPL-3.0 (Kerfly uses them under the GPL-3.0) |
 
@@ -135,3 +136,4 @@ this repository.
 | pyusb | BSD-3-Clause | USB connection to the laser |
 | svgelements | MIT | reading SVG curves for node editing |
 | pyclipper (optional) | MIT | offset of the boundary trace |
+| segno | BSD-3-Clause | QR codes (Generators → QR code) |

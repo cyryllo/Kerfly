@@ -1463,6 +1463,32 @@ def main():
     u._dirty = False
     u.close()
 
+    # 54. generators: each one's dialog makes a design that goes on the bed as one group and one
+    # undo step (with its layers), the window tells the truth; the dialog remembers its numbers
+    from kerfly.gui.generators import GENERATORS as _GENS, GeneratorDialog as _GD
+    from kerfly.gui import truth as _truth2
+    gw = make_window(grid_mm="0")
+    made = {}
+    for key, *_rest in _GENS:
+        dlg = _GD(gw, key, remember=False)
+        before = _truth2.state(gw)
+        els = gw.insert_generated(dlg.result_design())
+        grouped = len(els) == 1 or len({e.group for e in els}) == 1 and bool(els[0].group)
+        ok = bool(els) and grouped and not _truth2.check_window(gw)
+        gw.undo()
+        ok = ok and _truth2.difference(before, _truth2.state(gw)) == ""
+        made[key] = ok
+        dlg.deleteLater()
+    gw.remember_geometry = True
+    d1 = _GD(gw, "gear", remember=True)
+    d1.widgets["teeth"].setValue(33)
+    d1.accept()
+    remembered = _GD(gw, "gear", remember=True).widgets["teeth"].value() == 33
+    check("generators: every one inserts a group as one undo step, window tells the truth; numbers remembered",
+          all(made.values()) and remembered, "(%s, remembered %s)" % (made, remembered))
+    gw._dirty = False
+    gw.close()
+
     # 50. the element list shows a single element too (it was hidden until there were two)
     w9 = make_window(grid_mm="0")
     w9._add_drawn_element(_Spec(kind="rectangle", width=20, height=20), "rectangle", 10, 10)

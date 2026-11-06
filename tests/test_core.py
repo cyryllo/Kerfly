@@ -943,6 +943,122 @@ def test_udev():
     return errors
 
 
+def _inside(pt, polys):
+    """Even-odd point in polygons (lists of points, closed or not)."""
+    x, y = pt
+    inside = False
+    for poly in polys:
+        n = len(poly)
+        for i in range(n):
+            (x1, y1), (x2, y2) = poly[i], poly[(i + 1) % n]
+            if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+                inside = not inside
+    return inside
+
+
+def test_generators():
+    """Generators: the material test grid and its layers; the box's fingers interlock
+    with the next part (no gap, no overlap), each part one outline, the kerf grows
+    them; kerf test slots = thickness + clearance; gear size; puzzle and ruler counts;
+    the QR outline gives back the code's modules; the test card."""
+    from kerfly.core import generators as g
+    errors = 0
+    results = []
+    mt = g.material_test("engrave", 10, 50, 5, "power", 20, 60, 1, 3, 3, labels=True, legend="x")
+    fields = [it for it in mt.items if it.name == "Field"]
+    speeds = sorted({l.speed for l in mt.layers})
+    powers = sorted({round(l.power, 3) for l in mt.layers})
+    results.append(("material test: 5 x 3 fields, each on its own layer, speeds and powers spread evenly",
+                    len(fields) == 15 and len(mt.layers) == 15 and speeds == [10, 20, 30, 40, 50]
+                    and powers == [0.2, 0.4, 0.6] and len({it.layer for it in fields}) == 15))
+    mp = g.material_test("cut", 5, 5, 1, "passes", passes_min=1, passes_max=4, rows=4, labels=False)
+    results.append(("material test by passes: 1 to 4 passes, no labels",
+                    [l.passes for l in mp.layers] == [1, 2, 3, 4] and all(it.name == "Field" for it in mp.items)))
+
+    box = g.finger_box(100, 80, 50, 3, 10, kerf=0, lid=True)
+    parts = {it.name: it for it in box.items}
+    one_each = sorted(parts) == ["Back", "Bottom", "Front", "Left", "Lid", "Right"] and len(box.items) == 6
+
+    def outline(name):
+        it = parts[name]
+        return [[(x + 0, y + 0) for x, y in it.spec.points]], it.spec.width, it.spec.height
+    t = 3.0
+
+    def strip(name, side, depth_at):
+        """Material along one edge, sampled at the middle of every millimetre."""
+        polys, w, h = outline(name)
+        length = w if side in ("top", "bottom") else h
+        out = []
+        for k in range(int(length)):
+            u = k + 0.5
+            pt = {"top": (u, depth_at), "bottom": (u, h - depth_at), "left": (depth_at, u),
+                  "right": (w - depth_at, u)}[side]
+            out.append(_inside(pt, polys))
+        return out
+    # front's bottom edge against the bottom's top edge, front's left edge against the left side's
+    # front edge (right edge of "Left"), left side's bottom edge against the bottom's left edge
+    pairs = [(("Front", "bottom"), ("Bottom", "top")), (("Front", "left"), ("Left", "right")),
+             (("Left", "bottom"), ("Bottom", "left")), (("Front", "top"), ("Lid", "top"))]
+    interlock = True
+    for (a, sa), (b, sb) in pairs:
+        ma, mb = strip(a, sa, t / 2), strip(b, sb, t / 2)
+        if sb == "left":
+            mb = mb                                      # both run top to bottom / left to right
+        inner = range(int(t) + 1, len(ma) - int(t) - 1)  # leave out the corners
+        if any(ma[k] == mb[k] for k in inner):
+            interlock = False
+    kerfed = g.finger_box(100, 80, 50, 3, 10, kerf=0.2, lid=True)
+    grow = abs(kerfed.items[0].spec.width - (box.items[0].spec.width + 0.2)) < 1e-6
+    results.append(("finger box: six parts, one outline each, fingers interlock, the kerf grows the parts",
+                    one_each and interlock and grow))
+    try:
+        g.finger_box(10, 10, 10, 5, 3)
+        too_small = False
+    except ValueError:
+        too_small = True
+    results.append(("finger box: too small for the material is refused", too_small))
+
+    kt = g.kerf_test(50, 10, 10, 3.0, -0.2, 0.1, 7, 10, labels=False)
+    cuts = [it for it in kt.items if it.name == "Comb cut"]
+    plate = [it for it in kt.items if it.name == "Slot plate"][0]
+    xs = sorted({round(x, 4) for x, y in plate.spec.points})
+    widths = [round(b - a, 3) for a, b in zip(xs[1:-1:2], xs[2:-1:2])]
+    results.append(("kerf test: 9 comb cuts, slots 2.8 to 3.1 mm", len(cuts) == 9 and
+                    widths == [2.8, 2.85, 2.9, 2.95, 3.0, 3.05, 3.1]))
+
+    gr = g.gear(20, 2.0, 20, 5)
+    teeth = gr.items[0].spec
+    results.append(("gear: tip diameter = module x (teeth + 2), axle hole",
+                    abs(teeth.width - 44.0) < 0.05 and abs(teeth.height - 44.0) < 0.05 and len(gr.items) == 2))
+    pz = g.puzzle(150, 100, 5, 4, seed=3)
+    results.append(("puzzle: 4 + 3 inner lines in one shape, outline",
+                    len(pz.items[0].spec.subpaths) == 7 and pz.items[1].spec.width == 150))
+    rl = g.ruler(150, 25)
+    results.append(("ruler: 151 marks, 16 numbers", len(rl.items[0].spec.subpaths) == 151 and
+                    sum(1 for it in rl.items if it.name == "Number") == 16))
+
+    try:
+        import segno
+        qr = g.qr_code("Kerfly", 30, "m", 2)
+        matrix = segno.make("Kerfly", error="m", micro=False).matrix
+        n = len(matrix)
+        cell = 30.0 / (n + 4)
+        sp = qr.items[0].spec.subpaths
+        polys = [[(nd[0] + qr.items[0].left, nd[1] + qr.items[0].top) for nd in p["nodes"]] for p in sp]
+        same = all(_inside(((2 + c + 0.5) * cell, (2 + r + 0.5) * cell), polys) == bool(matrix[r][c])
+                   for r in range(n) for c in range(n))
+        results.append(("QR code: the outline gives back every module of the code", same))
+    except ImportError:
+        print("SKIP  generators: QR code (segno not installed)")
+    card = g.test_card()
+    results.append(("test card: 16 shapes, a text on the circle",
+                    len(card.items) == 16 and any(it.on_path_of >= 0 for it in card.items)))
+    for name, ok in results:
+        print("%-5s generators: %s" % ("OK" if ok else "FAIL", name))
+        errors += 0 if ok else 1
+    return errors
+
+
 def test_simulate():
     """Job simulation: layer order, travel moves, durations from the layer speeds."""
     from kerfly.core.layers import default_layers, CUT
@@ -1039,6 +1155,7 @@ def main():
     failures += test_simulate()
     failures += test_usblib()
     failures += test_udev()
+    failures += test_generators()
     failures += test_cut_order()
     failures += test_pattern_fill()
 

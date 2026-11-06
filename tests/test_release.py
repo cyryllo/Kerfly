@@ -1021,6 +1021,29 @@ def part_m3_board(s):
     s.covered_widgets.add("layer power")
 
 
+def part_generators(s):
+    """Every generator: its button (toolbar) or menu entry, a number typed into its dialog,
+    Insert; the design comes as one undo step."""
+    w = s.w
+    s.expect_dialog("save first?", lambda d: s.click_dialog_button(d, QMessageBox.Discard), optional=True)
+    s.step("File → New project", lambda: s.trigger(w.act_new), undo=False, change=None)
+    for n, (key, action) in enumerate(w.act_generators.items()):
+        def answer(dlg):
+            numbers = [wd for wd in dlg.widgets.values() if isinstance(wd, (QSpinBox, QDoubleSpinBox))]
+            if numbers:                                  # change the first number, as a user would
+                spin = numbers[0]
+                value = spin.value() + (spin.singleStep() if spin.value() < spin.maximum() else -spin.singleStep())
+                s.type_number(spin, value)
+            ok = next(b for b in dlg.findChildren(QAbstractButton) if b.text().replace("&", "") == tr_("Insert"))
+            QTest.mouseClick(ok, Qt.LeftButton)
+        s.expect_dialog(key, answer)
+        count = len(w.elements)
+        s.step("Generators → %s (%s)" % (action.text().replace("…", ""), "toolbar" if n % 2 == 0 else "menu"),
+               lambda a=action, via=("button" if n % 2 == 0 else "menu"): s.trigger(a, via=via),
+               check=lambda c=count: (len(w.elements) > c, "%d elements (was %d)" % (len(w.elements), c)))
+        s.trigger(w.act_undo)                             # an empty bed for the next one
+
+
 def part_files_and_help(s):
     w = s.w
     s.files.append(os.path.join(FIX, "shapes.svg"))
@@ -1114,7 +1137,8 @@ def coverage(s):
 def main():
     app = QApplication(sys.argv)
     s = Session(app)
-    for part in (session, part_edit, part_layers, part_view_and_laser, part_m3_board, part_files_and_help):
+    for part in (session, part_edit, part_layers, part_view_and_laser, part_m3_board, part_generators,
+                 part_files_and_help):
         try:
             part(s)
         except Exception:
