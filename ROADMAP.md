@@ -110,7 +110,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Living hinges~~ (step 1 done: Living hinge tool, straight / wavy / zigzag cuts, cut length, bridge, row spacing, direction, solid border); more hinge patterns later | `tools/livinghinges.py`, `tools/living_hinge_optimizer.py` |
 | Image dithering (more methods than Floyd-Steinberg) | `image/dither.py` |
 | Image adjustments (contrast, sharpen, crop, split) | `image/imagetools.py`, `extra/imageactions.py`, `gui/imagesplitter.py` |
-| Bitmap to vector (trace): **later** (decided 2026-11-06; LightBurn has it as Trace Image) | `extra/potrace.py`, `extra/vtracer.py`, `extra/vectrace.py` |
+| Bitmap to vector (trace), like LightBurn's Trace Image (button "Trace" in the options bar of a selected picture) | `extra/potrace.py`, `extra/vtracer.py`, `extra/vectrace.py` |
 | Path offset (kerf compensation) | `core/elements/offset_clpr.py`, `offset_mk.py` |
 | ~~Boolean operations on shapes~~ (done: union, difference, intersection, exclusion) | `tools/polybool.py`, `extra/cag.py` |
 | ~~Kerf test and material test generators~~ (done, Generators group; also finger-joint box, gear, puzzle, ruler, QR code, rubber stamp, laser test card) | `tools/kerftest.py`, `gui/materialtest.py` |
