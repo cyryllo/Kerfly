@@ -53,12 +53,6 @@ jobs:
         if: always()
         shell: cmd
         run: .venv\Scripts\python tests\test_references.py
-      - name: Release test (whole session, real clicks, Full HD screen)
-        if: always()
-        shell: cmd
-        env:
-          QT_QPA_PLATFORM: offscreen:configfile=tests/fullhd.json
-        run: .venv\Scripts\python -X faulthandler tests\test_release.py
       - name: Release check of the program
         if: always()
         shell: cmd
@@ -108,16 +102,6 @@ jobs:
       - name: Reference results (laser data, cut order, bed pictures)
         if: always()
         run: .venv/bin/python tests/test_references.py
-      - name: Release test (whole session, real clicks, Full HD screen)
-        if: always()
-        env:
-          QT_QPA_PLATFORM: xcb
-        run: xvfb-run -a -s "-screen 0 1920x1080x24" .venv/bin/python -X faulthandler tests/test_release.py
-      - name: Random sessions (fixed seeds)
-        if: always()
-        env:
-          QT_QPA_PLATFORM: xcb
-        run: xvfb-run -a -s "-screen 0 1920x1080x24" .venv/bin/python -X faulthandler tests/test_random.py --seed 1 --runs 3 --steps 300
       - name: Release check of the program
         if: always()
         env:

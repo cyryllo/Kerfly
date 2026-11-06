@@ -106,9 +106,12 @@ Kerfly --release-test                                  # Windows: kerfly-console
 
 Without X11 (Windows) the release test runs on a Full HD screen of Qt's
 offscreen platform: `QT_QPA_PLATFORM=offscreen:configfile=tests/fullhd.json`.
-GitHub Actions runs all of them on every push; for a version tag the
-release tests must pass before the packages are built, and the built
-installer and AppImage run `--release-test`.
+
+The release session and the random sessions run on the developer's
+computer **before every version tag** (they need a few minutes and a
+screen). GitHub Actions runs the quick ones on every push (core, GUI,
+translations, laser data, references, `--release-test`), and the built
+installer and AppImage run `--release-test` before they are released.
 
 ## Laser test card
 

@@ -204,10 +204,11 @@ the main test; these tests catch what is easy to miss.
   the bed view and of the simulation, and the exact laser data (as in
   `tests/regression.py`), compared with saved references, so a changed
   outline, cut order or cut preview shows up.
-- [x] **Step 6: run them where it counts.** The release workflow runs the
-  release tests on Linux and Windows before building the packages (a failed
-  test stops the release), and the built programs run a short
-  `--release-test` (fonts, Inkscape, USB library in the installed program).
+- [x] **Step 6: run them where it counts.** The release session and the
+  random sessions run on the developer's computer before every version tag;
+  GitHub runs the references and `--release-test` on every push, and the
+  built programs run `--release-test` (fonts, Qt plugins, libraries in the
+  installed program) before they are released.
 - [x] **Step 7: test card for the laser.** A ready project
   (`tests/fixtures/release_card.kerfly`) with every operation on a small
   piece of plywood: raster, outline, cut, fill patterns, hinge, text on a
