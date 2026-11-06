@@ -191,7 +191,9 @@ jedno oczko siatki, z Shiftem 10 razy dalej.
 (Ctrl+Z, Ctrl+Shift+Z), duplikuj (Ctrl+D), usuń (Del), obrót o 90° (Ctrl+L,
 Ctrl+R), odbicie (Ctrl+Shift+H, Ctrl+Shift+V), wyśrodkowanie na stole
 (Ctrl+E), wyrównywanie i rozkładanie oraz **Łącz kształty**: sumę, różnicę,
-część wspólną i wykluczenie zamkniętych kształtów.
+część wspólną i wykluczenie zamkniętych kształtów (różnica: pozostałe
+zaznaczone kształty są wycinane z tego, który jest najwyżej na liście
+elementów).
 
 **Kolejność.** Lista elementów to kolejność zadania: w każdej warstwie laser
 najpierw wykonuje element z góry listy. (Same warstwy zawsze idą w kolejności:

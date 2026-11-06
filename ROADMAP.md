@@ -208,7 +208,7 @@ the main test; these tests catch what is easy to miss.
   release tests on Linux and Windows before building the packages (a failed
   test stops the release), and the built programs run a short
   `--release-test` (fonts, Inkscape, USB library in the installed program).
-- [ ] **Step 7: test card for the laser.** A ready project
+- [x] **Step 7: test card for the laser.** A ready project
   (`tests/fixtures/release_card.kerfly`) with every operation on a small
   piece of plywood: raster, outline, cut, fill patterns, hinge, text on a
   path, bridges, holes before outlines, a size ruler. Before a feature

@@ -3,14 +3,14 @@
   "area_mm": [
    10.0,
    10.0,
-   215.0,
+   200.0,
    45.0
   ],
-  "burn_mm": 462.6,
-  "burn_moves": 90,
-  "egv_bytes": 7785,
-  "egv_sha256": "8927edd9442a81f883bbc00cf014e470b7cc2c8909decf1eff382e2daa12190b",
-  "fingerprint": "d1eaf30632ef2d66f41b2a2d597d5c0a898820ebf4f6916a640db3c3fbd918fc",
+  "burn_mm": 492.2,
+  "burn_moves": 83,
+  "egv_bytes": 6870,
+  "egv_sha256": "685b46854ba3aab1ff40d134bf5c5ca2dc1213c3e4e944bdd3e7f74e0f4c8739",
+  "fingerprint": "7cf356bc031abed78e570afe1cad38cebcdb09c2fb25d961c3a9a578a8c88ecf",
   "first_cuts": [
    [
     28.5,
@@ -52,9 +52,9 @@
   "layer_order": [
    "Vector cut"
   ],
-  "moves": 99,
-  "seconds": 48.0,
-  "travel_mm": 258.0
+  "moves": 92,
+  "seconds": 50.7,
+  "travel_mm": 225.7
  },
  "fills": {
   "area_mm": [

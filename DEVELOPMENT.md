@@ -110,6 +110,35 @@ GitHub Actions runs all of them on every push; for a version tag the
 release tests must pass before the packages are built, and the built
 installer and AppImage run `--release-test`.
 
+## Laser test card
+
+Before a feature release (1.x.0) the test card is cut on the machine; a
+fix-only release (1.x.y) needs only the automatic tests. Open
+`tests/fixtures/release_card.kerfly` (made by `tools/make_release_samples.py`)
+in the built program, put a piece of 3 mm plywood of about 160 x 100 mm on
+the bed, Trace boundary, then Start. Write down the board, material, speed
+and power. Then check:
+
+1. **Size:** the square is 50.0 mm on each side (± 0.2 mm), its hole is
+   20.0 mm and in the middle.
+2. **Order:** the hole was cut before the square (the square did not move
+   while its hole was cut); outlines and the raster ran before the cuts.
+3. **Ruler:** 100 mm long, a mark every 10 mm (check it with a ruler).
+4. **Raster:** the black block and the word "Kerfly" are where the preview
+   shows them, not shifted against the cut and engraved lines.
+5. **Patterns:** lines, honeycomb, waves and circles stay inside their
+   squares, with the small free border.
+6. **Hinge:** the cut strip bends without breaking; no cut reaches the
+   outline.
+7. **Text on a path:** "KERFLY TEST" follows the top of the circle.
+8. **Bridges:** the small rectangle stays held in the sheet by two bridges
+   and breaks out by hand.
+9. **Turned pentagon** and the **open line**: engraved / cut where the
+   preview shows them; the line starts at its end nearer the head.
+10. **Time:** the job took about as long as the estimate.
+
+Report anything else with **Help → Report a problem** and a photo.
+
 ## Screenshots
 
 After a change to the window, refresh the screenshots of the README and the

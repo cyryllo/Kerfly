@@ -17,6 +17,11 @@ Version numbers:
 - Undo of deleting a layer did not bring the layer back (its shapes stayed
   on the default layer). Adding and deleting layers are now steps of
   Undo / Redo.
+- Combine shapes → Difference cut sometimes the first shape out of the
+  second: the order of the selected shapes changed from run to run. Now it
+  is always the order of the element list (the other shapes are cut out of
+  the one highest in the list), and a union starts its outline at the same
+  place every time.
 - A level or upright line could not be made longer or shorter by typing
   its width (height) in the position fields; its height (width) field showed
   0.01 instead of 0.

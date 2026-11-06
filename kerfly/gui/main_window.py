@@ -2160,7 +2160,10 @@ class MainWindow(QMainWindow):
     def _selection(self):
         """Elements selected in the bed view (several with a rubber band or
         Ctrl+click), with all members of their groups."""
-        chosen = [e for e in self.preview.selected_elements() if e in self.elements]
+        picked = {id(e) for e in self.preview.selected_elements()}
+        # in the order of the element list (the bed view's order changes from run to run, and a
+        # union of the same shapes then started its outline elsewhere)
+        chosen = [e for e in self.elements if id(e) in picked]
         if not chosen and self.selected is not None:
             chosen = [self.selected]
         groups = {e.group for e in chosen if e.group}

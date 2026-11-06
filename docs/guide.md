@@ -191,7 +191,8 @@ grid step, with Shift 10 times as far.
 (Ctrl+Z, Ctrl+Shift+Z), duplicate (Ctrl+D), delete (Del), rotate 90°
 (Ctrl+L, Ctrl+R), mirror (Ctrl+Shift+H, Ctrl+Shift+V), centre on the bed
 (Ctrl+E), align and distribute, and **Combine shapes**: union, difference,
-intersection and exclusion of closed shapes.
+intersection and exclusion of closed shapes (difference: the other selected
+shapes are cut out of the one highest in the element list).
 
 **Order.** The element list is the order of the job: within each layer the
 laser does the element at the top of the list first. (The layers themselves
