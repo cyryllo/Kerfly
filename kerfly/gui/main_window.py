@@ -896,6 +896,8 @@ class MainWindow(QMainWindow):
         self._hinge_element(e)
         self.preview.select_element(e)
         self.selected = e
+        # the bar shows what the shape has now (it may have been selected already: no new selection)
+        self._update_tool_options(force=True)
         if self.hinge_defaults.hinge_pattern:
             self.status(_("Hinge cut into the shape. Click another shape, or change the cuts above."))
         else:
@@ -917,6 +919,8 @@ class MainWindow(QMainWindow):
         self._fill_element(e)
         self.preview.select_element(e)
         self.selected = e
+        # the bar shows what the shape has now (it may have been selected already: no new selection)
+        self._update_tool_options(force=True)
         if self.fill_defaults.fill_pattern:
             self.status(_("Filled. Click another shape, or change the pattern above."))
         else:

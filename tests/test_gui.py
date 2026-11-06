@@ -1394,6 +1394,14 @@ def main():
     w7.set_tool("hinge")
     hcombo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("wave") >= 0][0]
     hinge_none = hcombo.currentData() == ""
+    # a selected shape clicked with the tool: the bar shows what it got (it stayed "no hinge")
+    w7.set_tool("select")
+    w7.preview.select_element(boxes[0])
+    w7.selected = boxes[0]
+    w7.set_tool("hinge")
+    w7._hinge_clicked(QPointF(25, 25))
+    hcombo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("wave") >= 0][0]
+    hinge_none = hinge_none and boxes[0].shape.hinge_pattern == "straight" and hcombo.currentData() == "straight"
     check("fill tool with several shapes: shows \"no pattern\", each choice reaches all of them",
           shows_none and none_kept and multi_ok and clicked_ok and hinge_none,
           "(none %s, kept %s, %s, click %s, hinge %s)" % (shows_none, none_kept, seen, clicked_ok, hinge_none))
