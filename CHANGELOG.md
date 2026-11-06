@@ -7,6 +7,21 @@ Version numbers:
 - the **third number** goes up for releases that only fix bugs;
 - **1.0.0** will be the first release declared stable.
 
+## Unreleased
+
+### Changed
+
+- The order buttons (up, down, to the start, to the end) are beside the
+  element list on the Design tab instead of in the toolbar.
+- The element list also shows a single element (it appeared only with two).
+
+### Fixed
+
+- Fill and Living hinge tools with shapes selected: the options bar showed
+  the pattern a click gives (Lines), not what the selected shapes have; it
+  now shows "No pattern" / "No hinge" for shapes without one, and changing a
+  number under "No pattern" no longer fills anything.
+
 ## 0.19.0 (2026-11-06)
 
 Fixes from the second laser test (Windows 10, the 0.18.0 installer).

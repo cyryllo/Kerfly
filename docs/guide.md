@@ -200,10 +200,11 @@ intersection and exclusion of closed shapes.
 laser does the element at the top of the list first. (The layers themselves
 always run in the order raster engraving, outline engraving, cutting.) Inside
 one element, inner shapes are still cut before the outer ones, so a part
-does not fall out before its holes are cut. **Move up (earlier)** and **Move
-down (later)** (toolbar **Order**, PgUp and PgDown while the bed view has the
-focus) move the selected elements one place; **To the start** and **To the
-end** (Ctrl+PgUp, Ctrl+PgDown) move them to the top or the bottom of the list.
+does not fall out before its holes are cut. The arrow buttons beside the
+element list (Design tab) move the selected elements: **Move up (earlier)**
+and **Move down (later)** one place (PgUp, PgDown while the bed view has the
+focus), **To the start** and **To the end** to the top or the bottom of the
+list (Ctrl+PgUp, Ctrl+PgDown).
 Groups move together. *(not yet tested on a laser)*
 
 **Groups.** **Group** (Ctrl+Shift+G) makes several elements move together;
@@ -225,6 +226,9 @@ bricks.
    kept free inside the outline.
 2. Click a closed shape on a cut or outline layer. Click more shapes to fill
    them too; shapes that are selected get the pattern you choose at once.
+   With shapes selected, the options bar shows what they have now (**No
+   pattern** for shapes without one); the **Living hinge** tool works the
+   same way.
 3. The outline stays on its layer: a cut shape is still cut, and the pattern
    is engraved on an outline layer (for a cut shape a second **Layer** list
    chooses which). The square button next to the pattern list leaves the

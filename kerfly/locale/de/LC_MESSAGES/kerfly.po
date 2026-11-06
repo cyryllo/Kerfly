@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-06 13:40+0100\n"
+"POT-Creation-Date: 2026-11-06 13:51+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -1222,10 +1222,6 @@ msgstr "%s geöffnet"
 msgid "Opening %s"
 msgstr "%s wird geöffnet"
 
-msgctxt "toolbar group"
-msgid "Order"
-msgstr "Reihenfolge"
-
 msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr ""
 "Andere Seite: der Text läuft in die andere Richtung, auf der anderen "
@@ -2431,4 +2427,8 @@ msgstr "Vektorgravur"
 
 #~ msgid "Send to bac&k"
 #~ msgstr "In den &Hintergrund"
+
+#~ msgctxt "toolbar group"
+#~ msgid "Order"
+#~ msgstr "Reihenfolge"
 

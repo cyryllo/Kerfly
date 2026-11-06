@@ -201,10 +201,10 @@ część wspólną i wykluczenie zamkniętych kształtów.
 najpierw wykonuje element z góry listy. (Same warstwy zawsze idą w kolejności:
 grawer, obrys, cięcie.) Wewnątrz jednego elementu kształty wewnętrzne nadal są
 cięte przed zewnętrznymi, żeby element nie wypadł przed wycięciem otworów.
-**Wyżej (wcześniej)** i **Niżej (później)** (na pasku **Kolejność**, PgUp i
-PgDown, gdy aktywny jest stół) przesuwają zaznaczone elementy o jedno
-miejsce; **Na początek** i **Na koniec** (Ctrl+PgUp, Ctrl+PgDown) przenoszą je
-na górę albo na dół listy. Grupy przesuwają się razem. *(jeszcze nie
+Przyciski ze strzałkami obok listy elementów (zakładka Projekt) przesuwają
+zaznaczone elementy: **Wyżej (wcześniej)** i **Niżej (później)** o jedno
+miejsce (PgUp, PgDown, gdy aktywny jest stół), **Na początek** i **Na koniec**
+na górę albo na dół listy (Ctrl+PgUp, Ctrl+PgDown). Grupy przesuwają się razem. *(jeszcze nie
 sprawdzone na laserze)*
 
 **Grupy.** **Grupuj** (Ctrl+Shift+G) sprawia, że kilka elementów przesuwa
@@ -225,6 +225,9 @@ miodu, romby albo cegły.
    wewnątrz obrysu.
 2. Kliknij zamknięty kształt na warstwie cięcia albo obrysu. Klikaj kolejne,
    żeby też je wypełnić; zaznaczone kształty od razu dostają wybrany wzór.
+   Gdy kształty są zaznaczone, pasek opcji pokazuje, co mają teraz (**Bez
+   wzoru** dla kształtów bez wzoru); narzędzie **Zawias giętki** działa
+   tak samo.
 3. Obrys zostaje na swojej warstwie: kształt do cięcia dalej jest cięty, a wzór
    jest grawerowany na warstwie obrysu (dla kształtu do cięcia druga lista
    **Warstwa** wybiera, na której). Kwadratowy przycisk obok listy wzorów

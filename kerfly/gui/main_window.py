@@ -419,10 +419,6 @@ class MainWindow(QMainWindow):
                 (self.act_center, "focus-centered", C_("toolbar", "Centre")),
                 (self.act_place_head, "current-location", C_("toolbar", "To head")),
             ]),
-            (C_("toolbar group", "Order"), "grid", [
-                (self.act_order["up"], "arrow-up"),
-                (self.act_order["down"], "arrow-down"),
-            ]),
             (C_("toolbar group", "Align"), "grid", [
                 (self.act_align["left"], "layout-align-left"),
                 (self.act_align["hcenter"], "layout-align-center"),
@@ -615,15 +611,17 @@ class MainWindow(QMainWindow):
             ed = self.preview.node_editor
             self.tool_options.set_node_selection(len(ed.selected) if ed.path is not None else 0)
             return
-        if self.preview.tool == "fill":
-            if force or getattr(self, "_options_target", None) != "fill":
-                self._options_target, self._options_element = "fill", None
-                self.tool_options.show_fill_tool(self.fill_defaults)
-            return
-        if self.preview.tool == "hinge":
-            if force or getattr(self, "_options_target", None) != "hinge":
-                self._options_target, self._options_element = "hinge", None
-                self.tool_options.show_hinge_tool(self.hinge_defaults)
+        if self.preview.tool in ("fill", "hinge"):
+            tool = self.preview.tool
+            spec, key = self._pattern_tool_spec(tool)
+            if force or getattr(self, "_options_target", None) != tool \
+                    or getattr(self, "_options_element", None) != key:
+                self._options_target, self._options_element = tool, key
+                self._tool_shown = spec.copy()
+                if tool == "fill":
+                    self.tool_options.show_fill_tool(spec)
+                else:
+                    self.tool_options.show_hinge_tool(spec)
             return
         if self.preview.tool == "textpath":
             e = self.selected
@@ -653,25 +651,66 @@ class MainWindow(QMainWindow):
             self._options_target, self._options_element = None, None
             self.tool_options.show_hint()
 
+    FILL_ATTRS = ("fill_pattern", "fill_spacing", "fill_angle", "fill_margin", "fill_outline")
+    HINGE_ATTRS = ("hinge_pattern", "hinge_cut", "hinge_gap", "hinge_spacing", "hinge_angle", "hinge_margin",
+                   "hinge_band", "hinge_band_offset")
+
+    def _pattern_tool_spec(self, tool):
+        """What the bar of the Fill / Living hinge tool shows: with shapes selected,
+        what they have now ("No pattern" for a shape without a pattern, not the
+        pattern a click would give); otherwise the pattern a click gives.
+        Returns (spec, key of the selection)."""
+        if tool == "fill":
+            defaults, fits, attrs = self.fill_defaults, self._fillable, self.FILL_ATTRS
+        else:
+            defaults, fits, attrs = self.hinge_defaults, self._hingeable, self.HINGE_ATTRS
+        chosen = [e for e in self._selection() if fits(e)]
+        if not chosen:
+            return defaults, ()
+        e = self.selected if self.selected in chosen else chosen[0]
+        spec = defaults.copy()
+        if getattr(e.shape, attrs[0]):
+            for attr in attrs:
+                setattr(spec, attr, getattr(e.shape, attr))
+        else:
+            setattr(spec, attrs[0], "")
+        return spec, tuple(sorted(id(c) for c in chosen))
+
+    def _pattern_tool_changed(self, tool, spec):
+        """A field of the Fill / Living hinge tool bar changed: selected shapes take it,
+        and a click on another shape gives it."""
+        if tool == "fill":
+            fits, give, attr = self._fillable, self._fill_element, "fill_pattern"
+        else:
+            fits, give, attr = self._hingeable, self._hinge_element, "hinge_pattern"
+        shown = getattr(self, "_tool_shown", None)
+        if not getattr(spec, attr) and shown is not None and not getattr(shown, attr):
+            # a number changed while the bar says "none": nothing to give the selected shapes,
+            # and a click still gives the pattern chosen last
+            keep = spec.copy()
+            setattr(keep, attr, getattr(self.fill_defaults if tool == "fill" else self.hinge_defaults, attr))
+            if tool == "fill":
+                self.fill_defaults = keep
+            else:
+                self.hinge_defaults = keep
+            self._tool_shown = spec.copy()
+            return
+        if tool == "fill":
+            self.fill_defaults = spec
+        else:
+            self.hinge_defaults = spec
+        self._tool_shown = spec.copy()
+        chosen = [e for e in self._selection() if fits(e)]
+        if chosen:                                   # selected shapes take the chosen pattern
+            self._checkpoint()
+            for e in chosen:
+                give(e, checkpoint=False)
+            self._keep_selection(chosen)
+
     def _tool_options_changed(self, spec):
         target = getattr(self, "_options_target", None)
-        if target == "hinge":
-            self.hinge_defaults = spec
-            chosen = [e for e in self._selection() if self._hingeable(e)]
-            if chosen:                                   # selected shapes take the chosen hinge
-                self._checkpoint()
-                for e in chosen:
-                    self._hinge_element(e, checkpoint=False)
-                self._keep_selection(chosen)
-            return
-        if target == "fill":
-            self.fill_defaults = spec
-            chosen = [e for e in self._selection() if self._fillable(e)]
-            if chosen:                                   # selected shapes take the chosen pattern
-                self._checkpoint()
-                for e in chosen:
-                    self._fill_element(e, checkpoint=False)
-                self._keep_selection(chosen)
+        if target in ("fill", "hinge"):
+            self._pattern_tool_changed(target, spec)
             return
         if target == "selected" and self.selected is not None and self.selected.shape is not None:
             before = self.selected.shape.operation
@@ -837,10 +876,8 @@ class MainWindow(QMainWindow):
 
     def _hinge_element(self, e, checkpoint=True):
         spec = e.shape.copy()
-        d = self.hinge_defaults
-        for attr in ("hinge_pattern", "hinge_cut", "hinge_gap", "hinge_spacing", "hinge_angle", "hinge_margin",
-                     "hinge_band", "hinge_band_offset"):
-            setattr(spec, attr, getattr(d, attr))
+        for attr in self.HINGE_ATTRS:
+            setattr(spec, attr, getattr(self.hinge_defaults, attr))
         self._apply_shape(e, spec, checkpoint=checkpoint)
 
     def _hinge_clicked(self, point):
@@ -1465,7 +1502,28 @@ class MainWindow(QMainWindow):
         self.element_list.setIconSize(QSize(3 * self.element_list.fontMetrics().height(),
                                              self.element_list.fontMetrics().height()))
         self.element_list.itemSelectionChanged.connect(self._list_selection_changed)
-        v.addWidget(self.element_list, 1)
+        # the list is the order of the job: its order buttons right beside it
+        self.element_list_box = QWidget()
+        lb = QHBoxLayout(self.element_list_box)
+        lb.setContentsMargins(0, 0, 0, 0)
+        lb.setSpacing(4)
+        lb.addWidget(self.element_list, 1)
+        order_col = QVBoxLayout()
+        order_col.setSpacing(2)
+        for how, icon in (("first", "arrow-bar-to-up"), ("up", "arrow-up"), ("down", "arrow-down"),
+                          ("last", "arrow-bar-to-down")):
+            act = self.act_order[how]
+            act.setIcon(icons.tabler(icon))
+            b = QToolButton()
+            b.setDefaultAction(act)
+            b.setIconSize(QSize(18, 18))
+            b.setAutoRaise(True)
+            b.setToolTip("%s (%s)\n%s" % (act.text().replace("&", ""), act.shortcut().toString(),
+                                          act.statusTip()))
+            order_col.addWidget(b)
+        order_col.addStretch(1)
+        lb.addLayout(order_col)
+        v.addWidget(self.element_list_box, 1)
         design_layout.addWidget(box, 1)
 
         # --- selected element: position, size, rotation (ribbon sections above the bed view)
@@ -1914,7 +1972,7 @@ class MainWindow(QMainWindow):
             lst.addItem(item)
         lst.blockSignals(False)
         self._sync_list_selection()
-        lst.setVisible(len(self.elements) > 1)
+        self.element_list_box.setVisible(bool(self.elements))      # also for a single element
 
     def _layer_swatch(self, colors):
         """Icon with a small square in each layer colour (like LightBurn's list)."""

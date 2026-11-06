@@ -1219,7 +1219,10 @@ def main():
     undone = w4.elements == [a, c, d, b]
     on_bar = any(getattr(t, "defaultAction", lambda: None)() is w4.act_order["up"]
                  for t in w4.findChildren(QToolButton))
-    check("element order: down, to the end, already at the end, to the start, undo, toolbar",
+    beside_list = any(b.defaultAction() is w4.act_order["up"] and w4.element_list_box.isAncestorOf(b)
+                      for b in w4.findChildren(QToolButton))
+    on_bar = on_bar and beside_list
+    check("element order: down, to the end, already at the end, to the start, undo, buttons beside the list",
           step and last and already and first and already_top and undone and on_bar,
           "(%s)" % ([step, last, already, first, already_top, undone, on_bar],))
     w4._dirty = False
@@ -1362,27 +1365,50 @@ def main():
     w6._dirty = False
     w6.close()
 
-    # 48. Fill tool with several shapes selected: the pattern shown first can be chosen, and every
-    # later choice reaches all of them (the selection was lost after the first change)
+    # 48. Fill tool with several shapes selected: the bar shows what they have ("no pattern", not the
+    # pattern a click gives), every choice reaches all of them (the selection was lost after the
+    # first change), and a number changed under "no pattern" fills nothing
     w7 = make_window(grid_mm="0")
-    for i in range(3):
+    for i in range(4):
         w7._add_drawn_element(_Spec(kind="rectangle", width=30, height=30, operation="cut"), "rectangle",
                               10 + 40 * i, 10)
     boxes = list(w7.elements)
-    w7.preview.select_element(boxes)
-    w7.selected = boxes[-1]
+    w7.preview.select_element(boxes[:3])
+    w7.selected = boxes[2]
     w7.set_tool("fill")
     combo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("waves") >= 0][0]
+    shows_none = combo.currentData() == ""
+    w7.tool_options._set("fill_spacing", 3.0)              # under "no pattern": nothing is filled
+    none_kept = all(not e.shape.fill_pattern for e in w7.elements) and w7.fill_defaults.fill_pattern == "lines"
     seen = []
-    for code in ("lines", "waves", "honeycomb"):                    # "lines" is the one shown first
+    for code in ("lines", "waves", "honeycomb"):
+        combo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("waves") >= 0][0]
         combo.setCurrentIndex(combo.findData(code))
         combo.activated.emit(combo.currentIndex())
-        seen.append([e.shape.fill_pattern for e in w7.elements])
+        seen.append([e.shape.fill_pattern for e in w7.elements[:3]])
     multi_ok = seen == [["lines"] * 3, ["waves"] * 3, ["honeycomb"] * 3]
-    check("fill tool with several shapes: the shown pattern applies, each choice reaches all of them",
-          multi_ok, "(%s)" % seen)
+    w7._fill_clicked(QPointF(10 + 120 + 15, 25))           # a click on the fourth gives the last choice
+    clicked_ok = w7.elements[3].shape.fill_pattern == "honeycomb" and w7.elements[3].shape.fill_spacing == 3.0
+    w7.preview.select_element(boxes[:3])
+    w7.selected = boxes[2]
+    w7.set_tool("hinge")
+    hcombo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("wave") >= 0][0]
+    hinge_none = hcombo.currentData() == ""
+    check("fill tool with several shapes: shows \"no pattern\", each choice reaches all of them",
+          shows_none and none_kept and multi_ok and clicked_ok and hinge_none,
+          "(none %s, kept %s, %s, click %s, hinge %s)" % (shows_none, none_kept, seen, clicked_ok, hinge_none))
     w7._dirty = False
     w7.close()
+
+    # 50. the element list shows a single element too (it was hidden until there were two)
+    w9 = make_window(grid_mm="0")
+    w9._add_drawn_element(_Spec(kind="rectangle", width=20, height=20), "rectangle", 10, 10)
+    shown = not w9.element_list_box.isHidden() and w9.element_list.count() == 1
+    w9.new_project()
+    hidden_empty = w9.element_list_box.isHidden()
+    check("element list: shown with one element, hidden when the bed is empty", shown and hidden_empty)
+    w9._dirty = False
+    w9.close()
 
     # 49. File → New project: asks about unsaved changes, then an empty bed, default layers, no undo
     w8 = make_window(grid_mm="0")
