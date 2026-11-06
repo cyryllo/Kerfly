@@ -172,7 +172,7 @@ window's methods directly, so they miss what a user sees: a list showing
 click, a field that changes the wrong element. The user's own daily use stays
 the main test; these tests catch what is easy to miss.
 
-- [ ] **Step 1: "the window tells the truth" checks.** One function, run
+- [x] **Step 1: "the window tells the truth" checks.** One function, run
   after every step of the tests below, compares what is shown with the data:
   - every field and list of the options bar shows the value of the selected
     shape (or of the tool when nothing is selected): each field says which
@@ -185,7 +185,7 @@ the main test; these tests catch what is easy to miss.
     elements are;
   - undo brings back exactly the state before the step, redo the state
     after it; a saved and reopened project is the same.
-- [ ] **Step 2: scripted session with real clicks** (`tests/test_release.py`).
+- [x] **Step 2: scripted session with real clicks** (`tests/test_release.py`).
   Real mouse and keyboard events (QTest), not method calls: draw every shape
   with its tool, choose every option from every drop-down list, type into
   every field, move / scale / rotate with handles, arrows and fields,
@@ -193,7 +193,7 @@ the main test; these tests catch what is easy to miss.
   width and position), text on a path, bridges, layers and the material
   library, trace, simulation, start / pause / stop on the fake laser, new
   project, save and open. After each step: the checks of step 1.
-- [ ] **Step 3: coverage list.** The test fails when a toolbar button, menu
+- [x] **Step 3: coverage list.** The test fails when a toolbar button, menu
   command, tool or options field was never used by the session: a new
   function cannot be released without its release test.
 - [ ] **Step 4: random sessions.** Thousands of random steps (draw, select,

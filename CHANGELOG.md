@@ -7,6 +7,32 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Fixed (found by the new release tests)
+
+- After deleting the selected element (or undoing it away, or a new
+  project), the options bar and the Layer list above the bed kept showing
+  the deleted element.
+- Undo of deleting a layer did not bring the layer back (its shapes stayed
+  on the default layer). Adding and deleting layers are now steps of
+  Undo / Redo.
+- A level or upright line could not be made longer or shorter by typing
+  its width (height) in the position fields; its height (width) field showed
+  0.01 instead of 0.
+
+### Tests
+
+- Release tests (`tests/test_release.py`): a whole working session in the
+  real window on a Full HD screen, with real mouse clicks and key presses:
+  every drawing tool, every field of the options bar for every kind of
+  shape, every command of the menus and toolbars, the panels, the stand-in
+  laser. After each step the window must show what its data holds
+  (`kerfly/gui/truth.py`), and each change is undone and redone. The test
+  fails when a command, a field or a control was never used.
+- The GUI tests check after each step that the window tells the truth, and
+  change settings through the fields, as a user does.
+
 ## 1.0.0 (2026-11-06)
 
 The first stable release: Kerfly is ready for everyday work with K40 lasers.

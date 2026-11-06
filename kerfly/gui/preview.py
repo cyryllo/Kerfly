@@ -209,6 +209,11 @@ class ElementItem(QGraphicsItem):
         self._dragging = False
         self.view.hide_snap_marker()
         super().mouseReleaseEvent(event)
+        self.finish_drag()
+
+    def finish_drag(self):
+        """The drag ended: tell the window how far the element moved (bed inches)."""
+        self._dragging = False
         moved = self.pos() - getattr(self, "_press_pos", QPointF())
         if abs(moved.x()) > 1e-6 or abs(moved.y()) > 1e-6:
             dx = moved.x() / MM * (-1 if self.view.home_ur else 1)

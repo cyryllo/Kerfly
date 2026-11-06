@@ -24,52 +24,16 @@ TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(TESTS_DIR)
 sys.path.insert(0, ROOT_DIR)
 
-from PySide6.QtWidgets import QApplication, QComboBox, QFileDialog, QInputDialog, QLabel, QMessageBox, QToolButton  # noqa: E402
+from PySide6.QtCore import Qt  # noqa: E402
+from PySide6.QtWidgets import QApplication, QComboBox, QWidget, QFileDialog, QInputDialog, QLabel, QMessageBox, QToolButton  # noqa: E402
 
 from kerfly.core import config  # noqa: E402
 from kerfly.gui.main_window import MainWindow  # noqa: E402
+from fakes import FakeK40, run_until_idle  # noqa: E402
+from uidriver import bar_set, choose_layer, click_bar_button, select  # noqa: E402
 
 FIX = os.path.join(TESTS_DIR, "fixtures")
 BASE = os.path.join(TESTS_DIR, "baseline")
-
-
-class FakeK40:
-    """Records what would be sent; send_data calls update_gui like nano_library."""
-
-    def __init__(self, slow=False):
-        self.timeout = 200
-        self.n_timeouts = 30
-        self.sent = []          # (power, bytes)
-        self.passes = []
-        self.moves = []         # rapid moves (dx, dy) in mils
-        self.power = None
-        self.calls = []
-        self.slow = slow
-
-    def set_PWM_register(self, p):
-        self.power = p
-
-    def send_data(self, data, update_gui=None, stop_calc=None, passes=1, preprocess_crc=True,
-                  wait_for_laser=False):
-        for _ in range(50 if self.slow else 1):
-            update_gui("Sending")
-            if stop_calc[0]:
-                self.calls.append("e_stop")
-                raise Exception("Action Stopped by User.")
-            if self.slow:
-                time.sleep(0.02)
-        self.sent.append((self.power, bytes(data)))
-        self.passes.append(passes)
-        self.power = None
-
-    def rapid_move(self, dx, dy):
-        self.moves.append((dx, dy))
-
-    def pause_un_pause(self):
-        self.calls.append("pause")
-
-    def __getattr__(self, name):
-        return lambda *a, **k: self.calls.append(name)
 
 
 def read_usb_baseline(path):
@@ -93,14 +57,6 @@ def read_usb_baseline(path):
     return out
 
 
-def run_until_idle(app, window, timeout=120):
-    t0 = time.time()
-    while window.worker is not None and time.time() - t0 < timeout:
-        app.processEvents()
-        time.sleep(0.01)
-    return window.worker is None
-
-
 def find_inkscape():
     """Inkscape the way Kerfly finds it (PATH or the usual install folders)."""
     import svg_reader
@@ -112,11 +68,23 @@ def find_inkscape():
 INKSCAPE = find_inkscape()
 
 
+OPEN_WINDOWS = []          # checked by kerfly.gui.truth after every check (until closed)
+
+
 def make_window(**overrides):
     values = dict(config.DEFAULT_VALUES)
     values["inkscape_path"] = INKSCAPE
     values.update(overrides)
-    return MainWindow(values)
+    w = MainWindow(values)
+    OPEN_WINDOWS.append(w)
+    close = w.close
+
+    def closed():
+        if w in OPEN_WINDOWS:
+            OPEN_WINDOWS.remove(w)
+        return close()
+    w.close = closed
+    return w
 
 
 def main():
@@ -128,6 +96,14 @@ def main():
 
     def check(name, ok, detail=""):
         nonlocal failures
+        # every open window must show what its data holds (kerfly.gui.truth)
+        from kerfly.gui import truth
+        for _i in range(3):
+            app.processEvents()                  # widgets added to a shown window appear a moment later
+        for n, win in enumerate(list(OPEN_WINDOWS)):
+            for problem in truth.check_window(win):
+                print("TRUTH [%s] window %d: %s" % (name[:50], n, problem))
+                ok = False                       # the window shows something else than it holds
         print("%-5s %s %s" % ("OK" if ok else "FAIL", name, detail))
         if not ok and os.environ.get("GITHUB_ACTIONS"):
             print("::error title=test_gui::%s %s" % (name, detail))     # shown as a CI annotation
@@ -333,7 +309,7 @@ def main():
     w.head = (3.0, -2.0)
     w.place_at_head()
     placed = w.origin == (3.0, -2.0)
-    w.selected = b
+    select(w, b)
     size_before = b.size
     w.rotate_selected(90)
     rotated = abs(b.size[0] - size_before[1]) < 1e-9 and abs(b.size[1] - size_before[0]) < 1e-9
@@ -356,10 +332,10 @@ def main():
     w.undo()
     undo_dup_ok = len(w.elements) == 1
     w.redo()
-    w.elements[1].visible = False
+    w.element_list.item(1).setCheckState(Qt.Unchecked)       # untick it in the element list
     w._compiled = None
     hidden_ok = w.design is e.design or w.design.bounds == e.design.bounds   # only e compiled
-    w.selected = e
+    select(w, e)
     w.center_on_bed()
     bed_w, bed_h = 325 / 25.4, 220 / 25.4
     cx, cy = e.centre
@@ -397,18 +373,13 @@ def main():
                 and abs(rect.x * 25.4 - 10) < 1e-6 and abs(rect.y * 25.4 + 10) < 1e-6
                 and text.design.raster.image is not None and w.preview.tool == "select")
     check("draw: rectangle, Shift-circle, Shift-line, text", drawn_ok, "(%s)" % sizes)
-    w.selected = rect
-    w._update_tool_options(force=True)
-    spec = rect.shape.copy()
-    spec.operation = "engrave"
-    spec.corner_radius = 4
-    w._tool_options_changed(spec)
-    engraved = bool(rect.design.vector_engrave.ecoords) and not rect.design.vector_cut.ecoords
-    w.selected = text
-    w._update_tool_options(force=True)
-    spec = text.shape.copy()
-    spec.text = "Kerfly"
-    w._tool_options_changed(spec)
+    select(w, rect)
+    choose_layer(w, next(l for l in w.layers if l.kind == "engrave"))
+    bar_set(w, "corner_radius", 4)
+    engraved = bool(rect.design.vector_engrave.ecoords) and not rect.design.vector_cut.ecoords \
+        and rect.shape.corner_radius == 4
+    select(w, text)
+    bar_set(w, "text", "Kerfly")
     wider = text.size[0] > 0 and text.shape.text == "Kerfly"
     w.undo()
     undone = text.shape.text != "Kerfly"
@@ -466,9 +437,7 @@ def main():
     w._assign_layer("cut", w.add_layer("cut").id)
     extra_id = w.selected.layers["cut"]
     w._preview_drawn("text", QPointF(20, 150), QPointF(20, 150), False)
-    spec = w.selected.shape.copy()
-    spec.text = "Kerfly"
-    w._tool_options_changed(spec)
+    bar_set(w, "text", "Kerfly")
     title_dirty = w.windowTitle().startswith("*")
     egv1 = tempfile.mktemp(suffix=".egv")
     w.start_job(output_file=egv1)
@@ -591,7 +560,7 @@ def main():
           and gaps[0] == gaps[1] and undone and mirrored, "(tops %s, gaps %s)" % (tops, gaps))
 
     # 22. polyline tool: clicks in the bed view, close on the first point; open with Enter; saved in projects
-    from PySide6.QtCore import Qt
+    pass  # Qt: imported at the top
     from PySide6.QtTest import QTest
     w = make_window()
     w.resize(1200, 800)
@@ -652,14 +621,17 @@ def main():
     second = view._items[-1]
     view.scene().clearSelection()
     second.setSelected(True)
+    second._press_pos = second.pos()
     second._dragging = True
     r = second.sceneBoundingRect()                                     # top-left near the first one's corner
     second.setPos(second.pos() + QPointF(60.5 - r.left(), 50.4 - r.top()))
-    second._dragging = False
     r = second.sceneBoundingRect()
     dragged = abs(r.left() - 60) < 1e-6 and abs(r.top() - 50) < 1e-6 and view.last_move_snapped
+    moved_el = second.element
+    second.finish_drag()                                               # mouse released: the element moves
+    dragged = dragged and abs(moved_el.x * 25.4 - 60) < 1e-6 and abs(moved_el.y * 25.4 + 50) < 1e-6
     check("snapping: draw from a corner, off switch, drag onto another element",
-          corner and off and dragged, "(left %.3f)" % second.sceneBoundingRect().left())
+          corner and off and dragged, "(left %.3f)" % (moved_el.x * 25.4))
     view.last_move_snapped = False
     w.close()
 
@@ -719,7 +691,7 @@ def main():
     w.close()
 
     # 27. pen: click a corner, press and drag a smooth node, close on the first point; node buttons
-    from PySide6.QtCore import QEvent, Qt
+    from PySide6.QtCore import QEvent
     from PySide6.QtGui import QMouseEvent
     from PySide6.QtTest import QTest
     w = make_window(grid_mm="0")
@@ -850,24 +822,17 @@ def main():
     # its settings appear, only engraved lines, no cut; no separate Hatch section any more
     w = make_window(grid_mm="0")
     w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
-    spec = w.selected.shape.copy()
-    spec.fill_pattern, spec.fill_spacing, spec.fill_outline = "lines", 0.5, False
-    w._tool_options_changed(spec)
-    for _i in range(5):
-        app.processEvents()
+    bar_set(w, "fill_pattern", "lines")
+    bar_set(w, "fill_spacing", 0.5)
+    bar_set(w, "fill_outline", False)
     labels = [l.text() for l in w.tool_options.findChildren(QLabel)]
     e = w.selected
     lines_ok = e.design.vector_engrave.ecoords and not e.design.vector_cut.ecoords
     check("fill with lines, no outline (former hatch): settings shown, engraved lines only, no Hatch section",
           lines_ok and "Fill" in labels and "Hatch" not in labels, "(%s)" % labels)
-    spec = w.selected.shape.copy()                       # back to a plain cut shape for the bridges
-    spec.fill_pattern, spec.fill_outline, spec.operation = "", True, "cut"
-    w._tool_options_changed(spec)
-    for _i in range(5):
-        app.processEvents()
-    spec = w.tool_options.spec.copy()
-    spec.tabs = 2
-    w._tool_options_changed(spec)
+    bar_set(w, "fill_outline", True)                     # back to a plain cut shape for the bridges
+    bar_set(w, "fill_pattern", "")
+    bar_set(w, "tabs", 2)
     labels = [l.text() for l in w.tool_options.findChildren(QLabel)]
     loops = {r[2] for r in w.selected.design.vector_cut.ecoords}
     check("bridges: set in the options bar, the cut has gaps", len(loops) == 2 and "Bridges" in labels,
@@ -1202,8 +1167,7 @@ def main():
     for i in range(4):
         w4._add_drawn_element(_Spec(kind="rectangle", width=20, height=20), "rectangle", 10 + 30 * i, 10)
     a, b, c, d = w4.elements
-    w4.preview.select_element(b)
-    w4.selected = b
+    select(w4, b)
     w4.reorder_selected("down")
     step = w4.elements == [a, c, b, d]
     w4.reorder_selected("last")
@@ -1238,32 +1202,24 @@ def main():
     _uts(t)
     w5._add_drawn_element(t, "text", 10, 150)
     guide, text = w5.elements
-    w5.preview.select_element([guide, text])
-    w5.selected = text
+    select(w5, guide, text)
     w5.put_text_on_path()
     b = [v * 25.4 for v in text.bounds]
     centred = abs((b[0] + b[1]) / 2 - 70.0) < 2.0 and abs(b[2] + 60.0) < 0.6 and b[3] > -60.0
-    text.x += 10 / 25.4                                   # moved 10 mm right, then edited
-    spec = text.shape.copy()
-    spec.text = "KERFLY!"
-    w5._apply_shape(text, spec)
+    w5.sel_fields["x"].setValue(w5.sel_fields["x"].value() + 10)   # moved 10 mm right, then edited
+    bar_set(w5, "text", "KERFLY!")
     b2 = [v * 25.4 for v in text.bounds]
     kept = abs(b2[0] - (b[0] + 10.0)) < 0.6 and abs(b2[2] - b[2]) < 0.6
-    spec = text.shape.copy()
-    spec.text_path_flip = True
-    w5._apply_shape(text, spec)
+    bar_set(w5, "text_path_flip", True)
     below = text.bounds[3] * 25.4 <= -60.0 + 0.6
     saved = _project._shape_from_dict(_project._shape_to_dict(text.shape))
     in_project = saved.text_path_flip and len(saved.text_path) == len(text.shape.text_path)
-    spec = text.shape.copy()
-    spec.text_path = []
-    w5._apply_shape(text, spec)
+    click_bar_button(w5, _("Straight text"))
     # height of a 10 mm text in whatever font the system has (Windows has no DejaVu Sans)
     straight = not text.shape.text_path and 4.0 < text.size[1] * 25.4 < 14.0
     # the Text on a path tool: click near the line -> a new text on it; dragging slides it
     # along the line (it stays on it); spacing makes it longer; distance lifts it off the line
-    w5.preview.select_element([])                           # no text selected: the tool makes a new one
-    w5.selected = None
+    select(w5)                                              # no text selected: the tool makes a new one
     w5.set_tool("textpath")
     tool_bar_text = w5._options_target == "textpath"
     w5.shape_defaults["textpath"].text = "ABC"
@@ -1273,15 +1229,12 @@ def main():
     made = len(w5.elements) == n0 + 1 and t2.shape.text == "ABC" and bool(t2.shape.text_path) \
         and w5.preview.tool == "select"
     left0 = t2.bounds[0]
-    w5.preview.select_element(t2)
-    w5.selected = t2
+    select(w5, t2)
     w5._preview_moved(t2, 15 / 25.4, 8 / 25.4)               # drag right (and a bit up)
     slid = abs((t2.bounds[0] - left0) * 25.4 - 15.0) < 0.6 and abs(t2.bounds[2] * 25.4 + 60.0) < 0.6
     w_before = t2.size[0]
-    spec = t2.shape.copy()
-    spec.text_spacing = 2.0
-    spec.text_path_distance = 3.0
-    w5._apply_shape(t2, spec)
+    bar_set(w5, "text_spacing", 2.0)
+    bar_set(w5, "text_path_distance", 3.0)
     spaced = t2.size[0] * 25.4 > w_before * 25.4 + 3.5 and abs(t2.bounds[2] * 25.4 + 57.0) < 0.6
     check("text on a path tool: click puts a text on the line, drag slides along it, spacing, distance",
           tool_bar_text and made and slid and spaced, "(%s)" % ([tool_bar_text, made, slid, spaced],))
@@ -1303,9 +1256,7 @@ def main():
     # of the path, so every change moved the text further: +10, +20, +30 mm; the font jumped too)
     from PySide6.QtGui import QFont as _QFont
     from PySide6.QtWidgets import QDoubleSpinBox as _QDSB
-    w5.preview.select_element(t2)
-    w5.selected = t2
-    w5._update_tool_options(force=True)
+    select(w5, t2)
     off = [sp for sp in w5.tool_options.findChildren(_QDSB) if sp.toolTip().startswith(_("Position along the path"))]
     lefts = []
     for _i in range(3):
@@ -1319,7 +1270,7 @@ def main():
     from PySide6.QtGui import QFontDatabase as _QFDB
     other = next((f for f in _QFDB.families() if f != before_font and "Symbol" not in f
                   and not f.startswith(("Wingdings", "Webdings", "Marlett"))), "Arial")
-    w5.tool_options._set("font_family", other)
+    bar_set(w5, "font_family", other)
     font_ok = t2.shape.font_family != before_font and abs(t2.bounds[0] - left0) * 25.4 < 1.0 \
         and abs(t2.bounds[2] * 25.4 + 57.0) < 0.6
     check("text on a path: changes in the options bar move it exactly, the font changes in place",
@@ -1327,9 +1278,7 @@ def main():
                                                                       t2.shape.font_family))
 
     # the options of a selected text (all its sections) scroll instead of widening the window
-    w5.preview.select_element(text)
-    w5.selected = text
-    w5._update_tool_options(force=True)
+    select(w5, text)
     narrow = w5.minimumSizeHint().width() < 1100
     check("text on a path: centred, kept when edited / moved, other side, saved, straight again",
           centred and kept and below and in_project and straight,
@@ -1344,8 +1293,7 @@ def main():
     w6 = make_window(grid_mm="0")
     w6._add_drawn_element(_Spec(kind="rectangle", width=120, height=60, operation="cut"), "rectangle", 20, 20)
     box = w6.elements[0]
-    w6.preview.select_element([])
-    w6.selected = None
+    select(w6)
     w6.set_tool("hinge")
     tool_bar = w6._options_target == "hinge"
     plain_n = len(box.design.vector_cut.ecoords)
@@ -1354,9 +1302,7 @@ def main():
     cut_in = box.shape.hinge_pattern == "straight" and len(box.design.vector_cut.ecoords) > plain_n * 20 \
         and len(w6._undo) == u0 + 1
     w6.set_tool("select")
-    w6.preview.select_element(box)
-    w6.selected = box
-    w6._update_tool_options(force=True)
+    select(w6, box)
     section = any(c.findData("zigzag") >= 0 for c in w6.tool_options.findChildren(QComboBox))
     w6.undo()
     undone = not w6.elements[0].shape.hinge_pattern
@@ -1373,31 +1319,26 @@ def main():
         w7._add_drawn_element(_Spec(kind="rectangle", width=30, height=30, operation="cut"), "rectangle",
                               10 + 40 * i, 10)
     boxes = list(w7.elements)
-    w7.preview.select_element(boxes[:3])
-    w7.selected = boxes[2]
+    select(w7, *boxes[:3])
     w7.set_tool("fill")
     combo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("waves") >= 0][0]
     shows_none = combo.currentData() == ""
-    w7.tool_options._set("fill_spacing", 3.0)              # under "no pattern": nothing is filled
+    bar_set(w7, "fill_spacing", 3.0)                       # under "no pattern": nothing is filled
     none_kept = all(not e.shape.fill_pattern for e in w7.elements) and w7.fill_defaults.fill_pattern == "lines"
     seen = []
     for code in ("lines", "waves", "honeycomb"):
-        combo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("waves") >= 0][0]
-        combo.setCurrentIndex(combo.findData(code))
-        combo.activated.emit(combo.currentIndex())
+        bar_set(w7, "fill_pattern", code)
         seen.append([e.shape.fill_pattern for e in w7.elements[:3]])
     multi_ok = seen == [["lines"] * 3, ["waves"] * 3, ["honeycomb"] * 3]
     w7._fill_clicked(QPointF(10 + 120 + 15, 25))           # a click on the fourth gives the last choice
     clicked_ok = w7.elements[3].shape.fill_pattern == "honeycomb" and w7.elements[3].shape.fill_spacing == 3.0
-    w7.preview.select_element(boxes[:3])
-    w7.selected = boxes[2]
+    select(w7, *boxes[:3])
     w7.set_tool("hinge")
     hcombo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("wave") >= 0][0]
     hinge_none = hcombo.currentData() == ""
     # a selected shape clicked with the tool: the bar shows what it got (it stayed "no hinge")
     w7.set_tool("select")
-    w7.preview.select_element(boxes[0])
-    w7.selected = boxes[0]
+    select(w7, boxes[0])
     w7.set_tool("hinge")
     w7._hinge_clicked(QPointF(25, 25))
     hcombo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("wave") >= 0][0]
@@ -1407,6 +1348,52 @@ def main():
           "(none %s, kept %s, %s, click %s, hinge %s)" % (shows_none, none_kept, seen, clicked_ok, hinge_none))
     w7._dirty = False
     w7.close()
+
+    # 51. the "window tells the truth" checks find what they should: a field not refreshed, an element
+    # drawn elsewhere, a stale list row, a wrong layer list, a missing field; and a saved and reopened
+    # project has the same state
+    from kerfly.gui import truth as _truth
+    w10 = make_window(grid_mm="0")
+    w10._add_drawn_element(_Spec(kind="rectangle", width=30, height=20, operation="cut"), "rectangle", 10, 10)
+    w10._add_drawn_element(_Spec(kind="ellipse", width=30, height=20, operation="cut"), "ellipse", 60, 10)
+    r10, e10 = w10.elements
+    select(w10, r10)
+    clean = _truth.check_window(w10) == []
+    found = {}
+    spec = r10.shape.copy()                               # data changed behind the bar's back
+    spec.tabs = 3
+    r10.shape = spec
+    found["bar"] = any("'tabs' shows 0, should be 3" in p for p in _truth.check_window(w10))
+    spec.tabs = 0
+    r10.x += 5 / 25.4                                     # moved without redrawing
+    found["bed"] = any("bed view: Rectangle" in p for p in _truth.check_window(w10))
+    found["fields"] = any("position fields: x" in p for p in _truth.check_window(w10))
+    r10.x -= 5 / 25.4
+    e10.visible = False                                   # left out of the job without the list knowing
+    found["list"] = any("element list row 2" in p and "tick" in p for p in _truth.check_window(w10))
+    e10.visible = True
+    r10.layers["cut"] = w10.add_layer("cut").id           # the Layer list above the bed not updated
+    w10.layer_assign_box.findChildren(QComboBox)[0].blockSignals(True)
+    w10.layer_assign_box.findChildren(QComboBox)[0].setCurrentIndex(0)
+    found["layer"] = any("layer choice for Rectangle" in p for p in _truth.check_window(w10))
+    w10.refresh_preview()
+    for f in w10.tool_options.findChildren(QWidget):     # a field gone from the bar
+        if f.property("spec_attr") == "corner_radius":
+            f.hide()
+    found["missing"] = any("'corner_radius' is missing" in p for p in _truth.check_window(w10))
+    w10._update_tool_options(force=True)
+    before = _truth.state(w10)
+    path = tempfile.mktemp(suffix=".kerfly")
+    w10._write_project(path)
+    w11 = make_window(grid_mm="0")
+    w11.open_project(path)
+    os.remove(path)
+    same = _truth.difference(before, _truth.state(w11)) == ""
+    check("truth checks: a clean window passes, each kind of wrong display is found, reopened project same",
+          clean and all(found.values()) and same, "(%s, same %s)" % (found, same))
+    for win in (w10, w11):
+        win._dirty = False
+        win.close()
 
     # 50. the element list shows a single element too (it was hidden until there were two)
     w9 = make_window(grid_mm="0")

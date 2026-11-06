@@ -1544,7 +1544,7 @@ class MainWindow(QMainWindow):
                                           ("w", "\u2194", 1, 0, N_("Width")),
                                           ("h", "\u2195", 1, 2, N_("Height"))):
             spin = QDoubleSpinBox()
-            spin.setRange(-10000.0 if key in "xy" else 0.01, 10000.0)
+            spin.setRange(-10000.0 if key in "xy" else 0.0, 10000.0)     # 0: the height of a level line
             spin.setDecimals(2)
             fit_spin(spin, -9999.99)
             spin.setKeyboardTracking(False)          # apply on Enter / focus out, not per digit
@@ -1891,7 +1891,8 @@ class MainWindow(QMainWindow):
         return (list(self.elements),
                 [(e.placement(), e.design, e.shape.copy() if e.shape is not None else None,
                   dict(e.layers), e.group) for e in self.elements],
-                self.selected)
+                self.selected,
+                list(self.layers))                       # added / deleted layers come back too
 
     def _checkpoint(self):
         """Call before changing the layout."""
@@ -1901,17 +1902,21 @@ class MainWindow(QMainWindow):
         self._redo.clear()
 
     def _restore(self, snap):
-        elements, states, selected = snap
+        elements, states, selected, layer_list = snap
+        layers_changed = [id(l) for l in layer_list] != [id(l) for l in self.layers]
+        self.layers = list(layer_list)
         self.elements = list(elements)
-        for e, (placement, design, shape, layers, group) in zip(self.elements, states):
+        for e, (placement, design, shape, part_layers, group) in zip(self.elements, states):
             e.set_placement(placement)
             e.design = design
             e.shape = shape
-            e.layers = layers
+            e.layers = part_layers
             e.group = group
         self.selected = selected if selected in self.elements else None
         self._compiled = None
         self._layout_changed()
+        if layers_changed:                               # a layer added or deleted in between
+            self._rebuild_layers_panel()
         self._update_tool_options(force=True)
 
     def undo(self):
@@ -2393,6 +2398,9 @@ class MainWindow(QMainWindow):
         if e is None:
             return
         k = self._units_per_inch()
+        if key in ("w", "h") and self.sel_fields[key].value() <= 0 < e.size[0 if key == "w" else 1]:
+            self._update_selection_panel()           # 0 would flatten the element: keep its size
+            return
         if key != "rotation":
             self._checkpoint()
         if key == "x":
@@ -2484,6 +2492,7 @@ class MainWindow(QMainWindow):
                       color=EXTRA_COLORS[(len(self.layers) - len(KINDS)) % len(EXTRA_COLORS)],
                       speed=base.speed, passes=base.passes, power=base.power)
         index = max(i for i, l in enumerate(self.layers) if l.kind == kind) + 1
+        self._checkpoint()                               # Undo takes the new layer away again
         self.layers.insert(index, layer)
         self._layers_structure_changed()
         self._update_layer_assignment()
@@ -2912,6 +2921,9 @@ class MainWindow(QMainWindow):
         self.act_redo.setEnabled(bool(self._redo))
         self._update_laser_state()
         self._update_selection_panel()
+        # the options bar and the Layer lists follow too (a deleted or undone element left them showing it)
+        self._update_layer_assignment()
+        self._update_tool_options()
         self._update_times()
         self._update_bed_check()
 

@@ -129,14 +129,19 @@ class Element:
         angles the element is scaled uniformly to the new width."""
         w0, h0 = self.source_size
         angle = self.rotation % 360
-        if w0 <= 0 or h0 <= 0:
+        if w0 <= 0 and h0 <= 0:
             return
+        # a level or upright line has no height (width): only its other side can be scaled
         if angle in (0, 180):
-            self.scale_x = math.copysign(width / w0, self.scale_x)
-            self.scale_y = math.copysign(height / h0, self.scale_y)
+            if w0 > 0:
+                self.scale_x = math.copysign(width / w0, self.scale_x)
+            if h0 > 0:
+                self.scale_y = math.copysign(height / h0, self.scale_y)
         elif angle in (90, 270):
-            self.scale_x = math.copysign(height / w0, self.scale_x)
-            self.scale_y = math.copysign(width / h0, self.scale_y)
+            if w0 > 0:
+                self.scale_x = math.copysign(height / w0, self.scale_x)
+            if h0 > 0:
+                self.scale_y = math.copysign(width / h0, self.scale_y)
         else:
             cur_w, _h = self.size
             if cur_w > 0:

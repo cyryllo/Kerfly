@@ -69,6 +69,27 @@ GitHub Actions runs every push on clean Windows and Ubuntu machines: it
 installs Kerfly with `start_kerfly.bat` / `start_kerfly.sh`, runs the
 self-test and all the test suites above.
 
+## Release tests
+
+Before a stable release, run the release test on a Full HD screen:
+
+```bash
+QT_QPA_PLATFORM=xcb xvfb-run -a -s "-screen 0 1920x1080x24" .venv/bin/python tests/test_release.py
+```
+
+It works through a whole session in the real window with real mouse clicks
+and key presses (tools, every options bar field for every shape, every menu
+and toolbar command, the panels, a stand-in laser). After every step
+`kerfly/gui/truth.py` checks that the window shows what its data holds
+(options bar, position fields, element list, Layer lists, layers panel, bed
+view, job), and every change is undone and redone. Dialogs are answered by
+clicking their buttons; file and colour pickers and the browser are
+replaced. The test fails when a command, an options bar field or a panel
+control was never used: **a new function needs its steps in
+`tests/test_release.py`**. In the options bar, every field must say which
+setting it shows (`widget.setProperty("spec_attr", name)`), so the checks
+cover it.
+
 ## Screenshots
 
 After a change to the window, refresh the screenshots of the README and the

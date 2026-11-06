@@ -176,6 +176,7 @@ class ToolOptionsBar(QWidget):
             count.setKeyboardTracking(False)
             count.setToolTip(_("Bridges per outline: short uncut gaps that hold the part in the sheet"))
             count.valueChanged.connect(lambda v: self._set("tabs", v))
+            count.setProperty("spec_attr", "tabs")
             width = self._dspin("tab_width", 0.1, 20.0, " mm", decimals=1)
             width.setToolTip(_("Width of each bridge"))
             tg.addWidget(self._icon_label("hash", count.toolTip()), 0, 0)
@@ -202,6 +203,7 @@ class ToolOptionsBar(QWidget):
             sides.setKeyboardTracking(False)
             sides.setToolTip(_("Number of sides of the regular polygon"))
             sides.valueChanged.connect(lambda v: self._set("sides", v))
+            sides.setProperty("spec_attr", "sides")
             self._add(self._with_icon("hexagon", sides), _("Sides"))
         elif kind == "text":
             text = QPlainTextEdit(self.spec.text)
@@ -211,6 +213,7 @@ class ToolOptionsBar(QWidget):
             text.setFixedSize(chars_width(text, 16), fm.lineSpacing() * 2 + 14)
             text.setTabChangesFocus(True)
             text.textChanged.connect(lambda: self._text_edited(text.toPlainText()))
+            text.setProperty("spec_attr", "text")
             self._add(text, _("Content"))
 
             font_box = QWidget()
@@ -223,6 +226,7 @@ class ToolOptionsBar(QWidget):
             font.setFixedWidth(chars_width(font, 16) + 28)
             font.setToolTip(_("Font"))
             font.currentFontChanged.connect(lambda f: self._set("font_family", f.family()))
+            font.setProperty("spec_attr", "font_family")
             g.addWidget(font, 0, 0, 1, 4)
             spacing = self._dspin("text_spacing", -50.0, 200.0, " mm", decimals=2)
             spacing.setSingleStep(0.1)
@@ -241,6 +245,7 @@ class ToolOptionsBar(QWidget):
                 b.setChecked(getattr(self.spec, attr))
                 b.setToolTip(_(tip))
                 b.toggled.connect(lambda on, a=attr: self._set(a, on))
+                b.setProperty("spec_attr", attr)
                 g.addWidget(b, 1, 2 + i)
             self._add(font_box, _("Font"))
             if self.spec.text_path:
@@ -260,6 +265,7 @@ class ToolOptionsBar(QWidget):
                 flip.setChecked(self.spec.text_path_flip)
                 flip.setToolTip(_("Other side: the text runs the other way, on the other side of the line"))
                 flip.toggled.connect(lambda v: self._set("text_path_flip", v))
+                flip.setProperty("spec_attr", "text_path_flip")
                 straight = QToolButton()
                 straight.setText(_("Straight text"))
                 straight.setToolTip(_("Take the text off the path: back to a straight line of text"))
@@ -310,6 +316,7 @@ class ToolOptionsBar(QWidget):
         # tool: every choice counts, also the one already shown (it may not be on the shapes yet)
         (pattern.activated if tool else pattern.currentIndexChanged).connect(
             lambda _i: self._set("hinge_pattern", pattern.currentData()))
+        pattern.setProperty("spec_attr", "hinge_pattern")
         g.addWidget(pattern, 0, 0, 1, 4)
         if self.spec.hinge_pattern or tool:
             # (field, from, to, unit, icon, tooltip, row, column); two rows, like every section
@@ -353,6 +360,7 @@ class ToolOptionsBar(QWidget):
         # tool: every choice counts, also the one already shown (it may not be on the shapes yet)
         (pattern.activated if tool else pattern.currentIndexChanged).connect(
             lambda _i: self._set("fill_pattern", pattern.currentData()))
+        pattern.setProperty("spec_attr", "fill_pattern")
         g.addWidget(pattern, 0, 0, 1, 5)
         if self.spec.fill_pattern or tool:
             spacing = self._dspin("fill_spacing", 0.05, 50.0, " mm", decimals=2)
@@ -371,6 +379,7 @@ class ToolOptionsBar(QWidget):
             outline.setChecked(self.spec.fill_outline)
             outline.setToolTip(_("Cut or engrave the outline too (off: only the pattern)"))
             outline.toggled.connect(lambda v: self._set("fill_outline", v))
+            outline.setProperty("spec_attr", "fill_outline")
             g.addWidget(outline, 0, 5)
             for col, (icon, field) in enumerate((("line-height", spacing), ("rotate-2", angle), ("circle-dashed", margin))):
                 g.addWidget(self._icon_label(icon, field.toolTip()), 1, 2 * col)
@@ -405,6 +414,7 @@ class ToolOptionsBar(QWidget):
         if attr == "font_size":
             w.setToolTip(_("Text height"))
         w.valueChanged.connect(lambda v: self._set(attr, v))
+        w.setProperty("spec_attr", attr)          # which setting it shows (release tests check it)
         return w
 
     # ---- changes ----------------------------------------------------------
