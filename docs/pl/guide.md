@@ -9,7 +9,7 @@ other_lang: guide.html
 
 Kerfly steruje laserami CO2 klasy K40 z płytami Lihuiyu (rodzina M2 Nano):
 układa projekty na stole lasera, pozwala je rysować i edytować oraz wysyła
-zadanie do lasera. Instrukcja dotyczy wersji 1.0.
+zadanie do lasera. Instrukcja dotyczy wersji 1.1.
 
 > Zawsze trzymaj rękę przy wyłączniku lasera i nigdy nie zostawiaj
 > pracującego lasera bez nadzoru.
@@ -63,8 +63,8 @@ domyślne**.
 
 ![Główne okno Kerfly](../screenshot_pl.png)
 
-- **Pasek narzędzi** (góra): polecenia pliku, edycji, układu, widoku,
-  ustawień i pomocy w opisanych grupach.
+- **Pasek narzędzi** (góra): polecenia pliku, edycji, układu, generatorów,
+  widoku, ustawień i pomocy w opisanych grupach.
 
   ![Pasek narzędzi](../img/pl/toolbar.png)
 
@@ -383,13 +383,14 @@ lasera…** wysyła istniejący plik EGV.
 
 ## 8. Ustawienia
 
-**Ustawienia → Ustawienia…** (Ctrl+,) mają pięć zakładek:
+**Ustawienia → Ustawienia…** (Ctrl+,) mają sześć zakładek:
 
 | Zakładka | Ustawienia |
 |---|---|
 | Maszyna | płyta sterująca, jednostki, rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, odblokowanie osi i sygnał po zadaniu, współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 |
 | Raster | półtony (dithering) i ich rozdzielczość, odwrócenie kolorów, odbicie, obrót o 90°, grawer od dołu do góry, odstęp linii skanowania, krzywa poziomów |
 | Wektory | najpierw kształty wewnętrzne, objazd konturu z włączonym laserem, jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
+| Widok | rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok) |
 | Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów |
 | Zaawansowane | język (po ponownym uruchomieniu), Inkscape, mniejsze zużycie pamięci, przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |
 

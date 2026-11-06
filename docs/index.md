@@ -54,8 +54,9 @@ The <a href="{{ site.repo }}/blob/main/INSTALL.md">installation guide</a> explai
 
 ## Status
 
-**Kerfly 1.0 is stable and ready for everyday work** with your laser.
-Planned next: image tracing, kerf compensation, more patterns, more file
+**Kerfly 1.1 is stable and ready for everyday work** with your laser.
+Planned next: kerf compensation (exact sizes of cut parts), round stamps
+with text around the circle, image tracing, more patterns, more file
 formats, and a Debian package with its own APT repository. See the
 [roadmap]({{ site.repo }}/blob/main/ROADMAP.md) and the
 [changes]({{ site.repo }}/blob/main/CHANGELOG.md).

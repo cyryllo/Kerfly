@@ -9,7 +9,7 @@ other_lang: pl/guide.html
 
 Kerfly controls K40-class CO2 lasers with Lihuiyu (M2 Nano family) boards:
 it places your designs on the laser bed, lets you draw and edit them, and
-sends the job to the laser. This guide is for version 1.0.
+sends the job to the laser. This guide is for version 1.1.
 
 > Always keep a hand near the laser's power switch, and never leave a
 > running laser unattended.
@@ -62,8 +62,8 @@ Kerfly keeps its settings in `k40_whisperer.txt` in your home folder.
 
 ![Kerfly main window](screenshot.png)
 
-- **Toolbar** (top): file, edit, arrange, view, settings and help commands in
-  labelled groups.
+- **Toolbar** (top): file, edit, arrange, generators, view, settings and help
+  commands in labelled groups.
 
   ![Toolbar](img/en/toolbar.png)
 
@@ -381,13 +381,14 @@ EGV file.
 
 ## 8. Settings
 
-**Settings → Settings…** (Ctrl+,) has five tabs:
+**Settings → Settings…** (Ctrl+,) has six tabs:
 
 | Tab | Settings |
 |---|---|
 | Machine | controller board, units, bed size, home in the upper right corner, home when connecting, unlock the rail and beep after a job, X/Y scale factors, M3 power per operation and maximum power |
 | Raster | halftone (dither) and its resolution, invert colours, mirror, rotate 90°, engrave bottom to top, scan line step, levels curve |
 | Vector | cut inside shapes first, boundary trace with the laser on, as a rectangle or along the outline, trace gap and speed |
+| View | snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu) |
 | Rotary | rotary attachment, its scale factor and rapid speed |
 | Advanced | language (after a restart), Inkscape, reduced memory use, USB data preparation, waiting for the laser, USB timeout and retries |
 

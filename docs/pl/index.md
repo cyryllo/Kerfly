@@ -55,10 +55,10 @@ Otwórz <a href="{{ site.repo }}/releases/latest">najnowsze wydanie</a> i pobier
 
 ## Stan projektu
 
-**Kerfly 1.0 jest wersją stabilną, gotową do codziennej pracy** z laserem.
-Następne w planach: wektoryzacja obrazów, więcej wzorów,
-kompensacja kerfu, więcej formatów plików oraz paczka dla Debiana z własnym
-repozytorium APT. Zobacz [plan]({{ site.repo }}/blob/main/ROADMAP.md) (po angielsku) i
+**Kerfly 1.1 jest wersją stabilną, gotową do codziennej pracy** z laserem.
+Następne w planach: kompensacja kerfu (dokładne wymiary wycinanych części),
+okrągłe pieczątki z tekstem po okręgu, wektoryzacja obrazów, więcej wzorów,
+więcej formatów plików oraz paczka dla Debiana z własnym repozytorium APT. Zobacz [plan]({{ site.repo }}/blob/main/ROADMAP.md) (po angielsku) i
 [listę zmian]({{ site.repo }}/blob/main/CHANGELOG.md).
 
 ## Pomoc i uwagi
