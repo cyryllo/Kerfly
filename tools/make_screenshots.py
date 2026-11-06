@@ -22,7 +22,7 @@ import time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = os.path.join(ROOT, "docs")
 LANGUAGES = ("en", "pl")
-WINDOW = (1560, 989)          # narrower hides the Help group of the (Polish) toolbar
+WINDOW = (1640, 989)          # narrower hides the Help group of the (Polish) toolbar
 
 
 def take(lang):

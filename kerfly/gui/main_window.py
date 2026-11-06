@@ -195,6 +195,8 @@ class MainWindow(QMainWindow):
         return act
 
     def _build_actions(self):
+        self.act_new = self._action(_("&New project"), self.new_project, "Ctrl+N",
+                                    _("Start an empty project: clears the bed (asks to save changes first)"))
         self.act_open = self._action(_("&Open design\u2026"), self.open_design, "Ctrl+O",
                                      _("Open a file, replacing everything on the bed"))
         self.act_reload = self._action(_("&Reload design"), self.reload_design, "F5")
@@ -325,7 +327,7 @@ class MainWindow(QMainWindow):
 
         mb = self.menuBar()
         m = mb.addMenu(_("&File"))
-        for a in (self.act_open, self.act_add, self.act_reload, None, self.act_save_project,
+        for a in (self.act_new, self.act_open, self.act_add, self.act_reload, None, self.act_save_project,
                   self.act_save_project_as, None, self.act_save_egv,
                   self.act_send_egv, None, self.act_save_settings, None, self.act_quit):
             m.addSeparator() if a is None else m.addAction(a)
@@ -394,6 +396,7 @@ class MainWindow(QMainWindow):
 
         groups = [
             (C_("toolbar group", "File"), [
+                (self.act_new, "file", C_("toolbar", "New")),
                 (self.act_open, "folder-open", C_("toolbar", "Open")),
                 (self.act_add, "file-plus", C_("toolbar", "Add")),
                 (self.act_reload, "refresh", C_("toolbar", "Reload")),
@@ -2797,7 +2800,7 @@ class MainWindow(QMainWindow):
                   self.btn_goto,
                   self.btn_test_fire, self.btn_calc_time, self.selection_box] + self.corner_buttons:
             w.setEnabled(not busy)
-        for a in [self.act_open, self.act_reload, self.act_save_egv, self.act_send_egv,
+        for a in [self.act_new, self.act_open, self.act_reload, self.act_save_egv, self.act_send_egv,
                   self.act_connect, self.act_release, self.act_home, self.act_unlock,
                   self.act_settings, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v,
@@ -2851,6 +2854,27 @@ class MainWindow(QMainWindow):
         self._update_bed_check()
 
     # ------------------------------------------------------------ design files
+    def new_project(self):
+        """File → New project: an empty bed, the layers back to the default ones
+        (with the speeds and powers last used), nothing to undo."""
+        if self.worker is not None or not self._confirm_discard():
+            return
+        self.elements = []
+        self.selected = None
+        self._default_layer = {}
+        self._init_layers()
+        self._undo.clear()
+        self._redo.clear()
+        self._compiled = None
+        self._layer_cache.clear()
+        self.project_file = ""
+        self._set_dirty(False)
+        self._rebuild_layers_panel()
+        self._update_design_label()
+        self._update_power_visibility()
+        self.refresh_preview(fit=True)
+        self.status(_("New project"))
+
     def open_design(self, add=False):
         start = os.path.dirname(self.design_file or self.values.get("designfile", "")) or os.path.expanduser("~")
         title = _("Add design") if add else _("Open design")

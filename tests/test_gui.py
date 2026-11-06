@@ -1384,6 +1384,26 @@ def main():
     w7._dirty = False
     w7.close()
 
+    # 49. File → New project: asks about unsaved changes, then an empty bed, default layers, no undo
+    w8 = make_window(grid_mm="0")
+    w8._add_drawn_element(_Spec(kind="rectangle", width=20, height=20), "rectangle", 10, 10)
+    w8.add_layer("cut")                                   # an extra layer, gone in the new project
+    asked = []
+    _orig_q = QMessageBox.question
+    QMessageBox.question = staticmethod(lambda *a, **k: asked.append(1) or QMessageBox.Discard)
+    try:
+        w8.new_project()
+    finally:
+        QMessageBox.question = _orig_q
+    kinds = sorted(l.kind for l in w8.layers)
+    fresh = not w8.elements and not w8._undo and not w8.project_file and not w8._dirty \
+        and kinds == sorted(set(kinds)) and bool(asked)
+    on_bar = any(getattr(t, "defaultAction", lambda: None)() is w8.act_new for t in w8.findChildren(QToolButton))
+    check("new project: asks first, empty bed, default layers, nothing to undo, toolbar button",
+          fresh and on_bar, "(%s, %d layers, asked %s)" % (fresh, len(w8.layers), bool(asked)))
+    w8._dirty = False
+    w8.close()
+
     # 43. no keyboard shortcut is used twice (Qt then runs neither action)
     from PySide6.QtGui import QAction as _QAction
     seen, twice = {}, []

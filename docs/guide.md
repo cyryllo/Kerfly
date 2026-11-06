@@ -134,6 +134,8 @@ so in the status bar.
 
 ## 4. Opening files
 
+**File → New project** (Ctrl+N, toolbar **New**) starts with an empty bed
+and the default layers (it asks to save unsaved changes first).
 **File → Open design…** (Ctrl+O) replaces everything on the bed;
 **File → Add design…** (Ctrl+Shift+O) puts another file next to the others.
 
@@ -360,6 +362,7 @@ Kerfly is available in English, Polish, German, Spanish and French.
 
 | Keys | Action |
 |---|---|
+| Ctrl+N | New project |
 | Ctrl+O / Ctrl+Shift+O | Open design / add design |
 | F5 | Reload design |
 | Ctrl+S / Ctrl+Shift+S | Save project / save project as |

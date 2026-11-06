@@ -133,6 +133,8 @@ Kerfly przypomina o tym na pasku stanu.
 
 ## 4. Otwieranie plików
 
+**Plik → Nowy projekt** (Ctrl+N, na pasku **Nowy**) zaczyna od pustego stołu i
+domyślnych warstw (najpierw pyta o zapisanie niezapisanych zmian).
 **Plik → Otwórz projekt…** (Ctrl+O) zastępuje wszystko na stole;
 **Plik → Dodaj projekt…** (Ctrl+Shift+O) kładzie kolejny plik obok
 pozostałych.
@@ -365,6 +367,7 @@ francusku.
 
 | Klawisze | Działanie |
 |---|---|
+| Ctrl+N | Nowy projekt |
 | Ctrl+O / Ctrl+Shift+O | Otwórz projekt / dodaj projekt |
 | F5 | Wczytaj projekt ponownie |
 | Ctrl+S / Ctrl+Shift+S | Zapisz projekt / zapisz projekt jako |

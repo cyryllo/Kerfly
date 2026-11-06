@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-06 13:38+0100\n"
+"POT-Creation-Date: 2026-11-06 13:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -99,6 +99,9 @@ msgid "&Material library…"
 msgstr ""
 
 msgid "&Mirror horizontally"
+msgstr ""
+
+msgid "&New project"
 msgstr ""
 
 msgid "&Open design…"
@@ -1017,6 +1020,10 @@ msgstr ""
 msgid "New"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "New"
+msgstr ""
+
 msgid "New ellipse"
 msgstr ""
 
@@ -1039,6 +1046,9 @@ msgid "New polygon"
 msgstr ""
 
 msgid "New polyline"
+msgstr ""
+
+msgid "New project"
 msgstr ""
 
 msgid "New rectangle"
@@ -1562,6 +1572,9 @@ msgid ""
 msgstr ""
 
 msgid "Start"
+msgstr ""
+
+msgid "Start an empty project: clears the bed (asks to save changes first)"
 msgstr ""
 
 msgid "Start the selected operations"

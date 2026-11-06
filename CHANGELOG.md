@@ -45,6 +45,8 @@ Fixes from the second laser test (Windows 10, the 0.18.0 installer).
 
 - **Living hinge in a band**: the width of the band with cuts (0: the whole
   shape, as before) and where its middle is, from the middle of the shape.
+- **File → New project** (Ctrl+N, toolbar **New**): an empty bed with the
+  default layers; asks to save unsaved changes first.
 
 ## 0.18.0 (2026-11-05)
 
