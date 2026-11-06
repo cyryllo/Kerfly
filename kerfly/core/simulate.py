@@ -62,7 +62,9 @@ def timeline(elements, layers, settings, units="mm", start=(0.0, 0.0)):
             coords = copy.deepcopy(source)
             if coords and settings.inside_first and layer.kind != GCODE:
                 part = design.vector_cut if layer.kind == CUT else design.vector_engrave
-                ordered = None if part.sorted else element_order(part, inside_check=layer.kind == CUT)
+                start = None if (settings.rotate or settings.mirror) else (design.bounds[0], design.bounds[3])
+                ordered = None if part.sorted else element_order(part, inside_check=layer.kind == CUT,
+                                                                 start=start)
                 coords = ordered if ordered is not None else (
                     coords if part.sorted else optimize_paths(coords, inside_check=layer.kind == CUT))
             paths = _loops(coords, bed)

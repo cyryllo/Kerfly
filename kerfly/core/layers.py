@@ -143,17 +143,19 @@ def compile_layer(elements, layer, layers):
     return design, full_origin
 
 
-def element_order(ecoord, inside_check):
-    """Rows of a layer made of several elements, in the order of the element
-    list: each element's own paths are ordered as K40 Whisperer does (inside
-    shapes first, short travel), but the elements are not mixed, so they are
-    cut in the order the user set. Loop numbers stay unique. None when the
-    data are not made of several elements (K40 Whisperer's order then)."""
+def element_order(ecoord, inside_check, start=None):
+    """Rows of a layer built from the element list, in the order of that list:
+    each element's own paths are ordered as K40 Whisperer does (inside shapes
+    first, short travel), but the elements are not mixed, so they are cut in
+    the order the user set. Loop numbers stay unique. With `start` (the head
+    position, design coordinates) an open line is cut from its end nearer to
+    the head. None when the data do not come from the element list (a single
+    opened file: K40 Whisperer's order, byte-identical)."""
     from .pathopt import optimize_paths
     import copy
     starts = getattr(ecoord, "element_starts", None)
     rows = ecoord.ecoords
-    if not starts or len(starts) < 2 or not rows:
+    if not starts or not rows:
         return None
     out = []
     for a, b in zip(starts, starts[1:] + [len(rows)]):
@@ -165,6 +167,31 @@ def element_order(ecoord, inside_check):
         offset = (max(r[2] for r in out) + 1) if out else 0
         for r in part:
             out.append([r[0], r[1], r[2] - base + offset] + list(r[3:]))
+    if start is not None:
+        out = _open_lines_from_near_end(out, start)
+    return out
+
+
+def _open_lines_from_near_end(rows, start):
+    """Reverse each open line (first point != last) whose far end is nearer to
+    where the head is: no run along the line to its other end first."""
+    import math
+    loops = []
+    for r in rows:
+        if loops and loops[-1][0][2] == r[2]:
+            loops[-1].append(r)
+        else:
+            loops.append([r])
+    out = []
+    head = start
+    for loop in loops:
+        first, last = loop[0], loop[-1]
+        closed = math.hypot(first[0] - last[0], first[1] - last[1]) < 1e-6
+        if not closed and math.hypot(last[0] - head[0], last[1] - head[1]) \
+                < math.hypot(first[0] - head[0], first[1] - head[1]):
+            loop = loop[::-1]
+        out.extend(loop)
+        head = (loop[-1][0], loop[-1][1])
     return out
 
 
@@ -200,7 +227,9 @@ def build_layers_job(elements, layers, settings, progress=None, update_gui=None,
         if s.inside_first and layer.kind in (CUT, ENGRAVE):
             part = design.vector_cut if layer.kind == CUT else design.vector_engrave
             if not part.sorted:
-                rows = element_order(part, inside_check=layer.kind == CUT)
+                # the head starts at the design's top-left corner (rotated / mirrored jobs: no turning)
+                start = None if (s.rotate or s.mirror) else (design.bounds[0], design.bounds[3])
+                rows = element_order(part, inside_check=layer.kind == CUT, start=start)
                 if rows is not None:
                     part.set_ecoords(rows, data_sorted=True)
                     part.sorted = True        # what build_job checks (set_ecoords only sets data_sorted)

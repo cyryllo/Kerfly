@@ -216,7 +216,17 @@ def make_trace_path(design, settings, progress=_no_progress, stop=None):
     all_coords.extend(RengHullCoords)
 
     trace_coords = []
-    if all_coords != []:
+    if all_coords != [] and settings.trace_rectangle:
+        # the bounding rectangle, made larger by the trace gap
+        gap = settings.trace_gap / settings.units_scale
+        x0 = min(p[0] for p in all_coords) - gap
+        x1 = max(p[0] for p in all_coords) + gap
+        y0 = min(p[1] for p in all_coords) - gap
+        y1 = max(p[1] for p in all_coords) + gap
+        trace_coords = [[x0, y1, 1], [x1, y1, 1], [x1, y0, 1], [x0, y0, 1], [x0, y1, 1]]
+        if settings.trace_from_corner:
+            trace_coords = start_loop_near(trace_coords, startx, starty)
+    elif all_coords != []:
         trace_coords = my_hull.convexHullecoords(all_coords)
         gap = settings.trace_gap / settings.units_scale
         trace_coords = offset_ecoords(trace_coords, gap)

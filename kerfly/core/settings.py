@@ -73,6 +73,9 @@ class JobSettings:
     # Kerfly: start the trace loop at the corner nearest the head. Off: K40 Whisperer's
     # start point (with pyclipper the upper right corner), byte-identical laser data.
     trace_from_corner: bool = False
+    # Kerfly: trace the bounding rectangle of the design instead of its convex hull
+    # (off: K40 Whisperer's hull, which follows outward curves)
+    trace_rectangle: bool = False
 
     @property
     def feed_factor(self):

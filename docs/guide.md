@@ -314,7 +314,10 @@ out of the job.
 2. Place the design on the bed (or let it follow the head, see section 3).
 3. **Trace boundary** (the dashed-outline button, Laser menu) drives the head
    around the design, with the laser off unless set in the settings, so you
-   can check where it will be cut. It starts at the corner nearest the head.
+   can check where it will be cut. It runs round the rectangle around the
+   design, starting at the corner nearest the head (Settings → Vector: switch
+   off "Boundary trace as a rectangle" to follow the outline, as K40
+   Whisperer does). *(rectangle: not yet tested on a laser)*
 4. **Start** (F9) runs all ticked layers. **Pause** stops the laser for a
    moment and the same button resumes it. **Stop** (Esc) ends the job
    immediately; then press **Home** before the next job.
@@ -343,7 +346,7 @@ EGV file.
 |---|---|
 | Machine | controller board, units, bed size, home in the upper right corner, home when connecting, unlock the rail and beep after a job, X/Y scale factors, M3 power per operation and maximum power |
 | Raster | halftone (dither) and its resolution, invert colours, mirror, rotate 90°, engrave bottom to top, scan line step, levels curve |
-| Vector | cut inside shapes first, boundary trace with the laser on, trace gap and speed |
+| Vector | cut inside shapes first, boundary trace with the laser on, as a rectangle or along the outline, trace gap and speed |
 | Rotary | rotary attachment, its scale factor and rapid speed |
 | Advanced | language (after a restart), Inkscape, reduced memory use, USB data preparation, waiting for the laser, USB timeout and retries |
 

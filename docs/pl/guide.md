@@ -316,8 +316,11 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
 2. Ułóż projekt na stole (albo włącz „Projekt podąża za głowicą”, punkt 3).
 3. **Objazd konturu** (przycisk z kreskowaną ramką, menu Laser) objeżdża
    głowicą projekt, z wyłączonym laserem, chyba że ustawisz inaczej w
-   ustawieniach, żeby sprawdzić, gdzie będzie cięcie. Zaczyna od narożnika
-   najbliższego głowicy.
+   ustawieniach, żeby sprawdzić, gdzie będzie cięcie. Objeżdża prostokąt
+   wokół projektu, zaczynając od narożnika najbliższego głowicy (Ustawienia →
+   Wektory: wyłącz „Objazd konturu jako prostokąt”, żeby jechać wzdłuż
+   obwiedni, jak w K40 Whisperer). *(prostokąt: jeszcze nie sprawdzony na
+   laserze)*
 4. **Start** (F9) wykonuje wszystkie zaznaczone warstwy. **Pauza** na chwilę
    zatrzymuje laser, a ten sam przycisk wznawia pracę. **Stop** (Esc)
    natychmiast kończy zadanie; potem naciśnij **Bazowanie** przed następnym
@@ -347,7 +350,7 @@ lasera…** wysyła istniejący plik EGV.
 |---|---|
 | Maszyna | płyta sterująca, jednostki, rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, odblokowanie osi i sygnał po zadaniu, współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 |
 | Raster | półtony (dithering) i ich rozdzielczość, odwrócenie kolorów, odbicie, obrót o 90°, grawer od dołu do góry, odstęp linii skanowania, krzywa poziomów |
-| Wektory | najpierw kształty wewnętrzne, objazd konturu z włączonym laserem, odstęp i prędkość objazdu |
+| Wektory | najpierw kształty wewnętrzne, objazd konturu z włączonym laserem, jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
 | Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów |
 | Zaawansowane | język (po ponownym uruchomieniu), Inkscape, mniejsze zużycie pamięci, przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |
 

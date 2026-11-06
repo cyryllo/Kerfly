@@ -2647,7 +2647,7 @@ class MainWindow(QMainWindow):
     def job_settings(self):
         s = config.job_settings_from_values(self.values, power_per_stage=self.power_per_stage())
         # the trace starts at the corner where the head is (K40 Whisperer: upper right first)
-        return replace(s, trace_from_corner=True)
+        return replace(s, trace_from_corner=True, trace_rectangle=is_true(self.values.get("trace_rect", "1")))
 
     def send_options(self):
         v = self.values

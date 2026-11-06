@@ -42,6 +42,7 @@ TABS = [
     (N_("Vector"), [
         ("inside_first", N_("Cut inside shapes first"), "bool", None),
         ("trace_w_laser", N_("Boundary trace with laser on"), "bool", None),
+        ("trace_rect", N_("Boundary trace as a rectangle (off: along the outline of the design)"), "bool", None),
         ("trace_gap", N_("Boundary trace gap"), "float", (0, 100, 1, "len")),
         ("trace_speed", N_("Boundary trace speed"), "float", (0.1, 1000, 1, "speed")),
     ]),

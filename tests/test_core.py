@@ -818,6 +818,34 @@ def test_cut_order():
     print("%-5s cut order: as in the element list, holes first inside an element %s"
           % ("OK" if ok else "FAIL", names))
     errors += 0 if ok else 1
+
+    # an open line drawn from right to left is cut from its left end, the one nearer to where
+    # the head starts (the design's top-left corner), not after a run to its right end
+    line = ShapeSpec(kind="polyline", points=[(80, 0), (40, 15), (0, 5)], closed_path=False)
+    box = ShapeSpec(kind="rectangle", width=10, height=10)
+    elements = [Element(build_design(box), x=0.0, y=0.0, shape=box),
+                Element(build_design(line), x=0.0, y=-1.0, shape=line)]
+    cache = {}
+    build_layers_job(elements, layers, JobSettings(), cache=cache)
+    rows = cache[cut_layer.id].vector_cut.ecoords
+    line_rows = [r for r in rows if r[2] == rows[-1][2]]
+    ok = line_rows[0][0] < line_rows[-1][0]
+    print("%-5s cut order: an open line starts at its end nearer the head (x %.2f -> %.2f in)"
+          % ("OK" if ok else "FAIL", line_rows[0][0], line_rows[-1][0]))
+    errors += 0 if ok else 1
+
+    # trace boundary as the bounding rectangle (Kerfly), the hull in K40 Whisperer
+    from dataclasses import replace as _replace
+    import math
+    d = Design()
+    d.vector_cut.set_ecoords([[i / 10.0, 1 - math.sin(i / 20.0 * math.pi) * 0.8, 1] for i in range(21)])
+    d.bounds = (0, 2, 0.2, 1)
+    rect = job.make_trace_path(d, _replace(JobSettings(), trace_from_corner=True, trace_rectangle=True))
+    hull = job.make_trace_path(d, JobSettings())
+    ok = [(round(p[0], 3), round(p[1], 3)) for p in rect] == [(0, 1), (2, 1), (2, 0.2), (0, 0.2), (0, 1)] \
+        and len(hull) > 5
+    print("%-5s trace: rectangle in Kerfly, outline (hull) as in K40 Whisperer" % ("OK" if ok else "FAIL"))
+    errors += 0 if ok else 1
     return errors
 
 

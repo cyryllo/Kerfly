@@ -34,6 +34,12 @@ Fixes from the second laser test (Windows 10, the 0.18.0 installer).
   down (later)**, **To the start** and **To the end** (PgUp, PgDown, Ctrl+PgUp,
   Ctrl+PgDown); the simulation shows the same order. A single opened file is
   cut as before (byte-identical to K40 Whisperer).
+- **Trace boundary as a rectangle**: it ran along the convex outline, so
+  under a curve it followed the curve. Now it drives round the rectangle
+  around the design (Settings → Vector: "Boundary trace as a rectangle", on by
+  default; off: the outline, as in K40 Whisperer).
+- **Open lines are cut from the end nearer to the head**, so the head no
+  longer runs to the far end of a curve first.
 
 ## 0.18.0 (2026-11-05)
 
