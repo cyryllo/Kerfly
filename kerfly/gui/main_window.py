@@ -2282,6 +2282,15 @@ class MainWindow(QMainWindow):
         hx, hy = self.head
         made = []
         for item in design.items:
+            if item.image is not None:                   # a picture (stamp): saved, then opened as an image
+                path = self._save_generated_image(item.image, design.name)
+                built = Design()
+                loaders.load_image(path, built, item.dpi, is_true(self.values.get("reduced_mem", "0")))
+                e = Element(built, name=_(item.name or design.name), source_file=path,
+                            load_options={"dpi": item.dpi}, group=group)
+                e.x, e.y = hx + item.left / 25.4, hy - item.top / 25.4
+                made.append((item, e))
+                continue
             spec = item.spec.copy()
             if spec.kind == "text":
                 update_text_spec(spec)
@@ -2312,6 +2321,22 @@ class MainWindow(QMainWindow):
         self.status(_("%(name)s inserted: %(n)d shapes. Drag it into place; Undo takes it away.")
                     % {"name": _(design.name), "n": len(elements)})
         return elements
+
+    def _save_generated_image(self, image, name):
+        """Keep a generated picture (e.g. a stamp) in Kerfly's settings folder, so the
+        element can be reloaded and saved in projects like any opened picture."""
+        import time
+        from kerfly.core.materials import library_path
+        folder = os.path.join(os.path.dirname(library_path()), "generated")
+        os.makedirs(folder, exist_ok=True)
+        base = "%s-%s" % (name.lower().replace(" ", "-"), time.strftime("%Y%m%d-%H%M%S"))
+        path = os.path.join(folder, base + ".png")
+        n = 1
+        while os.path.exists(path):
+            n += 1
+            path = os.path.join(folder, "%s-%d.png" % (base, n))
+        image.save(path)
+        return path
 
     def _shift_onto_bed(self, elements):
         """Move elements together so all of them lie on the bed, if they fit."""

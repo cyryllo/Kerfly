@@ -32,12 +32,14 @@ class LayerSpec:
 
 @dataclass
 class Item:
-    spec: ShapeSpec
+    spec: ShapeSpec                # None for a picture (image)
     left: float                    # mm, top-left of the shape's bounding box
     top: float
     layer: str = ""                # key of a LayerSpec; "" = the default layer of its kind
     name: str = ""
     on_path_of: int = -1           # a text put on the path of item number ... (after placing)
+    image: object = None           # a picture to engrave as a raster (made by the window)
+    dpi: float = 0.0               # its resolution
 
 
 @dataclass

@@ -1479,15 +1479,53 @@ def main():
         ok = ok and _truth2.difference(before, _truth2.state(gw)) == ""
         made[key] = ok
         dlg.deleteLater()
+    from PySide6.QtTest import QTest as _QTest
+    d0 = _GD(gw, "gear", remember=False)
+    d0.show()
+    app.processEvents()
+    _QTest.keyClick(d0.widgets["teeth"].lineEdit(), Qt.Key_Return)      # Enter: the preview, not Insert
+    app.processEvents()
+    enter_stays = d0.isVisible() and d0.result() == 0
+    d0.reject()
     gw.remember_geometry = True
     d1 = _GD(gw, "gear", remember=True)
     d1.widgets["teeth"].setValue(33)
     d1.accept()
     remembered = _GD(gw, "gear", remember=True).widgets["teeth"].value() == 33
     check("generators: every one inserts a group as one undo step, window tells the truth; numbers remembered",
-          all(made.values()) and remembered, "(%s, remembered %s)" % (made, remembered))
+          all(made.values()) and remembered and enter_stays,
+          "(%s, remembered %s, Enter keeps the dialog %s)" % (made, remembered, enter_stays))
     gw._dirty = False
     gw.close()
+
+    # 55. stamp: the picture is inverted (background burnt, text raised) and mirrored, black and white,
+    # at the chosen size; it is kept as a file (projects can save it) and the outline is cut
+    from kerfly.gui import stamp as _stamp
+    base = dict(preset="custom", width=40.0, height=15.0, text="AB", font="DejaVu Sans", bold=True, text_size=0.0,
+                picture="", place="left", frame=0.0, corner=0.0, margin=1.0, outline=True)
+    plain = _stamp.render(dict(base, invert=False, mirror=False))
+    stamp_img = _stamp.render(dict(base, invert=True, mirror=True))
+
+    def dark(img):
+        return sum(1 for y in range(0, img.height(), 4) for x in range(0, img.width(), 4)
+                   if img.pixelColor(x, y).lightness() < 128)
+    total = len(range(0, plain.height(), 4)) * len(range(0, plain.width(), 4))
+    inverted = dark(plain) < total * 0.5 < dark(stamp_img)
+    mirrored = all((plain.pixelColor(x, y).lightness() < 128) ==
+                   (stamp_img.pixelColor(plain.width() - 1 - x, y).lightness() >= 128)
+                   for y in range(0, plain.height(), 25) for x in range(0, plain.width(), 25))
+    two_tone = all(plain.pixelColor(x, y).lightness() in (0, 255)
+                   for y in range(0, plain.height(), 9) for x in range(0, plain.width(), 9))
+    size_ok = abs(plain.width() / 1000 * 25.4 - 40) < 0.1 and abs(plain.height() / 1000 * 25.4 - 15) < 0.1
+    sw = make_window(grid_mm="0")
+    els = sw.insert_generated(_stamp.make(dict(base, invert=True, mirror=True), sw))
+    kept = els and os.path.isfile(els[0].source_file) and els[0].design.raster.image is not None \
+        and els[1].shape is not None and els[1].shape.operation == "cut"
+    check("stamp: inverted, mirrored, black and white, its size, kept as a file, outline cut",
+          inverted and mirrored and two_tone and size_ok and bool(kept),
+          "(%s)" % ([inverted, mirrored, two_tone, size_ok, bool(kept)],))
+    sw._dirty = False
+    sw.close()
 
     # 50. the element list shows a single element too (it was hidden until there were two)
     w9 = make_window(grid_mm="0")

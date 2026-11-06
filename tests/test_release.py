@@ -1029,15 +1029,18 @@ def part_generators(s):
     s.step("File → New project", lambda: s.trigger(w.act_new), undo=False, change=None)
     for n, (key, action) in enumerate(w.act_generators.items()):
         def answer(dlg):
-            numbers = [wd for wd in dlg.widgets.values() if isinstance(wd, (QSpinBox, QDoubleSpinBox))]
+            numbers = [wd for wd in dlg.widgets.values()
+                       if isinstance(wd, (QSpinBox, QDoubleSpinBox)) and wd.isEnabled()]
             if numbers:                                  # change the first number, as a user would
                 spin = numbers[0]
                 value = spin.value() + (spin.singleStep() if spin.value() < spin.maximum() else -spin.singleStep())
                 s.type_number(spin, value)
-            ok = next(b for b in dlg.findChildren(QAbstractButton) if b.text().replace("&", "") == tr_("Insert"))
+            from PySide6.QtWidgets import QDialogButtonBox
+            ok = dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok)   # Insert / Generate stamp
             QTest.mouseClick(ok, Qt.LeftButton)
         s.expect_dialog(key, answer)
         count = len(w.elements)
+        assert count == 0, "the bed should be empty before each generator"
         s.step("Generators → %s (%s)" % (action.text().replace("…", ""), "toolbar" if n % 2 == 0 else "menu"),
                lambda a=action, via=("button" if n % 2 == 0 else "menu"): s.trigger(a, via=via),
                check=lambda c=count: (len(w.elements) > c, "%d elements (was %d)" % (len(w.elements), c)))

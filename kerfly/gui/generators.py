@@ -15,9 +15,9 @@ import os
 
 from PySide6.QtCore import QPointF, QRectF, Qt, QTimer
 from PySide6.QtGui import QBrush, QColor, QPainter, QPainterPath, QPen
-from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout,
-                               QGraphicsScene, QGraphicsView, QHBoxLayout, QLabel, QLineEdit, QSpinBox,
-                               QVBoxLayout)
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
+                               QFontComboBox, QFormLayout, QGraphicsScene, QGraphicsView, QHBoxLayout, QLabel,
+                               QLineEdit, QPlainTextEdit, QSpinBox, QToolButton, QVBoxLayout, QWidget)
 
 from kerfly.core import generators as gen
 from kerfly.core.layers import DEFAULT_COLORS
@@ -171,13 +171,24 @@ GENERATORS += [
      [], _test_card),
 ]
 
+from kerfly.gui import stamp as _stamp                 # noqa: E402
+
+GENERATORS.insert(len(GENERATORS) - 1, (
+    "stamp", N_("Stamp"), "rubber-stamp",
+    N_("Stamp: text, a picture and a frame for a rubber stamp; the background is burnt away and the stamp is "
+       "mirrored, so it prints the right way round"),
+    _stamp.FIELDS, _stamp.make))
+# the button that makes the design (default: Insert)
+ACCEPT_TEXT = {"stamp": N_("Generate stamp")}
+
 # names of the generated elements (kerfly.core.generators), shown in the element list
 ITEM_NAMES = [N_("Field"), N_("Label"), N_("Bottom"), N_("Front"), N_("Back"), N_("Left side"),
               N_("Right side"), N_("Lid"), N_("Comb"), N_("Comb cut"), N_("Slot plate"), N_("Gear"),
               N_("Axle hole"), N_("Puzzle cuts"), N_("Puzzle outline"), N_("Marks"), N_("Number"),
               N_("Ruler outline"), N_("Square 50 mm"), N_("Hole 20 mm"), N_("Ruler 100 mm"),
               N_("Raster block"), N_("Raster text"), N_("Pattern fill"), N_("Living hinge"), N_("Circle"),
-              N_("Text on a path"), N_("Bridges"), N_("Pentagon"), N_("Open line"), N_("QR code")]
+              N_("Text on a path"), N_("Bridges"), N_("Pentagon"), N_("Open line"), N_("QR code"), N_("Stamp"),
+              N_("Stamp outline")]
 
 
 def generator(key):
@@ -189,6 +200,10 @@ def _settings():
     from PySide6.QtCore import QSettings
     from kerfly.core.materials import library_path
     return QSettings(os.path.join(os.path.dirname(library_path()), "window.ini"), QSettings.IniFormat)
+
+
+def default_of(fields, name):
+    return next(f[3] for f in fields if f[0] == name)
 
 
 def defaults(fields, window):
@@ -272,6 +287,31 @@ class GeneratorDialog(QDialog):
                 w = QCheckBox()
                 w.setChecked(bool(value))
                 w.toggled.connect(self._changed)
+            elif kind == "multiline":
+                w = QPlainTextEdit(_(value) if value == default_of(self.fields, name) else value)
+                w.setFixedHeight(w.fontMetrics().lineSpacing() * 4 + 14)
+                w.textChanged.connect(self._changed)
+            elif kind == "font":
+                w = QFontComboBox()
+                from PySide6.QtGui import QFont
+                w.setCurrentFont(QFont(str(value)))
+                w.currentFontChanged.connect(self._changed)
+            elif kind == "file":
+                w = QWidget()
+                row = QHBoxLayout(w)
+                row.setContentsMargins(0, 0, 0, 0)
+                edit = QLineEdit(str(value))
+                edit.setPlaceholderText(_("none"))
+                edit.textChanged.connect(self._changed)
+                browse = QToolButton()
+                browse.setText("…")
+                browse.setToolTip(_("Choose a file"))
+                browse.clicked.connect(lambda _c=False, e=edit: self._choose_file(e))
+                row.addWidget(edit, 1)
+                row.addWidget(browse)
+                w.edit = edit
+                from PySide6.QtWidgets import QSizePolicy
+                w.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
             else:
                 w = QLineEdit(str(value))
                 w.textChanged.connect(self._changed)
@@ -297,7 +337,10 @@ class GeneratorDialog(QDialog):
         info = QLabel(_(tip))
         info.setWordWrap(True)
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.button(QDialogButtonBox.Ok).setText(_("Insert"))
+        buttons.button(QDialogButtonBox.Ok).setText(_(ACCEPT_TEXT.get(key, N_("Insert"))))
+        for b in buttons.buttons():                    # Enter in a field updates the preview, it does not insert
+            b.setAutoDefault(False)
+            b.setDefault(False)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         layout = QVBoxLayout(self)
@@ -308,6 +351,7 @@ class GeneratorDialog(QDialog):
         self._timer.setSingleShot(True)
         self._timer.setInterval(150)
         self._timer.timeout.connect(self._preview)
+        self._enable_fields()
         self._preview()
 
     def values(self):
@@ -320,15 +364,37 @@ class GeneratorDialog(QDialog):
                 out[name] = w.currentData()
             elif kind == "bool":
                 out[name] = w.isChecked()
+            elif kind == "multiline":
+                out[name] = w.toPlainText()
+            elif kind == "font":
+                out[name] = w.currentFont().family()
+            elif kind == "file":
+                out[name] = w.edit.text().strip()
             else:
                 out[name] = w.text()
         return out
+
+    def _choose_file(self, edit):
+        name, _unused = QFileDialog.getOpenFileName(self, _("Choose a picture"), os.path.dirname(edit.text()),
+                                                    _("Pictures (*.png *.jpg *.jpeg *.bmp *.svg);;All files (*)"))
+        if name:
+            edit.setText(name)
 
     def result_design(self):
         return self.make(self.values(), self.window_)
 
     def _changed(self, *_args):
+        self._enable_fields()
         self._timer.start()
+
+    def _enable_fields(self):
+        """Own width and height only with the own size (a stamp's ready-made sizes)."""
+        preset = self.widgets.get("preset")
+        if preset is not None:
+            own = preset.currentData() == "custom"
+            for name in ("width", "height"):
+                if name in self.widgets:
+                    self.widgets[name].setEnabled(own)
 
     def _preview(self):
         from kerfly.gui.text_shapes import update_text_spec
@@ -341,6 +407,16 @@ class GeneratorDialog(QDialog):
         colors = {l.key: l.color for l in design.layers}
         xs, ys = [], []
         for item in design.items:
+            if item.image is not None:                 # a picture (stamp): shown at its size
+                from PySide6.QtGui import QPixmap
+                pix = self.scene.addPixmap(QPixmap.fromImage(item.image))
+                k = 25.4 / item.dpi
+                pix.setTransformationMode(Qt.SmoothTransformation)
+                pix.setScale(k)
+                pix.setPos(item.left, item.top)
+                xs += [item.left, item.left + item.image.width() * k]
+                ys += [item.top, item.top + item.image.height() * k]
+                continue
             spec = item.spec.copy()
             if spec.kind == "text":
                 update_text_spec(spec)
@@ -370,6 +446,17 @@ class GeneratorDialog(QDialog):
             self.view.fitInView(rect, Qt.KeepAspectRatio)
             self.summary.setText(_("%(w).1f × %(h).1f mm, %(n)d shapes, %(l)d layers") % {
                 "w": max(xs) - min(xs), "h": max(ys) - min(ys), "n": len(design.items), "l": len(design.layers)})
+
+    def keyPressEvent(self, event):
+        """Enter in a field takes the number and updates the preview; it does not insert
+        (only the button does)."""
+        from PySide6.QtWidgets import QAbstractButton
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter) and not isinstance(self.focusWidget(), QAbstractButton):
+            self._enable_fields()
+            self._preview()
+            event.accept()
+            return
+        super().keyPressEvent(event)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
