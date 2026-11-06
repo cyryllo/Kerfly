@@ -895,6 +895,54 @@ def test_usblib():
     return errors
 
 
+def test_udev():
+    """Linux: the USB rule is written through pkexec with the rule as an argument (no
+    quoting problems), a closed password window is "cancelled", without pkexec the
+    commands are given; a permission error is told from other USB errors."""
+    from kerfly.core import udev
+    errors = 0
+    calls = []
+
+    class Done:
+        def __init__(self, rc):
+            self.returncode, self.stdout, self.stderr = rc, "", "denied" if rc else ""
+
+    def run(rc):
+        def fake(cmd, **kw):
+            calls.append((cmd, kw.get("env", {})))
+            return Done(rc)
+        return fake
+    os.environ["LD_LIBRARY_PATH"] = "/tmp/_MEIxyz"                   # as a packaged Kerfly sets it
+    try:
+        ok, why = udev.install(run=run(0), which=lambda name: "/usr/bin/pkexec")
+    finally:
+        os.environ.pop("LD_LIBRARY_PATH", None)
+    cmd, env = calls[-1]
+    rule_line = [l for l in open(os.path.join(ROOT_DIR, "packaging", "linux", "99-kerfly-k40.rules"))
+                 if l.startswith("SUBSYSTEM")][0].strip()
+    good = ok and cmd[:3] == ["/usr/bin/pkexec", "sh", "-c"] and cmd[-1] == udev.RULE and \
+        udev.RULE == rule_line and "LD_LIBRARY_PATH" not in env and udev.RULE_FILE in cmd[3]
+    cancelled = udev.install(run=run(126), which=lambda n: "/usr/bin/pkexec") == (False, "cancelled")
+    failed = udev.install(run=run(1), which=lambda n: "/usr/bin/pkexec") == (False, "denied")
+    no_pkexec = udev.install(run=run(0), which=lambda n: None) == (False, "no pkexec") and \
+        any("udevadm control" in c for c in udev.manual_commands())
+    perm = udev.permission_problem("USB error: [Errno 13] Access denied (insufficient permissions)") and \
+        not udev.permission_problem("USB error: No backend available")
+    tmp = tempfile.mkdtemp()
+    open(os.path.join(tmp, "50-other.rules"), "w").write('ATTRS{idVendor}=="0403"\n')
+    found_none = not udev.installed(dirs=[tmp])
+    open(os.path.join(tmp, "97-ctc-lasercutter.rules"), "w").write(
+        'SUBSYSTEM=="usb", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="5512", GROUP="lasercutter"\n')
+    found_ctc = udev.installed(dirs=[tmp])
+    for name, ok_ in (("rule written by pkexec, packaged libraries left out", good),
+                      ("password window closed: cancelled", cancelled), ("error text passed on", failed),
+                      ("no pkexec: the commands to type", no_pkexec), ("permission error recognised", perm),
+                      ("an existing K40 rule (also the K40 Whisperer one) is found", found_none and found_ctc)):
+        print("%-5s udev: %s" % ("OK" if ok_ else "FAIL", name))
+        errors += 0 if ok_ else 1
+    return errors
+
+
 def test_simulate():
     """Job simulation: layer order, travel moves, durations from the layer speeds."""
     from kerfly.core.layers import default_layers, CUT
@@ -990,6 +1038,7 @@ def main():
     failures += test_curves()
     failures += test_simulate()
     failures += test_usblib()
+    failures += test_udev()
     failures += test_cut_order()
     failures += test_pattern_fill()
 

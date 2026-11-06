@@ -19,8 +19,9 @@ Pobierz paczkę dla swojego systemu z
   ochronił ten komputer”: wybierz **Więcej informacji → Uruchom mimo to**. Za
   pierwszym razem zaznacz sterownik USB lasera K40.
 - **Linux:** nadaj plikowi `Kerfly-<wersja>-x86_64.AppImage` prawo
-  uruchamiania i uruchom go. Raz dodaj regułę dla portu USB lasera (trzy
-  polecenia, zobacz [INSTALL_pl.md](INSTALL_pl.md#linux-appimage)).
+  uruchamiania i uruchom go. Raz zezwól na dostęp do portu USB lasera:
+  **Laser → Zezwól na dostęp do USB lasera…** (zapyta o hasło; zobacz
+  [INSTALL_pl.md](INSTALL_pl.md#linux-appimage)).
 
 Krok po kroku, z autotestem i pierwszym uruchomieniem z laserem:
 [INSTALL_pl.md](INSTALL_pl.md). Jak używać Kerfly: [instrukcja

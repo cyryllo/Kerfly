@@ -308,6 +308,10 @@ class MainWindow(QMainWindow):
         self.act_home = self._action(_("&Home"), self.home, "Home")
         self.act_unlock = self._action(_("&Unlock rail"), self.unlock)
         self.act_unfreeze = self._action(_("Un&freeze laser"), self.unfreeze)
+        # Linux: the udev rule for the laser's USB port, with one click (pkexec asks for the password)
+        self.act_usb_access = self._action(_("Allow USB access for the laser…"), self.allow_usb_access,
+                                           tip=_("Linux: let this computer's users use the laser's USB port "
+                                                 "without root (asks for the administrator password once)"))
         self.act_fit = self._action(_("&Fit to window"), lambda: self.preview.fit_all(), "Ctrl+0")
         self.act_settings = self._action(_("&Settings\u2026"), self.edit_settings, "Ctrl+,")
         self.act_materials = self._action(_("&Material library\u2026"), lambda: self.edit_materials())
@@ -353,6 +357,10 @@ class MainWindow(QMainWindow):
         sub = m.addMenu(_("Move head to design"))
         for a in self.act_corners.values():
             sub.addAction(a)
+        from kerfly.core import udev
+        if udev.applies():
+            m.addSeparator()
+            m.addAction(self.act_usb_access)
         m = mb.addMenu(_("&View"))
         m.addAction(self.act_fit)
         m.addAction(self.act_simulate)
@@ -3331,11 +3339,48 @@ class MainWindow(QMainWindow):
             self.status(_("Laser initialized"))
         except LaserError as e:
             self.status(str(e), error=True)
+            from kerfly.core import udev
+            if udev.applies() and udev.permission_problem(str(e)):
+                QApplication.restoreOverrideCursor()
+                QTimer.singleShot(0, self, lambda: self.allow_usb_access(after_error=True))
         except Exception as e:
             self.status(_("Unknown USB error: %s") % e, error=True)
         finally:
             QApplication.restoreOverrideCursor()
         self.refresh_preview()
+
+    def allow_usb_access(self, after_error=False):
+        """Linux: install the udev rule for the K40 board through pkexec (one password prompt)."""
+        from kerfly.core import udev
+        if udev.installed() and not after_error:
+            QMessageBox.information(self, _("USB access"),
+                                    _("The rule for the laser's USB port is already installed. If Kerfly still "
+                                      "cannot connect, unplug the laser's USB cable and plug it in again."))
+            return
+        text = _("The laser was found, but this user may not use its USB port.") + "\n\n" if after_error else ""
+        answer = QMessageBox.question(
+            self, _("USB access"),
+            text + _("Kerfly can add a rule to the system so that the laser's USB port can be used without "
+                     "root. The system asks for the administrator password once. Add the rule now?"),
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+        if answer != QMessageBox.Yes:
+            return
+        ok, why = udev.install()
+        if ok:
+            QMessageBox.information(self, _("USB access"),
+                                    _("Done. Unplug the laser's USB cable, plug it in again, then connect."))
+            self.status(_("USB rule installed: unplug the laser and plug it in again."))
+        elif why == "cancelled":
+            self.status(_("USB rule not installed (the password window was closed)."), error=True)
+        else:
+            box = QMessageBox(self)
+            box.setIcon(QMessageBox.Warning)
+            box.setWindowTitle(_("USB access"))
+            box.setText(_("The rule could not be added here (%s). Type these commands in a terminal, then unplug "
+                          "the laser and plug it in again:") % why)
+            box.setInformativeText("\n".join(udev.manual_commands()))
+            box.setTextInteractionFlags(Qt.TextSelectableByMouse)
+            box.exec()
 
     def release_laser(self):
         try:

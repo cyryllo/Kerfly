@@ -37,8 +37,8 @@ sends the job to the laser. This guide is for version 1.0.
      choose **More info → Run anyway**. The first time, tick the USB driver
      for the K40 laser.
    - **Linux:** make `Kerfly-<version>-x86_64.AppImage` executable and run
-     it. Add the udev rule for the laser's USB port once, as the installation
-     guide shows.
+     it. Allow the laser's USB port once: **Laser → Allow USB access for the
+     laser…** (asks for your password), then plug the laser in again.
 2. Check the installation with the self-test (in a command window /
    terminal):
    - Windows installer: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
@@ -411,7 +411,7 @@ Common problems:
 
 | Problem | What to do |
 |---|---|
-| "Laser is not initialized" | Press the plug button (Ctrl+I). On Linux check the udev rule (see the installation guide); on Windows the libusb driver |
+| "Laser is not initialized" | Press the plug button (Ctrl+I). On Linux choose **Laser → Allow USB access for the laser…**; on Windows check the libusb driver |
 | The head is not where the program shows it | Press Home. This happens after Unlock rail, after moving the head by hand and after Stop |
 | An element is drawn red, Start does not work | The element sticks out of the bed: move it back |
 | SVG text is missing or not cut | Install Inkscape: it turns SVG text into paths |

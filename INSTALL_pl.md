@@ -31,8 +31,14 @@ nie jest potrzebne.
    chmod +x Kerfly-*.AppImage
    ```
 
-3. Daj swojemu użytkownikowi dostęp do portu USB lasera. Wystarczy raz na
-   komputer, potem wyloguj się i zaloguj ponownie:
+3. Uruchom AppImage (dwuklik albo `./Kerfly-*.AppImage`).
+4. Daj swojemu użytkownikowi dostęp do portu USB lasera, raz na komputer.
+   Najprościej: w Kerfly wybierz **Laser → Zezwól na dostęp do USB
+   lasera…**. System raz zapyta o hasło; potem odłącz kabel USB lasera i
+   podłącz go ponownie. (Kerfly sam to zaproponuje, gdy nie może się połączyć
+   z braku uprawnień.)
+
+   Albo ręcznie w terminalu, a potem wyloguj się i zaloguj ponownie:
 
    ```bash
    sudo groupadd -f lasercutter
@@ -42,7 +48,6 @@ nie jest potrzebne.
 
    Sama grupa `dialout` nie wystarczy: płyta lasera nie jest portem
    szeregowym.
-4. Uruchom AppImage (dwuklik albo `./Kerfly-*.AppImage`).
 
 ## Autotest
 
@@ -76,8 +81,9 @@ Resztę opisuje [instrukcja obsługi](https://cyryllo.github.io/Kerfly/pl/guide.
 ## Gdy coś nie działa
 
 - **„Błąd USB … sterownik libUSB nie jest zainstalowany”**: na Windows
-  uruchom instalator jeszcze raz i zaznacz sterownik USB; na Linuksie dodaj
-  regułę z kroku 3 i zaloguj się ponownie.
+  uruchom instalator jeszcze raz i zaznacz sterownik USB; na Linuksie wybierz
+  **Laser → Zezwól na dostęp do USB lasera…** (krok 4), potem podłącz laser
+  ponownie.
 - **Brakuje tekstu z SVG albo nie jest cięty**: zainstaluj
   [Inkscape](https://inkscape.org/release/) (opcjonalny). Kerfly otwiera pliki
   SVG sam, ale do zamiany tekstu z SVG na linie potrzebuje Inkscape. Kerfly

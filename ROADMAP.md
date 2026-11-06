@@ -254,5 +254,6 @@ checked byte for byte.
 - [ ] Debian `.deb` that uses the system's Python libraries (a few MB) with the
   udev rule, menu entry and icon, in an own signed APT repository on GitHub
   Pages (`https://cyryllo.github.io/Kerfly/apt`), modelled on LamaDeck's.
-- [ ] AppImage: offer to install the udev rule once (through `pkexec`).
+- [x] Linux (AppImage too): Laser → Allow USB access for the laser… installs the udev rule
+  through `pkexec`; offered by itself when connecting fails for want of permission.
 

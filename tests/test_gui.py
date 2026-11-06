@@ -1429,6 +1429,40 @@ def main():
           grid_off and remembered and last_size and from_dialog,
           "(%s)" % ([grid_off, remembered, last_size, from_dialog],))
 
+    # 53. Linux: connecting fails for want of permission -> Kerfly offers the USB rule (pkexec); with
+    # a rule already there, Laser → Allow USB access only says to plug the laser in again
+    from kerfly.core import udev as _udev
+    from kerfly.core.laser import LaserError as _LaserError
+    u = make_window(grid_mm="0")
+    saved = (_udev.installed, _udev.install, _udev.applies, QMessageBox.question, QMessageBox.information,
+             u.laser.connect)
+    asked, informed, installs = [], [], []
+    try:
+        _udev.applies = lambda: True
+        _udev.installed = lambda dirs=None: False
+        _udev.install = lambda: installs.append(1) or (True, "")
+        QMessageBox.question = staticmethod(lambda *a, **k: asked.append(a[2]) or QMessageBox.Yes)
+        QMessageBox.information = staticmethod(lambda *a, **k: informed.append(a[2]))
+
+        def refuse(init_home=True):
+            raise _LaserError("USB error: [Errno 13] Access denied (insufficient permissions)")
+        u.laser.connect = refuse
+        u.connect_laser()
+        for _i in range(5):
+            app.processEvents()
+        offered = bool(installs) and any("was found" in q for q in asked) and any("Unplug" in t for t in informed)
+        _udev.installed = lambda dirs=None: True
+        installs.clear()
+        u.allow_usb_access()
+        already = not installs and any("already installed" in t for t in informed)
+    finally:
+        (_udev.installed, _udev.install, _udev.applies, QMessageBox.question, QMessageBox.information,
+         u.laser.connect) = saved
+    check("Linux USB access: refused connection offers the rule (pkexec), an existing rule only a hint",
+          offered and already, "(%s, %s, %s)" % (offered, already, asked[:1]))
+    u._dirty = False
+    u.close()
+
     # 50. the element list shows a single element too (it was hidden until there were two)
     w9 = make_window(grid_mm="0")
     w9._add_drawn_element(_Spec(kind="rectangle", width=20, height=20), "rectangle", 10, 10)

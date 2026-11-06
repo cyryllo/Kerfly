@@ -45,7 +45,7 @@ Open the <a href="{{ site.repo }}/releases/latest">latest release</a> and downlo
 
 <ol class="steps">
   <li><strong>Windows 10 / 11:</strong> run <code>Kerfly-&lt;version&gt;-windows-setup.exe</code>. The installer is not signed, so Windows may say <em>Windows protected your PC</em>: choose <em>More info → Run anyway</em>. The first time, tick <em>Install the USB driver for the K40 laser</em>. Kerfly is then in the Start menu.</li>
-  <li><strong>Linux:</strong> make <code>Kerfly-&lt;version&gt;-x86_64.AppImage</code> executable and run it. Add the <a href="{{ site.repo }}/blob/main/INSTALL.md#linux-the-appimage">rule for the laser's USB port</a> once (three commands).</li>
+  <li><strong>Linux:</strong> make <code>Kerfly-&lt;version&gt;-x86_64.AppImage</code> executable and run it. Allow the <a href="{{ site.repo }}/blob/main/INSTALL.md#linux-the-appimage">laser's USB port</a> once: <em>Laser → Allow USB access for the laser…</em> (asks for your password).</li>
   <li>Read the <a href="{{ '/guide.html' | relative_url }}">user guide</a>: connect the laser, place a design, trace, start.</li>
 </ol>
 

@@ -15,6 +15,13 @@ Version numbers:
   follows the head" are remembered for the next start at once, without
   "Save settings as default". Settings has a new View tab with them.
 
+### Added
+
+- Linux: **Laser → Allow USB access for the laser…** adds the rule for the
+  laser's USB port with one click (the system asks for the password once),
+  so the AppImage needs no terminal commands. Kerfly offers it by itself
+  when it cannot connect for want of permission.
+
 ## 1.0.1 (2026-11-06)
 
 ### Fixed (found by the new release tests)

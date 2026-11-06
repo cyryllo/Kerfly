@@ -37,8 +37,9 @@ zadanie do lasera. Instrukcja dotyczy wersji 1.0.
      ochronił ten komputer”: wybierz **Więcej informacji → Uruchom mimo to**.
      Za pierwszym razem zaznacz sterownik USB dla lasera K40.
    - **Linux:** nadaj plikowi `Kerfly-<wersja>-x86_64.AppImage` prawo
-     uruchamiania i uruchom go. Raz dodaj regułę udev dla portu USB lasera,
-     jak pokazuje instrukcja instalacji.
+     uruchamiania i uruchom go. Raz zezwól na dostęp do portu USB lasera:
+     **Laser → Zezwól na dostęp do USB lasera…** (zapyta o hasło), potem
+     podłącz laser ponownie.
 2. Sprawdź instalację autotestem (w wierszu poleceń / terminalu):
    - z instalatora Windows: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
    - AppImage: `./Kerfly-<wersja>-x86_64.AppImage --self-test`
@@ -415,7 +416,7 @@ Częste problemy:
 
 | Problem | Co zrobić |
 |---|---|
-| „Laser nie jest połączony” | Naciśnij przycisk z wtyczką (Ctrl+I). W Linuksie sprawdź regułę udev (instrukcja instalacji), w Windows sterownik libusb |
+| „Laser nie jest połączony” | Naciśnij przycisk z wtyczką (Ctrl+I). W Linuksie wybierz **Laser → Zezwól na dostęp do USB lasera…**, w Windows sprawdź sterownik libusb |
 | Głowica jest gdzie indziej, niż pokazuje program | Naciśnij Bazowanie. Tak bywa po odblokowaniu osi, ręcznym przesunięciu głowicy i po Stop |
 | Element jest czerwony, Start nie działa | Element wystaje poza stół: przesuń go z powrotem |
 | Brakuje tekstu z SVG albo nie jest cięty | Zainstaluj Inkscape: zamienia tekst SVG na ścieżki |

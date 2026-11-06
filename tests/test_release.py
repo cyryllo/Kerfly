@@ -131,6 +131,10 @@ class Session:
         QColorDialog.getColor = staticmethod(get_color)
         from PySide6.QtGui import QDesktopServices
         QDesktopServices.openUrl = staticmethod(lambda url: s.opened_urls.append(url.toString()) or True)
+        from kerfly.core import udev                # pkexec's password window belongs to the system
+        s.udev_installs = []
+        udev.installed = lambda dirs=None: False
+        udev.install = lambda: s.udev_installs.append(1) or (True, "")
         import nano_library                         # the laser: a stand-in that records what it gets
 
         def board():
@@ -976,6 +980,12 @@ def part_view_and_laser(s):
             raise RuntimeError("no simulation window")
         dlg.close()
     s.step("View → Simulate job… (opens, close)", simulate, change=False)
+    from kerfly.core import udev
+    if udev.applies():
+        s.expect_dialog("add the rule?", lambda d: s.click_dialog_button(d, QMessageBox.Yes))
+        s.expect_dialog("done: plug in again", lambda d: s.click_dialog_button(d, QMessageBox.Ok))
+        s.step("Laser → Allow USB access for the laser… (Linux)", lambda: s.trigger(w.act_usb_access, via="menu"),
+               change=False, check=lambda: (bool(s.udev_installs), "the rule was not installed"))
     s.step("Laser → Release USB", lambda: s.trigger(w.act_release, via="menu"), change=False,
            check=lambda: (not w.laser.connected, "still connected"))
     s.tab(0)

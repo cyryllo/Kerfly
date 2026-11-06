@@ -30,8 +30,14 @@ Nothing else is needed.
    chmod +x Kerfly-*.AppImage
    ```
 
-3. Let your user reach the laser's USB port. Do this once per computer, then
-   log out and back in:
+3. Run the AppImage (double-click it, or `./Kerfly-*.AppImage`).
+4. Let your user reach the laser's USB port, once per computer. The easy
+   way: in Kerfly choose **Laser → Allow USB access for the laser…**. The
+   system asks for your password once; then unplug the laser's USB cable
+   and plug it in again. (Kerfly also offers this by itself when it cannot
+   connect for want of permission.)
+
+   Or by hand in a terminal, then log out and back in:
 
    ```bash
    sudo groupadd -f lasercutter
@@ -41,7 +47,6 @@ Nothing else is needed.
 
    The `dialout` group is not enough: the laser's board is not a serial
    port.
-4. Run the AppImage (double-click it, or `./Kerfly-*.AppImage`).
 
 ## Self-test
 
@@ -74,8 +79,8 @@ rest.
 ## When something goes wrong
 
 - **"USB error … libUSB driver not installed"**: on Windows run the installer
-  again and tick the USB driver; on Linux add the rule from step 3 and log in
-  again.
+  again and tick the USB driver; on Linux choose **Laser → Allow USB access
+  for the laser…** (step 4), then plug the laser in again.
 - **SVG text is missing or not cut**: install [Inkscape](https://inkscape.org/release/)
   (optional). Kerfly opens SVG files by itself, but it needs Inkscape to turn
   SVG text into lines. When Inkscape is installed, Kerfly finds it; otherwise

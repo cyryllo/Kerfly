@@ -19,8 +19,8 @@ Download the package for your system from the
   choose **More info → Run anyway**. The first time, tick the USB driver for
   the K40 laser.
 - **Linux:** make `Kerfly-<version>-x86_64.AppImage` executable and run it.
-  Add the rule for the laser's USB port once (three commands, see
-  [INSTALL.md](INSTALL.md#linux-the-appimage)).
+  Allow the laser's USB port once: **Laser → Allow USB access for the
+  laser…** (asks for your password; see [INSTALL.md](INSTALL.md#linux-the-appimage)).
 
 Step by step, with the self-test and the first run on the laser:
 [INSTALL.md](INSTALL.md) ([po polsku](INSTALL_pl.md)). How to use Kerfly:

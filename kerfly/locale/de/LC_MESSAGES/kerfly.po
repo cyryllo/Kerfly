@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-06 20:07+0100\n"
+"POT-Creation-Date: 2026-11-06 20:12+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -244,6 +244,9 @@ msgstr "Oben ausrichten"
 
 msgid "All files"
 msgstr "Alle Dateien"
+
+msgid "Allow USB access for the laser…"
+msgstr "USB-Zugriff für den Laser erlauben…"
 
 msgid "Already at the end of the list."
 msgstr "Bereits am Ende der Liste."
@@ -571,6 +574,11 @@ msgstr ""
 "%d Elemente verteilt: zu breit für Abstände, daher liegen ihre Mitten "
 "%.2f %s auseinander."
 
+msgid "Done. Unplug the laser's USB cable, plug it in again, then connect."
+msgstr ""
+"Fertig. Ziehen Sie das USB-Kabel des Lasers ab, stecken Sie es wieder ein"
+" und verbinden Sie dann."
+
 msgid "Drawing tools"
 msgstr "Zeichenwerkzeuge"
 
@@ -852,6 +860,15 @@ msgstr ""
 msgid "Jump to the next layer"
 msgstr "Zur nächsten Ebene springen"
 
+msgid ""
+"Kerfly can add a rule to the system so that the laser's USB port can be "
+"used without root. The system asks for the administrator password once. "
+"Add the rule now?"
+msgstr ""
+"Kerfly kann dem System eine Regel hinzufügen, damit der USB-Anschluss des"
+" Lasers ohne root benutzt werden kann. Das System fragt einmal nach dem "
+"Administratorpasswort. Regel jetzt hinzufügen?"
+
 msgid "Kerfly projects"
 msgstr "Kerfly-Projekte"
 
@@ -927,6 +944,13 @@ msgstr "Linie"
 
 msgid "Lines"
 msgstr "Linien"
+
+msgid ""
+"Linux: let this computer's users use the laser's USB port without root "
+"(asks for the administrator password once)"
+msgstr ""
+"Linux: Benutzer dieses Computers dürfen den USB-Anschluss des Lasers ohne"
+" root verwenden (fragt einmal nach dem Administratorpasswort)"
 
 msgid "Living hinge"
 msgstr "Biegescharnier"
@@ -1877,6 +1901,11 @@ msgstr "Der Laser hat etwas falsch gemacht"
 msgid "The laser stopped responding after the job was complete."
 msgstr "Der Laser antwortet nach Abschluss des Auftrags nicht mehr."
 
+msgid "The laser was found, but this user may not use its USB port."
+msgstr ""
+"Der Laser wurde gefunden, aber dieser Benutzer darf seinen USB-Anschluss "
+"nicht verwenden."
+
 msgid "The new language will be used after restarting Kerfly."
 msgstr "Die neue Sprache wird nach einem Neustart von Kerfly verwendet."
 
@@ -1886,6 +1915,23 @@ msgid ""
 msgstr ""
 "Das Meldeformular wird im Browser geöffnet. Bitte den Diagnosebericht in "
 "das Feld „Diagnostic report“ ziehen:"
+
+#, python-format
+msgid ""
+"The rule could not be added here (%s). Type these commands in a terminal,"
+" then unplug the laser and plug it in again:"
+msgstr ""
+"Die Regel konnte hier nicht hinzugefügt werden (%s). Geben Sie diese "
+"Befehle in einem Terminal ein, ziehen Sie dann den Laser ab und stecken "
+"Sie ihn wieder ein:"
+
+msgid ""
+"The rule for the laser's USB port is already installed. If Kerfly still "
+"cannot connect, unplug the laser's USB cable and plug it in again."
+msgstr ""
+"Die Regel für den USB-Anschluss des Lasers ist bereits installiert. Wenn "
+"Kerfly sich trotzdem nicht verbinden kann, ziehen Sie das USB-Kabel des "
+"Lasers ab und stecken Sie es wieder ein."
 
 #, python-format
 msgid "There are many data transmission errors (%s). Press Stop to stop trying."
@@ -1979,6 +2025,9 @@ msgstr "Zuerst oben den Text eingeben."
 msgid "U&ngroup"
 msgstr "Gruppierung auf&heben"
 
+msgid "USB access"
+msgstr "USB-Zugriff"
+
 msgid "USB data ready"
 msgstr "USB-Daten bereit"
 
@@ -1991,6 +2040,12 @@ msgstr "USB freigegeben"
 
 msgid "USB retries"
 msgstr "USB-Wiederholungen"
+
+msgid "USB rule installed: unplug the laser and plug it in again."
+msgstr "USB-Regel installiert: Laser abziehen und wieder einstecken."
+
+msgid "USB rule not installed (the password window was closed)."
+msgstr "USB-Regel nicht installiert (das Passwortfenster wurde geschlossen)."
 
 #, python-format
 msgid "USB timeout #%s"
