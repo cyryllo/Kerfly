@@ -371,13 +371,17 @@ HINGES = (("straight", "Straight cuts"), ("wave", "Wavy cuts"), ("zigzag", "Zigz
 HINGE_CODES = tuple(code for code, _name in HINGES)
 
 
-def hinge_lines(pattern, polygons, cut, gap, spacing, angle_deg=90.0, margin=3.0):
+def hinge_lines(pattern, polygons, cut, gap, spacing, angle_deg=90.0, margin=3.0,
+                band_width=0.0, band_offset=0.0):
     """Cut lines of a living hinge inside the closed polygons: rows of cuts
     `cut` long with `gap` of uncut material between them (the bridges that hold
     the sheet together), rows `spacing` apart, every second row shifted by half
     a cut, so the sheet bends across the cuts. The cuts run at angle_deg
     (90: up and down, so the sheet bends round an upright axis) and stay
     `margin` away from the outline, which leaves a solid border.
+    band_width > 0 keeps the cuts in a band that wide (across the cuts), its
+    middle `band_offset` from the middle of the shape (plus: right for upright
+    cuts, down for level ones); 0: the whole shape.
     Raises ValueError for an unknown pattern or non-positive sizes."""
     if cut <= 0 or gap <= 0 or spacing <= 0:
         raise ValueError("hinge sizes must be positive")
@@ -387,8 +391,16 @@ def hinge_lines(pattern, polygons, cut, gap, spacing, angle_deg=90.0, margin=3.0
     half, to_world = _frame(rings, angle_deg)
     period = cut + gap
     amp = 0.3 * spacing                                  # waves and zigzags stay apart from the next row
+    # the band across the rows: +v goes (sin a, cos a) on the page (y down); "plus" means right
+    # for upright cuts and down for level ones
+    a = math.radians(angle_deg)
+    sx, sy = math.sin(a), math.cos(a)
+    sign = 1.0 if ((abs(sx) > abs(sy) and sx > 0) or (abs(sy) >= abs(sx) and sy > 0)) else -1.0
+    band_mid = sign * band_offset
     local = []
     for k, v in enumerate(_rows(half, spacing)):
+        if band_width > 0 and abs(v - band_mid) > band_width / 2.0:
+            continue
         start = -half - period - ((k % 2) * period / 2.0)
         n = int((2 * half + 2 * period) / period) + 2
         for j in range(n):

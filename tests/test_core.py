@@ -765,6 +765,17 @@ def test_pattern_fill():
           len(hd.vector_cut.ecoords) > len(plain_cut.vector_cut.ecoords) and len(outline_rows) >= 4
           and first_loop != outline_rows[0][2] and he.vector_engrave.ecoords and he.vector_cut.ecoords
           and not hl.vector_cut.ecoords[5:] and hd.bounds == plain_cut.bounds)
+    # a hinge band: only part of the shape, its middle moved right (upright cuts) or left
+    spans = []
+    for offset in (0.0, 30.0, -30.0):
+        sp = ShapeSpec(kind="rectangle", width=120, height=60, operation="cut", hinge_pattern="straight",
+                       hinge_band=40.0, hinge_band_offset=offset)
+        cuts = patterns.hinge_lines("straight", [rect], 20.0, 3.0, 1.5, -sp.hinge_angle, 4.0, 40.0, offset)
+        xs = [p[0] for line in cuts for p in line]
+        spans.append((round(min(xs)), round(max(xs))))
+    check("hinge band: 40 mm wide, in the middle, moved right and left",
+          all(abs(a - b) <= 1 for s1, s2 in zip(spans, [(40, 80), (70, 110), (10, 50)]) for a, b in zip(s1, s2)),
+          "(%s)" % spans)
     back = project._shape_from_dict(project._shape_to_dict(ShapeSpec(kind="ellipse", hinge_pattern="zigzag",
                                                                      hinge_cut=15.0, hinge_spacing=2.0)))
     check("hinge settings saved in projects", (back.hinge_pattern, back.hinge_cut, back.hinge_spacing)

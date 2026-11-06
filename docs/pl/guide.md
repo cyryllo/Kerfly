@@ -264,8 +264,10 @@ i kliknij zamknięty kształt: nacięcia zostaną wycięte w jego środku, przed
 obrysem. Pola sekcji **Zawias giętki**, każde z ikoną i opisem po najechaniu,
 ustawiają długość jednego nacięcia, **mostek** nieprzeciętego materiału między
 dwoma nacięciami, odstęp rzędów (mniejszy bardziej się wygina), kierunek
-nacięć (90°: góra–dół, arkusz wygina się w poprzek nich) i **pełny brzeg**
-wzdłuż obrysu. Zaznaczone kształty od razu dostają wybrany zawias; kształt z
+nacięć (90°: góra–dół, arkusz wygina się w poprzek nich), **pełny brzeg**
+wzdłuż obrysu oraz **pas**: jego szerokość (0: cały kształt) i położenie
+środka liczone od środka kształtu (minus: w lewo / w górę, plus: w prawo / w
+dół), gdy zawias ma być tylko tam, gdzie arkusz się wygina. Zaznaczone kształty od razu dostają wybrany zawias; kształt z
 zawiasem pokazuje tę sekcję także przy narzędziu zaznaczania, gdzie **Bez
 zawiasu** go usuwa. Najpierw spróbuj na małym kawałku: to, jak bardzo arkusz
 się wygina, zależy od materiału.

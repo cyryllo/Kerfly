@@ -312,7 +312,7 @@ class ToolOptionsBar(QWidget):
             lambda _i: self._set("hinge_pattern", pattern.currentData()))
         g.addWidget(pattern, 0, 0, 1, 4)
         if self.spec.hinge_pattern or tool:
-            # (field, from, to, unit, icon, tooltip, row, column)
+            # (field, from, to, unit, icon, tooltip, row, column); two rows, like every section
             fields = (("hinge_cut", 1.0, 500.0, " mm", "ruler-measure", N_("Length of one cut"), 0, 4),
                       ("hinge_gap", 0.2, 50.0, " mm", "link",
                        N_("Bridge: uncut material between two cuts in a row"), 0, 6),
@@ -321,7 +321,12 @@ class ToolOptionsBar(QWidget):
                       ("hinge_angle", -180.0, 180.0, "\u00b0", "rotate-2",
                        N_("Direction of the cuts (90\u00b0: up and down; the sheet bends across them)"), 1, 2),
                       ("hinge_margin", 0.0, 100.0, " mm", "circle-dashed",
-                       N_("Solid border: no cuts this close to the outline"), 1, 4))
+                       N_("Solid border: no cuts this close to the outline"), 1, 4),
+                      ("hinge_band", 0.0, 2000.0, " mm", "arrows-horizontal",
+                       N_("Width of the hinge band, across the cuts (0: the whole shape)"), 0, 8),
+                      ("hinge_band_offset", -2000.0, 2000.0, " mm", "focus-centered",
+                       N_("Where the band is: its middle from the middle of the shape (minus: left / up, "
+                          "plus: right / down)"), 1, 6))
             for attr, lo, hi, unit, icon, tip, row, col in fields:
                 w = self._dspin(attr, lo, hi, unit)
                 w.setSingleStep(90.0 if attr == "hinge_angle" else 0.5)

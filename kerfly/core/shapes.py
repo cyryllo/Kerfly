@@ -58,6 +58,8 @@ class ShapeSpec:
     hinge_spacing: float = 1.5    # mm between the rows of cuts
     hinge_angle: float = 90.0     # degrees: direction of the cuts (90: up and down)
     hinge_margin: float = 4.0     # mm of solid material along the outline
+    hinge_band: float = 0.0       # mm: width of the band with cuts (0: the whole shape)
+    hinge_band_offset: float = 0.0  # mm: middle of the band from the middle of the shape
     tabs: int = 0                 # cut: bridges per closed outline that hold the part in the sheet
     tab_width: float = 1.0        # cut: width of each bridge, mm
     corner_radius: float = 0.0    # rectangle, mm
@@ -292,7 +294,8 @@ def build_design(spec):
             from .patterns import hinge_lines
             for line in hinge_lines(spec.hinge_pattern, outlines(spec), max(0.5, float(spec.hinge_cut)),
                                     max(0.2, float(spec.hinge_gap)), max(0.2, float(spec.hinge_spacing)),
-                                    -float(spec.hinge_angle), max(0.0, float(spec.hinge_margin))):
+                                    -float(spec.hinge_angle), max(0.0, float(spec.hinge_margin)),
+                                    max(0.0, float(spec.hinge_band)), float(spec.hinge_band_offset)):
                 pts = [to_design(x, y) for x, y in line]
                 for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
                     hinge_segments.append([x1, y1, x2, y2])

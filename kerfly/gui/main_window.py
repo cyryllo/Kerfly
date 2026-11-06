@@ -835,7 +835,8 @@ class MainWindow(QMainWindow):
     def _hinge_element(self, e, checkpoint=True):
         spec = e.shape.copy()
         d = self.hinge_defaults
-        for attr in ("hinge_pattern", "hinge_cut", "hinge_gap", "hinge_spacing", "hinge_angle", "hinge_margin"):
+        for attr in ("hinge_pattern", "hinge_cut", "hinge_gap", "hinge_spacing", "hinge_angle", "hinge_margin",
+                     "hinge_band", "hinge_band_offset"):
             setattr(spec, attr, getattr(d, attr))
         self._apply_shape(e, spec, checkpoint=checkpoint)
 

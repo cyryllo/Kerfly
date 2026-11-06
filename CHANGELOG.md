@@ -41,6 +41,11 @@ Fixes from the second laser test (Windows 10, the 0.18.0 installer).
 - **Open lines are cut from the end nearer to the head**, so the head no
   longer runs to the far end of a curve first.
 
+### New
+
+- **Living hinge in a band**: the width of the band with cuts (0: the whole
+  shape, as before) and where its middle is, from the middle of the shape.
+
 ## 0.18.0 (2026-11-05)
 
 ### New
