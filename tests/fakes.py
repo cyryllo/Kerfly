@@ -26,13 +26,17 @@ class FakeK40:
 
     def send_data(self, data, update_gui=None, stop_calc=None, passes=1, preprocess_crc=True,
                   wait_for_laser=False):
-        for _ in range(50 if self.slow else 1):
+        # slow: True for about a second per send, or a number of 20 ms steps (a long job to pause or
+        # stop); read at every step, so a test can let a long send finish quickly
+        n = 0
+        while n < (self.slow if not isinstance(self.slow, bool) and self.slow else (50 if self.slow else 1)):
             update_gui("Sending")
             if stop_calc[0]:
                 self.calls.append("e_stop")
                 raise Exception("Action Stopped by User.")
             if self.slow:
                 time.sleep(0.02)
+            n += 1
         self.sent.append((self.power, bytes(data)))
         self.passes.append(passes)
         self.power = None

@@ -925,17 +925,19 @@ def part_view_and_laser(s):
            change=False, check=lambda: (len(s.fake.sent) > sent, "nothing sent: %s" % w.statusBar().currentMessage()))
 
     def pause_resume():
-        s.fake.slow = True
+        s.fake.slow = 1000                         # long enough to be paused also on a slow machine
         s.click(w.btn_start)
         s.wait(lambda: "Sending" in w.statusBar().currentMessage(), 20)
         s.click(w.btn_pause)
         s.wait(lambda: w._paused and w.btn_pause.isEnabled(), 30)   # the board confirms the pause
         s.click(w.btn_pause)                                        # the same button resumes
+        s.fake.slow = False                                         # and let the job finish
         s.wait(lambda: w.worker is None, 60)
     s.step("Start, Pause, resume", pause_resume, change=False,
            check=lambda: (s.fake.calls.count("pause") >= 2, "calls %s" % s.fake.calls[-5:]))
 
     def stop():
+        s.fake.slow = 1000
         s.click(w.btn_start)
         s.wait(lambda: "Sending" in w.statusBar().currentMessage(), 20)
         s.click(w.btn_stop)
@@ -944,7 +946,7 @@ def part_view_and_laser(s):
     s.step("Start, Stop (button)", stop, change=False, check=lambda: ("e_stop" in s.fake.calls, "no stop"))
 
     def stop_key():
-        s.fake.slow = True
+        s.fake.slow = 1000
         s.fake.calls.clear()
         s.click(w.btn_start)
         s.wait(lambda: "Sending" in w.statusBar().currentMessage(), 20)
