@@ -231,11 +231,22 @@ class Session:
         QTest.keyClick(edit, Qt.Key_Return)
         self.settle()
 
+    @staticmethod
+    def type_chars(widget, text):
+        """Key presses for a text, also letters like ą ę ł ó ś ż (QTest types only ASCII)."""
+        from PySide6.QtGui import QKeyEvent
+        for ch in text:
+            if ord(ch) < 128:
+                QTest.keyClicks(widget, ch)
+            else:
+                for kind in (QEvent.KeyPress, QEvent.KeyRelease):
+                    QApplication.sendEvent(widget, QKeyEvent(kind, 0, Qt.NoModifier, ch))
+
     def type_text(self, edit, text):
         self.touched.add(id(edit))
         QTest.mouseClick(edit.viewport() if isinstance(edit, QPlainTextEdit) else edit, Qt.LeftButton)
         QTest.keyClick(edit, Qt.Key_A, Qt.ControlModifier)
-        QTest.keyClicks(edit, text)
+        self.type_chars(edit, text)
         bar = self.w.tool_options
         self.wait(lambda: not bar._text_timer.isActive(), 3.0)     # the text is applied when typing pauses
         self.settle()
@@ -253,6 +264,11 @@ class Session:
         self.settle()
         if not combo.view().isVisible():
             raise RuntimeError("the list did not open on a click")
+        # Qt ignores a release in a just-opened list for a double-click time (so the opening
+        # click does not pick an entry); a person is never that quick
+        t0 = time.time()
+        while time.time() - t0 < QApplication.doubleClickInterval() / 1000.0 + 0.05:
+            self.settle(1, 0.01)
         view = combo.view()
         if index is None:
             index = combo.findData(data)
@@ -271,8 +287,12 @@ class Session:
         except RuntimeError:
             return                                   # the bar was rebuilt by the choice: the list is gone
         if still_open:
+            item = view.model().index(index, combo.modelColumn())
+            detail = "entry %d '%s' of %d, enabled %s, at %s in a list of %s on the screen at %s" % (
+                index, combo.itemText(index), combo.count(), bool(view.model().flags(item) & Qt.ItemIsEnabled),
+                r.getRect(), view.viewport().rect().getRect(), view.window().geometry().getRect())
             combo.hidePopup()
-            raise RuntimeError("the list stayed open after the click")
+            raise RuntimeError("the list stayed open after the click (%s)" % detail)
 
     def tab(self, index):
         bar = self.w.tabs.tabBar()
@@ -417,7 +437,8 @@ class Session:
             for problem in truth.check_window(self.w):
                 self.fail(name + " (after redo)", problem)
                 ok = False
-        print("%-5s %s" % ("OK" if ok else "FAIL", name))
+        if not ok or not getattr(self, "quiet", False):
+            print("%-5s %s" % ("OK" if ok else "FAIL", name))
         return ok
 
     # ------------------------------------------------------------------ options bar
@@ -543,8 +564,8 @@ def session(s):
         s.click_bed(100, 140)
     s.step("text tool: click", text, check=lambda: (w.elements[-1].shape.kind == "text", "no text"))
     s.step("text: type into the options bar",
-           lambda: s.type_text(truth.bar_fields(w.tool_options)["text"], "Kerfly 1.0"),
-           check=lambda: (w.elements[-1].shape.text == "Kerfly 1.0", w.elements[-1].shape.text))
+           lambda: s.type_text(truth.bar_fields(w.tool_options)["text"], "Kerfly 1.0 źdźbło"),
+           check=lambda: (w.elements[-1].shape.text == "Kerfly 1.0 źdźbło", w.elements[-1].shape.text))
 
     # --- every field of the options bar, for every kind of shape -----------------------
     s.trigger(w.tool_actions["select"])
