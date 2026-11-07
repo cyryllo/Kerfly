@@ -2,7 +2,7 @@
 
 Opis programu po polsku jest w [README_pl.md](README_pl.md).
 
-Kerfly ma dwie gotowe paczki. Pobierz tę dla swojego systemu ze
+Kerfly ma gotowe paczki dla Windows, Linuksa i macOS. Pobierz tę dla swojego systemu ze
 [strony wydań](https://github.com/cyryllo/Kerfly/releases/latest). Nic więcej
 nie jest potrzebne.
 
@@ -49,13 +49,38 @@ nie jest potrzebne.
    Sama grupa `dialout` nie wystarczy: płyta lasera nie jest portem
    szeregowym.
 
+## macOS
+
+*Wersja wstępna: jeszcze nie sprawdzona z laserem. Daj znać, jak działa,
+przez **Pomoc → Zgłoś problem**.*
+
+1. Pobierz **`Kerfly-<wersja>-macos-arm64.dmg`** dla Maca z procesorem
+   Apple (M1 lub nowszy) albo **`Kerfly-<wersja>-macos-x86_64.dmg`** dla
+   Maca z procesorem Intel (menu Apple → Ten Mac pokazuje, który masz). macOS 11 lub
+   nowszy.
+2. Otwórz plik `.dmg` i przeciągnij **Kerfly** do **Aplikacji**.
+3. Pierwsze uruchomienie: Kerfly nie jest podpisany przez Apple (certyfikat
+   jest płatny), więc macOS napisze, że nie może sprawdzić dewelopera. Otwórz
+   **Ustawienia systemowe → Prywatność i ochrona**, przewiń w dół i wybierz
+   **Otwórz mimo to** przy komunikacie o Kerfly (w starszym macOS: prawy
+   przycisk na Kerfly w Aplikacjach → **Otwórz**). Jeśli macOS napisze, że
+   aplikacja „jest uszkodzona”, wpisz raz w Terminalu:
+
+   ```bash
+   xattr -dr com.apple.quarantine /Applications/Kerfly.app
+   ```
+
+4. USB na macOS nie potrzebuje sterownika ani reguły: podłącz laser i połącz
+   się z nim.
+
 ## Autotest
 
 Przed pierwszym zadaniem sprawdź instalację. Podłącz i włącz laser, a potem
-uruchom w wierszu poleceń (Windows) albo w terminalu (Linux):
+uruchom w wierszu poleceń (Windows) albo w terminalu (Linux, macOS):
 
 - Windows: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
 - Linux: `./Kerfly-<wersja>-x86_64.AppImage --self-test`
+- macOS: `/Applications/Kerfly.app/Contents/MacOS/Kerfly --self-test`
 
 Kerfly wypisze po jednej linii na każde sprawdzenie: biblioteki, sterownik
 USB, czy widzi laser (nie rusza nim), Inkscape, folder ustawień i czy okno

@@ -252,6 +252,11 @@ checked byte for byte.
 - [x] Release workflow (`.github/workflows/release.yml`): on a version tag
   builds both, runs their self-test and publishes the release with the notes
   from CHANGELOG.md.
+- [x] macOS: `Kerfly.app` in a `.dmg` for Apple Silicon and Intel, with libusb inside, built and
+  checked on GitHub (a preview; added to the 1.1.0 release with a `macos-v1.1.0` tag).
+- [ ] macOS: confirm the USB connection with a K40 on a Mac (users with Macs report).
+- [ ] macOS: signing and notarization (needs a paid Apple Developer account), so it opens without
+  "Open Anyway".
 - [ ] Debian `.deb` that uses the system's Python libraries (a few MB) with the
   udev rule, menu entry and icon, in an own signed APT repository on GitHub
   Pages (`https://cyryllo.github.io/Kerfly/apt`), modelled on LamaDeck's.

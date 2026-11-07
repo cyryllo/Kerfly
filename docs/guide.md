@@ -39,10 +39,14 @@ sends the job to the laser. This guide is for version 1.1.
    - **Linux:** make `Kerfly-<version>-x86_64.AppImage` executable and run
      it. Allow the laser's USB port once: **Laser → Allow USB access for the
      laser…** (asks for your password), then plug the laser in again.
+   - **macOS** (preview): open the `.dmg` and drag Kerfly to Applications;
+     the first start goes through **System Settings → Privacy & Security →
+     Open Anyway** (the installation guide shows it). USB needs no driver.
 2. Check the installation with the self-test (in a command window /
    terminal):
    - Windows installer: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
    - AppImage: `./Kerfly-<version>-x86_64.AppImage --self-test`
+   - macOS: `/Applications/Kerfly.app/Contents/MacOS/Kerfly --self-test`
 
    Every line should say `OK`; `WARN` lines are optional parts or mean that
    the laser is not connected.

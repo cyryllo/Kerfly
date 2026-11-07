@@ -7,6 +7,16 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Added
+
+- **macOS** (preview, not yet tested with a laser): `Kerfly.app` in a disk
+  image for Macs with Apple Silicon and with Intel processors, with libusb
+  inside for the laser's USB port; built and checked (`--self-test`,
+  `--release-test`) on GitHub with the other packages. The 1.1.0 disk images
+  were added to the 1.1.0 release.
+
 ## 1.1.0 (2026-11-06)
 
 ### Changed

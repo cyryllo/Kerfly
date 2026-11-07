@@ -1,12 +1,15 @@
-# PyInstaller build of Kerfly (Windows and Linux), one folder with the program
-# and all its libraries. Run from the repository root:
+# PyInstaller build of Kerfly (Windows, Linux and macOS), one folder with the
+# program and all its libraries (macOS: the Kerfly.app bundle). Run from the
+# repository root:
 #
 #     pyinstaller packaging/kerfly.spec --noconfirm
 #
 # Result: dist/Kerfly/ with "Kerfly" (the window) and, on Windows, also
 # "kerfly-console.exe" (the same program with a console, for --self-test).
 # The Windows installer (packaging/windows/kerfly.iss) and the AppImage
-# (packaging/linux/build-appimage.sh) are made from that folder.
+# (packaging/linux/build-appimage.sh) are made from that folder; on macOS
+# dist/Kerfly.app goes into a .dmg (.github/workflows/release.yml). For USB on
+# macOS set LIBUSB_DYLIB to libusb-1.0's dylib (Homebrew), it is put in the app.
 #
 # Copyright (C) 2026 Kerfly contributors
 # Licensed under the GNU General Public License v3 or later. See LICENSE.
@@ -16,6 +19,7 @@ import sys
 
 ROOT = os.path.abspath(os.path.join(SPECPATH, os.pardir))
 WINDOWS = sys.platform == "win32"
+MACOS = sys.platform == "darwin"
 
 
 def files(pattern):
@@ -41,9 +45,15 @@ for dist in ("PySide6_Essentials", "shiboken6", "lxml", "pillow", "pyusb", "svge
     except Exception:            # optional library not installed (pyclipper)
         pass
 
+binaries = []
+if MACOS and os.environ.get("LIBUSB_DYLIB"):        # libusb-1.0 for pyusb (LGPL, licence in licenses/)
+    binaries.append((os.environ["LIBUSB_DYLIB"], "."))
+    datas.append((os.path.join(ROOT, "packaging", "licenses", "LGPL-3.0.txt"), "licenses"))
+
 a = Analysis(
     [os.path.join(ROOT, "kerfly.py")],
     pathex=[ROOT],
+    binaries=binaries,
     datas=datas,
     hiddenimports=["PySide6.QtSvg", "usb.backend.libusb1", "usb.backend.libusb0", "kerfly.releasecheck", "segno"],
     excludes=[
@@ -65,3 +75,13 @@ if WINDOWS:
                            icon=icon, upx=False))
 
 coll = COLLECT(*executables, a.binaries, a.datas, strip=False, upx=False, name="Kerfly")
+
+if MACOS:
+    sys.path.insert(0, ROOT)
+    from kerfly import __version__
+    app = BUNDLE(coll, name="Kerfly.app", icon=os.path.join(ROOT, "kerfly", "gui", "icons", "kerfly.icns"),
+                 bundle_identifier="io.github.cyryllo.kerfly",
+                 info_plist={"CFBundleName": "Kerfly", "CFBundleDisplayName": "Kerfly",
+                             "CFBundleShortVersionString": __version__, "CFBundleVersion": __version__,
+                             "NSHighResolutionCapable": True, "LSMinimumSystemVersion": "11.0",
+                             "NSHumanReadableCopyright": "GPL-3.0-or-later, Kerfly contributors"})

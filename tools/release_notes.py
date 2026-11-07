@@ -33,6 +33,10 @@ def main():
     print("- **Linux:** `Kerfly-%s-x86_64.AppImage`: make it executable and run it. Allow the laser's USB port "
           "once (Laser → Allow USB access for the laser…), see "
           "[INSTALL.md](https://github.com/cyryllo/Kerfly/blob/v%s/INSTALL.md#linux-the-appimage)." % (version, version))
+    print("- **macOS 11 or newer:** `Kerfly-%s-macos-arm64.dmg` (Apple Silicon, M1 and later) or "
+          "`Kerfly-%s-macos-x86_64.dmg` (Intel): open it and drag Kerfly to Applications. Not signed by Apple: "
+          "the first time see [INSTALL.md](https://github.com/cyryllo/Kerfly/blob/v%s/INSTALL.md#macos). A preview, "
+          "not yet tested with a laser." % (version, version, version))
     print("\nUser guide: https://cyryllo.github.io/Kerfly/guide.html "
           "([Polish](https://cyryllo.github.io/Kerfly/pl/guide.html))")
 

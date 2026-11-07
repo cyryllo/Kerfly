@@ -2,7 +2,7 @@
 
 A Polish version of this guide is in [INSTALL_pl.md](INSTALL_pl.md).
 
-Kerfly comes in two ready-made packages. Download the one for your system
+Kerfly comes in ready-made packages for Windows, Linux and macOS. Download the one for your system
 from the [releases page](https://github.com/cyryllo/Kerfly/releases/latest).
 Nothing else is needed.
 
@@ -48,13 +48,36 @@ Nothing else is needed.
    The `dialout` group is not enough: the laser's board is not a serial
    port.
 
+## macOS
+
+*A preview: not yet tested with a laser. Please report how it works with
+**Help → Report a problem**.*
+
+1. Download **`Kerfly-<version>-macos-arm64.dmg`** for a Mac with Apple
+   Silicon (M1 or later), or **`Kerfly-<version>-macos-x86_64.dmg`** for a
+   Mac with an Intel processor (Apple menu → About This Mac says which). macOS 11
+   or newer.
+2. Open the `.dmg` and drag **Kerfly** onto **Applications**.
+3. The first start: Kerfly is not signed by Apple (a paid certificate), so
+   macOS says it cannot check the developer. Open **System Settings →
+   Privacy & Security**, scroll down and choose **Open Anyway** next to the
+   message about Kerfly (on older macOS: right-click Kerfly in Applications →
+   **Open**). If macOS says the app "is damaged", run once in Terminal:
+
+   ```bash
+   xattr -dr com.apple.quarantine /Applications/Kerfly.app
+   ```
+
+4. USB needs no driver and no rule on macOS: plug the laser in and connect.
+
 ## Self-test
 
 Before the first job, check the installation. Plug in and switch on the laser,
-then run in a command window (Windows) or a terminal (Linux):
+then run in a command window (Windows) or a terminal (Linux, macOS):
 
 - Windows: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
 - Linux: `./Kerfly-<version>-x86_64.AppImage --self-test`
+- macOS: `/Applications/Kerfly.app/Contents/MacOS/Kerfly --self-test`
 
 Kerfly prints one line per check: libraries, USB driver, whether the laser is
 found (it is not moved), Inkscape, the settings folder, and that the window

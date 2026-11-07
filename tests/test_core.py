@@ -888,8 +888,24 @@ def test_usblib():
         ok2 = not found2 and "nowhere" in text2 and "missing" in text2
     finally:
         usblib.os.name, libusb0.get_backend, usblib.candidates, usblib._result = saved
+    # macOS: libusb-1.0 from inside Kerfly.app first, the log says where
+    import usb.backend.libusb1 as libusb1
+    fake_dylib = os.path.join(tmp, "libusb-1.0.0.dylib")
+    open(fake_dylib, "wb").close()
+    saved_mac = (usblib.sys.platform, libusb1.get_backend, usblib.mac_candidates, usblib._result)
+    try:
+        usblib.sys.platform = "darwin"
+        libusb1.get_backend = lambda find_library=None: object() if find_library and \
+            find_library("usb-1.0") == fake_dylib else None
+        usblib.mac_candidates = lambda: [os.path.join(tmp, "nowhere.dylib"), fake_dylib]
+        usblib._result = None
+        found3, text3 = usblib.ensure_libusb()
+        ok3 = found3 and fake_dylib in text3
+    finally:
+        usblib.sys.platform, libusb1.get_backend, usblib.mac_candidates, usblib._result = saved_mac
     for name, ok, detail in (("USB library loaded from the first place that works", ok1, ""),
-                             ("USB library missing: the log lists where Kerfly looked", ok2, "")):
+                             ("USB library missing: the log lists where Kerfly looked", ok2, ""),
+                             ("macOS: libusb-1.0 loaded from inside the app", ok3, "")):
         print("%-5s usb: %s %s" % ("OK" if ok else "FAIL", name, detail))
         errors += 0 if ok else 1
     return errors

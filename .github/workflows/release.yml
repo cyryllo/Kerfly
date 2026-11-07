@@ -1,13 +1,15 @@
-# Build the Windows installer and the Linux AppImage, test them with
-# --self-test, and on a version tag (vX.Y.Z) publish them as a GitHub release
-# with the notes of that version from CHANGELOG.md.
+# Build the Windows installer, the Linux AppImage and the macOS disk images,
+# test them with --self-test and --release-test, and on a version tag (vX.Y.Z)
+# publish them as a GitHub release with the notes of that version from
+# CHANGELOG.md. A tag macos-vX.Y.Z builds only the macOS disk images and adds
+# them to the existing release vX.Y.Z.
 # To try the packages without a release: Actions -> packages -> Run workflow,
 # on any branch (the files are kept as workflow artifacts).
 name: packages
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["v*", "macos-v*"]
   workflow_dispatch:
 
 permissions:
@@ -25,6 +27,7 @@ env:
 
 jobs:
   windows:
+    if: ${{ !startsWith(github.ref, 'refs/tags/macos-') }}
     runs-on: windows-latest
     timeout-minutes: 40
     steps:
@@ -85,6 +88,7 @@ jobs:
           if-no-files-found: error
 
   linux:
+    if: ${{ !startsWith(github.ref, 'refs/tags/macos-') }}
     runs-on: ubuntu-22.04          # older glibc: the AppImage also runs on older systems
     timeout-minutes: 40
     steps:
@@ -125,9 +129,85 @@ jobs:
           path: dist/Kerfly-*-x86_64.AppImage
           if-no-files-found: error
 
+  macos:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15            # Apple Silicon (M1 and later)
+            arch: arm64
+          - runner: macos-15-intel      # older Macs with an Intel processor
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Libraries (libusb from Homebrew goes into the app, LGPL)
+        run: |
+          brew install libusb
+          echo "LIBUSB_DYLIB=$(brew --prefix libusb)/lib/libusb-1.0.0.dylib" >> "$GITHUB_ENV"
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt pyinstaller
+          python -m pip install -r requirements-optional.txt || echo "pyclipper not installed (optional)"
+      - name: Kerfly.app (PyInstaller)
+        run: python -m PyInstaller packaging/kerfly.spec --noconfirm
+      - name: Self-test of the app (must load libusb)
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          out=$(dist/Kerfly.app/Contents/MacOS/Kerfly --self-test 2>&1); rc=$?
+          echo "$out"
+          [ $rc -eq 0 ] || exit 1
+          echo "$out" | grep -Eq "OK +USB driver" || { echo "::error::the app did not load libusb"; exit 1; }
+      - name: Release check of the app (fonts, Qt plugins, libraries)
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: dist/Kerfly.app/Contents/MacOS/Kerfly --release-test
+      - name: Disk image (.dmg)
+        run: |
+          version=$(python -c "import kerfly; print(kerfly.__version__)")
+          mkdir -p dmg
+          cp -R dist/Kerfly.app dmg/
+          ln -s /Applications dmg/Applications
+          hdiutil create -volname "Kerfly $version" -srcfolder dmg -ov -format UDZO \
+            "dist/Kerfly-$version-macos-${{ matrix.arch }}.dmg"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: macos-${{ matrix.arch }}
+          path: dist/Kerfly-*-macos-*.dmg
+          if-no-files-found: error
+
+  # macos-vX.Y.Z: add the macOS disk images to the existing release vX.Y.Z
+  macos-to-release:
+    if: ${{ !cancelled() && startsWith(github.ref, 'refs/tags/macos-v') }}
+    needs: [macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: macos-*
+          path: packages
+          merge-multiple: true
+      - name: Which release
+        id: tag
+        run: echo "name=${GITHUB_REF_NAME#macos-}" >> "$GITHUB_OUTPUT"
+      - uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          append_body: true
+          body: |
+
+            - **macOS 11 or newer** (added later): `Kerfly-…-macos-arm64.dmg` for Macs with Apple Silicon (M1 and later), `Kerfly-…-macos-x86_64.dmg` for Macs with an Intel processor. A preview, not yet tested with a laser: please report how it works. The app is not signed by Apple; see [INSTALL.md](https://github.com/cyryllo/Kerfly/blob/main/INSTALL.md#macos) for opening it the first time.
+          files: packages/*
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [windows, linux]
+    needs: [windows, linux, macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write

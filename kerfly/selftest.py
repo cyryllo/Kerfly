@@ -73,13 +73,15 @@ def _check_usb(r):
         devices = list(usb.core.find(idVendor=0x1A86, idProduct=0x5512, find_all=True))
     except usb.core.NoBackendError:
         hint = ("install the libusb-win32 driver with Zadig (see INSTALL.md)" if os.name == "nt"
+                else "install libusb (brew install libusb)" if sys.platform == "darwin"
                 else "install libusb (Debian: sudo apt install libusb-1.0-0)")
         r.add(WARN, "USB driver", "no libusb found: " + hint + ("" if os.name != "nt" else " [%s]" % where))
         return
     except Exception as e:
         r.add(WARN, "K40 laser", "could not list USB devices: %s" % e)
         return
-    r.add(OK, "USB driver", "libusb found" + (" (%s)" % where if os.name == "nt" else ""))
+    r.add(OK, "USB driver", "libusb found" + (" (%s)" % where if os.name == "nt" or sys.platform == "darwin"
+                                               else ""))
     if devices:
         where = ", ".join("bus %s address %s" % (d.bus, d.address) for d in devices)
         r.add(OK, "K40 laser", "found (%s)" % where)

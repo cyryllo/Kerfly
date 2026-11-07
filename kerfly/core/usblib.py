@@ -1,5 +1,10 @@
 """
-Finding the USB library on Windows.
+Finding the USB library on Windows and macOS.
+
+macOS: pyusb uses libusb-1.0; the packaged Kerfly.app carries its own
+libusb-1.0.0.dylib (from Homebrew), which a frozen program does not always
+find by itself, so Kerfly loads it from the app first, then the system's
+(Homebrew in /opt/homebrew or /usr/local).
 
 The K40 board is driven through pyusb with the libusb-win32 back end, which
 needs libusb0.dll. The driver installers (Zadig, Scorch's K40 driver
@@ -35,12 +40,56 @@ def candidates():
     return places
 
 
+def mac_candidates():
+    """Places to look for libusb-1.0 on macOS, in order: inside Kerfly.app, then Homebrew."""
+    places = []
+    meipass = getattr(sys, "_MEIPASS", None)
+    for folder in filter(None, (meipass, os.path.dirname(sys.executable),
+                                os.path.join(os.path.dirname(os.path.dirname(sys.executable)), "Frameworks"))):
+        for name in ("libusb-1.0.0.dylib", "libusb-1.0.dylib"):
+            places.append(os.path.join(folder, name))
+    for prefix in ("/opt/homebrew", "/usr/local"):
+        places.append(os.path.join(prefix, "lib", "libusb-1.0.0.dylib"))
+    return places
+
+
+def _ensure_mac():
+    global _result
+    try:
+        import usb.backend.libusb1 as libusb1
+    except Exception as e:
+        _result = (False, "pyusb not available: %s" % e)
+        return _result
+    looked = []
+    for path in mac_candidates():
+        if not os.path.isfile(path):
+            looked.append("%s (missing)" % path)
+            continue
+        try:
+            backend = libusb1.get_backend(find_library=lambda _name, p=path: p)
+        except Exception as e:
+            looked.append("%s (could not load: %s)" % (path, e))
+            continue
+        if backend is not None:
+            _result = (True, "libusb-1.0 loaded from %s" % path)
+            log.info("usb: %s", _result[1])
+            return _result
+    if libusb1.get_backend() is not None:
+        _result = (True, "libusb-1.0 found by pyusb")
+        return _result
+    _result = (False, "libusb-1.0 not found (Homebrew: brew install libusb); looked in: " + "; ".join(looked))
+    log.warning("usb: %s", _result[1])
+    return _result
+
+
 def ensure_libusb():
     """Make sure pyusb has a USB back end. Returns (found, text for the log /
-    self-test). Does nothing outside Windows, where pyusb finds libusb itself."""
+    self-test). On Linux pyusb finds the system's libusb by itself."""
     global _result
     if _result is not None and _result[0]:
         return _result
+    if sys.platform == "darwin":
+        return _ensure_mac()
     if os.name != "nt":
         _result = (True, "system libusb")
         return _result

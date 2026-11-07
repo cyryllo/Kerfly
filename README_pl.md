@@ -5,7 +5,7 @@
 **Strona i instrukcja obsługi:** [cyryllo.github.io/Kerfly/pl](https://cyryllo.github.io/Kerfly/pl/) · **Pobierz:** [najnowsze wydanie](https://github.com/cyryllo/Kerfly/releases/latest) · **English:** [README.md](README.md)
 
 Kerfly to darmowy program do sterowania laserami CO2 klasy K40 z płytami
-Lihuiyu (rodzina M2 Nano). Działa na Windows 10 / 11 i Linuksie.
+Lihuiyu (rodzina M2 Nano). Działa na Windows 10 / 11, Linuksie i macOS.
 
 ![Główne okno Kerfly](docs/screenshot_pl.png)
 
@@ -22,6 +22,11 @@ Pobierz paczkę dla swojego systemu z
   uruchamiania i uruchom go. Raz zezwól na dostęp do portu USB lasera:
   **Laser → Zezwól na dostęp do USB lasera…** (zapyta o hasło; zobacz
   [INSTALL_pl.md](INSTALL_pl.md#linux-appimage)).
+- **macOS 11 lub nowszy** (wersja wstępna, jeszcze nie sprawdzona z
+  laserem): otwórz `Kerfly-<wersja>-macos-arm64.dmg` (procesor Apple) albo
+  `-macos-x86_64.dmg` (Intel) i przeciągnij Kerfly do Aplikacji. Nie jest
+  podpisany przez Apple; jak go otworzyć za pierwszym razem:
+  [INSTALL_pl.md](INSTALL_pl.md#macos).
 
 Krok po kroku, z autotestem i pierwszym uruchomieniem z laserem:
 [INSTALL_pl.md](INSTALL_pl.md). Jak używać Kerfly: [instrukcja

@@ -116,3 +116,46 @@ jobs:
             tests/output/
             tests/references/out/
           if-no-files-found: ignore
+
+  macos:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Libraries
+        run: |
+          brew install libusb
+          python -m venv .venv
+          .venv/bin/python -m pip install -r requirements.txt -r requirements-optional.txt -r requirements-dev.txt
+      - name: Self-test
+        if: always()
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: .venv/bin/python kerfly.py --self-test
+      - name: Core tests
+        if: always()
+        run: .venv/bin/python tests/test_core.py
+      - name: GUI tests
+        if: always()
+        run: .venv/bin/python -X faulthandler tests/test_gui.py
+      - name: Translations
+        if: always()
+        run: .venv/bin/python tests/test_i18n.py
+      - name: Reference results (laser data, cut order, bed pictures)
+        if: always()
+        run: .venv/bin/python tests/test_references.py
+      - name: Release check of the program
+        if: always()
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: .venv/bin/python kerfly.py --release-test
+      - name: Keep the differing pictures
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: references-out-macos
+          path: tests/references/out/
+          if-no-files-found: ignore

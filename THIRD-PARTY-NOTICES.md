@@ -122,6 +122,10 @@ The ready-made packages (built by `.github/workflows/release.yml` from
   (Jordan Russell and Martijn Laan, Inno Setup License, a free licence that
   allows this use).
 - **AppImage only: the AppImage runtime** of appimagetool (MIT).
+- **macOS only: `libusb-1.0.0.dylib`** of **libusb 1.0** (LGPL-2.1-or-later,
+  text in `licenses/LGPL-3.0.txt` covers the later versions; source:
+  <https://github.com/libusb/libusb>), built by Homebrew, inside `Kerfly.app`
+  so the laser's USB port works without installing anything.
 
 ## Libraries installed with Kerfly
 

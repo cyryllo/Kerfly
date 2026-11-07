@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Render Kerfly's logo (kerfly/gui/icons/kerfly.svg) to the bitmap icons:
-kerfly.png (256 px, Linux desktop entry, README) and kerfly.ico (Windows,
-16-256 px), and copy the SVG to the project website (docs/assets/logo.svg).
+kerfly.png (256 px, Linux desktop entry, README), kerfly.ico (Windows,
+16-256 px) and kerfly.icns (macOS, 16-1024 px), and copy the SVG to the project website (docs/assets/logo.svg).
 Run after changing the SVG:
 
     python tools/make_icons.py
@@ -49,9 +49,13 @@ def main():
     # each size drawn from the SVG (sharper than scaling one bitmap down)
     images[256].save(os.path.join(ICONS, "kerfly.ico"), sizes=[(s, s) for s in sizes],
                      append_images=[images[s] for s in sizes if s != 256])
+    # macOS: the app's icon, up to 1024 px (512 at double density)
+    big = {s: render(renderer, s) for s in (512, 1024)}
+    big[1024].save(os.path.join(ICONS, "kerfly.icns"),
+                   append_images=[images[s] for s in (16, 32, 64, 128, 256)] + [big[512]])
     import shutil
     shutil.copyfile(os.path.join(ICONS, "kerfly.svg"), os.path.join(ROOT, "docs", "assets", "logo.svg"))
-    print("kerfly.png, kerfly.ico written in", ICONS, "and docs/assets/logo.svg updated")
+    print("kerfly.png, kerfly.ico, kerfly.icns written in", ICONS, "and docs/assets/logo.svg updated")
 
 
 if __name__ == "__main__":

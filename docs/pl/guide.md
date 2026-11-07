@@ -40,9 +40,14 @@ zadanie do lasera. Instrukcja dotyczy wersji 1.1.
      uruchamiania i uruchom go. Raz zezwól na dostęp do portu USB lasera:
      **Laser → Zezwól na dostęp do USB lasera…** (zapyta o hasło), potem
      podłącz laser ponownie.
+   - **macOS** (wersja wstępna): otwórz plik `.dmg` i przeciągnij Kerfly do
+     Aplikacji; pierwsze uruchomienie przez **Ustawienia systemowe →
+     Prywatność i ochrona → Otwórz mimo to** (opisuje to instrukcja
+     instalacji). USB nie potrzebuje sterownika.
 2. Sprawdź instalację autotestem (w wierszu poleceń / terminalu):
    - z instalatora Windows: `"C:\Program Files\Kerfly\kerfly-console.exe" --self-test`
    - AppImage: `./Kerfly-<wersja>-x86_64.AppImage --self-test`
+   - macOS: `/Applications/Kerfly.app/Contents/MacOS/Kerfly --self-test`
 
    Każda linia powinna mieć `OK`; linie `WARN` dotyczą rzeczy opcjonalnych
    albo niepodłączonego lasera.

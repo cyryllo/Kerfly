@@ -3,19 +3,19 @@ layout: default
 lang: pl
 title: Kerfly po polsku
 other_lang: index.html
-description: Kerfly to darmowy program do sterowania laserami CO2 K40 z płytami Lihuiyu M2 Nano. Rysuj, układaj i tnij w Linuksie i Windows.
+description: Kerfly to darmowy program do sterowania laserami CO2 K40 z płytami Lihuiyu M2 Nano. Rysuj, układaj i tnij w Windows, Linuksie i macOS.
 ---
 
 <div class="hero">
   <img src="{{ '/assets/logo.svg' | relative_url }}" alt="Logo Kerfly">
   <div>
     <h1>Kerfly</h1>
-    <p>Darmowy program do sterowania laserami K40, dla Linuksa i Windows.</p>
+    <p>Darmowy program do sterowania laserami K40, dla Windows, Linuksa i macOS.</p>
   </div>
 </div>
 
 <div class="buttons">
-  <a class="button primary" href="{{ site.repo }}/releases/latest">Pobierz (Windows, Linux)</a>
+  <a class="button primary" href="{{ site.repo }}/releases/latest">Pobierz (Windows, Linux, macOS)</a>
   <a class="button" href="{{ '/pl/guide.html' | relative_url }}">Instrukcja obsługi</a>
   <a class="button" href="{{ site.repo }}/blob/main/INSTALL_pl.md">Instalacja</a>
 </div>
@@ -38,7 +38,7 @@ w jednym oknie, od pierwszego szkicu do wyciętej części.
   <div class="feature"><h3>Generatory</h3><p>Gotowe projekty z kilku liczb: test materiału, pudełko na wczepy, test kerfu, koło zębate, puzzle, linijka, kod QR, gumowa pieczątka i karta testowa lasera.</p></div>
   <div class="feature"><h3>Bezpieczna praca</h3><p>Najpierw objazd konturu, symulacja zadania, szacowany czas. Kerfly nie wyśle zadania, które wyprowadziłoby głowicę poza stół.</p></div>
   <div class="feature"><h3>Twój sposób pracy</h3><p>Projekt może zostać na swoim miejscu na stole, a głowica do niego podjedzie, albo podążać za głowicą: wybór należy do Ciebie.</p></div>
-  <div class="feature"><h3>Po polsku</h3><p>Polski, angielski, niemiecki, hiszpański i francuski. Działa w Windows 10 / 11 (instalator) i Linuksie (AppImage, większość dystrybucji).</p></div>
+  <div class="feature"><h3>Po polsku</h3><p>Polski, angielski, niemiecki, hiszpański i francuski. Działa w Windows 10 / 11 (instalator), Linuksie (AppImage, większość dystrybucji) i macOS 11 lub nowszym (wersja wstępna).</p></div>
 </div>
 
 ## Jak zacząć
@@ -48,6 +48,7 @@ Otwórz <a href="{{ site.repo }}/releases/latest">najnowsze wydanie</a> i pobier
 <ol class="steps">
   <li><strong>Windows 10 / 11:</strong> uruchom <code>Kerfly-&lt;wersja&gt;-windows-setup.exe</code>. Instalator nie jest podpisany, więc Windows może pokazać <em>System Windows ochronił ten komputer</em>: wybierz <em>Więcej informacji → Uruchom mimo to</em>. Za pierwszym razem zaznacz <em>Zainstaluj sterownik USB lasera K40</em>. Kerfly będzie w menu Start.</li>
   <li><strong>Linux:</strong> nadaj plikowi <code>Kerfly-&lt;wersja&gt;-x86_64.AppImage</code> prawo uruchamiania i uruchom go. Raz zezwól na dostęp do <a href="{{ site.repo }}/blob/main/INSTALL_pl.md#linux-appimage">portu USB lasera</a>: <em>Laser → Zezwól na dostęp do USB lasera…</em> (zapyta o hasło).</li>
+  <li><strong>macOS</strong> (wersja wstępna, jeszcze nie sprawdzona z laserem): otwórz <code>Kerfly-&lt;wersja&gt;-macos-arm64.dmg</code> (procesor Apple) albo <code>-macos-x86_64.dmg</code> (Intel) i przeciągnij Kerfly do Aplikacji. Nie jest podpisany przez Apple: pierwsze uruchomienie opisuje <a href="{{ site.repo }}/blob/main/INSTALL_pl.md#macos">instrukcja instalacji</a>.</li>
   <li>Przeczytaj <a href="{{ '/pl/guide.html' | relative_url }}">instrukcję obsługi</a>: połącz laser, ułóż projekt, objedź kontur, start.</li>
 </ol>
 
