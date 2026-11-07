@@ -137,21 +137,29 @@ jobs:
         run: .venv/bin/python kerfly.py --self-test
       - name: Core tests
         if: always()
-        run: .venv/bin/python tests/test_core.py
+        run: |
+          set -o pipefail
+          .venv/bin/python tests/test_core.py 2>&1 | tee core.log || { grep -E "^FAIL" core.log | head -10 | sed 's/^/::error title=test_core (macOS)::/'; exit 1; }
       - name: GUI tests
         if: always()
-        run: .venv/bin/python -X faulthandler tests/test_gui.py
+        run: |
+          set -o pipefail
+          .venv/bin/python -X faulthandler tests/test_gui.py 2>&1 | tee gui.log || { grep -E "^(FAIL|TRUTH)" gui.log | head -10 | sed 's/^/::error title=test_gui (macOS)::/'; exit 1; }
       - name: Translations
         if: always()
         run: .venv/bin/python tests/test_i18n.py
       - name: Reference results (laser data, cut order, bed pictures)
         if: always()
-        run: .venv/bin/python tests/test_references.py
+        run: |
+          set -o pipefail
+          .venv/bin/python tests/test_references.py 2>&1 | tee refs.log || { grep -E "^FAIL" refs.log | head -10 | sed 's/^/::error title=references (macOS)::/'; exit 1; }
       - name: Release check of the program
         if: always()
         env:
           QT_QPA_PLATFORM: offscreen
-        run: .venv/bin/python kerfly.py --release-test
+        run: |
+          set -o pipefail
+          .venv/bin/python kerfly.py --release-test 2>&1 | tee rc.log || { grep -E "^FAIL" rc.log | head -10 | sed 's/^/::error title=release check (macOS)::/'; exit 1; }
       - name: Keep the differing pictures
         if: failure()
         uses: actions/upload-artifact@v7

@@ -869,7 +869,7 @@ def test_usblib():
     tmp = tempfile.mkdtemp()
     fake_dll = os.path.join(tmp, "libusb0.dll")
     open(fake_dll, "wb").close()
-    saved = (os.name, libusb0.get_backend, usblib.candidates, usblib._result)
+    saved = (os.name, usblib.sys.platform, libusb0.get_backend, usblib.candidates, usblib._result)
     calls = []
 
     def fake_get_backend(find_library=None):
@@ -877,6 +877,7 @@ def test_usblib():
         return object() if find_library and find_library("libusb0") == fake_dll else None
     try:
         usblib.os.name = "nt"
+        usblib.sys.platform = "win32"                 # also when the tests run on macOS
         libusb0.get_backend = fake_get_backend
         usblib.candidates = lambda: [os.path.join(tmp, "System32", "libusb0.dll"), fake_dll]
         usblib._result = None
@@ -887,7 +888,7 @@ def test_usblib():
         found2, text2 = usblib.ensure_libusb()
         ok2 = not found2 and "nowhere" in text2 and "missing" in text2
     finally:
-        usblib.os.name, libusb0.get_backend, usblib.candidates, usblib._result = saved
+        usblib.os.name, usblib.sys.platform, libusb0.get_backend, usblib.candidates, usblib._result = saved
     # macOS: libusb-1.0 from inside Kerfly.app first, the log says where
     import usb.backend.libusb1 as libusb1
     fake_dylib = os.path.join(tmp, "libusb-1.0.0.dylib")
