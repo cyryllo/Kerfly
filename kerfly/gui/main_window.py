@@ -1438,6 +1438,10 @@ class MainWindow(QMainWindow):
                           "nodes.") % len(made))
 
     def _add_drawn_element(self, spec, tool, left, top):
+        if spec.kind == "path" and spec.subpaths:
+            # the node editor draws the nodes from (0, 0) of the outline: a path must start there
+            from kerfly.core import curves
+            spec.subpaths = curves.normalized(spec.subpaths)[0]
         design = build_design(spec)
         xmin, xmax, ymin, ymax = design.bounds
         if xmax - xmin <= 0 and ymax - ymin <= 0:
@@ -2294,6 +2298,9 @@ class MainWindow(QMainWindow):
             spec = item.spec.copy()
             if spec.kind == "text":
                 update_text_spec(spec)
+            elif spec.kind == "path" and spec.subpaths:          # nodes from (0, 0) of the outline
+                from kerfly.core import curves
+                spec.subpaths = curves.normalized(spec.subpaths)[0]
             built = build_design(spec)
             xmin, xmax, ymin, ymax = built.bounds
             if xmax - xmin <= 0 and ymax - ymin <= 0:

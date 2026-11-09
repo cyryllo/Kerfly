@@ -9,6 +9,12 @@ Version numbers:
 
 ## Unreleased
 
+### Fixed
+
+- A path shape inserted from outside the drawing tools (generators,
+  scripts) is moved so its outline starts at (0, 0): the node editor drew
+  the nodes of such a curve shifted from the shape.
+
 ### Added
 
 - **macOS** (preview, not yet tested with a laser): `Kerfly.app` in a disk

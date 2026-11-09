@@ -1527,6 +1527,20 @@ def main():
     sw._dirty = False
     sw.close()
 
+    # 56. a path shape put on the bed starts at (0, 0) of its outline, so the node editor draws its
+    # nodes on the shape (a curve whose handles stuck out was drawn shifted)
+    from kerfly.core import curves as _cv
+    pw = make_window(grid_mm="0")
+    heart = _Spec(kind="path", operation="cut", subpaths=[{"closed": True, "nodes": [
+        _cv.node(45, 15, (30, -5), (60, -5)), _cv.node(85, 25, (90, 0), (80, 50)),
+        _cv.node(45, 75, (60, 60), (30, 60)), _cv.node(5, 25, (10, 50), (0, 0))]}])
+    pw._add_drawn_element(heart, "pen", 40, 30)
+    x0, _x1, y0, _y1 = _cv.bounds(pw.elements[-1].shape.subpaths)
+    check("path shapes start at (0, 0) of their outline (node editor on the shape)",
+          abs(x0) < 1e-6 and abs(y0) < 1e-6, "(%.3f, %.3f)" % (x0, y0))
+    pw._dirty = False
+    pw.close()
+
     # 50. the element list shows a single element too (it was hidden until there were two)
     w9 = make_window(grid_mm="0")
     w9._add_drawn_element(_Spec(kind="rectangle", width=20, height=20), "rectangle", 10, 10)
