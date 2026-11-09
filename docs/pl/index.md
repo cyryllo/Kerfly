@@ -28,7 +28,7 @@ description: Kerfly to darmowy program do sterowania laserami CO2 K40 z płytami
 <p class="lead">Kerfly steruje laserami CO2 klasy K40 z <strong>płytami Lihuiyu</strong> (rodzina M2 Nano: M1, M2, M3, B1, …), czyli popularnymi niebiesko-białymi laserami biurkowymi sprzedawanymi pod wieloma nazwami. Wszystko, od pierwszego szkicu do wyciętej części, robisz w jednym nowoczesnym oknie: rysujesz, otwierasz pliki, układasz je na stole, ustawiasz warstwy, sprawdzasz zadanie i wysyłasz je do lasera.</p>
 
 <div class="stats">
-  <div><strong>9</strong><span>generatorów: pudełka, testy, pieczątki, QR, …</span></div>
+  <div><strong>10</strong><span>generatorów: pudełka, testy, pieczątki, QR, …</span></div>
   <div><strong>8</strong><span>wzorów wypełnień do graweru</span></div>
   <div><strong>3</strong><span>rodzaje zawiasów giętkich</span></div>
   <div><strong>3</strong><span>rodzaje warstw: raster, obrys, cięcie</span></div>
@@ -110,6 +110,7 @@ description: Kerfly to darmowy program do sterowania laserami CO2 K40 z płytami
       <li><strong>Pudełko na wczepy</strong> z wiekiem albo bez, wymiary wewnętrzne lub zewnętrzne, kompensacja kerfu.</li>
       <li><strong>Test kerfu</strong>: zmierz, jak szeroko tnie Twój laser, i znajdź najciaśniejsze pasowanie.</li>
       <li><strong>Koło zębate</strong> z zębami ewolwentowymi, <strong>puzzle</strong>, <strong>linijka</strong>, <strong>kod QR</strong> i <strong>karta testowa</strong> lasera.</li>
+      <li><strong>Dokładne wymiary</strong>: wpisz kerf swojego lasera w warstwie cięcia, a części wyjdą w narysowanym rozmiarze; <strong>Odsunięcie</strong> rysuje obrys wokół kształtu albo w jego środku.</li>
     </ul>
   </div>
 </div>
@@ -118,7 +119,7 @@ description: Kerfly to darmowy program do sterowania laserami CO2 K40 z płytami
   <div class="shot-col"><a href="{{ img }}stamp.png"><img loading="lazy" src="{{ img }}stamp.png" alt="Generator pieczątek: tekst, logo i ramka, odwrócone i odbite"></a></div>
   <div class="text-col">
     <h3>Pieczątki jednym kliknięciem</h3>
-    <p>Wybierz typowy rozmiar pieczątki (albo własny), wpisz linie, wybierz czcionkę, logo i ramkę, i naciśnij <strong>Generuj pieczątkę</strong>. Kerfly wypala tło, żeby tekst został wypukły, odbija pieczątkę, żeby odbijała się prawidłowo, i dodaje linię cięcia dookoła.</p>
+    <p>Wybierz typowy rozmiar pieczątki (albo własny), wpisz linie, wybierz czcionkę, logo i ramkę, i naciśnij <strong>Generuj pieczątkę</strong>. Kerfly wypala tło, żeby tekst został wypukły, odbija pieczątkę, żeby odbijała się prawidłowo, i dodaje linię cięcia dookoła. Także <strong>pieczątki okrągłe</strong>: tekst wokół góry i dołu, pierścienie oraz tekst albo logo w środku.</p>
   </div>
 </div>
 
@@ -214,8 +215,7 @@ Kerfly steruje prawdziwą maszyną z laserem, więc „chyba działa” to za ma
 ## Stan projektu
 
 **Kerfly 1.1 jest wersją stabilną, gotową do codziennej pracy** z laserem.
-Następne w planach: kompensacja kerfu (dokładne wymiary wycinanych części),
-okrągłe pieczątki z tekstem po okręgu, wektoryzacja obrazów, więcej wzorów,
+Następne w planach: wektoryzacja obrazów, więcej wzorów,
 więcej formatów plików oraz paczka dla Debiana z własnym repozytorium APT.
 Zobacz [plan]({{ site.repo }}/blob/main/ROADMAP.md) (po angielsku) i
 [listę zmian]({{ site.repo }}/blob/main/CHANGELOG.md).

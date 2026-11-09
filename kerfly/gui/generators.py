@@ -179,8 +179,13 @@ GENERATORS.insert(len(GENERATORS) - 1, (
     N_("Stamp: text, a picture and a frame for a rubber stamp; the background is burnt away and the stamp is "
        "mirrored, so it prints the right way round"),
     _stamp.FIELDS, _stamp.make))
+GENERATORS.insert(len(GENERATORS) - 1, (
+    "round_stamp", N_("Round stamp"), "rosette",
+    N_("Round stamp: text around the top and the bottom, rings, and text or a picture in the middle; burnt "
+       "for rubber like the stamp"),
+    _stamp.ROUND_FIELDS, _stamp.make_round))
 # the button that makes the design (default: Insert)
-ACCEPT_TEXT = {"stamp": N_("Generate stamp")}
+ACCEPT_TEXT = {"stamp": N_("Generate stamp"), "round_stamp": N_("Generate stamp")}
 
 # names of the generated elements (kerfly.core.generators), shown in the element list
 ITEM_NAMES = [N_("Field"), N_("Label"), N_("Bottom"), N_("Front"), N_("Back"), N_("Left side"),
@@ -314,7 +319,7 @@ class GeneratorDialog(QDialog):
                 from PySide6.QtWidgets import QSizePolicy
                 w.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
             else:
-                w = QLineEdit(str(value))
+                w = QLineEdit(_(value) if value and value == default_of(self.fields, name) else str(value))
                 w.textChanged.connect(self._changed)
             w.setToolTip(_(ftip))
             w.setProperty("generator_field", name)
@@ -389,11 +394,11 @@ class GeneratorDialog(QDialog):
         self._timer.start()
 
     def _enable_fields(self):
-        """Own width and height only with the own size (a stamp's ready-made sizes)."""
+        """Own width and height (diameter) only with the own size (a stamp's ready-made sizes)."""
         preset = self.widgets.get("preset")
         if preset is not None:
             own = preset.currentData() == "custom"
-            for name in ("width", "height"):
+            for name in ("width", "height", "diameter"):
                 if name in self.widgets:
                     self.widgets[name].setEnabled(own)
 

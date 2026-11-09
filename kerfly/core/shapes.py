@@ -251,8 +251,10 @@ def has_pattern_fill(spec):
         and spec.operation in ("cut", "engrave")
 
 
-def build_design(spec):
-    """Design for a shape. Bounds are the shape's bounding box."""
+def build_design(spec, cut_offset_mm=0.0):
+    """Design for a shape. Bounds are the shape's bounding box. cut_offset_mm:
+    kerf compensation, the closed outlines of a cut shape moved out by this
+    much (holes in) before the bridges are cut; the bounds stay the drawn ones."""
     polys = outlines(spec)
     design = Design()
     xmin, xmax, ymin, ymax = _bounds_mm(polys)
@@ -299,6 +301,11 @@ def build_design(spec):
                 pts = [to_design(x, y) for x, y in line]
                 for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
                     hinge_segments.append([x1, y1, x2, y2])
+        if spec.operation == "cut" and cut_offset_mm and polys:
+            from .offset import offset_polygons
+            closed = [p for p in polys if len(p) > 2 and p[0] == p[-1]]
+            open_lines = [p for p in polys if not (len(p) > 2 and p[0] == p[-1])]
+            polys = (offset_polygons(closed, cut_offset_mm) if closed else []) + open_lines
         if spec.operation == "cut" and spec.tabs > 0:
             pieces = []
             for p in polys:

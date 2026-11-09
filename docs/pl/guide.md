@@ -201,6 +201,13 @@ część wspólną i wykluczenie zamkniętych kształtów (różnica: pozostałe
 zaznaczone kształty są wycinane z tego, który jest najwyżej na liście
 elementów).
 
+**Odsunięcie.** **Odsunięcie…** w grupie **Kształty** paska narzędzi (i w
+menu Edycja) rysuje nowy obrys w zadanej odległości wokół zaznaczonych
+kształtów: dodatnia na zewnątrz (otwory się zmniejszają), ujemna do środka.
+Wybierz zaokrąglone albo ostre narożniki i to, czy zachować oryginalne
+kształty. Przydaje się do obwódki wokół napisu, ramki wokół części albo
+mniejszej kopii w środku.
+
 **Kolejność.** Lista elementów to kolejność zadania: w każdej warstwie laser
 najpierw wykonuje element z góry listy. (Same warstwy zawsze idą w kolejności:
 grawer, obrys, cięcie.) Wewnątrz jednego elementu kształty wewnętrzne nadal są
@@ -219,7 +226,8 @@ na osobne części. Dwuklik na dowolnym elemencie otwiera edycję węzłów.
 **Wypełnienia wzorami.** Narzędzie
 **Wypełnij wzorem** (wiaderko, Shift+F) wypełnia zamknięte kształty
 grawerowanymi liniami we wzór: linie, krzyżowe, fale, zygzak, okręgi, plaster
-miodu, romby albo cegły.
+miodu, romby, cegły albo koncentryczny (pierścienie idące za obrysem do
+środka).
 
 ![Kształty wypełnione wzorami](../img/pl/fill.png)
 
@@ -321,11 +329,18 @@ jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
   i ramkę, potem **Generuj pieczątkę**: kolory są odwracane (tło zostaje
   wypalone, tekst zostaje wypukły), a pieczątka odbita, żeby odbijała się
   prawidłowo. Linia cięcia dookoła wycina pieczątkę z gumy.
+- **Pieczątka okrągła**: to samo dla pieczątki okrągłej: średnica (typowe
+  rozmiary albo własna), tekst wokół góry i dołu z kropką po każdej stronie,
+  pierścień zewnętrzny i wewnętrzny oraz wiersze tekstu albo obrazek w
+  środku. Oba teksty w otoku mają tę samą wysokość liter, największą, jaka
+  się mieści.
 - **Karta testowa**: każda operacja na kawałku sklejki 3 mm (kwadrat 50 mm
   z otworem 20 mm, linijka 100 mm, raster, wzory, zawias, tekst na ścieżce,
   mostki), do sprawdzenia lasera.
 
 ![Generator pieczątek](../img/pl/stamp.png)
+
+![Generator pieczątki okrągłej](../img/pl/round-stamp.png)
 
 <a id="s6"></a>
 
@@ -345,9 +360,18 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
 - **Więcej warstw.** Przycisk **+** pod warstwami dodaje kolejną warstwę
   cięcia, obrysu albo graweru, np. drugą warstwę cięcia z inną prędkością.
   Warstwy wykonują się w kolejności: grawer, obrys, cięcie.
+- **Kerf.** Laser wypala cienką linię, więc część wycięta po obrysie wychodzi
+  trochę mniejsza, a jej otwory trochę większe. Wpisz szerokość cięcia w
+  kolumnie **Kerf** warstwy cięcia (zmierz ją: **Generatory → Test kerfu**):
+  obrysy są cięte o jej połowę dalej na zewnątrz, a otwory o połowę dalej do
+  środka, więc części wychodzą w narysowanym rozmiarze. Otwarte linie są
+  cięte tak, jak narysowane. 0 wyłącza. Biblioteka materiałów też pamięta
+  kerf dla każdego materiału.
 - **Czas.** Kolumna **Czas** pokazuje czas każdej warstwy; dla graweru
   naciśnij przycisk z kalkulatorem. **Widok → Symulacja zadania…**
-  (Ctrl+Shift+J) odtwarza ruchy głowicy na stole.
+  (Ctrl+Shift+J) odtwarza ruchy głowicy na stole: to, co laser już wypalił,
+  robi się czerwone (grawerowany obrazek tylko tam, gdzie jest ciemny), a
+  ruchy z wyłączonym laserem to szare przerywane linie.
 - **Materiały.** **Ustawienia → Baza materiałów…** zapamiętuje prędkości,
   przejścia i moce dla materiałów (np. „Sklejka 3 mm”). Wybór materiału z
   listy **Materiał** nad warstwami ustawia wszystkie warstwy naraz. Bazę można

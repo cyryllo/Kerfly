@@ -27,6 +27,7 @@ class OperationSettings:
     speed: float = 10.0       # mm/s
     passes: int = 1
     power: float = 0.5        # fraction of max power (M3 boards)
+    kerf: float = 0.0         # mm, cut: width of the cut (kerf compensation of the cut layer)
 
 
 @dataclass
@@ -87,7 +88,7 @@ def from_json(text):
         for kind, v in (m.get("settings") or {}).items():
             if kind in KINDS:
                 settings[kind] = OperationSettings(float(v.get("speed", 10)), int(v.get("passes", 1)),
-                                                   float(v.get("power", 0.5)))
+                                                   float(v.get("power", 0.5)), float(v.get("kerf", 0.0)))
         out.append(Material(str(m.get("name", "?")), float(m.get("thickness_mm", 0) or 0),
                             str(m.get("notes", "")), settings))
     return out

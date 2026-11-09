@@ -199,6 +199,12 @@ grid step, with Shift 10 times as far.
 intersection and exclusion of closed shapes (difference: the other selected
 shapes are cut out of the one highest in the element list).
 
+**Offset.** **Offset…** in the **Shapes** group of the toolbar (and the Edit
+menu) draws a new outline a set distance around the selected shapes:
+positive outside (holes get smaller), negative inside. Choose round or sharp
+corners and whether to keep the original shapes. Use it for a border around
+a text, a frame around a part, or a smaller copy inside.
+
 **Order.** The element list is the order of the job: within each layer the
 laser does the element at the top of the list first. (The layers themselves
 always run in the order raster engraving, outline engraving, cutting.) Inside
@@ -219,8 +225,8 @@ its nodes.
 
 **Pattern fills.** The **Fill with a pattern**
 tool (the bucket, Shift+F) fills closed shapes with engraved lines in a
-pattern: lines, cross-hatch, waves, zigzag, circles, honeycomb, diamonds or
-bricks.
+pattern: lines, cross-hatch, waves, zigzag, circles, honeycomb, diamonds,
+bricks or concentric (rings following the outline inwards).
 
 ![Shapes filled with patterns](img/en/fill.png)
 
@@ -320,11 +326,17 @@ remembered.
   **Generate stamp**: the colours are inverted (the background is burnt away,
   the text stays raised) and the stamp is mirrored, so it prints the right
   way round. A cut line around it cuts the stamp out of the rubber.
+- **Round stamp**: the same for a round stamp: a diameter (usual sizes or
+  your own), text around the top and the bottom with a dot on each side, an
+  outer and an inner ring, and text lines or a picture in the middle. Both
+  ring texts get the same letter height, as large as fits.
 - **Test card**: every operation on a piece of 3 mm plywood (a 50 mm square
   with a 20 mm hole, a 100 mm ruler, raster, patterns, a hinge, text on a
   path, bridges), to check the laser.
 
 ![Stamp generator](img/en/stamp.png)
+
+![Round stamp generator](img/en/round-stamp.png)
 
 <a id="s6"></a>
 
@@ -344,9 +356,18 @@ out of the job.
 - **More layers.** The **+** button under the layers adds another cut,
   outline or raster layer, for example a second cut layer with another speed.
   Layers run in the order raster, outline, cut.
+- **Kerf.** The laser burns away a thin line, so a part cut along its
+  outline comes out a little smaller and its holes a little larger. Type the
+  width of the cut into the **Kerf** column of a cut layer (measure it with
+  **Generators → Kerf test**): the outlines are cut half of it further out and
+  the holes half of it further in, so the parts come out at their drawn size.
+  Open lines are cut as drawn. 0 switches it off. The material library keeps
+  a kerf for each material too.
 - **Time.** The **Time** column shows how long each layer takes; for raster
   layers press the calculator button. **View → Simulate job…**
-  (Ctrl+Shift+J) plays the head's moves on the bed.
+  (Ctrl+Shift+J) plays the head's moves on the bed: what the laser has burnt
+  so far turns red (an engraved picture only where it is dark), moves with
+  the laser off are grey dashed lines.
 - **Materials.** **Settings → Material library…** stores speeds, passes and
   powers per material (for example "Plywood 3 mm"). Choosing a material in
   the **Material** list above the layers sets all layers at once. The library

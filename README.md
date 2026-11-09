@@ -34,21 +34,22 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
 
 - **Lay out the bed.** Put several files on a picture of the laser bed,
   drag, scale and rotate them with the mouse or type their position, size
-  and angle. Align, group, combine shapes, choose the order of the job, undo
-  and redo everything.
+  and angle. Align, group, combine and offset shapes, choose the order of
+  the job, undo and redo everything.
 - **Draw and edit.** Rectangle (with rounded corners), ellipse, polygon,
   line, polyline, pen curves, freehand and text in any installed font, also
   along a line, curve or circle. Edit the nodes of drawn shapes and of opened
   SVG and DXF files.
 - **Patterns and hinges.** The **Fill** tool fills closed shapes with
-  engraved patterns (lines, waves, honeycomb, bricks, ...) while their
+  engraved patterns (lines, waves, honeycomb, concentric, ...) while their
   outline is still cut. The **Living hinge** tool cuts hinges that let
   plywood bend.
 - **Generators.** Ready designs from a few numbers: material test, finger-joint
-  box, kerf test, gear, puzzle, ruler, QR code, rubber stamp (inverted and
-  mirrored) and a test card for the laser.
+  box, kerf test, gear, puzzle, ruler, QR code, rubber stamps, rectangular
+  and round (inverted and mirrored), and a test card for the laser.
 - **Layers, like LightBurn.** Raster engrave, outline engrave and cut, each
-  with its own speed, passes and power (M3 boards) and colour. A material
+  with its own speed, passes and power (M3 boards) and colour; cut layers
+  compensate the kerf, so parts come out at their drawn size. A material
   library (for example "Plywood 3 mm") sets all layers at once.
 - **Files.** SVG, DXF, G-code, and pictures (PNG, JPG, BMP, TIFF, GIF, WebP)
   for raster engraving. A project (`.kerfly`) keeps the layout, layers,

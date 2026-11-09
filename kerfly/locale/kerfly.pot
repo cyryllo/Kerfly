@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-06 21:07+0100\n"
+"POT-Creation-Date: 2026-11-09 21:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -115,6 +115,9 @@ msgstr ""
 msgid "&New project"
 msgstr ""
 
+msgid "&Offset..."
+msgstr ""
+
 msgid "&Open design…"
 msgstr ""
 
@@ -177,6 +180,9 @@ msgid ""
 "href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>"
 msgstr ""
 
+msgid "A dot on each side between the top and the bottom text"
+msgstr ""
+
 msgid "A job is running. Stop it and quit?"
 msgstr ""
 
@@ -188,7 +194,13 @@ msgstr ""
 msgid "A logo or picture (PNG, JPG or SVG); empty: none"
 msgstr ""
 
+msgid "A logo or picture in the middle (PNG, JPG or SVG); empty: none"
+msgstr ""
+
 msgid "A stamp prints its mirror image: mirror it left to right"
+msgstr ""
+
+msgid "A usual size of round self-inking stamps, or your own size below"
 msgstr ""
 
 msgid "A usual size of self-inking stamps, or your own size below"
@@ -225,6 +237,9 @@ msgid "Add another file to the laser bed"
 msgstr ""
 
 msgid "Add design"
+msgstr ""
+
+msgid "Add the new outline next to the shape; off: the shape is replaced by it"
 msgstr ""
 
 #, python-format
@@ -348,6 +363,9 @@ msgid ""
 "itself)"
 msgstr ""
 
+msgid "CITY"
+msgstr ""
+
 msgid "Calculate raster time"
 msgstr ""
 
@@ -448,6 +466,9 @@ msgstr ""
 msgid "Combine shapes"
 msgstr ""
 
+msgid "Concentric"
+msgstr ""
+
 msgid "Connect to the laser"
 msgstr ""
 
@@ -467,6 +488,12 @@ msgid "Corner radius"
 msgstr ""
 
 msgid "Corner radius: 0 for sharp corners"
+msgstr ""
+
+msgid "Corners"
+msgstr ""
+
+msgid "Corners of the new outline: rounded, or sharp like the shape's"
 msgstr ""
 
 #, python-format
@@ -592,7 +619,13 @@ msgstr ""
 msgid "Diagnostic report saved: %s"
 msgstr ""
 
+msgid "Diameter"
+msgstr ""
+
 msgid "Diameter of the hole in the middle (0: none)"
+msgstr ""
+
+msgid "Diameter of the stamp (own size)"
 msgstr ""
 
 msgid "Diamonds"
@@ -608,6 +641,9 @@ msgid "Direction of the cuts (90°: up and down; the sheet bends across them)"
 msgstr ""
 
 msgid "Direction of the pattern"
+msgstr ""
+
+msgid "Distance"
 msgstr ""
 
 #, python-format
@@ -652,7 +688,15 @@ msgstr ""
 msgid "Done. Unplug the laser's USB cable, plug it in again, then connect."
 msgstr ""
 
+msgid "Dots between the texts"
+msgstr ""
+
 msgid "Drawing tools"
+msgstr ""
+
+msgid ""
+"Draws a new outline around the selected shapes (or inside them). Only "
+"closed outlines are used."
 msgstr ""
 
 msgid "Duplicate"
@@ -734,6 +778,9 @@ msgid "Export material library"
 msgstr ""
 
 msgid "Export…"
+msgstr ""
+
+msgid "Extra space between the letters around the stamp"
 msgstr ""
 
 msgid "Field"
@@ -851,11 +898,6 @@ msgstr ""
 msgid "Go to X"
 msgstr ""
 
-msgid ""
-"Grey dashed lines are moves with the laser off. Raster engraving is shown"
-" one line every 0.2 mm."
-msgstr ""
-
 msgctxt "toolbar"
 msgid "Grid"
 msgstr ""
@@ -887,7 +929,15 @@ msgstr ""
 msgid "Height of the box"
 msgstr ""
 
+msgid ""
+"Height of the capital letters around the stamp (0: about an eighth of the"
+" diameter)"
+msgstr ""
+
 msgid "Height of the letters (0: as large as fits)"
+msgstr ""
+
+msgid "Height of the letters in the middle (0: as large as fits)"
 msgstr ""
 
 msgid "Height of the puzzle"
@@ -936,6 +986,11 @@ msgstr ""
 msgid "Honeycomb"
 msgstr ""
 
+msgid ""
+"How far the new outline lies from the shape: positive outside (holes get "
+"smaller), negative inside"
+msgstr ""
+
 msgid "How many different powers or passes"
 msgstr ""
 
@@ -972,6 +1027,9 @@ msgid "Inkscape executable"
 msgstr ""
 
 msgid "Inkscape timeout (minutes)"
+msgstr ""
+
+msgid "Inner ring"
 msgstr ""
 
 msgid "Inside sizes"
@@ -1018,6 +1076,9 @@ msgstr ""
 msgid "Jump to the next layer"
 msgstr ""
 
+msgid "Keep the original shapes"
+msgstr ""
+
 msgid "Kerf"
 msgstr ""
 
@@ -1027,6 +1088,15 @@ msgstr ""
 msgid ""
 "Kerf test: a comb to measure how wide the laser cuts, and slots to find "
 "the tightest fit for the material"
+msgstr ""
+
+msgid "Kerf:"
+msgstr ""
+
+msgid ""
+"Kerf: width of the laser's cut (measure it with Generators → Kerf test). "
+"The outlines are cut half of it further out and the holes half of it "
+"further in, so the parts come out at their drawn size. 0: off"
 msgstr ""
 
 msgid ""
@@ -1103,6 +1173,9 @@ msgid "Length of the comb before cutting"
 msgstr ""
 
 msgid "Length of the scale"
+msgstr ""
+
+msgid "Letter spacing"
 msgstr ""
 
 msgid "Letter spacing: space added between the letters (0: as the font sets it)"
@@ -1370,6 +1443,9 @@ msgstr ""
 msgid "No pattern"
 msgstr ""
 
+msgid "No. 123"
+msgstr ""
+
 msgid "Node"
 msgstr ""
 
@@ -1401,6 +1477,17 @@ msgid "Numbers"
 msgstr ""
 
 msgid "Numbers in"
+msgstr ""
+
+msgid "Offset"
+msgstr ""
+
+msgid "Offset needs the pyclipper library, which is missing."
+msgstr ""
+
+msgid ""
+"Offset: a new outline around the selected shapes (or inside them), a set "
+"distance away"
 msgstr ""
 
 msgid "Only closed shapes on a cut or outline layer can be filled with a pattern."
@@ -1453,6 +1540,9 @@ msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr ""
 
 msgid "Out of memory."
+msgstr ""
+
+msgid "Outer ring"
 msgstr ""
 
 msgid "Outside the laser bed!"
@@ -1680,6 +1770,11 @@ msgstr ""
 msgid "Rectangle"
 msgstr ""
 
+msgid ""
+"Red: what the laser has burnt so far (raster engraving one line every 0.2"
+" mm). Grey dashed lines: moves with the laser off."
+msgstr ""
+
 msgctxt "toolbar"
 msgid "Redo"
 msgstr ""
@@ -1725,6 +1820,9 @@ msgstr ""
 msgid "Right side"
 msgstr ""
 
+msgid "Ring text height"
+msgstr ""
+
 msgid "Rotary"
 msgstr ""
 
@@ -1752,6 +1850,17 @@ msgstr ""
 msgid ""
 "Rotation, counter-clockwise. You can also drag the round handle above the"
 " element (hold Shift for 15° steps)."
+msgstr ""
+
+msgid "Round"
+msgstr ""
+
+msgid "Round stamp"
+msgstr ""
+
+msgid ""
+"Round stamp: text around the top and the bottom, rings, and text or a "
+"picture in the middle; burnt for rubber like the stamp"
 msgstr ""
 
 msgid "Rounded corners of the frame and outline"
@@ -1855,6 +1964,9 @@ msgstr ""
 msgid "Select and move"
 msgstr ""
 
+msgid "Select one or more shapes with closed outlines."
+msgstr ""
+
 msgid ""
 "Select one text and one shape (line, curve, circle, ...) to put the text "
 "on, then choose Put text on path again (Ctrl+click selects both)."
@@ -1926,6 +2038,9 @@ msgctxt "toolbar group"
 msgid "Shapes"
 msgstr ""
 
+msgid "Sharp"
+msgstr ""
+
 msgid "Show the report file"
 msgstr ""
 
@@ -1989,6 +2104,9 @@ msgid "Space between the fields"
 msgstr ""
 
 msgid "Space between the frame and the text"
+msgstr ""
+
+msgid "Space between the rings and the text"
 msgstr ""
 
 msgid "Space kept free between the pattern and the outline"
@@ -2121,10 +2239,25 @@ msgstr ""
 msgid "Text"
 msgstr ""
 
+msgid "Text around the bottom of the stamp, reading left to right (empty: none)"
+msgstr ""
+
+msgid "Text around the top of the stamp, reading left to right"
+msgstr ""
+
+msgid "Text at the bottom"
+msgstr ""
+
+msgid "Text at the top"
+msgstr ""
+
 msgid "Text files"
 msgstr ""
 
 msgid "Text height"
+msgstr ""
+
+msgid "Text in the middle"
 msgstr ""
 
 msgid "Text on a path"
@@ -2217,6 +2350,9 @@ msgid "The laser stopped responding after the job was complete."
 msgstr ""
 
 msgid "The laser was found, but this user may not use its USB port."
+msgstr ""
+
+msgid "The lines in the middle (empty: none)"
 msgstr ""
 
 msgid "The lines of the stamp"
@@ -2485,6 +2621,11 @@ msgstr ""
 msgid "Width of the code with its free border"
 msgstr ""
 
+msgid ""
+"Width of the cut in this material (measure it with Generators → Kerf "
+"test): the cut layer moves the outlines out by half of it"
+msgstr ""
+
 msgid "Width of the hinge band, across the cuts (0: the whole shape)"
 msgstr ""
 
@@ -2497,6 +2638,12 @@ msgid "Width of the puzzle"
 msgstr ""
 
 msgid "Width of the raised frame around it (0: none)"
+msgstr ""
+
+msgid "Width of the raised outer ring (0: none)"
+msgstr ""
+
+msgid "Width of the ring inside the text (0: none)"
 msgstr ""
 
 msgid "Width of the ruler"
@@ -2535,6 +2682,9 @@ msgid ""
 "YOUR COMPANY\n"
 "Street 1, 00-000 City\n"
 "phone 123 456 789"
+msgstr ""
+
+msgid "YOUR COMPANY NAME"
 msgstr ""
 
 msgid "Zigzag"

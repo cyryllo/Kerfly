@@ -36,21 +36,23 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
 
 - **Układanie na stole.** Kilka plików na obrazie stołu lasera: przesuwanie,
   skalowanie i obracanie myszą albo wpisanie pozycji, rozmiaru i kąta.
-  Wyrównywanie, grupowanie, łączenie kształtów, kolejność zadania, cofanie i
-  ponawianie wszystkiego.
+  Wyrównywanie, grupowanie, łączenie i odsuwanie kształtów, kolejność
+  zadania, cofanie i ponawianie wszystkiego.
 - **Rysowanie i edycja.** Prostokąt (także z zaokrąglonymi rogami), elipsa,
   wielokąt, linia, łamana, pióro (krzywe), rysowanie odręczne i tekst dowolną
   zainstalowaną czcionką, także wzdłuż linii, krzywej albo okręgu. Edycja
   węzłów narysowanych kształtów i otwartych plików SVG i DXF.
 - **Wzory i zawiasy.** Narzędzie **Wypełnienie** wypełnia zamknięte kształty
-  grawerowanymi wzorami (linie, fale, plaster miodu, cegły…), a ich obrys
+  grawerowanymi wzorami (linie, fale, plaster miodu, koncentryczny…), a ich obrys
   nadal jest cięty. Narzędzie **Zawias giętki** nacina zawiasy, dzięki którym
   sklejka się wygina.
 - **Generatory.** Gotowe projekty z kilku liczb: test materiału, pudełko na
-  wczepy, test kerfu, koło zębate, puzzle, linijka, kod QR, gumowa pieczątka
-  (odwrócona i odbita) i karta testowa lasera.
+  wczepy, test kerfu, koło zębate, puzzle, linijka, kod QR, gumowe
+  pieczątki, prostokątne i okrągłe (odwrócone i odbite), i karta testowa
+  lasera.
 - **Warstwy jak w LightBurnie.** Grawer rastrowy, obrys i cięcie, każda z
-  własną prędkością, liczbą przejść, mocą (płyty M3) i kolorem. Baza
+  własną prędkością, liczbą przejść, mocą (płyty M3) i kolorem; warstwy
+  cięcia kompensują kerf, więc części wychodzą w narysowanym rozmiarze. Baza
   materiałów (np. „Sklejka 3 mm”) ustawia wszystkie warstwy jednym wyborem.
 - **Pliki.** SVG, DXF, G-code i obrazy (PNG, JPG, BMP, TIFF, GIF, WebP) do
   graweru rastrowego. Projekt (`.kerfly`) trzyma układ, warstwy, kształty i

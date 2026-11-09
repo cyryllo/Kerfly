@@ -99,7 +99,19 @@ class MaterialsDialog(QDialog):
             g.addWidget(passes, 0, 3)
             g.addWidget(QLabel(_("Power:")), 0, 4)
             g.addWidget(power, 0, 5)
-            self.fields[kind] = (speed, passes, power)
+            kerf = None
+            if kind == "cut":
+                kerf = QDoubleSpinBox()
+                kerf.setRange(0, 2)
+                kerf.setDecimals(2)
+                kerf.setSingleStep(0.05)
+                kerf.setSuffix(" mm")
+                kerf.setToolTip(_("Width of the cut in this material (measure it with Generators → Kerf test): "
+                                  "the cut layer moves the outlines out by half of it"))
+                kerf.valueChanged.connect(self._store)
+                g.addWidget(QLabel(_("Kerf:")), 1, 0)
+                g.addWidget(kerf, 1, 1)
+            self.fields[kind] = (speed, passes, power, kerf)
             form.addWidget(box)
         self.notes = QPlainTextEdit()
         self.notes.setFixedHeight(54)
@@ -141,11 +153,13 @@ class MaterialsDialog(QDialog):
         self._loading = True
         self.name.setText(m.name)
         self.thickness.setValue(m.thickness_mm)
-        for kind, (speed, passes, power) in self.fields.items():
+        for kind, (speed, passes, power, kerf) in self.fields.items():
             s = m.settings.get(kind) or OperationSettings()
             speed.setValue(s.speed)
             passes.setValue(s.passes)
             power.setValue(s.power * 100)
+            if kerf is not None:
+                kerf.setValue(s.kerf)
         self.notes.setPlainText(m.notes)
         self._loading = False
 
@@ -157,8 +171,9 @@ class MaterialsDialog(QDialog):
         m.name = self.name.text().strip() or _("Material")
         m.thickness_mm = self.thickness.value()
         m.notes = self.notes.toPlainText()
-        for kind, (speed, passes, power) in self.fields.items():
-            m.settings[kind] = OperationSettings(speed.value(), passes.value(), power.value() / 100.0)
+        for kind, (speed, passes, power, kerf) in self.fields.items():
+            m.settings[kind] = OperationSettings(speed.value(), passes.value(), power.value() / 100.0,
+                                                 kerf.value() if kerf is not None else 0.0)
         item = self.list.item(row)
         item.setText(list_label(m))
 

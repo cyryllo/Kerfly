@@ -259,6 +259,9 @@ class MainWindow(QMainWindow):
                           ("exclusion", N_("Exclusion: keep where the shapes do not overlap"))):
             self.act_boolean[code] = self._action(_(self.BOOLEAN_NAMES[code]),
                                                   lambda _c=False, k=code: self.boolean_selected(k), None, _(tip))
+        self.act_offset = self._action(_("&Offset..."), self.offset_selected, None,
+                                       _("Offset: a new outline around the selected shapes (or inside them), "
+                                         "a set distance away"))
         self.act_mirror_h = self._action(_("&Mirror horizontally"), lambda: self.mirror_selected(True), "Ctrl+Shift+H",
                                          _("Flip the selected elements left to right"))
         self.act_mirror_v = self._action(_("Mirror &vertically"), lambda: self.mirror_selected(False), "Ctrl+Shift+V",
@@ -346,6 +349,7 @@ class MainWindow(QMainWindow):
         sub2 = m.addMenu(_("Combine shapes"))
         for a in self.act_boolean.values():
             sub2.addAction(a)
+        m.addAction(self.act_offset)
         sub = m.addMenu(_("Align and distribute"))
         for a in list(self.act_align.values()) + [None, self.act_distribute_h, self.act_distribute_v]:
             sub.addSeparator() if a is None else sub.addAction(a)
@@ -451,6 +455,7 @@ class MainWindow(QMainWindow):
                 (self.act_group, "squares-selected"),
                 (self.act_boolean["union"], "layers-union"),
                 (self.act_boolean["difference"], "layers-subtract"),
+                (self.act_offset, "box-padding"),
                 (self.act_ungroup, "squares"),
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
@@ -1254,6 +1259,67 @@ class MainWindow(QMainWindow):
         self._compiled = None
         self._layer_cache.clear()
         self._layout_changed()
+
+    def offset_selected(self):
+        """A new outline around each selected shape (or inside it), a distance
+        away: the closed outlines are joined even-odd, so holes move the other
+        way. Asks for the distance, the corners and whether to keep the shapes."""
+        from kerfly.core import offset
+        from kerfly.core.curves import from_polylines
+        from kerfly.gui.offset_dialog import OffsetDialog
+        if self.worker is not None:
+            return
+        if not offset.available():
+            self.status(_("Offset needs the pyclipper library, which is missing."), error=True)
+            return
+        chosen = self._selection()
+        items = {id(i.element): i for i in self.preview._items}
+        parts = []
+        for e in chosen:
+            item = items.get(id(e))
+            if item is None:
+                continue
+            t = item.sceneTransform()
+            polys = [[t.map(x, y) for x, y in poly] for poly in item.local_polys
+                     if len(poly) >= 4 and abs(poly[0][0] - poly[-1][0]) < 1e-6
+                     and abs(poly[0][1] - poly[-1][1]) < 1e-6]
+            if polys:
+                parts.append((e, polys))
+        if not parts:
+            self.status(_("Select one or more shapes with closed outlines."), error=True)
+            return
+        dialog = OffsetDialog(self)
+        if not dialog.exec():
+            return
+        v = dialog.values()
+        if abs(v["distance"]) < 1e-9:
+            return
+        made = []
+        for e, polys in parts:
+            rings = [r[:-1] for r in offset.offset_polygons(polys, v["distance"], v["join"])]
+            if not rings:
+                continue
+            kind = e.shape.operation if e.shape is not None else "cut"
+            new = Element(Design(), name="%s: %s" % (_("Offset"), e.name) if e.name else _("Offset"),
+                          visible=e.visible)
+            if self._fit_path(new, from_polylines(rings, [True] * len(rings)), ShapeSpec(kind="path", operation=kind)):
+                new.layers = dict(e.layers)
+                made.append((e, new))
+        if not made:
+            self.status(_("Nothing is left of the shapes after this operation."), error=True)
+            return
+        self._checkpoint()
+        for e, new in made:
+            index = self.elements.index(e)
+            if v["keep"]:
+                self.elements.insert(index + 1, new)
+            else:
+                self.elements[index] = new
+        news = [n for _e, n in made]
+        self.selected = news[0] if len(news) == 1 else None
+        self._compiled = None
+        self._layer_cache.clear()
+        self._arranged(news)
 
     def _node_selection_changed(self, count):
         self.tool_options.set_node_selection(count)
@@ -2605,6 +2671,8 @@ class MainWindow(QMainWindow):
                     layer.speed = float(self.values.get(feed) or layer.speed)
                 layer.passes = int(float(self.values.get(passes) or 1))
                 layer.power = float(self.values.get(power) or 0.5)
+                if kind == CUT:
+                    layer.kerf = max(0.0, float(self.values.get("cut_kerf") or 0.0))
             except ValueError:
                 pass
 
@@ -2617,6 +2685,8 @@ class MainWindow(QMainWindow):
             self.values[feed] = _num_text(layer.speed)
         self.values[passes] = str(int(layer.passes))
         self.values[power] = _num_text(layer.power)
+        if layer.kind == CUT:
+            self.values["cut_kerf"] = _num_text(layer.kerf)
 
     def _layer_changed(self, layer):
         self._set_dirty(True)
@@ -2688,6 +2758,8 @@ class MainWindow(QMainWindow):
             layer.speed = round(self._speed_from_mm_s(s.speed), 2)
             layer.passes = s.passes
             layer.power = s.power
+            if layer.kind == CUT:
+                layer.kerf = s.kerf
             self._layer_to_values(layer)
         self._rebuild_layers_panel()
         self.layers_panel.material.setCurrentIndex(index + 1)
@@ -2698,7 +2770,7 @@ class MainWindow(QMainWindow):
         for kind in (CUT, ENGRAVE, RASTER):
             layer = self._default_layer[kind]
             current[kind] = material_lib.OperationSettings(round(self._speed_to_mm_s(layer.speed), 2),
-                                                           layer.passes, layer.power)
+                                                           layer.passes, layer.power, layer.kerf)
         dlg = MaterialsDialog(self.materials, current, self.values.get("units", "mm"), self)
         if not dlg.exec():
             return
@@ -3039,7 +3111,7 @@ class MainWindow(QMainWindow):
                   self.act_group, self.act_ungroup, self.act_distribute_h, self.act_distribute_v, self.act_place_head,
                   self.act_follow_head, self.act_undo] + list(self.act_order.values()) + [
                   self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()) \
-                + list(self.act_align.values()) + list(self.act_boolean.values()):
+                + list(self.act_align.values()) + list(self.act_boolean.values()) + [self.act_offset]:
             a.setEnabled(not busy)
         self.btn_stop.setEnabled(busy)
         self.act_stop.setEnabled(busy)

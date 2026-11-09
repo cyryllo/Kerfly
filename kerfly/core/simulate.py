@@ -11,6 +11,7 @@ Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import copy
+import itertools
 import math
 from dataclasses import dataclass
 
@@ -31,6 +32,7 @@ class Step:
     kind: str                    # layer kind
     seconds: float
     layer: str = ""
+    runs: tuple = ()             # raster row: (from, to) parts of the way where the laser is on; () all of it
 
 
 def _speed_mm_s(speed, units):
@@ -69,13 +71,15 @@ def timeline(elements, layers, settings, units="mm", start=(0.0, 0.0)):
                     coords if part.sorted else optimize_paths(coords, inside_check=layer.kind == CUT))
             paths = _loops(coords, bed)
         for _p in range(passes):
-            for path, step_factor in paths:
+            for path, step_factor, *runs in paths:
                 if not path:
                     continue
                 if path[0] != head:
                     steps.append(_step(head, path[0], False, layer, RAPID_MM_S))
                 for a, b in zip(path, path[1:]):
                     steps.append(_step(a, b, True, layer, speed / step_factor))
+                if runs:
+                    steps[-1].runs = runs[0]
                 head = path[-1]
     return steps
 
@@ -125,7 +129,17 @@ def _raster_rows(design, bed, settings):
             x1 = xmin + box[2] / dpi
             y = ymax - py / dpi
             a, b = bed(x0, y), bed(x1, y)
-            rows.append(([a, b] if k % 2 == 0 else [b, a], lines_per_row))
+            # the dark runs along the row (the laser is off over the light parts in between)
+            span = float(box[2] - box[0])
+            runs, pos = [], box[0]
+            for dark, group in itertools.groupby(line.tobytes()[box[0]:box[2]]):
+                n = len(list(group))
+                if dark:
+                    runs.append(((pos - box[0]) / span, (pos + n - box[0]) / span))
+                pos += n
+            if k % 2:
+                runs = [(1.0 - t1, 1.0 - t0) for t0, t1 in reversed(runs)]
+            rows.append(([a, b] if k % 2 == 0 else [b, a], lines_per_row, tuple(runs)))
             k += 1
         y_mm += row_mm
     return rows

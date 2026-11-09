@@ -156,7 +156,10 @@ def take(lang):
                          ((8, 150), _stamp.make(dict(preset="47x18", text=i18n._(
                              "YOUR COMPANY\nStreet 1, 00-000 City\nphone 123 456 789"), font="DejaVu Sans", bold=True,
                              text_size=0, picture="", place="left", frame=0.6, corner=1, margin=1, invert=True,
-                             mirror=True, outline=True), gn))):
+                             mirror=True, outline=True), gn)),
+                         ((62, 140), _stamp.make_round(dict(
+                             {f[0]: f[3] for f in _stamp.ROUND_FIELDS}, top_text=i18n._("YOUR COMPANY NAME"),
+                             bottom_text=i18n._("CITY"), text=i18n._("No. 123")), gn))):
         gn.head = (x / 25.4, -y / 25.4)
         gn.insert_generated(made)
     gn.head = (0.0, 0.0)
@@ -251,6 +254,14 @@ def take(lang):
     dlg._preview()
     settle()
     dlg.grab().save(os.path.join(out, "stamp.png"))
+    dlg.close()
+    dlg = GeneratorDialog(st, "round_stamp", remember=False)
+    dlg.show()
+    dlg.resize(1000, 700)
+    settle()
+    dlg._preview()
+    settle()
+    dlg.grab().save(os.path.join(out, "round-stamp.png"))
     dlg.close()
     st._dirty = False
     st.close()

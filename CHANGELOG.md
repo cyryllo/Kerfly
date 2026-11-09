@@ -9,6 +9,14 @@ Version numbers:
 
 ## Unreleased
 
+### Changed
+
+- **Job simulation**: what the laser has burnt so far is shown in red, for
+  every layer. An engraved picture turns red only where it is dark, row by
+  row; before, each scan line was drawn as one thick grey line from its
+  first to its last dark point and covered the whole picture. Moves with the
+  laser off stay grey dashed lines.
+
 ### Fixed
 
 - A path shape inserted from outside the drawing tools (generators,
@@ -17,6 +25,19 @@ Version numbers:
 
 ### Added
 
+- **Kerf compensation.** Cut layers have a **Kerf** column (and the material
+  library a kerf for each material): closed outlines are cut half of the kerf
+  further out and their holes half of it further in, so the parts come out at
+  their drawn size; bridges are cut into the moved outline, open lines are
+  cut as drawn. 0 (the default) leaves the job exactly as before.
+- **Offset** in the Shapes group of the toolbar and the Edit menu: a new
+  outline a set distance around the selected shapes (or inside them), round
+  or sharp corners, keeping the shapes or replacing them.
+- **Concentric** fill pattern: rings following the outline inwards.
+- **Round stamp** generator: text around the top and the bottom (one letter
+  height for both, a dot on each side), outer and inner ring, text lines or
+  a picture in the middle, usual diameters or your own; inverted and
+  mirrored for rubber, with a round cut outline.
 - **macOS** (preview, not yet tested with a laser): `Kerfly.app` in a disk
   image for Macs with Apple Silicon and with Intel processors, with libusb
   inside for the laser's USB port; built and checked (`--self-test`,

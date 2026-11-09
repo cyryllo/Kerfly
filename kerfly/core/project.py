@@ -32,7 +32,8 @@ class ProjectError(Exception):
 
 def _layer_to_dict(layer):
     return {"id": layer.id, "kind": layer.kind, "name": layer.name, "color": layer.color,
-            "speed": layer.speed, "passes": layer.passes, "power": layer.power, "enabled": layer.enabled}
+            "speed": layer.speed, "passes": layer.passes, "power": layer.power, "enabled": layer.enabled,
+            "kerf": layer.kerf}
 
 
 def _shape_to_dict(spec):
@@ -117,7 +118,8 @@ def layers_from_data(data):
     for d in data.get("layers", []):
         layer = Layer(d["kind"], name=d.get("name", ""), color=d.get("color", "#000000"),
                       speed=float(d.get("speed", 10)), passes=int(d.get("passes", 1)),
-                      power=float(d.get("power", 0.5)), enabled=bool(d.get("enabled", True)))
+                      power=float(d.get("power", 0.5)), enabled=bool(d.get("enabled", True)),
+                      kerf=float(d.get("kerf", 0.0) or 0.0))
         layers.append(layer)
         by_id[d.get("id")] = layer
     return layers, by_id

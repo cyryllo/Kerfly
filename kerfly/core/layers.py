@@ -43,6 +43,7 @@ class Layer:
     passes: int = 1
     power: float = 0.5            # fraction of max power (M3 boards)
     enabled: bool = True
+    kerf: float = 0.0             # mm, cut layers: closed outlines move out by half of it (holes in)
     id: int = field(default_factory=lambda: next(_ids))
 
     def copy(self):
@@ -120,6 +121,36 @@ def layout_frame(visible):
     return (xmin, xmax, ymin, ymax), (xmin, ymax)
 
 
+_kerf_cache = {}
+
+
+def _kerf_cut(element, part, kerf_mm):
+    """The element's cut part with kerf compensation: closed outlines moved out by
+    half the kerf (holes in), so the parts come out at their drawn size. A drawn
+    shape is rebuilt with its outline moved before the bridges are cut; an opened
+    file has its closed loops moved. Scaled elements: the kerf is on the bed."""
+    from . import offset
+    scale = (abs(element.scale_x) + abs(element.scale_y)) / 2.0 or 1.0
+    half_mm = kerf_mm / 2.0 / scale
+    # a drawn shape by its settings; a file by its design (kept in the cache, so its id stays unique)
+    key = (id(element.design), repr(element.shape), round(half_mm, 6))
+    cached = _kerf_cache.get(key)
+    cut = cached[1] if cached is not None and cached[0] is element.design else None
+    if cut is None:
+        if not offset.available():
+            return part.vector_cut
+        cut = ECoord()
+        if element.shape is not None and element.shape.operation == "cut":
+            from .shapes import build_design
+            cut = build_design(element.shape, cut_offset_mm=half_mm).vector_cut
+        else:
+            cut.set_ecoords(offset.offset_ecoord_loops(part.vector_cut.ecoords, half_mm / 25.4))
+        if len(_kerf_cache) > 300:
+            _kerf_cache.clear()
+        _kerf_cache[key] = (element.design, cut)
+    return cut
+
+
 def compile_layer(elements, layer, layers):
     """(design, origin) with only this layer's parts of the visible elements,
     in the frame of the whole layout so all layers share one origin."""
@@ -132,6 +163,8 @@ def compile_layer(elements, layer, layers):
         if layer_of(e, layer.kind, layers) is layer and part_present(e.design, layer.kind):
             p = e.copy()
             p.design = _part_design(e.design, {layer.kind})
+            if layer.kind == CUT and getattr(layer, "kerf", 0.0) > 0:
+                p.design.vector_cut = _kerf_cut(e, p.design, float(layer.kerf))
             parts.append(p)
     if not parts:
         return None, full_origin

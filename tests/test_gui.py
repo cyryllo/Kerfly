@@ -772,6 +772,61 @@ def main():
     check("combine shapes: union, difference, intersection, exclusion", ok and len(w.elements) == 2, str(sizes))
     w.close()
 
+    # 28b. offset: a new outline around the shape (or inside it), the hole the other way
+    from kerfly.gui import offset_dialog as _offdlg
+    w = make_window(grid_mm="0")
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    w.preview.fit_all()
+    app.processEvents()
+    answers = []
+
+    def _answer(dlg):
+        d, join, keep = answers.pop(0)
+        dlg.distance.setValue(d)
+        dlg.join.setCurrentIndex(dlg.join.findData(join))
+        dlg.keep.setChecked(keep)
+        dlg.accept()
+        return True
+    _orig_off_exec = _offdlg.OffsetDialog.exec
+    _offdlg.OffsetDialog.exec = _answer
+    try:
+        w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)      # 40 x 40
+        w.preview.select_element([w.elements[-1]])
+        answers.append((2.0, "miter", True))
+        w.offset_selected()
+        grown = w.elements[-1]
+        out_ok = (len(w.elements) == 2 and grown.shape.kind == "path"
+                  and (round(grown.size[0] * 25.4, 2), round(grown.size[1] * 25.4, 2)) == (44.0, 44.0)
+                  and abs(grown.bounds[0] * 25.4 - 18.0) < 0.01)
+        w.preview.select_element([w.elements[0]])
+        answers.append((-5.0, "round", False))
+        w.offset_selected()
+        inner = w.elements[0]
+        in_ok = len(w.elements) == 2 and (round(inner.size[0] * 25.4, 2), round(inner.size[1] * 25.4, 2)) == (30.0, 30.0)
+        w.undo()
+        undo_ok = len(w.elements) == 2 and round(w.elements[0].size[0] * 25.4, 2) == 40.0
+        # a frame (square with a hole): the outside grows, the hole shrinks
+        for e in list(w.elements):
+            w.elements.remove(e)
+        w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)
+        w._preview_drawn("rectangle", QPointF(30, 30), QPointF(50, 50), False)
+        w.preview.select_element(w.elements[-2:])
+        w.boolean_selected("difference")
+        w.preview.select_element([w.elements[-1]])
+        answers.append((1.0, "miter", False))
+        w.offset_selected()
+        frame = w.elements[-1]
+        holes = sorted(round(max(n[0] for n in sp["nodes"]) - min(n[0] for n in sp["nodes"]), 2)
+                       for sp in frame.shape.subpaths)
+        hole_ok = holes == [18.0, 42.0]
+    finally:
+        _offdlg.OffsetDialog.exec = _orig_off_exec
+    check("offset: outline 2 mm out (kept), 5 mm in (replaced), undo, a hole shrinks",
+          out_ok and in_ok and undo_ok and hole_ok, "(%s)" % [out_ok, in_ok, undo_ok, holes])
+    w.close()
+
     # 29. freehand: a circle drawn with the mouse becomes a closed smooth path with few nodes
     import math as _m
     w = make_window(grid_mm="0")
@@ -1524,6 +1579,37 @@ def main():
     check("stamp: inverted, mirrored, black and white, its size, kept as a file, outline cut",
           inverted and mirrored and two_tone and size_ok and bool(kept),
           "(%s)" % ([inverted, mirrored, two_tone, size_ok, bool(kept)],))
+    sw._dirty = False
+    sw.close()
+
+    # 55b. round stamp: text around the top (letters standing on the circle) and the bottom, the
+    # middle text, the ready-made diameters, inverted and mirrored, a round outline cut
+    rbase = {f[0]: f[3] for f in _stamp.ROUND_FIELDS}
+    rbase.update(preset="40", top_text="TOP TEXT HERE", bottom_text="BOTTOM", text="MID", invert=False,
+                 mirror=False, picture="")
+    r_plain = _stamp.render_round(rbase)
+
+    def region(img, y0, y1, x0=0.3, x1=0.7):
+        return sum(1 for y in range(int(img.height() * y0), int(img.height() * y1), 4)
+                   for x in range(int(img.width() * x0), int(img.width() * x1), 4)
+                   if img.pixelColor(x, y).lightness() < 128)
+    empty = _stamp.render_round(dict(rbase, top_text="", bottom_text="", text=""))
+    texts_ok = (region(r_plain, 0.04, 0.2) > region(empty, 0.04, 0.2) + 50
+                and region(r_plain, 0.8, 0.96) > region(empty, 0.8, 0.96) + 50
+                and region(r_plain, 0.4, 0.6) > region(empty, 0.4, 0.6) + 50)
+    r_size_ok = abs(r_plain.width() / 1000 * 25.4 - 40) < 0.1 and r_plain.width() == r_plain.height()
+    small = _stamp.render_round(dict(rbase, preset="custom", diameter=25.0))
+    r_burn = _stamp.render_round(dict(rbase, invert=True, mirror=True))
+    r_mirrored = all((r_plain.pixelColor(x, y).lightness() < 128) ==
+                     (r_burn.pixelColor(r_plain.width() - 1 - x, y).lightness() >= 128)
+                     for y in range(0, r_plain.height(), 31) for x in range(0, r_plain.width(), 31))
+    sw = make_window(grid_mm="0")
+    els = sw.insert_generated(_stamp.make_round(dict(rbase, invert=True, mirror=True), sw))
+    r_cut = (len(els) == 2 and els[1].shape.kind == "ellipse" and els[1].shape.operation == "cut"
+             and abs(els[1].shape.width - 40) < 1e-6)
+    check("round stamp: texts at the top, bottom and middle, its diameter, inverted and mirrored, round cut",
+          texts_ok and r_size_ok and abs(small.width() / 1000 * 25.4 - 25) < 0.1 and r_mirrored and r_cut,
+          "(%s)" % ([texts_ok, r_size_ok, small.width(), r_mirrored, r_cut],))
     sw._dirty = False
     sw.close()
 

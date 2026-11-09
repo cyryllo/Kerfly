@@ -738,6 +738,21 @@ def part_edit(s):
         if op != "exclusion":
             s.trigger(w.act_undo)                  # back to the two shapes for the next one
 
+    # offset: a new outline 3 mm around the combined shape, sharp corners, the shape kept
+    def offset_answer(dlg):
+        s.type_number(dlg.distance, 3.0)
+        s.pick(dlg.join, data="miter")
+        if not dlg.keep.isChecked():
+            s.click(dlg.keep)
+        from PySide6.QtWidgets import QDialogButtonBox
+        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+    s.expect_dialog("offset", offset_answer)
+    n = len(w.elements)
+    base = w.elements[-1]
+    s.step("Shapes → Offset 3 mm around the shape", lambda: (select_one(base), s.trigger(w.act_offset, via="button")),
+           check=lambda: (len(w.elements) == n + 1 and abs((w.elements[-1].size[0] - base.size[0]) * 25.4 - 6.0) < 0.05,
+                          "%d elements, %.2f mm wider" % (len(w.elements), (w.elements[-1].size[0] - base.size[0]) * 25.4)))
+
     # text on a path: Put text on path (menu), then the tool
     def line_and_text():
         s.trigger(w.tool_actions["line"])
@@ -830,10 +845,12 @@ def part_layers(s):
            check=lambda: (w.selected is not None and w.selected.layers.get("cut") == new.id,
                           "layers %s" % (w.selected.layers if w.selected else None)))
     row = lambda: panel.rows[new.id]
-    s.covered_widgets |= {"layer speed", "layer passes", "layer name", "layer colour", "layer tick", "layer delete",
+    s.covered_widgets |= {"layer speed", "layer passes", "layer kerf", "layer name", "layer colour", "layer tick", "layer delete",
                           "layer add"}
     s.step("layers: type a speed", lambda: s.type_number(row()["speed"], 12.5), undo=False,
            check=lambda: (abs(new.speed - 12.5) < 1e-6, "speed %s" % new.speed))
+    s.step("layers: type the kerf of the cut layer", lambda: s.type_number(row()["kerf"], 0.15), undo=False,
+           check=lambda: (abs(new.kerf - 0.15) < 1e-6, "kerf %s" % new.kerf))
     passes = lambda: next(sp for sp in panel.grid_box.findChildren(QSpinBox)
                           if panel.grid.getItemPosition(panel.grid.indexOf(sp))[0] ==
                           panel.grid.getItemPosition(panel.grid.indexOf(row()["speed"]))[0])
@@ -1126,7 +1143,7 @@ def coverage(s):
     for name, widget in fixed.items():
         if id(widget) not in s.touched:
             gaps.append(name)
-    for name in ("element list", "layer speed", "layer passes", "layer power", "layer name", "layer colour",
+    for name in ("element list", "layer speed", "layer passes", "layer kerf", "layer power", "layer name", "layer colour",
                  "layer tick", "layer delete", "layer add"):
         if name not in s.covered_widgets:
             gaps.append(name)

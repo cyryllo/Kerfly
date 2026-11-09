@@ -23,7 +23,7 @@ KIND_NAMES = {"rectangle": N_("Rectangle"), "ellipse": N_("Ellipse"), "polygon":
 # fill patterns (kerfly.core.patterns.PATTERNS), names for the GUI
 PATTERN_NAMES = [("lines", N_("Lines")), ("cross", N_("Cross-hatch")), ("waves", N_("Waves")),
                  ("zigzag", N_("Zigzag")), ("circles", N_("Circles")), ("honeycomb", N_("Honeycomb")),
-                 ("diamonds", N_("Diamonds")), ("bricks", N_("Bricks"))]
+                 ("diamonds", N_("Diamonds")), ("bricks", N_("Bricks")), ("concentric", N_("Concentric"))]
 # living hinges (kerfly.core.patterns.HINGES), names for the GUI
 HINGE_NAMES = [("straight", N_("Straight cuts")), ("wave", N_("Wavy cuts")), ("zigzag", N_("Zigzag cuts"))]
 NEW_KIND_TITLES = {"rectangle": N_("New rectangle"), "ellipse": N_("New ellipse"),

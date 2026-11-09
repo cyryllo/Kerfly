@@ -27,7 +27,7 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
 <p class="lead">Kerfly runs K40-class CO2 lasers with <strong>Lihuiyu boards</strong> (M2 Nano family: M1, M2, M3, B1, …), the blue-and-white desktop lasers sold under many names. Everything from the first sketch to the cut part happens in one modern window: draw, open your files, arrange them on the bed, set the layers, check the job and send it.</p>
 
 <div class="stats">
-  <div><strong>9</strong><span>generators: boxes, tests, stamps, QR, …</span></div>
+  <div><strong>10</strong><span>generators: boxes, tests, stamps, QR, …</span></div>
   <div><strong>8</strong><span>engraved fill patterns</span></div>
   <div><strong>3</strong><span>living hinge patterns</span></div>
   <div><strong>3</strong><span>layer kinds: raster, outline, cut</span></div>
@@ -109,6 +109,7 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
       <li><strong>Finger-joint box</strong> with or without a lid, inside or outside sizes, kerf compensation.</li>
       <li><strong>Kerf test</strong>: measure how wide your laser cuts and find the tightest fit.</li>
       <li><strong>Gear</strong> with involute teeth, <strong>puzzle</strong>, <strong>ruler</strong>, <strong>QR code</strong> and a <strong>test card</strong> for the laser.</li>
+      <li><strong>Exact sizes</strong>: type your laser's kerf into a cut layer and the parts come out at their drawn size; <strong>Offset</strong> draws an outline around a shape or inside it.</li>
     </ul>
   </div>
 </div>
@@ -117,7 +118,7 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
   <div class="shot-col"><a href="{{ img }}stamp.png"><img loading="lazy" src="{{ img }}stamp.png" alt="The stamp generator: text, logo and frame, inverted and mirrored"></a></div>
   <div class="text-col">
     <h3>Rubber stamps in one click</h3>
-    <p>Pick a usual stamp size (or your own), type the lines, choose a font, a logo and a frame, and press <strong>Generate stamp</strong>. Kerfly burns the background away so the text stays raised, mirrors the stamp so it prints the right way round, and adds the cut line around it.</p>
+    <p>Pick a usual stamp size (or your own), type the lines, choose a font, a logo and a frame, and press <strong>Generate stamp</strong>. Kerfly burns the background away so the text stays raised, mirrors the stamp so it prints the right way round, and adds the cut line around it. <strong>Round stamps</strong> too: text around the top and the bottom, rings, and text or a logo in the middle.</p>
   </div>
 </div>
 
@@ -213,8 +214,7 @@ Kerfly drives a real machine with a laser, so "it seems to work" is not enough:
 ## Status
 
 **Kerfly 1.1 is stable and ready for everyday work** with your laser.
-Planned next: kerf compensation (exact sizes of cut parts), round stamps
-with text around the circle, image tracing, more patterns, more file
+Planned next: image tracing, more patterns, more file
 formats, and a Debian package with its own APT repository. See the
 [roadmap]({{ site.repo }}/blob/main/ROADMAP.md) and the
 [changes]({{ site.repo }}/blob/main/CHANGELOG.md).

@@ -1076,6 +1076,90 @@ def test_generators():
     return errors
 
 
+def test_offset():
+    """Offset of closed outlines, kerf compensation of cut layers."""
+    from kerfly.core import offset, project
+    from kerfly.core.layers import CUT, compile_layer, default_layers
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s offset: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    if not offset.available():
+        print("SKIP  offset: pyclipper not installed")
+        return 0
+
+    def box(rings):
+        xs = [x for r in rings for x, _y in r]
+        ys = [y for r in rings for _x, y in r]
+        return round(min(xs), 4), round(max(xs), 4), round(min(ys), 4), round(max(ys), 4)
+
+    sq = [(0, 0), (10, 0), (10, 10), (0, 10), (0, 0)]
+    hole = [(3, 3), (7, 3), (7, 7), (3, 7), (3, 3)]
+    out = offset.offset_polygons([sq, hole], 0.5, "miter")
+    outer = [r for r in out if box([r])[1] > 8]
+    inner = [r for r in out if box([r])[1] < 8]
+    check("square grows, its hole shrinks", len(out) == 2 and box(outer) == (-0.5, 10.5, -0.5, 10.5)
+          and box(inner) == (3.5, 6.5, 3.5, 6.5), str([box([r]) for r in out]))
+    check("rings come back closed", all(r[0] == r[-1] for r in out))
+    shrunk = offset.offset_polygons([sq], -2.0, "miter")
+    check("negative distance shrinks", box(shrunk) == (2.0, 8.0, 2.0, 8.0), str(box(shrunk)))
+    check("shrinking past the middle leaves nothing", offset.offset_polygons([sq], -6.0) == [])
+    rnd = offset.offset_polygons([sq], 1.0, "round")
+    check("round corners: more points than sharp ones", len(rnd[0]) > len(offset.offset_polygons([sq], 1.0, "miter")[0]))
+    rings = offset.concentric_rings([sq], 1.0)
+    check("concentric rings: 5 in a 10 mm square every 1 mm", len(rings) == 5, "(%d)" % len(rings))
+    # file loops (inches): closed loops move, open lines stay as they are
+    rows = [[x / 25.4, y / 25.4, 1] for x, y in sq] + [[0.0, 1.0, 2], [0.5, 1.2, 2]]
+    moved = offset.offset_ecoord_loops(rows, 0.1 / 25.4)
+    kept = [r for r in moved if r[2] == 1]
+    check("file loops: the open line is kept", [r[:2] for r in kept] == [[0.0, 1.0], [0.5, 1.2]])
+    check("file loops: the closed loop grows by the distance",
+          abs(min(r[0] for r in moved if r[2] == 2) * 25.4 + 0.1) < 0.003)
+
+    def cut_size(kerf, spec, x=1.0, y=-1.0):
+        from kerfly.core.layout import Element
+        from kerfly.core.shapes import ShapeSpec, build_design
+        e = Element(build_design(spec), x=x, y=y, shape=spec)
+        r = ShapeSpec(kind="rectangle", width=5, height=5, operation="engrave")
+        other = Element(build_design(r), x=3.0, y=-0.2, shape=r)
+        lay = default_layers()
+        cut = [l for l in lay if l.kind == CUT][0]
+        cut.kerf = kerf
+        d, o = compile_layer([e, other], cut, lay)
+        rows = d.vector_cut.ecoords
+        xs = [row[0] - d.bounds[0] + o[0] for row in rows]
+        ys = [row[1] - d.bounds[3] + o[1] for row in rows]
+        return rows, round((max(xs) - min(xs)) * 25.4, 4), round((max(ys) - min(ys)) * 25.4, 4)
+
+    from kerfly.core.shapes import ShapeSpec
+    rect = ShapeSpec(kind="rectangle", width=20, height=10, operation="cut")
+    plain_rows, w0, h0 = cut_size(0.0, rect)
+    _rows, w, h = cut_size(0.2, rect)
+    check("kerf 0.2 mm: the cut rectangle is 20.2 x 10.2 mm", (w0, h0, w, h) == (20.0, 10.0, 20.2, 10.2),
+          "(%s x %s)" % (w, h))
+    again, _w, _h = cut_size(0.0, rect)
+    check("kerf 0: the cut is exactly as drawn", again == plain_rows)
+    tabbed = ShapeSpec(kind="rectangle", width=20, height=10, operation="cut", tabs=4, tab_width=1.0)
+    rows, w, h = cut_size(0.2, tabbed)
+    check("kerf with bridges: still 4 gaps, grown outline", len({r[2] for r in rows}) == 4 and (w, h) == (20.2, 10.2),
+          "(%d pieces, %s x %s)" % (len({r[2] for r in rows}), w, h))
+    # saved with the project and in the materials library
+    lay = default_layers()
+    [l for l in lay if l.kind == CUT][0].kerf = 0.15
+    data = {"layers": [project._layer_to_dict(l) for l in lay]}
+    back, _ids = project.layers_from_data(data)
+    check("kerf saved with the project", [l.kerf for l in back if l.kind == CUT] == [0.15])
+    from kerfly.core import materials
+    m = materials.example_materials()[0]
+    m.settings["cut"] = replace(m.settings["cut"], kerf=0.12)
+    m2 = materials.from_json(materials.to_json([m]))[0]
+    check("kerf saved in the materials library", m2.settings["cut"].kerf == 0.12)
+    return errors
+
+
 def test_simulate():
     """Job simulation: layer order, travel moves, durations from the layer speeds."""
     from kerfly.core.layers import default_layers, CUT
@@ -1101,6 +1185,27 @@ def test_simulate():
     check("starts with a travel move from home to the shape", not first.burn and (first.x0, first.y0) == (0.0, 0.0)
           and abs(first.x1 - 25.4) < 1e-6 or abs(first.y1 - 25.4) < 1e-6)
     check("total includes travel", total_seconds(steps) > burn)
+    # a raster row with a gap: one row step, the laser on over the two dark parts only
+    from PIL import Image
+    from kerfly.core.layers import RASTER
+    tmp = tempfile.mkdtemp()
+    png = os.path.join(tmp, "gap.png")
+    img = Image.new("L", (1000, 200), 255)
+    img.paste(0, (0, 0, 300, 200))
+    img.paste(0, (600, 0, 1000, 200))
+    img.save(png, dpi=(1000, 1000))
+    d = Design()
+    loaders.load_image(png, d, 1000)
+    shutil.rmtree(tmp, ignore_errors=True)
+    re_ = Element(d, x=1.0, y=-1.0)
+    rows = [st for st in timeline([re_], default_layers(), JobSettings(), "mm") if st.burn and st.kind == RASTER]
+    # left to right: dark 0-30 % and 60-100 %; right to left: 0-40 % and 70-100 % of the way
+    want = lambda st: (0.3, 0.6) if st.x1 > st.x0 else (0.4, 0.7)
+    runs_ok = bool(rows) and len({st.x1 > st.x0 for st in rows}) == 2 and all(
+        len(st.runs) == 2 and abs(st.runs[0][1] - want(st)[0]) < 0.01 and abs(st.runs[1][0] - want(st)[1]) < 0.01
+        for st in rows)
+    check("raster rows: the laser is on over the dark parts only (shown red there)", runs_ok,
+          "(%d rows, %s)" % (len(rows), rows[0].runs if rows else None))
     return errors
 
 
@@ -1175,6 +1280,7 @@ def main():
     failures += test_generators()
     failures += test_cut_order()
     failures += test_pattern_fill()
+    failures += test_offset()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

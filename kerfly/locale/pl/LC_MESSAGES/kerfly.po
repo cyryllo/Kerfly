@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-06 21:07+0100\n"
+"POT-Creation-Date: 2026-11-09 21:48+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -122,6 +122,9 @@ msgstr "Odbij w &poziomie"
 msgid "&New project"
 msgstr "&Nowy projekt"
 
+msgid "&Offset..."
+msgstr "&Odsunięcie..."
+
 msgid "&Open design…"
 msgstr "&Otwórz projekt…"
 
@@ -190,6 +193,9 @@ msgstr ""
 "GNU General Public License w wersji 3 lub późniejszej.<br><a "
 "href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>"
 
+msgid "A dot on each side between the top and the bottom text"
+msgstr "Kropka z każdej strony między tekstem górnym a dolnym"
+
 msgid "A job is running. Stop it and quit?"
 msgstr "Zadanie jest w toku. Zatrzymać je i zakończyć program?"
 
@@ -203,8 +209,16 @@ msgstr ""
 msgid "A logo or picture (PNG, JPG or SVG); empty: none"
 msgstr "Logo lub obrazek (PNG, JPG albo SVG); puste: bez obrazka"
 
+msgid "A logo or picture in the middle (PNG, JPG or SVG); empty: none"
+msgstr "Logo lub obrazek w środku (PNG, JPG lub SVG); puste: brak"
+
 msgid "A stamp prints its mirror image: mirror it left to right"
 msgstr "Pieczątka odbija lustrzane odbicie: odbij ją w poziomie"
+
+msgid "A usual size of round self-inking stamps, or your own size below"
+msgstr ""
+"Typowy rozmiar okrągłych pieczątek samotuszujących albo własny rozmiar "
+"poniżej"
 
 msgid "A usual size of self-inking stamps, or your own size below"
 msgstr "Typowy rozmiar pieczątek samotuszujących albo własny rozmiar poniżej"
@@ -243,6 +257,9 @@ msgstr "Dodaj kolejny plik na stół lasera"
 
 msgid "Add design"
 msgstr "Dodaj projekt"
+
+msgid "Add the new outline next to the shape; off: the shape is replaced by it"
+msgstr "Dodaj nowy obrys obok kształtu; wyłączone: kształt zostanie nim zastąpiony"
 
 #, python-format
 msgid "Adjusting image darkness: %s%%"
@@ -367,6 +384,9 @@ msgid ""
 "itself)"
 msgstr "Wypal tło, żeby tekst został wypukły (wyłączone: wypala się sam tekst)"
 
+msgid "CITY"
+msgstr "MIASTO"
+
 msgid "Calculate raster time"
 msgstr "Oblicz czas rastra"
 
@@ -473,6 +493,9 @@ msgstr "Części grzebienia"
 msgid "Combine shapes"
 msgstr "Łącz kształty"
 
+msgid "Concentric"
+msgstr "Koncentryczny"
+
 msgid "Connect to the laser"
 msgstr "Połącz z laserem"
 
@@ -493,6 +516,12 @@ msgstr "Promień rogów"
 
 msgid "Corner radius: 0 for sharp corners"
 msgstr "Promień rogów: 0 to ostre rogi"
+
+msgid "Corners"
+msgstr "Narożniki"
+
+msgid "Corners of the new outline: rounded, or sharp like the shape's"
+msgstr "Narożniki nowego obrysu: zaokrąglone albo ostre jak w kształcie"
 
 #, python-format
 msgid "Could not open %s"
@@ -617,8 +646,14 @@ msgstr "Import projektu"
 msgid "Diagnostic report saved: %s"
 msgstr "Zapisano raport diagnostyczny: %s"
 
+msgid "Diameter"
+msgstr "Średnica"
+
 msgid "Diameter of the hole in the middle (0: none)"
 msgstr "Średnica otworu w środku (0: bez otworu)"
+
+msgid "Diameter of the stamp (own size)"
+msgstr "Średnica pieczątki (własny rozmiar)"
 
 msgid "Diamonds"
 msgstr "Romby"
@@ -634,6 +669,9 @@ msgstr "Kierunek nacięć (90°: góra–dół; arkusz wygina się w poprzek nic
 
 msgid "Direction of the pattern"
 msgstr "Kierunek wzoru"
+
+msgid "Distance"
+msgstr "Odległość"
 
 #, python-format
 msgid ""
@@ -685,8 +723,18 @@ msgstr ""
 "Gotowe. Odłącz kabel USB lasera, podłącz go ponownie, a potem połącz się "
 "z laserem."
 
+msgid "Dots between the texts"
+msgstr "Kropki między tekstami"
+
 msgid "Drawing tools"
 msgstr "Narzędzia rysowania"
+
+msgid ""
+"Draws a new outline around the selected shapes (or inside them). Only "
+"closed outlines are used."
+msgstr ""
+"Rysuje nowy obrys wokół zaznaczonych kształtów (albo wewnątrz nich). "
+"Brane są tylko zamknięte obrysy."
 
 msgid "Duplicate"
 msgstr "Duplikuj"
@@ -774,6 +822,9 @@ msgstr "Eksport bazy materiałów"
 
 msgid "Export…"
 msgstr "Eksportuj…"
+
+msgid "Extra space between the letters around the stamp"
+msgstr "Dodatkowy odstęp między literami wokół pieczątki"
 
 msgid "Field"
 msgstr "Pole"
@@ -898,13 +949,6 @@ msgstr "Idź"
 msgid "Go to X"
 msgstr "Idź do X"
 
-msgid ""
-"Grey dashed lines are moves with the laser off. Raster engraving is shown"
-" one line every 0.2 mm."
-msgstr ""
-"Szare przerywane linie to przejazdy z wyłączonym laserem. Grawer rastrowy"
-" jest pokazany jako linia co 0,2 mm."
-
 msgctxt "toolbar"
 msgid "Grid"
 msgstr "Siatka"
@@ -938,8 +982,16 @@ msgstr "Wysokość"
 msgid "Height of the box"
 msgstr "Wysokość pudełka"
 
+msgid ""
+"Height of the capital letters around the stamp (0: about an eighth of the"
+" diameter)"
+msgstr "Wysokość wielkich liter wokół pieczątki (0: około jednej ósmej średnicy)"
+
 msgid "Height of the letters (0: as large as fits)"
 msgstr "Wysokość liter (0: największa, jaka się zmieści)"
+
+msgid "Height of the letters in the middle (0: as large as fits)"
+msgstr "Wysokość liter w środku (0: tak duże, jak się zmieszczą)"
 
 msgid "Height of the puzzle"
 msgstr "Wysokość puzzli"
@@ -989,6 +1041,13 @@ msgstr "Głowica w pozycji bazowej"
 msgid "Honeycomb"
 msgstr "Plaster miodu"
 
+msgid ""
+"How far the new outline lies from the shape: positive outside (holes get "
+"smaller), negative inside"
+msgstr ""
+"Jak daleko od kształtu leży nowy obrys: dodatnia na zewnątrz (otwory się "
+"zmniejszają), ujemna do środka"
+
 msgid "How many different powers or passes"
 msgstr "Ile różnych mocy lub przejść"
 
@@ -1028,6 +1087,9 @@ msgstr "Program Inkscape"
 
 msgid "Inkscape timeout (minutes)"
 msgstr "Limit czasu Inkscape (minuty)"
+
+msgid "Inner ring"
+msgstr "Pierścień wewnętrzny"
 
 msgid "Inside sizes"
 msgstr "Wymiary wewnętrzne"
@@ -1073,6 +1135,9 @@ msgstr "Połącz zaznaczone elementy w grupę, zaznaczaną i przesuwaną jako ca
 msgid "Jump to the next layer"
 msgstr "Przeskocz do następnej warstwy"
 
+msgid "Keep the original shapes"
+msgstr "Zachowaj oryginalne kształty"
+
 msgid "Kerf"
 msgstr "Kerf"
 
@@ -1085,6 +1150,18 @@ msgid ""
 msgstr ""
 "Test kerfu: grzebień do zmierzenia szerokości cięcia lasera i szczeliny "
 "do znalezienia najciaśniejszego pasowania materiału"
+
+msgid "Kerf:"
+msgstr "Kerf:"
+
+msgid ""
+"Kerf: width of the laser's cut (measure it with Generators → Kerf test). "
+"The outlines are cut half of it further out and the holes half of it "
+"further in, so the parts come out at their drawn size. 0: off"
+msgstr ""
+"Kerf: szerokość cięcia lasera (zmierz ją: Generatory → Test kerfu). "
+"Obrysy są cięte o połowę dalej na zewnątrz, a otwory o połowę dalej do "
+"środka, więc części wychodzą w narysowanym rozmiarze. 0: wyłączone"
 
 msgid ""
 "Kerfly can add a rule to the system so that the laser's USB port can be "
@@ -1168,6 +1245,9 @@ msgstr "Długość grzebienia przed cięciem"
 
 msgid "Length of the scale"
 msgstr "Długość podziałki"
+
+msgid "Letter spacing"
+msgstr "Odstęp liter"
 
 msgid "Letter spacing: space added between the letters (0: as the font sets it)"
 msgstr ""
@@ -1456,6 +1536,9 @@ msgstr "Nie wygenerowano danych dla lasera."
 msgid "No pattern"
 msgstr "Bez wzoru"
 
+msgid "No. 123"
+msgstr "Nr 123"
+
 msgid "Node"
 msgstr "Węzeł"
 
@@ -1488,6 +1571,19 @@ msgstr "Liczby"
 
 msgid "Numbers in"
 msgstr "Liczby w"
+
+msgid "Offset"
+msgstr "Odsunięcie"
+
+msgid "Offset needs the pyclipper library, which is missing."
+msgstr "Odsunięcie wymaga biblioteki pyclipper, której brakuje."
+
+msgid ""
+"Offset: a new outline around the selected shapes (or inside them), a set "
+"distance away"
+msgstr ""
+"Odsunięcie: nowy obrys wokół zaznaczonych kształtów (albo wewnątrz nich) "
+"w zadanej odległości"
 
 msgid "Only closed shapes on a cut or outline layer can be filled with a pattern."
 msgstr ""
@@ -1546,6 +1642,9 @@ msgstr "Druga strona: tekst biegnie w przeciwną stronę, po drugiej stronie lin
 
 msgid "Out of memory."
 msgstr "Brak pamięci."
+
+msgid "Outer ring"
+msgstr "Pierścień zewnętrzny"
 
 msgid "Outside the laser bed!"
 msgstr "Poza stołem lasera!"
@@ -1783,6 +1882,13 @@ msgstr "Gotowy"
 msgid "Rectangle"
 msgstr "Prostokąt"
 
+msgid ""
+"Red: what the laser has burnt so far (raster engraving one line every 0.2"
+" mm). Grey dashed lines: moves with the laser off."
+msgstr ""
+"Czerwone: to, co laser już wypalił (grawer rastrowy jedna linia co 0,2 "
+"mm). Szare przerywane linie: ruchy z wyłączonym laserem."
+
 msgctxt "toolbar"
 msgid "Redo"
 msgstr "Ponów"
@@ -1830,6 +1936,9 @@ msgstr "Wznowiono"
 msgid "Right side"
 msgstr "Prawy bok"
 
+msgid "Ring text height"
+msgstr "Wysokość tekstu w otoku"
+
 msgid "Rotary"
 msgstr "Oś obrotowa"
 
@@ -1860,6 +1969,19 @@ msgid ""
 msgstr ""
 "Obrót przeciwnie do ruchu wskazówek zegara. Możesz też przeciągnąć "
 "okrągły uchwyt nad elementem (z Shift co 15°)."
+
+msgid "Round"
+msgstr "Zaokrąglone"
+
+msgid "Round stamp"
+msgstr "Pieczątka okrągła"
+
+msgid ""
+"Round stamp: text around the top and the bottom, rings, and text or a "
+"picture in the middle; burnt for rubber like the stamp"
+msgstr ""
+"Pieczątka okrągła: tekst wokół góry i dołu, pierścienie oraz tekst lub "
+"obrazek w środku; wypalana w gumie jak zwykła pieczątka"
 
 msgid "Rounded corners of the frame and outline"
 msgstr "Zaokrąglone rogi ramki i obrysu"
@@ -1976,6 +2098,9 @@ msgstr "Zaznacz otwarty plik albo tekst z liniami, aby go rozbić."
 msgid "Select and move"
 msgstr "Zaznacz i przesuń"
 
+msgid "Select one or more shapes with closed outlines."
+msgstr "Zaznacz jeden lub więcej kształtów z zamkniętym obrysem."
+
 msgid ""
 "Select one text and one shape (line, curve, circle, ...) to put the text "
 "on, then choose Put text on path again (Ctrl+click selects both)."
@@ -2054,6 +2179,9 @@ msgctxt "toolbar group"
 msgid "Shapes"
 msgstr "Kształty"
 
+msgid "Sharp"
+msgstr "Ostre"
+
 msgid "Show the report file"
 msgstr "Pokaż plik raportu"
 
@@ -2123,6 +2251,9 @@ msgstr "Odstęp między polami"
 
 msgid "Space between the frame and the text"
 msgstr "Odstęp między ramką a tekstem"
+
+msgid "Space between the rings and the text"
+msgstr "Odstęp między pierścieniami a tekstem"
 
 msgid "Space kept free between the pattern and the outline"
 msgstr "Wolne miejsce między wzorem a obrysem"
@@ -2263,11 +2394,26 @@ msgstr "Strzał testowy: %.0f%% przez %d ms"
 msgid "Text"
 msgstr "Tekst"
 
+msgid "Text around the bottom of the stamp, reading left to right (empty: none)"
+msgstr "Tekst wokół dołu pieczątki, czytany od lewej do prawej (puste: brak)"
+
+msgid "Text around the top of the stamp, reading left to right"
+msgstr "Tekst wokół góry pieczątki, czytany od lewej do prawej"
+
+msgid "Text at the bottom"
+msgstr "Tekst na dole"
+
+msgid "Text at the top"
+msgstr "Tekst na górze"
+
 msgid "Text files"
 msgstr "Pliki tekstowe"
 
 msgid "Text height"
 msgstr "Wysokość tekstu"
+
+msgid "Text in the middle"
+msgstr "Tekst w środku"
 
 msgid "Text on a path"
 msgstr "Tekst na ścieżce"
@@ -2378,6 +2524,9 @@ msgid "The laser was found, but this user may not use its USB port."
 msgstr ""
 "Laser został znaleziony, ale ten użytkownik nie ma dostępu do jego portu "
 "USB."
+
+msgid "The lines in the middle (empty: none)"
+msgstr "Wiersze w środku (puste: brak)"
 
 msgid "The lines of the stamp"
 msgstr "Linie pieczątki"
@@ -2679,6 +2828,13 @@ msgstr "Szerokość pudełka (od lewej do prawej)"
 msgid "Width of the code with its free border"
 msgstr "Szerokość kodu razem z wolnym marginesem"
 
+msgid ""
+"Width of the cut in this material (measure it with Generators → Kerf "
+"test): the cut layer moves the outlines out by half of it"
+msgstr ""
+"Szerokość cięcia w tym materiale (zmierz ją: Generatory → Test kerfu): "
+"warstwa cięcia odsuwa obrysy o jej połowę na zewnątrz"
+
 msgid "Width of the hinge band, across the cuts (0: the whole shape)"
 msgstr "Szerokość pasa zawiasu, w poprzek nacięć (0: cały kształt)"
 
@@ -2694,6 +2850,12 @@ msgstr "Szerokość puzzli"
 
 msgid "Width of the raised frame around it (0: none)"
 msgstr "Grubość wypukłej ramki dookoła (0: bez ramki)"
+
+msgid "Width of the raised outer ring (0: none)"
+msgstr "Szerokość wypukłego pierścienia zewnętrznego (0: brak)"
+
+msgid "Width of the ring inside the text (0: none)"
+msgstr "Szerokość pierścienia wewnątrz tekstu (0: brak)"
 
 msgid "Width of the ruler"
 msgstr "Szerokość linijki"
@@ -2737,6 +2899,9 @@ msgstr ""
 "TWOJA FIRMA\n"
 "ul. Przykładowa 1, 00-000 Miasto\n"
 "tel. 123 456 789"
+
+msgid "YOUR COMPANY NAME"
+msgstr "NAZWA TWOJEJ FIRMY"
 
 msgid "Zigzag"
 msgstr "Zygzak"
@@ -3046,4 +3211,13 @@ msgstr "obrys"
 
 #~ msgid "Size of the round tabs, in % of a piece"
 #~ msgstr "Wielkość okrągłych wypustek, w % elementu"
+
+#~ msgid ""
+#~ "Grey dashed lines are moves with "
+#~ "the laser off. Raster engraving is "
+#~ "shown one line every 0.2 mm."
+#~ msgstr ""
+#~ "Szare przerywane linie to przejazdy z"
+#~ " wyłączonym laserem. Grawer rastrowy jest"
+#~ " pokazany jako linia co 0,2 mm."
 

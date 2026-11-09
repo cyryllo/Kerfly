@@ -10,14 +10,17 @@ from PySide6.QtGui import QColor, QPainterPath, QPen
 from PySide6.QtWidgets import (QComboBox, QDialog, QGraphicsEllipseItem, QGraphicsItem, QHBoxLayout, QLabel,
                                QPushButton, QSlider, QVBoxLayout)
 
-from kerfly.core.simulate import timeline, total_seconds
+from kerfly.core.simulate import RASTER_ROW_MM, timeline, total_seconds
 from kerfly.gui import icons
 from kerfly.i18n import _
 
 SPEEDS = (1, 2, 5, 10, 20, 50, 100, 200, 500, 1000)
 WATCH_SECONDS = 30.0             # the automatic speed plays the whole job in about this time
-COLORS = {"raster": QColor("#424242"), "engrave": QColor("#1565c0"), "cut": QColor("#d32f2f"),
-          "gcode": QColor("#6a1b9a"), "move": QColor("#9e9e9e")}
+# red where the laser is on (whatever the layer), grey for moves with the laser off; a raster
+# row is drawn only over its dark parts and one row wide, so what is engraved turns red
+BURN = QColor("#e53935")
+COLORS = {"raster": BURN, "engrave": BURN, "cut": BURN, "gcode": BURN,
+          "move": QColor("#9e9e9e")}
 
 
 def _pen(color, width=1.6, style=Qt.SolidLine):
@@ -76,8 +79,8 @@ class SimulationDialog(QDialog):
         v = QVBoxLayout(self)
         v.addLayout(row)
         v.addWidget(self.label)
-        hint = QLabel(_("Grey dashed lines are moves with the laser off. Raster engraving is shown one line "
-                        "every 0.2 mm."))
+        hint = QLabel(_("Red: what the laser has burnt so far (raster engraving one line every 0.2 mm). "
+                        "Grey dashed lines: moves with the laser off."))
         hint.setWordWrap(True)
         hint.setStyleSheet("color:#6b7280;")
         v.addWidget(hint)
@@ -156,13 +159,26 @@ class SimulationDialog(QDialog):
             b = self._scene_point(s.x0 + (s.x1 - s.x0) * f, s.y0 + (s.y1 - s.y0) * f)
             key = s.kind if s.burn else "move"
             qp = paths.setdefault(key, QPainterPath())
-            qp.moveTo(a)
-            qp.lineTo(b)
+            if s.burn and s.runs:                 # a raster row: only where it is dark
+                for r0, r1 in s.runs:
+                    if r0 >= f:
+                        break
+                    r1 = min(r1, f)
+                    qp.moveTo(self._scene_point(s.x0 + (s.x1 - s.x0) * r0, s.y0 + (s.y1 - s.y0) * r0))
+                    qp.lineTo(self._scene_point(s.x0 + (s.x1 - s.x0) * r1, s.y0 + (s.y1 - s.y0) * r1))
+            else:
+                qp.moveTo(a)
+                qp.lineTo(b)
             head = b
             start = end
         for key, qp in paths.items():
-            item = scene.addPath(qp, _pen(COLORS.get(key, COLORS["cut"]), 1.0 if key == "move" else 2.0,
-                                          Qt.DashLine if key == "move" else Qt.SolidLine))
+            if key == "raster":
+                # as wide as the row it stands for (in mm on the bed), so the rows touch but do not pile up
+                pen = QPen(COLORS["raster"], RASTER_ROW_MM, Qt.SolidLine, Qt.FlatCap)
+            else:
+                pen = _pen(COLORS.get(key, BURN), 1.0 if key == "move" else 2.5,
+                           Qt.DashLine if key == "move" else Qt.SolidLine)
+            item = scene.addPath(qp, pen)
             item.setZValue(60)
             self.items.append(item)
         if head is None and self.steps:

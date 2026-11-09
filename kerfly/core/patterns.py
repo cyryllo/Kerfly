@@ -19,7 +19,7 @@ from .hatch import hatch_lines
 # pattern code -> English name (translated in the GUI); the order of the pattern list
 PATTERNS = (("lines", "Lines"), ("cross", "Cross-hatch"), ("waves", "Waves"), ("zigzag", "Zigzag"),
             ("circles", "Circles"), ("honeycomb", "Honeycomb"), ("diamonds", "Diamonds"),
-            ("bricks", "Bricks"))
+            ("bricks", "Bricks"), ("concentric", "Concentric"))
 PATTERN_CODES = tuple(code for code, _name in PATTERNS)
 
 
@@ -278,6 +278,12 @@ def pattern_lines(pattern, polygons, spacing, angle_deg=0.0, margin=0.0):
         # straight lines: the hatch code is exact and fast
         segs = hatch_lines(rings, spacing, angle_deg, cross=pattern == "cross")
         return [[a, b] for a, b in segs]
+    if pattern == "concentric":
+        # rings following the outline inwards (the angle does not matter)
+        from . import offset
+        if not offset.available():
+            return []
+        return offset.concentric_rings(rings, spacing, margin, tolerance=min(0.01, spacing / 20.0))
     half, to_world = _frame(rings, angle_deg)
     s = spacing
     if pattern == "lines":

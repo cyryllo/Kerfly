@@ -118,7 +118,8 @@ class LayersPanel(QWidget):
                 w.hide()
                 w.setParent(None)
                 w.deleteLater()
-        headers = ["", "", _("Speed (%s)") % speed_unit, _("Passes"), _("Power") if show_power else "", _("Time"), ""]
+        headers = ["", "", _("Speed (%s)") % speed_unit, _("Passes"), _("Power") if show_power else "", _("Kerf"),
+                   _("Time"), ""]
         for col, text in enumerate(headers):
             if text:
                 self.grid.addWidget(QLabel(text), 0, col)
@@ -137,7 +138,7 @@ class LayersPanel(QWidget):
         if row == 1:
             hint = QLabel(_("Open a design to see its layers."))
             hint.setStyleSheet("color:#757575;")
-            self.grid.addWidget(hint, 1, 0, 1, 7)
+            self.grid.addWidget(hint, 1, 0, 1, 8)
         self.add_button.setEnabled(not gcode_file)
 
     def _add_row(self, row, layer, has_data, removable):
@@ -211,7 +212,23 @@ class LayersPanel(QWidget):
             th.addWidget(calc)
         th.addStretch(1)
         time_cell.setMinimumWidth(max(60, time_label.fontMetrics().horizontalAdvance("0:00:00") + 10))
-        self.grid.addWidget(time_cell, row, 5)
+        if layer.kind == CUT:
+            # kerf compensation: the width of the cut; outlines move out by half of it
+            kerf = QDoubleSpinBox()
+            kerf.setRange(0, 2)
+            kerf.setDecimals(2)
+            kerf.setSingleStep(0.05)
+            kerf.setSuffix(" mm")
+            kerf.setValue(layer.kerf)
+            fit_spin(kerf, 1.99)
+            kerf.setKeyboardTracking(False)
+            kerf.setToolTip(_("Kerf: width of the laser's cut (measure it with Generators → Kerf test). The "
+                              "outlines are cut half of it further out and the holes half of it further in, so "
+                              "the parts come out at their drawn size. 0: off"))
+            kerf.valueChanged.connect(lambda v, l=layer: self._set(l, "kerf", v))
+            self.grid.addWidget(kerf, row, 5)
+            widgets["kerf"] = kerf
+        self.grid.addWidget(time_cell, row, 6)
         if removable:
             rm = QToolButton()
             rm.setIcon(icons.tabler("trash", "#c62828"))
@@ -219,7 +236,7 @@ class LayersPanel(QWidget):
             rm.setAutoRaise(True)
             rm.setToolTip(_("Delete this layer (its parts go back to the default layer)"))
             rm.clicked.connect(lambda _c=False, l=layer: self.remove_layer.emit(l))
-            self.grid.addWidget(rm, row, 6)
+            self.grid.addWidget(rm, row, 7)
         for w in (cb, name_box, passes):
             w.setEnabled(has_data or removable)
         self.rows[layer.id] = {"time": time_label, "calc": calc, **widgets}
@@ -244,7 +261,7 @@ class LayersPanel(QWidget):
     # ---- edits ----------------------------------------------------------------
     def _set(self, layer, attr, value):
         setattr(layer, attr, value)
-        if attr in ("speed", "passes", "power"):
+        if attr in ("speed", "passes", "power", "kerf"):
             self.clear_material()
         self.changed.emit(layer)
 
