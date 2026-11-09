@@ -44,6 +44,25 @@ def take(lang):
             app.processEvents()
             time.sleep(0.02)
 
+    from PySide6.QtCore import QPoint, QRect, QRectF, Qt as _Qt
+
+    def crop(win, widgets, path):
+        """Save the part of a window covering these widgets (the website's pictures)."""
+        rect = None
+        for wd in widgets:
+            r = QRect(wd.mapTo(win, QPoint(0, 0)), wd.size())
+            rect = r if rect is None else rect.united(r)
+        win.grab(rect).save(path)
+
+    def zoom_to(win, elements, margin=8.0):
+        """Fit the bed view to some elements (scene mm)."""
+        x0 = min(e.bounds[0] for e in elements) * 25.4 - margin
+        x1 = max(e.bounds[1] for e in elements) * 25.4 + margin
+        y0 = -max(e.bounds[3] for e in elements) * 25.4 - margin
+        y1 = -min(e.bounds[2] for e in elements) * 25.4 + margin
+        win.preview.fitInView(QRectF(x0, y0, x1 - x0, y1 - y0), _Qt.KeepAspectRatio)
+        settle(5)
+
     values = dict(config.DEFAULT_VALUES)
     values["language"] = lang
     w = MainWindow(values)
@@ -77,8 +96,77 @@ def take(lang):
     w.tabs.grab().save(os.path.join(out, "laser.png"))
     strip = [t for t in w.findChildren(QToolBar) if t.objectName() != "main_toolbar"][0]
     strip.grab().save(os.path.join(out, "tools.png"))
+    w.tabs.setCurrentIndex(0)
+    # safety: an element sticking out of the bed is red, Start and Trace are locked
+    w.preview.select_element([])
+    w.elements[3].x += 95 / 25.4
+    w._layout_changed()
+    settle()
+    w.grab().save(os.path.join(out, "site-safety.png"))
+    w.elements[3].x -= 95 / 25.4
+    w._layout_changed()
+    # the job simulation, half way through
+    w.simulate_job()
+    settle(10)
+    sim = w._simulation
+    sim.timer.stop()
+    sim.seek(sim.total * 0.55)
+    settle(5)
+    picture = w.grab()
+    from PySide6.QtGui import QPainter as _QPainter
+    panel = sim.grab()
+    p = _QPainter(picture)
+    corner = w.preview.mapTo(w, QPoint(w.preview.width() - panel.width() - 16, w.preview.height() - panel.height() - 16))
+    p.drawPixmap(corner, panel)
+    p.end()
+    corner = w.preview.mapTo(w, QPoint(0, 0))
+    picture.copy(QRect(corner, w.preview.size())).save(os.path.join(out, "site-simulation.png"))
+    sim.close()
     w._dirty = False
     w.close()
+
+    # node editing: a curve with its nodes and handles, close up
+    from kerfly.core import curves as _curves
+    nd = MainWindow(values)
+    nd.resize(*WINDOW)
+    nd.show()
+    leaf = ShapeSpec(kind="path", operation="cut", subpaths=[{"closed": True, "nodes": [   # a heart
+        _curves.node(45, 15, (30, -5), (60, -5)), _curves.node(85, 25, (90, 0), (80, 50)),
+        _curves.node(45, 75, (60, 60), (30, 60)), _curves.node(5, 25, (10, 50), (0, 0))]}])
+    nd._add_drawn_element(leaf, "pen", 60, 40)
+    nd._edit_nodes_of(nd.elements[-1])
+    settle()
+    nd.preview.node_editor.select({(0, 1)})                 # the right lobe: its handles show
+    settle()
+    zoom_to(nd, nd.elements, 25)
+    crop(nd, [nd.top_bar, nd.preview], os.path.join(out, "site-nodes.png"))
+    nd._dirty = False
+    nd.close()
+
+    # generators on the bed: a material test, a finger-joint box, a gear and a stamp
+    from kerfly.core import generators as _gen
+    from kerfly.gui import stamp as _stamp
+    gn = MainWindow(values)
+    gn.resize(*WINDOW)
+    gn.show()
+    for (x, y), made in (((8, 8), _gen.material_test("engrave", 10, 50, 5, "passes", passes_min=1, passes_max=3,
+                                                     rows=3, legend=i18n._("Speed (%s) / passes") % "mm/s")),
+                         ((100, 8), _gen.finger_box(70, 50, 35, 3, 10, 0.15, lid=False)),
+                         ((8, 75), _gen.gear(24, 2.0, 20, 6)),
+                         ((8, 150), _stamp.make(dict(preset="47x18", text=i18n._(
+                             "YOUR COMPANY\nStreet 1, 00-000 City\nphone 123 456 789"), font="DejaVu Sans", bold=True,
+                             text_size=0, picture="", place="left", frame=0.6, corner=1, margin=1, invert=True,
+                             mirror=True, outline=True), gn))):
+        gn.head = (x / 25.4, -y / 25.4)
+        gn.insert_generated(made)
+    gn.head = (0.0, 0.0)
+    gn.preview.select_element([])
+    gn.refresh_preview()
+    settle()
+    zoom_to(gn, gn.elements, 6)
+    crop(gn, [gn.preview], os.path.join(out, "site-generators.png"))
+    gn._dirty = False
+    gn.close()
 
     # pattern fills, with the Fill tool in use
     from PySide6.QtCore import QPointF
@@ -100,6 +188,8 @@ def take(lang):
     f._update_tool_options(force=True)
     settle()
     f.grab().save(os.path.join(out, "fill.png"))
+    zoom_to(f, f.elements)
+    crop(f, [f.top_bar, f.preview], os.path.join(out, "site-fill.png"))
     f._dirty = False
     f.close()
 
@@ -123,6 +213,8 @@ def take(lang):
     tp._update_tool_options(force=True)
     settle()
     tp.grab().save(os.path.join(out, "textpath.png"))
+    zoom_to(tp, tp.elements)
+    crop(tp, [tp.top_bar, tp.preview], os.path.join(out, "site-textpath.png"))
     tp._dirty = False
     tp.close()
 
@@ -142,6 +234,8 @@ def take(lang):
     hg._update_tool_options(force=True)
     settle()
     hg.grab().save(os.path.join(out, "hinge.png"))
+    zoom_to(hg, hg.elements)
+    crop(hg, [hg.top_bar, hg.preview], os.path.join(out, "site-hinge.png"))
     hg._dirty = False
     hg.close()
     # the stamp generator's window
@@ -170,7 +264,8 @@ def main():
     rc = 0
     for lang in LANGUAGES:
         env = dict(os.environ, HOME=tempfile.mkdtemp(prefix="kerfly-shots-"), LANG="C.UTF-8",
-                   LC_ALL="C.UTF-8", APPDATA=tempfile.mkdtemp(prefix="kerfly-shots-"))
+                   LC_ALL="C.UTF-8", APPDATA=tempfile.mkdtemp(prefix="kerfly-shots-"),
+                   XDG_CONFIG_HOME=tempfile.mkdtemp(prefix="kerfly-shots-"))
         env.setdefault("QT_QPA_PLATFORM", "xcb")
         rc |= subprocess.call([sys.executable, os.path.abspath(__file__), "--lang", lang], env=env)
     return rc
