@@ -112,6 +112,9 @@ def expected_bar(w):
     tool = w.preview.tool
     if tool in ("fill", "hinge"):
         return _fill_like(w, tool)
+    if tool == "offset":
+        values = dict(w.offset_defaults)
+        return values, set(values)
     e = w.selected
     if tool == "textpath":
         if e is not None and e.shape is not None and e.shape.kind == "text":

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-09 21:48+0100\n"
+"POT-Creation-Date: 2026-11-09 22:30+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -120,8 +120,8 @@ msgstr "&Reflejar horizontalmente"
 msgid "&New project"
 msgstr "&Nuevo proyecto"
 
-msgid "&Offset..."
-msgstr "&Desplazamiento..."
+msgid "&Offset"
+msgstr "&Desplazamiento"
 
 msgid "&Open design…"
 msgstr "&Abrir diseño…"
@@ -255,11 +255,6 @@ msgstr "Añadir otro archivo al área de trabajo"
 
 msgid "Add design"
 msgstr "Añadir diseño"
-
-msgid "Add the new outline next to the shape; off: the shape is replaced by it"
-msgstr ""
-"Añadir el nuevo contorno junto a la forma; desactivado: la forma se "
-"sustituye por él"
 
 #, python-format
 msgid "Adjusting image darkness: %s%%"
@@ -466,6 +461,9 @@ msgstr "Haga clic en un elemento para seleccionarlo."
 msgid "Click inside a closed shape to cut a hinge into it."
 msgstr "Haga clic dentro de una forma cerrada para cortar en ella una bisagra."
 
+msgid "Click inside a closed shape to offset it."
+msgstr "Haga clic dentro de una forma cerrada para desplazarla."
+
 msgid "Click inside a shape to fill it."
 msgstr "Haga clic dentro de una forma para rellenarla."
 
@@ -524,9 +522,6 @@ msgstr "Radio de esquina"
 
 msgid "Corner radius: 0 for sharp corners"
 msgstr "Radio de las esquinas: 0 para esquinas vivas"
-
-msgid "Corners"
-msgstr "Esquinas"
 
 msgid "Corners of the new outline: rounded, or sharp like the shape's"
 msgstr "Esquinas del nuevo contorno: redondeadas, o vivas como las de la forma"
@@ -682,9 +677,6 @@ msgstr ""
 msgid "Direction of the pattern"
 msgstr "Dirección del patrón"
 
-msgid "Distance"
-msgstr "Distancia"
-
 #, python-format
 msgid ""
 "Distance %(d).2f %(u)s: width %(w).2f %(u)s, height %(h).2f %(u)s, angle "
@@ -712,6 +704,13 @@ msgstr "Distancia por cada clic en una flecha"
 msgid "Distance right from home"
 msgstr "Distancia hacia la derecha desde el origen"
 
+msgid ""
+"Distance: how far the new outline lies from the shape, positive outside "
+"(holes get smaller), negative inside"
+msgstr ""
+"Distancia: a qué distancia de la forma queda el nuevo contorno, positiva "
+"por fuera (los agujeros se reducen), negativa por dentro"
+
 msgid "Distribute horizontally"
 msgstr "Distribuir horizontalmente"
 
@@ -738,15 +737,15 @@ msgstr ""
 msgid "Dots between the texts"
 msgstr "Puntos entre los textos"
 
+msgid ""
+"Draw the new outline around the shapes selected now (or click a shape on "
+"the bed)"
+msgstr ""
+"Dibujar el nuevo contorno alrededor de las formas seleccionadas ahora (o "
+"haga clic en una forma en la mesa)"
+
 msgid "Drawing tools"
 msgstr "Herramientas de dibujo"
-
-msgid ""
-"Draws a new outline around the selected shapes (or inside them). Only "
-"closed outlines are used."
-msgstr ""
-"Dibuja un nuevo contorno alrededor de las formas seleccionadas (o dentro "
-"de ellas). Solo se usan contornos cerrados."
 
 msgid "Duplicate"
 msgstr "Duplicar"
@@ -1059,13 +1058,6 @@ msgstr "Cabezal en el origen"
 msgid "Honeycomb"
 msgstr "Panal"
 
-msgid ""
-"How far the new outline lies from the shape: positive outside (holes get "
-"smaller), negative inside"
-msgstr ""
-"A qué distancia de la forma queda el nuevo contorno: positivo por fuera "
-"(los agujeros se reducen), negativo por dentro"
-
 msgid "How many different powers or passes"
 msgstr "Cuántas potencias o pasadas distintas"
 
@@ -1155,8 +1147,8 @@ msgstr ""
 msgid "Jump to the next layer"
 msgstr "Saltar a la capa siguiente"
 
-msgid "Keep the original shapes"
-msgstr "Conservar las formas originales"
+msgid "Keep the original"
+msgstr "Conservar el original"
 
 msgid "Kerf"
 msgstr "Kerf"
@@ -1594,15 +1586,33 @@ msgstr "Números en"
 msgid "Offset"
 msgstr "Desplazamiento"
 
+msgid "Offset done. Click another shape, or change the distance above."
+msgstr "Hecho. Haga clic en otra forma o cambie la distancia arriba."
+
 msgid "Offset needs the pyclipper library, which is missing."
 msgstr "El desplazamiento necesita la biblioteca pyclipper, que falta."
 
-msgid ""
-"Offset: a new outline around the selected shapes (or inside them), a set "
-"distance away"
+msgid "Offset selected"
+msgstr "Desplazar selección"
+
+msgid "Offset: a new outline around a shape (or inside it), a set distance away"
 msgstr ""
-"Desplazamiento: un nuevo contorno alrededor de las formas seleccionadas "
-"(o dentro de ellas) a una distancia dada"
+"Desplazamiento: un nuevo contorno alrededor de una forma (o dentro de "
+"ella) a una distancia dada"
+
+msgid ""
+"Offset: set the distance above, then click a closed shape to draw a new "
+"outline around it (negative: inside it). Shapes selected before: Offset "
+"selected."
+msgstr ""
+"Desplazamiento: ajuste la distancia arriba y haga clic en una forma "
+"cerrada para dibujar un nuevo contorno a su alrededor (negativa: dentro)."
+" Formas seleccionadas antes: Desplazar selección."
+
+msgid "On: the new outline is added next to the shape; off: it replaces the shape"
+msgstr ""
+"Activado: el nuevo contorno se añade junto a la forma; desactivado: "
+"sustituye la forma"
 
 msgid "Only closed shapes on a cut or outline layer can be filled with a pattern."
 msgstr ""
@@ -2160,6 +2170,9 @@ msgstr "Enviando %s…"
 #, python-format
 msgid "Sending data to laser: %s%%"
 msgstr "Enviando datos al láser: %s%%"
+
+msgid "Set a distance other than 0 first."
+msgstr "Primero ajuste una distancia distinta de 0."
 
 msgid ""
 "Set the selected text along the selected shape (line, curve, circle, "
@@ -3263,4 +3276,52 @@ msgstr "grabado vectorial"
 #~ "movimientos con el láser apagado. El "
 #~ "grabado ráster se muestra con una "
 #~ "línea cada 0,2 mm."
+
+#~ msgid "&Offset..."
+#~ msgstr "&Desplazamiento..."
+
+#~ msgid "Add the new outline next to the shape; off: the shape is replaced by it"
+#~ msgstr ""
+#~ "Añadir el nuevo contorno junto a "
+#~ "la forma; desactivado: la forma se "
+#~ "sustituye por él"
+
+#~ msgid "Corners"
+#~ msgstr "Esquinas"
+
+#~ msgid "Distance"
+#~ msgstr "Distancia"
+
+#~ msgid ""
+#~ "Draws a new outline around the "
+#~ "selected shapes (or inside them). Only"
+#~ " closed outlines are used."
+#~ msgstr ""
+#~ "Dibuja un nuevo contorno alrededor de"
+#~ " las formas seleccionadas (o dentro "
+#~ "de ellas). Solo se usan contornos "
+#~ "cerrados."
+
+#~ msgid ""
+#~ "How far the new outline lies from"
+#~ " the shape: positive outside (holes "
+#~ "get smaller), negative inside"
+#~ msgstr ""
+#~ "A qué distancia de la forma queda"
+#~ " el nuevo contorno: positivo por "
+#~ "fuera (los agujeros se reducen), "
+#~ "negativo por dentro"
+
+#~ msgid "Keep the original shapes"
+#~ msgstr "Conservar las formas originales"
+
+#~ msgid ""
+#~ "Offset: a new outline around the "
+#~ "selected shapes (or inside them), a "
+#~ "set distance away"
+#~ msgstr ""
+#~ "Desplazamiento: un nuevo contorno alrededor"
+#~ " de las formas seleccionadas (o "
+#~ "dentro de ellas) a una distancia "
+#~ "dada"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-09 21:48+0100\n"
+"POT-Creation-Date: 2026-11-09 22:30+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -122,8 +122,8 @@ msgstr "Odbij w &poziomie"
 msgid "&New project"
 msgstr "&Nowy projekt"
 
-msgid "&Offset..."
-msgstr "&Odsunięcie..."
+msgid "&Offset"
+msgstr "&Odsunięcie"
 
 msgid "&Open design…"
 msgstr "&Otwórz projekt…"
@@ -257,9 +257,6 @@ msgstr "Dodaj kolejny plik na stół lasera"
 
 msgid "Add design"
 msgstr "Dodaj projekt"
-
-msgid "Add the new outline next to the shape; off: the shape is replaced by it"
-msgstr "Dodaj nowy obrys obok kształtu; wyłączone: kształt zostanie nim zastąpiony"
 
 #, python-format
 msgid "Adjusting image darkness: %s%%"
@@ -460,6 +457,9 @@ msgstr "Kliknij element na stole, aby go zaznaczyć."
 msgid "Click inside a closed shape to cut a hinge into it."
 msgstr "Kliknij wewnątrz zamkniętego kształtu, żeby naciąć w nim zawias."
 
+msgid "Click inside a closed shape to offset it."
+msgstr "Kliknij wewnątrz zamkniętego kształtu, żeby go odsunąć."
+
 msgid "Click inside a shape to fill it."
 msgstr "Kliknij wewnątrz kształtu, żeby go wypełnić."
 
@@ -516,9 +516,6 @@ msgstr "Promień rogów"
 
 msgid "Corner radius: 0 for sharp corners"
 msgstr "Promień rogów: 0 to ostre rogi"
-
-msgid "Corners"
-msgstr "Narożniki"
 
 msgid "Corners of the new outline: rounded, or sharp like the shape's"
 msgstr "Narożniki nowego obrysu: zaokrąglone albo ostre jak w kształcie"
@@ -670,9 +667,6 @@ msgstr "Kierunek nacięć (90°: góra–dół; arkusz wygina się w poprzek nic
 msgid "Direction of the pattern"
 msgstr "Kierunek wzoru"
 
-msgid "Distance"
-msgstr "Odległość"
-
 #, python-format
 msgid ""
 "Distance %(d).2f %(u)s: width %(w).2f %(u)s, height %(h).2f %(u)s, angle "
@@ -700,6 +694,13 @@ msgstr "Odległość ruchu po jednym kliknięciu strzałki"
 msgid "Distance right from home"
 msgstr "Odległość w prawo od pozycji bazowej"
 
+msgid ""
+"Distance: how far the new outline lies from the shape, positive outside "
+"(holes get smaller), negative inside"
+msgstr ""
+"Odległość: jak daleko od kształtu leży nowy obrys, dodatnia na zewnątrz "
+"(otwory się zmniejszają), ujemna do środka"
+
 msgid "Distribute horizontally"
 msgstr "Rozłóż w poziomie"
 
@@ -726,15 +727,15 @@ msgstr ""
 msgid "Dots between the texts"
 msgstr "Kropki między tekstami"
 
+msgid ""
+"Draw the new outline around the shapes selected now (or click a shape on "
+"the bed)"
+msgstr ""
+"Narysuj nowy obrys wokół zaznaczonych teraz kształtów (albo kliknij "
+"kształt na stole)"
+
 msgid "Drawing tools"
 msgstr "Narzędzia rysowania"
-
-msgid ""
-"Draws a new outline around the selected shapes (or inside them). Only "
-"closed outlines are used."
-msgstr ""
-"Rysuje nowy obrys wokół zaznaczonych kształtów (albo wewnątrz nich). "
-"Brane są tylko zamknięte obrysy."
 
 msgid "Duplicate"
 msgstr "Duplikuj"
@@ -1041,13 +1042,6 @@ msgstr "Głowica w pozycji bazowej"
 msgid "Honeycomb"
 msgstr "Plaster miodu"
 
-msgid ""
-"How far the new outline lies from the shape: positive outside (holes get "
-"smaller), negative inside"
-msgstr ""
-"Jak daleko od kształtu leży nowy obrys: dodatnia na zewnątrz (otwory się "
-"zmniejszają), ujemna do środka"
-
 msgid "How many different powers or passes"
 msgstr "Ile różnych mocy lub przejść"
 
@@ -1135,8 +1129,8 @@ msgstr "Połącz zaznaczone elementy w grupę, zaznaczaną i przesuwaną jako ca
 msgid "Jump to the next layer"
 msgstr "Przeskocz do następnej warstwy"
 
-msgid "Keep the original shapes"
-msgstr "Zachowaj oryginalne kształty"
+msgid "Keep the original"
+msgstr "Zachowaj oryginał"
 
 msgid "Kerf"
 msgstr "Kerf"
@@ -1575,15 +1569,33 @@ msgstr "Liczby w"
 msgid "Offset"
 msgstr "Odsunięcie"
 
+msgid "Offset done. Click another shape, or change the distance above."
+msgstr "Odsunięte. Kliknij kolejny kształt albo zmień odległość powyżej."
+
 msgid "Offset needs the pyclipper library, which is missing."
 msgstr "Odsunięcie wymaga biblioteki pyclipper, której brakuje."
 
-msgid ""
-"Offset: a new outline around the selected shapes (or inside them), a set "
-"distance away"
+msgid "Offset selected"
+msgstr "Odsuń zaznaczone"
+
+msgid "Offset: a new outline around a shape (or inside it), a set distance away"
 msgstr ""
-"Odsunięcie: nowy obrys wokół zaznaczonych kształtów (albo wewnątrz nich) "
-"w zadanej odległości"
+"Odsunięcie: nowy obrys wokół kształtu (albo w jego środku) w zadanej "
+"odległości"
+
+msgid ""
+"Offset: set the distance above, then click a closed shape to draw a new "
+"outline around it (negative: inside it). Shapes selected before: Offset "
+"selected."
+msgstr ""
+"Odsunięcie: ustaw odległość powyżej, potem kliknij zamknięty kształt, "
+"żeby narysować wokół niego nowy obrys (ujemna: w środku). Kształty "
+"zaznaczone wcześniej: Odsuń zaznaczone."
+
+msgid "On: the new outline is added next to the shape; off: it replaces the shape"
+msgstr ""
+"Włączone: nowy obrys jest dodawany obok kształtu; wyłączone: zastępuje "
+"kształt"
 
 msgid "Only closed shapes on a cut or outline layer can be filled with a pattern."
 msgstr ""
@@ -2141,6 +2153,9 @@ msgstr "Wysyłanie %s…"
 #, python-format
 msgid "Sending data to laser: %s%%"
 msgstr "Wysyłanie danych do lasera: %s%%"
+
+msgid "Set a distance other than 0 first."
+msgstr "Najpierw ustaw odległość różną od 0."
 
 msgid ""
 "Set the selected text along the selected shape (line, curve, circle, "
@@ -3220,4 +3235,48 @@ msgstr "obrys"
 #~ "Szare przerywane linie to przejazdy z"
 #~ " wyłączonym laserem. Grawer rastrowy jest"
 #~ " pokazany jako linia co 0,2 mm."
+
+#~ msgid "&Offset..."
+#~ msgstr "&Odsunięcie..."
+
+#~ msgid "Add the new outline next to the shape; off: the shape is replaced by it"
+#~ msgstr ""
+#~ "Dodaj nowy obrys obok kształtu; "
+#~ "wyłączone: kształt zostanie nim zastąpiony"
+
+#~ msgid "Corners"
+#~ msgstr "Narożniki"
+
+#~ msgid "Distance"
+#~ msgstr "Odległość"
+
+#~ msgid ""
+#~ "Draws a new outline around the "
+#~ "selected shapes (or inside them). Only"
+#~ " closed outlines are used."
+#~ msgstr ""
+#~ "Rysuje nowy obrys wokół zaznaczonych "
+#~ "kształtów (albo wewnątrz nich). Brane są"
+#~ " tylko zamknięte obrysy."
+
+#~ msgid ""
+#~ "How far the new outline lies from"
+#~ " the shape: positive outside (holes "
+#~ "get smaller), negative inside"
+#~ msgstr ""
+#~ "Jak daleko od kształtu leży nowy "
+#~ "obrys: dodatnia na zewnątrz (otwory się"
+#~ " zmniejszają), ujemna do środka"
+
+#~ msgid "Keep the original shapes"
+#~ msgstr "Zachowaj oryginalne kształty"
+
+#~ msgid ""
+#~ "Offset: a new outline around the "
+#~ "selected shapes (or inside them), a "
+#~ "set distance away"
+#~ msgstr ""
+#~ "Odsunięcie: nowy obrys wokół zaznaczonych "
+#~ "kształtów (albo wewnątrz nich) w zadanej"
+#~ " odległości"
 

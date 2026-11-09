@@ -30,7 +30,7 @@ MM = 25.4
 MAX_PREVIEW_PIXELS = 3000   # longest side of a raster preview image
 
 # tools that work on a shape clicked in the bed view (they draw nothing)
-PICK_TOOLS = ("fill", "textpath", "hinge")
+PICK_TOOLS = ("fill", "textpath", "hinge", "offset")
 
 COLORS = {
     "bed": QColor("#e9ebee"),

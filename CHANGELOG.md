@@ -19,6 +19,10 @@ Version numbers:
 
 ### Fixed
 
+- **The language chosen in Settings did not come after a restart** unless
+  the settings were also saved as default (File → Save settings as
+  default), reported on Windows 11. The language is now kept at once, like
+  the grid and snapping.
 - A path shape inserted from outside the drawing tools (generators,
   scripts) is moved so its outline starts at (0, 0): the node editor drew
   the nodes of such a curve shifted from the shape.
@@ -30,9 +34,10 @@ Version numbers:
   further out and their holes half of it further in, so the parts come out at
   their drawn size; bridges are cut into the moved outline, open lines are
   cut as drawn. 0 (the default) leaves the job exactly as before.
-- **Offset** in the Shapes group of the toolbar and the Edit menu: a new
-  outline a set distance around the selected shapes (or inside them), round
-  or sharp corners, keeping the shapes or replacing them.
+- **Offset** tool in the drawing tools on the right (Shift+O, also Edit →
+  Offset): set the distance, round or sharp corners and Keep the original in
+  the options bar, then click closed shapes to draw a new outline around them
+  (or inside them); **Offset selected** for shapes selected before.
 - **Concentric** fill pattern: rings following the outline inwards.
 - **Round stamp** generator: text around the top and the bottom (one letter
   height for both, a dot on each side), outer and inner ring, text lines or

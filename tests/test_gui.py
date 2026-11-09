@@ -772,59 +772,61 @@ def main():
     check("combine shapes: union, difference, intersection, exclusion", ok and len(w.elements) == 2, str(sizes))
     w.close()
 
-    # 28b. offset: a new outline around the shape (or inside it), the hole the other way
-    from kerfly.gui import offset_dialog as _offdlg
+    # 28b. Offset tool (right strip): click a shape -> a new outline around it (or inside it);
+    # "Offset selected" for shapes selected before; a hole moves the other way
     w = make_window(grid_mm="0")
     w.resize(1200, 800)
     w.show()
     app.processEvents()
     w.preview.fit_all()
     app.processEvents()
-    answers = []
 
-    def _answer(dlg):
-        d, join, keep = answers.pop(0)
-        dlg.distance.setValue(d)
-        dlg.join.setCurrentIndex(dlg.join.findData(join))
-        dlg.keep.setChecked(keep)
-        dlg.accept()
-        return True
-    _orig_off_exec = _offdlg.OffsetDialog.exec
-    _offdlg.OffsetDialog.exec = _answer
-    try:
-        w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)      # 40 x 40
-        w.preview.select_element([w.elements[-1]])
-        answers.append((2.0, "miter", True))
-        w.offset_selected()
-        grown = w.elements[-1]
-        out_ok = (len(w.elements) == 2 and grown.shape.kind == "path"
-                  and (round(grown.size[0] * 25.4, 2), round(grown.size[1] * 25.4, 2)) == (44.0, 44.0)
-                  and abs(grown.bounds[0] * 25.4 - 18.0) < 0.01)
-        w.preview.select_element([w.elements[0]])
-        answers.append((-5.0, "round", False))
-        w.offset_selected()
-        inner = w.elements[0]
-        in_ok = len(w.elements) == 2 and (round(inner.size[0] * 25.4, 2), round(inner.size[1] * 25.4, 2)) == (30.0, 30.0)
-        w.undo()
-        undo_ok = len(w.elements) == 2 and round(w.elements[0].size[0] * 25.4, 2) == 40.0
-        # a frame (square with a hole): the outside grows, the hole shrinks
-        for e in list(w.elements):
-            w.elements.remove(e)
-        w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)
-        w._preview_drawn("rectangle", QPointF(30, 30), QPointF(50, 50), False)
-        w.preview.select_element(w.elements[-2:])
-        w.boolean_selected("difference")
-        w.preview.select_element([w.elements[-1]])
-        answers.append((1.0, "miter", False))
-        w.offset_selected()
-        frame = w.elements[-1]
-        holes = sorted(round(max(n[0] for n in sp["nodes"]) - min(n[0] for n in sp["nodes"]), 2)
-                       for sp in frame.shape.subpaths)
-        hole_ok = holes == [18.0, 42.0]
-    finally:
-        _offdlg.OffsetDialog.exec = _orig_off_exec
-    check("offset: outline 2 mm out (kept), 5 mm in (replaced), undo, a hole shrinks",
-          out_ok and in_ok and undo_ok and hole_ok, "(%s)" % [out_ok, in_ok, undo_ok, holes])
+    def click_scene(x, y):
+        vp = w.preview.viewport()
+        QTest.mouseClick(vp, Qt.LeftButton, Qt.NoModifier, w.preview.mapFromScene(QPointF(x, y)))
+        app.processEvents()
+    w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)      # 40 x 40
+    w.tool_actions["offset"].trigger()
+    from kerfly.gui import truth as _otruth
+    in_strip = w.preview.tool == "offset" and set(_otruth.bar_fields(w.tool_options)) == {
+        "offset_distance", "offset_join", "offset_keep"}
+    bar_set(w, "offset_distance", 2.0)
+    bar_set(w, "offset_join", "miter")
+    bar_set(w, "offset_keep", True)
+    click_scene(40, 40)
+    grown = w.elements[-1]
+    out_ok = (len(w.elements) == 2 and grown.shape.kind == "path"
+              and (round(grown.size[0] * 25.4, 2), round(grown.size[1] * 25.4, 2)) == (44.0, 44.0)
+              and abs(grown.bounds[0] * 25.4 - 18.0) < 0.01)
+    bar_set(w, "offset_distance", -5.0)
+    bar_set(w, "offset_join", "round")
+    bar_set(w, "offset_keep", False)
+    w.preview.select_element([w.elements[0]])
+    app.processEvents()
+    click_bar_button(w, "Offset selected")
+    inner = w.elements[0]
+    in_ok = len(w.elements) == 2 and (round(inner.size[0] * 25.4, 2), round(inner.size[1] * 25.4, 2)) == (30.0, 30.0)
+    w.undo()
+    undo_ok = len(w.elements) == 2 and round(w.elements[0].size[0] * 25.4, 2) == 40.0
+    # a frame (square with a hole): the outside grows, the hole shrinks
+    for e in list(w.elements):
+        w.elements.remove(e)
+    w.set_tool("select")
+    w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)
+    w._preview_drawn("rectangle", QPointF(30, 30), QPointF(50, 50), False)
+    w.preview.select_element(w.elements[-2:])
+    w.boolean_selected("difference")
+    w.set_tool("offset")
+    bar_set(w, "offset_distance", 1.0)
+    bar_set(w, "offset_join", "miter")
+    click_scene(25, 40)                                  # on the frame, not in its hole
+    frame = w.elements[-1]
+    holes = sorted(round(max(n[0] for n in sp["nodes"]) - min(n[0] for n in sp["nodes"]), 2)
+                   for sp in frame.shape.subpaths)
+    hole_ok = holes == [18.0, 42.0] and len(w.elements) == 1
+    check("Offset tool: in the right strip, click a shape (2 mm out, kept), Offset selected (5 mm in, "
+          "replaced), undo, a hole shrinks", in_strip and out_ok and in_ok and undo_ok and hole_ok,
+          "(%s)" % [in_strip, out_ok, in_ok, undo_ok, holes])
     w.close()
 
     # 29. freehand: a circle drawn with the mouse becomes a closed smooth path with few nodes
@@ -1483,6 +1485,35 @@ def main():
     check("view settings remembered at once (grid on/off and size, snapping, follow head), Settings tab",
           grid_off and remembered and last_size and from_dialog,
           "(%s)" % ([grid_off, remembered, last_size, from_dialog],))
+
+    # 52b. the language chosen in Settings is kept for the next start at once (it was lost unless the
+    # settings were saved as default, so the new language never came after a restart)
+    from kerfly.gui import settings_dialog as _sd
+    lw = make_window(grid_mm="0")
+    lw.remember_geometry = True
+    _orig_exec, _orig_info = _sd.SettingsDialog.exec, QMessageBox.information
+
+    def _pick_german(dlg):
+        combo = next(c for c in dlg.findChildren(QComboBox) if c.findData("de") >= 0 and c.findData("") >= 0)
+        combo.setCurrentIndex(combo.findData("de"))
+        return True
+    told = []
+    _sd.SettingsDialog.exec = _pick_german
+    QMessageBox.information = staticmethod(lambda *a, **k: told.append(a[2] if len(a) > 2 else ""))
+    try:
+        lw.edit_settings()
+    finally:
+        _sd.SettingsDialog.exec, QMessageBox.information = _orig_exec, _orig_info
+    # the next start: the settings file (never saved here) and then window.ini
+    next_start = _viewstate.load(config.load_user_settings())
+    lang_ok = lw.values.get("language") == "de" and next_start.get("language") == "de" and bool(told)
+    lw.values["language"] = ""                               # back to the system language
+    lw._remember_view()
+    lang_back = _viewstate.load({}).get("language") == ""
+    lw._dirty = False
+    lw.close()
+    check("language from Settings is kept for the next start without Save settings as default",
+          lang_ok and lang_back, "(%s)" % ([lang_ok, lang_back, next_start.get("language")],))
 
     # 53. Linux: connecting fails for want of permission -> Kerfly offers the USB rule (pkexec); with
     # a rule already there, Laser → Allow USB access only says to plug the laser in again

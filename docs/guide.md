@@ -58,7 +58,9 @@ sends the job to the laser. This guide is for version 1.1.
    head (moves it to the upper left corner).
 
 Kerfly keeps its settings in `k40_whisperer.txt` in your home folder.
-**File → Save settings as default** keeps changed settings.
+**File → Save settings as default** keeps changed settings. The language,
+the grid, snapping and "design follows the head" are kept at once, without
+saving.
 
 <a id="s2"></a>
 
@@ -179,6 +181,7 @@ before or after drawing.
 | Text on a path | Shift+T | Type the text in the options bar, then click a line, curve or shape (see below) |
 | Fill with a pattern | Shift+F | Choose a pattern in the options bar, then click closed shapes to fill them (see below) |
 | Living hinge | Shift+H | Choose the cuts in the options bar, then click closed shapes to cut a hinge into them (see below) |
+| Offset | Shift+O | Set the distance in the options bar, then click closed shapes to draw a new outline around them (see below) |
 
 **Snapping.** Drawing and moving snap to the corners, centres and edges of
 other elements and to the bed (**View → Snap to objects**, Ctrl+;), and to
@@ -199,11 +202,13 @@ grid step, with Shift 10 times as far.
 intersection and exclusion of closed shapes (difference: the other selected
 shapes are cut out of the one highest in the element list).
 
-**Offset.** **Offset…** in the **Shapes** group of the toolbar (and the Edit
-menu) draws a new outline a set distance around the selected shapes:
-positive outside (holes get smaller), negative inside. Choose round or sharp
-corners and whether to keep the original shapes. Use it for a border around
-a text, a frame around a part, or a smaller copy inside.
+**Offset.** The **Offset** tool (Shift+O, also Edit → Offset) draws a new
+outline a set distance around a shape. In the options bar set the
+**distance** (positive outside, holes get smaller; negative inside), round
+or sharp **corners** and **Keep the original** (off: the new outline replaces
+the shape), then click closed shapes on the bed. Shapes you selected before
+choosing the tool get it with **Offset selected**. Use it for a border
+around a text, a frame around a part, or a smaller copy inside.
 
 **Order.** The element list is the order of the job: within each layer the
 laser does the element at the top of the list first. (The layers themselves
@@ -452,7 +457,7 @@ Kerfly is available in English, Polish, German, Spanish and French.
 | Alt (held) | Snap to nothing for a moment |
 | Ctrl+, | Settings |
 | F1 | This user guide |
-| S, N, R, E, P, L, Shift+L, B, F, T, Shift+T, Shift+F, Shift+H, M | Tools (see section 5) |
+| S, N, R, E, P, L, Shift+L, B, F, T, Shift+T, Shift+F, Shift+H, Shift+O, M | Tools (see section 5) |
 
 <a id="s10"></a>
 

@@ -111,7 +111,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Image dithering (more methods than Floyd-Steinberg) | `image/dither.py` |
 | Image adjustments (contrast, sharpen, crop, split) | `image/imagetools.py`, `extra/imageactions.py`, `gui/imagesplitter.py` |
 | Bitmap to vector (trace), like LightBurn's Trace Image (button "Trace" in the options bar of a selected picture) | `extra/potrace.py`, `extra/vtracer.py`, `extra/vectrace.py` |
-| ~~Path offset (kerf compensation)~~ (done: Offset command in the Shapes group, kerf column of cut layers and in the material library, concentric fill pattern; pyclipper) | `core/elements/offset_clpr.py`, `offset_mk.py` |
+| ~~Path offset (kerf compensation)~~ (done: Offset tool in the drawing tools on the right, kerf column of cut layers and in the material library, concentric fill pattern; pyclipper) | `core/elements/offset_clpr.py`, `offset_mk.py` |
 | ~~Boolean operations on shapes~~ (done: union, difference, intersection, exclusion) | `tools/polybool.py`, `extra/cag.py` |
 | ~~Kerf test and material test generators~~ (done, Generators group; also finger-joint box, gear, puzzle, ruler, QR code, rubber stamp, laser test card) | `tools/kerftest.py`, `gui/materialtest.py` |
 | More generators: ~~round stamps with text around the circle~~ (done), living-hinge boxes, more box types (sliding lid, dividers) | `boxes.py` (not in MeerK40t) |

@@ -113,6 +113,8 @@ class MainWindow(QMainWindow):
         self.tool_options = ToolOptionsBar()
         self.tool_options.changed.connect(self._tool_options_changed)
         self.tool_options.node_action.connect(lambda code: self.preview.node_editor.action(code))
+        self.tool_options.offset_changed.connect(self._offset_values_changed)
+        self.tool_options.offset_apply.connect(self.offset_selected)
         central = QWidget()
         central_layout = QVBoxLayout(central)
         central_layout.setContentsMargins(0, 0, 0, 0)
@@ -171,6 +173,8 @@ class MainWindow(QMainWindow):
         self.fill_defaults = ShapeSpec(kind="rectangle", fill_pattern="lines", fill_spacing=2.0)
         # what the Living hinge tool gives to the shapes it is clicked on
         self.hinge_defaults = ShapeSpec(kind="rectangle", hinge_pattern="straight")
+        # the Offset tool: what a click on a shape (or "Offset selected") does
+        self.offset_defaults = {"offset_distance": 2.0, "offset_join": "round", "offset_keep": True}
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
@@ -259,9 +263,9 @@ class MainWindow(QMainWindow):
                           ("exclusion", N_("Exclusion: keep where the shapes do not overlap"))):
             self.act_boolean[code] = self._action(_(self.BOOLEAN_NAMES[code]),
                                                   lambda _c=False, k=code: self.boolean_selected(k), None, _(tip))
-        self.act_offset = self._action(_("&Offset..."), self.offset_selected, None,
-                                       _("Offset: a new outline around the selected shapes (or inside them), "
-                                         "a set distance away"))
+        self.act_offset = self._action(_("&Offset"), lambda: self.set_tool("offset"), None,
+                                       _("Offset: a new outline around a shape (or inside it), a set distance "
+                                         "away"))
         self.act_mirror_h = self._action(_("&Mirror horizontally"), lambda: self.mirror_selected(True), "Ctrl+Shift+H",
                                          _("Flip the selected elements left to right"))
         self.act_mirror_v = self._action(_("Mirror &vertically"), lambda: self.mirror_selected(False), "Ctrl+Shift+V",
@@ -455,7 +459,6 @@ class MainWindow(QMainWindow):
                 (self.act_group, "squares-selected"),
                 (self.act_boolean["union"], "layers-union"),
                 (self.act_boolean["difference"], "layers-subtract"),
-                (self.act_offset, "box-padding"),
                 (self.act_ungroup, "squares"),
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
@@ -568,6 +571,7 @@ class MainWindow(QMainWindow):
                  ("textpath", icons.text_on_path_icon(), N_("Text on a path"), "Shift+T"),
                  ("fill", "bucket-droplet", N_("Fill with a pattern"), "Shift+F"),
                  ("hinge", icons.hinge_icon(), N_("Living hinge"), "Shift+H"),
+                 ("offset", "box-padding", N_("Offset"), "Shift+O"),
                  ("measure", "ruler-measure", N_("Measure"), "M")]
         for entry in tools:
             if entry is None:
@@ -610,6 +614,9 @@ class MainWindow(QMainWindow):
             self.status(_("Text on a path: click a line, curve or shape to put the selected text on it (no text "
                           "selected: type a new one above first). Drag the text afterwards to slide it along the "
                           "line."))
+        if tool == "offset":
+            self.status(_("Offset: set the distance above, then click a closed shape to draw a new outline around "
+                          "it (negative: inside it). Shapes selected before: Offset selected."))
         if tool == "fill":
             self.status(_("Fill: choose a pattern above, then click a closed shape (cut or outline) to fill it. "
                           "Selected shapes get the pattern you choose. The outline stays on its layer; the "
@@ -647,6 +654,11 @@ class MainWindow(QMainWindow):
                     self.tool_options.show_fill_tool(spec)
                 else:
                     self.tool_options.show_hinge_tool(spec)
+            return
+        if self.preview.tool == "offset":
+            if force or getattr(self, "_options_target", None) != "offset":
+                self._options_target, self._options_element = "offset", None
+                self.tool_options.show_offset_tool(self.offset_defaults)
             return
         if self.preview.tool == "textpath":
             e = self.selected
@@ -780,6 +792,8 @@ class MainWindow(QMainWindow):
             self._text_path_clicked(point)
         elif tool == "hinge":
             self._hinge_clicked(point)
+        elif tool == "offset":
+            self._offset_clicked(point)
         else:
             self._fill_clicked(point)
 
@@ -1260,19 +1274,37 @@ class MainWindow(QMainWindow):
         self._layer_cache.clear()
         self._layout_changed()
 
+    def _offset_values_changed(self, values):
+        self.offset_defaults = dict(values)
+
+    def _offset_clicked(self, point):
+        """The Offset tool was clicked at a point of the bed view (scene mm)."""
+        e = self._element_inside(point)
+        if e is None:
+            self.status(_("Click inside a closed shape to offset it."), error=True)
+            return
+        self._offset_elements([e])
+
     def offset_selected(self):
-        """A new outline around each selected shape (or inside it), a distance
-        away: the closed outlines are joined even-odd, so holes move the other
-        way. Asks for the distance, the corners and whether to keep the shapes."""
+        """The Offset tool's button: offset the shapes selected now."""
+        self._offset_elements(self._selection())
+
+    def _offset_elements(self, chosen):
+        """A new outline around each shape (or inside it), the Offset tool's
+        distance away: the closed outlines are joined even-odd, so holes move
+        the other way. The shapes are kept or replaced (one undo step)."""
         from kerfly.core import offset
         from kerfly.core.curves import from_polylines
-        from kerfly.gui.offset_dialog import OffsetDialog
         if self.worker is not None:
             return
         if not offset.available():
             self.status(_("Offset needs the pyclipper library, which is missing."), error=True)
             return
-        chosen = self._selection()
+        v = self.offset_defaults
+        distance = float(v["offset_distance"])
+        if abs(distance) < 1e-9:
+            self.status(_("Set a distance other than 0 first."), error=True)
+            return
         items = {id(i.element): i for i in self.preview._items}
         parts = []
         for e in chosen:
@@ -1288,15 +1320,9 @@ class MainWindow(QMainWindow):
         if not parts:
             self.status(_("Select one or more shapes with closed outlines."), error=True)
             return
-        dialog = OffsetDialog(self)
-        if not dialog.exec():
-            return
-        v = dialog.values()
-        if abs(v["distance"]) < 1e-9:
-            return
         made = []
         for e, polys in parts:
-            rings = [r[:-1] for r in offset.offset_polygons(polys, v["distance"], v["join"])]
+            rings = [r[:-1] for r in offset.offset_polygons(polys, distance, v["offset_join"])]
             if not rings:
                 continue
             kind = e.shape.operation if e.shape is not None else "cut"
@@ -1311,7 +1337,7 @@ class MainWindow(QMainWindow):
         self._checkpoint()
         for e, new in made:
             index = self.elements.index(e)
-            if v["keep"]:
+            if v["offset_keep"]:
                 self.elements.insert(index + 1, new)
             else:
                 self.elements[index] = new
@@ -1320,6 +1346,9 @@ class MainWindow(QMainWindow):
         self._compiled = None
         self._layer_cache.clear()
         self._arranged(news)
+        if len(news) == 1:
+            self.preview.select_element(news[0])
+        self.status(_("Offset done. Click another shape, or change the distance above."))
 
     def _node_selection_changed(self, count):
         self.tool_options.set_node_selection(count)
@@ -3482,6 +3511,9 @@ class MainWindow(QMainWindow):
         self._reload_spin_values()
         self._update_unit_suffixes()
         self._update_power_visibility()
+        from kerfly.gui import viewstate
+        if changed & set(viewstate.KEYS):
+            self._remember_view()                # e.g. the language: kept for the next start at once
         if "language" in changed:
             QMessageBox.information(self, _("Language"),
                                     _("The new language will be used after restarting Kerfly."))

@@ -85,6 +85,8 @@ class ToolOptionsBar(QWidget):
     node_action(code) from the node tool's buttons."""
     changed = Signal(object)
     node_action = Signal(str)
+    offset_changed = Signal(dict)       # the Offset tool's settings
+    offset_apply = Signal()             # the Offset tool's "Offset selected" button
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -289,6 +291,64 @@ class ToolOptionsBar(QWidget):
         self._clear()
         self._add_fill_section(tool=True)       # what to do is said in the status bar
         self.row.addStretch(1)
+
+    def show_offset_tool(self, values):
+        """Options of the Offset tool: how far the new outline lies from the shape,
+        its corners, keep the shape or replace it; a button for the selected shapes."""
+        self.spec = None
+        self._clear()
+        self.offset_values = dict(values)
+        g = QGridLayout()
+        g.setHorizontalSpacing(4)
+        g.setVerticalSpacing(2)
+        distance = QDoubleSpinBox()
+        distance.setRange(-50.0, 50.0)
+        distance.setDecimals(2)
+        distance.setSingleStep(0.5)
+        distance.setSuffix(" mm")
+        distance.setValue(float(values["offset_distance"]))
+        distance.setKeyboardTracking(False)
+        distance.setToolTip(_("Distance: how far the new outline lies from the shape, positive outside (holes "
+                              "get smaller), negative inside"))
+        distance.setProperty("spec_attr", "offset_distance")
+        distance.valueChanged.connect(lambda v: self._set_offset("offset_distance", v))
+        g.addWidget(self._icon_label("arrows-horizontal", distance.toolTip()), 0, 0)
+        g.addWidget(distance, 0, 1)
+        join = QComboBox()
+        join.addItem(icons.tabler("border-radius"), _("Round"), "round")
+        join.addItem(icons.tabler("square"), _("Sharp"), "miter")
+        join.setCurrentIndex(max(0, join.findData(values["offset_join"])))
+        join.setToolTip(_("Corners of the new outline: rounded, or sharp like the shape's"))
+        join.setProperty("spec_attr", "offset_join")
+        join.currentIndexChanged.connect(lambda _i: self._set_offset("offset_join", join.currentData()))
+        g.addWidget(self._icon_label("border-radius", join.toolTip()), 1, 0)
+        g.addWidget(join, 1, 1)
+        keep = QToolButton()
+        keep.setCheckable(True)
+        keep.setChecked(bool(values["offset_keep"]))
+        keep.setIcon(icons.tabler("copy"))
+        keep.setText(_("Keep the original"))
+        keep.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        keep.setToolTip(_("On: the new outline is added next to the shape; off: it replaces the shape"))
+        keep.setProperty("spec_attr", "offset_keep")
+        keep.toggled.connect(lambda on: self._set_offset("offset_keep", on))
+        g.addWidget(keep, 0, 2)
+        apply = QToolButton()
+        apply.setIcon(icons.tabler("box-padding"))
+        apply.setText(_("Offset selected"))
+        apply.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        apply.setToolTip(_("Draw the new outline around the shapes selected now (or click a shape on the bed)"))
+        apply.clicked.connect(self.offset_apply.emit)
+        self.offset_apply_button = apply
+        g.addWidget(apply, 1, 2)
+        box = QWidget()
+        box.setLayout(g)
+        self.row.addWidget(ribbon_section(box, _("Offset")))
+        self.row.addStretch(1)
+
+    def _set_offset(self, key, value):
+        self.offset_values[key] = value
+        self.offset_changed.emit(dict(self.offset_values))
 
     def show_hinge_tool(self, spec):
         """Options of the Living hinge tool: the cuts given to the shapes it is clicked on."""

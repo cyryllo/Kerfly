@@ -60,7 +60,8 @@ zadanie do lasera. Instrukcja dotyczy wersji 1.1.
 
 Kerfly trzyma ustawienia w pliku `k40_whisperer.txt` w folderze domowym.
 Zmienione ustawienia zachowasz przez **Plik → Zapisz ustawienia jako
-domyślne**.
+domyślne**. Język, siatka, przyciąganie i „projekt podąża za głowicą”
+zapamiętują się od razu, bez zapisywania.
 
 <a id="s2"></a>
 
@@ -180,6 +181,7 @@ narysowaniem i po nim.
 | Tekst na ścieżce | Shift+T | Wpisz tekst na pasku opcji, potem kliknij linię, krzywą albo kształt (opis niżej) |
 | Wypełnij wzorem | Shift+F | Wybierz wzór na pasku opcji i klikaj zamknięte kształty, żeby je wypełnić (opis niżej) |
 | Zawias giętki | Shift+H | Wybierz nacięcia na pasku opcji i klikaj zamknięte kształty, żeby naciąć w nich zawias (opis niżej) |
+| Odsunięcie | Shift+O | Ustaw odległość na pasku opcji i klikaj zamknięte kształty, żeby narysować wokół nich nowy obrys (opis niżej) |
 
 **Przyciąganie.** Rysowanie i przesuwanie przyciąga do narożników, środków i
 krawędzi innych elementów i do stołu (**Widok → Przyciągaj do obiektów**,
@@ -201,12 +203,14 @@ część wspólną i wykluczenie zamkniętych kształtów (różnica: pozostałe
 zaznaczone kształty są wycinane z tego, który jest najwyżej na liście
 elementów).
 
-**Odsunięcie.** **Odsunięcie…** w grupie **Kształty** paska narzędzi (i w
-menu Edycja) rysuje nowy obrys w zadanej odległości wokół zaznaczonych
-kształtów: dodatnia na zewnątrz (otwory się zmniejszają), ujemna do środka.
-Wybierz zaokrąglone albo ostre narożniki i to, czy zachować oryginalne
-kształty. Przydaje się do obwódki wokół napisu, ramki wokół części albo
-mniejszej kopii w środku.
+**Odsunięcie.** Narzędzie **Odsunięcie** (Shift+O, także Edycja →
+Odsunięcie) rysuje nowy obrys w zadanej odległości wokół kształtu. Na pasku
+opcji ustaw **odległość** (dodatnia na zewnątrz, otwory się zmniejszają;
+ujemna do środka), zaokrąglone albo ostre **narożniki** i **Zachowaj
+oryginał** (wyłączone: nowy obrys zastępuje kształt), potem klikaj
+zamknięte kształty na stole. Kształty zaznaczone przed wybraniem narzędzia
+odsuwa przycisk **Odsuń zaznaczone**. Przydaje się do obwódki wokół
+napisu, ramki wokół części albo mniejszej kopii w środku.
 
 **Kolejność.** Lista elementów to kolejność zadania: w każdej warstwie laser
 najpierw wykonuje element z góry listy. (Same warstwy zawsze idą w kolejności:
@@ -459,7 +463,7 @@ francusku.
 | Alt (przytrzymany) | Chwilowo bez przyciągania |
 | Ctrl+, | Ustawienia |
 | F1 | Ta instrukcja |
-| S, N, R, E, P, L, Shift+L, B, F, T, Shift+T, Shift+F, Shift+H, M | Narzędzia (punkt 5) |
+| S, N, R, E, P, L, Shift+L, B, F, T, Shift+T, Shift+F, Shift+H, Shift+O, M | Narzędzia (punkt 5) |
 
 <a id="s10"></a>
 

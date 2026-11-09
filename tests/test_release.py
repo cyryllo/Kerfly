@@ -488,9 +488,10 @@ class Session:
         else:
             self.type_number(widget, value)
 
-    def every_field(self, what):
+    def every_field(self, what, change=True):
         """Change every field the options bar shows now, one after the other (fields
-        that appear after a change are done too)."""
+        that appear after a change are done too). change=False: the fields are the
+        tool's settings, the project stays as it is."""
         done = set()
         while True:
             fields = truth.bar_fields(self.w.tool_options)
@@ -506,7 +507,7 @@ class Session:
             self.covered_fields.add((what, attr))
             self.covered_widgets.add("bar " + attr)
             self.step("%s: options bar %s -> %r" % (what, attr, value), lambda: self.set_field(attr, value),
-                      check=lambda a=attr, v=value: self._field_shows(a, v))
+                      change=change, check=lambda a=attr, v=value: self._field_shows(a, v))
 
     def _field_shows(self, attr, value):
         fields = truth.bar_fields(self.w.tool_options)
@@ -738,20 +739,21 @@ def part_edit(s):
         if op != "exclusion":
             s.trigger(w.act_undo)                  # back to the two shapes for the next one
 
-    # offset: a new outline 3 mm around the combined shape, sharp corners, the shape kept
-    def offset_answer(dlg):
-        s.type_number(dlg.distance, 3.0)
-        s.pick(dlg.join, data="miter")
-        if not dlg.keep.isChecked():
-            s.click(dlg.keep)
-        from PySide6.QtWidgets import QDialogButtonBox
-        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
-    s.expect_dialog("offset", offset_answer)
+    # Offset tool (right strip): its settings in the options bar, then a click on the combined shape
     n = len(w.elements)
     base = w.elements[-1]
-    s.step("Shapes → Offset 3 mm around the shape", lambda: (select_one(base), s.trigger(w.act_offset, via="button")),
+    s.step("Edit → Offset (chooses the Offset tool)", lambda: s.trigger(w.act_offset, via="menu"), change=False,
+           check=lambda: (w.preview.tool == "offset", "tool %s" % w.preview.tool))
+    s.trigger(w.tool_actions["select"])
+    s.step("Offset tool (right strip)", lambda: s.trigger(w.tool_actions["offset"]), change=False,
+           check=lambda: (w.preview.tool == "offset", "tool %s" % w.preview.tool))
+    s.every_field("offset tool", change=False)
+    for attr, value in (("offset_distance", 3.0), ("offset_join", "miter"), ("offset_keep", True)):
+        s.step("offset tool: %s %r" % (attr, value), lambda a=attr, v=value: s.set_field(a, v), change=None)
+    s.step("Offset tool: click the shape (3 mm around it, kept)", lambda: s.click_bed(*s.element_at(base)),
            check=lambda: (len(w.elements) == n + 1 and abs((w.elements[-1].size[0] - base.size[0]) * 25.4 - 6.0) < 0.05,
                           "%d elements, %.2f mm wider" % (len(w.elements), (w.elements[-1].size[0] - base.size[0]) * 25.4)))
+    s.trigger(w.tool_actions["select"])
 
     # text on a path: Put text on path (menu), then the tool
     def line_and_text():
