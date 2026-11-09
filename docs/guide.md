@@ -9,7 +9,7 @@ other_lang: pl/guide.html
 
 Kerfly controls K40-class CO2 lasers with Lihuiyu (M2 Nano family) boards:
 it places your designs on the laser bed, lets you draw and edit them, and
-sends the job to the laser. This guide is for version 1.1.
+sends the job to the laser. This guide is for version 1.2.
 
 > Always keep a hand near the laser's power switch, and never leave a
 > running laser unattended.

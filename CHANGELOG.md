@@ -7,47 +7,50 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.2.0 (2026-11-09)
+
+Parts at their exact size, a new Offset tool and round stamps.
+
+### Added
+
+- **Kerf compensation.** The laser burns away a thin line, so a part cut
+  along its outline came out a little smaller and its holes a little larger.
+  Cut layers now have a **Kerf** column (and the material library a kerf for
+  each material): type the width of your laser's cut (measure it with
+  Generators → Kerf test) and the outlines are cut half of it further out,
+  the holes half of it further in, so the parts come out at their drawn
+  size. Bridges are cut into the moved outline, open lines are cut as drawn.
+  0 (the default) leaves the job exactly as before.
+- **Offset** tool in the drawing tools on the right (Shift+O, also Edit →
+  Offset): set the distance, round or sharp corners and *Keep the original*
+  in the options bar, then click closed shapes to draw a new outline around
+  them (a negative distance: inside them). **Offset selected** does it for
+  shapes selected before. For a border around a text, a frame around a part
+  or a smaller copy inside.
+- **Concentric** fill pattern: rings following the outline inwards.
+- **Round stamp** generator: text around the top and the bottom (the same
+  letter height for both, a dot on each side), an outer and an inner ring,
+  text lines or a picture in the middle, usual diameters (30 to 50 mm) or
+  your own. Inverted and mirrored for rubber, with a round cut outline.
+- **macOS** (preview, not yet tested with a laser): Kerfly for Macs with
+  Apple Silicon and with Intel processors, in a disk image, with everything
+  the laser's USB port needs inside.
 
 ### Changed
 
-- **Job simulation**: what the laser has burnt so far is shown in red, for
-  every layer. An engraved picture turns red only where it is dark, row by
-  row; before, each scan line was drawn as one thick grey line from its
-  first to its last dark point and covered the whole picture. Moves with the
-  laser off stay grey dashed lines.
+- **Job simulation**: what the laser has burnt so far turns red, on every
+  layer. An engraved picture turns red only where it is dark, row by row;
+  before, the simulation covered the whole picture with grey lines. Moves
+  with the laser off stay grey dashed lines.
 
 ### Fixed
 
 - **The language chosen in Settings did not come after a restart** unless
   the settings were also saved as default (File → Save settings as
-  default), reported on Windows 11. The language is now kept at once, like
+  default); reported on Windows 11. The language is now kept at once, like
   the grid and snapping.
-- A path shape inserted from outside the drawing tools (generators,
-  scripts) is moved so its outline starts at (0, 0): the node editor drew
-  the nodes of such a curve shifted from the shape.
-
-### Added
-
-- **Kerf compensation.** Cut layers have a **Kerf** column (and the material
-  library a kerf for each material): closed outlines are cut half of the kerf
-  further out and their holes half of it further in, so the parts come out at
-  their drawn size; bridges are cut into the moved outline, open lines are
-  cut as drawn. 0 (the default) leaves the job exactly as before.
-- **Offset** tool in the drawing tools on the right (Shift+O, also Edit →
-  Offset): set the distance, round or sharp corners and Keep the original in
-  the options bar, then click closed shapes to draw a new outline around them
-  (or inside them); **Offset selected** for shapes selected before.
-- **Concentric** fill pattern: rings following the outline inwards.
-- **Round stamp** generator: text around the top and the bottom (one letter
-  height for both, a dot on each side), outer and inner ring, text lines or
-  a picture in the middle, usual diameters or your own; inverted and
-  mirrored for rubber, with a round cut outline.
-- **macOS** (preview, not yet tested with a laser): `Kerfly.app` in a disk
-  image for Macs with Apple Silicon and with Intel processors, with libusb
-  inside for the laser's USB port; built and checked (`--self-test`,
-  `--release-test`) on GitHub with the other packages. The 1.1.0 disk images
-  were added to the 1.1.0 release.
+- Curves made by the generators: the node editor drew their nodes shifted
+  from the shape.
 
 ## 1.1.0 (2026-11-06)
 
