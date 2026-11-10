@@ -214,7 +214,8 @@ Kerfly drives a real machine with a laser, so "it seems to work" is not enough:
 ## Status
 
 **Kerfly 1.2 is stable and ready for everyday work** with your laser.
-Planned next: image tracing, more patterns, more file
+Planned next: copy, cut and paste, a right-click menu (move to another layer,
+combine, order, move the head here, …), image tracing, more patterns, more file
 formats, and a Debian package with its own APT repository. See the
 [roadmap]({{ site.repo }}/blob/main/ROADMAP.md) and the
 [changes]({{ site.repo }}/blob/main/CHANGELOG.md).
