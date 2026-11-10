@@ -166,7 +166,10 @@ class Effect:
         # First try to open the file from the function argument
         if filename is not None:
             try:
-                stream = open(filename, 'r')
+                # bytes: the XML parser reads the encoding from the file itself (UTF-8 from
+                # Inkscape); text mode used the system's encoding (cp1250 on a Polish Windows)
+                # and failed on letters such as Ł, Ę, Ń in layer names (Kerfly issue #1)
+                stream = open(filename, 'rb')
             except IOError:
                 errormsg(_("Unable to open specified file: %s") % filename)
                 sys.exit()
@@ -175,7 +178,7 @@ class Effect:
         # an object member
         elif self.svg_file is not None:
             try:
-                stream = open(self.svg_file, 'r')
+                stream = open(self.svg_file, 'rb')
             except IOError:
                 errormsg(_("Unable to open object member file: %s") % self.svg_file)
                 sys.exit()

@@ -7,6 +7,17 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## 1.2.1 (2026-11-10)
+
+### Fixed
+
+- **SVG files with Polish letters such as Ł, Ę or Ń (for example in layer
+  names) did not open on Windows** ("latin-1" error, issue #1): the file was
+  read in the system's text encoding instead of the encoding written in the
+  file. DXF and G-code files with texts in another encoding open too.
+- When a file cannot be opened, the reason is written to the log, so the
+  diagnostic report shows it.
+
 ## 1.2.0 (2026-11-09)
 
 Parts at their exact size, a new Offset tool and round stamps.

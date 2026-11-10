@@ -3422,6 +3422,8 @@ class MainWindow(QMainWindow):
             return None
         except Exception as e:
             QApplication.restoreOverrideCursor()
+            from kerfly.core import diag
+            diag.log.warning("opening %s failed: %s", filename, e, exc_info=True)   # the reason, for reports
             self.status(_("Could not open %s") % os.path.basename(filename), error=True)
             QMessageBox.critical(self, _("Could not open design"), tr_message(str(e)))
             return None

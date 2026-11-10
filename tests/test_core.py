@@ -1160,6 +1160,60 @@ def test_offset():
     return errors
 
 
+def test_file_encodings():
+    """Files with Polish letters open whatever the system's text encoding is
+    (Kerfly issue #1: an SVG with "Ł", "Ę" or "Ń" in a layer name did not open on a
+    Polish Windows, whose text encoding is cp1250, not UTF-8)."""
+    import builtins
+    import inkex
+    import svg_reader
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s encodings: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    tmp = tempfile.mkdtemp()
+    svg = os.path.join(tmp, "warstwy.svg")
+    with open(svg, "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+                '<svg xmlns="http://www.w3.org/2000/svg" '
+                'xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="50mm" height="30mm" '
+                'viewBox="0 0 50 30"><g inkscape:groupmode="layer" inkscape:label="WNĘTRZE ŁÓDŹ ŃĄ">'
+                '<rect x="5" y="5" width="40" height="20" style="fill:none;stroke:#ff0000"/></g></svg>')
+
+    def windows_open(name, mode="r", *args, **kwargs):          # text mode as on a Polish Windows
+        if "b" not in mode:
+            kwargs.setdefault("encoding", "cp1250")
+        return builtins.open(name, mode, *args, **kwargs)
+    inkex.open = windows_open
+    try:
+        reader = svg_reader.SVG_READER()
+        reader.parse_svg(svg)
+        labels = [g.get("{http://www.inkscape.org/namespaces/inkscape}label") for g in reader.document.getroot()]
+        check("SVG with Ł, Ę, Ń in a layer name, system encoding cp1250", labels == ["WNĘTRZE ŁÓDŹ ŃĄ"],
+              str(labels))
+    except Exception as e:
+        check("SVG with Ł, Ę, Ń in a layer name, system encoding cp1250", False, "(%s)" % e)
+    finally:
+        del inkex.open
+    # a DXF with a comment in another encoding than the system's still opens
+    dxf = os.path.join(tmp, "komentarz.dxf")
+    with open(DXF, "rb") as f:
+        data = f.read()
+    with open(dxf, "wb") as f:
+        f.write("999\nZażółć gęślą jaźń\n".encode("cp1250") + data)
+    try:
+        d = Design()
+        loaders.load_dxf(dxf, d)
+        check("DXF with a comment in cp1250", bool(d.vector_cut.ecoords or d.vector_engrave.ecoords))
+    except Exception as e:
+        check("DXF with a comment in cp1250", False, "(%s)" % e)
+    shutil.rmtree(tmp, ignore_errors=True)
+    return errors
+
+
 def test_simulate():
     """Job simulation: layer order, travel moves, durations from the layer speeds."""
     from kerfly.core.layers import default_layers, CUT
@@ -1281,6 +1335,7 @@ def main():
     failures += test_cut_order()
     failures += test_pattern_fill()
     failures += test_offset()
+    failures += test_file_encodings()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

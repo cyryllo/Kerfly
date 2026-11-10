@@ -79,7 +79,7 @@ class G_Code_Rip:
 
         # Try to open file for reading
         try:
-            fin = open(filename,'r')
+            fin = open(filename,'r',errors='replace')   # comments in another encoding: no failure
         except:
             READ_MSG.append("Unable to open file: %s" %(filename))
             return READ_MSG

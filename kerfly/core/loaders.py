@@ -170,7 +170,8 @@ def load_dxf(filename, design, ask_units=None):
     design.reset()
     dxf_import = DXF_CLASS()
     tolerance = .0005
-    with open(filename) as fd:
+    # a text in another encoding than the system's must not stop the drawing from loading
+    with open(filename, errors="replace") as fd:
         dxf_import.GET_DXF_DATA(fd, lin_tol=tolerance, get_units=True, units=None)
         fd.seek(0)
         dxf_units = dxf_import.units
