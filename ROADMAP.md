@@ -87,6 +87,34 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Material library (saved speed/power per material)~~ (done); export / import (done) | `gui/materialmanager.py`, `core/elements/materials.py` |
 | ~~Toolbar~~ (done; every new command gets a button), themes | `gui/ribbon.py`, `gui/themes.py` |
 
+## Basic editing commands and the right-click menu
+
+Asked for by users (2026-11-10): Kerfly has Duplicate but no clipboard, and
+the right mouse button only pans the view. K40 Whisperer had no menu there
+(a right-drag moved the head without the design).
+
+- [ ] **Copy, Cut, Paste** (Ctrl+C, Ctrl+X, Ctrl+V; Edit menu and the Edit
+  group of the toolbar): elements with their layers, also from one project to
+  another; Paste puts them at the mouse, or next to the originals.
+- [ ] **Select all** (Ctrl+A), **Deselect** (Esc).
+- [ ] **Right-click menu on an element or the selection** (a right-drag still
+  pans the view; a right-click without moving opens the menu):
+  - Copy, Cut, Paste, Duplicate, Delete;
+  - Group / Ungroup;
+  - **Layer ▸** the layers of its kind, to move it with one click (for
+    example each design on its own raster layer, so they are engraved one
+    after another, issue #2);
+  - Combine shapes ▸ (union, difference, intersection, exclusion), Offset;
+  - Order ▸ (up, down, first, last), Align ▸;
+  - Rotate 90°, Mirror;
+  - Fill with a pattern / Remove the pattern, Text on a path, Edit nodes;
+  - Centre on the bed;
+  - Leave out of the job (the tick of the element list).
+- [ ] **Right-click menu on the empty bed:** **Move the head here** (laser
+  connected; what K40 Whisperer's right-drag did), Paste, Select all, Fit
+  view, Grid on / off.
+- [ ] Release test steps: every menu entry used with a real right-click.
+
 ## Drawing tools
 
 | Tool | MeerK40t reference (`gui/toolwidgets/`) |
