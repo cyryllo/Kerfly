@@ -251,18 +251,25 @@ class MainWindow(QMainWindow):
                                          lambda: self.rotate_selected(90), "Ctrl+L")
         self.act_rot_right = self._action(_("Rotate 90° clockwise"),
                                           lambda: self.rotate_selected(-90), "Ctrl+R")
-        self.act_group = self._action(_("&Group"), self.group_selected, "Ctrl+Shift+G",
+        # the same keys as in Inkscape too: Ctrl+[ and Ctrl+] turn by 90°
+        self.act_rot_left.setShortcuts([QKeySequence("Ctrl+L"), QKeySequence("Ctrl+[")])
+        self.act_rot_right.setShortcuts([QKeySequence("Ctrl+R"), QKeySequence("Ctrl+]")])
+        # Group / Ungroup as in Inkscape
+        self.act_group = self._action(_("&Group"), self.group_selected, "Ctrl+G",
                                       _("Join the selected elements into a group that is selected and moved "
                                         "as one"))
-        self.act_ungroup = self._action(_("U&ngroup"), self.ungroup_selected, "Ctrl+Alt+G",
+        self.act_ungroup = self._action(_("U&ngroup"), self.ungroup_selected, "Ctrl+Shift+G",
                                         _("Split the selected group into separate elements"))
         self.act_boolean = {}
-        for code, tip in (("union", N_("Union: join the selected shapes into one outline")),
-                          ("difference", N_("Difference: cut the other selected shapes out of the first one")),
-                          ("intersection", N_("Intersection: keep only where the selected shapes overlap")),
-                          ("exclusion", N_("Exclusion: keep where the shapes do not overlap"))):
+        # keys as in Inkscape: Ctrl++ union, Ctrl+- difference, Ctrl+* intersection, Ctrl+^ exclusion
+        for code, tip, key in (("union", N_("Union: join the selected shapes into one outline"), "Ctrl++"),
+                               ("difference", N_("Difference: cut the other selected shapes out of the first one"),
+                                "Ctrl+-"),
+                               ("intersection", N_("Intersection: keep only where the selected shapes overlap"),
+                                "Ctrl+*"),
+                               ("exclusion", N_("Exclusion: keep where the shapes do not overlap"), "Ctrl+^")):
             self.act_boolean[code] = self._action(_(self.BOOLEAN_NAMES[code]),
-                                                  lambda _c=False, k=code: self.boolean_selected(k), None, _(tip))
+                                                  lambda _c=False, k=code: self.boolean_selected(k), key, _(tip))
         self.act_offset = self._action(_("&Offset"), lambda: self.set_tool("offset"), None,
                                        _("Offset: a new outline around a shape (or inside it), a set distance "
                                          "away"))
@@ -301,7 +308,7 @@ class MainWindow(QMainWindow):
         self.act_save_project = self._action(_("&Save project"), self.save_project, "Ctrl+S",
                                              _("Save the layout, layers and files in one .kerfly file"))
         self.act_save_project_as = self._action(_("Save project &as\u2026"), self.save_project_as, "Ctrl+Shift+S")
-        self.act_goto = self._action(_("&Go to X/Y position"), self.goto_position, "Ctrl+G")
+        self.act_goto = self._action(_("&Go to X/Y position"), self.goto_position, "Ctrl+Alt+G")
         self.act_corners = {}
         for key, text, sc in (("UL", N_("Upper left corner"), "Ctrl+7"),
                               ("UR", N_("Upper right corner"), "Ctrl+9"),
@@ -590,6 +597,15 @@ class MainWindow(QMainWindow):
             self.tool_actions[key] = act
         self.tool_actions["select"].setChecked(True)
         self.addToolBar(Qt.RightToolBarArea, strip)
+        # Inkscape's H and V mirror the selection (only with the bed view in focus, like the tool letters)
+        self.mirror_keys = []
+        for key, horizontal in (("H", True), ("V", False)):
+            act = QAction(self)
+            act.setShortcut(QKeySequence(key))
+            act.setShortcutContext(Qt.WidgetWithChildrenShortcut)
+            act.triggered.connect(lambda _c=False, h=horizontal: self.mirror_selected(h))
+            self.preview.addAction(act)
+            self.mirror_keys.append(act)
 
     def set_tool(self, tool):
         self.tool_actions[tool].setChecked(True)
@@ -1832,7 +1848,8 @@ class MainWindow(QMainWindow):
         row.addWidget(self.goto_y)
         self.btn_goto = QPushButton(_("Go"))
         self.btn_goto.setIcon(icons.tabler("arrow-right"))
-        self.btn_goto.setToolTip(_("Home the head, then move to X/Y (Ctrl+G)"))
+        self.btn_goto.setToolTip(_("Home the head, then move to X/Y (%s)")
+                                % self.act_goto.shortcut().toString(QKeySequence.NativeText))
         self.btn_goto.clicked.connect(self.goto_position)
         row.addWidget(self.btn_goto)
         row.addStretch(1)

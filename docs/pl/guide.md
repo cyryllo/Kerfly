@@ -111,7 +111,7 @@ Na zakładce **Laser** po lewej są przyciski maszyny, a po prawej strzałki.
 | Celownik z łańcuchem | **Projekt podąża za głowicą** (Ctrl+Alt+H), opis niżej |
 | Strzałki | Przesuwają głowicę o jeden **Krok** (pole pod strzałkami). **Ctrl+strzałki** na klawiaturze robią to samo |
 | Kropkowane narożniki i środek | Przesuwają głowicę do tego narożnika albo środka projektu, żeby zobaczyć, gdzie będzie cięcie. Projekt się nie przesuwa. Ctrl+7, Ctrl+9, Ctrl+5, Ctrl+1, Ctrl+3 |
-| Idź do X / Y, **Idź** | Bazuje, a potem jedzie głowicą do tej pozycji (odległość od pozycji bazowej; Ctrl+G) |
+| Idź do X / Y, **Idź** | Bazuje, a potem jedzie głowicą do tej pozycji (odległość od pozycji bazowej; Ctrl+Alt+G) |
 
 Same strzałki na klawiaturze (bez Ctrl) przesuwają **zaznaczony element** na
 stole, nie głowicę.
@@ -221,9 +221,9 @@ zaznaczone elementy: **Wyżej (wcześniej)** i **Niżej (później)** o jedno
 miejsce (PgUp, PgDown, gdy aktywny jest stół), **Na początek** i **Na koniec**
 na górę albo na dół listy (Ctrl+PgUp, Ctrl+PgDown). Grupy przesuwają się razem.
 
-**Grupy.** **Grupuj** (Ctrl+Shift+G) sprawia, że kilka elementów przesuwa
+**Grupy.** **Grupuj** (Ctrl+G) sprawia, że kilka elementów przesuwa
 się razem; klik w jeden z nich zaznacza całą grupę, drugi klik tylko ten
-element. **Rozgrupuj** (Ctrl+Alt+G) dzieli grupę, a także otwarty plik SVG
+element. **Rozgrupuj** (Ctrl+Shift+G) dzieli grupę, a także otwarty plik SVG
 albo DXF: każda jego linia staje się kształtem do edycji, a obrazy dzielą się
 na osobne części. Dwuklik na dowolnym elemencie otwiera edycję węzłów.
 
@@ -443,9 +443,10 @@ francusku.
 | Ctrl+Shift+E | Zapisz plik EGV |
 | Ctrl+Z / Ctrl+Shift+Z | Cofnij / ponów |
 | Ctrl+D / Del | Duplikuj / usuń |
-| Ctrl+L / Ctrl+R | Obróć o 90° w lewo / w prawo |
-| Ctrl+Shift+H / Ctrl+Shift+V | Odbij w poziomie / w pionie |
-| Ctrl+Shift+G / Ctrl+Alt+G | Grupuj / rozgrupuj |
+| Ctrl+L / Ctrl+R, także Ctrl+[ / Ctrl+] | Obróć o 90° w lewo / w prawo |
+| Ctrl+Shift+H / Ctrl+Shift+V, także H / V na stole | Odbij w poziomie / w pionie |
+| Ctrl+G / Ctrl+Shift+G | Grupuj / rozgrupuj |
+| Ctrl++ / Ctrl+- / Ctrl+* / Ctrl+^ | Suma / różnica / część wspólna / wykluczenie |
 | Ctrl+E | Wyśrodkuj na stole |
 | PgUp / PgDown | Wyżej (wcześniej) / niżej (później) na liście elementów (Ctrl: na początek / na koniec) |
 | Ctrl+H | Ustaw projekt przy głowicy |
@@ -453,7 +454,7 @@ francusku.
 | Strzałki (Shift: ×10) | Przesuń zaznaczony element |
 | Ctrl+strzałki | Przesuń głowicę o jeden krok |
 | Ctrl+7, 9, 5, 1, 3 | Głowica do lewego górnego, prawego górnego rogu, środka, lewego dolnego, prawego dolnego rogu projektu |
-| Ctrl+G | Idź do pozycji X/Y |
+| Ctrl+Alt+G | Idź do pozycji X/Y |
 | Ctrl+I | Połącz z laserem |
 | Home | Bazowanie |
 | F9 / Esc | Start / stop |

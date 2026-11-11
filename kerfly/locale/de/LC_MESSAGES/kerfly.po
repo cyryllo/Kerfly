@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-09 22:30+0100\n"
+"POT-Creation-Date: 2026-11-11 15:10+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -1046,8 +1046,9 @@ msgstr "Referenzpunkt oben rechts"
 msgid "Home the head when initializing"
 msgstr "Referenzfahrt beim Verbinden"
 
-msgid "Home the head, then move to X/Y (Ctrl+G)"
-msgstr "Referenzfahrt, dann zu X/Y fahren (Strg+G)"
+#, python-format
+msgid "Home the head, then move to X/Y (%s)"
+msgstr "Referenzfahrt, dann zu X/Y fahren (%s)"
 
 msgid "Home: move the head to the home corner"
 msgstr "Referenzfahrt: Kopf in die Ausgangsecke fahren"
@@ -3330,4 +3331,7 @@ msgstr "Vektorgravur"
 #~ "Versatz: ein neuer Umriss um die "
 #~ "ausgewählten Formen (oder in ihnen) in"
 #~ " einem festen Abstand"
+
+#~ msgid "Home the head, then move to X/Y (Ctrl+G)"
+#~ msgstr "Referenzfahrt, dann zu X/Y fahren (Strg+G)"
 

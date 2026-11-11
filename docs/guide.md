@@ -112,7 +112,7 @@ right.
 | Crosshair with a chain link | **Design follows the head** (Ctrl+Alt+H), see below |
 | Arrows | Move the head by one **Step** (the field under the pad). **Ctrl+arrow keys** do the same from the keyboard |
 | Dotted corners and centre | Move the head to that corner or the centre of the design, to see where it will be cut. The design does not move. Ctrl+7, Ctrl+9, Ctrl+5, Ctrl+1, Ctrl+3 |
-| Go to X / Y, **Go** | Home, then move the head to that position (distance from the home corner; Ctrl+G) |
+| Go to X / Y, **Go** | Home, then move the head to that position (distance from the home corner; Ctrl+Alt+G) |
 
 The plain arrow keys (without Ctrl) move the **selected element** on the bed,
 not the head.
@@ -221,9 +221,9 @@ focus), **To the start** and **To the end** to the top or the bottom of the
 list (Ctrl+PgUp, Ctrl+PgDown).
 Groups move together.
 
-**Groups.** **Group** (Ctrl+Shift+G) makes several elements move together;
+**Groups.** **Group** (Ctrl+G) makes several elements move together;
 clicking one member selects the whole group, a second click selects that
-member alone. **Ungroup** (Ctrl+Alt+G) splits a group, and also an opened
+member alone. **Ungroup** (Ctrl+Shift+G) splits a group, and also an opened
 SVG or DXF file: each of its lines becomes a shape you can edit, and its
 pictures split into their separate parts. Double-click any element to edit
 its nodes.
@@ -437,9 +437,10 @@ Kerfly is available in English, Polish, German, Spanish and French.
 | Ctrl+Shift+E | Save EGV file |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
 | Ctrl+D / Del | Duplicate / delete |
-| Ctrl+L / Ctrl+R | Rotate 90° left / right |
-| Ctrl+Shift+H / Ctrl+Shift+V | Mirror horizontally / vertically |
-| Ctrl+Shift+G / Ctrl+Alt+G | Group / ungroup |
+| Ctrl+L / Ctrl+R, also Ctrl+[ / Ctrl+] | Rotate 90° left / right |
+| Ctrl+Shift+H / Ctrl+Shift+V, also H / V on the bed | Mirror horizontally / vertically |
+| Ctrl+G / Ctrl+Shift+G | Group / ungroup |
+| Ctrl++ / Ctrl+- / Ctrl+* / Ctrl+^ | Union / difference / intersection / exclusion |
 | Ctrl+E | Centre on the bed |
 | PgUp / PgDown | Move up (earlier) / down (later) in the element list (Ctrl: to the start / end) |
 | Ctrl+H | Place design at the head |
@@ -447,7 +448,7 @@ Kerfly is available in English, Polish, German, Spanish and French.
 | Arrow keys (Shift: ×10) | Move the selected element |
 | Ctrl+arrow keys | Move the laser head by one step |
 | Ctrl+7, 9, 5, 1, 3 | Head to the design's upper left, upper right, centre, lower left, lower right |
-| Ctrl+G | Go to the X/Y position |
+| Ctrl+Alt+G | Go to the X/Y position |
 | Ctrl+I | Connect to the laser |
 | Home | Home the head |
 | F9 / Esc | Start / stop |

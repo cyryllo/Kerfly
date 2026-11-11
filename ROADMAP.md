@@ -109,10 +109,14 @@ Asked for by users (2026-11-10): Kerfly has Duplicate but no clipboard, and
 the right mouse button only pans the view. K40 Whisperer had no menu there
 (a right-drag moved the head without the design).
 
+- [x] Inkscape's keys (2026-11-11): Ctrl+G / Ctrl+Shift+G group / ungroup,
+  Ctrl+[ / Ctrl+] rotate 90°, H / V mirror, Ctrl++ / Ctrl+- / Ctrl+* / Ctrl+^
+  union / difference / intersection / exclusion (Go to X/Y moved to Ctrl+Alt+G).
 - [ ] **Copy, Cut, Paste** (Ctrl+C, Ctrl+X, Ctrl+V; Edit menu and the Edit
-  group of the toolbar): elements with their layers, also from one project to
-  another; Paste puts them at the mouse, or next to the originals.
-- [ ] **Select all** (Ctrl+A), **Deselect** (Esc).
+  group of the toolbar) and **Paste in place** (Ctrl+Alt+V), as in Inkscape:
+  elements with their layers, also from one project to another; Paste puts
+  them at the mouse, Paste in place where they were.
+- [ ] **Select all** (Ctrl+A), **Deselect** (Esc), as in Inkscape.
 - [ ] **Right-click menu on an element or the selection** (a right-drag still
   pans the view; a right-click without moving opens the menu):
   - Copy, Cut, Paste, Duplicate, Delete;

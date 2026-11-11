@@ -84,7 +84,8 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
 | Edycja węzłów (N) | Przeciągaj węzły i okrągłe uchwyty krzywych (Ctrl: jeden uchwyt osobno). Shift+klik zaznacza więcej. Dwuklik na boku dodaje węzeł, na węźle go usuwa. Klawisze: I wstaw, D usuń, L linia, C krzywa, O gładki, S symetryczny, Z zamknij / otwórz, B rozdziel |
 | Edycja otwartego SVG / DXF | Rozgrupuj go: każda linia staje się osobnym kształtem, a obraz dzieli się na osobne części; klik przesuwa, dwuklik edytuje węzły |
 | Edycja węzłów dowolnego elementu | Dwuklik na nim |
-| Grupuj / Rozgrupuj | Ctrl+Shift+G / Ctrl+Alt+G. Klik w jeden element grupy zaznacza całą grupę |
+| Grupuj / Rozgrupuj | Ctrl+G / Ctrl+Shift+G (jak w Inkscape). Klik w jeden element grupy zaznacza całą grupę |
+| Obrót, odbicie, łączenie (jak w Inkscape) | Ctrl+[ / Ctrl+] obrót o 90°; H / V odbicie; Ctrl++ suma, Ctrl+- różnica, Ctrl+* część wspólna, Ctrl+^ wykluczenie |
 | Lista elementów | Pokazuje, co jest zaznaczone na stole; klik w wiersz (Ctrl / Shift: kilka) zaznacza na stole |
 | Powiększenie | Kółko myszy przybliża; nie oddala bardziej niż cały stół |
 | Przesuwanie i powiększanie widoku | Środkowy albo prawy przycisk myszy przesuwa widok; kółko przybliża |

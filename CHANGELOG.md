@@ -7,6 +7,21 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Changed
+
+- **Keyboard shortcuts as in Inkscape:** **Ctrl+G** groups and
+  **Ctrl+Shift+G** ungroups (before: Ctrl+Shift+G and Ctrl+Alt+G); Go to
+  X/Y position moved from Ctrl+G to **Ctrl+Alt+G**.
+
+### Added
+
+- More keys as in Inkscape: **Ctrl+[** / **Ctrl+]** rotate by 90°, **H** /
+  **V** mirror the selection (with the bed view in focus), **Ctrl++** union,
+  **Ctrl+-** difference, **Ctrl+\*** intersection, **Ctrl+^** exclusion. The
+  old keys (Ctrl+L, Ctrl+R, Ctrl+Shift+H, Ctrl+Shift+V) still work.
+
 ## 1.2.1 (2026-11-10)
 
 ### Fixed

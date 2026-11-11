@@ -39,7 +39,7 @@ sys.path.insert(0, ROOT_DIR)
 sys.path.insert(0, TESTS_DIR)
 
 from PySide6.QtCore import QEvent, QPoint, QPointF, Qt, QTimer  # noqa: E402
-from PySide6.QtGui import QAction, QMouseEvent  # noqa: E402
+from PySide6.QtGui import QAction, QKeySequence, QMouseEvent  # noqa: E402
 from PySide6.QtTest import QTest  # noqa: E402
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QColorDialog, QComboBox, QDialog,  # noqa: E402
                                QDoubleSpinBox, QFileDialog, QFontComboBox, QMenu, QMessageBox,
@@ -359,7 +359,8 @@ class Session:
                 self.settle()
                 return
             via = "key"
-        sequence = action.shortcut()
+        # "key" uses the command's first shortcut; "key:Ctrl+[" one of its other keys
+        sequence = QKeySequence(via[4:]) if via.startswith("key:") else action.shortcut()
         if sequence.isEmpty():
             raise RuntimeError("%s has no button, menu entry or shortcut" % action.text())
         combo = sequence[0]
@@ -673,6 +674,11 @@ def part_edit(s):
     s.step("rotate 90° counter-clockwise (menu)", lambda: (select_one(a), s.trigger(w.act_rot_left, via="menu")))
     s.step("mirror horizontally", lambda: (select_one(a), s.trigger(w.act_mirror_h)))
     s.step("mirror vertically (Ctrl+Shift+V)", lambda: (select_one(a), s.trigger(w.act_mirror_v, via="key")))
+    # the same keys as in Inkscape
+    s.step("rotate 90° counter-clockwise (Ctrl+[)", lambda: (select_one(a), s.trigger(w.act_rot_left, via="key:Ctrl+[")))
+    s.step("rotate 90° clockwise (Ctrl+])", lambda: (select_one(a), s.trigger(w.act_rot_right, via="key:Ctrl+]")))
+    s.step("mirror horizontally (H on the bed)", lambda: (select_one(a), s.trigger(w.mirror_keys[0], via="key")))
+    s.step("mirror vertically (V on the bed)", lambda: (select_one(a), s.trigger(w.mirror_keys[1], via="key")))
     s.step("centre on the bed", lambda: (select_one(b), s.trigger(w.act_center)))
     s.step("duplicate (Ctrl+D)", lambda: (select_one(b), s.trigger(w.act_duplicate, via="key")),
            check=lambda: (len(w.elements) == 4, "%d elements" % len(w.elements)))
@@ -680,7 +686,7 @@ def part_edit(s):
            check=lambda: (len(w.elements) == 3, "%d elements" % len(w.elements)))
     s.step("Ctrl+click: two selected", lambda: (select_one(a), pick_el(c, Qt.ControlModifier)), change=False,
            check=lambda: (len(w.preview.selected_elements()) == 2, "%d" % len(w.preview.selected_elements())))
-    s.step("group (Ctrl+Shift+G)", lambda: (select_one(a), pick_el(c, Qt.ControlModifier),
+    s.step("group (Ctrl+G)", lambda: (select_one(a), pick_el(c, Qt.ControlModifier),
                                             s.trigger(w.act_group, via="key")),
            check=lambda: (a.group and a.group == c.group, "not grouped"))
     s.step("one click selects the whole group", lambda: select_one(a), change=False,
@@ -732,7 +738,8 @@ def part_edit(s):
             p, q = w.elements[-2], w.elements[-1]
             select_one(p)
             pick_el(q, Qt.ControlModifier)
-            s.trigger(w.act_boolean[op], via="menu")
+            # union and difference with Inkscape's keys (Ctrl++, Ctrl+-), the others from the menu
+            s.trigger(w.act_boolean[op], via="key" if op in ("union", "difference") else "menu")
         n = len(w.elements)
         s.step("combine shapes: %s" % op, combine,
                check=lambda n=n: (len(w.elements) == n - 1, "%d elements (was %d)" % (len(w.elements), n)))
@@ -932,7 +939,7 @@ def part_view_and_laser(s):
         s.step("head to the design: %s (menu)" % key, lambda k=key: s.trigger(w.act_corners[k], via="menu"), change=False)
     s.step("Go to X/Y: type and Go", lambda: (s.type_number(w.goto_x, 30), s.type_number(w.goto_y, 20), s.click(w.btn_goto)),
            change=False, check=lambda: (abs(w.head[0] * MM - 30) < 0.1 and abs(w.head[1] * MM + 20) < 0.1, w.head))
-    s.step("Laser → Go to X/Y position (Ctrl+G)", lambda: s.trigger(w.act_goto, via="key"), change=False)
+    s.step("Laser → Go to X/Y position (Ctrl+Alt+G)", lambda: s.trigger(w.act_goto, via="key"), change=False)
     s.step("Unlock rail (button)", lambda: s.click(w.btn_unlock), change=False)
     s.step("Laser → Unlock rail", lambda: s.trigger(w.act_unlock, via="menu"), change=False)
     s.step("Laser → Unfreeze laser", lambda: s.trigger(w.act_unfreeze, via="menu"), change=False)
