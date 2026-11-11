@@ -7,10 +7,11 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## 1.3.1 (2026-11-11)
+## 1.3.2 (2026-11-11)
 
-(1.3.0 was tagged but not released: its Linux package could not be built.
-Everything below is new since 1.2.1.)
+(1.3.0 and 1.3.1 were tagged but not released: their Linux package could not be
+built while Ubuntu's package servers did not answer. Everything below is new
+since 1.2.1.)
 
 Important fixes: the laser always gets the job that is on the screen, and with the
 home in the upper right several designs come out where they are on the screen.
