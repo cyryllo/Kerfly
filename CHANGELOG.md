@@ -7,7 +7,21 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.3.0 (2026-11-11)
+
+An important fix: the laser always gets the job that is on the screen. Keyboard
+shortcuts as in Inkscape.
+
+### Fixed
+
+- **The laser could get an older job than the one on the screen.** To start
+  faster, Kerfly keeps each layer's laser data, but it was reused after the
+  design had changed: after opening another file (without moving the head),
+  the laser engraved the previous design; after moving an element to another
+  layer, a layer engraved elements that were no longer on it; an element
+  left out of the job (unticked in the element list) was still engraved. The
+  kept data is now used only while the elements, their places and their
+  layers are exactly the same.
 
 ### Changed
 

@@ -223,15 +223,12 @@ class RasterLayersWorker(TaskWorker):
         self.cache = cache
 
     def task(self):
-        from kerfly.core.layers import RASTER, compile_layer, layer_settings
+        from kerfly.core.layers import RASTER, cached_layer, layer_settings
         for layer in self.layers:
             if layer.kind != RASTER or not layer.enabled:
                 continue
-            design = self.cache.get(layer.id)
+            design, _origin = cached_layer(self.cache, self.elements, layer, self.layers)
             if design is None:
-                design, _origin = compile_layer(self.elements, layer, self.layers)
-                if design is None:
-                    continue
-                self.cache[layer.id] = design
+                continue
             raster.make_raster_coords(design, layer_settings(self.settings, layer), self._progress, self.stop)
         return _("Raster prepared")

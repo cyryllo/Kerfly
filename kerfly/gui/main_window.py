@@ -1972,9 +1972,12 @@ class MainWindow(QMainWindow):
     @property
     def design(self):
         """The elements compiled into one design (cached until they change)."""
-        if self._compiled is None:
+        from kerfly.core.layers import _signature
+        sig = _signature(self.elements)
+        if self._compiled is None or self._compiled[2] != sig:
             design, origin = compile_layout(self.elements)
-            self._compiled = (design or Design(), origin or (0.0, 0.0))
+            self._compiled = (design or Design(), origin or (0.0, 0.0), sig,
+                              [e.design for e in self.elements if e.visible])
         return self._compiled[0]
 
     @property

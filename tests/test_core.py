@@ -813,7 +813,7 @@ def test_cut_order():
     cache = {}
     build_layers_job(elements, layers, JobSettings(), cache=cache)
     cut_layer = [l for l in layers if l.kind == CUT][0]
-    rows = cache[cut_layer.id].vector_cut.ecoords
+    rows = cache[cut_layer.id][1].vector_cut.ecoords
     loops = []
     for r in rows:
         if not loops or loops[-1][0] != r[2]:
@@ -838,7 +838,7 @@ def test_cut_order():
                 Element(build_design(line), x=0.0, y=-1.0, shape=line)]
     cache = {}
     build_layers_job(elements, layers, JobSettings(), cache=cache)
-    rows = cache[cut_layer.id].vector_cut.ecoords
+    rows = cache[cut_layer.id][1].vector_cut.ecoords
     line_rows = [r for r in rows if r[2] == rows[-1][2]]
     ok = line_rows[0][0] < line_rows[-1][0]
     print("%-5s cut order: an open line starts at its end nearer the head (x %.2f -> %.2f in)"
@@ -1214,6 +1214,60 @@ def test_file_encodings():
     return errors
 
 
+def test_job_cache():
+    """The job sent to the laser is always the one on the screen (a user's report
+    2026-11-11): after opening another file, moving an element to another layer or
+    leaving an element out of the job, Start sent the job compiled before."""
+    from kerfly.core.layers import ENGRAVE, Layer, build_layers_job, default_layers, layer_times
+    from kerfly.core.layout import Element
+    from kerfly.core.shapes import ShapeSpec, build_design
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s job cache: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    def outline(w, x):
+        spec = ShapeSpec(kind="rectangle", width=w, height=10, operation="engrave")
+        return Element(build_design(spec), x=x, y=-0.5, shape=spec)
+
+    def sent(elements, layers, cache):
+        chunks, _origin = build_layers_job(elements, layers, JobSettings(), cache=cache)
+        return bytes(chunks[0].data)
+
+    def fresh(elements, layers):
+        return sent(elements, layers, None)
+
+    layers = default_layers()
+    cache = {}
+    a = outline(20, 1.0)
+    first = sent([a], layers, cache)
+    layer_times([a], layers, JobSettings(), cache)          # the window fills the cache too
+    # 1. another file opened in place of the first one, nothing else touched
+    b = outline(40, 1.0)
+    check("another file opened: its job is sent, not the one before",
+          sent([b], layers, cache) == fresh([b], layers) != first)
+    # 2. an element moved to a second engrave layer: each layer sends only its own
+    second = Layer(ENGRAVE, name="Outline 2", color="#2e7d32", speed=20.0)
+    layers.append(second)
+    c = outline(30, 3.0)
+    sent([b, c], layers, cache)
+    c.layers = {ENGRAVE: second.id}
+    check("element moved to another layer: the layers send what they have now",
+          sent([b, c], layers, cache) == fresh([b, c], layers))
+    # 3. an element left out of the job (unticked in the element list)
+    c.visible = False
+    check("element left out of the job: not sent", sent([b, c], layers, cache) == fresh([b], layers))
+    c.visible = True
+    check("ticked again: sent again", sent([b, c], layers, cache) == fresh([b, c], layers))
+    # unchanged elements: the cached design is used again (no compiling)
+    d1 = cache[second.id][1]
+    sent([b, c], layers, cache)
+    check("nothing changed: the cached design is reused", cache[second.id][1] is d1)
+    return errors
+
+
 def test_simulate():
     """Job simulation: layer order, travel moves, durations from the layer speeds."""
     from kerfly.core.layers import default_layers, CUT
@@ -1336,6 +1390,7 @@ def main():
     failures += test_pattern_fill()
     failures += test_offset()
     failures += test_file_encodings()
+    failures += test_job_cache()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

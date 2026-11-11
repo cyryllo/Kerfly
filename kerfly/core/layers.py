@@ -232,12 +232,48 @@ def run_order(layers):
     return sorted(layers, key=lambda layer: KINDS.index(layer.kind))
 
 
+def _signature(elements, layer=None, layers=None):
+    """What a compiled design depends on: every visible element (its loaded
+    design, place, size, turn) and, for a layer, which of them go to it."""
+    parts = []
+    for e in elements:
+        if not e.visible:
+            continue
+        target = None
+        if layer is not None:
+            found = layer_of(e, layer.kind, layers)
+            target = found.id if found is not None else None
+        parts.append((id(e.design), e.placement(), target))
+    head = None if layer is None else (layer.id, layer.kind, round(float(getattr(layer, "kerf", 0.0)), 6))
+    return head, tuple(parts)
+
+
+def cached_layer(cache, elements, layer, layers):
+    """(design, origin) of a layer, reused from cache only when it was compiled
+    from exactly these elements, places and layer choices (origin None then).
+    A design compiled from other elements was sent to the laser after a new
+    file was opened, an element moved to another layer or left out of the job.
+    The cache keeps the loaded designs alive, so their ids stay unique."""
+    sig = _signature(elements, layer, layers)
+    hit = cache.get(layer.id) if cache is not None else None
+    if hit is not None and hit[0] == sig:
+        return hit[1], None
+    design, origin = compile_layer(elements, layer, layers)
+    if cache is not None:
+        if design is not None:
+            cache[layer.id] = (sig, design, [e.design for e in elements if e.visible])
+        else:
+            cache.pop(layer.id, None)
+    return design, origin
+
+
 def build_layers_job(elements, layers, settings, progress=None, update_gui=None, stop=None,
                      cache=None):
     """Laser data for all enabled layers. Returns (chunks, origin).
 
-    cache: optional dict {layer.id: design} reused between calls (computed
-    raster lines are kept in the designs).
+    cache: optional dict {layer.id: (signature, design, kept)} reused between
+    calls while the elements stay the same (computed raster lines are kept in
+    the designs); see cached_layer.
     """
     progress = progress or (lambda m: None)
     chunks, origin = [], None
@@ -245,13 +281,7 @@ def build_layers_job(elements, layers, settings, progress=None, update_gui=None,
     for layer in run_order(layers):
         if not layer.enabled:
             continue
-        design = cache.get(layer.id) if cache is not None else None
-        if design is None:
-            design, origin_l = compile_layer(elements, layer, layers)
-            if cache is not None and design is not None:
-                cache[layer.id] = design
-        else:
-            origin_l = None
+        design, origin_l = cached_layer(cache, elements, layer, layers)
         if design is None:
             continue
         if origin_l is not None:
@@ -303,12 +333,9 @@ def layer_times(elements, layers, settings, cache):
     """{layer.id: seconds or None (raster not prepared yet)} for layers with data."""
     out = {}
     for layer in layers:
-        design = cache.get(layer.id)
+        design, _o = cached_layer(cache, elements, layer, layers)
         if design is None:
-            design, _o = compile_layer(elements, layer, layers)
-            if design is None:
-                continue
-            cache[layer.id] = design
+            continue
         times = estimate_times(design, layer_settings(settings, layer))
         out[layer.id] = times.get(OPERATION_OF_KIND[layer.kind])
     return out

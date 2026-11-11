@@ -214,7 +214,7 @@ Kerfly steruje prawdziwą maszyną z laserem, więc „chyba działa” to za ma
 
 ## Stan projektu
 
-**Kerfly 1.2 jest wersją stabilną, gotową do codziennej pracy** z laserem.
+**Kerfly 1.3 jest wersją stabilną, gotową do codziennej pracy** z laserem.
 Następne w planach: kopiuj, wytnij i wklej, menu pod prawym przyciskiem myszy
 (przeniesienie na inną warstwę, łączenie, kolejność, przesuń głowicę tutaj, …),
 wektoryzacja obrazów, więcej wzorów,
