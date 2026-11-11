@@ -225,3 +225,12 @@ formats, and a Debian package with its own APT repository. See the
 Found a problem? In Kerfly choose **Help → Report a problem on GitHub…**: it
 saves a diagnostic report and opens the [report form]({{ site.repo }}/issues/new/choose).
 Ideas and translation fixes are welcome too, in English or Polish.
+
+## Supporting the project
+
+Kerfly is free and stays free. Help it grow: report what does not work,
+tell others about it, test it with your machine and board (especially new
+boards and macOS), or improve a translation. **Laser makers, sellers and
+shops: I am open to cooperation** (testing with your machines and boards,
+material settings, mentioning Kerfly to your customers). Contact me through
+my GitHub profile, [@cyryllo](https://github.com/cyryllo).

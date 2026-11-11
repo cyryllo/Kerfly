@@ -229,3 +229,12 @@ program zapisze raport diagnostyczny i otworzy
 [formularz zgłoszenia]({{ site.repo }}/issues/new/choose). Formularze są po
 angielsku, ale **możesz pisać po polsku**. Pomysły i poprawki tłumaczeń też
 są mile widziane.
+
+## Wsparcie projektu
+
+Kerfly jest darmowy i taki zostanie. Pomóż mu się rozwijać: zgłaszaj, co nie
+działa, mów o nim innym, przetestuj go ze swoją maszyną i płytą (zwłaszcza z
+nowymi płytami i na macOS) albo popraw tłumaczenie. **Producenci, sprzedawcy
+i sklepy z laserami: jestem otwarty na współpracę** (testy z Waszymi
+maszynami i płytami, ustawienia materiałów, polecanie Kerfly klientom).
+Kontakt przez mój profil na GitHubie, [@cyryllo](https://github.com/cyryllo).

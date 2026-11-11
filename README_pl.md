@@ -104,6 +104,22 @@ formularze dla problemów z laserem (złe miejsce, moc albo prędkość), innych
 błędów, pomysłów na funkcje i poprawek tłumaczeń. Formularze są po angielsku,
 ale **zgłoszenie możesz napisać po polsku**.
 
+## Wsparcie projektu
+
+Kerfly jest darmowy i taki zostanie. Możesz pomóc mu się rozwijać:
+
+- **Używaj go i zgłaszaj, co nie działa** albo czego brakuje (opis wyżej).
+  Każde zgłoszenie zamienia się w test, więc ten sam błąd nie wraca.
+- **Mów o nim innym**: na grupach i forach, i temu, kto sprzedał Ci laser.
+- **Przetestuj go ze swoją maszyną i płytą**, zwłaszcza z płytami jeszcze
+  niepotwierdzonymi (M3 Plus i inne) i na macOS.
+- **Popraw tłumaczenie** albo dodaj nowy język.
+- **Producenci, sprzedawcy i sklepy z laserami: jestem otwarty na
+  współpracę**: testy Kerfly z Waszymi maszynami i nowymi płytami, gotowe
+  ustawienia materiałów, polecanie Kerfly klientom albo Wasz własny pomysł.
+  Kontakt przez mój profil na GitHubie,
+  [@cyryllo](https://github.com/cyryllo).
+
 ## Licencja
 
 Kerfly jest wolnym oprogramowaniem na licencji **GNU General Public License w

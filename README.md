@@ -99,6 +99,22 @@ version, system and board filled in; drag the report file into the form.
 There are forms for laser problems (wrong place, power or speed), other bugs,
 feature ideas and translation fixes. You can write in English or Polish.
 
+## Supporting the project
+
+Kerfly is free and stays free. You can help it grow:
+
+- **Use it and report what does not work**, or what you miss (see above).
+  Every report becomes a test, so the same problem does not come back.
+- **Tell others about it**: on groups and forums, and to whoever sold you
+  your laser.
+- **Test it with your machine and board**, especially boards that are not
+  confirmed yet (M3 Plus and others) and macOS.
+- **Improve a translation**, or add a new language.
+- **Laser makers, sellers and shops: I am open to cooperation**: testing
+  Kerfly with your machines and new boards, ready material settings for them,
+  mentioning Kerfly to your customers, or your own idea. Contact me through my
+  GitHub profile, [@cyryllo](https://github.com/cyryllo).
+
 ## License
 
 Kerfly is free software, distributed under the **GNU General Public License,
