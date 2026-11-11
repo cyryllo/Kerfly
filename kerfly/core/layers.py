@@ -232,6 +232,26 @@ def run_order(layers):
     return sorted(layers, key=lambda layer: KINDS.index(layer.kind))
 
 
+def job_elements(elements, settings):
+    """The elements as the job lays them out. With the home in the upper right,
+    an element's x is measured from the right edge of the bed, but the job
+    mirrors the whole design left to right (as K40 Whisperer does for the
+    machine's reversed x axis), which expects the elements in it from left to
+    right: placed by their x, several elements came out with their places
+    swapped (the letters right, the layout mirrored; a user's report
+    2026-11-11). A single element is passed as it is (identical laser data)."""
+    if not getattr(settings, "home_upper_right", False):
+        return elements
+    if sum(1 for e in elements if e.visible) < 2:
+        return elements
+    out = []
+    for e in elements:
+        c = e.copy()
+        c.x = -(e.x + e.size[0])          # left edge, seen from the bed's left side
+        out.append(c)
+    return out
+
+
 def _signature(elements, layer=None, layers=None):
     """What a compiled design depends on: every visible element (its loaded
     design, place, size, turn) and, for a layer, which of them go to it."""
@@ -278,6 +298,8 @@ def build_layers_job(elements, layers, settings, progress=None, update_gui=None,
     progress = progress or (lambda m: None)
     chunks, origin = [], None
     joined = None
+    on_bed = elements
+    elements = job_elements(elements, settings)
     for layer in run_order(layers):
         if not layer.enabled:
             continue
@@ -324,8 +346,8 @@ def build_layers_job(elements, layers, settings, progress=None, update_gui=None,
         chunks = [joined]
     if not chunks:
         raise job.NoLaserData("No laser data was generated.")
-    if origin is None:
-        _b, origin = layout_frame([e for e in elements if e.visible])
+    # where the head starts: the layout's corner on the bed (as the elements are placed there)
+    _b, origin = layout_frame([e for e in on_bed if e.visible])
     return chunks, origin
 
 

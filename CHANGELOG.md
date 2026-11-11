@@ -7,10 +7,14 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## 1.3.0 (2026-11-11)
+## 1.3.1 (2026-11-11)
 
-An important fix: the laser always gets the job that is on the screen. Keyboard
-shortcuts as in Inkscape.
+(1.3.0 was tagged but not released: its Linux package could not be built.
+Everything below is new since 1.2.1.)
+
+Important fixes: the laser always gets the job that is on the screen, and with the
+home in the upper right several designs come out where they are on the screen.
+Keyboard shortcuts as in Inkscape.
 
 ### Fixed
 
@@ -22,6 +26,11 @@ shortcuts as in Inkscape.
   left out of the job (unticked in the element list) was still engraved. The
   kept data is now used only while the elements, their places and their
   layers are exactly the same.
+- **Home in the upper right: a layout of several designs came out mirrored**
+  (each text right, but the designs in each other's places). The job mirrors
+  the design for the machine's reversed x axis; the designs are now placed in
+  it as they lie on the bed. A single design gives the same laser data as
+  before.
 
 ### Changed
 

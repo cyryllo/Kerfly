@@ -1268,6 +1268,47 @@ def test_job_cache():
     return errors
 
 
+def test_home_upper_right_layout():
+    """Home in the upper right: several elements come out where the bed view shows
+    them (a user's report 2026-11-11: the letters were right, but the layout was
+    mirrored). The job mirrors the whole design (the machine's x axis runs from
+    the right), so in the design before that mirroring the element next to the
+    home must be on the right."""
+    from kerfly.core.layers import CUT, build_layers_job, compile_layer, default_layers, job_elements
+    from kerfly.core.layout import Element
+    from kerfly.core.shapes import ShapeSpec, build_design
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s home upper right: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    def cut(w, x):
+        spec = ShapeSpec(kind="rectangle", width=w, height=10, operation="cut")
+        return Element(build_design(spec), x=x, y=-0.5, shape=spec)
+    near, far = cut(10, 0.2), cut(40, 3.0)          # x measured from the home (the right edge)
+    ur = replace(JobSettings(), home_upper_right=True)
+    layers = default_layers()
+    layer = [l for l in layers if l.kind == CUT][0]
+    design, _o = compile_layer(job_elements([near, far], ur), layer, layers)
+    loops = {}
+    for x, y, n in design.vector_cut.ecoords:
+        loops.setdefault(n, []).append(x)
+    spans = sorted((max(v) - min(v), min(v), max(v)) for v in loops.values())
+    (w_near, near_min, _), (w_far, _, far_max) = spans[0], spans[1]
+    flip = design.bounds[0] + design.bounds[1]          # the job's mirroring: x -> flip - x
+    check("the element next to the home is next to the head's start after the mirroring",
+          near_min > far_max and flip - near_min < flip - far_max,
+          "(near %.3f..., far ...%.3f in)" % (near_min, far_max))
+    chunks, origin = build_layers_job([near, far], layers, ur)
+    check("the job starts at the layout's corner on the bed", origin == (0.2, -0.5), str(origin))
+    one = job_elements([near], ur)
+    check("a single element is passed as it is (laser data as K40 Whisperer's)", one[0] is near)
+    check("home in the upper left: the elements as they are", job_elements([near, far], JobSettings())[1] is far)
+    return errors
+
+
 def test_simulate():
     """Job simulation: layer order, travel moves, durations from the layer speeds."""
     from kerfly.core.layers import default_layers, CUT
@@ -1391,6 +1432,7 @@ def main():
     failures += test_offset()
     failures += test_file_encodings()
     failures += test_job_cache()
+    failures += test_home_upper_right_layout()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

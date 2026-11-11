@@ -1972,10 +1972,17 @@ class MainWindow(QMainWindow):
     @property
     def design(self):
         """The elements compiled into one design (cached until they change)."""
-        from kerfly.core.layers import _signature
-        sig = _signature(self.elements)
+        from kerfly.core.layers import _signature, job_elements, layout_frame
+        try:
+            ur = bool(self.job_settings().home_upper_right)
+        except ValueError:
+            ur = False
+        sig = (_signature(self.elements), ur)
         if self._compiled is None or self._compiled[2] != sig:
-            design, origin = compile_layout(self.elements)
+            # laid out as the job does it (home in the upper right: mirrored places), started
+            # from the layout's corner on the bed
+            design, _o = compile_layout(job_elements(self.elements, self.job_settings() if ur else None))
+            _b, origin = layout_frame([e for e in self.elements if e.visible])
             self._compiled = (design or Design(), origin or (0.0, 0.0), sig,
                               [e.design for e in self.elements if e.visible])
         return self._compiled[0]
