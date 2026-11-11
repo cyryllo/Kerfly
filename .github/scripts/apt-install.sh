@@ -34,6 +34,16 @@ for attempt in 1 2 3; do
     fi
     echo "apt-get install failed (attempt $attempt), waiting before the next one"
     tail -n 15 "$log"
+    if grep -q "Temporary failure resolving 'azure.archive.ubuntu.com'" "$log"; then
+        # the runners' own Ubuntu mirror (in Azure) cannot be reached (2026-11-11): use Ubuntu's main
+        # servers instead (sources.list on 22.04, ubuntu.sources from 24.04 on)
+        echo "::warning title=apt mirror::azure.archive.ubuntu.com unreachable, switching to archive.ubuntu.com"
+        for f in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do
+            [ -f "$f" ] || continue
+            sudo sed -i -e 's#mirror+file:/etc/apt/apt-mirrors.txt#http://archive.ubuntu.com/ubuntu/#g' \
+                -e 's#azure\.archive\.ubuntu\.com#archive.ubuntu.com#g' "$f"
+        done
+    fi
     sleep $((attempt * 30))
 done
 echo "::error title=apt-get install::$(grep -E '^(E|Err):' "$log" | tail -6 | tr '\n' ' ' | sed 's/%/%25/g')"

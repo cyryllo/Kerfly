@@ -177,6 +177,16 @@ version tag (`vX.Y.Z`) publishes them as a GitHub release with notes from
 [CHANGELOG.md](CHANGELOG.md) (`tools/release_notes.py`). To try the packages
 without a release: Actions → packages → Run workflow.
 
+**When GitHub cannot build the AppImage** (its Ubuntu runners could not reach
+Ubuntu's package servers on 2026-11-11), build it on your computer:
+`packaging/linux/build-appimage-docker.sh v1.3.2` builds that version from a
+clean copy in an Ubuntu 22.04 container (so it runs on older systems too), runs
+its `--self-test` and `--release-test`, and writes it to `dist/`. It needs
+Docker. The release is created only when every package was built, so then
+create it by hand on GitHub (Releases → Draft a new release, the tag, the notes
+from `python tools/release_notes.py X.Y.Z`) and attach the AppImage and the
+other packages from the run's artifacts (Actions → the run → Artifacts).
+
 Every code release raises the version in `kerfly/__init__.py` and gets a
 CHANGELOG section. Changes to the documentation alone get no new version.
 
