@@ -391,7 +391,10 @@ out of the job.
    off "Boundary trace as a rectangle" to follow the outline instead).
 4. **Start** (F9) runs all ticked layers. **Pause** stops the laser for a
    moment and the same button resumes it. **Stop** (Esc) ends the job
-   immediately; then press **Home** before the next job.
+   immediately; then press **Home** before the next job. These buttons stay
+   at the bottom of the left panel, also when it scrolls on a small screen.
+   The mouse wheel changes a number field or a list only after you click
+   into it, so scrolling the panel cannot change a speed by accident.
 5. The progress bar at the bottom shows the percentage of the current step
    (preparing the data, sending it to the laser).
 

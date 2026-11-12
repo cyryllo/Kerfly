@@ -113,6 +113,9 @@ screen). GitHub Actions runs the quick ones on every push (core, GUI,
 translations, laser data, references, `--release-test`), and the built
 installer and AppImage run `--release-test` before they are released.
 
+All of them in one go, before a tag: `tools/run_release_checks.sh` (about
+20 minutes; prints one short block per suite).
+
 ## Laser test card
 
 Before a feature release (1.x.0) the test card is cut on the machine; a

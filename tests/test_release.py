@@ -229,6 +229,16 @@ class Session:
         QTest.mouseClick(widget, Qt.LeftButton)
         self.settle()
 
+    def wheel(self, widget, notches=-1):
+        """Turn the mouse wheel over a widget (negative: towards the user)."""
+        from PySide6.QtCore import QPoint, QPointF
+        from PySide6.QtGui import QWheelEvent
+        pos = QPointF(widget.rect().center())
+        QApplication.sendEvent(widget, QWheelEvent(pos, QPointF(widget.mapToGlobal(pos.toPoint())), QPoint(0, 0),
+                                                   QPoint(0, 120 * notches), Qt.NoButton, Qt.NoModifier,
+                                                   Qt.NoScrollPhase, False))
+        self.settle()
+
     def type_number(self, spin, value):
         """Click into a number field, select it, type the number, press Enter."""
         self.touched.add(id(spin))
@@ -858,6 +868,13 @@ def part_layers(s):
                           "layer add"}
     s.step("layers: type a speed", lambda: s.type_number(row()["speed"], 12.5), undo=False,
            check=lambda: (abs(new.speed - 12.5) < 1e-6, "speed %s" % new.speed))
+
+    def wheel_without_click():
+        s.click_bed(*s.element_at(w.elements[0]))         # the keyboard focus goes to the bed view
+        s.wheel(row()["speed"], -2)
+    s.step("layers: the wheel over the speed without clicking it changes nothing", wheel_without_click,
+           change=None, check=lambda: (abs(new.speed - 12.5) < 1e-6 and abs(row()["speed"].value() - 12.5) < 1e-6,
+                                       "speed %s, field %s" % (new.speed, row()["speed"].value())))
     s.step("layers: type the kerf of the cut layer", lambda: s.type_number(row()["kerf"], 0.15), undo=False,
            check=lambda: (abs(new.kerf - 0.15) < 1e-6, "kerf %s" % new.kerf))
     passes = lambda: next(sp for sp in panel.grid_box.findChildren(QSpinBox)

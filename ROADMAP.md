@@ -87,6 +87,41 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Material library (saved speed/power per material)~~ (done); export / import (done) | `gui/materialmanager.py`, `core/elements/materials.py` |
 | ~~Toolbar~~ (done; every new command gets a button), themes | `gui/ribbon.py`, `gui/themes.py` |
 
+## Optional: engrave each design separately (raster layers)
+
+Asked for by a user (2026-11-12; see also issue #2). Planned as an optional
+function, for later.
+
+**The problem.** On one raster layer all the pictures on the bed are joined
+into one image. The head engraves it row by row, and every row runs from the
+first dark point to the last one, across the empty gaps between the designs.
+With designs side by side (names on several products in a row) most of the
+time goes on driving over the gaps: two 50 × 50 mm pictures 90 mm apart take
+31.8 min on one layer, 17.0 min when each is engraved on its own.
+
+**What works today.** Put each design on its own raster layer (Layers panel:
+**+** → Raster engrave, then the Layer list above the bed): layers run one
+after another in the same job, so it is fast, but with many designs it means
+many layers to make and keep track of.
+
+**The planned option (B).** A tick box at a raster layer: **"Each design
+separately"**. With it on, the designs on that layer are engraved one after
+another, each in its own area (all with this layer's speed, power and
+passes), as if each had its own layer, but without making layers. Still one
+job, one Start.
+
+- Which designs are "one": each element on the bed (a group counts as one).
+- Order: as in the element list (the same order as the other layers).
+- The time in the Layers panel, the simulation and the job all follow it.
+- Off by default: with the designs touching or overlapping it gives nothing.
+- Release-test step: two pictures with a gap on a layer with the option, the
+  laser data and the time compared with two separate layers (must be equal).
+
+**Considered and left out for now (A):** putting every newly added design on a
+new raster layer by itself (reusing an empty one). Gives the same time, and
+also separate speeds per design, but the Layers panel fills up with layers;
+only if users need different settings per design.
+
 ## Run one kind of work: Engrave, Outline, Cut buttons
 
 Asked for by a user (2026-11-10), as K40 Whisperer's three buttons (Raster

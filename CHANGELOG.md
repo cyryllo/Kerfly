@@ -7,6 +7,18 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Changed
+
+- **The mouse wheel changes a number field or a list only after it was
+  clicked.** Scrolling the left panel on a small screen (1366 × 768) to
+  reach Start changed the speeds of the layers the wheel passed over; now the
+  panel scrolls and the values stay. Click into a field to change it with the
+  wheel.
+- **Start, Pause and Stop stay at the bottom of the left panel**, always
+  visible, also when the panel scrolls on a small screen.
+
 ## 1.3.2 (2026-11-11)
 
 (1.3.0 and 1.3.1 were tagged but not released: their Linux package could not be

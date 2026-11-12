@@ -396,7 +396,10 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
 4. **Start** (F9) wykonuje wszystkie zaznaczone warstwy. **Pauza** na chwilę
    zatrzymuje laser, a ten sam przycisk wznawia pracę. **Stop** (Esc)
    natychmiast kończy zadanie; potem naciśnij **Bazowanie** przed następnym
-   zadaniem.
+   zadaniem. Te przyciski zostają na dole lewego panelu, także gdy na małym
+   ekranie panel się przewija. Rolka myszy zmienia pole liczbowe albo listę
+   dopiero po kliknięciu w nie, więc przewijanie panelu nie zmieni
+   przypadkiem prędkości.
 5. Pasek postępu na dole pokazuje procent bieżącego kroku (przygotowanie
    danych, wysyłanie do lasera).
 

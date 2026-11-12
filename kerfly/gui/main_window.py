@@ -86,6 +86,8 @@ def _num_text(v):
 class MainWindow(QMainWindow):
     def __init__(self, values):
         super().__init__()
+        from kerfly.gui import wheelguard
+        wheelguard.install()            # the wheel changes a field only after it was clicked
         self.values = values
         self.elements = []              # design elements placed on the bed
         self.selected = None            # selected element
@@ -1895,7 +1897,6 @@ class MainWindow(QMainWindow):
         self.bed_warning.setObjectName("bed_warning")
         self.bed_warning.setWordWrap(True)
         self.bed_warning.hide()
-        layout.addWidget(self.bed_warning)
         run = QWidget()
         row = QHBoxLayout(run)
         row.setContentsMargins(0, 4, 0, 0)
@@ -1934,17 +1935,34 @@ class MainWindow(QMainWindow):
         self.btn_stop.setEnabled(False)
         self.btn_stop.clicked.connect(self.stop_job)
         row.addWidget(self.btn_stop, 1)          # Start and Stop share the width equally
-        layout.addWidget(run)
         layout.addStretch(1)
 
         scroll = QScrollArea()
         scroll.setWidget(panel)
         scroll.setWidgetResizable(True)
         self.panel_scroll = scroll
+        # Start, Pause and Stop stay at the bottom, outside the scrolling part: on a small screen
+        # (1366 x 768) the panel scrolls, and reaching Start with the wheel changed the speed fields
+        # the wheel passed over (a user's report 2026-11-12)
+        body = QWidget()
+        body_layout = QVBoxLayout(body)
+        body_layout.setContentsMargins(0, 0, 0, 0)
+        body_layout.setSpacing(0)
+        body_layout.addWidget(scroll, 1)
+        footer = QWidget()
+        footer.setObjectName("run_footer")
+        footer_layout = QVBoxLayout(footer)
+        margins = layout.contentsMargins()
+        footer_layout.setContentsMargins(margins.left(), 2, margins.right(), margins.bottom())
+        footer_layout.setSpacing(2)
+        footer_layout.addWidget(self.bed_warning)
+        footer_layout.addWidget(run)
+        body_layout.addWidget(footer)
+        self.run_footer = footer
         dock = QDockWidget(_("Job"), self)
         dock.setObjectName("job_dock")
         dock.setFeatures(QDockWidget.NoDockWidgetFeatures)
-        dock.setWidget(scroll)
+        dock.setWidget(body)
         self.addDockWidget(Qt.LeftDockWidgetArea, dock)
         for key in ("x", "y", "w", "h"):
             self._unit_widgets.append((self.sel_fields[key], "len", None, 1.0))

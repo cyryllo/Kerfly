@@ -565,7 +565,8 @@ def main():
     w = make_window()
     w.resize(1200, 800)
     w.show()
-    app.processEvents()
+    for _settle in range(5):             # the panel measures itself once more after showing: let it settle
+        app.processEvents()              # (the bed view must not move between the clicks)
     w.preview.fit_all()                  # the whole bed in view, also on small test screens
     app.processEvents()
     view = w.preview
@@ -1514,6 +1515,42 @@ def main():
     lw.close()
     check("language from Settings is kept for the next start without Save settings as default",
           lang_ok and lang_back, "(%s)" % ([lang_ok, lang_back, next_start.get("language")],))
+
+    # 52c. small screens (1366 x 768): the wheel changes a number field only after it was clicked
+    # (scrolling down to Start changed the layer speeds on the way, a user's report); Start, Pause
+    # and Stop stay visible below the scrolling panel
+    from PySide6.QtCore import QPoint as _QPoint
+    from PySide6.QtGui import QWheelEvent as _QWheelEvent
+    sw = make_window(grid_mm="0")
+    sw.resize(1366, 700)
+    sw.show()
+    sw._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)
+    app.processEvents()
+    speed = next(r["speed"] for r in sw.layers_panel.rows.values() if "speed" in r)
+    bar = sw.panel_scroll.verticalScrollBar()
+
+    def _wheel(widget):
+        pos = QPointF(widget.rect().center())
+        QApplication.sendEvent(widget, _QWheelEvent(pos, QPointF(widget.mapToGlobal(pos.toPoint())), _QPoint(0, 0),
+                                                    _QPoint(0, -120), Qt.NoButton, Qt.NoModifier, Qt.NoScrollPhase,
+                                                    False))
+        app.processEvents()
+    bar.setValue(0)
+    before = speed.value()
+    _wheel(speed)
+    untouched = speed.value() == before and (bar.maximum() == 0 or bar.value() > 0)
+    sw.activateWindow()
+    app.processEvents()
+    speed.setFocus()
+    app.processEvents()
+    _wheel(speed)
+    clicked = speed.value() != before
+    pinned = not sw.panel_scroll.isAncestorOf(sw.btn_start) and sw.btn_start.isVisible()
+    check("wheel over a number field not clicked scrolls the panel; clicked, it changes the value; Start "
+          "stays below the panel", untouched and clicked and pinned,
+          "(%s)" % [untouched, clicked, pinned, bar.value(), bar.maximum()])
+    sw._dirty = False
+    sw.close()
 
     # 53. Linux: connecting fails for want of permission -> Kerfly offers the USB rule (pkexec); with
     # a rule already there, Laser → Allow USB access only says to plug the laser in again
