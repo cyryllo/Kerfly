@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 20:13+0100\n"
+"POT-Creation-Date: 2026-11-12 20:49+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -1111,6 +1111,9 @@ msgstr "Loch 20 mm"
 
 msgid "Home is in the upper right corner"
 msgstr "Referenzpunkt oben rechts"
+
+msgid "Home the head after a job (back to 0, 0)"
+msgstr "Kopf nach dem Auftrag referenzieren (zurück zu 0, 0)"
 
 msgid "Home the head when initializing"
 msgstr "Referenzfahrt beim Verbinden"
@@ -2713,6 +2716,10 @@ msgstr "Die Datei ist keine Kerfly-Materialbibliothek."
 
 msgid "The image resolution must be greater than zero."
 msgstr "Die Bildauflösung muss größer als null sein."
+
+#, python-format
+msgid "The job is finished, but homing failed: %s"
+msgstr "Der Auftrag ist fertig, aber die Referenzfahrt ist fehlgeschlagen: %s"
 
 #, python-format
 msgid ""

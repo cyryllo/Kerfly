@@ -61,6 +61,7 @@ SETTINGS_KEYS = [
     ("follow_head", BOOL),   # Kerfly only: the design moves with the head (arrows, Go to, Home)
     ("grid_last_mm", TEXT),  # Kerfly only: grid size switched on by View → Snap to grid
     ("cut_kerf", TEXT),      # Kerfly only: kerf (mm) of the default cut layer
+    ("post_home_xy", TEXT),  # Kerfly only: home the head after a finished job ("1")
     ("kind_buttons", TEXT),  # Kerfly only: Engrave / Outline / Cut only buttons next to Start ("1")
     ("check_updates", TEXT),  # Kerfly only: look for new versions at start ("1", default; "0": off)
     ("update_skip", TEXT),   # Kerfly only: the version the user does not want to hear about
@@ -99,6 +100,7 @@ DEFAULT_VALUES = {
     "follow_head": "0",
     "grid_last_mm": "5",
     "cut_kerf": "0",
+    "post_home_xy": "0",
     "kind_buttons": "0",
     "check_updates": "1",
     "update_skip": "",

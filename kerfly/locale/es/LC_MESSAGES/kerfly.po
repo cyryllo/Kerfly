@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 20:13+0100\n"
+"POT-Creation-Date: 2026-11-12 20:49+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -1111,6 +1111,9 @@ msgstr "Agujero de 20 mm"
 
 msgid "Home is in the upper right corner"
 msgstr "El origen está en la esquina superior derecha"
+
+msgid "Home the head after a job (back to 0, 0)"
+msgstr "Llevar el cabezal al origen tras el trabajo (vuelta a 0, 0)"
 
 msgid "Home the head when initializing"
 msgstr "Llevar el cabezal al origen al conectar"
@@ -2704,6 +2707,10 @@ msgstr "El archivo no es una biblioteca de materiales de Kerfly."
 
 msgid "The image resolution must be greater than zero."
 msgstr "La resolución de la imagen debe ser mayor que cero."
+
+#, python-format
+msgid "The job is finished, but homing failed: %s"
+msgstr "El trabajo ha terminado, pero falló la vuelta al origen: %s"
 
 #, python-format
 msgid ""

@@ -20,6 +20,7 @@ TABS = [
         ("LaserYsize", N_("Bed height"), "float", (1, 5000, 1, "len")),
         ("HomeUR", N_("Home is in the upper right corner"), "bool", None),
         ("init_home", N_("Home the head when initializing"), "bool", None),
+        ("post_home_xy", N_("Home the head after a job (back to 0, 0)"), "bool", None),
         ("post_home", N_("Unlock rail after a job"), "bool", None),
         ("post_beep", N_("Beep after a job"), "bool", None),
         ("LaserXscale", N_("X scale factor"), "float", (0.5, 2, 4, None)),

@@ -29,6 +29,10 @@ Version numbers:
   always visible also on small screens, switched on in Settings → View (off
   by default); also in the Laser menu. Their tooltips show the time of their
   part.
+- **Home the head after a job** (Settings → Machine): after a finished job
+  the head goes back to 0, 0, ready for the next piece, without pressing
+  Home (not after Stop, and not after a boundary trace). The design stays
+  where it is; the next Start drives the head to it.
 - **Right-click menu** on the bed (a right click without dragging; a right
   drag still pans the view). On an element: its commands, with **Layer ▸**
   to move all the selected elements to another layer in one click (for

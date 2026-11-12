@@ -4230,6 +4230,8 @@ class MainWindow(QMainWindow):
         was_laser_job = isinstance(self.worker, (JobWorker, LayersJobWorker, EgvSendWorker)) \
             and self.worker.laser is not None
         interrupted = was_laser_job and not ok and self.worker.sending
+        # a boundary trace checks where the job goes: no homing after it (the job starts there next)
+        traced = isinstance(self.worker, JobWorker) and getattr(self.worker, "operation", None) == job.TRACE_ENG
         self.worker.wait()
         self.worker = None
         self._set_paused(False)
@@ -4242,7 +4244,16 @@ class MainWindow(QMainWindow):
             self.status(_("%s The laser head position is now unknown: press Home before the next job.")
                         % tr_message(message), error=True)
         if was_laser_job and self.laser.connected:
-            if is_true(self.values.get("post_home", "0")):
+            if ok and not traced and is_true(self.values.get("post_home_xy", "0")):
+                # back to 0, 0 for the next piece (only after a finished job: after Stop the head stays);
+                # the design stays where it is, the next Start drives the head to it
+                try:
+                    self.laser.home()
+                    self.head = (0.0, 0.0)
+                    diag_log.info("job finished: head homed (setting)")
+                except Exception as e:
+                    self.status(_("The job is finished, but homing failed: %s") % e, error=True)
+            if is_true(self.values.get("post_home", "0")):         # K40 Whisperer's name: it unlocks the rail
                 try:
                     self.laser.unlock()
                 except Exception:

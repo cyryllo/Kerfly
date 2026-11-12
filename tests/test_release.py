@@ -216,6 +216,17 @@ class Session:
             QTest.mouseClick(self.vp, Qt.LeftButton, mods, p)
         self.settle()
 
+    def tick(self, box):
+        """Click the square of a tick box (a wide box's middle is empty space after its text)."""
+        from PySide6.QtWidgets import QStyle, QStyleOptionButton
+        option = QStyleOptionButton()
+        box.initStyleOption(option)
+        square = box.style().subElementRect(QStyle.SE_CheckBoxIndicator, option, box)
+        if not self.on_screen(box):
+            raise RuntimeError("the tick box %r is not on the screen" % box.text())
+        QTest.mouseClick(box, Qt.LeftButton, Qt.NoModifier, square.center())
+        self.settle()
+
     def right_click_bed(self, x, y):
         p = self.pos(x, y)
         QTest.mouseMove(self.vp, p)
@@ -1062,7 +1073,7 @@ def part_view_and_laser(s):
         s.settle()
         box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == "kind_buttons")
         if not box.isChecked():
-            s.click(box)
+            s.tick(box)
         QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
     s.expect_dialog("settings: kind buttons", kind_buttons_on)
     s.step("Settings → View: Engrave, Outline and Cut buttons next to Start",
@@ -1100,6 +1111,35 @@ def part_view_and_laser(s):
     sent = len(s.fake.sent)
     s.step("Start (F9): the job goes to the laser", lambda: (s.trigger(w.act_start, via="key"), s.wait(lambda: w.worker is None)),
            change=False, check=lambda: (len(s.fake.sent) > sent, "nothing sent: %s" % w.statusBar().currentMessage()))
+
+    # Home the head after a job (Settings → Machine): the next piece starts from 0, 0
+    def setting_box(key, on):
+        def answer(dlg):
+            from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QTabWidget
+            box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == key)
+            tabs = dlg.findChild(QTabWidget)
+            index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(box))
+            QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+            s.settle()
+            if box.isChecked() != on:
+                s.tick(box)
+            QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+        return answer
+    s.expect_dialog("settings: home after a job", setting_box("post_home_xy", True))
+    s.step("Settings → Machine: Home the head after a job", lambda: s.trigger(w.act_settings, via="menu"),
+           change=False, undo=False, check=lambda: (w.values.get("post_home_xy") == "1", w.values.get("post_home_xy")))
+    mark_home = {}
+
+    def start_and_home():
+        mark_home["calls"] = len(s.fake.calls)
+        s.trigger(w.act_start, via="key")
+        s.wait(lambda: w.worker is None)
+    s.step("Start: after the job the head goes home", start_and_home, change=False,
+           check=lambda: ("home_position" in s.fake.calls[mark_home.get("calls", 0):] and w.head == (0.0, 0.0),
+                          "calls %s, head %s" % (s.fake.calls[mark_home.get("calls", 0):][-4:], w.head)))
+    s.expect_dialog("settings: no home after a job", setting_box("post_home_xy", False))
+    s.step("Settings (Ctrl+,) → Machine: Home after a job off again", lambda: s.trigger(w.act_settings, via="key"),
+           change=False, undo=False, check=lambda: (w.values.get("post_home_xy") == "0", w.values.get("post_home_xy")))
 
     def pause_resume():
         s.fake.slow = 1000                         # long enough to be paused also on a slow machine
