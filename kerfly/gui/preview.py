@@ -1095,6 +1095,7 @@ class PreviewView(QGraphicsView):
         bed = scene.addRect(QRectF(0, 0, bed_w * MM, bed_h * MM),
                             _cosmetic_pen(COLORS["bed_border"]), QBrush(COLORS["bed"]))
         bed.setZValue(-10)
+        self.bed_item = bed            # kept: a dropped Python wrapper from scene().items() deleted it once
         self.grid_mm = grid_mm
         if grid_mm > 0:
             # draw at least every 5 mm so a fine grid does not turn into a grey area

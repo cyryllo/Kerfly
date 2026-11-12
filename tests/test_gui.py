@@ -1725,6 +1725,8 @@ def main():
     QTest.mouseRelease(rvp, Qt.RightButton, Qt.NoModifier, p0 + QPoint(60, 40))
     app.processEvents()
     drag_no_menu = rw._context_menu is None
+    # the bed's white rectangle survives the right clicks (it vanished once: a user's report)
+    drag_no_menu = drag_no_menu and rw.preview.bed_item.scene() is rw.preview.scene()
     check("right-click menu: element (selected, its commands), Layer moves all selected in one step, empty bed, "
           "a right drag only pans", on_element and kept and both and one_step and empty and drag_no_menu,
           "(%s %s)" % ([on_element, kept, both, one_step, empty, drag_no_menu], empty_texts))

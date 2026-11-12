@@ -2718,13 +2718,14 @@ class MainWindow(QMainWindow):
 
     # ---- right-click menu on the bed ----------------------------------------
     def _element_at(self, scene_point):
-        """The topmost element drawn at a point of the bed view, or None."""
-        from kerfly.gui.preview import ElementItem
-        for item in self.preview.scene().items(scene_point):
-            while item is not None and not isinstance(item, ElementItem):
-                item = item.parentItem()
-            if item is not None and item.element in self.elements:
-                return item.element
+        """The topmost element drawn at a point of the bed view, or None. Looked up in
+        the bed view's own list of element items: asking the scene (scene().items())
+        made PySide delete the bed's white rectangle when the answer was dropped."""
+        by_element = {id(i.element): i for i in self.preview._items}
+        for e in reversed(self.elements):                 # later elements lie on top
+            item = by_element.get(id(e))
+            if item is not None and item.isVisible() and item.contains(item.mapFromScene(scene_point)):
+                return e
         return None
 
     def _bed_context_menu(self, scene_point, global_pos):
