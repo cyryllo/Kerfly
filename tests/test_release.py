@@ -131,6 +131,9 @@ class Session:
         QColorDialog.getColor = staticmethod(get_color)
         from PySide6.QtGui import QDesktopServices
         QDesktopServices.openUrl = staticmethod(lambda url: s.opened_urls.append(url.toString()) or True)
+        from kerfly.core import updates             # GitHub is never asked: a newer release is "out"
+        updates.latest_release = lambda current, timeout=6.0: updates.Release(
+            "99.0", "https://github.com/cyryllo/Kerfly/releases/tag/v99.0")
         from kerfly.core import udev                # pkexec's password window belongs to the system
         s.udev_installs = []
         udev.installed = lambda dirs=None: False
@@ -1131,6 +1134,18 @@ def part_files_and_help(s):
     s.step("Help → Report a problem on GitHub…", lambda: s.trigger(w.act_report_problem, via="menu"), change=False,
            check=lambda: (any("issues/new" in u for u in s.opened_urls), s.opened_urls[-1:]))
     s.step("Help → Open the log folder", lambda: s.trigger(w.act_log_folder, via="menu"), change=False)
+
+    def check_updates():
+        s.trigger(w.act_check_updates)                       # the Updates button of the toolbar
+        s.wait(lambda: w.update_bar.isVisible(), 10)
+    s.step("Updates (toolbar): a newer version, the bar above the bed", check_updates, change=False,
+           check=lambda: (w.update_bar.isVisible() and "99.0" in w.update_bar.text.text(), w.update_bar.text.text()))
+    s.step("update bar: See the release", lambda: s.click(w.update_bar.open_button), change=False,
+           check=lambda: (s.opened_urls[-1:] == ["https://github.com/cyryllo/Kerfly/releases/tag/v99.0"],
+                          s.opened_urls[-1:]))
+    s.step("update bar: Skip this version", lambda: s.click(w.update_bar.skip_button), change=False,
+           check=lambda: (not w.update_bar.isVisible() and w.values.get("update_skip") == "99.0",
+                          w.values.get("update_skip")))
     s.expect_dialog("about", lambda d: d.accept())
     s.step("Help → About Kerfly", lambda: s.trigger(w.act_about, via="menu"), change=False)
     s.expect_dialog("unsaved changes", lambda d: s.click_dialog_button(d, QMessageBox.Discard))

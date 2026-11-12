@@ -423,9 +423,17 @@ EGV file.
 | Vector | cut inside shapes first, boundary trace with the laser on, as a rectangle or along the outline, trace gap and speed |
 | View | snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu) |
 | Rotary | rotary attachment, its scale factor and rapid speed |
-| Advanced | language (after a restart), Inkscape, reduced memory use, USB data preparation, waiting for the laser, USB timeout and retries |
+| Advanced | language (after a restart), checking for new versions, Inkscape, reduced memory use, USB data preparation, waiting for the laser, USB timeout and retries |
 
 Kerfly is available in English, Polish, German, Spanish and French.
+
+**New versions.** Once a day at start Kerfly asks GitHub, where it is
+published, whether a new version is out (nothing about you or your work is
+sent). When there is one, a bar above the bed says so: **See the release**
+opens its page with what is new and the files to download, **Later** hides
+the bar, **Skip this version** stops reminding about it. **Help → Check for
+updates** (toolbar **Updates**) asks at once. Don't want it? Untick it in
+Settings → Advanced. Kerfly never downloads or installs anything by itself.
 
 <a id="s9"></a>
 

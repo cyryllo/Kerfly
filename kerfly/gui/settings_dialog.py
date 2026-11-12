@@ -58,6 +58,8 @@ TABS = [
     ]),
     (N_("Advanced"), [
         ("language", N_("Language (applies after restart)"), "language", None),
+        ("check_updates", N_("Check once a day for a new version (asks GitHub; nothing about you is sent)"),
+         "bool", None),
         ("use_inkscape", N_("Use Inkscape for SVG files when installed (otherwise built-in)"), "bool", None),
         ("inkscape_path", N_("Inkscape executable"), "path", None),
         ("ink_timeout", N_("Inkscape timeout (minutes)"), "float", (0.1, 60, 1, None)),

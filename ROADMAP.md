@@ -87,6 +87,22 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Material library (saved speed/power per material)~~ (done); export / import (done) | `gui/materialmanager.py`, `core/elements/materials.py` |
 | ~~Toolbar~~ (done; every new command gets a button), themes | `gui/ribbon.py`, `gui/themes.py` |
 
+## New versions
+
+- [x] Step 1 (2026-11-12): once a day at start, a question to GitHub's list of
+  releases; a bar above the bed with a link to the new release (Later, Skip
+  this version); Help → Check for updates and a toolbar button; on by
+  default, off in Settings → Advanced. Nothing downloaded by Kerfly.
+- [ ] Step 2, only if users ask for it: **Update now**, always after asking,
+  never during a job. Windows: download the new installer and run it silently
+  (Inno Setup), then start the new version (the system asks for admin rights).
+  AppImage: download the new file and swap it in place. macOS: only the link
+  (without Apple's paid signing, replacing the app runs into the system's
+  protection). Every download checked against SHA-256 sums published with
+  the release; the previous version stays linked on the releases page. No
+  silent updates: Kerfly runs a machine, a new version must never arrive in
+  the middle of the work.
+
 ## Optional: engrave each design separately (raster layers)
 
 Asked for by a user (2026-11-12; see also issue #2). Planned as an optional

@@ -33,6 +33,7 @@ QLineEdit#layer_name { background: transparent; }
 QLineEdit#layer_name:focus { background: palette(base); }
 QToolBar#tool_strip { padding: 2px 4px 2px 2px; spacing: 2px; }
 QLabel#bed_warning { color: #c62828; font-weight: bold; padding: 2px 0; }
+QFrame#update_bar { background: #e3f2fd; border-bottom: 1px solid #90caf9; }
 QLabel#node_hint { color: #4b5563; }
 QWidget#top_bar { background: #eef0f3; border-bottom: 1px solid #c4c9d0; }
 QLabel#tool_options_title { font-weight: bold; }
@@ -145,6 +146,8 @@ def main(argv=None):
     files = [a for a in argv[1:] if not a.startswith("-")]
     if files:
         window.load_design(files[0])
+    from PySide6.QtCore import QTimer
+    QTimer.singleShot(1500, window.check_updates_on_start)     # new version? (once a day, in the background)
     rc = app.exec()
     diag.log.info("==== Kerfly closed (exit code %s)", rc)
     return rc

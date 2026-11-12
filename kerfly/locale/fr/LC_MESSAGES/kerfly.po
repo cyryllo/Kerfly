@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-11 15:10+0100\n"
+"POT-Creation-Date: 2026-11-12 19:09+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -54,6 +54,10 @@ msgid "%s The laser head position is now unknown: press Home before the next job
 msgstr ""
 "%s La position de la tête du laser est maintenant inconnue : appuyez sur "
 "Origine avant le prochain travail."
+
+#, python-format
+msgid "%s is available."
+msgstr "%s est disponible."
 
 #, python-format
 msgid "%s of %s"
@@ -174,6 +178,10 @@ msgstr "<b style='color:#2e7d32'>Connecté</b> (%s)"
 
 msgid "<b style='color:#c62828'>Not connected</b>"
 msgstr "<b style='color:#c62828'>Non connecté</b>"
+
+#, python-format
+msgid "<b>%s is available</b> (you have %s)."
+msgstr "<b>%s est disponible</b> (vous avez %s)."
 
 #, python-format
 msgid ""
@@ -310,6 +318,11 @@ msgctxt "toolbar group"
 msgid "Arrange"
 msgstr "Disposition"
 
+msgid "Ask GitHub whether a newer Kerfly is out (a bar above the bed links to it)"
+msgstr ""
+"Demander à GitHub si un Kerfly plus récent est sorti (une barre au-dessus"
+" du plateau y mène)"
+
 msgid "Axle hole"
 msgstr "Trou d'axe"
 
@@ -408,6 +421,19 @@ msgstr "Centrer"
 
 msgid "Centre the selected element, or the whole design, on the bed"
 msgstr "Centrer l'élément sélectionné ou tout le dessin sur le plateau"
+
+msgid "Check for &updates"
+msgstr "Rechercher des &mises à jour"
+
+msgid ""
+"Check once a day for a new version (asks GitHub; nothing about you is "
+"sent)"
+msgstr ""
+"Rechercher une nouvelle version une fois par jour (interroge GitHub ; "
+"rien vous concernant n'est envoyé)"
+
+msgid "Checking for a new version…"
+msgstr "Recherche d'une nouvelle version…"
 
 msgid "Choose a file"
 msgstr "Choisir un fichier"
@@ -523,6 +549,10 @@ msgstr "Rayon des coins : 0 pour des coins vifs"
 
 msgid "Corners of the new outline: rounded, or sharp like the shape's"
 msgstr "Coins du nouveau contour : arrondis, ou vifs comme ceux de la forme"
+
+#, python-format
+msgid "Could not check for a new version: %s"
+msgstr "Impossible de rechercher une nouvelle version : %s"
 
 #, python-format
 msgid "Could not open %s"
@@ -726,6 +756,9 @@ msgid ""
 msgstr ""
 "%d éléments répartis : trop larges pour des espaces, leurs centres sont "
 "donc espacés de %.2f %s."
+
+msgid "Do not remind about this version again (a later one is shown)"
+msgstr "Ne plus rappeler cette version (une suivante sera affichée)"
 
 msgid "Done. Unplug the laser's USB cable, plug it in again, then connect."
 msgstr ""
@@ -1021,6 +1054,9 @@ msgctxt "toolbar group"
 msgid "Help"
 msgstr "Aide"
 
+msgid "Hide this until the next check"
+msgstr "Masquer jusqu'à la prochaine vérification"
+
 msgid "High (25 %)"
 msgstr "Haute (25 %)"
 
@@ -1212,6 +1248,9 @@ msgstr "Laser connecté"
 
 msgid "Laser is not initialized."
 msgstr "Le laser n'est pas connecté."
+
+msgid "Later"
+msgstr "Plus tard"
 
 msgid "Layer"
 msgstr "Calque"
@@ -1654,6 +1693,11 @@ msgstr "Ligne ouverte"
 
 msgid "Open the &log folder"
 msgstr "Ouvrir le dossier du &journal"
+
+msgid "Open the page of the new version: what is new and the files to download"
+msgstr ""
+"Ouvrir la page de la nouvelle version : nouveautés et fichiers à "
+"télécharger"
 
 msgid "Open the user guide on the Kerfly website"
 msgstr "Ouvrir le guide d'utilisation sur le site de Kerfly"
@@ -2127,6 +2171,9 @@ msgstr ""
 msgid "Scan line step (in)"
 msgstr "Pas entre les lignes (po)"
 
+msgid "See the release"
+msgstr "Voir la version"
+
 msgid "Select an opened file or a text with lines to break it apart."
 msgstr ""
 "Sélectionnez un fichier ouvert ou un texte avec des lignes pour le "
@@ -2257,6 +2304,9 @@ msgid ""
 msgstr ""
 "Taille des dents : le diamètre primitif est le module fois le nombre de "
 "dents ; les engrenages qui s'engrènent ont besoin du même module"
+
+msgid "Skip this version"
+msgstr "Ignorer cette version"
 
 msgid "Slot plate"
 msgstr "Plaque à fentes"
@@ -2793,6 +2843,10 @@ msgstr "Décochez un élément pour l'exclure de la tâche"
 msgid "Untitled"
 msgstr "Sans titre"
 
+msgctxt "toolbar"
+msgid "Updates"
+msgstr "Mises à jour"
+
 msgid "Upper left corner"
 msgstr "Coin supérieur gauche"
 
@@ -2963,6 +3017,10 @@ msgstr ""
 
 msgid "YOUR COMPANY NAME"
 msgstr "NOM DE VOTRE ENTREPRISE"
+
+#, python-format
+msgid "You have the newest version (%s)."
+msgstr "Vous avez la dernière version (%s)."
 
 msgid "Zigzag"
 msgstr "Zigzag"

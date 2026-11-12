@@ -1552,6 +1552,62 @@ def main():
     sw._dirty = False
     sw.close()
 
+    # 52d. new versions: a bar above the bed with a link to the release; skipping a version; the
+    # manual check says when there is nothing new; switched off in Settings: no check at start
+    from kerfly.core import updates as _upd
+    from PySide6.QtGui import QDesktopServices
+    uw = make_window(grid_mm="0")
+    uw.remember_geometry = True
+    uw.show()
+
+    def _answer(version):
+        return lambda current, timeout=6.0: _upd.Release(version, "https://github.com/cyryllo/Kerfly/releases/tag/v"
+                                                         + version)
+
+    def _run_check(**kw):
+        uw.check_for_updates(**kw)
+        uw._update_check.wait(5000)
+        for _i in range(5):
+            app.processEvents()
+    _run_check(manual=True, fetch=_answer("99.0"))
+    shown = uw.update_bar.isVisible() and "99.0" in uw.update_bar.text.text()
+    opened = []
+    _orig_open = QDesktopServices.openUrl
+    QDesktopServices.openUrl = staticmethod(lambda url: opened.append(url.toString()) or True)
+    try:
+        uw.update_bar.open_button.click()
+    finally:
+        QDesktopServices.openUrl = _orig_open
+    linked = opened == ["https://github.com/cyryllo/Kerfly/releases/tag/v99.0"]
+    uw.update_bar.skip_button.click()
+    skipped = not uw.update_bar.isVisible() and uw.values.get("update_skip") == "99.0"
+    _run_check(manual=False, fetch=_answer("99.0"))
+    not_again = not uw.update_bar.isVisible()
+    from kerfly import __version__ as _kv
+    _run_check(manual=True, fetch=_answer(_kv))
+    newest = _kv in uw.statusBar().currentMessage() and not uw.update_bar.isVisible()
+
+    def _offline(current, timeout=6.0):
+        raise OSError("no internet")
+    _run_check(manual=True, fetch=_offline)
+    offline = "no internet" in uw.statusBar().currentMessage()
+    asked = []
+    _orig_check = uw.check_for_updates
+    uw.check_for_updates = lambda **kw: asked.append(kw)
+    uw.values["check_updates"], uw.values["update_last"] = "0", "0"
+    uw.check_updates_on_start()
+    off_ok = asked == []
+    uw.values["check_updates"] = "1"
+    uw.check_updates_on_start()
+    on_ok = asked == [{"manual": False}]
+    uw.check_for_updates = _orig_check
+    check("new versions: bar with a link to the release, skip a version, nothing new / offline said, "
+          "off in Settings", shown and linked and skipped and not_again and newest and offline and off_ok and on_ok,
+          "(%s)" % [shown, linked, skipped, not_again, newest, offline, off_ok, on_ok])
+    uw.values["check_updates"], uw.values["update_skip"] = "1", ""
+    uw._dirty = False
+    uw.close()
+
     # 53. Linux: connecting fails for want of permission -> Kerfly offers the USB rule (pkexec); with
     # a rule already there, Laser → Allow USB access only says to plug the laser in again
     from kerfly.core import udev as _udev

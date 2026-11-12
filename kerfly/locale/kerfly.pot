@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-11 15:10+0100\n"
+"POT-Creation-Date: 2026-11-12 19:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,6 +48,10 @@ msgstr ""
 
 #, python-format
 msgid "%s The laser head position is now unknown: press Home before the next job."
+msgstr ""
+
+#, python-format
+msgid "%s is available."
 msgstr ""
 
 #, python-format
@@ -168,6 +172,10 @@ msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
 msgstr ""
 
 msgid "<b style='color:#c62828'>Not connected</b>"
+msgstr ""
+
+#, python-format
+msgid "<b>%s is available</b> (you have %s)."
 msgstr ""
 
 #, python-format
@@ -293,6 +301,9 @@ msgctxt "toolbar group"
 msgid "Arrange"
 msgstr ""
 
+msgid "Ask GitHub whether a newer Kerfly is out (a bar above the bed links to it)"
+msgstr ""
+
 msgid "Axle hole"
 msgstr ""
 
@@ -382,6 +393,17 @@ msgid "Centre"
 msgstr ""
 
 msgid "Centre the selected element, or the whole design, on the bed"
+msgstr ""
+
+msgid "Check for &updates"
+msgstr ""
+
+msgid ""
+"Check once a day for a new version (asks GitHub; nothing about you is "
+"sent)"
+msgstr ""
+
+msgid "Checking for a new version…"
 msgstr ""
 
 msgid "Choose a file"
@@ -491,6 +513,10 @@ msgid "Corner radius: 0 for sharp corners"
 msgstr ""
 
 msgid "Corners of the new outline: rounded, or sharp like the shape's"
+msgstr ""
+
+#, python-format
+msgid "Could not check for a new version: %s"
 msgstr ""
 
 #, python-format
@@ -682,6 +708,9 @@ msgstr ""
 msgid ""
 "Distributed %d elements: they are too wide for gaps, so their centres are"
 " %.2f %s apart."
+msgstr ""
+
+msgid "Do not remind about this version again (a later one is shown)"
 msgstr ""
 
 msgid "Done. Unplug the laser's USB cable, plug it in again, then connect."
@@ -952,6 +981,9 @@ msgctxt "toolbar group"
 msgid "Help"
 msgstr ""
 
+msgid "Hide this until the next check"
+msgstr ""
+
 msgid "High (25 %)"
 msgstr ""
 
@@ -1124,6 +1156,9 @@ msgid "Laser initialized"
 msgstr ""
 
 msgid "Laser is not initialized."
+msgstr ""
+
+msgid "Later"
 msgstr ""
 
 msgid "Layer"
@@ -1528,6 +1563,9 @@ msgid "Open line"
 msgstr ""
 
 msgid "Open the &log folder"
+msgstr ""
+
+msgid "Open the page of the new version: what is new and the files to download"
 msgstr ""
 
 msgid "Open the user guide on the Kerfly website"
@@ -1966,6 +2004,9 @@ msgstr ""
 msgid "Scan line step (in)"
 msgstr ""
 
+msgid "See the release"
+msgstr ""
+
 msgid "Select an opened file or a text with lines to break it apart."
 msgstr ""
 
@@ -2080,6 +2121,9 @@ msgstr ""
 msgid ""
 "Size of the teeth: the pitch diameter is the module times the number of "
 "teeth; gears that mesh need the same module"
+msgstr ""
+
+msgid "Skip this version"
 msgstr ""
 
 msgid "Slot plate"
@@ -2546,6 +2590,10 @@ msgstr ""
 msgid "Untitled"
 msgstr ""
 
+msgctxt "toolbar"
+msgid "Updates"
+msgstr ""
+
 msgid "Upper left corner"
 msgstr ""
 
@@ -2696,6 +2744,10 @@ msgid ""
 msgstr ""
 
 msgid "YOUR COMPANY NAME"
+msgstr ""
+
+#, python-format
+msgid "You have the newest version (%s)."
 msgstr ""
 
 msgid "Zigzag"

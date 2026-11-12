@@ -152,6 +152,11 @@ class MainWindow(QMainWindow):
         scroll_h = bar_scroll.horizontalScrollBar().sizeHint().height()
         self.top_bar.setFixedHeight(2 * probe.sizeHint().height() + cap.sizeHint().height() + 4 + 2 + 10 + 4
                                     + scroll_h)
+        # "a new version is available" (hidden until a check finds one)
+        from kerfly.gui.update_check import UpdateBar
+        self.update_bar = UpdateBar()
+        self.update_bar.skip.connect(self._skip_update)
+        central_layout.addWidget(self.update_bar)
         central_layout.addWidget(self.top_bar)
         central_layout.addWidget(self.preview, 1)
         self.setCentralWidget(central)
@@ -339,6 +344,9 @@ class MainWindow(QMainWindow):
         self.act_report = self._action(_("Save &diagnostic report…"), self.save_report, None,
                                        _("Save a report with the laser log and settings, to attach to a bug report"))
         self.act_log_folder = self._action(_("Open the &log folder"), self.open_log_folder)
+        self.act_check_updates = self._action(
+            _("Check for &updates"), lambda: self.check_for_updates(manual=True), None,
+            _("Ask GitHub whether a newer Kerfly is out (a bar above the bed links to it)"))
         self.act_guide = self._action(_("&User guide"), self.open_guide, "F1",
                                       _("Open the user guide on the Kerfly website"))
         self.act_report_problem = self._action(
@@ -404,6 +412,7 @@ class MainWindow(QMainWindow):
             m.addAction(a)
         m = mb.addMenu(_("&Help"))
         m.addAction(self.act_guide)
+        m.addAction(self.act_check_updates)
         m.addSeparator()
         m.addAction(self.act_report_problem)
         m.addAction(self.act_report)
@@ -485,6 +494,7 @@ class MainWindow(QMainWindow):
             ]),
             (C_("toolbar group", "Help"), [
                 (self.act_report_problem, "bug", C_("toolbar", "Bug report")),
+                (self.act_check_updates, "cloud-download", C_("toolbar", "Updates")),
                 (self.act_report, "file-report", C_("toolbar", "Report")),
             ]),
         ]
@@ -3982,6 +3992,58 @@ class MainWindow(QMainWindow):
         QApplication.restoreOverrideCursor()
         self.status(_("Diagnostic report saved: %s") % name)
         return name
+
+    # ------------------------------------------------------------ new versions
+    def check_updates_on_start(self):
+        """At start (the program, not the tests): at most once a day, in the
+        background, unless switched off in Settings → Advanced (on by default)."""
+        import time
+        from kerfly.core import updates
+        if self.values.get("check_updates", "1") == "0":
+            return
+        try:
+            last = float(self.values.get("update_last", "0") or 0)
+        except ValueError:
+            last = 0.0
+        if time.time() - last < updates.CHECK_EVERY_S:
+            return
+        self.check_for_updates(manual=False)
+
+    def check_for_updates(self, manual=False, fetch=None):
+        """Ask GitHub in the background. manual (Help → Check for updates): the
+        answer is said in the status bar also when there is nothing new, and a
+        skipped version is shown again."""
+        import time
+        from kerfly.gui.update_check import UpdateCheck
+        if getattr(self, "_update_check", None) is not None and self._update_check.isRunning():
+            return
+        skipped = "" if manual else self.values.get("update_skip", "")
+        if manual:
+            self.status(_("Checking for a new version…"))
+        check = UpdateCheck(__version__, skipped, self, fetch=fetch)
+        self._update_manual = manual
+        check.done.connect(self._update_checked)      # a method of the window: runs in the window's thread
+        self._update_check = check
+        if not manual:
+            self.values["update_last"] = "%d" % time.time()
+            self._remember_view()
+        check.start()
+
+    def _update_checked(self, release, error):
+        manual = getattr(self, "_update_manual", False)
+        if release is not None:
+            self.update_bar.show_release(release, __version__)
+            if manual:
+                self.status(_("%s is available.") % release.name)
+        elif manual:
+            if error:
+                self.status(_("Could not check for a new version: %s") % error, error=True)
+            else:
+                self.status(_("You have the newest version (%s).") % __version__)
+
+    def _skip_update(self, version):
+        self.values["update_skip"] = version
+        self._remember_view()
 
     def open_guide(self):
         from PySide6.QtCore import QUrl

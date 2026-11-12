@@ -428,10 +428,19 @@ lasera…** wysyła istniejący plik EGV.
 | Wektory | najpierw kształty wewnętrzne, objazd konturu z włączonym laserem, jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
 | Widok | rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok) |
 | Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów |
-| Zaawansowane | język (po ponownym uruchomieniu), Inkscape, mniejsze zużycie pamięci, przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |
+| Zaawansowane | język (po ponownym uruchomieniu), sprawdzanie nowych wersji, Inkscape, mniejsze zużycie pamięci, przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |
 
 Kerfly jest dostępny po angielsku, polsku, niemiecku, hiszpańsku i
 francusku.
+
+**Nowe wersje.** Raz dziennie przy starcie Kerfly pyta GitHuba, gdzie jest
+publikowany, czy wyszła nowa wersja (nic o Tobie ani o Twojej pracy nie jest
+wysyłane). Gdy jest, informuje o tym pasek nad stołem: **Zobacz wydanie**
+otwiera jej stronę z nowościami i plikami do pobrania, **Później** ukrywa
+pasek, **Pomiń tę wersję** przestaje o niej przypominać. **Pomoc → Sprawdź
+aktualizacje** (na pasku **Aktualizacje**) sprawdza od razu. Nie chcesz?
+Odznacz to w Ustawienia → Zaawansowane. Kerfly nigdy niczego sam nie pobiera
+ani nie instaluje.
 
 <a id="s9"></a>
 

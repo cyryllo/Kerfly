@@ -7,6 +7,17 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Added
+
+- **New versions:** once a day at start Kerfly asks GitHub whether a new
+  version is out (nothing about the user or the work is sent). A bar above
+  the bed then shows it, with **See the release** (its page: what is new and
+  the files), **Later** and **Skip this version**. **Help → Check for
+  updates** (toolbar **Updates**) asks at once. On by default; switched off
+  in Settings → Advanced. Nothing is downloaded or installed by Kerfly.
+
 ## 1.3.3 (2026-11-12)
 
 Easier work on small screens (laptops with 1366 × 768).

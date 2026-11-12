@@ -1309,6 +1309,36 @@ def test_home_upper_right_layout():
     return errors
 
 
+def test_updates():
+    """New version check: versions compared as numbers, drafts and pre-releases
+    left out, a skipped version not shown again (no network: the answer is given)."""
+    from kerfly.core import updates
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s updates: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+
+    check("1.3.10 is newer than 1.3.9, v1.4 than 1.3.3, 1.3.3 not than 1.3.3",
+          updates.is_newer("1.3.10", "1.3.9") and updates.is_newer("v1.4", "1.3.3")
+          and not updates.is_newer("1.3.3", "1.3.3") and not updates.is_newer("1.3.0", "1.3"))
+    answer = {"tag_name": "v1.4.0", "html_url": "https://github.com/cyryllo/Kerfly/releases/tag/v1.4.0",
+              "name": "Kerfly 1.4.0", "draft": False, "prerelease": False}
+    r = updates.parse_latest(answer)
+    check("GitHub's answer read: version, release page", r.version == "1.4.0" and r.url.endswith("/v1.4.0"))
+    check("drafts and pre-releases are not offered",
+          updates.parse_latest(dict(answer, draft=True)) is None
+          and updates.parse_latest(dict(answer, prerelease=True)) is None)
+    fetch = lambda current, timeout=6.0: updates.parse_latest(answer)
+    check("a newer release is offered", updates.newer_release("1.3.3", fetch=fetch).version == "1.4.0")
+    check("not when this one is as new", updates.newer_release("1.4.0", fetch=fetch) is None)
+    check("not when the user skipped it", updates.newer_release("1.3.3", skipped="1.4.0", fetch=fetch) is None)
+    check("a release newer than the skipped one is offered again",
+          updates.newer_release("1.3.3", skipped="1.3.9", fetch=fetch) is not None)
+    return errors
+
+
 def test_simulate():
     """Job simulation: layer order, travel moves, durations from the layer speeds."""
     from kerfly.core.layers import default_layers, CUT
@@ -1433,6 +1463,7 @@ def main():
     failures += test_file_encodings()
     failures += test_job_cache()
     failures += test_home_upper_right_layout()
+    failures += test_updates()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:
