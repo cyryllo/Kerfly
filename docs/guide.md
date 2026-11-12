@@ -93,7 +93,12 @@ saving.
 
 Mouse in the bed view: the wheel zooms in and out (not further than the
 whole bed); the middle or right button drags the view; **Ctrl+0** fits the
-bed to the window.
+bed to the window. A **right click** (without dragging) opens a menu: on an
+element its commands (copy, cut, paste, duplicate, delete, group, **Layer** ▸
+to move all selected elements to another layer at once, combine shapes,
+offset, order, align, turn, mirror, fill, edit nodes, centre, leave out of
+the job); on the empty bed **Move the head here** (laser connected), paste,
+select all, fit, grid.
 
 <a id="s3"></a>
 

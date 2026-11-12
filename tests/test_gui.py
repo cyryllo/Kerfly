@@ -1671,6 +1671,66 @@ def main():
     cw._dirty = False
     cw.close()
 
+    # 52f. right-click menu: a right click without moving opens it (a right drag pans); on an element
+    # it selects it and offers its commands, Layer moves all selected elements at once; on the empty bed:
+    # Move the head here (greyed out without the laser), Paste, Select all
+    rw = make_window(grid_mm="0")
+    rw.resize(1200, 800)
+    rw.show()
+    for _settle in range(5):
+        app.processEvents()
+    rw.preview.fit_all()
+    app.processEvents()
+    rw._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)
+    rw._preview_drawn("ellipse", QPointF(80, 20), QPointF(120, 50), False)
+    r1, r2 = rw.elements
+    from kerfly.core.layers import Layer as _Layer2, layer_of as _layer_of
+    cut2 = _Layer2("cut", name="Cut 2", color="#2e7d32", speed=5.0)
+    rw.layers.append(cut2)
+    rvp = rw.preview.viewport()
+
+    def _rclick(x, y):
+        pos = rw.preview.mapFromScene(QPointF(x, y))
+        QTest.mouseClick(rvp, Qt.RightButton, Qt.NoModifier, pos)
+        for _i in range(3):
+            app.processEvents()
+        return rw._context_menu
+
+    menu = _rclick(40, 40)
+    texts = [a.text() for a in menu.actions()]
+    on_element = (menu.isVisible() and rw.preview.selected_elements() == [r1] and rw.act_copy in menu.actions()
+                  and _("Combine shapes") not in texts)
+    menu.close()
+    rw.preview.select_element([r1, r2])
+    menu = _rclick(40, 40)                                 # on a selected element: the selection stays
+    kept = len(rw.preview.selected_elements()) == 2 and _("Combine shapes") in [a.text() for a in menu.actions()]
+    layer_menu = next(a.menu() for a in menu.actions() if a.menu() and a.menu().objectName() == "layer_submenu")
+    next(a for a in layer_menu.actions() if a.text() == "Cut 2" and not a.isSeparator()).trigger()
+    both = _layer_of(r1, "cut", rw.layers) is cut2 and _layer_of(r2, "cut", rw.layers) is cut2
+    rw.undo()
+    one_step = _layer_of(r1, "cut", rw.layers) is not cut2 and _layer_of(r2, "cut", rw.layers) is not cut2
+    menu.close()
+    menu = _rclick(250, 180)
+    empty_texts = [a.text() for a in menu.actions()]
+    here = next(a for a in menu.actions() if a.text() == _("Move the head here"))
+    empty = rw.act_paste in menu.actions() and rw.act_select_all in menu.actions() and not here.isEnabled()
+    menu.close()
+    # a right drag pans and opens nothing
+    rw._context_menu = None
+    p0 = rw.preview.mapFromScene(QPointF(150, 150))
+    QTest.mousePress(rvp, Qt.RightButton, Qt.NoModifier, p0)
+    QApplication.sendEvent(rvp, QMouseEvent(QEvent.MouseMove, QPointF(p0 + QPoint(60, 40)),
+                                            QPointF(rvp.mapToGlobal(p0 + QPoint(60, 40))), Qt.NoButton,
+                                            Qt.RightButton, Qt.NoModifier))
+    QTest.mouseRelease(rvp, Qt.RightButton, Qt.NoModifier, p0 + QPoint(60, 40))
+    app.processEvents()
+    drag_no_menu = rw._context_menu is None
+    check("right-click menu: element (selected, its commands), Layer moves all selected in one step, empty bed, "
+          "a right drag only pans", on_element and kept and both and one_step and empty and drag_no_menu,
+          "(%s %s)" % ([on_element, kept, both, one_step, empty, drag_no_menu], empty_texts))
+    rw._dirty = False
+    rw.close()
+
     # 53. Linux: connecting fails for want of permission -> Kerfly offers the USB rule (pkexec); with
     # a rule already there, Laser → Allow USB access only says to plug the laser in again
     from kerfly.core import udev as _udev

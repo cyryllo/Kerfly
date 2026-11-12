@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 19:31+0100\n"
+"POT-Creation-Date: 2026-11-12 19:40+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -1302,6 +1302,9 @@ msgstr "Capas"
 msgid "Leather 2 mm"
 msgstr "Cuero 2 mm"
 
+msgid "Leave out of the job"
+msgstr "Dejar fuera del trabajo"
+
 msgid "Left of the text"
 msgstr "A la izquierda del texto"
 
@@ -1493,6 +1496,9 @@ msgstr "Recorrer el contorno del diseño"
 msgid "Move head to design"
 msgstr "Mover el cabezal al diseño"
 
+msgid "Move the head here"
+msgstr "Mover el cabezal aquí"
+
 msgid "Move the head to the centre of the design"
 msgstr "Mover el cabezal al centro del diseño"
 
@@ -1516,6 +1522,13 @@ msgstr "Mover el cabezal un paso a la izquierda"
 
 msgid "Move the laser head right by one step"
 msgstr "Mover el cabezal un paso a la derecha"
+
+msgid ""
+"Move the laser head to this point of the bed (the design stays where it "
+"is)"
+msgstr ""
+"Mover el cabezal del láser a este punto de la mesa (el diseño se queda "
+"donde está)"
 
 msgid "Move the laser head up by one step"
 msgstr "Mover el cabezal un paso hacia arriba"
@@ -1674,6 +1687,10 @@ msgstr ""
 "cerrada para dibujar un nuevo contorno a su alrededor (negativa: dentro)."
 " Formas seleccionadas antes: Desplazar selección."
 
+#, python-format
+msgid "On the layer %s: %d element(s)."
+msgstr "En la capa %s: %d elemento(s)."
+
 msgid "On: the new outline is added next to the shape; off: it replaces the shape"
 msgstr ""
 "Activado: el nuevo contorno se añade junto a la forma; desactivado: "
@@ -1733,6 +1750,9 @@ msgstr "Abriendo %s"
 
 msgid "Operation"
 msgstr "Operación"
+
+msgid "Order"
+msgstr "Orden"
 
 msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr "Otro lado: el texto va en sentido contrario, al otro lado de la línea"
@@ -2645,6 +2665,13 @@ msgstr "Ahora el diseño se mueve con el cabezal del láser."
 
 msgid "The design stays in place when the laser head moves."
 msgstr "El diseño se queda en su sitio cuando se mueve el cabezal."
+
+msgid ""
+"The elements stay on the bed but are not sent to the laser (as the tick "
+"of the element list)"
+msgstr ""
+"Los elementos se quedan en la mesa pero no se envían al láser (como la "
+"marca de la lista de elementos)"
 
 msgid "The file does not say how large the image is. Set its size."
 msgstr "El archivo no indica el tamaño de la imagen. Indique su tamaño."

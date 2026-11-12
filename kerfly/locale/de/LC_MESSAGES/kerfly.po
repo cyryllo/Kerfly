@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 19:31+0100\n"
+"POT-Creation-Date: 2026-11-12 19:40+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -1303,6 +1303,9 @@ msgstr "Ebenen"
 msgid "Leather 2 mm"
 msgstr "Leder 2 mm"
 
+msgid "Leave out of the job"
+msgstr "Aus dem Auftrag lassen"
+
 msgid "Left of the text"
 msgstr "Links vom Text"
 
@@ -1496,6 +1499,9 @@ msgstr "Den Umriss des Entwurfs abfahren"
 msgid "Move head to design"
 msgstr "Kopf zum Entwurf fahren"
 
+msgid "Move the head here"
+msgstr "Kopf hierher fahren"
+
 msgid "Move the head to the centre of the design"
 msgstr "Kopf zur Mitte des Entwurfs fahren"
 
@@ -1519,6 +1525,13 @@ msgstr "Laserkopf einen Schritt nach links bewegen"
 
 msgid "Move the laser head right by one step"
 msgstr "Laserkopf einen Schritt nach rechts bewegen"
+
+msgid ""
+"Move the laser head to this point of the bed (the design stays where it "
+"is)"
+msgstr ""
+"Den Laserkopf an diese Stelle des Tisches fahren (das Design bleibt, wo "
+"es ist)"
 
 msgid "Move the laser head up by one step"
 msgstr "Laserkopf einen Schritt nach oben bewegen"
@@ -1679,6 +1692,10 @@ msgstr ""
 "anklicken, um einen neuen Umriss um sie zu zeichnen (negativ: innen). "
 "Vorher ausgewählte Formen: Auswahl versetzen."
 
+#, python-format
+msgid "On the layer %s: %d element(s)."
+msgstr "Auf der Ebene %s: %d Element(e)."
+
 msgid "On: the new outline is added next to the shape; off: it replaces the shape"
 msgstr "An: der neue Umriss kommt neben die Form; aus: er ersetzt die Form"
 
@@ -1738,6 +1755,9 @@ msgstr "%s wird geöffnet"
 
 msgid "Operation"
 msgstr "Vorgang"
+
+msgid "Order"
+msgstr "Reihenfolge"
 
 msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr ""
@@ -2654,6 +2674,13 @@ msgstr "Der Entwurf bewegt sich jetzt mit dem Laserkopf."
 
 msgid "The design stays in place when the laser head moves."
 msgstr "Der Entwurf bleibt an seinem Platz, wenn sich der Laserkopf bewegt."
+
+msgid ""
+"The elements stay on the bed but are not sent to the laser (as the tick "
+"of the element list)"
+msgstr ""
+"Die Elemente bleiben auf dem Tisch, werden aber nicht an den Laser "
+"gesendet (wie der Haken in der Elementliste)"
 
 msgid "The file does not say how large the image is. Set its size."
 msgstr "Die Datei gibt die Bildgröße nicht an. Legen Sie die Größe fest."

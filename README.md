@@ -86,6 +86,7 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
 | Element list | Shows what is selected on the bed; click a row (Ctrl / Shift: several) to select on the bed |
 | Zoom | The wheel zooms in; it does not zoom out further than the whole bed |
 | Pan and zoom | Middle or right mouse button drags the view; the wheel zooms |
+| Right click | A menu: on an element its commands (Layer ▸ moves all selected elements to another layer), on the empty bed Move the head here |
 
 On KDE Plasma 5, Alt+drag moves windows by default. Change it in System
 Settings → Window Management → Window Behavior → Window Actions, or use Plasma

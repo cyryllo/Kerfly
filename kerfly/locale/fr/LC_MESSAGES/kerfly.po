@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 19:31+0100\n"
+"POT-Creation-Date: 2026-11-12 19:40+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -1304,6 +1304,9 @@ msgstr "Calques"
 msgid "Leather 2 mm"
 msgstr "Cuir 2 mm"
 
+msgid "Leave out of the job"
+msgstr "Exclure de la tâche"
+
 msgid "Left of the text"
 msgstr "À gauche du texte"
 
@@ -1497,6 +1500,9 @@ msgstr "Parcourir le contour du dessin"
 msgid "Move head to design"
 msgstr "Déplacer la tête vers le dessin"
 
+msgid "Move the head here"
+msgstr "Déplacer la tête ici"
+
 msgid "Move the head to the centre of the design"
 msgstr "Déplacer la tête au centre du dessin"
 
@@ -1520,6 +1526,11 @@ msgstr "Déplacer la tête d'un pas vers la gauche"
 
 msgid "Move the laser head right by one step"
 msgstr "Déplacer la tête d'un pas vers la droite"
+
+msgid ""
+"Move the laser head to this point of the bed (the design stays where it "
+"is)"
+msgstr "Déplacer la tête laser à ce point du plateau (le dessin reste à sa place)"
 
 msgid "Move the laser head up by one step"
 msgstr "Déplacer la tête d'un pas vers le haut"
@@ -1680,6 +1691,10 @@ msgstr ""
 "pour dessiner un nouveau contour autour (négative : à l'intérieur). "
 "Formes sélectionnées avant : Décaler la sélection."
 
+#, python-format
+msgid "On the layer %s: %d element(s)."
+msgstr "Sur le calque %s : %d élément(s)."
+
 msgid "On: the new outline is added next to the shape; off: it replaces the shape"
 msgstr ""
 "Activé : le nouveau contour s'ajoute à côté de la forme ; désactivé : il "
@@ -1741,6 +1756,9 @@ msgstr "Ouverture de %s"
 
 msgid "Operation"
 msgstr "Opération"
+
+msgid "Order"
+msgstr "Ordre"
 
 msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr "Autre côté : le texte va dans l'autre sens, de l'autre côté de la ligne"
@@ -2656,6 +2674,13 @@ msgstr "Le dessin se déplace maintenant avec la tête du laser."
 
 msgid "The design stays in place when the laser head moves."
 msgstr "Le dessin reste en place quand la tête se déplace."
+
+msgid ""
+"The elements stay on the bed but are not sent to the laser (as the tick "
+"of the element list)"
+msgstr ""
+"Les éléments restent sur le plateau mais ne sont pas envoyés au laser "
+"(comme la case de la liste des éléments)"
 
 msgid "The file does not say how large the image is. Set its size."
 msgstr "Le fichier n'indique pas la taille de l'image. Indiquez sa taille."

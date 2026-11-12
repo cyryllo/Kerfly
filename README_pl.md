@@ -90,6 +90,7 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
 | Lista elementów | Pokazuje, co jest zaznaczone na stole; klik w wiersz (Ctrl / Shift: kilka) zaznacza na stole |
 | Powiększenie | Kółko myszy przybliża; nie oddala bardziej niż cały stół |
 | Przesuwanie i powiększanie widoku | Środkowy albo prawy przycisk myszy przesuwa widok; kółko przybliża |
+| Prawy przycisk (kliknięcie) | Menu: na elemencie jego polecenia (Warstwa ▸ przenosi zaznaczone elementy na inną warstwę), na pustym stole Przesuń głowicę tutaj |
 
 W KDE Plasma 5 Alt+przeciąganie domyślnie przesuwa okna. Zmienisz to w
 Ustawieniach systemowych → Zarządzanie oknami → Zachowanie okien → Działania

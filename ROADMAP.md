@@ -168,7 +168,7 @@ the right mouse button only pans the view. K40 Whisperer had no menu there
   elements with their layers, also from one project to another; Paste puts
   them at the mouse, Paste in place where they were.
 - [x] **Select all** (Ctrl+A), **Deselect** (Esc on the bed; Ctrl+Shift+A, as Esc stops a running job), as in Inkscape.
-- [ ] **Right-click menu on an element or the selection** (a right-drag still
+- [x] **Right-click menu on an element or the selection** (a right-drag still
   pans the view; a right-click without moving opens the menu):
   - Copy, Cut, Paste, Duplicate, Delete;
   - Group / Ungroup;
@@ -181,10 +181,10 @@ the right mouse button only pans the view. K40 Whisperer had no menu there
   - Fill with a pattern / Remove the pattern, Text on a path, Edit nodes;
   - Centre on the bed;
   - Leave out of the job (the tick of the element list).
-- [ ] **Right-click menu on the empty bed:** **Move the head here** (laser
+- [x] **Right-click menu on the empty bed:** **Move the head here** (laser
   connected; what K40 Whisperer's right-drag did), Paste, Select all, Fit
   view, Grid on / off.
-- [ ] Release test steps: every menu entry used with a real right-click.
+- [x] Release test steps: Layer ▸, Leave out of the job and Move the head here with real right clicks (the other entries are the Edit menu's commands, used there).
 
 ## Drawing tools
 

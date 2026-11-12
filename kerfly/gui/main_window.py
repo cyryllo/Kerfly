@@ -11,7 +11,7 @@ from dataclasses import replace
 
 from PySide6.QtCore import QItemSelectionModel, QSize, Qt, QTimer
 from PySide6.QtCore import QLocale
-from PySide6.QtGui import QAction, QColor, QKeySequence
+from PySide6.QtGui import QAction, QColor, QIcon, QKeySequence, QPixmap
 from PySide6.QtGui import QActionGroup
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QDockWidget, QDoubleSpinBox, QFileDialog,
                                QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
@@ -176,6 +176,7 @@ class MainWindow(QMainWindow):
         self.preview.signals.node_selection.connect(self._node_selection_changed)
         self.preview.signals.measured.connect(self._preview_measured)
         self.preview.signals.shape_picked.connect(self._shape_picked)
+        self.preview.signals.context_menu.connect(self._bed_context_menu)
         # what the Fill tool gives to the shapes it is clicked on
         self.fill_defaults = ShapeSpec(kind="rectangle", fill_pattern="lines", fill_spacing=2.0)
         # what the Living hinge tool gives to the shapes it is clicked on
@@ -295,6 +296,7 @@ class MainWindow(QMainWindow):
         self.act_offset = self._action(_("&Offset"), lambda: self.set_tool("offset"), None,
                                        _("Offset: a new outline around a shape (or inside it), a set distance "
                                          "away"))
+        self.act_offset.setIcon(icons.tabler("box-padding"))
         self.act_mirror_h = self._action(_("&Mirror horizontally"), lambda: self.mirror_selected(True), "Ctrl+Shift+H",
                                          _("Flip the selected elements left to right"))
         self.act_mirror_v = self._action(_("Mirror &vertically"), lambda: self.mirror_selected(False), "Ctrl+Shift+V",
@@ -2675,6 +2677,135 @@ class MainWindow(QMainWindow):
         self.selected = None
         self._multi = []
         self._layout_changed()
+
+    # ---- right-click menu on the bed ----------------------------------------
+    def _element_at(self, scene_point):
+        """The topmost element drawn at a point of the bed view, or None."""
+        from kerfly.gui.preview import ElementItem
+        for item in self.preview.scene().items(scene_point):
+            while item is not None and not isinstance(item, ElementItem):
+                item = item.parentItem()
+            if item is not None and item.element in self.elements:
+                return item.element
+        return None
+
+    def _bed_context_menu(self, scene_point, global_pos):
+        """Right click on the bed: the commands for the element under the pointer
+        (it is selected first, unless it is already among the selected ones), or
+        for the empty bed. The menu does not block the window (popup)."""
+        from PySide6.QtWidgets import QMenu
+        if self.worker is not None:
+            return
+        menu = QMenu(self)
+        menu.setObjectName("bed_context_menu")
+        e = self._element_at(scene_point)
+        if e is not None:
+            if e not in self._selection():
+                self.preview.select_element(e)
+                self.selected = e
+            chosen = self._selection()
+            for a in (self.act_cut, self.act_copy, self.act_paste, self.act_duplicate, self.act_delete):
+                menu.addAction(a)
+            menu.addSeparator()
+            if len(chosen) > 1:
+                menu.addAction(self.act_group)
+            if any(c.group for c in chosen):
+                menu.addAction(self.act_ungroup)
+            self._layer_submenu(menu, chosen)
+            if len(chosen) > 1:
+                sub = menu.addMenu(_("Combine shapes"))
+                for a in self.act_boolean.values():
+                    sub.addAction(a)
+            menu.addAction(self.act_offset)
+            sub = menu.addMenu(_("Order"))
+            for a in self.act_order.values():
+                sub.addAction(a)
+            if len(chosen) > 1:
+                sub = menu.addMenu(_("Align and distribute"))
+                for a in list(self.act_align.values()) + [self.act_distribute_h, self.act_distribute_v]:
+                    sub.addAction(a)
+            menu.addSeparator()
+            for a in (self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v):
+                menu.addAction(a)
+            menu.addSeparator()
+            menu.addAction(self.tool_actions["fill"])
+            if len(chosen) == 1 and e.shape is not None:
+                menu.addAction(self.tool_actions["nodes"])
+            if len(chosen) == 2:
+                menu.addAction(self.act_text_path)
+            menu.addAction(self.act_center)
+            out = menu.addAction(_("Leave out of the job"))
+            out.setCheckable(True)
+            out.setChecked(all(not c.visible for c in chosen))
+            out.setStatusTip(_("The elements stay on the bed but are not sent to the laser (as the tick of the "
+                               "element list)"))
+            out.triggered.connect(lambda checked, c=chosen: self._leave_out(c, checked))
+        else:
+            here = menu.addAction(icons.tabler("current-location"), _("Move the head here"))
+            here.setStatusTip(_("Move the laser head to this point of the bed (the design stays where it is)"))
+            try:
+                bed = self._bed_point(scene_point)
+            except ValueError:
+                bed = None
+            here.setEnabled(self.laser.connected and bed is not None)
+            here.triggered.connect(lambda _c=False, p=bed: self._move_head_here(p))
+            menu.addSeparator()
+            for a in (self.act_paste, self.act_select_all, self.act_fit, self.act_snap):
+                menu.addAction(a)
+        self._context_menu = menu                     # for the tests
+        menu.aboutToHide.connect(menu.deleteLater)    # a new menu every time: nothing left behind
+        menu.popup(global_pos)
+
+    def _layer_submenu(self, menu, chosen):
+        """Layer ▸ the layers of the kinds the selected elements have (one click moves them)."""
+        kinds = [k for k in (RASTER, ENGRAVE, CUT, GCODE) if any(part_present(c.design, k) for c in chosen)]
+        if not kinds:
+            return
+        sub = menu.addMenu(_("Layer"))
+        sub.setObjectName("layer_submenu")
+        for n, kind in enumerate(kinds):
+            if n:
+                sub.addSeparator()
+            sub.addSection(_(LAYER_KIND_NAMES[kind]))
+            current = {layer_of(c, kind, self.layers).id for c in chosen if part_present(c.design, kind)}
+            for layer in [l for l in self.layers if l.kind == kind]:
+                pix = QPixmap(14, 14)
+                pix.fill(QColor(layer.color))
+                a = sub.addAction(QIcon(pix), layer.name or _(LAYER_KIND_NAMES[kind]))
+                a.setCheckable(True)
+                a.setChecked(current == {layer.id})
+                a.triggered.connect(lambda _c=False, l=layer, c=chosen: self._move_to_layer(c, l))
+
+    def _move_to_layer(self, elements, layer):
+        """Put the parts of this layer's kind of the elements on the layer (one undo step)."""
+        movable = [e for e in elements if part_present(e.design, layer.kind)]
+        if not movable or self.worker is not None:
+            return
+        self._checkpoint()
+        default = self._default_layer[layer.kind].id
+        for e in movable:
+            if layer.id == default:
+                e.layers.pop(layer.kind, None)
+            else:
+                e.layers[layer.kind] = layer.id
+        self._layer_cache.clear()
+        self._rebuild_layers_panel()
+        self._update_layer_assignment()
+        self.refresh_preview()
+        self.status(_("On the layer %s: %d element(s).") % (layer.name, len(movable)))
+
+    def _leave_out(self, elements, out):
+        self._checkpoint()
+        for e in elements:
+            e.visible = not out
+        self._layout_changed()
+        self._update_element_list()
+
+    def _move_head_here(self, bed_point):
+        bed_w, bed_h = config.bed_size_inches(self.values)
+        x = min(max(bed_point[0], 0.0), bed_w)
+        y = max(min(bed_point[1], 0.0), -bed_h)
+        self.move_head_to(x, y, follow=False)
 
     # ---- clipboard ----------------------------------------------------------
     def copy_selected(self):

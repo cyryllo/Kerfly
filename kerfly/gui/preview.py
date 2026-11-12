@@ -11,7 +11,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 import math
 
 from PIL import ImageOps
-from PySide6.QtCore import QObject, QPointF, QRectF, Qt, Signal
+from PySide6.QtCore import QObject, QPoint, QPointF, QRectF, Qt, Signal
 from PySide6.QtGui import QBrush, QColor, QImage, QPainter, QPainterPath, QPen, QPixmap, QTransform
 from PySide6.QtWidgets import (QGraphicsEllipseItem, QGraphicsItem, QGraphicsLineItem, QGraphicsPathItem,
                                QGraphicsSimpleTextItem,
@@ -76,6 +76,7 @@ class ViewSignals(QObject):
     edit_nodes = Signal(object)                   # element double-clicked with the select tool
     node_selection = Signal(int)                  # number of selected nodes in the node tool
     shape_picked = Signal(str, QPointF)          # fill / text-on-path / hinge tool clicked here (scene mm)
+    context_menu = Signal(QPointF, QPoint)        # right click without moving: scene mm, screen position
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -774,6 +775,8 @@ class PreviewView(QGraphicsView):
         if event.button() in (Qt.MiddleButton, Qt.RightButton):
             self._user_zoomed = True             # panned: keep this view when the window is resized
             self._panning = event.position()
+            # a right click that does not move opens the menu (a right drag pans the view)
+            self._right_press = event.position() if event.button() == Qt.RightButton else None
             self.setCursor(Qt.ClosedHandCursor)
             event.accept()
             return
@@ -864,6 +867,12 @@ class PreviewView(QGraphicsView):
             return
         if self._panning is not None and event.button() in (Qt.MiddleButton, Qt.RightButton):
             self._panning = None
+            press = getattr(self, "_right_press", None)
+            self._right_press = None
+            if event.button() == Qt.RightButton and press is not None \
+                    and (event.position() - press).manhattanLength() < 5:
+                pos = event.position().toPoint()
+                self.signals.context_menu.emit(self.mapToScene(pos), self.viewport().mapToGlobal(pos))
             self.unsetCursor()
             event.accept()
             return

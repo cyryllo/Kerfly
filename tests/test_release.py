@@ -46,6 +46,7 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QColorDialog, QCom
                                QPlainTextEdit, QSpinBox, QToolButton)
 
 from kerfly.core import config  # noqa: E402
+from kerfly.core.layers import layer_of  # noqa: E402
 from kerfly.gui import truth  # noqa: E402
 from kerfly.gui.main_window import MainWindow  # noqa: E402
 from fakes import FakeK40  # noqa: E402
@@ -211,6 +212,31 @@ class Session:
             QTest.mouseDClick(self.vp, Qt.LeftButton, mods, p)
         else:
             QTest.mouseClick(self.vp, Qt.LeftButton, mods, p)
+        self.settle()
+
+    def right_click_bed(self, x, y):
+        p = self.pos(x, y)
+        QTest.mouseMove(self.vp, p)
+        QTest.mouseClick(self.vp, Qt.RightButton, Qt.NoModifier, p)
+        self.settle()
+
+    def menu_pick(self, menu, *texts):
+        """Click an entry of an open menu, through its submenus (by their texts)."""
+        for n, text in enumerate(texts):
+            action = next((a for a in menu.actions()
+                           if not a.isSeparator() and a.text().replace("&", "") == text), None)   # not a heading
+            if action is None:
+                raise RuntimeError("the menu has no '%s' (%s)" % (text, [a.text() for a in menu.actions()]))
+            r = menu.actionGeometry(action)
+            QTest.mouseMove(menu, r.center())
+            self.settle(4, 0.08)                         # submenus open after a short hover
+            if n < len(texts) - 1:
+                if not action.menu().isVisible():
+                    QTest.mouseClick(menu, Qt.LeftButton, Qt.NoModifier, r.center())
+                    self.settle(4, 0.05)
+                menu = action.menu()
+            else:
+                QTest.mouseClick(menu, Qt.LeftButton, Qt.NoModifier, r.center())
         self.settle()
 
     def key(self, key, mods=Qt.NoModifier, widget=None):
@@ -895,6 +921,22 @@ def part_layers(s):
     s.step("Layer list above the bed: the new layer", lambda: s.pick(combo(), data=new.id),
            check=lambda: (w.selected is not None and w.selected.layers.get("cut") == new.id,
                           "layers %s" % (w.selected.layers if w.selected else None)))
+    # the right-click menu: another layer, left out of the job and back
+    first = [l for l in w.layers if l.kind == "cut"][0]
+    shape = w.elements[0]
+
+    def right_menu(*texts):
+        s.right_click_bed(x, y)
+        s.menu_pick(w._context_menu, *texts)
+    s.step("right click on the shape → Layer → the first cut layer",
+           lambda: right_menu(tr_("Layer"), first.name or tr_("Vector cut")),
+           check=lambda: (layer_of(shape, "cut", w.layers) is first, "layers %s" % shape.layers))
+    s.step("right click on the shape → Layer → the new cut layer", lambda: right_menu(tr_("Layer"), new.name),
+           check=lambda: (layer_of(shape, "cut", w.layers) is new, "layers %s" % shape.layers))
+    s.step("right click on the shape → Leave out of the job", lambda: right_menu(tr_("Leave out of the job")),
+           check=lambda: (not shape.visible, "still in the job"))
+    s.step("right click on the shape → Leave out of the job (off again)",
+           lambda: right_menu(tr_("Leave out of the job")), check=lambda: (shape.visible, "still left out"))
     row = lambda: panel.rows[new.id]
     s.covered_widgets |= {"layer speed", "layer passes", "layer kerf", "layer name", "layer colour", "layer tick", "layer delete",
                           "layer add"}
@@ -989,6 +1031,16 @@ def part_view_and_laser(s):
     s.step("Go to X/Y: type and Go", lambda: (s.type_number(w.goto_x, 30), s.type_number(w.goto_y, 20), s.click(w.btn_goto)),
            change=False, check=lambda: (abs(w.head[0] * MM - 30) < 0.1 and abs(w.head[1] * MM + 20) < 0.1, w.head))
     s.step("Laser → Go to X/Y position (Ctrl+Alt+G)", lambda: s.trigger(w.act_goto, via="key"), change=False)
+    # right click on the empty bed: Move the head here (near a corner of the bed, never under a design)
+    bed_w_in, bed_h_in = config.bed_size_inches(w.values)
+    spot = (bed_w_in * 25.4 - 4.0, bed_h_in * 25.4 - 4.0)          # scene mm (home in the upper left)
+
+    def head_here():
+        s.right_click_bed(*spot)
+        s.menu_pick(w._context_menu, tr_("Move the head here"))
+    s.step("right click on the empty bed → Move the head here", head_here, change=None,
+           check=lambda: (abs(w.head[0] - spot[0] / 25.4) < 0.02 and abs(w.head[1] + spot[1] / 25.4) < 0.02,
+                          "head %s, wanted %s" % (w.head, (spot[0] / 25.4, -spot[1] / 25.4))))
     s.step("Unlock rail (button)", lambda: s.click(w.btn_unlock), change=False)
     s.step("Laser → Unlock rail", lambda: s.trigger(w.act_unlock, via="menu"), change=False)
     s.step("Laser → Unfreeze laser", lambda: s.trigger(w.act_unfreeze, via="menu"), change=False)

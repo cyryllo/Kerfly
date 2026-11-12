@@ -94,6 +94,13 @@ zapamiętują się od razu, bez zapisywania.
 
 Mysz na stole: kółko przybliża i oddala (nie dalej niż cały stół); środkowy
 albo prawy przycisk przesuwa widok; **Ctrl+0** dopasowuje stół do okna.
+**Kliknięcie prawym przyciskiem** (bez przeciągania) otwiera menu: na elemencie
+jego polecenia (kopiuj, wytnij, wklej, duplikuj, usuń, grupuj, **Warstwa** ▸
+przenosi wszystkie zaznaczone elementy naraz na inną warstwę, łączenie
+kształtów, odsunięcie, kolejność, wyrównanie, obrót, odbicie, wypełnienie,
+edycja węzłów, wyśrodkowanie, pominięcie w zadaniu); na pustym stole
+**Przesuń głowicę tutaj** (gdy laser jest podłączony), wklej, zaznacz
+wszystko, dopasuj widok, siatka.
 
 <a id="s3"></a>
 

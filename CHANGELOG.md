@@ -23,6 +23,13 @@ Version numbers:
   groups, layers go along by name). **Select all** (Ctrl+A) and **Deselect**
   (Esc on the bed, Ctrl+Shift+A). In the Edit menu and a new **Clipboard**
   group of the toolbar, together with Duplicate and Delete.
+- **Right-click menu** on the bed (a right click without dragging; a right
+  drag still pans the view). On an element: its commands, with **Layer ▸**
+  to move all the selected elements to another layer in one click (for
+  example each design on its own raster layer, issue #2), combine shapes,
+  order, align, turn, mirror, fill, edit nodes, **Leave out of the job**. On
+  the empty bed: **Move the head here** (the design stays where it is),
+  paste, select all, fit, grid.
 
 ## 1.3.3 (2026-11-12)
 
