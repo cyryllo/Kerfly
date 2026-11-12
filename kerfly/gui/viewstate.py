@@ -13,7 +13,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import os
 
-KEYS = ("grid_mm", "grid_last_mm", "snap_objects", "follow_head", "language",
+KEYS = ("grid_mm", "grid_last_mm", "snap_objects", "follow_head", "language", "kind_buttons",
         "check_updates", "update_skip", "update_last")     # new versions: on / off, skipped, last check
 
 

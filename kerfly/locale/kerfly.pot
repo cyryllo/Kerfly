@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 19:40+0100\n"
+"POT-Creation-Date: 2026-11-12 20:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -592,6 +592,9 @@ msgstr ""
 msgid "Cut inside shapes first"
 msgstr ""
 
+msgid "Cut only"
+msgstr ""
+
 msgid "Cut open"
 msgstr ""
 
@@ -789,6 +792,9 @@ msgstr ""
 msgid "Engrave bottom to top"
 msgstr ""
 
+msgid "Engrave only"
+msgstr ""
+
 msgid "Engrave outline"
 msgstr ""
 
@@ -804,6 +810,9 @@ msgid ""
 msgstr ""
 
 msgid "Engrave the values"
+msgstr ""
+
+msgid "Engrave, Outline and Cut buttons next to Start (each runs only its layers)"
 msgstr ""
 
 msgid "Error correction"
@@ -1634,6 +1643,9 @@ msgstr ""
 msgid "Outer ring"
 msgstr ""
 
+msgid "Outline only"
+msgstr ""
+
 msgid "Outside the laser bed!"
 msgstr ""
 
@@ -1986,6 +1998,15 @@ msgid "Ruler outline"
 msgstr ""
 
 msgid "Ruler: a mark every millimetre, numbers every centimetre"
+msgstr ""
+
+msgid "Run only the ticked cut layers"
+msgstr ""
+
+msgid "Run only the ticked outline (vector engrave) layers"
+msgstr ""
+
+msgid "Run only the ticked raster engrave layers"
 msgstr ""
 
 msgid "SVG files"

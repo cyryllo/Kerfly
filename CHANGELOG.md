@@ -23,6 +23,12 @@ Version numbers:
   groups, layers go along by name). **Select all** (Ctrl+A) and **Deselect**
   (Esc on the bed, Ctrl+Shift+A). In the Edit menu and a new **Clipboard**
   group of the toolbar, together with Duplicate and Delete.
+- **Engrave only, Outline only, Cut only**: to run one kind of work at a
+  time (for example engrave, check, then cut), each runs all the ticked
+  layers of its kind with their own settings. Small buttons above Start,
+  always visible also on small screens, switched on in Settings → View (off
+  by default); also in the Laser menu. Their tooltips show the time of their
+  part.
 - **Right-click menu** on the bed (a right click without dragging; a right
   drag still pans the view). On an element: its commands, with **Layer ▸**
   to move all the selected elements to another layer in one click (for

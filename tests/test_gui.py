@@ -1731,6 +1731,26 @@ def main():
     rw._dirty = False
     rw.close()
 
+    # 52g. Engrave / Outline / Cut only: hidden by default (Settings → View), below the scrolling panel
+    # with Start, greyed out without a ticked layer of that kind that has something on it
+    kw_ = make_window(grid_mm="0")
+    hidden = not kw_.kind_row.isVisibleTo(kw_)
+    kw_.values["kind_buttons"] = "1"
+    kw_.kind_row.setVisible(True)
+    kw_._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)       # a cut shape
+    app.processEvents()
+    states = {k: a.isEnabled() for k, a in kw_.act_run_kind.items()}
+    pinned_k = not kw_.panel_scroll.isAncestorOf(kw_.kind_row)
+    cut_layer = [l for l in kw_.layers if l.kind == "cut"][0]
+    cut_layer.enabled = False
+    kw_._update_bed_check()
+    unticked = not kw_.act_run_kind["cut"].isEnabled()
+    check("Engrave / Outline / Cut only: hidden by default, pinned with Start, greyed out without data",
+          hidden and states == {"raster": False, "engrave": False, "cut": True} and pinned_k and unticked,
+          "(%s)" % [hidden, states, pinned_k, unticked])
+    kw_._dirty = False
+    kw_.close()
+
     # 53. Linux: connecting fails for want of permission -> Kerfly offers the USB rule (pkexec); with
     # a rule already there, Laser → Allow USB access only says to plug the laser in again
     from kerfly.core import udev as _udev

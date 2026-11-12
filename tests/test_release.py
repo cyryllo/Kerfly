@@ -45,6 +45,8 @@ from PySide6.QtWidgets import (QAbstractButton, QApplication, QColorDialog, QCom
                                QDoubleSpinBox, QFileDialog, QFontComboBox, QMenu, QMessageBox,
                                QPlainTextEdit, QSpinBox, QToolButton)
 
+from dataclasses import replace  # noqa: E402
+
 from kerfly.core import config  # noqa: E402
 from kerfly.core.layers import layer_of  # noqa: E402
 from kerfly.gui import truth  # noqa: E402
@@ -1051,6 +1053,50 @@ def part_view_and_laser(s):
     s.step("Trace boundary (button)", lambda: (s.click(w.btn_trace), s.wait(lambda: w.worker is None)), change=False)
     s.step("Laser → Trace boundary", lambda: (s.trigger(w.act_trace, via="menu"), s.wait(lambda: w.worker is None)),
            change=False)
+    # Engrave / Outline / Cut only: switched on in Settings → View, then each kind on its own
+    def kind_buttons_on(dlg):
+        from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QTabWidget
+        tabs = dlg.findChild(QTabWidget)
+        index = next(i for i in range(tabs.count()) if tabs.tabText(i).replace("&", "") == tr_("View"))
+        QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+        s.settle()
+        box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == "kind_buttons")
+        if not box.isChecked():
+            s.click(box)
+        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+    s.expect_dialog("settings: kind buttons", kind_buttons_on)
+    s.step("Settings → View: Engrave, Outline and Cut buttons next to Start",
+           lambda: s.trigger(w.act_settings, via="menu"), change=False, undo=False,
+           check=lambda: (w.kind_row.isVisible(), "the buttons are not shown"))
+    from kerfly.core.layers import build_layers_job as _blj
+    from kerfly.core import job as _job
+
+    def only_kind(kind, via):
+        before = len(s.fake.sent)
+        if via == "button":
+            s.click(w.kind_buttons[kind])
+        else:
+            s.trigger(w.act_run_kind[kind], via="menu")
+        s.wait(lambda: w.worker is None)
+        return before
+
+    def sent_is_only(kind, before):
+        layers = [replace(l, enabled=l.enabled and l.kind == kind) for l in w.layers]
+        try:
+            chunks, _o = _blj(w.elements, layers, w.job_settings())
+        except _job.NoLaserData:
+            return False, "no %s data to compare" % kind
+        got = b"".join(bytes(data) for _p, data in s.fake.sent[before:])
+        want = b"".join(bytes(c.data) for c in chunks)
+        return got == want, "sent %d bytes, only-%s job %d bytes" % (len(got), kind, len(want))
+    for kind, via in (("raster", "button"), ("engrave", "menu"), ("cut", "button")):
+        if not w.act_run_kind[kind].isEnabled():
+            s.fail("%s only" % kind, "nothing of this kind on the bed at this point of the session")
+            continue
+        mark = {}
+        s.step("%s only (%s): only these layers go to the laser" % (kind, via),
+               lambda k=kind, v=via, m=mark: m.setdefault("before", only_kind(k, v)), change=False,
+               check=lambda k=kind, m=mark: sent_is_only(k, m.get("before", 0)))
     sent = len(s.fake.sent)
     s.step("Start (F9): the job goes to the laser", lambda: (s.trigger(w.act_start, via="key"), s.wait(lambda: w.worker is None)),
            change=False, check=lambda: (len(s.fake.sent) > sent, "nothing sent: %s" % w.statusBar().currentMessage()))

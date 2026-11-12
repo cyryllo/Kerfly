@@ -402,6 +402,11 @@ out of the job.
    at the bottom of the left panel, also when it scrolls on a small screen.
    The mouse wheel changes a number field or a list only after you click
    into it, so scrolling the panel cannot change a speed by accident.
+   To run one kind of work at a time (for example engrave first, check it,
+   then cut), switch on **Engrave, Outline and Cut buttons next to Start** in
+   Settings → View: **Engrave only**, **Outline only** and **Cut only** run all
+   the ticked layers of that kind, each with its own settings (also in the
+   Laser menu). Their tooltips show how long their part takes.
 5. The progress bar at the bottom shows the percentage of the current step
    (preparing the data, sending it to the laser).
 
@@ -428,7 +433,7 @@ EGV file.
 | Machine | controller board, units, bed size, home in the upper right corner, home when connecting, unlock the rail and beep after a job, X/Y scale factors, M3 power per operation and maximum power |
 | Raster | halftone (dither) and its resolution, invert colours, mirror, rotate 90°, engrave bottom to top, scan line step, levels curve |
 | Vector | cut inside shapes first, boundary trace with the laser on, as a rectangle or along the outline, trace gap and speed |
-| View | snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu) |
+| View | snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu), Engrave / Outline / Cut buttons next to Start |
 | Rotary | rotary attachment, its scale factor and rapid speed |
 | Advanced | language (after a restart), checking for new versions, Inkscape, reduced memory use, USB data preparation, waiting for the laser, USB timeout and retries |
 

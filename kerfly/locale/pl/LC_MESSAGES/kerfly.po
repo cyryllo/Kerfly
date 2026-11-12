@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 19:40+0100\n"
+"POT-Creation-Date: 2026-11-12 20:13+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -623,6 +623,9 @@ msgstr "Cięcie"
 msgid "Cut inside shapes first"
 msgstr "Najpierw wycinaj kształty wewnętrzne"
 
+msgid "Cut only"
+msgstr "Tylko cięcie"
+
 msgid "Cut open"
 msgstr "Rozetnij"
 
@@ -836,6 +839,9 @@ msgstr "Puste moduły wokół kodu (skanery ich potrzebują)"
 msgid "Engrave bottom to top"
 msgstr "Graweruj od dołu do góry"
 
+msgid "Engrave only"
+msgstr "Tylko grawer"
+
 msgid "Engrave outline"
 msgstr "Obrys"
 
@@ -852,6 +858,11 @@ msgstr "Wygraweruj prędkości nad kolumnami, a moce lub przejścia obok rzędó
 
 msgid "Engrave the values"
 msgstr "Wygraweruj wartości"
+
+msgid "Engrave, Outline and Cut buttons next to Start (each runs only its layers)"
+msgstr ""
+"Przyciski Grawer, Obrys i Cięcie przy Start (każdy wykonuje tylko swoje "
+"warstwy)"
 
 msgid "Error correction"
 msgstr "Korekcja błędów"
@@ -1746,6 +1757,9 @@ msgstr "Brak pamięci."
 msgid "Outer ring"
 msgstr "Pierścień zewnętrzny"
 
+msgid "Outline only"
+msgstr "Tylko obrys"
+
 msgid "Outside the laser bed!"
 msgstr "Poza stołem lasera!"
 
@@ -2120,6 +2134,15 @@ msgstr "Obrys linijki"
 
 msgid "Ruler: a mark every millimetre, numbers every centimetre"
 msgstr "Linijka: kreska co milimetr, liczby co centymetr"
+
+msgid "Run only the ticked cut layers"
+msgstr "Wykonaj tylko zaznaczone warstwy cięcia"
+
+msgid "Run only the ticked outline (vector engrave) layers"
+msgstr "Wykonaj tylko zaznaczone warstwy obrysu (graweru wektorowego)"
+
+msgid "Run only the ticked raster engrave layers"
+msgstr "Wykonaj tylko zaznaczone warstwy graweru rastrowego"
 
 msgid "SVG files"
 msgstr "Pliki SVG"

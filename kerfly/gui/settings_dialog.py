@@ -50,6 +50,8 @@ TABS = [
         ("grid_mm", N_("Snap grid (mm, 0 = off)"), "float", (0, 100, 1, None)),
         ("snap_objects", N_("Snap to other objects"), "bool", None),
         ("follow_head", N_("The design follows the laser head"), "bool", None),
+        ("kind_buttons", N_("Engrave, Outline and Cut buttons next to Start (each runs only its layers)"),
+         "bool", None),
     ]),
     (N_("Rotary"), [
         ("rotary", N_("Rotary attachment in use"), "bool", None),
@@ -100,6 +102,7 @@ class SettingsDialog(QDialog):
             grid.setHorizontalSpacing(8)
             for row, (key, label, kind, opt) in enumerate(fields):
                 widget, getter = self._make_field(key, kind, opt, len_unit, speed_unit)
+                widget.setProperty("setting_key", key)      # which setting it is (tests find it by this)
                 if kind == "bool":
                     widget.setText(_(label))          # the text sits right next to the box
                     grid.addWidget(widget, row, 0, 1, 3)

@@ -408,7 +408,12 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
    zadaniem. Te przyciski zostają na dole lewego panelu, także gdy na małym
    ekranie panel się przewija. Rolka myszy zmienia pole liczbowe albo listę
    dopiero po kliknięciu w nie, więc przewijanie panelu nie zmieni
-   przypadkiem prędkości.
+   przypadkiem prędkości. Żeby wykonać jeden rodzaj pracy naraz (np. najpierw
+   grawer, sprawdzenie, potem cięcie), włącz **Przyciski Grawer, Obrys i
+   Cięcie przy Start** w Ustawienia → Widok: **Tylko grawer**, **Tylko obrys**
+   i **Tylko cięcie** wykonują wszystkie zaznaczone warstwy danego rodzaju,
+   każdą z jej ustawieniami (są też w menu Laser). Podpowiedź przycisku
+   pokazuje, ile potrwa jego część.
 5. Pasek postępu na dole pokazuje procent bieżącego kroku (przygotowanie
    danych, wysyłanie do lasera).
 
@@ -435,7 +440,7 @@ lasera…** wysyła istniejący plik EGV.
 | Maszyna | płyta sterująca, jednostki, rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, odblokowanie osi i sygnał po zadaniu, współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 |
 | Raster | półtony (dithering) i ich rozdzielczość, odwrócenie kolorów, odbicie, obrót o 90°, grawer od dołu do góry, odstęp linii skanowania, krzywa poziomów |
 | Wektory | najpierw kształty wewnętrzne, objazd konturu z włączonym laserem, jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
-| Widok | rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok) |
+| Widok | rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok), przyciski Grawer / Obrys / Cięcie przy Start |
 | Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów |
 | Zaawansowane | język (po ponownym uruchomieniu), sprawdzanie nowych wersji, Inkscape, mniejsze zużycie pamięci, przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |
 

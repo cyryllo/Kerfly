@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 19:40+0100\n"
+"POT-Creation-Date: 2026-11-12 20:13+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -631,6 +631,9 @@ msgstr "Schneiden"
 msgid "Cut inside shapes first"
 msgstr "Innere Formen zuerst schneiden"
 
+msgid "Cut only"
+msgstr "Nur schneiden"
+
 msgid "Cut open"
 msgstr "Auftrennen"
 
@@ -846,6 +849,9 @@ msgstr "Leere Module um den Code (Scanner brauchen etwas Rand)"
 msgid "Engrave bottom to top"
 msgstr "Von unten nach oben gravieren"
 
+msgid "Engrave only"
+msgstr "Nur gravieren"
+
 msgid "Engrave outline"
 msgstr "Kontur gravieren"
 
@@ -864,6 +870,11 @@ msgstr ""
 
 msgid "Engrave the values"
 msgstr "Werte gravieren"
+
+msgid "Engrave, Outline and Cut buttons next to Start (each runs only its layers)"
+msgstr ""
+"Schaltflächen Gravieren, Kontur und Schneiden neben Start (jede führt nur"
+" ihre Ebenen aus)"
 
 msgid "Error correction"
 msgstr "Fehlerkorrektur"
@@ -1770,6 +1781,9 @@ msgstr "Nicht genügend Speicher."
 msgid "Outer ring"
 msgstr "Äußerer Ring"
 
+msgid "Outline only"
+msgstr "Nur Kontur"
+
 msgid "Outside the laser bed!"
 msgstr "Außerhalb der Arbeitsfläche!"
 
@@ -2148,6 +2162,15 @@ msgstr "Linealumriss"
 
 msgid "Ruler: a mark every millimetre, numbers every centimetre"
 msgstr "Lineal: ein Strich je Millimeter, Zahlen je Zentimeter"
+
+msgid "Run only the ticked cut layers"
+msgstr "Nur die angehakten Schneideebenen ausführen"
+
+msgid "Run only the ticked outline (vector engrave) layers"
+msgstr "Nur die angehakten Kontur-Ebenen (Vektorgravur) ausführen"
+
+msgid "Run only the ticked raster engrave layers"
+msgstr "Nur die angehakten Rastergravur-Ebenen ausführen"
 
 msgid "SVG files"
 msgstr "SVG-Dateien"

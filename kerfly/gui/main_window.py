@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QDock
                                QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
                                QListWidget, QListWidgetItem, QMainWindow, QMessageBox, QProgressBar,
                                QPushButton, QScrollArea, QSpinBox, QTabWidget, QToolBar, QToolButton,
-                               QVBoxLayout, QWidget, QFrame)
+                               QVBoxLayout, QWidget, QFrame, QSizePolicy)
 
 from kerfly import __version__
 from kerfly.core import config, egvfile, job, loaders
@@ -44,6 +44,7 @@ from kerfly.gui.tool_options import (KIND_NAMES, NEW_KIND_TITLES, ToolOptionsBar
 from kerfly.gui.preview import PreviewView
 from kerfly.gui.settings_dialog import RASTER_KEYS, RELOAD_KEYS, SettingsDialog
 from kerfly.gui.layers_panel import KIND_NAMES as LAYER_KIND_NAMES
+from kerfly.core.layers import DEFAULT_COLORS as DEFAULT_LAYER_COLORS
 from kerfly.gui.layers_panel import LayersPanel
 from kerfly.gui.materials_dialog import MaterialsDialog
 from kerfly.gui.worker import EgvSendWorker, JobWorker, LayersJobWorker, RasterLayersWorker
@@ -450,8 +451,20 @@ class MainWindow(QMainWindow):
         self.act_stop.setEnabled(False)
         self.act_trace = self._action(_("Trace boundary"), lambda: self.start_job(trace=True), None,
                                       _("Move around the outline of the design"))
+        # one kind of work, as K40 Whisperer's three buttons: all the ticked layers of that kind
+        self.act_run_kind = {}
+        for kind, text, tip in ((RASTER, N_("Engrave only"), N_("Run only the ticked raster engrave layers")),
+                                (ENGRAVE, N_("Outline only"), N_("Run only the ticked outline (vector engrave) "
+                                                                  "layers")),
+                                (CUT, N_("Cut only"), N_("Run only the ticked cut layers"))):
+            act = self._action(_(text), lambda _c=False, k=kind: self.start_job(kinds={k}), None, _(tip))
+            act.setToolTip(_(tip))
+            pix = QPixmap(14, 14)
+            pix.fill(QColor(DEFAULT_LAYER_COLORS[kind]))
+            act.setIcon(QIcon(pix))
+            self.act_run_kind[kind] = act
         self.laser_menu.addSeparator()
-        for a in (self.act_trace, self.act_start, self.act_stop):
+        for a in (self.act_trace, self.act_start) + tuple(self.act_run_kind.values()) + (self.act_stop,):
             self.laser_menu.addAction(a)
         self.act_trace.setIcon(icons.trace_icon())
         self.act_start.setIcon(icons.tabler("player-play", "#2e7d32"))
@@ -1992,6 +2005,22 @@ class MainWindow(QMainWindow):
         footer_layout.setContentsMargins(margins.left(), 2, margins.right(), margins.bottom())
         footer_layout.setSpacing(2)
         footer_layout.addWidget(self.bed_warning)
+        # Engrave / Outline / Cut only (switched on in Settings → View): small, above Start, always visible
+        self.kind_row = QWidget()
+        kind_layout = QHBoxLayout(self.kind_row)
+        kind_layout.setContentsMargins(0, 2, 0, 0)
+        kind_layout.setSpacing(4)
+        self.kind_buttons = {}
+        for kind, act in self.act_run_kind.items():
+            b = QToolButton()
+            b.setDefaultAction(act)
+            b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            b.setFixedHeight(28)
+            b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            kind_layout.addWidget(b)
+            self.kind_buttons[kind] = b
+        self.kind_row.setVisible(is_true(self.values.get("kind_buttons", "0")))
+        footer_layout.addWidget(self.kind_row)
         footer_layout.addWidget(run)
         body_layout.addWidget(footer)
         self.run_footer = footer
@@ -2076,6 +2105,15 @@ class MainWindow(QMainWindow):
             self.bed_warning.setText(_("Outside the work area: %s. Move it onto the bed to start.") % names)
         for w in (self.btn_start, self.btn_trace, self.act_start, self.act_trace):
             w.setEnabled(not busy and not off)
+        times = getattr(self, "_last_layer_times", {})
+        for kind, act in getattr(self, "act_run_kind", {}).items():
+            layers = [l for l in self.layers if l.kind == kind and l.enabled and self._layer_has_data(l)]
+            act.setEnabled(not busy and not off and bool(layers))
+            seconds = [times.get(l.id) for l in layers]
+            tip = act.statusTip()
+            if layers and all(t is not None for t in seconds):
+                tip += " (%s)" % format_time(sum(seconds))
+            act.setToolTip(tip)
 
     def _keep_on_bed(self, element):
         """Nudge an element back onto the bed if it fits there."""
@@ -3281,6 +3319,7 @@ class MainWindow(QMainWindow):
         except (ValueError, ZeroDivisionError):
             times = {}
         self.layers_panel.set_times(times, format_time)
+        self._last_layer_times = times               # the Engrave / Outline / Cut buttons show their part
         if times:
             known = [t for t in times.values() if t is not None]
             unknown = any(t is None for t in times.values())
@@ -3843,6 +3882,8 @@ class MainWindow(QMainWindow):
         self._layers_from_values()
         if changed & {"grid_mm", "snap_objects", "follow_head"}:
             self._sync_view_actions()
+        if "kind_buttons" in changed:
+            self.kind_row.setVisible(is_true(self.values.get("kind_buttons", "0")))
         if changed & RASTER_KEYS:
             for e in self.elements:
                 e.design.raster.reset_path()
@@ -4093,10 +4134,13 @@ class MainWindow(QMainWindow):
                          _("Sending %s…") % os.path.basename(name))
 
     # ------------------------------------------------------------ jobs
-    def start_job(self, output_file=None, trace=False):
+    def start_job(self, output_file=None, trace=False, kinds=None):
+        """Run the job (trace: only the boundary). kinds: only the ticked layers of
+        these kinds (Engrave / Outline / Cut only)."""
         if self.worker is not None:
             return
-        if not any(l.enabled and self._layer_has_data(l) for l in self.layers) and not (trace and self.elements):
+        wanted = [l for l in self.layers if kinds is None or l.kind in kinds]
+        if not any(l.enabled and self._layer_has_data(l) for l in wanted) and not (trace and self.elements):
             self.status(_("Nothing to do: load a design and select at least one operation."), error=True)
             return
         if not self._layout_fits_bed():
@@ -4120,7 +4164,7 @@ class MainWindow(QMainWindow):
                       tuple(round(v, 4) for v in self.origin),
                       [(e.name, round(e.x, 3), round(e.y, 3), round(e.rotation, 1)) for e in self.elements
                        if e.visible],
-                      [(l.name, l.kind, l.speed, l.passes, round(l.power, 2)) for l in self.layers
+                      [(l.name, l.kind, l.speed, l.passes, round(l.power, 2)) for l in wanted
                        if l.enabled and self._layer_has_data(l)])
         if trace:
             worker = JobWorker(self.design, settings, job.TRACE_ENG,
@@ -4128,7 +4172,10 @@ class MainWindow(QMainWindow):
                                output_file=output_file, send_options=send_options, parent=self,
                                origin=self.origin, bed=config.bed_size_inches(self.values))
         else:
-            worker = LayersJobWorker(self.elements, self.layers, settings, self._layer_cache,
+            # only the chosen kinds: the others are switched off in the job's copy of the layers
+            job_layers = self.layers if kinds is None else [
+                replace(l, enabled=l.enabled and l.kind in kinds) for l in self.layers]
+            worker = LayersJobWorker(self.elements, job_layers, settings, self._layer_cache,
                                      laser=None if output_file else self.laser,
                                      output_file=output_file, send_options=send_options, parent=self,
                                      bed=config.bed_size_inches(self.values))

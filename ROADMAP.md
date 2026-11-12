@@ -143,15 +143,15 @@ only if users need different settings per design.
 Asked for by a user (2026-11-10), as K40 Whisperer's three buttons (Raster
 Engrave, Vector Engrave, Vector Cut) were used: engrave first, check, then cut.
 
-- [ ] Switched on in **Settings** ("Engrave, Outline and Cut buttons next to
+- [x] Switched on in **Settings** ("Engrave, Outline and Cut buttons next to
   Start"), off by default: those who work with layers keep a plain window.
-- [ ] Three buttons next to **Start** (machine control on the left):
+- [x] Three buttons next to **Start** (machine control on the left):
   **Engrave**, **Outline**, **Cut**. Each runs all ticked layers of that kind,
   in their order and each with its own speed, power and passes (two cut layers
   with different speeds are both cut). Start still runs everything.
-- [ ] The same in the Laser menu; time estimate and the "head stays on the
+- [x] The same in the Laser menu; time estimate and the "head stays on the
   bed" check for just that part; greyed out when there is nothing of that kind.
-- [ ] Release test steps: each button on the stand-in laser, only that kind
+- [x] Release test steps: each button on the stand-in laser, only that kind
   of data sent.
 
 ## Basic editing commands and the right-click menu

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 19:40+0100\n"
+"POT-Creation-Date: 2026-11-12 20:13+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -631,6 +631,9 @@ msgstr "Corte"
 msgid "Cut inside shapes first"
 msgstr "Cortar primero las formas interiores"
 
+msgid "Cut only"
+msgstr "Solo cortar"
+
 msgid "Cut open"
 msgstr "Abrir"
 
@@ -846,6 +849,9 @@ msgstr "Módulos vacíos alrededor del código (los lectores los necesitan)"
 msgid "Engrave bottom to top"
 msgstr "Grabar de abajo hacia arriba"
 
+msgid "Engrave only"
+msgstr "Solo grabar"
+
 msgid "Engrave outline"
 msgstr "Grabar contorno"
 
@@ -864,6 +870,11 @@ msgstr ""
 
 msgid "Engrave the values"
 msgstr "Grabar los valores"
+
+msgid "Engrave, Outline and Cut buttons next to Start (each runs only its layers)"
+msgstr ""
+"Botones Grabar, Contorno y Cortar junto a Iniciar (cada uno ejecuta solo "
+"sus capas)"
 
 msgid "Error correction"
 msgstr "Corrección de errores"
@@ -1763,6 +1774,9 @@ msgstr "Memoria insuficiente."
 msgid "Outer ring"
 msgstr "Anillo exterior"
 
+msgid "Outline only"
+msgstr "Solo contorno"
+
 msgid "Outside the laser bed!"
 msgstr "¡Fuera del área de trabajo!"
 
@@ -2137,6 +2151,15 @@ msgstr "Contorno de la regla"
 
 msgid "Ruler: a mark every millimetre, numbers every centimetre"
 msgstr "Regla: una marca cada milímetro, números cada centímetro"
+
+msgid "Run only the ticked cut layers"
+msgstr "Ejecutar solo las capas de corte marcadas"
+
+msgid "Run only the ticked outline (vector engrave) layers"
+msgstr "Ejecutar solo las capas de contorno (grabado vectorial) marcadas"
+
+msgid "Run only the ticked raster engrave layers"
+msgstr "Ejecutar solo las capas de grabado ráster marcadas"
 
 msgid "SVG files"
 msgstr "Archivos SVG"
