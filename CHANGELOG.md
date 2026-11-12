@@ -7,7 +7,9 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.3.3 (2026-11-12)
+
+Easier work on small screens (laptops with 1366 × 768).
 
 ### Changed
 
