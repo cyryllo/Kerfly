@@ -196,7 +196,9 @@ głowicą**; można je też ustawić w **Ustawienia → Widok**.
 jedno oczko siatki, z Shiftem 10 razy dalej.
 
 **Układanie.** Menu **Edycja** i pasek narzędzi mają: cofnij i ponów
-(Ctrl+Z, Ctrl+Shift+Z), duplikuj (Ctrl+D), usuń (Del), obrót o 90° (Ctrl+L,
+(Ctrl+Z, Ctrl+Shift+Z), kopiuj, wytnij i wklej (Ctrl+C, Ctrl+X, Ctrl+V: wkleja
+pod kursorem, także do innego projektu; Ctrl+Alt+V wkleja w miejscu),
+zaznacz wszystko (Ctrl+A), duplikuj (Ctrl+D), usuń (Del), obrót o 90° (Ctrl+L,
 Ctrl+R), odbicie (Ctrl+Shift+H, Ctrl+Shift+V), wyśrodkowanie na stole
 (Ctrl+E), wyrównywanie i rozkładanie oraz **Łącz kształty**: sumę, różnicę,
 część wspólną i wykluczenie zamkniętych kształtów (różnica: pozostałe
@@ -455,6 +457,9 @@ ani nie instaluje.
 | Ctrl+Shift+E | Zapisz plik EGV |
 | Ctrl+Z / Ctrl+Shift+Z | Cofnij / ponów |
 | Ctrl+D / Del | Duplikuj / usuń |
+| Ctrl+C / Ctrl+X / Ctrl+V | Kopiuj / wytnij / wklej (pod kursorem, gdy jest nad stołem) |
+| Ctrl+Alt+V | Wklej w miejscu (tam, gdzie elementy były) |
+| Ctrl+A / Esc (na stole) | Zaznacz wszystko / odznacz |
 | Ctrl+L / Ctrl+R, także Ctrl+[ / Ctrl+] | Obróć o 90° w lewo / w prawo |
 | Ctrl+Shift+H / Ctrl+Shift+V, także H / V na stole | Odbij w poziomie / w pionie |
 | Ctrl+G / Ctrl+Shift+G | Grupuj / rozgrupuj |

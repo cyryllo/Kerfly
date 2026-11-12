@@ -196,7 +196,9 @@ View**.
 grid step, with Shift 10 times as far.
 
 **Arranging.** The **Edit** menu and the toolbar have: undo and redo
-(Ctrl+Z, Ctrl+Shift+Z), duplicate (Ctrl+D), delete (Del), rotate 90°
+(Ctrl+Z, Ctrl+Shift+Z), copy, cut and paste (Ctrl+C, Ctrl+X, Ctrl+V: pasted at
+the mouse pointer, also into another project; Ctrl+Alt+V pastes in place),
+select all (Ctrl+A), duplicate (Ctrl+D), delete (Del), rotate 90°
 (Ctrl+L, Ctrl+R), mirror (Ctrl+Shift+H, Ctrl+Shift+V), centre on the bed
 (Ctrl+E), align and distribute, and **Combine shapes**: union, difference,
 intersection and exclusion of closed shapes (difference: the other selected
@@ -448,6 +450,9 @@ Settings → Advanced. Kerfly never downloads or installs anything by itself.
 | Ctrl+Shift+E | Save EGV file |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
 | Ctrl+D / Del | Duplicate / delete |
+| Ctrl+C / Ctrl+X / Ctrl+V | Copy / cut / paste (at the mouse pointer when it is over the bed) |
+| Ctrl+Alt+V | Paste in place (where the elements were) |
+| Ctrl+A / Esc (on the bed) | Select all / select nothing |
 | Ctrl+L / Ctrl+R, also Ctrl+[ / Ctrl+] | Rotate 90° left / right |
 | Ctrl+Shift+H / Ctrl+Shift+V, also H / V on the bed | Mirror horizontally / vertically |
 | Ctrl+G / Ctrl+Shift+G | Group / ungroup |

@@ -1608,6 +1608,69 @@ def main():
     uw._dirty = False
     uw.close()
 
+    # 52e. clipboard as in Inkscape: copy / paste (a new group, 5 mm further when the mouse is not on
+    # the bed), paste in place, cut + undo, select all, Esc, layers by name; Ctrl+C in a text field
+    # copies the text, not the elements
+    from PySide6.QtTest import QTest as _QT
+    from PySide6.QtWidgets import QLineEdit as _QLE
+    from PySide6.QtCore import QPoint
+    from PySide6.QtGui import QCursor
+    cw = make_window(grid_mm="0")
+    cw.resize(1200, 800)
+    cw.show()
+    app.processEvents()
+    cw._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)
+    cw._preview_drawn("ellipse", QPointF(80, 20), QPointF(120, 50), False)
+    ca, cb = cw.elements
+    cw.preview.select_element([ca, cb])
+    cw.group_selected()
+    from kerfly.core.layers import Layer as _Layer
+    second = _Layer("cut", name="Cut 2", color="#2e7d32", speed=5.0)
+    cw.layers.append(second)
+    cb.layers = {"cut": second.id}
+    cw.preview.select_element([ca])
+    app.processEvents()
+    QCursor.setPos(cw.mapToGlobal(QPoint(5, 5)))            # not over the bed
+    cw.act_copy.trigger()
+    cw.act_paste.trigger()
+    p1, p2 = cw.elements[2], cw.elements[3]
+    pasted = (len(cw.elements) == 4 and p1.group and p1.group == p2.group and p1.group != ca.group
+              and abs((p1.x - ca.x) * 25.4 - 5) < 1e-6 and p2.layers.get("cut") == second.id)
+    cw.act_paste_in_place.trigger()
+    in_place = len(cw.elements) == 6 and abs(cw.elements[4].x - ca.x) < 1e-9
+    cw.act_select_all.trigger()
+    app.processEvents()
+    all_sel = len(cw.preview.selected_elements()) == 6
+    cw.preview.setFocus()
+    _QT.keyClick(cw.preview.viewport(), Qt.Key_Escape)
+    app.processEvents()
+    esc = cw.preview.selected_elements() == []
+    cw.preview.select_element([cw.elements[-1]])
+    cw.act_cut.trigger()
+    cut_ok = len(cw.elements) == 4
+    cw.undo()
+    undo_ok = len(cw.elements) == 6
+    cw.layers.remove(second)                                # its layer gone: the copy goes to the cut layer
+    cw.act_paste.trigger()
+    no_layer = "cut" not in cw.elements[-1].layers
+    field = _QLE("text")
+    field.setParent(cw)
+    field.show()
+    field.setFocus()
+    field.selectAll()
+    app.processEvents()
+    before = cw._clipboard
+    cw.preview.select_element([ca])
+    field.setFocus()
+    app.processEvents()
+    _QT.keyClick(field, Qt.Key_C, Qt.ControlModifier)
+    text_only = cw._clipboard is before
+    check("clipboard: copy and paste (new group, layers by name), paste in place, cut + undo, select all, "
+          "Esc, Ctrl+C in a text field", pasted and in_place and all_sel and esc and cut_ok and undo_ok and no_layer
+          and text_only, "(%s)" % [pasted, in_place, all_sel, esc, cut_ok, undo_ok, no_layer, text_only])
+    cw._dirty = False
+    cw.close()
+
     # 53. Linux: connecting fails for want of permission -> Kerfly offers the USB rule (pkexec); with
     # a rule already there, Laser → Allow USB access only says to plug the laser in again
     from kerfly.core import udev as _udev

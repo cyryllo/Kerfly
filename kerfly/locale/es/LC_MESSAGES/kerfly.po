@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 19:09+0100\n"
+"POT-Creation-Date: 2026-11-12 19:31+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -76,6 +76,9 @@ msgstr "&Añadir diseño…"
 msgid "&Centre on the bed"
 msgstr "&Centrar en el área de trabajo"
 
+msgid "&Copy"
+msgstr "&Copiar"
+
 msgid "&Delete element"
 msgstr "&Eliminar elemento"
 
@@ -129,6 +132,9 @@ msgstr "&Desplazamiento"
 
 msgid "&Open design…"
 msgstr "&Abrir diseño…"
+
+msgid "&Paste"
+msgstr "&Pegar"
 
 msgid "&Quit"
 msgstr "&Salir"
@@ -498,6 +504,10 @@ msgstr ""
 "Primero haz clic en el archivo abierto o en el grupo y luego en "
 "Desagrupar."
 
+msgctxt "toolbar group"
+msgid "Clipboard"
+msgstr "Portapapeles"
+
 msgid "Close / open"
 msgstr "Cerrar / abrir"
 
@@ -542,6 +552,16 @@ msgstr "Placa controladora"
 
 msgid "Converting text to paths."
 msgstr "Convirtiendo texto en trazados."
+
+#, python-format
+msgid "Copied: %d element(s)."
+msgstr "Copiados: %d elemento(s)."
+
+msgid "Copy the selected elements and remove them"
+msgstr "Copiar los elementos seleccionados y quitarlos"
+
+msgid "Copy the selected elements, to paste them here or in another project"
+msgstr "Copiar los elementos seleccionados para pegarlos aquí o en otro proyecto"
 
 msgid "Corner radius"
 msgstr "Radio de esquina"
@@ -596,6 +616,9 @@ msgstr "Creando líneas de barrido: %s%%"
 msgid "Cross-hatch"
 msgstr "Rayado cruzado"
 
+msgid "Cu&t"
+msgstr "Cor&tar"
+
 msgid "Curve"
 msgstr "Curva"
 
@@ -629,6 +652,13 @@ msgstr "Abrir la forma en el nodo seleccionado"
 msgid "Cut the stamp out of the sheet"
 msgstr "Cortar el sello de la plancha"
 
+#, python-format
+msgid "Cut: %d element(s)."
+msgstr "Cortados: %d elemento(s)."
+
+msgid "D&eselect"
+msgstr "&Deseleccionar"
+
 msgid "D&uplicate element"
 msgstr "D&uplicar elemento"
 
@@ -649,10 +679,6 @@ msgstr "Datos guardados en: %s"
 msgid "Data transmission (CRC) error #%s"
 msgstr "Error de transmisión de datos (CRC) n.º %s"
 
-msgid "Delete"
-msgstr "Eliminar"
-
-msgctxt "toolbar"
 msgid "Delete"
 msgstr "Eliminar"
 
@@ -780,10 +806,6 @@ msgstr ""
 msgid "Drawing tools"
 msgstr "Herramientas de dibujo"
 
-msgid "Duplicate"
-msgstr "Duplicar"
-
-msgctxt "toolbar"
 msgid "Duplicate"
 msgstr "Duplicar"
 
@@ -1596,6 +1618,9 @@ msgstr "Nodo"
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notas (p. ej. proveedor, lente, asistencia de aire)"
 
+msgid "Nothing copied yet: select elements and press Ctrl+C."
+msgstr "Aún no se ha copiado nada: seleccione elementos y pulse Ctrl+C."
+
 msgid "Nothing is left of the shapes after this operation."
 msgstr "No queda nada de las formas después de esta operación."
 
@@ -1745,6 +1770,23 @@ msgstr "Pasadas hasta"
 
 msgid "Passes:"
 msgstr "Pasadas:"
+
+msgid "Paste in pla&ce"
+msgstr "Pegar en el &sitio"
+
+msgid ""
+"Paste the copied elements at the mouse pointer (or next to where they "
+"were)"
+msgstr ""
+"Pegar los elementos copiados en el puntero del ratón (o junto a donde "
+"estaban)"
+
+msgid "Paste the copied elements exactly where they were"
+msgstr "Pegar los elementos copiados exactamente donde estaban"
+
+#, python-format
+msgid "Pasted: %d element(s)."
+msgstr "Pegados: %d elemento(s)."
 
 msgid "Path"
 msgstr "Trazado"
@@ -2167,11 +2209,20 @@ msgstr "Paso entre líneas (pulg.)"
 msgid "See the release"
 msgstr "Ver la versión"
 
+msgid "Select &all"
+msgstr "Seleccionar &todo"
+
 msgid "Select an opened file or a text with lines to break it apart."
 msgstr "Selecciona un archivo abierto o un texto con líneas para separarlo."
 
 msgid "Select and move"
 msgstr "Seleccionar y mover"
+
+msgid "Select every element on the bed"
+msgstr "Seleccionar todos los elementos de la mesa"
+
+msgid "Select nothing (Esc on the bed does it too)"
+msgstr "No seleccionar nada (Esc en la mesa también lo hace)"
 
 msgid "Select one or more shapes with closed outlines."
 msgstr "Seleccione una o más formas con contornos cerrados."
@@ -2183,6 +2234,9 @@ msgstr ""
 "Seleccione un texto y una forma (línea, curva, círculo, ...) donde "
 "ponerlo y vuelva a elegir Poner texto en trazado (Ctrl+clic selecciona "
 "ambos)."
+
+msgid "Select the elements to copy first."
+msgstr "Seleccione primero los elementos que desea copiar."
 
 msgid "Select the elements to move up or down first."
 msgstr "Seleccione primero los elementos que quiere subir o bajar."
@@ -3384,4 +3438,12 @@ msgstr "grabado vectorial"
 
 #~ msgid "Home the head, then move to X/Y (Ctrl+G)"
 #~ msgstr "Llevar el cabezal al origen y luego ir a X/Y (Ctrl+G)"
+
+#~ msgctxt "toolbar"
+#~ msgid "Delete"
+#~ msgstr "Eliminar"
+
+#~ msgctxt "toolbar"
+#~ msgid "Duplicate"
+#~ msgstr "Duplicar"
 

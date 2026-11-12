@@ -219,6 +219,21 @@ class MainWindow(QMainWindow):
         self.act_undo = self._action(_("&Undo"), self.undo, "Ctrl+Z")
         self.act_redo = self._action(_("&Redo"), self.redo, "Ctrl+Shift+Z")
         self.act_duplicate = self._action(_("D&uplicate element"), self.duplicate_selected, "Ctrl+D")
+        # the clipboard, as in Inkscape (text fields keep their own Ctrl+C / Ctrl+V while typing)
+        self.act_copy = self._action(_("&Copy"), self.copy_selected, "Ctrl+C",
+                                     _("Copy the selected elements, to paste them here or in another project"))
+        self.act_cut = self._action(_("Cu&t"), self.cut_selected, "Ctrl+X",
+                                    _("Copy the selected elements and remove them"))
+        self.act_paste = self._action(_("&Paste"), lambda: self.paste(False), "Ctrl+V",
+                                      _("Paste the copied elements at the mouse pointer (or next to where they were)"))
+        self.act_paste_in_place = self._action(_("Paste in pla&ce"), lambda: self.paste(True), "Ctrl+Alt+V",
+                                               _("Paste the copied elements exactly where they were"))
+        self.act_select_all = self._action(_("Select &all"), self.select_all, "Ctrl+A",
+                                           _("Select every element on the bed"))
+        self.act_deselect = self._action(_("D&eselect"), self.deselect, "Ctrl+Shift+A",
+                                         _("Select nothing (Esc on the bed does it too)"))
+        self._clipboard = None          # copies of the elements and the names of their layers
+        self._paste_count = 0
         self.act_order = {}
         # the element list is the order of the job: the laser does the top element first
         for how, text, key, tip in (
@@ -360,7 +375,9 @@ class MainWindow(QMainWindow):
                   self.act_send_egv, None, self.act_save_settings, None, self.act_quit):
             m.addSeparator() if a is None else m.addAction(a)
         m = mb.addMenu(_("&Edit"))
-        for a in (self.act_undo, self.act_redo, None, self.act_duplicate, self.act_delete, None,
+        for a in (self.act_undo, self.act_redo, None, self.act_cut, self.act_copy, self.act_paste,
+                  self.act_paste_in_place, None, self.act_select_all, self.act_deselect, None,
+                  self.act_duplicate, self.act_delete, None,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v, None,
                   self.act_group, self.act_ungroup, None, self.act_order["up"], self.act_order["down"],
                   self.act_order["first"], self.act_order["last"], None, self.act_center, self.act_place_head,
@@ -450,8 +467,15 @@ class MainWindow(QMainWindow):
             (C_("toolbar group", "Edit"), [
                 (self.act_undo, "arrow-back-up", C_("toolbar", "Undo")),
                 (self.act_redo, "arrow-forward-up", C_("toolbar", "Redo")),
-                (self.act_duplicate, "copy", C_("toolbar", "Duplicate")),
-                (self.act_delete, "trash", C_("toolbar", "Delete")),
+            ]),
+            (C_("toolbar group", "Clipboard"), "grid", [
+                (self.act_cut, "scissors"),
+                (self.act_copy, "copy"),
+                (self.act_paste, "clipboard"),
+                (self.act_paste_in_place, "clipboard-plus"),
+                (self.act_duplicate, "copy-plus"),
+                (self.act_delete, "trash"),
+                (self.act_select_all, "select-all"),
             ]),
             (C_("toolbar group", "Transform"), "grid", [
                 (self.act_rot_left, "rotate-2"),
@@ -2652,6 +2676,111 @@ class MainWindow(QMainWindow):
         self._multi = []
         self._layout_changed()
 
+    # ---- clipboard ----------------------------------------------------------
+    def copy_selected(self):
+        """Copy the selected elements (with their groups) for Paste, also into
+        another project in this window. Their layers go along by name."""
+        chosen = self._selection()
+        if not chosen:
+            self.status(_("Select the elements to copy first."), error=True)
+            return False
+        names = {l.id: (l.kind, l.name) for l in self.layers}
+        self._clipboard = ([e.copy() for e in chosen],
+                           [{kind: names.get(lid) for kind, lid in e.layers.items()} for e in chosen])
+        self._paste_count = 0
+        self.status(_("Copied: %d element(s).") % len(chosen))
+        return True
+
+    def cut_selected(self):
+        if self.worker is not None:
+            return
+        if self.copy_selected():
+            n = len(self._clipboard[0])
+            self.delete_selected()
+            self.status(_("Cut: %d element(s).") % n)
+
+    def paste(self, in_place=False):
+        """Paste copies of the copied elements: at the mouse pointer when it is over
+        the bed, otherwise 5 mm further than the last paste (in place: exactly
+        where they were). Groups stay groups (new ones); layers by name and kind."""
+        from kerfly.core.layout import selection_bounds
+        if self.worker is not None:
+            return
+        if self._clipboard is None:
+            self.status(_("Nothing copied yet: select elements and press Ctrl+C."), error=True)
+            return
+        originals, layer_names = self._clipboard
+        new_groups = {}
+        made = []
+        for c, wanted in zip(originals, layer_names):
+            e = c.copy()
+            if e.group:
+                e.group = new_groups.setdefault(e.group, self._new_group_id())
+            layers = {}
+            for kind, name in wanted.items():
+                same = [l for l in self.layers if (l.kind, l.name) == name and l.kind == kind]
+                if same:
+                    layers[kind] = same[0].id
+            e.layers = layers
+            made.append(e)
+        if not in_place:
+            xmin, xmax, ymin, ymax = selection_bounds(made)
+            target = self._mouse_on_bed()
+            if target is not None:
+                dx, dy = target[0] - (xmin + xmax) / 2.0, target[1] - (ymin + ymax) / 2.0
+            else:
+                self._paste_count += 1
+                dx, dy = 5 / 25.4 * self._paste_count, -5 / 25.4 * self._paste_count
+            for e in made:
+                e.x += dx
+                e.y += dy
+            self._keep_together_on_bed(made)
+        self._checkpoint()
+        self.elements.extend(made)
+        self.selected = made[0] if len(made) == 1 else None
+        self._compiled = None
+        self._layer_cache.clear()
+        self._arranged(made)
+        if len(made) == 1:
+            self.preview.select_element(made[0])
+        self.status(_("Pasted: %d element(s).") % len(made))
+
+    def _mouse_on_bed(self):
+        """The bed position (inches) under the mouse pointer, or None when it is not over the bed view."""
+        from PySide6.QtGui import QCursor
+        vp = self.preview.viewport()
+        pos = vp.mapFromGlobal(QCursor.pos())
+        if not vp.rect().contains(pos):
+            return None
+        try:
+            return self._bed_point(self.preview.mapToScene(pos))
+        except ValueError:
+            return None
+
+    def _keep_together_on_bed(self, elements):
+        """Move elements together back onto the bed, if they fit there."""
+        from kerfly.core.layout import selection_bounds
+        bed_w, bed_h = config.bed_size_inches(self.values)
+        xmin, xmax, ymin, ymax = selection_bounds(elements)
+        dx = dy = 0.0
+        if xmax - xmin <= bed_w:
+            dx = -xmin if xmin < 0 else (bed_w - xmax if xmax > bed_w else 0.0)
+        if ymax - ymin <= bed_h:
+            dy = -ymax if ymax > 0 else (-bed_h - ymin if ymin < -bed_h else 0.0)
+        for e in elements:
+            e.x += dx
+            e.y += dy
+
+    def select_all(self):
+        if self.elements:
+            self.preview.select_element(list(self.elements))
+            self._update_element_list()
+
+    def deselect(self):
+        self.preview.select_element([])
+        self.selected = None
+        self._update_element_list()
+
     def place_at_head(self):
         """Move all elements together so the design's top-left is at the laser head."""
         self._design_to_head(checkpoint=True)
@@ -3195,7 +3324,8 @@ class MainWindow(QMainWindow):
                   self.act_group, self.act_ungroup, self.act_distribute_h, self.act_distribute_v, self.act_place_head,
                   self.act_follow_head, self.act_undo] + list(self.act_order.values()) + [
                   self.act_redo, self.act_duplicate, self.act_center] + list(self.act_corners.values()) \
-                + list(self.act_align.values()) + list(self.act_boolean.values()) + [self.act_offset]:
+                + list(self.act_align.values()) + list(self.act_boolean.values()) + [self.act_offset] \
+                + [self.act_cut, self.act_paste, self.act_paste_in_place]:
             a.setEnabled(not busy)
         self.btn_stop.setEnabled(busy)
         self.act_stop.setEnabled(busy)

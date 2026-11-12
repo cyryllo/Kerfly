@@ -920,6 +920,11 @@ class PreviewView(QGraphicsView):
             self.signals.drawn.emit("cancel", QPointF(), QPointF(), False)
             event.accept()
             return
+        if event.key() == Qt.Key_Escape and self._selected_items():
+            # Esc selects nothing, as in Inkscape (while a job runs, Esc is Stop and never gets here)
+            self.select_element([])
+            event.accept()
+            return
         keys = {Qt.Key_Left: (-1, 0), Qt.Key_Right: (1, 0), Qt.Key_Up: (0, 1), Qt.Key_Down: (0, -1)}
         items = self._selected_items()
         if event.key() in keys and items and not (event.modifiers() & Qt.ControlModifier):

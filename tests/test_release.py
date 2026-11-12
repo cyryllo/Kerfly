@@ -697,6 +697,35 @@ def part_edit(s):
            check=lambda: (len(w.elements) == 4, "%d elements" % len(w.elements)))
     s.step("delete (Del)", lambda: (select_one(w.elements[-1]), s.trigger(w.act_delete, via="key")),
            check=lambda: (len(w.elements) == 3, "%d elements" % len(w.elements)))
+    # the clipboard, as in Inkscape; the copies are cut again at the end (three elements as before)
+    s.step("copy (Ctrl+C)", lambda: (select_one(b), s.trigger(w.act_copy, via="key")), change=False)
+    def paste_from_toolbar():
+        from PySide6.QtGui import QCursor
+        button = s.buttons_for(w.act_paste)[0]
+        QCursor.setPos(button.mapToGlobal(button.rect().center()))     # the pointer on the button, off the bed
+        s.settle()
+        s.trigger(w.act_paste)
+    s.step("paste (toolbar): 5 mm next to the original", paste_from_toolbar,
+           check=lambda: (len(w.elements) == 4 and abs((w.elements[-1].x - b.x) * 25.4 - 5) < 1e-6,
+                          "%d elements, %.2f mm" % (len(w.elements), (w.elements[-1].x - b.x) * 25.4)))
+    s.step("paste in place (Ctrl+Alt+V)", lambda: s.trigger(w.act_paste_in_place, via="key"),
+           check=lambda: (len(w.elements) == 5 and abs(w.elements[-1].x - b.x) < 1e-9, "%d elements" % len(w.elements)))
+    s.step("cut (Ctrl+X) the copy in place", lambda: (select_one(w.elements[-1]), s.trigger(w.act_cut, via="key")),
+           check=lambda: (len(w.elements) == 4, "%d elements" % len(w.elements)))
+    s.step("Edit → Cut the other copy", lambda: (select_one(w.elements[-1]), s.trigger(w.act_cut, via="menu")),
+           check=lambda: (len(w.elements) == 3, "%d elements" % len(w.elements)))
+    s.step("select all (Ctrl+A)", lambda: s.trigger(w.act_select_all, via="key"), change=False,
+           check=lambda: (len(w.preview.selected_elements()) == len(w.elements),
+                          "%d selected" % len(w.preview.selected_elements())))
+
+    def escape_on_bed():
+        w.preview.setFocus()
+        QTest.keyClick(w.preview.viewport(), Qt.Key_Escape)
+        s.settle()
+    s.step("Esc on the bed: nothing selected", escape_on_bed, change=False,
+           check=lambda: (w.preview.selected_elements() == [], "%d selected" % len(w.preview.selected_elements())))
+    s.step("Edit → Deselect", lambda: (select_one(a), s.trigger(w.act_deselect, via="menu")), change=False,
+           check=lambda: (w.preview.selected_elements() == [], "%d selected" % len(w.preview.selected_elements())))
     s.step("Ctrl+click: two selected", lambda: (select_one(a), pick_el(c, Qt.ControlModifier)), change=False,
            check=lambda: (len(w.preview.selected_elements()) == 2, "%d" % len(w.preview.selected_elements())))
     s.step("group (Ctrl+G)", lambda: (select_one(a), pick_el(c, Qt.ControlModifier),

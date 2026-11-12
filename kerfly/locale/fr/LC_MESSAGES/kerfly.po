@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 19:09+0100\n"
+"POT-Creation-Date: 2026-11-12 19:31+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -76,6 +76,9 @@ msgstr "&Ajouter un dessin…"
 msgid "&Centre on the bed"
 msgstr "&Centrer sur le plateau"
 
+msgid "&Copy"
+msgstr "&Copier"
+
 msgid "&Delete element"
 msgstr "&Supprimer l'élément"
 
@@ -129,6 +132,9 @@ msgstr "&Décalage"
 
 msgid "&Open design…"
 msgstr "&Ouvrir un dessin…"
+
+msgid "&Paste"
+msgstr "Co&ller"
 
 msgid "&Quit"
 msgstr "&Quitter"
@@ -496,6 +502,10 @@ msgstr "Cliquez à l'intérieur d'une forme pour la remplir."
 msgid "Click the opened file or the group first, then Ungroup."
 msgstr "Cliquez d'abord sur le fichier ouvert ou le groupe, puis sur Dégrouper."
 
+msgctxt "toolbar group"
+msgid "Clipboard"
+msgstr "Presse-papiers"
+
 msgid "Close / open"
 msgstr "Fermer / ouvrir"
 
@@ -540,6 +550,18 @@ msgstr "Carte de contrôle"
 
 msgid "Converting text to paths."
 msgstr "Conversion du texte en chemins."
+
+#, python-format
+msgid "Copied: %d element(s)."
+msgstr "Copiés : %d élément(s)."
+
+msgid "Copy the selected elements and remove them"
+msgstr "Copier les éléments sélectionnés et les supprimer"
+
+msgid "Copy the selected elements, to paste them here or in another project"
+msgstr ""
+"Copier les éléments sélectionnés pour les coller ici ou dans un autre "
+"projet"
 
 msgid "Corner radius"
 msgstr "Rayon des coins"
@@ -594,6 +616,9 @@ msgstr "Création des lignes de balayage : %s%%"
 msgid "Cross-hatch"
 msgstr "Hachures croisées"
 
+msgid "Cu&t"
+msgstr "Co&uper"
+
 msgid "Curve"
 msgstr "Courbe"
 
@@ -627,6 +652,13 @@ msgstr "Ouvrir la forme au nœud sélectionné"
 msgid "Cut the stamp out of the sheet"
 msgstr "Découper le tampon dans la plaque"
 
+#, python-format
+msgid "Cut: %d element(s)."
+msgstr "Coupés : %d élément(s)."
+
+msgid "D&eselect"
+msgstr "&Désélectionner"
+
 msgid "D&uplicate element"
 msgstr "D&upliquer l'élément"
 
@@ -649,10 +681,6 @@ msgstr "Données enregistrées dans : %s"
 msgid "Data transmission (CRC) error #%s"
 msgstr "Erreur de transmission (CRC) n° %s"
 
-msgid "Delete"
-msgstr "Supprimer"
-
-msgctxt "toolbar"
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -778,10 +806,6 @@ msgstr ""
 msgid "Drawing tools"
 msgstr "Outils de dessin"
 
-msgid "Duplicate"
-msgstr "Dupliquer"
-
-msgctxt "toolbar"
 msgid "Duplicate"
 msgstr "Dupliquer"
 
@@ -1598,6 +1622,11 @@ msgstr "Nœud"
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notes (par ex. fournisseur, lentille, soufflage)"
 
+msgid "Nothing copied yet: select elements and press Ctrl+C."
+msgstr ""
+"Rien n'a encore été copié : sélectionnez des éléments et appuyez sur "
+"Ctrl+C."
+
 msgid "Nothing is left of the shapes after this operation."
 msgstr "Il ne reste rien des formes après cette opération."
 
@@ -1749,6 +1778,21 @@ msgstr "Passes à"
 
 msgid "Passes:"
 msgstr "Passes :"
+
+msgid "Paste in pla&ce"
+msgstr "Coller sur &place"
+
+msgid ""
+"Paste the copied elements at the mouse pointer (or next to where they "
+"were)"
+msgstr "Coller les éléments copiés sous le pointeur (ou à côté de leur place)"
+
+msgid "Paste the copied elements exactly where they were"
+msgstr "Coller les éléments copiés exactement à leur place"
+
+#, python-format
+msgid "Pasted: %d element(s)."
+msgstr "Collés : %d élément(s)."
 
 msgid "Path"
 msgstr "Chemin"
@@ -2174,6 +2218,9 @@ msgstr "Pas entre les lignes (po)"
 msgid "See the release"
 msgstr "Voir la version"
 
+msgid "Select &all"
+msgstr "&Tout sélectionner"
+
 msgid "Select an opened file or a text with lines to break it apart."
 msgstr ""
 "Sélectionnez un fichier ouvert ou un texte avec des lignes pour le "
@@ -2181,6 +2228,12 @@ msgstr ""
 
 msgid "Select and move"
 msgstr "Sélectionner et déplacer"
+
+msgid "Select every element on the bed"
+msgstr "Sélectionner tous les éléments du plateau"
+
+msgid "Select nothing (Esc on the bed does it too)"
+msgstr "Ne rien sélectionner (Échap sur le plateau aussi)"
 
 msgid "Select one or more shapes with closed outlines."
 msgstr "Sélectionnez une ou plusieurs formes aux contours fermés."
@@ -2192,6 +2245,9 @@ msgstr ""
 "Sélectionnez un texte et une forme (ligne, courbe, cercle, ...) où le "
 "placer, puis choisissez à nouveau Mettre le texte sur un chemin "
 "(Ctrl+clic sélectionne les deux)."
+
+msgid "Select the elements to copy first."
+msgstr "Sélectionnez d'abord les éléments à copier."
 
 msgid "Select the elements to move up or down first."
 msgstr "Sélectionnez d'abord les éléments à monter ou descendre."
@@ -3397,4 +3453,12 @@ msgstr "gravure vectorielle"
 
 #~ msgid "Home the head, then move to X/Y (Ctrl+G)"
 #~ msgstr "Ramener la tête à l'origine, puis aller à X/Y (Ctrl+G)"
+
+#~ msgctxt "toolbar"
+#~ msgid "Delete"
+#~ msgstr "Supprimer"
+
+#~ msgctxt "toolbar"
+#~ msgid "Duplicate"
+#~ msgstr "Dupliquer"
 

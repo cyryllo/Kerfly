@@ -17,6 +17,12 @@ Version numbers:
   the files), **Later** and **Skip this version**. **Help → Check for
   updates** (toolbar **Updates**) asks at once. On by default; switched off
   in Settings → Advanced. Nothing is downloaded or installed by Kerfly.
+- **Copy, cut and paste** as in Inkscape: Ctrl+C, Ctrl+X, Ctrl+V (pasted at
+  the mouse pointer when it is over the bed, otherwise 5 mm further), Ctrl+Alt+V
+  pastes in place; also into another project in the same window (groups stay
+  groups, layers go along by name). **Select all** (Ctrl+A) and **Deselect**
+  (Esc on the bed, Ctrl+Shift+A). In the Edit menu and a new **Clipboard**
+  group of the toolbar, together with Duplicate and Delete.
 
 ## 1.3.3 (2026-11-12)
 

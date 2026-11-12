@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 19:09+0100\n"
+"POT-Creation-Date: 2026-11-12 19:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,6 +71,9 @@ msgstr ""
 msgid "&Centre on the bed"
 msgstr ""
 
+msgid "&Copy"
+msgstr ""
+
 msgid "&Delete element"
 msgstr ""
 
@@ -123,6 +126,9 @@ msgid "&Offset"
 msgstr ""
 
 msgid "&Open design…"
+msgstr ""
+
+msgid "&Paste"
 msgstr ""
 
 msgid "&Quit"
@@ -461,6 +467,10 @@ msgstr ""
 msgid "Click the opened file or the group first, then Ungroup."
 msgstr ""
 
+msgctxt "toolbar group"
+msgid "Clipboard"
+msgstr ""
+
 msgid "Close / open"
 msgstr ""
 
@@ -504,6 +514,16 @@ msgid "Controller board"
 msgstr ""
 
 msgid "Converting text to paths."
+msgstr ""
+
+#, python-format
+msgid "Copied: %d element(s)."
+msgstr ""
+
+msgid "Copy the selected elements and remove them"
+msgstr ""
+
+msgid "Copy the selected elements, to paste them here or in another project"
 msgstr ""
 
 msgid "Corner radius"
@@ -557,6 +577,9 @@ msgstr ""
 msgid "Cross-hatch"
 msgstr ""
 
+msgid "Cu&t"
+msgstr ""
+
 msgid "Curve"
 msgstr ""
 
@@ -590,6 +613,13 @@ msgstr ""
 msgid "Cut the stamp out of the sheet"
 msgstr ""
 
+#, python-format
+msgid "Cut: %d element(s)."
+msgstr ""
+
+msgid "D&eselect"
+msgstr ""
+
 msgid "D&uplicate element"
 msgstr ""
 
@@ -610,10 +640,6 @@ msgstr ""
 msgid "Data transmission (CRC) error #%s"
 msgstr ""
 
-msgid "Delete"
-msgstr ""
-
-msgctxt "toolbar"
 msgid "Delete"
 msgstr ""
 
@@ -727,10 +753,6 @@ msgstr ""
 msgid "Drawing tools"
 msgstr ""
 
-msgid "Duplicate"
-msgstr ""
-
-msgctxt "toolbar"
 msgid "Duplicate"
 msgstr ""
 
@@ -1482,6 +1504,9 @@ msgstr ""
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr ""
 
+msgid "Nothing copied yet: select elements and press Ctrl+C."
+msgstr ""
+
 msgid "Nothing is left of the shapes after this operation."
 msgstr ""
 
@@ -1617,6 +1642,21 @@ msgid "Passes to"
 msgstr ""
 
 msgid "Passes:"
+msgstr ""
+
+msgid "Paste in pla&ce"
+msgstr ""
+
+msgid ""
+"Paste the copied elements at the mouse pointer (or next to where they "
+"were)"
+msgstr ""
+
+msgid "Paste the copied elements exactly where they were"
+msgstr ""
+
+#, python-format
+msgid "Pasted: %d element(s)."
 msgstr ""
 
 msgid "Path"
@@ -2007,10 +2047,19 @@ msgstr ""
 msgid "See the release"
 msgstr ""
 
+msgid "Select &all"
+msgstr ""
+
 msgid "Select an opened file or a text with lines to break it apart."
 msgstr ""
 
 msgid "Select and move"
+msgstr ""
+
+msgid "Select every element on the bed"
+msgstr ""
+
+msgid "Select nothing (Esc on the bed does it too)"
 msgstr ""
 
 msgid "Select one or more shapes with closed outlines."
@@ -2019,6 +2068,9 @@ msgstr ""
 msgid ""
 "Select one text and one shape (line, curve, circle, ...) to put the text "
 "on, then choose Put text on path again (Ctrl+click selects both)."
+msgstr ""
+
+msgid "Select the elements to copy first."
 msgstr ""
 
 msgid "Select the elements to move up or down first."
