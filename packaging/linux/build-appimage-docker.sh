@@ -46,7 +46,7 @@ chmod +x dist/*.AppImage
 QT_QPA_PLATFORM=offscreen dist/Kerfly-*-x86_64.AppImage --appimage-extract-and-run --self-test
 QT_QPA_PLATFORM=offscreen dist/Kerfly-*-x86_64.AppImage --appimage-extract-and-run --release-test
 cp dist/Kerfly-*-x86_64.AppImage /work/
-chown "$HOST_UID:$HOST_GID" /work/Kerfly-*-x86_64.AppImage
+chown -R "$HOST_UID:$HOST_GID" /work          # everything back to the user (the container runs as root)
 INSIDE
 chmod +x "$WORK/inside.sh"
 docker run --rm -v "$WORK:/work" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" ubuntu:22.04 /work/inside.sh

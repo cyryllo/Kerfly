@@ -100,8 +100,27 @@ def install_qt_translations(app, language):
         app._kerfly_qt_translator = translator      # keep a reference
 
 
+def restore_system_libraries():
+    """In the built program (AppImage, PyInstaller) LD_LIBRARY_PATH points to the
+    libraries packed with Kerfly, and every program Kerfly starts inherited it:
+    Inkscape then loaded Kerfly's older C++ library and failed, so SVG files did
+    not open in the AppImage on systems with Inkscape (and a browser or pkexec
+    could fail the same way). Kerfly's own libraries are loaded by then (the
+    loader reads LD_LIBRARY_PATH only when a program starts), so the system's
+    value is put back for the programs it starts."""
+    import os
+    if not getattr(sys, "frozen", False) or not sys.platform.startswith("linux"):
+        return
+    original = os.environ.get("LD_LIBRARY_PATH_ORIG")
+    if original:
+        os.environ["LD_LIBRARY_PATH"] = original
+    else:
+        os.environ.pop("LD_LIBRARY_PATH", None)
+
+
 def main(argv=None):
     argv = sys.argv if argv is None else argv
+    restore_system_libraries()
     if "--self-test" in argv:
         from kerfly import selftest
         return selftest.run()

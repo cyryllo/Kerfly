@@ -1751,6 +1751,30 @@ def main():
     kw_._dirty = False
     kw_.close()
 
+    # 52h. the built program (AppImage) gives the programs it starts (Inkscape, a browser) the system's
+    # library path, not its own: Inkscape loaded the AppImage's older C++ library and failed
+    import os as _os
+    from kerfly.gui import app as _kapp
+    _saved = (getattr(sys, "frozen", None), sys.platform, dict(_os.environ))
+    try:
+        sys.frozen = True
+        sys.platform = "linux"
+        _os.environ["LD_LIBRARY_PATH"], _os.environ["LD_LIBRARY_PATH_ORIG"] = "/tmp/_MEIxyz", "/opt/lib"
+        _kapp.restore_system_libraries()
+        restored = _os.environ.get("LD_LIBRARY_PATH") == "/opt/lib"
+        del _os.environ["LD_LIBRARY_PATH_ORIG"]
+        _os.environ["LD_LIBRARY_PATH"] = "/tmp/_MEIxyz"
+        _kapp.restore_system_libraries()
+        removed = "LD_LIBRARY_PATH" not in _os.environ
+    finally:
+        if _saved[0] is None:
+            del sys.frozen
+        sys.platform = _saved[1]
+        _os.environ.clear()
+        _os.environ.update(_saved[2])
+    check("built program: programs it starts get the system's library path", restored and removed,
+          "(%s)" % [restored, removed])
+
     # 53. Linux: connecting fails for want of permission -> Kerfly offers the USB rule (pkexec); with
     # a rule already there, Laser → Allow USB access only says to plug the laser in again
     from kerfly.core import udev as _udev

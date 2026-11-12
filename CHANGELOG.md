@@ -9,6 +9,13 @@ Version numbers:
 
 ## Unreleased
 
+### Fixed
+
+- **Linux AppImage: SVG files did not open when Inkscape is installed** (the
+  program hung). The programs Kerfly starts (Inkscape, the browser) got the
+  AppImage's own libraries, and Inkscape failed on its older C++ library; they
+  now get the system's.
+
 ### Added
 
 - **New versions:** once a day at start Kerfly asks GitHub whether a new
