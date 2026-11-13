@@ -2019,9 +2019,16 @@ class MainWindow(QMainWindow):
         kind_layout.setSpacing(4)
         self.kind_buttons = {}
         for kind, act in self.act_run_kind.items():
-            b = QToolButton()
-            b.setDefaultAction(act)
-            b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            # a push button: its colour square and text are centred, not stuck to the left edge
+            b = QPushButton(act.icon(), act.text())
+            b.setObjectName("kind_button")
+            b.clicked.connect(act.trigger)
+
+            def follow(_b=b, _a=act):
+                _b.setEnabled(_a.isEnabled())
+                _b.setToolTip(_a.toolTip())
+            act.changed.connect(follow)
+            follow()
             b.setFixedHeight(28)
             b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
             kind_layout.addWidget(b)

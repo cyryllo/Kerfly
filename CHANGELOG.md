@@ -7,6 +7,13 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Fixed
+
+- The colour square and text of the Engrave only, Outline only and Cut only
+  buttons are centred (they sat against the left edge).
+
 ## 1.4.0 (2026-11-13)
 
 Copy and paste, a right-click menu, a text editor for stamps, boxes that fit

@@ -3,6 +3,13 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
+## Unreleased
+
+### Poprawione
+
+- Kolorowy kwadrat i napis na przyciskach Tylko grawer, Tylko obrys i Tylko
+  cięcie są wyśrodkowane (przylegały do lewej krawędzi).
+
 ## 1.4.0 (2026-11-13)
 
 Kopiuj i wklej, menu pod prawym przyciskiem, edytor tekstu pieczątki, pudełka
