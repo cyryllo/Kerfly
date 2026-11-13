@@ -2492,7 +2492,8 @@ class MainWindow(QMainWindow):
         layer_of_key = {}
         for spec in design.layers:
             layer = Layer(spec.kind, name=spec.name, color=spec.color or EXTRA_COLORS[0],
-                          speed=spec.speed, passes=int(spec.passes), power=spec.power)
+                          speed=spec.speed, passes=int(spec.passes), power=spec.power,
+                          enabled=getattr(spec, "enabled", True))
             index = max(i for i, l in enumerate(self.layers) if l.kind == spec.kind) + 1
             self.layers.insert(index, layer)
             layer_of_key[spec.key] = layer
@@ -4269,6 +4270,15 @@ class MainWindow(QMainWindow):
         from kerfly.gui.simulation import SimulationDialog, simulation_steps
         if self.worker is not None:
             return
+        open_one = getattr(self, "_simulation", None)
+        try:
+            if open_one is not None and open_one.isVisible():
+                # one simulation at a time: a second click (or a double click) brings it to the front
+                open_one.raise_()
+                open_one.activateWindow()
+                return
+        except RuntimeError:
+            pass                                   # it was closed (and deleted)
         try:
             steps = simulation_steps(self)
         except ValueError as e:

@@ -67,8 +67,17 @@ GENERATORS = [
 def _finger_box(v, window):
     names = {"bottom": _("Bottom"), "front": _("Front"), "back": _("Back"), "left": _("Left side"),
              "right": _("Right side"), "lid": _("Lid")}
+    from kerfly.core import config
+    from kerfly.core.layers import CUT
+    try:
+        bed = tuple(v_in * 25.4 for v_in in config.bed_size_inches(window.values))
+    except (ValueError, AttributeError):
+        bed = None
+    layer = window._default_layer.get(CUT) if hasattr(window, "_default_layer") else None
+    cut = (layer.speed, layer.power, layer.passes) if layer is not None else (10.0, 0.5, 1)
     return gen.finger_box(v["width"], v["depth"], v["height"], v["thickness"], v["finger"], v["kerf"], v["lid"],
-                          v["inside"], names=names)
+                          v["inside"], names=names, bed=bed, each_layer=bool(v.get("each_layer", False)),
+                          cut=cut, sheet_name=_("Sheet %d"))
 
 
 def _kerf_test(v, window):
@@ -111,7 +120,10 @@ GENERATORS += [
       ("kerf", N_("Kerf"), "float", 0.15, (0, 1, 2, "mm"),
        N_("Width of the laser's cut: the parts grow by half of it so the fingers fit tightly "
           "(measure it with the kerf test)")),
-      ("lid", N_("With a lid"), "bool", True, None, N_("Six parts with a lid (off: an open box of five parts)"))],
+      ("lid", N_("With a lid"), "bool", True, None, N_("Six parts with a lid (off: an open box of five parts)")),
+      ("each_layer", N_("Each part on its own layer"), "bool", False, None,
+       N_("Every part on its own cut layer, to cut them one by one. Parts that do not fit the bed go on a "
+          "next sheet anyway (its layer unticked)"))],
      _finger_box),
     ("kerf_test", N_("Kerf test"), "ruler-2",
      N_("Kerf test: a comb to measure how wide the laser cuts, and slots to find the tightest fit for the "
@@ -250,6 +262,107 @@ def save_values(key, values):
         pass
 
 
+# ---------------------------------------------------------------- formatted text (stamp)
+class RichTextField(QWidget):
+    """A small text editor that shows the text as it will look (WYSIWYG): buttons for
+    bold, italic, underline, bigger, smaller and the alignment of the lines."""
+    from PySide6.QtCore import Signal as _Signal
+    changed = _Signal()
+
+    def __init__(self, html, parent=None):
+        super().__init__(parent)
+        from PySide6.QtWidgets import QTextEdit
+        from kerfly.gui import icons
+        v = QVBoxLayout(self)
+        v.setContentsMargins(0, 0, 0, 0)
+        v.setSpacing(2)
+        bar = QHBoxLayout()
+        bar.setSpacing(2)
+        self.edit = QTextEdit()
+        self.edit.setAcceptRichText(True)
+        self.edit.setHtml(html)
+        self.edit.setFixedHeight(self.edit.fontMetrics().lineSpacing() * 6 + 16)
+        self.buttons = {}
+        for key, icon, tip, checkable in (("bold", "bold", N_("Bold (Ctrl+B)"), True),
+                                          ("italic", "italic", N_("Italic (Ctrl+I)"), True),
+                                          ("underline", "underline", N_("Underline (Ctrl+U)"), True),
+                                          ("bigger", "text-increase", N_("Bigger letters"), False),
+                                          ("smaller", "text-decrease", N_("Smaller letters"), False),
+                                          ("left", "align-left", N_("Align the lines to the left"), True),
+                                          ("center", "align-center", N_("Centre the lines"), True),
+                                          ("right", "align-right", N_("Align the lines to the right"), True)):
+            b = QToolButton()
+            b.setIcon(icons.tabler(icon))
+            b.setToolTip(_(tip))
+            b.setCheckable(checkable)
+            b.setAutoRaise(True)
+            b.setProperty("rich_button", key)
+            b.clicked.connect(lambda _c=False, k=key: self._action(k))
+            bar.addWidget(b)
+            self.buttons[key] = b
+            if key in ("underline", "smaller"):
+                bar.addSpacing(6)
+        for key, seq in (("bold", "Ctrl+B"), ("italic", "Ctrl+I"), ("underline", "Ctrl+U")):
+            from PySide6.QtGui import QAction, QKeySequence
+            act = QAction(self.edit)
+            act.setShortcut(QKeySequence(seq))
+            act.setShortcutContext(Qt.WidgetShortcut)
+            act.triggered.connect(lambda _c=False, k=key: self.buttons[k].click())
+            self.edit.addAction(act)
+        bar.addStretch(1)
+        v.addLayout(bar)
+        v.addWidget(self.edit)
+        self.edit.textChanged.connect(self.changed.emit)
+        self.edit.cursorPositionChanged.connect(self._show_format)
+        from PySide6.QtWidgets import QSizePolicy
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)     # the buttons stay on the text
+        self._show_format()
+
+    def html(self):
+        return self.edit.toHtml()
+
+    def _selection(self):
+        """The selected text, or the word under the cursor when nothing is selected."""
+        from PySide6.QtGui import QTextCursor
+        cursor = self.edit.textCursor()
+        if not cursor.hasSelection():
+            cursor.select(QTextCursor.WordUnderCursor)
+        return cursor
+
+    def _action(self, key):
+        from PySide6.QtGui import QFont, QTextCharFormat
+        if key in ("left", "center", "right"):
+            self.edit.setAlignment({"left": Qt.AlignLeft, "center": Qt.AlignHCenter, "right": Qt.AlignRight}[key])
+        else:
+            cursor = self._selection()
+            fmt = QTextCharFormat()
+            if key == "bold":
+                fmt.setFontWeight(QFont.Bold if self.buttons["bold"].isChecked() else QFont.Normal)
+            elif key == "italic":
+                fmt.setFontItalic(self.buttons["italic"].isChecked())
+            elif key == "underline":
+                fmt.setFontUnderline(self.buttons["underline"].isChecked())
+            else:
+                size = cursor.charFormat().fontPointSize() or self.edit.font().pointSizeF() or 10.0
+                fmt.setFontPointSize(max(4.0, min(72.0, size * (1.2 if key == "bigger" else 1 / 1.2))))
+            cursor.mergeCharFormat(fmt)
+            self.edit.mergeCurrentCharFormat(fmt)
+        self.edit.setFocus()
+        self._show_format()
+        self.changed.emit()
+
+    def _show_format(self):
+        fmt = self.edit.currentCharFormat()
+        from PySide6.QtGui import QFont
+        self.buttons["bold"].setChecked(fmt.fontWeight() >= QFont.Bold)
+        self.buttons["italic"].setChecked(fmt.fontItalic())
+        self.buttons["underline"].setChecked(fmt.fontUnderline())
+        align = self.edit.alignment()
+        self.buttons["left"].setChecked(bool(align & Qt.AlignLeft) and not align & Qt.AlignHCenter)
+        self.buttons["center"].setChecked(bool(align & Qt.AlignHCenter))
+        self.buttons["right"].setChecked(bool(align & Qt.AlignRight))
+
+
 # ---------------------------------------------------------------- dialog
 class GeneratorDialog(QDialog):
     """The numbers of one generator, with a preview of the design."""
@@ -293,6 +406,10 @@ class GeneratorDialog(QDialog):
                 w = QCheckBox()
                 w.setChecked(bool(value))
                 w.toggled.connect(self._changed)
+            elif kind == "richtext":
+                from kerfly.gui.stamp import default_html
+                w = RichTextField(value or default_html())
+                w.changed.connect(self._changed)
             elif kind == "multiline":
                 w = QPlainTextEdit(_(value) if value == default_of(self.fields, name) else value)
                 w.setFixedHeight(w.fontMetrics().lineSpacing() * 4 + 14)
@@ -300,7 +417,8 @@ class GeneratorDialog(QDialog):
             elif kind == "font":
                 w = QFontComboBox()
                 from PySide6.QtGui import QFont
-                w.setCurrentFont(QFont(str(value)))
+                from kerfly.gui.stamp import default_font
+                w.setCurrentFont(QFont(str(value) or default_font()))     # empty: the system's usual font
                 w.currentFontChanged.connect(self._changed)
             elif kind == "file":
                 w = QWidget()
@@ -372,6 +490,8 @@ class GeneratorDialog(QDialog):
                 out[name] = w.isChecked()
             elif kind == "multiline":
                 out[name] = w.toPlainText()
+            elif kind == "richtext":
+                out[name] = w.html()
             elif kind == "font":
                 out[name] = w.currentFont().family()
             elif kind == "file":
@@ -450,8 +570,14 @@ class GeneratorDialog(QDialog):
             rect = QRectF(min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)).adjusted(-3, -3, 3, 3)
             self.scene.setSceneRect(rect)
             self.view.fitInView(rect, Qt.KeepAspectRatio)
-            self.summary.setText(_("%(w).1f × %(h).1f mm, %(n)d shapes, %(l)d layers") % {
-                "w": max(xs) - min(xs), "h": max(ys) - min(ys), "n": len(design.items), "l": len(design.layers)})
+            text = _("%(w).1f × %(h).1f mm, %(n)d shapes, %(l)d layers") % {
+                "w": max(xs) - min(xs), "h": max(ys) - min(ys), "n": len(design.items), "l": len(design.layers)}
+            sheets = getattr(design, "sheets", 1)
+            if sheets > 1:
+                text += "\n" + _("The parts do not fit the bed at once: %d sheets of material, drawn on top of each "
+                                  "other. Sheets 2 and on are on their own cut layers, unticked: cut sheet 1, "
+                                  "change the material, then tick the next sheet's layer.") % sheets
+            self.summary.setText(text)
 
     def keyPressEvent(self, event):
         """Enter in a field takes the number and updates the preview; it does not insert

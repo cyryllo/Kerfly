@@ -11,6 +11,13 @@ Version numbers:
 
 ### Fixed
 
+- **Stamp: streaks across the letters and a dashed frame on Windows**, in the
+  preview, the simulation and the engraving. The stamp is now painted in Qt's
+  usual colour format and only then made black and white, and a missing font
+  (DejaVu Sans on Windows) is replaced by Arial instead of an artificial
+  bold.
+- **The job simulation opened twice** after a second click; a second click
+  now brings the open one to the front.
 - **Linux AppImage: SVG files did not open when Inkscape is installed** (the
   program hung). The programs Kerfly starts (Inkscape, the browser) got the
   AppImage's own libraries, and Inkscape failed on its older C++ library; they
@@ -36,6 +43,16 @@ Version numbers:
   always visible also on small screens, switched on in Settings → View (off
   by default); also in the Laser menu. Their tooltips show the time of their
   part.
+- **Stamp text editor**: the text of the rectangular stamp is written in a
+  small editor that shows it as it will look, with **B** bold, **I** italic,
+  **U** underline, **A+ / A−** bigger and smaller letters and the alignment of
+  the lines, for each part of the text (for example the name big and bold,
+  the address smaller).
+- **Finger-joint box fits the bed**: the parts are laid out on the work area;
+  those that do not fit go on a next sheet at the same place, on its own
+  unticked cut layer (Sheet 2, …). **Each part on its own layer** as an option.
+- **Puzzle with round tabs**: a narrow neck and a round head, each tab a
+  little different.
 - **Home the head after a job** (Settings → Machine): after a finished job
   the head goes back to 0, 0, ready for the next piece, without pressing
   Home (not after Stop, and not after a boundary trace). The design stays

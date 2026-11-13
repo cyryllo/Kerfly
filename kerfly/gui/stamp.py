@@ -19,6 +19,32 @@ from kerfly.core.shapes import ShapeSpec
 from kerfly.i18n import N_, _
 
 DPI = 1000
+# the stamp's text at the start: the name bigger and bold, the address smaller (the text editor changes it)
+DEFAULT_LINE_TEXTS = (N_("YOUR COMPANY"), N_("Street 1, 00-000 City"), N_("phone 123 456 789"))
+
+
+def default_html():
+    """The starting text of the stamp, formatted, in the user's language."""
+    from html import escape
+    name, street, phone = (escape(_(t)) for t in DEFAULT_LINE_TEXTS)
+    return ('<p align="center" style="margin:0"><span style="font-size:14pt; font-weight:700">%s</span></p>'
+            '<p align="center" style="margin:0"><span style="font-size:10pt">%s</span></p>'
+            '<p align="center" style="margin:0"><span style="font-size:10pt">%s</span></p>' % (name, street, phone))
+# painted in Qt's usual colour format and only then made black and white: text and lines painted
+# straight into a grey-scale image came out with gaps on Windows (the frame dashed, streaks across
+# the letters; a user's report 2026-11-13)
+PAINT_FORMAT = QImage.Format_ARGB32_Premultiplied
+
+
+def default_font():
+    """DejaVu Sans where it is installed (Linux), Arial elsewhere (Windows, macOS):
+    a missing font was replaced by another one and made bold artificially."""
+    from PySide6.QtGui import QFontDatabase
+    families = set(QFontDatabase.families())
+    for name in ("DejaVu Sans", "Arial", "Liberation Sans", "Helvetica"):
+        if name in families:
+            return name
+    return QFont().defaultFamily()
 # common self-inking stamp sizes (mm)
 PRESETS = [("custom", N_("Own size")), ("26x9", "26 × 9 mm"), ("38x14", "38 × 14 mm"), ("47x18", "47 × 18 mm"),
            ("58x22", "58 × 22 mm"), ("70x25", "70 × 25 mm"), ("82x25", "82 × 25 mm"), ("60x40", "60 × 40 mm"),
@@ -61,7 +87,7 @@ def render(v, dpi=DPI):
     and white QImage; dark = burnt."""
     w_mm, h_mm = stamp_size(v)
     px = lambda mm: mm / 25.4 * dpi
-    img = QImage(max(1, int(round(px(w_mm)))), max(1, int(round(px(h_mm)))), QImage.Format_Grayscale8)
+    img = QImage(max(1, int(round(px(w_mm)))), max(1, int(round(px(h_mm)))), PAINT_FORMAT)
     img.fill(QColor("white"))
     p = QPainter(img)
     p.setRenderHint(QPainter.Antialiasing, True)
@@ -90,7 +116,10 @@ def render(v, dpi=DPI):
             box = QRectF(area.left(), area.top() + (area.height() - side) / 2, side, side)
             area = QRectF(box.right() + px(1.0), area.top(), area.right() - box.right() - px(1.0), area.height())
         _draw_picture(p, picture_path, box)
-    _draw_lines(p, _lines(v.get("text", "")), area, v, px(float(v.get("text_size", 0))))
+    if "text_html" in v:                           # the formatted text of the editor
+        _draw_rich(p, v.get("text_html") or default_html(), area, v, px(float(v.get("text_size", 0))))
+    else:
+        _draw_lines(p, stamp_lines(v), area, v, px(float(v.get("text_size", 0))))
     p.end()
     return _finish(img, v)
 
@@ -103,7 +132,7 @@ def _lines(text):
 
 
 def _font(v):
-    font = QFont(v.get("font", "DejaVu Sans") or "DejaVu Sans")
+    font = QFont(v.get("font") or default_font())
     font.setBold(bool(v.get("bold", True)))
     return font
 
@@ -116,37 +145,87 @@ def _draw_picture(p, path, box):
                            box.top() + (box.height() - pic.height()) / 2, pic.width(), pic.height()), pic)
 
 
+def stamp_lines(v):
+    """A plain text (v["text"], one line per row) as lines all alike
+    ({"text", "size" in % of the line height, "bold", "italic"})."""
+    return [{"text": t, "size": 100.0, "bold": bool(v.get("bold", True)), "italic": False}
+            for t in _lines(v.get("text", ""))]
+
+
+def _draw_rich(p, html, area, v, size_px=0.0):
+    """The formatted text of the editor (HTML) in the stamp's font, centred in area
+    (QRectF, pixels) and scaled as a whole (the sizes keep their proportions):
+    as large as fits, or so that letters of the normal size are size_px high."""
+    from PySide6.QtGui import QTextCharFormat, QTextCursor, QTextDocument
+    doc = QTextDocument()
+    doc.setDocumentMargin(0)
+    base = QFont(v.get("font") or default_font())
+    base.setPointSizeF(10.0)
+    doc.setDefaultFont(base)
+    doc.setHtml(html)
+    every = QTextCursor(doc)
+    every.select(QTextCursor.Document)
+    family = QTextCharFormat()
+    family.setFontFamilies([base.family()])        # the Font field decides, whatever the editor had
+    every.mergeCharFormat(family)
+    doc.setTextWidth(doc.idealWidth())
+    w, h = doc.size().width(), doc.size().height()
+    if w <= 0 or h <= 0 or not doc.toPlainText().strip():
+        return
+    if size_px > 0:
+        scale = size_px / max(QFontMetricsF(base).capHeight(), 1e-6)
+    else:
+        scale = min(area.width() / w, area.height() / h)
+    p.save()
+    p.translate(area.left() + (area.width() - w * scale) / 2, area.top() + (area.height() - h * scale) / 2)
+    p.scale(scale, scale)
+    doc.drawContents(p)
+    p.restore()
+
+
 def _draw_lines(p, lines, area, v, size_px=0.0):
-    """Text lines centred in area (QRectF, pixels); size_px: letter height
-    (0: as large as fits)."""
+    """Lines centred in area (QRectF, pixels), each with its own size (% of the
+    base height), bold and italic. size_px: the base height (0: as large as fits)."""
     if not lines or area.width() <= 2 or area.height() <= 2:
         return
-    font = _font(v)
     spacing = 1.15
+    base_font = _font(v)
+
+    def fonts(base):
+        out = []
+        for line in lines:
+            f = QFont(base_font)
+            f.setBold(line["bold"])
+            f.setItalic(line["italic"])
+            f.setPixelSize(max(1, int(base * line["size"] / 100.0)))
+            out.append(f)
+        return out
+
+    def measure(base):
+        fs = fonts(base)
+        widths = [QFontMetricsF(f).horizontalAdvance(line["text"]) for f, line in zip(fs, lines)]
+        heights = [QFontMetricsF(f).height() * spacing for f in fs]
+        return fs, max(widths), heights
     if size_px > 0:
-        font.setPixelSize(max(1, int(size_px)))
+        fs, _w, heights = measure(size_px)
     else:                                        # as large as fits
-        size_px = area.height() / (len(lines) * spacing)
-        while size_px > 4:
-            font.setPixelSize(int(size_px))
-            fm = QFontMetricsF(font)
-            if max(fm.horizontalAdvance(l) for l in lines) <= area.width() and \
-                    fm.height() * spacing * len(lines) <= area.height() * 1.02:
+        base = area.height() / (sum(line["size"] for line in lines) / 100.0 * spacing)
+        while True:
+            fs, width, heights = measure(base)
+            if base <= 4 or (width <= area.width() and sum(heights) <= area.height() * 1.02):
                 break
-            size_px *= 0.95
-        font.setPixelSize(max(1, int(size_px)))
-    p.setFont(font)
+            base *= 0.95
     p.setPen(QColor("black"))
-    fm = QFontMetricsF(font)
-    line_h = fm.height() * spacing
-    top = area.top() + (area.height() - line_h * len(lines)) / 2
-    for n, line in enumerate(lines):
-        r = QRectF(area.left(), top + n * line_h, area.width(), line_h)
-        p.drawText(r, Qt.AlignHCenter | Qt.AlignVCenter, line)
+    top = area.top() + (area.height() - sum(heights)) / 2
+    for f, line, h in zip(fs, lines, heights):
+        p.setFont(f)
+        p.drawText(QRectF(area.left(), top, area.width(), h), Qt.AlignHCenter | Qt.AlignVCenter, line["text"])
+        top += h
 
 
 def _finish(img, v):
     """Inverted and mirrored as asked, then pure black and white."""
+    img = img.convertToFormat(QImage.Format_Grayscale8)
     if v.get("invert", True):
         img.invertPixels()
     if v.get("mirror", True):
@@ -173,12 +252,12 @@ FIELDS = [
      N_("A usual size of self-inking stamps, or your own size below")),
     ("width", N_("Width"), "float", 50.0, (5, 300, 1, "mm"), N_("Width of the stamp (own size)")),
     ("height", N_("Height"), "float", 20.0, (5, 300, 1, "mm"), N_("Height of the stamp (own size)")),
-    ("text", N_("Text"), "multiline", N_("YOUR COMPANY\nStreet 1, 00-000 City\nphone 123 456 789"), None,
-     N_("The lines of the stamp")),
-    ("font", N_("Font"), "font", "DejaVu Sans", None, N_("Font of the text")),
-    ("bold", N_("Bold"), "bool", True, None, N_("Bold letters stamp more clearly")),
+    ("text_html", N_("Text"), "richtext", "", None,
+     N_("The text of the stamp: select a part and make it bold, italic, underlined, bigger or smaller, "
+        "or align the lines (for example the name bigger than the address)")),
+    ("font", N_("Font"), "font", "", None, N_("Font of the text")),
     ("text_size", N_("Text height"), "float", 0.0, (0, 50, 1, "mm"),
-     N_("Height of the letters (0: as large as fits)")),
+     N_("Height of the letters of normal size (0: the whole text as large as fits)")),
     ("picture", N_("Picture"), "file", "", None, N_("A logo or picture (PNG, JPG or SVG); empty: none")),
     ("place", N_("Picture place"), "choice", "left", PLACES, N_("Where the picture goes")),
     ("frame", N_("Frame"), "float", 0.6, (0, 5, 1, "mm"), N_("Width of the raised frame around it (0: none)")),
@@ -265,7 +344,7 @@ def render_round(v, dpi=DPI):
     d_mm = round_diameter(v)
     px = lambda mm: mm / 25.4 * dpi
     size = max(1, int(round(px(d_mm))))
-    img = QImage(size, size, QImage.Format_Grayscale8)
+    img = QImage(size, size, PAINT_FORMAT)
     img.fill(QColor("white"))
     p = QPainter(img)
     p.setRenderHint(QPainter.Antialiasing, True)
@@ -322,7 +401,7 @@ def render_round(v, dpi=DPI):
             p.drawEllipse(QPointF(c, c), inner_r - ring / 2, inner_r - ring / 2)
             inner_r -= ring + gap
     # the middle: a box inside the inner circle
-    lines = _lines(v.get("text", ""))
+    lines = stamp_lines(v)
     picture_path = v.get("picture", "")
     if inner_r > 2:
         half_w, half_h = inner_r * 0.8, inner_r * 0.6
@@ -370,7 +449,7 @@ ROUND_FIELDS = [
     ("text", N_("Text in the middle"), "multiline", N_("No. 123"), None, N_("The lines in the middle (empty: none)")),
     ("text_size", N_("Text height"), "float", 0.0, (0, 50, 1, "mm"),
      N_("Height of the letters in the middle (0: as large as fits)")),
-    ("font", N_("Font"), "font", "DejaVu Sans", None, N_("Font of the text")),
+    ("font", N_("Font"), "font", "", None, N_("Font of the text")),
     ("bold", N_("Bold"), "bool", True, None, N_("Bold letters stamp more clearly")),
     ("picture", N_("Picture"), "file", "", None,
      N_("A logo or picture in the middle (PNG, JPG or SVG); empty: none")),

@@ -327,18 +327,26 @@ jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
 - **Pudełko na wczepy**: dno, cztery ścianki i wieko (albo otwarte pudełko)
   łączone wczepami; wymiary zewnętrzne lub wewnętrzne, grubość materiału,
   szerokość wczepu i kerf (części rosną o jego połowę, żeby wczepy pasowały
-  ciasno).
+  ciasno). Części są układane tak, żeby mieściły się na stole; te, które się
+  nie mieszczą, trafiają na kolejny arkusz (**Arkusz 2**, …), w tym samym
+  miejscu, na osobnej odhaczonej warstwie cięcia: wytnij arkusz 1, zmień
+  materiał, zaznacz kolejny arkusz. **Każda część na osobnej warstwie** daje
+  każdej części jej własną warstwę cięcia.
 - **Test kerfu**: grzebień cięty na części (zsuń je i zmierz: kerf =
   (długość − zmierzone) / liczba części) i płytka ze szczelinami o grubości
   materiału plus luz, żeby znaleźć najciaśniejsze pasowanie.
 - **Koło zębate**: walcowe, z zębami ewolwentowymi (liczba zębów, moduł, kąt
   przyporu) i otworem na oś.
-- **Puzzle**: układanka dowolnej wielkości i liczby elementów; **Wariant**
-  odwraca wypustki.
+- **Puzzle**: układanka dowolnej wielkości i liczby elementów, z okrągłymi
+  wypustkami; **Wariant** odwraca wypustki.
 - **Linijka**: kreska co milimetr, liczby co centymetr.
 - **Kod QR**: tekst albo adres strony jako kod do graweru (raster).
 - **Pieczątka**: gumowa pieczątka. Wybierz rozmiar (typowe pieczątki
-  samotuszujące albo własny), wpisz linie, wybierz czcionkę, obrazek (logo)
+  samotuszujące albo własny), wpisz tekst w małym edytorze obok podglądu
+  (zaznacz fragment i naciśnij **B** pogrubienie, **I** kursywa, **U**
+  podkreślenie, **A+ / A−** większe lub mniejsze litery albo wyrównaj
+  wiersze: np. nazwa duża i pogrubiona, adres mniejszy), wybierz czcionkę,
+  obrazek (logo)
   i ramkę, potem **Generuj pieczątkę**: kolory są odwracane (tło zostaje
   wypalone, tekst zostaje wypukły), a pieczątka odbita, żeby odbijała się
   prawidłowo. Linia cięcia dookoła wycina pieczątkę z gumy.

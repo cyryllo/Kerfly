@@ -1034,6 +1034,23 @@ def test_generators():
     except ValueError:
         too_small = True
     results.append(("finger box: too small for the material is refused", too_small))
+    # a box bigger than the bed: the parts in rows that fit it, the rest on next sheets (own cut
+    # layers, unticked); a small box stays on one sheet; each part on its own layer on request
+    big = g.finger_box(200, 150, 120, 3, 10, 0.15, True, bed=(325, 220))
+    by_sheet = {}
+    for it in big.items:
+        by_sheet.setdefault(it.layer, []).append(it)
+
+    def fits(items):
+        return (max(it.left + it.spec.width for it in items) <= 325 and
+                max(it.top + it.spec.height for it in items) <= 220)
+    small = g.finger_box(100, 80, 50, 3, 10, 0.15, True, bed=(325, 220))
+    each = g.finger_box(100, 80, 50, 3, 10, 0.15, True, bed=(325, 220), each_layer=True)
+    results.append(("finger box on a small bed: %d sheets that fit it, sheets 2+ on unticked layers; a small "
+                    "box on one sheet; each part on its own layer" % big.sheets,
+                    big.sheets > 1 and len(big.layers) == big.sheets - 1 and all(not l.enabled for l in big.layers)
+                    and all(fits(items) for items in by_sheet.values()) and small.sheets == 1
+                    and not small.layers and len(each.layers) == 6))
 
     kt = g.kerf_test(50, 10, 10, 3.0, -0.2, 0.1, 7, 10, labels=False)
     cuts = [it for it in kt.items if it.name == "Comb cut"]
@@ -1050,6 +1067,18 @@ def test_generators():
     pz = g.puzzle(150, 100, 5, 4, seed=3)
     results.append(("puzzle: 4 + 3 inner lines in one shape, outline",
                     len(pz.items[0].spec.subpaths) == 7 and pz.items[1].spec.width == 150))
+    # the tabs are round (a head wider than its neck, a user's report), as high as the tab size:
+    # the first vertical cut at x = 30 mm, pieces 25 mm high, tab 22 %
+    first = [(n[0], n[1]) for n in pz.items[0].spec.subpaths[0]["nodes"]]
+    top_tab = [(x, y) for x, y in first if y <= 25.0]
+    depth = max(abs(x - 30.0) for x, y in top_tab)
+
+    def width_at(fraction):
+        level = [y for x, y in top_tab if abs(abs(x - 30.0) - depth * fraction) < depth * 0.06]
+        return max(level) - min(level) if level else 0.0
+    results.append(("puzzle: round tabs (head wider than neck), %.1f mm deep for 22 %% of 25 mm" % depth,
+                    abs(depth - 0.22 * 25.0) < 0.15 and width_at(0.57) > 1.5 * width_at(0.19) > 0
+                    and len(first) > 4 * 30))
     rl = g.ruler(150, 25)
     results.append(("ruler: 151 marks, 16 numbers", len(rl.items[0].spec.subpaths) == 151 and
                     sum(1 for it in rl.items if it.name == "Number") == 16))

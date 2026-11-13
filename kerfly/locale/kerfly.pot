@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 20:49+0100\n"
+"POT-Creation-Date: 2026-11-13 22:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -282,6 +282,12 @@ msgstr ""
 msgid "Align right"
 msgstr ""
 
+msgid "Align the lines to the left"
+msgstr ""
+
+msgid "Align the lines to the right"
+msgstr ""
+
 msgid "Align top"
 msgstr ""
 
@@ -325,7 +331,13 @@ msgstr ""
 msgid "Beep after a job"
 msgstr ""
 
+msgid "Bigger letters"
+msgstr ""
+
 msgid "Bold"
+msgstr ""
+
+msgid "Bold (Ctrl+B)"
 msgstr ""
 
 msgid "Bold letters stamp more clearly"
@@ -396,6 +408,9 @@ msgstr ""
 
 msgctxt "toolbar"
 msgid "Centre"
+msgstr ""
+
+msgid "Centre the lines"
 msgstr ""
 
 msgid "Centre the selected element, or the whole design, on the bed"
@@ -769,6 +784,9 @@ msgstr ""
 msgid "EGV files (*.egv *.EGV);;All files (*)"
 msgstr ""
 
+msgid "Each part on its own layer"
+msgstr ""
+
 msgctxt "toolbar group"
 msgid "Edit"
 msgstr ""
@@ -820,6 +838,11 @@ msgstr ""
 
 #, python-format
 msgid "Estimated total: <b>%s</b>"
+msgstr ""
+
+msgid ""
+"Every part on its own cut layer, to cut them one by one. Parts that do "
+"not fit the bed go on a next sheet anyway (its layer unticked)"
 msgstr ""
 
 msgid ""
@@ -993,10 +1016,10 @@ msgid ""
 " diameter)"
 msgstr ""
 
-msgid "Height of the letters (0: as large as fits)"
+msgid "Height of the letters in the middle (0: as large as fits)"
 msgstr ""
 
-msgid "Height of the letters in the middle (0: as large as fits)"
+msgid "Height of the letters of normal size (0: the whole text as large as fits)"
 msgstr ""
 
 msgid "Height of the puzzle"
@@ -1116,6 +1139,9 @@ msgid "Invert raster colors"
 msgstr ""
 
 msgid "Italic"
+msgstr ""
+
+msgid "Italic (Ctrl+I)"
 msgstr ""
 
 msgid "Job"
@@ -2187,6 +2213,10 @@ msgstr ""
 msgid "Sharp"
 msgstr ""
 
+#, python-format
+msgid "Sheet %d"
+msgstr ""
+
 msgid "Show the report file"
 msgstr ""
 
@@ -2224,6 +2254,9 @@ msgid "Slot plate"
 msgstr ""
 
 msgid "Slots"
+msgstr ""
+
+msgid "Smaller letters"
 msgstr ""
 
 msgid "Smooth"
@@ -2352,6 +2385,9 @@ msgid "Straight cuts"
 msgstr ""
 
 msgid "Straight text"
+msgstr ""
+
+msgid "Street 1, 00-000 City"
 msgstr ""
 
 msgid "Symmetric"
@@ -2513,13 +2549,17 @@ msgstr ""
 msgid "The lines in the middle (empty: none)"
 msgstr ""
 
-msgid "The lines of the stamp"
-msgstr ""
-
 msgid "The new language will be used after restarting Kerfly."
 msgstr ""
 
 msgid "The numbers count centimetres or millimetres"
+msgstr ""
+
+#, python-format
+msgid ""
+"The parts do not fit the bed at once: %d sheets of material, drawn on top"
+" of each other. Sheets 2 and on are on their own cut layers, unticked: "
+"cut sheet 1, change the material, then tick the next sheet's layer."
 msgstr ""
 
 msgid ""
@@ -2542,6 +2582,12 @@ msgid "The sizes are the inside of the box (off: the outside)"
 msgstr ""
 
 msgid "The stamp is too small."
+msgstr ""
+
+msgid ""
+"The text of the stamp: select a part and make it bold, italic, "
+"underlined, bigger or smaller, or align the lines (for example the name "
+"bigger than the address)"
 msgstr ""
 
 #, python-format
@@ -2650,6 +2696,9 @@ msgid "USB timeout (ms)"
 msgstr ""
 
 msgid "Un&freeze laser"
+msgstr ""
+
+msgid "Underline (Ctrl+U)"
 msgstr ""
 
 msgctxt "toolbar"
@@ -2840,10 +2889,7 @@ msgstr ""
 msgid "Y scale factor"
 msgstr ""
 
-msgid ""
-"YOUR COMPANY\n"
-"Street 1, 00-000 City\n"
-"phone 123 456 789"
+msgid "YOUR COMPANY"
 msgstr ""
 
 msgid "YOUR COMPANY NAME"
@@ -2888,6 +2934,9 @@ msgid "none"
 msgstr ""
 
 msgid "on line"
+msgstr ""
+
+msgid "phone 123 456 789"
 msgstr ""
 
 msgid "project"

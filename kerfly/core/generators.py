@@ -28,6 +28,7 @@ class LayerSpec:
     power: float = 0.5
     passes: int = 1
     color: str = ""
+    enabled: bool = True           # unticked: e.g. the second sheet of a box, cut after the first
 
 
 @dataclass
@@ -47,6 +48,7 @@ class Generated:
     name: str
     items: list = field(default_factory=list)
     layers: list = field(default_factory=list)
+    sheets: int = 1                # sheets of material it needs (the parts that fit the bed at once)
 
 
 def _steps(lo, hi, n):
@@ -153,13 +155,13 @@ def _region_outline(rect, holes):
     return loops
 
 
-def _polygon_item(points, left, top, operation="cut", name=""):
+def _polygon_item(points, left, top, operation="cut", name="", layer=""):
     x0 = min(p[0] for p in points)
     y0 = min(p[1] for p in points)
     pts = [(x - x0, y - y0) for x, y in points]
     spec = ShapeSpec(kind="polyline", operation=operation, points=pts, closed_path=True,
                      width=max(p[0] for p in pts), height=max(p[1] for p in pts))
-    return Item(spec, left + x0, top + y0, name=name)
+    return Item(spec, left + x0, top + y0, layer=layer, name=name)
 
 
 def _path_item(subpaths, left, top, operation="cut", name=""):
@@ -224,10 +226,17 @@ def _fingers(length, finger):
 
 
 def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0, kerf=0.1, lid=True,
-               inside=False, spacing=4.0, names=None):
+               inside=False, spacing=4.0, names=None, bed=None, each_layer=False, cut=(10.0, 0.5, 1),
+               sheet_name="Sheet %d"):
     """A box joined with fingers: bottom, four walls and (lid) a top, laid out side by
     side. Sizes are outside sizes (inside=True: inside sizes). kerf: width of the cut;
-    every part grows by half of it, so the fingers fit tightly after cutting."""
+    every part grows by half of it, so the fingers fit tightly after cutting.
+
+    bed: (width, height) mm of the work area: the parts are laid out in rows that
+    fit it, and parts that do not fit go on a next sheet, at the same place on its
+    own unticked cut layer (cut sheet 1, change the material, tick sheet 2).
+    each_layer: every part on its own cut layer (named after the part).
+    cut: (speed, power, passes) for the new layers (those of the cut layer)."""
     t = float(thickness)
     if inside:
         width, depth, height = width + 2 * t, depth + 2 * t, height + (2 if lid else 1) * t
@@ -277,16 +286,37 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
              ("right", D, H, (top_edge, "in", "out", "in"))]
     if lid:
         parts.append(("lid", W, D, ("in", "in", "in", "in")))
-    x, y, row_h = 0.0, 0.0, 0.0
     row_w = max(2 * W + spacing, W + D + spacing) + 1
+    if bed is not None:
+        bed_w, bed_h = (max(10.0, float(v) - 2.0) for v in bed)     # a little room to the bed's edges
+        row_w = min(row_w, bed_w)
+    else:
+        bed_w = bed_h = float("inf")
+    speed, power, passes = cut
+    sheet, x, y, row_h = 1, 0.0, 0.0, 0.0
+    sheet_keys = {}
     for name, w, h, edges in parts:
-        if x > 0 and x + w > row_w:
+        if x > 0 and x + w > row_w:                                 # next row
             x, y, row_h = 0.0, y + row_h + spacing, 0.0
+        if y > 0 and y + h > bed_h:                                 # does not fit: next sheet, same place
+            sheet, x, y, row_h = sheet + 1, 0.0, 0.0, 0.0
+        layer = ""
+        if each_layer:
+            layer = "part " + name
+            out.layers.append(LayerSpec(layer, CUT, names.get(name, name.capitalize()), speed, power, passes,
+                                        EXTRA_COLORS[len(out.layers) % len(EXTRA_COLORS)], enabled=sheet == 1))
+        elif sheet > 1:
+            layer = sheet_keys.get(sheet)
+            if layer is None:
+                layer = sheet_keys[sheet] = "sheet %d" % sheet
+                out.layers.append(LayerSpec(layer, CUT, sheet_name % sheet, speed, power, passes,
+                                            EXTRA_COLORS[(sheet - 2) % len(EXTRA_COLORS)], enabled=False))
         for loop in notches(w, h, edges):
             out.items.append(_polygon_item([(px + x, py + y) for px, py in loop], 0, 0, "cut",
-                                           names.get(name, name.capitalize())))  # Bottom, Front, ...
+                                           names.get(name, name.capitalize()), layer))  # Bottom, Front, ...
         x += w + spacing
         row_h = max(row_h, h)
+    out.sheets = sheet
     return out
 
 
@@ -378,16 +408,48 @@ def puzzle(width=150.0, height=100.0, columns=5, rows=4, tab=0.22, seed=1, outli
     rows = max(2, min(int(rows), 40))
     cw, ch = width / columns, height / rows
 
+    def knob(jitter_u, jitter_r):
+        """A classic tab in edge units (u along the edge 0..1, v to the side): a narrow
+        neck and a round head that turns back under itself, 0.29 high."""
+        import math
+
+        def bezier(p0, c1, c2, p3, n=8):
+            out = []
+            for i in range(1, n + 1):
+                t = i / n
+                a, b_, c, d = (1 - t) ** 3, 3 * (1 - t) ** 2 * t, 3 * (1 - t) * t * t, t ** 3
+                out.append((a * p0[0] + b_ * c1[0] + c * c2[0] + d * p3[0],
+                            a * p0[1] + b_ * c1[1] + c * c2[1] + d * p3[1]))
+            return out
+        cu = 0.5 + jitter_u                         # the head's centre along the edge
+        r = 0.125 * jitter_r                        # the head's radius
+        cv = 0.29 - r                               # its centre to the side (the top stays at 0.29)
+        neck = 0.06 * jitter_r                      # half the neck's width where it meets the head
+        nv = cv - math.sqrt(max(r * r - neck * neck, 0.0))     # where the neck meets the circle
+        a0 = math.atan2(nv - cv, -neck)             # lower left of the head
+        a1 = math.atan2(nv - cv, neck) + 2 * math.pi            # lower right, after going over the top
+        pts = [(0.0, 0.0), (cu - 0.14, 0.0)]
+        # a soft shoulder into the neck (it widens towards the edge)
+        pts += bezier((cu - 0.14, 0.0), (cu - 0.06, 0.0), (cu - neck + 0.005, nv * 0.35), (cu - neck, nv))
+        steps = 28                                  # the head, from lower left over the top to lower right
+        start, end = a0, a1 - 2 * math.pi
+        if start < end:
+            start += 2 * math.pi
+        for i in range(1, steps + 1):
+            ang = start + (end - start) * i / steps
+            pts.append((cu + r * math.cos(ang), cv + r * math.sin(ang)))
+        pts += bezier((cu + neck, nv), (cu + neck - 0.005, nv * 0.35), (cu + 0.06, 0.0), (cu + 0.14, 0.0))
+        pts.append((1.0, 0.0))
+        return pts
+
     def edge(p0, p1, size):
-        """Points of one edge from p0 to p1 with a tab to one side."""
+        """Points of one edge from p0 to p1 with a round tab to one side."""
         (x0, y0), (x1, y1) = p0, p1
         dx, dy = x1 - x0, y1 - y0
         nx, ny = -dy, dx                           # a side of the edge
         side = 1 if rnd.random() < 0.5 else -1
-        shape = [(0.0, 0.0), (0.35, 0.0), (0.37, 0.05), (0.33, 0.12), (0.35, 0.2), (0.42, 0.25),
-                 (0.5, 0.26), (0.58, 0.25), (0.65, 0.2), (0.67, 0.12), (0.63, 0.05), (0.65, 0.0),
-                 (1.0, 0.0)]
-        k = side * size / 0.25
+        shape = knob(rnd.uniform(-0.04, 0.04), rnd.uniform(0.92, 1.08))     # a little different each time
+        k = side * size / 0.29
         return [(x0 + dx * u + nx * v * k, y0 + dy * u + ny * v * k) for u, v in shape]
     lines = []
     for c in range(1, columns):

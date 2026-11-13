@@ -323,18 +323,24 @@ remembered.
 - **Finger-joint box**: bottom, four walls and a lid (or an open box) that fit
   together with fingers; outside or inside sizes, material thickness, finger
   width and the kerf (the parts grow by half of it so the fingers fit
-  tightly).
+  tightly). The parts are laid out to fit the bed; those that do not fit go
+  on a next sheet (**Sheet 2**, …), at the same place on its own unticked cut
+  layer: cut sheet 1, change the material, tick the next sheet. **Each part on
+  its own layer** puts every part on a cut layer of its own.
 - **Kerf test**: a comb cut into pieces (push them together and measure:
   kerf = (length − measured) / pieces) and a plate with slots of the
   material's thickness plus a clearance each, to find the tightest fit.
 - **Gear**: a spur gear with involute teeth (teeth, module, pressure angle)
   and a hole for the axle.
-- **Puzzle**: a jigsaw puzzle cut of any size and number of pieces;
-  **Variant** turns the tabs other ways.
+- **Puzzle**: a jigsaw puzzle cut of any size and number of pieces, with
+  round tabs; **Variant** turns the tabs other ways.
 - **Ruler**: a mark every millimetre, numbers every centimetre.
 - **QR code**: a text or web address as a code to engrave (raster).
 - **Stamp**: a rubber stamp. Choose the size (usual self-inking sizes or your
-  own), type the lines, choose the font, a picture (logo) and a frame, then
+  own), type the text in the small editor above the preview (select a part
+  and press **B** bold, **I** italic, **U** underline, **A+ / A−** bigger or
+  smaller, or align the lines: for example the name big and bold, the address
+  smaller), choose the font, a picture (logo) and a frame, then
   **Generate stamp**: the colours are inverted (the background is burnt away,
   the text stays raised) and the stamp is mirrored, so it prints the right
   way round. A cut line around it cuts the stamp out of the rubber.

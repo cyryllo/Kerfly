@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-12 20:49+0100\n"
+"POT-Creation-Date: 2026-11-13 22:14+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -299,6 +299,12 @@ msgstr "Links ausrichten"
 msgid "Align right"
 msgstr "Rechts ausrichten"
 
+msgid "Align the lines to the left"
+msgstr "Zeilen links ausrichten"
+
+msgid "Align the lines to the right"
+msgstr "Zeilen rechts ausrichten"
+
 msgid "Align top"
 msgstr "Oben ausrichten"
 
@@ -344,8 +350,14 @@ msgstr "Breite der Arbeitsfläche"
 msgid "Beep after a job"
 msgstr "Signalton nach dem Auftrag"
 
+msgid "Bigger letters"
+msgstr "Größere Buchstaben"
+
 msgid "Bold"
 msgstr "Fett"
+
+msgid "Bold (Ctrl+B)"
+msgstr "Fett (Strg+B)"
 
 msgid "Bold letters stamp more clearly"
 msgstr "Fette Buchstaben stempeln deutlicher"
@@ -422,6 +434,9 @@ msgstr "Mitte"
 msgctxt "toolbar"
 msgid "Centre"
 msgstr "Zentrieren"
+
+msgid "Centre the lines"
+msgstr "Zeilen zentrieren"
 
 msgid "Centre the selected element, or the whole design, on the bed"
 msgstr ""
@@ -822,6 +837,9 @@ msgstr "EGV-Dateien (*.EGV *.egv)"
 msgid "EGV files (*.egv *.EGV);;All files (*)"
 msgstr "EGV-Dateien (*.egv *.EGV);;Alle Dateien (*)"
 
+msgid "Each part on its own layer"
+msgstr "Jedes Teil auf eigener Ebene"
+
 msgctxt "toolbar group"
 msgid "Edit"
 msgstr "Bearbeiten"
@@ -882,6 +900,14 @@ msgstr "Fehlerkorrektur"
 #, python-format
 msgid "Estimated total: <b>%s</b>"
 msgstr "Geschätzte Gesamtzeit: <b>%s</b>"
+
+msgid ""
+"Every part on its own cut layer, to cut them one by one. Parts that do "
+"not fit the bed go on a next sheet anyway (its layer unticked)"
+msgstr ""
+"Jedes Teil auf eigener Schneideebene, um sie nacheinander zu schneiden. "
+"Teile, die nicht auf den Tisch passen, kommen ohnehin auf einen weiteren "
+"Bogen (Ebene abgehakt)"
 
 msgid ""
 "Example starting values for a typical 40 W K40; test on a scrap piece "
@@ -1070,11 +1096,13 @@ msgstr ""
 "Höhe der Großbuchstaben rund um den Stempel (0: etwa ein Achtel des "
 "Durchmessers)"
 
-msgid "Height of the letters (0: as large as fits)"
-msgstr "Buchstabenhöhe (0: so groß, wie es passt)"
-
 msgid "Height of the letters in the middle (0: as large as fits)"
 msgstr "Höhe der Buchstaben in der Mitte (0: so groß wie es passt)"
+
+msgid "Height of the letters of normal size (0: the whole text as large as fits)"
+msgstr ""
+"Höhe der Buchstaben normaler Größe (0: der ganze Text so groß wie es "
+"passt)"
 
 msgid "Height of the puzzle"
 msgstr "Höhe des Puzzles"
@@ -1198,6 +1226,9 @@ msgstr "Rasterfarben umkehren"
 
 msgid "Italic"
 msgstr "Kursiv"
+
+msgid "Italic (Ctrl+I)"
+msgstr "Kursiv (Strg+I)"
 
 msgid "Job"
 msgstr "Auftrag"
@@ -2371,6 +2402,10 @@ msgstr "Formen"
 msgid "Sharp"
 msgstr "Spitz"
 
+#, python-format
+msgid "Sheet %d"
+msgstr "Bogen %d"
+
 msgid "Show the report file"
 msgstr "Berichtsdatei anzeigen"
 
@@ -2411,6 +2446,9 @@ msgstr "Schlitzplatte"
 
 msgid "Slots"
 msgstr "Schlitze"
+
+msgid "Smaller letters"
+msgstr "Kleinere Buchstaben"
 
 msgid "Smooth"
 msgstr "Glatt"
@@ -2553,6 +2591,9 @@ msgstr "Gerade Schnitte"
 
 msgid "Straight text"
 msgstr "Gerader Text"
+
+msgid "Street 1, 00-000 City"
+msgstr "Musterstraße 1, 12345 Stadt"
 
 msgid "Symmetric"
 msgstr "Symmetrisch"
@@ -2741,14 +2782,22 @@ msgstr ""
 msgid "The lines in the middle (empty: none)"
 msgstr "Die Zeilen in der Mitte (leer: keine)"
 
-msgid "The lines of the stamp"
-msgstr "Die Zeilen des Stempels"
-
 msgid "The new language will be used after restarting Kerfly."
 msgstr "Die neue Sprache wird nach einem Neustart von Kerfly verwendet."
 
 msgid "The numbers count centimetres or millimetres"
 msgstr "Die Zahlen zählen Zentimeter oder Millimeter"
+
+#, python-format
+msgid ""
+"The parts do not fit the bed at once: %d sheets of material, drawn on top"
+" of each other. Sheets 2 and on are on their own cut layers, unticked: "
+"cut sheet 1, change the material, then tick the next sheet's layer."
+msgstr ""
+"Die Teile passen nicht auf einmal auf den Tisch: %d Bögen Material, "
+"übereinander gezeichnet. Bögen ab 2 liegen auf eigenen, abgehakten "
+"Schneideebenen: Bogen 1 schneiden, Material wechseln, dann die Ebene des "
+"nächsten Bogens anhaken."
 
 msgid ""
 "The report form is opening in your browser. Please drag the diagnostic "
@@ -2779,6 +2828,15 @@ msgstr "Die Maße sind innen (aus: außen)"
 
 msgid "The stamp is too small."
 msgstr "Der Stempel ist zu klein."
+
+msgid ""
+"The text of the stamp: select a part and make it bold, italic, "
+"underlined, bigger or smaller, or align the lines (for example the name "
+"bigger than the address)"
+msgstr ""
+"Text des Stempels: einen Teil markieren und fett, kursiv, unterstrichen, "
+"größer oder kleiner machen oder die Zeilen ausrichten (zum Beispiel den "
+"Namen größer als die Adresse)"
 
 #, python-format
 msgid "There are many data transmission errors (%s). Press Stop to stop trying."
@@ -2909,6 +2967,9 @@ msgstr "USB-Zeitlimit (ms)"
 
 msgid "Un&freeze laser"
 msgstr "Laser &entsperren"
+
+msgid "Underline (Ctrl+U)"
+msgstr "Unterstrichen (Strg+U)"
 
 msgctxt "toolbar"
 msgid "Undo"
@@ -3116,14 +3177,8 @@ msgstr "Y"
 msgid "Y scale factor"
 msgstr "Skalierungsfaktor Y"
 
-msgid ""
-"YOUR COMPANY\n"
-"Street 1, 00-000 City\n"
-"phone 123 456 789"
-msgstr ""
-"IHRE FIRMA\n"
-"Musterstraße 1, 00000 Stadt\n"
-"Tel. 123 456 789"
+msgid "YOUR COMPANY"
+msgstr "IHRE FIRMA"
 
 msgid "YOUR COMPANY NAME"
 msgstr "NAME IHRER FIRMA"
@@ -3168,6 +3223,9 @@ msgstr "keine"
 
 msgid "on line"
 msgstr "auf Linie"
+
+msgid "phone 123 456 789"
+msgstr "Tel. 123 456 789"
 
 msgid "project"
 msgstr "projekt"
@@ -3511,4 +3569,19 @@ msgstr "Vektorgravur"
 #~ msgstr ""
 #~ "Dupli-\n"
 #~ "zieren"
+
+#~ msgid "Height of the letters (0: as large as fits)"
+#~ msgstr "Buchstabenhöhe (0: so groß, wie es passt)"
+
+#~ msgid "The lines of the stamp"
+#~ msgstr "Die Zeilen des Stempels"
+
+#~ msgid ""
+#~ "YOUR COMPANY\n"
+#~ "Street 1, 00-000 City\n"
+#~ "phone 123 456 789"
+#~ msgstr ""
+#~ "IHRE FIRMA\n"
+#~ "Musterstraße 1, 00000 Stadt\n"
+#~ "Tel. 123 456 789"
 

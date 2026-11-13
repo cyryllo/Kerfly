@@ -908,6 +908,10 @@ def main():
     skipped = dlg.time > 0
     dlg.seek(dlg.total)
     drawn = len(dlg.items) >= 2 and auto_speed and skipped
+    from kerfly.gui.simulation import SimulationDialog as _SD
+    w.simulate_job()                                    # clicked again: the same window, not a second one
+    app.processEvents()
+    drawn = drawn and w._simulation is dlg and len([d for d in w.findChildren(_SD) if d.isVisible()]) == 1
     dlg.close()
     app.processEvents()
     check("simulation: plays, draws the path, closes", played and drawn, "(%.1f s)" % (dlg.total if dlg else 0))
@@ -1905,6 +1909,76 @@ def main():
           "(%s)" % ([texts_ok, r_size_ok, small.width(), r_mirrored, r_cut],))
     sw._dirty = False
     sw.close()
+
+    # 55c. the stamp picture is clean: the frame unbroken along its whole length, nothing between the
+    # frame and the text (on Windows the frame came out dashed and streaks ran across the letters)
+    clean = dict(base, preset="custom", width=95.0, height=40.0, frame=0.6, corner=1.0, margin=1.0,
+                 text="Prototypowanie i Fabrykacja\nCyryl Sochacki\nul. Szczyglewskiego 21/8\n80-625 Gdańsk",
+                 invert=False, mirror=False, font="")
+    rich_clean = {k: val for k, val in clean.items() if k != "text"}
+    rich_clean["text_html"] = ""                         # the editor's default text (name bold, address)
+    stray_all, frame_all = [], True
+    for variant in (clean, rich_clean):
+        framed = _stamp.render(variant)
+        bare = _stamp.render(dict(variant, frame=0.0))
+
+        def _dark(img, x, y):
+            return img.pixelColor(x, y).lightness() < 128
+        fw, fh = framed.width(), framed.height()
+        band = int(0.6 / 25.4 * 1000)                   # the frame's width in pixels
+        corner = int(1.5 / 25.4 * 1000)
+        frame_ok = all(_dark(framed, x, y) for y in (band // 3, band // 2, fh - 1 - band // 2)
+                       for x in range(corner, fw - corner, 7))
+        frame_ok = frame_ok and all(_dark(framed, x, y) for x in (band // 2, fw - 1 - band // 2)
+                                    for y in range(corner, fh - corner, 7))
+        xs = [x for x in range(0, fw, 3) for y in range(0, fh, 6) if _dark(bare, x, y)]
+        ys = [y for y in range(0, fh, 3) for x in range(0, fw, 6) if _dark(bare, x, y)]
+        tx0, tx1, ty0, ty1 = min(xs) - 4, max(xs) + 4, min(ys) - 4, max(ys) + 4
+        inner = int(1.2 / 25.4 * 1000)
+        stray_all += [(x, y) for y in range(inner, fh - inner, 5) for x in range(inner, fw - inner, 5)
+                      if not (tx0 <= x <= tx1 and ty0 <= y <= ty1) and _dark(framed, x, y)]
+        frame_all = frame_all and frame_ok
+    frame_ok, stray = frame_all, stray_all
+    two_tone_r = all(framed.pixelColor(x, y).lightness() in (0, 255) for y in range(0, fh, 11) for x in range(0, fw, 11))
+    ring = _stamp.render_round(dict(rbase, invert=False, mirror=False, font=""))
+    two_tone_c = all(ring.pixelColor(x, y).lightness() in (0, 255) for y in range(0, ring.height(), 11)
+                     for x in range(0, ring.width(), 11))
+    check("stamp picture clean: unbroken frame, nothing between the frame and the text, black and white "
+          "(font %s)" % _stamp.default_font(), frame_ok and not stray and two_tone_r and two_tone_c,
+          "(%s)" % [frame_ok, stray[:5], two_tone_r, two_tone_c])
+
+    # 55d. the stamp's text editor (WYSIWYG): a line selected, B makes it bold, A+ bigger; the stamp
+    # follows (a user asked for the name and the address in different sizes and weights)
+    from PySide6.QtGui import QTextCursor as _QTC
+    from kerfly.gui.generators import GeneratorDialog as _GD, RichTextField as _RTF
+    sd = _GD(make_window(), "stamp", remember=False)
+    rich = next(wd for wd in sd.widgets.values() if isinstance(wd, _RTF))
+
+    def _ink(values):
+        im = _stamp.render(dict(values, invert=False, mirror=False))
+        return sum(1 for y in range(0, im.height(), 3) for x in range(0, im.width(), 3)
+                   if im.pixelColor(x, y).lightness() < 128)
+    plain_ink = _ink(sd.values())
+    cur = rich.edit.textCursor()
+    cur.movePosition(_QTC.Start)
+    cur.movePosition(_QTC.NextBlock)
+    cur.select(_QTC.BlockUnderCursor)
+    rich.edit.setTextCursor(cur)
+    rich.buttons["bold"].click()
+    bold_html = sd.values()["text_html"]
+    bold_ink = _ink(sd.values())
+    cur = rich.edit.textCursor()
+    second_bold = cur.charFormat().fontWeight() >= 700
+    cur.movePosition(_QTC.Start)
+    cur.select(_QTC.BlockUnderCursor)
+    rich.edit.setTextCursor(cur)
+    before_size = rich.edit.textCursor().charFormat().fontPointSize()
+    rich.buttons["bigger"].click()
+    after_size = rich.edit.textCursor().charFormat().fontPointSize()
+    check("stamp text editor: B makes a line bold, A+ bigger, the stamp follows",
+          second_bold and bold_ink > plain_ink and after_size > before_size > 0 and "700" in bold_html,
+          "(%s)" % [second_bold, plain_ink, bold_ink, before_size, after_size])
+    sd.close()
 
     # 56. a path shape put on the bed starts at (0, 0) of its outline, so the node editor draws its
     # nodes on the shape (a curve whose handles stuck out was drawn shifted)
