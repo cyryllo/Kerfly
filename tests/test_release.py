@@ -1151,12 +1151,17 @@ def part_view_and_laser(s):
 
     # after a job: the report window (on by default) and a program run after the job, its output in the report
     program_dir = tempfile.mkdtemp(prefix="kerfly_release_after_job_")
+    before_marker = os.path.join(program_dir, "exhaust_on.txt")
     if sys.platform == "win32":
         program = os.path.join(program_dir, "after.bat")
         open(program, "w").write("@echo off\r\necho exhaust off\r\n")
+        before = os.path.join(program_dir, "before.bat")
+        open(before, "w").write('@echo off\r\necho on > "%s"\r\n' % before_marker)
     else:
         program = os.path.join(program_dir, "after.sh")
         open(program, "w").write("#!/bin/sh\necho exhaust off\n")
+        before = os.path.join(program_dir, "before.sh")
+        open(before, "w").write('#!/bin/sh\necho on > "%s"\n' % before_marker)
 
     def program_on(dlg):
         from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QLineEdit, QTabWidget
@@ -1165,33 +1170,39 @@ def part_view_and_laser(s):
         index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(box))
         QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
         s.settle()
-        if not box.isChecked():
-            s.tick(box)
-        field = next(e for e in dlg.findChildren(QLineEdit)
-                     if e.parentWidget() is not None and e.parentWidget().property("setting_key") == "batch_path")
-        if not field.isEnabled():
-            raise RuntimeError("the program field is greyed out with the tick on")
-        s.click(field)
-        QTest.keyClick(field, Qt.Key_A, Qt.ControlModifier)
-        QTest.keyClicks(field, program)
+        for tick_key, path_key, path in (("pre_exec", "pre_batch_path", before), ("post_exec", "batch_path", program)):
+            box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == tick_key)
+            if not box.isChecked():
+                s.tick(box)
+            field = next(e for e in dlg.findChildren(QLineEdit)
+                         if e.parentWidget() is not None and e.parentWidget().property("setting_key") == path_key)
+            if not field.isEnabled():
+                raise RuntimeError("the %s field is greyed out with the tick on" % path_key)
+            s.click(field)
+            QTest.keyClick(field, Qt.Key_A, Qt.ControlModifier)
+            QTest.keyClicks(field, path)
         QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
     s.expect_dialog("settings: run a program after a job", program_on)
-    s.step("Settings (Ctrl+,) → Machine: Run a program after a job, its path typed",
+    s.step("Settings (Ctrl+,) → Machine: Run a program before and after a job, their paths typed",
            lambda: s.trigger(w.act_settings, via="key"), change=False, undo=False,
-           check=lambda: (w.values.get("post_exec") == "1" and w.values.get("batch_path") == program,
-                          "%s, %r" % (w.values.get("post_exec"), w.values.get("batch_path"))))
+           check=lambda: (w.values.get("post_exec") == "1" and w.values.get("batch_path") == program
+                          and w.values.get("pre_exec") == "1" and w.values.get("pre_batch_path") == before,
+                          "%s" % [w.values.get(k) for k in ("pre_exec", "pre_batch_path", "post_exec", "batch_path")]))
 
     def start_and_report():
         s.trigger(w.act_start, via="key")
-        s.wait(lambda: w.worker is None and getattr(w, "_after_job_process", None) is None)
+        s.wait(lambda: getattr(w, "_before_job_process", None) is None and w.worker is None
+               and getattr(w, "_after_job_process", None) is None)
         s.settle()
 
     def report_text():
         box = getattr(w, "_job_report", None)
         return box.text() if box is not None and box.isVisible() else None
-    s.step("Start: after the job the report shows the time and the program's output", start_and_report,
-           change=False, check=lambda: (report_text() is not None and "exhaust off" in report_text(),
-                                        "report %r" % report_text()))
+    s.step("Start: the program before the job runs, after the job the report shows the time and the "
+           "program's output", start_and_report, change=False,
+           check=lambda: (os.path.isfile(before_marker) and report_text() is not None
+                          and "exhaust off" in report_text(),
+                          "before ran %s, report %r" % (os.path.isfile(before_marker), report_text())))
     s.step("report window: OK closes it", lambda: s.click(w._job_report.button(QMessageBox.Ok)), change=False,
            check=lambda: (report_text() is None, "still open"))
 
@@ -1202,13 +1213,16 @@ def part_view_and_laser(s):
         index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(box))
         QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
         s.settle()
-        if box.isChecked():
-            s.tick(box)
+        for key in ("pre_exec", "post_exec"):
+            box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == key)
+            if box.isChecked():
+                s.tick(box)
         QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
     s.expect_dialog("settings: no program after a job", program_off)
-    s.step("Settings (Ctrl+,) → Machine: Run a program after a job off again",
+    s.step("Settings (Ctrl+,) → Machine: Run a program before and after a job off again",
            lambda: s.trigger(w.act_settings, via="key"), change=False, undo=False,
-           check=lambda: (w.values.get("post_exec") == "0", w.values.get("post_exec")))
+           check=lambda: (w.values.get("post_exec") == "0" and w.values.get("pre_exec") == "0",
+                          "%s, %s" % (w.values.get("pre_exec"), w.values.get("post_exec"))))
 
     def pause_resume():
         s.fake.slow = 1000                         # long enough to be paused also on a slow machine

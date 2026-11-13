@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-14 00:34+0100\n"
+"POT-Creation-Date: 2026-11-14 00:49+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -2022,6 +2022,9 @@ msgstr "Preprocesando datos del ráster: %s%%"
 msgid "Pressure angle"
 msgstr "Ángulo de presión"
 
+msgid "Program before the job"
+msgstr "Programa antes del trabajo"
+
 msgid "Program errors:"
 msgstr "Errores del programa:"
 
@@ -2030,6 +2033,9 @@ msgstr "Salida del programa:"
 
 msgid "Program to run after a job"
 msgstr "Programa tras un trabajo"
+
+msgid "Program to run before a job"
+msgstr "Programa antes de un trabajo"
 
 #, python-format
 msgid "Project opened: %s"
@@ -2223,6 +2229,9 @@ msgstr "Regla: una marca cada milímetro, números cada centímetro"
 msgid "Run a program after a job"
 msgstr "Ejecutar un programa tras un trabajo"
 
+msgid "Run a program before a job"
+msgstr "Ejecutar un programa antes de un trabajo"
+
 msgid "Run only the ticked cut layers"
 msgstr "Ejecutar solo las capas de corte marcadas"
 
@@ -2235,6 +2244,10 @@ msgstr "Ejecutar solo las capas de grabado ráster marcadas"
 #, python-format
 msgid "Running the program set to run after a job: %s"
 msgstr "Ejecutando el programa ajustado para después del trabajo: %s"
+
+#, python-format
+msgid "Running the program set to run before a job: %s"
+msgstr "Ejecutando el programa ajustado para antes del trabajo: %s"
 
 msgid "SVG files"
 msgstr "Archivos SVG"
@@ -2599,6 +2612,9 @@ msgstr ""
 "Empezar un proyecto vacío: vacía la cama (antes pregunta si guardar los "
 "cambios)"
 
+msgid "Start the job anyway?"
+msgstr "¿Iniciar el trabajo de todos modos?"
+
 msgid "Start the selected operations"
 msgstr "Iniciar las operaciones seleccionadas"
 
@@ -2608,6 +2624,14 @@ msgid ""
 msgstr ""
 "Se inicia tras cada trabajo terminado, por ejemplo para apagar el "
 "extractor o enviar un mensaje; su salida va al informe"
+
+msgid ""
+"Started before every job sent to the laser, for example to switch on the "
+"exhaust or the air pump; the job waits until it ends (at most a minute)"
+msgstr ""
+"Se inicia antes de cada trabajo enviado al láser, por ejemplo para "
+"encender el extractor o la bomba de aire; el trabajo espera a que termine"
+" (como mucho un minuto)"
 
 msgid "Step:"
 msgstr "Paso:"
@@ -2856,6 +2880,10 @@ msgid "The program could not be started: %s"
 msgstr "No se pudo iniciar el programa: %s"
 
 #, python-format
+msgid "The program did not end within a minute and was stopped: %s"
+msgstr "El programa no terminó en un minuto y se detuvo: %s"
+
+#, python-format
 msgid "The program ended with an error (exit code %d)."
 msgstr "El programa terminó con un error (código de salida %d)."
 
@@ -2863,6 +2891,12 @@ msgid "The program run after the job reported an error; see the report window."
 msgstr ""
 "El programa ejecutado tras el trabajo informó de un error; vea la ventana"
 " del informe."
+
+msgid "The program run before the job reported an error."
+msgstr "El programa ejecutado antes del trabajo informó de un error."
+
+msgid "The program set to run before the job did not work:"
+msgstr "El programa ajustado para antes del trabajo no funcionó:"
 
 msgid ""
 "The report form is opening in your browser. Please drag the diagnostic "

@@ -62,12 +62,13 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
   time the job, pause and resume, stop. The design stays where it is on the
   bed and the head drives to it, or the design follows the head: your
   choice. Engrave, outline or cut only, home after each job for the next
-  piece. Kerfly refuses jobs that would run the head off the bed, and tells
+  piece, a report with the job time, your own programs before and after a
+  job (the exhaust on and off). Kerfly refuses jobs that would run the head off the bed, and tells
   you when a new version is out.
 - **Your language.** English, Polish, German, Spanish and French (Settings →
   Advanced → Language).
 
-**Kerfly 1.4 is stable and ready for everyday work.** Changes are in [CHANGELOG.md](CHANGELOG.md), plans in
+**Kerfly 1.5 is stable and ready for everyday work.** Changes are in [CHANGELOG.md](CHANGELOG.md), plans in
 [ROADMAP.md](ROADMAP.md).
 
 ## Drawing and editing: mouse and keys

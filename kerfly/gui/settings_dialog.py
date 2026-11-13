@@ -24,6 +24,9 @@ TABS = [
         ("post_home", N_("Unlock rail after a job"), "bool", None),
         ("post_beep", N_("Beep after a job"), "bool", None),
         ("post_disp", N_("Show a report after a job (its time; the program's output)"), "bool", None),
+        ("pre_exec", N_("Run a program before a job"), "bool", None),
+        ("pre_batch_path", N_("Program to run before a job"), "path",
+         (N_("Program to run before a job"), N_("a program or script (.bat, .sh)"))),
         ("post_exec", N_("Run a program after a job"), "bool", None),
         ("batch_path", N_("Program to run after a job"), "path",
          (N_("Program to run after a job"), N_("a program or script (.bat, .sh)"))),
@@ -80,7 +83,7 @@ TABS = [
 ]
 
 # field -> the tick it depends on
-DEPENDS = {"Trace_power": "trace_w_laser", "batch_path": "post_exec", "LaserRscale": "rotary",
+DEPENDS = {"Trace_power": "trace_w_laser", "batch_path": "post_exec", "pre_batch_path": "pre_exec", "LaserRscale": "rotary",
            "rapid_feed": "rotary"}
 
 # settings whose change invalidates the computed raster lines / path order
@@ -133,6 +136,9 @@ class SettingsDialog(QDialog):
                                  "boards the power knob of the laser sets it"))
         self._widgets["batch_path"].setToolTip(_("Started after every finished job, for example to switch off "
                                                  "the exhaust or send a message; its output goes to the report"))
+        self._widgets["pre_batch_path"].setToolTip(_("Started before every job sent to the laser, for example "
+                                                     "to switch on the exhaust or the air pump; the job waits "
+                                                     "until it ends (at most a minute)"))
         # fields that count only with a tick: greyed out without it (as in K40 Whisperer)
         for key, switch in DEPENDS.items():
             box = self._widgets[switch]

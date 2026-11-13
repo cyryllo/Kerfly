@@ -228,6 +228,57 @@ def main():
     if getattr(w, "_job_report", None) is not None:
         w._job_report.close()
 
+    # 3d. a program before a job (the exhaust on): the job waits for it; when it fails the user is asked,
+    # No sends nothing, Yes sends the job; not before a boundary trace
+    def _wait_job(w):
+        t0 = time.time()
+        while (getattr(w, "_before_job_process", None) is not None or w.worker is not None) \
+                and time.time() - t0 < 30:
+            app.processEvents()
+            time.sleep(0.02)
+        run_until_idle(app, w)
+    w = make_window(post_disp="0")
+    w.load_design(os.path.join(FIX, "shapes.dxf"))
+    fake = FakeK40()
+    w.laser.k40 = fake
+    order_file = os.path.join(tmp_dir, "before.txt")
+    if sys.platform == "win32":
+        before_ok = os.path.join(tmp_dir, "before.bat")
+        open(before_ok, "w").write('@echo off\r\necho exhaust on > "%s"\r\n' % order_file)
+    else:
+        before_ok = os.path.join(tmp_dir, "before.sh")
+        open(before_ok, "w").write('#!/bin/sh\necho exhaust on > "%s"\n' % order_file)
+    w.values.update(pre_exec="1", pre_batch_path=before_ok)
+    sent_at_start = len(fake.sent)
+    w.start_job()
+    waited = w.worker is None and not fake.sent[sent_at_start:]      # nothing sent before the program ends
+    _wait_job(w)
+    ran_then_sent = os.path.isfile(order_file) and len(fake.sent) > sent_at_start
+    os.remove(order_file)
+    w.start_job(trace=True)
+    _wait_job(w)
+    not_for_trace = not os.path.isfile(order_file)
+    asked_before = []
+    real_question = QMessageBox.question
+    w.values.update(pre_batch_path=bad)
+    answers = [QMessageBox.No, QMessageBox.Yes]
+    QMessageBox.question = staticmethod(lambda *a, **k: (asked_before.append(a[2] if len(a) > 2 else ""),
+                                                         answers.pop(0))[1])
+    n = len(fake.sent)
+    w.start_job()
+    _wait_job(w)
+    refused = len(fake.sent) == n
+    w.start_job()
+    _wait_job(w)
+    anyway = len(fake.sent) > n
+    QMessageBox.question = real_question
+    w.values.update(pre_exec="0")
+    check("program before a job: the job waits for it, not before a trace; when it fails the user is "
+          "asked (No: nothing sent, Yes: the job runs)",
+          waited and ran_then_sent and not_for_trace and len(asked_before) == 2 and "no plug" in asked_before[0]
+          and refused and anyway,
+          "(%s)" % [waited, ran_then_sent, not_for_trace, asked_before, refused, anyway])
+
     # 4. Stop while sending: immediate e-stop, no pause, no question
     w = make_window()
     w.load_design(os.path.join(FIX, "shapes.svg"))

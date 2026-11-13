@@ -4217,10 +4217,10 @@ class MainWindow(QMainWindow):
                          _("Sending %s…") % os.path.basename(name))
 
     # ------------------------------------------------------------ jobs
-    def start_job(self, output_file=None, trace=False, kinds=None):
+    def start_job(self, output_file=None, trace=False, kinds=None, _program_done=False):
         """Run the job (trace: only the boundary). kinds: only the ticked layers of
         these kinds (Engrave / Outline / Cut only)."""
-        if self.worker is not None:
+        if self.worker is not None or getattr(self, "_before_job_process", None) is not None:
             return
         wanted = [l for l in self.layers if kinds is None or l.kind in kinds]
         if not any(l.enabled and self._layer_has_data(l) for l in wanted) and not (trace and self.elements):
@@ -4237,6 +4237,13 @@ class MainWindow(QMainWindow):
             send_options = self.send_options()
         except ValueError as e:
             self.status(str(e), error=True)
+            return
+        program = str(self.values.get("pre_batch_path", "")).strip()
+        if output_file is None and not trace and not _program_done and program \
+                and is_true(self.values.get("pre_exec", "0")):
+            # the program before the job (the exhaust on, ...): the job waits until it ends
+            self._run_before_job_program(program, lambda: self.start_job(output_file, trace, kinds,
+                                                                          _program_done=True))
             return
         if output_file is None and self.head != self.origin:
             # the job starts where the head is: first move it to the design
@@ -4363,7 +4370,9 @@ class MainWindow(QMainWindow):
         elif is_true(self.values.get("post_disp", "1")):
             self._show_job_report(text)
 
-    def _run_after_job_program(self, program, text):
+    def _program_process(self, program):
+        """A QProcess for a program or script chosen in Settings → Machine (.bat through cmd on
+        Windows, a .sh without the run permission through sh)."""
         import sys
         from PySide6.QtCore import QProcess
         proc = QProcess(self)
@@ -4375,22 +4384,75 @@ class MainWindow(QMainWindow):
             proc.setArguments([program])
         else:
             proc.setProgram(program)
+        return proc
+
+    @staticmethod
+    def _program_result(proc, program, timed_out=False):
+        """(output, error text or '') of a finished program."""
+        from PySide6.QtCore import QProcess
+        out = bytes(proc.readAllStandardOutput()).decode("utf-8", "replace").strip()
+        err = bytes(proc.readAllStandardError()).decode("utf-8", "replace").strip()
+        if timed_out:
+            err = _("The program did not end within a minute and was stopped: %s") % program + \
+                ("\n" + err if err else "")
+        elif proc.error() == QProcess.FailedToStart:
+            err = (_("The program could not be started: %s") % program) + ("\n" + err if err else "")
+        elif proc.exitStatus() != QProcess.NormalExit or proc.exitCode() != 0:
+            err = (_("The program ended with an error (exit code %d).") % proc.exitCode()) + \
+                ("\n" + err if err else "")
+        return out, err
+
+    def _run_before_job_program(self, program, start):
+        """Run the program before a job; start() when it ended well, otherwise ask."""
+        from PySide6.QtCore import QProcess
+        proc = self._program_process(program)
+        self._before_job_process = proc
+        timer = QTimer(self)
+        timer.setSingleShot(True)
+        state = {"timed_out": False}
+
+        def too_long():
+            state["timed_out"] = True
+            proc.kill()
+
+        def done(*_args):
+            if getattr(self, "_before_job_process", None) is not proc:
+                return
+            self._before_job_process = None
+            timer.stop()
+            self.set_busy(False)
+            out, err = self._program_result(proc, program, state["timed_out"])
+            diag_log.info("before-job program %s: out %r, err %r", program, out[:200], err[:200])
+            proc.deleteLater()
+            if not err:
+                start()
+                return
+            self.status(_("The program run before the job reported an error."), error=True)
+            answer = QMessageBox.question(
+                self, _("Program before the job"),
+                _("The program set to run before the job did not work:") + "\n\n" + err + "\n\n" +
+                _("Start the job anyway?"), QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if answer == QMessageBox.Yes:
+                start()
+        timer.timeout.connect(too_long)
+        proc.finished.connect(done)
+        proc.errorOccurred.connect(lambda e: done() if e == QProcess.FailedToStart else None)
+        self.set_busy(True)
+        self.status(_("Running the program set to run before a job: %s") % program)
+        timer.start(60000)
+        proc.start()
+
+    def _run_after_job_program(self, program, text):
+        from PySide6.QtCore import QProcess
+        proc = self._program_process(program)
         self._after_job_process = proc
 
         def done(*_args):
             if getattr(self, "_after_job_process", None) is not proc:
                 return
             self._after_job_process = None
-            out = bytes(proc.readAllStandardOutput()).decode("utf-8", "replace").strip()
-            err = bytes(proc.readAllStandardError()).decode("utf-8", "replace").strip()
-            failed = proc.error() == QProcess.FailedToStart
-            if failed:
-                err = (_("The program could not be started: %s") % program) + ("\n" + err if err else "")
-            elif proc.exitStatus() != QProcess.NormalExit or proc.exitCode() != 0:
-                err = (_("The program ended with an error (exit code %d).") % proc.exitCode()) + \
-                    ("\n" + err if err else "")
-            diag_log.info("after-job program %s: exit %s, out %r, err %r", program,
-                          None if failed else proc.exitCode(), out[:200], err[:200])
+            out, err = self._program_result(proc, program)
+            diag_log.info("after-job program %s: out %r, err %r", program, out[:200], err[:200])
             report = text
             if out:
                 report += "\n\n" + _("Program output:") + "\n" + out

@@ -53,8 +53,8 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - [x] Test fire (M3)
 - [x] Job time estimate
 - [x] Post-job actions (`post_disp`, `post_exec`): a report window with the job time (on by
-  default, not blocking) and a program run after every finished job, its output and errors in
-  the report (Settings → Machine)
+  default, not blocking) a program run before every job (the exhaust on; the job waits for it) and
+  one after every finished job, its output and errors in the report (Settings → Machine)
 - [x] Open and send EGV files
 - [x] Rotary settings window parity (Settings → Rotary; scale and rapid speed greyed out while
   the attachment is off)

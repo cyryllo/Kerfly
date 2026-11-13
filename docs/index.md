@@ -156,6 +156,7 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
       <li>Keep the design where it is on the bed, or let it <strong>follow the head</strong>: your way of working.</li>
       <li>Test fire and power per operation on M3 boards.</li>
       <li>Engrave, outline or cut only, and home after each job, ready for the next piece.</li>
+      <li>A report with the job time, and your own programs before and after a job: the exhaust on and off.</li>
     </ul>
   </div>
 </div>
@@ -215,9 +216,9 @@ Kerfly drives a real machine with a laser, so "it seems to work" is not enough:
 
 ## Status
 
-**Kerfly 1.4 is stable and ready for everyday work** with your laser.
+**Kerfly 1.5 is stable and ready for everyday work** with your laser.
 Planned next: engraving each design on a raster layer separately, image
-tracing, more patterns, more file formats, and a Debian package with its own APT repository. See the
+tracing, more fill patterns, more boxes, and a Debian package with its own APT repository. See the
 [roadmap]({{ site.repo }}/blob/main/ROADMAP.md) and the
 [changes]({{ site.repo }}/blob/main/CHANGELOG.md).
 

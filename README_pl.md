@@ -64,12 +64,14 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
   konturu, symulacja i czas zadania, pauza i wznowienie, stop. Projekt
   zostaje na swoim miejscu na stole i głowica do niego podjeżdża, albo
   projekt podąża za głowicą: jak wolisz. Tylko grawer, obrys albo cięcie,
-  bazowanie po każdym zadaniu przed kolejną sztuką. Kerfly nie wyśle zadania,
+  bazowanie po każdym zadaniu przed kolejną sztuką, raport z czasem zadania,
+  własne programy przed zadaniem i po nim (włączenie i wyłączenie wyciągu).
+  Kerfly nie wyśle zadania,
   które wyprowadziłoby głowicę poza stół, i powie, gdy wyjdzie nowa wersja.
 - **Twój język.** Polski, angielski, niemiecki, hiszpański i francuski
   (Ustawienia → Zaawansowane → Język).
 
-**Kerfly 1.4 jest wersją stabilną, gotową do codziennej pracy.** Zmiany są w [CHANGELOG.md](CHANGELOG.md), plany w
+**Kerfly 1.5 jest wersją stabilną, gotową do codziennej pracy.** Zmiany są w [CHANGELOG_pl.md](CHANGELOG_pl.md), plany w
 [ROADMAP.md](ROADMAP.md) (po angielsku).
 
 ## Rysowanie i edycja: mysz i klawisze

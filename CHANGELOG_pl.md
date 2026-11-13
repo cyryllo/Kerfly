@@ -3,7 +3,10 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
-## Unreleased
+## 1.5.0 (2026-11-14)
+
+Programy przed zadaniem i po nim (włączenie i wyłączenie wyciągu), raport z
+czasem zadania, moc objazdu konturu.
 
 ### Dodane
 
@@ -14,6 +17,10 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 - **Raport po zadaniu** (Ustawienia → Maszyna, domyślnie włączony): małe okno
   z czasem zadania, które czeka, aż wrócisz do lasera (nie blokuje Kerfly).
   Nie pojawia się po objeździe konturu.
+- **Uruchom program przed zadaniem** (Ustawienia → Maszyna): np. żeby włączyć
+  wyciąg albo pompę powietrza. Zadanie czeka, aż program się skończy (najwyżej
+  minutę); gdy nie zadziała, Kerfly pyta, czy mimo to rozpocząć zadanie. Nie
+  przed objazdem konturu.
 - **Uruchom program po zadaniu** (Ustawienia → Maszyna): program albo skrypt
   (.bat, .sh) uruchamiany po każdym skończonym zadaniu, np. żeby wyłączyć
   wyciąg albo wysłać wiadomość; jego wynik i błędy są pokazane w raporcie

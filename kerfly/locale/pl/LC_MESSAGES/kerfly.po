@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-14 00:34+0100\n"
+"POT-Creation-Date: 2026-11-14 00:49+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -2003,6 +2003,9 @@ msgstr "Wstępne przetwarzanie rastra: %s%%"
 msgid "Pressure angle"
 msgstr "Kąt przyporu"
 
+msgid "Program before the job"
+msgstr "Program przed zadaniem"
+
 msgid "Program errors:"
 msgstr "Błędy programu:"
 
@@ -2011,6 +2014,9 @@ msgstr "Wynik programu:"
 
 msgid "Program to run after a job"
 msgstr "Program uruchamiany po zadaniu"
+
+msgid "Program to run before a job"
+msgstr "Program uruchamiany przed zadaniem"
 
 #, python-format
 msgid "Project opened: %s"
@@ -2206,6 +2212,9 @@ msgstr "Linijka: kreska co milimetr, liczby co centymetr"
 msgid "Run a program after a job"
 msgstr "Uruchom program po zadaniu"
 
+msgid "Run a program before a job"
+msgstr "Uruchom program przed zadaniem"
+
 msgid "Run only the ticked cut layers"
 msgstr "Wykonaj tylko zaznaczone warstwy cięcia"
 
@@ -2218,6 +2227,10 @@ msgstr "Wykonaj tylko zaznaczone warstwy graweru rastrowego"
 #, python-format
 msgid "Running the program set to run after a job: %s"
 msgstr "Uruchamiam program ustawiony na po zadaniu: %s"
+
+#, python-format
+msgid "Running the program set to run before a job: %s"
+msgstr "Uruchamiam program ustawiony na przed zadaniem: %s"
 
 msgid "SVG files"
 msgstr "Pliki SVG"
@@ -2576,6 +2589,9 @@ msgstr "Start"
 msgid "Start an empty project: clears the bed (asks to save changes first)"
 msgstr "Zacznij pusty projekt: czyści stół (najpierw pyta o zapisanie zmian)"
 
+msgid "Start the job anyway?"
+msgstr "Mimo to rozpocząć zadanie?"
+
 msgid "Start the selected operations"
 msgstr "Uruchom zaznaczone operacje"
 
@@ -2585,6 +2601,14 @@ msgid ""
 msgstr ""
 "Uruchamiany po każdym skończonym zadaniu, np. żeby wyłączyć wyciąg albo "
 "wysłać wiadomość; jego wynik trafia do raportu"
+
+msgid ""
+"Started before every job sent to the laser, for example to switch on the "
+"exhaust or the air pump; the job waits until it ends (at most a minute)"
+msgstr ""
+"Uruchamiany przed każdym zadaniem wysyłanym do lasera, np. żeby włączyć "
+"wyciąg albo pompę powietrza; zadanie czeka, aż się skończy (najwyżej "
+"minutę)"
 
 msgid "Step:"
 msgstr "Krok:"
@@ -2827,11 +2851,21 @@ msgid "The program could not be started: %s"
 msgstr "Nie udało się uruchomić programu: %s"
 
 #, python-format
+msgid "The program did not end within a minute and was stopped: %s"
+msgstr "Program nie skończył się w ciągu minuty i został zatrzymany: %s"
+
+#, python-format
 msgid "The program ended with an error (exit code %d)."
 msgstr "Program zakończył się błędem (kod wyjścia %d)."
 
 msgid "The program run after the job reported an error; see the report window."
 msgstr "Program uruchomiony po zadaniu zgłosił błąd; zobacz okno raportu."
+
+msgid "The program run before the job reported an error."
+msgstr "Program uruchomiony przed zadaniem zgłosił błąd."
+
+msgid "The program set to run before the job did not work:"
+msgstr "Program ustawiony na przed zadaniem nie zadziałał:"
 
 msgid ""
 "The report form is opening in your browser. Please drag the diagnostic "

@@ -157,6 +157,7 @@ description: Kerfly to darmowy program do sterowania laserami CO2 K40 z płytami
       <li>Projekt zostaje na swoim miejscu na stole albo <strong>podąża za głowicą</strong>: jak wolisz.</li>
       <li>Strzał testowy i moc dla każdej operacji na płytach M3.</li>
       <li>Tylko grawer, obrys albo cięcie oraz bazowanie po każdym zadaniu, gotowe na kolejną sztukę.</li>
+      <li>Raport z czasem zadania i własne programy przed zadaniem i po nim: włączenie i wyłączenie wyciągu.</li>
     </ul>
   </div>
 </div>
@@ -216,12 +217,12 @@ Kerfly steruje prawdziwą maszyną z laserem, więc „chyba działa” to za ma
 
 ## Stan projektu
 
-**Kerfly 1.4 jest wersją stabilną, gotową do codziennej pracy** z laserem.
+**Kerfly 1.5 jest wersją stabilną, gotową do codziennej pracy** z laserem.
 Następne w planach: grawer każdego projektu na warstwie rastrowej osobno,
-wektoryzacja obrazów, więcej wzorów,
-więcej formatów plików oraz paczka dla Debiana z własnym repozytorium APT.
+wektoryzacja obrazów, więcej wzorów wypełnień,
+więcej pudełek oraz paczka dla Debiana z własnym repozytorium APT.
 Zobacz [plan]({{ site.repo }}/blob/main/ROADMAP.md) (po angielsku) i
-[listę zmian]({{ site.repo }}/blob/main/CHANGELOG.md).
+[listę zmian]({{ site.repo }}/blob/main/CHANGELOG_pl.md).
 
 ## Pomoc i uwagi
 

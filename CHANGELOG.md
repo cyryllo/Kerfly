@@ -7,7 +7,10 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.5.0 (2026-11-14)
+
+Programs before and after a job (the exhaust on and off), a report with
+the job time, the power of the boundary trace.
 
 ### Added
 
@@ -18,6 +21,10 @@ Version numbers:
 - **Report after a job** (Settings → Machine, on by default): a small window
   with the job's time that waits until you are back at the laser (it does not
   block Kerfly). Not after a boundary trace.
+- **Run a program before a job** (Settings → Machine): for example to switch
+  on the exhaust or the air pump. The job waits until it ends (at most a
+  minute); when it fails, Kerfly asks whether to start the job anyway. Not
+  before a boundary trace.
 - **Run a program after a job** (Settings → Machine): a program or script
   (.bat, .sh) started after every finished job, for example to switch off the
   exhaust or send a message; its output and errors are shown in the report

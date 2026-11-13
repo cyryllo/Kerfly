@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-14 00:34+0100\n"
+"POT-Creation-Date: 2026-11-14 00:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1868,6 +1868,9 @@ msgstr ""
 msgid "Pressure angle"
 msgstr ""
 
+msgid "Program before the job"
+msgstr ""
+
 msgid "Program errors:"
 msgstr ""
 
@@ -1875,6 +1878,9 @@ msgid "Program output:"
 msgstr ""
 
 msgid "Program to run after a job"
+msgstr ""
+
+msgid "Program to run before a job"
 msgstr ""
 
 #, python-format
@@ -2063,6 +2069,9 @@ msgstr ""
 msgid "Run a program after a job"
 msgstr ""
 
+msgid "Run a program before a job"
+msgstr ""
+
 msgid "Run only the ticked cut layers"
 msgstr ""
 
@@ -2074,6 +2083,10 @@ msgstr ""
 
 #, python-format
 msgid "Running the program set to run after a job: %s"
+msgstr ""
+
+#, python-format
+msgid "Running the program set to run before a job: %s"
 msgstr ""
 
 msgid "SVG files"
@@ -2401,12 +2414,20 @@ msgstr ""
 msgid "Start an empty project: clears the bed (asks to save changes first)"
 msgstr ""
 
+msgid "Start the job anyway?"
+msgstr ""
+
 msgid "Start the selected operations"
 msgstr ""
 
 msgid ""
 "Started after every finished job, for example to switch off the exhaust "
 "or send a message; its output goes to the report"
+msgstr ""
+
+msgid ""
+"Started before every job sent to the laser, for example to switch on the "
+"exhaust or the air pump; the job waits until it ends (at most a minute)"
 msgstr ""
 
 msgid "Step:"
@@ -2621,10 +2642,20 @@ msgid "The program could not be started: %s"
 msgstr ""
 
 #, python-format
+msgid "The program did not end within a minute and was stopped: %s"
+msgstr ""
+
+#, python-format
 msgid "The program ended with an error (exit code %d)."
 msgstr ""
 
 msgid "The program run after the job reported an error; see the report window."
+msgstr ""
+
+msgid "The program run before the job reported an error."
+msgstr ""
+
+msgid "The program set to run before the job did not work:"
 msgstr ""
 
 msgid ""
