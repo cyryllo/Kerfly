@@ -34,8 +34,10 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
 
 - **Lay out the bed.** Put several files on a picture of the laser bed,
   drag, scale and rotate them with the mouse or type their position, size
-  and angle. Align, group, combine and offset shapes, choose the order of
-  the job, undo and redo everything.
+  and angle. Copy, cut and paste, align, group, combine and offset shapes,
+  choose the order of the job, undo and redo everything; a right-click menu
+  for the element under the pointer. Files of the same name are told apart
+  by their folder (one folder per customer).
 - **Draw and edit.** Rectangle (with rounded corners), ellipse, polygon,
   line, polyline, pen curves, freehand and text in any installed font, also
   along a line, curve or circle. Edit the nodes of drawn shapes and of opened
@@ -45,8 +47,10 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
   outline is still cut. The **Living hinge** tool cuts hinges that let
   plywood bend.
 - **Generators.** Ready designs from a few numbers: material test, finger-joint
-  box, kerf test, gear, puzzle, ruler, QR code, rubber stamps, rectangular
-  and round (inverted and mirrored), and a test card for the laser.
+  box (laid out to fit the bed, sheet by sheet), kerf test, gear, puzzle,
+  ruler, QR code, rubber stamps, rectangular (with a text editor: bold,
+  italic, sizes) and round (inverted and mirrored), and a test card for the
+  laser.
 - **Layers, like LightBurn.** Raster engrave, outline engrave and cut, each
   with its own speed, passes and power (M3 boards) and colour; cut layers
   compensate the kerf, so parts come out at their drawn size. A material
@@ -57,11 +61,13 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
 - **Run the laser.** Connect, home, jog, trace the outline, simulate and
   time the job, pause and resume, stop. The design stays where it is on the
   bed and the head drives to it, or the design follows the head: your
-  choice. Kerfly refuses jobs that would run the head off the bed.
+  choice. Engrave, outline or cut only, home after each job for the next
+  piece. Kerfly refuses jobs that would run the head off the bed, and tells
+  you when a new version is out.
 - **Your language.** English, Polish, German, Spanish and French (Settings →
   Advanced → Language).
 
-**Kerfly 1.3 is stable and ready for everyday work.** Changes are in [CHANGELOG.md](CHANGELOG.md), plans in
+**Kerfly 1.4 is stable and ready for everyday work.** Changes are in [CHANGELOG.md](CHANGELOG.md), plans in
 [ROADMAP.md](ROADMAP.md).
 
 ## Drawing and editing: mouse and keys

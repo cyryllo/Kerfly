@@ -9,7 +9,7 @@ other_lang: guide.html
 
 Kerfly steruje laserami CO2 klasy K40 z płytami Lihuiyu (rodzina M2 Nano):
 układa projekty na stole lasera, pozwala je rysować i edytować oraz wysyła
-zadanie do lasera. Instrukcja dotyczy wersji 1.3.
+zadanie do lasera. Instrukcja dotyczy wersji 1.4.
 
 > Zawsze trzymaj rękę przy wyłączniku lasera i nigdy nie zostawiaj
 > pracującego lasera bez nadzoru.

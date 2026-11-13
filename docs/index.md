@@ -55,7 +55,8 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
     <h3>Lay out the whole bed</h3>
     <ul>
       <li>Put several files and drawings on a picture of the laser bed; drag, scale and rotate them with handles or type exact numbers.</li>
-      <li>Align, distribute, mirror, group, duplicate; undo and redo everything.</li>
+      <li>Copy, cut and paste, align, distribute, mirror, group, duplicate; undo and redo everything. A right-click menu offers the commands for the element under the pointer, and moves it to another layer in one click.</li>
+      <li>Several files of the same name? The list shows each one with its folder, and the bottom bar the path of the design under the mouse.</li>
       <li>The element list is the order of the job: move parts up or down with the arrows beside it. Holes are always cut before their outline.</li>
       <li>Projects keep the layout, the layers and copies of your files in one <code>.kerfly</code> file.</li>
     </ul>
@@ -106,7 +107,7 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
     <h3>Generators: ready designs from a few numbers</h3>
     <ul>
       <li><strong>Material test</strong>: a grid of fields, each with its own speed and power or passes, on its own layer, with the values engraved.</li>
-      <li><strong>Finger-joint box</strong> with or without a lid, inside or outside sizes, kerf compensation.</li>
+      <li><strong>Finger-joint box</strong> with or without a lid, inside or outside sizes, kerf compensation; laid out to fit your bed, sheet by sheet.</li>
       <li><strong>Kerf test</strong>: measure how wide your laser cuts and find the tightest fit.</li>
       <li><strong>Gear</strong> with involute teeth, <strong>puzzle</strong>, <strong>ruler</strong>, <strong>QR code</strong> and a <strong>test card</strong> for the laser.</li>
       <li><strong>Exact sizes</strong>: type your laser's kerf into a cut layer and the parts come out at their drawn size; <strong>Offset</strong> draws an outline around a shape or inside it.</li>
@@ -118,7 +119,7 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
   <div class="shot-col"><a href="{{ img }}stamp.png"><img loading="lazy" src="{{ img }}stamp.png" alt="The stamp generator: text, logo and frame, inverted and mirrored"></a></div>
   <div class="text-col">
     <h3>Rubber stamps in one click</h3>
-    <p>Pick a usual stamp size (or your own), type the lines, choose a font, a logo and a frame, and press <strong>Generate stamp</strong>. Kerfly burns the background away so the text stays raised, mirrors the stamp so it prints the right way round, and adds the cut line around it. <strong>Round stamps</strong> too: text around the top and the bottom, rings, and text or a logo in the middle.</p>
+    <p>Pick a usual stamp size (or your own), type the text in a small editor (bold, italic, bigger or smaller, as it will look), choose a font, a logo and a frame, and press <strong>Generate stamp</strong>. Kerfly burns the background away so the text stays raised, mirrors the stamp so it prints the right way round, and adds the cut line around it. <strong>Round stamps</strong> too: text around the top and the bottom, rings, and text or a logo in the middle.</p>
   </div>
 </div>
 
@@ -154,6 +155,7 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
       <li>Connect, home, unlock the rail, jog the head with buttons or Ctrl+arrows, move it to the corners or the centre of the design, or to any X/Y.</li>
       <li>Keep the design where it is on the bed, or let it <strong>follow the head</strong>: your way of working.</li>
       <li>Test fire and power per operation on M3 boards.</li>
+      <li>Engrave, outline or cut only, and home after each job, ready for the next piece.</li>
     </ul>
   </div>
 </div>
@@ -168,7 +170,7 @@ Kerfly drives a real machine with a laser, so "it seems to work" is not enough:
 
 <div class="features">
   <div class="feature"><h3>Byte-exact laser data</h3><p>After every change the data sent to the laser is compared byte by byte with the proven original.</p></div>
-  <div class="feature"><h3>Clicked through like a user</h3><p>Before every release a test clicks through the whole program in over 270 steps on a Full HD screen and checks after each step that the window shows what Kerfly will really do.</p></div>
+  <div class="feature"><h3>Clicked through like a user</h3><p>Before every release a test clicks through the whole program in over 300 steps on a Full HD screen and checks after each step that the window shows what Kerfly will really do.</p></div>
   <div class="feature"><h3>Thousands of random sessions</h3><p>Random clicking hunts for the mistakes no person would think of; each one can be repeated exactly.</p></div>
   <div class="feature"><h3>Three systems</h3><p>Every change is tested on clean Windows, Linux and macOS machines, and the packages check themselves before they are published.</p></div>
 </div>
@@ -213,10 +215,9 @@ Kerfly drives a real machine with a laser, so "it seems to work" is not enough:
 
 ## Status
 
-**Kerfly 1.3 is stable and ready for everyday work** with your laser.
-Planned next: copy, cut and paste, a right-click menu (move to another layer,
-combine, order, move the head here, …), image tracing, more patterns, more file
-formats, and a Debian package with its own APT repository. See the
+**Kerfly 1.4 is stable and ready for everyday work** with your laser.
+Planned next: engraving each design on a raster layer separately, image
+tracing, more patterns, more file formats, and a Debian package with its own APT repository. See the
 [roadmap]({{ site.repo }}/blob/main/ROADMAP.md) and the
 [changes]({{ site.repo }}/blob/main/CHANGELOG.md).
 

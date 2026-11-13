@@ -36,8 +36,10 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
 
 - **Układanie na stole.** Kilka plików na obrazie stołu lasera: przesuwanie,
   skalowanie i obracanie myszą albo wpisanie pozycji, rozmiaru i kąta.
-  Wyrównywanie, grupowanie, łączenie i odsuwanie kształtów, kolejność
-  zadania, cofanie i ponawianie wszystkiego.
+  Kopiowanie, wycinanie i wklejanie, wyrównywanie, grupowanie, łączenie i
+  odsuwanie kształtów, kolejność zadania, cofanie i ponawianie wszystkiego;
+  menu pod prawym przyciskiem dla elementu pod kursorem. Pliki o tej samej
+  nazwie odróżnisz po folderze (np. folder na każdego klienta).
 - **Rysowanie i edycja.** Prostokąt (także z zaokrąglonymi rogami), elipsa,
   wielokąt, linia, łamana, pióro (krzywe), rysowanie odręczne i tekst dowolną
   zainstalowaną czcionką, także wzdłuż linii, krzywej albo okręgu. Edycja
@@ -47,9 +49,10 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
   nadal jest cięty. Narzędzie **Zawias giętki** nacina zawiasy, dzięki którym
   sklejka się wygina.
 - **Generatory.** Gotowe projekty z kilku liczb: test materiału, pudełko na
-  wczepy, test kerfu, koło zębate, puzzle, linijka, kod QR, gumowe
-  pieczątki, prostokątne i okrągłe (odwrócone i odbite), i karta testowa
-  lasera.
+  wczepy (ułożone tak, żeby mieściły się na stole, arkusz po arkuszu),
+  test kerfu, koło zębate, puzzle, linijka, kod QR, gumowe pieczątki,
+  prostokątne (z edytorem tekstu: pogrubienie, kursywa, rozmiary) i okrągłe
+  (odwrócone i odbite), i karta testowa lasera.
 - **Warstwy jak w LightBurnie.** Grawer rastrowy, obrys i cięcie, każda z
   własną prędkością, liczbą przejść, mocą (płyty M3) i kolorem; warstwy
   cięcia kompensują kerf, więc części wychodzą w narysowanym rozmiarze. Baza
@@ -60,12 +63,13 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
 - **Praca z laserem.** Połączenie, bazowanie, przesuwanie głowicy, objazd
   konturu, symulacja i czas zadania, pauza i wznowienie, stop. Projekt
   zostaje na swoim miejscu na stole i głowica do niego podjeżdża, albo
-  projekt podąża za głowicą: jak wolisz. Kerfly nie wyśle zadania, które
-  wyprowadziłoby głowicę poza stół.
+  projekt podąża za głowicą: jak wolisz. Tylko grawer, obrys albo cięcie,
+  bazowanie po każdym zadaniu przed kolejną sztuką. Kerfly nie wyśle zadania,
+  które wyprowadziłoby głowicę poza stół, i powie, gdy wyjdzie nowa wersja.
 - **Twój język.** Polski, angielski, niemiecki, hiszpański i francuski
   (Ustawienia → Zaawansowane → Język).
 
-**Kerfly 1.3 jest wersją stabilną, gotową do codziennej pracy.** Zmiany są w [CHANGELOG.md](CHANGELOG.md), plany w
+**Kerfly 1.4 jest wersją stabilną, gotową do codziennej pracy.** Zmiany są w [CHANGELOG.md](CHANGELOG.md), plany w
 [ROADMAP.md](ROADMAP.md) (po angielsku).
 
 ## Rysowanie i edycja: mysz i klawisze

@@ -7,7 +7,10 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.4.0 (2026-11-13)
+
+Copy and paste, a right-click menu, a text editor for stamps, boxes that fit
+the bed, where each design comes from, and checking for new versions.
 
 ### Fixed
 
