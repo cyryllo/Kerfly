@@ -205,9 +205,8 @@ the right mouse button only pans the view. K40 Whisperer had no menu there
 |---|---|
 | Text from Hershey / TrueType / SHX fonts (no Inkscape) | `extra/hershey.py`, `tools/ttfparser.py`, `tools/shxparser.py`, `tools/jhfparser.py` |
 | ~~Hatch fill~~ (done; since 0.17 part of the pattern fills: Lines / Cross-hatch without the outline); pattern fills (step 1 done, see below) | `fill/fills.py`, `fill/patterns.py` (`fill/patternfill.py` is obsolete in MeerK40t) |
-| ~~Living hinges~~ (step 1 done: Living hinge tool, straight / wavy / zigzag cuts, cut length, bridge, row spacing, direction, solid border); more hinge patterns later | `tools/livinghinges.py`, `tools/living_hinge_optimizer.py` |
+| ~~Living hinges~~ (step 1 done: Living hinge tool, straight / wavy / zigzag cuts, cut length, bridge, row spacing, direction, solid border); more hinge patterns: see Maybe some day | `tools/livinghinges.py`, `tools/living_hinge_optimizer.py` |
 | Image dithering (more methods than Floyd-Steinberg) | `image/dither.py` |
-| Image adjustments (contrast, sharpen, crop, split) | `image/imagetools.py`, `extra/imageactions.py`, `gui/imagesplitter.py` |
 | Bitmap to vector (trace), like LightBurn's Trace Image (button "Trace" in the options bar of a selected picture) | `extra/potrace.py`, `extra/vtracer.py`, `extra/vectrace.py` |
 | ~~Path offset (kerf compensation)~~ (done: Offset tool in the drawing tools on the right, kerf column of cut layers and in the material library, concentric fill pattern; pyclipper) | `core/elements/offset_clpr.py`, `offset_mk.py` |
 | ~~Boolean operations on shapes~~ (done: union, difference, intersection, exclusion) | `tools/polybool.py`, `extra/cag.py` |
@@ -347,6 +346,12 @@ Set aside for now (not planned; back on the list only when users need it).
 
 - PDF, EPS, AI, CDR, WMF import through the Inkscape command line (set aside
   2026-11-13; MeerK40t reference: `extra/inkscape.py`).
+- Image adjustments: **Contrast**, **Sharpen**, **Crop**, **Split** buttons in
+  the options bar of a selected picture (set aside 2026-11-13; MeerK40t:
+  `image/imagetools.py`, `extra/imageactions.py`, `gui/imagesplitter.py`).
+- More living-hinge patterns, chosen from a list in the hinge options (set
+  aside 2026-11-13; MeerK40t: `tools/livinghinges.py`,
+  `tools/living_hinge_optimizer.py`).
 
 ## Packaging
 
