@@ -65,7 +65,6 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Feature | MeerK40t reference |
 |---|---|
 | ~~Bitmaps directly: PNG, JPG, BMP, TIFF, GIF, WebP~~ (done) | `image/imagetools.py` (loader) |
-| PDF, EPS, AI, CDR, WMF via the Inkscape command line | `extra/inkscape.py` |
 | LightBurn `.lbrn` / `.lbrn2` | `extra/lbrn.py` |
 | xTool `.xcs` | `extra/xcs_reader.py` |
 | EZCad `.ezd` | `extra/ezd.py` |
@@ -341,6 +340,13 @@ checked byte for byte.
 - [ ] **Step 4: test on a real GRBL machine** (diode laser or a K40 with a
   GRBL board). Windows: the boards usually use a CH340 USB chip; its driver
   goes into the installation guide.
+
+## Maybe some day
+
+Set aside for now (not planned; back on the list only when users need it).
+
+- PDF, EPS, AI, CDR, WMF import through the Inkscape command line (set aside
+  2026-11-13; MeerK40t reference: `extra/inkscape.py`).
 
 ## Packaging
 
