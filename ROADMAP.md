@@ -65,9 +65,6 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | Feature | MeerK40t reference |
 |---|---|
 | ~~Bitmaps directly: PNG, JPG, BMP, TIFF, GIF, WebP~~ (done) | `image/imagetools.py` (loader) |
-| LightBurn `.lbrn` / `.lbrn2` | `extra/lbrn.py` |
-| xTool `.xcs` | `extra/xcs_reader.py` |
-| EZCad `.ezd` | `extra/ezd.py` |
 | ~~SVG without Inkscape~~ (done: raster with the built-in Qt renderer; Inkscape still needed to turn cut/engrave text into paths). SVG curves for editing are read with svgelements (PyPI, MIT) | `svgelements.py` (also on PyPI) |
 
 ## Editor window (modelled on MeerK40t's interface)
@@ -346,6 +343,9 @@ Set aside for now (not planned; back on the list only when users need it).
 
 - PDF, EPS, AI, CDR, WMF import through the Inkscape command line (set aside
   2026-11-13; MeerK40t reference: `extra/inkscape.py`).
+- Import of LightBurn `.lbrn` / `.lbrn2`, xTool `.xcs` and EZCad `.ezd` files
+  through the Open button (set aside 2026-11-13; MeerK40t: `extra/lbrn.py`,
+  `extra/xcs_reader.py`, `extra/ezd.py`).
 - Image adjustments: **Contrast**, **Sharpen**, **Crop**, **Split** buttons in
   the options bar of a selected picture (set aside 2026-11-13; MeerK40t:
   `image/imagetools.py`, `extra/imageactions.py`, `gui/imagesplitter.py`).
