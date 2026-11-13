@@ -191,7 +191,8 @@ from `python tools/release_notes.py X.Y.Z`) and attach the AppImage and the
 other packages from the run's artifacts (Actions → the run → Artifacts).
 
 Every code release raises the version in `kerfly/__init__.py` and gets a
-CHANGELOG section. Changes to the documentation alone get no new version.
+section in CHANGELOG.md and in CHANGELOG_pl.md (Polish): the release text
+shows the Polish one first, then the English one (`tools/release_notes.py`). Changes to the documentation alone get no new version.
 
 ## Project layout
 
