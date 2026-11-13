@@ -3194,16 +3194,34 @@ class MainWindow(QMainWindow):
         if not 0 <= index < len(self.materials):
             return
         m = self.materials[index]
+
+        def set_layer(layer, speed, passes, power, kerf):
+            layer.speed = round(self._speed_from_mm_s(speed), 2)
+            layer.passes = passes
+            layer.power = power
+            if layer.kind == CUT:
+                layer.kerf = kerf
+            self._layer_to_values(layer)
+        extra = m.extra_layers
+        if extra is not None:
+            self._checkpoint()                           # layers it adds go away with Undo
         for layer in self.layers:
             s = m.get(layer.kind)
             if s is None:
                 continue
-            layer.speed = round(self._speed_from_mm_s(s.speed), 2)
-            layer.passes = s.passes
-            layer.power = s.power
-            if layer.kind == CUT:
-                layer.kerf = s.kerf
-            self._layer_to_values(layer)
+            if extra is not None and self._default_layer.get(layer.kind) is not layer:
+                continue                                 # the other layers: by their name, below
+            set_layer(layer, s.speed, s.passes, s.power, s.kerf)
+        for x in extra or []:
+            # the material's other layers: the layer of the same kind and name, else a new one
+            layer = next((l for l in self.layers if l.kind == x.kind and l.name == x.name
+                          and self._default_layer.get(l.kind) is not l), None)
+            if layer is None:
+                layer = Layer(x.kind, name=x.name, color=x.color or EXTRA_COLORS[0])
+                index_after = max(i for i, l in enumerate(self.layers) if l.kind == x.kind) + 1
+                self.layers.insert(index_after, layer)
+            set_layer(layer, x.speed, x.passes, x.power, x.kerf)
+        self._layer_cache.clear()
         self._rebuild_layers_panel()
         self.layers_panel.material.setCurrentIndex(index + 1)
         self.status(_("Material: %s") % m.name)
@@ -3214,7 +3232,10 @@ class MainWindow(QMainWindow):
             layer = self._default_layer[kind]
             current[kind] = material_lib.OperationSettings(round(self._speed_to_mm_s(layer.speed), 2),
                                                            layer.passes, layer.power, layer.kerf)
-        dlg = MaterialsDialog(self.materials, current, self.values.get("units", "mm"), self)
+        extra = [material_lib.ExtraLayer(l.kind, l.name, l.color, round(self._speed_to_mm_s(l.speed), 2),
+                                         l.passes, l.power, l.kerf)
+                 for l in self.layers if l.kind in (CUT, ENGRAVE, RASTER) and self._default_layer.get(l.kind) is not l]
+        dlg = MaterialsDialog(self.materials, current, self.values.get("units", "mm"), self, current_extra=extra)
         if not dlg.exec():
             return
         self.materials = dlg.materials

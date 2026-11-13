@@ -31,12 +31,14 @@ def list_label(m):
 
 
 class MaterialsDialog(QDialog):
-    def __init__(self, materials, current_layers=None, units="mm", parent=None):
-        """current_layers: {kind: OperationSettings} of the job, for 'Save current settings'."""
+    def __init__(self, materials, current_layers=None, units="mm", parent=None, current_extra=None):
+        """current_layers: {kind: OperationSettings} of the job's basic layers, and
+        current_extra: [ExtraLayer] its other layers, for 'New from current layers'."""
         super().__init__(parent)
         self.setWindowTitle(_("Material library"))
         self.materials = copy.deepcopy(materials)
         self.current_layers = current_layers or {}
+        self.current_extra = list(current_extra or [])
         self._loading = False
 
         self.list = QListWidget()
@@ -113,6 +115,12 @@ class MaterialsDialog(QDialog):
                 g.addWidget(kerf, 1, 1)
             self.fields[kind] = (speed, passes, power, kerf)
             form.addWidget(box)
+        # the material's other layers (a second cut layer, slower, ...): kept by their names
+        self.extra_box = QGroupBox(_("Other layers"))
+        self.extra_box.setToolTip(_("The job's layers besides the three basic ones, kept with the material: "
+                                    "applying it sets the layer of the same name, or adds it"))
+        self.extra_grid = QGridLayout(self.extra_box)
+        form.addWidget(self.extra_box)
         self.notes = QPlainTextEdit()
         self.notes.setFixedHeight(54)
         self.notes.setPlaceholderText(_("Notes (e.g. supplier, lens, air assist)"))
@@ -161,6 +169,7 @@ class MaterialsDialog(QDialog):
             if kerf is not None:
                 kerf.setValue(s.kerf)
         self.notes.setPlainText(m.notes)
+        self._show_extra(m)
         self._loading = False
 
     def _store(self, *args):
@@ -230,9 +239,79 @@ class MaterialsDialog(QDialog):
         except OSError as e:
             QMessageBox.critical(self, _("Export material library"), str(e))
 
+    def _show_extra(self, m):
+        """The material's other layers: name, speed, passes, power (and kerf for cut), a remove button."""
+        while self.extra_grid.count():
+            w = self.extra_grid.takeAt(0).widget()
+            if w is not None:
+                w.hide()
+                w.setParent(None)
+                w.deleteLater()
+        extra = m.extra_layers or []
+        self.extra_box.setVisible(bool(extra))
+        self.extra_rows = []
+        for row, x in enumerate(extra):
+            name = QLabel("%s (%s)" % (x.name, _(KIND_TITLES[x.kind])))
+            speed = QDoubleSpinBox()
+            speed.setRange(0, 10000)
+            speed.setDecimals(1)
+            speed.setSuffix(" mm/s")
+            speed.setValue(x.speed)
+            passes = QSpinBox()
+            passes.setRange(1, 100)
+            passes.setValue(x.passes)
+            power = QDoubleSpinBox()
+            power.setRange(0, 100)
+            power.setDecimals(0)
+            power.setSuffix(" %")
+            power.setValue(x.power * 100)
+            kerf = None
+            widgets = [name, speed, passes, power]
+            if x.kind == "cut":
+                kerf = QDoubleSpinBox()
+                kerf.setRange(0, 2)
+                kerf.setDecimals(2)
+                kerf.setSingleStep(0.05)
+                kerf.setSuffix(" mm")
+                kerf.setValue(x.kerf)
+                kerf.setToolTip(_("Kerf:"))
+                widgets.append(kerf)
+            remove = QPushButton(_("Remove"))
+            remove.setToolTip(_("Remove this layer from the material"))
+            remove.clicked.connect(lambda _c=False, r=row: self._remove_extra(r))
+            for col, w in enumerate(widgets):
+                self.extra_grid.addWidget(w, row, col)
+            self.extra_grid.addWidget(remove, row, 5)
+            for w in (speed, passes, power, kerf):
+                if w is not None:
+                    w.valueChanged.connect(self._store_extra)
+            self.extra_rows.append((speed, passes, power, kerf))
+
+    def _store_extra(self, *args):
+        row = self.list.currentRow()
+        if self._loading or not (0 <= row < len(self.materials)):
+            return
+        m = self.materials[row]
+        for x, (speed, passes, power, kerf) in zip(m.extra_layers or [], self.extra_rows):
+            x.speed, x.passes, x.power = speed.value(), passes.value(), power.value() / 100.0
+            if kerf is not None:
+                x.kerf = kerf.value()
+
+    def _remove_extra(self, index):
+        row = self.list.currentRow()
+        if not (0 <= row < len(self.materials)):
+            return
+        m = self.materials[row]
+        if m.extra_layers and 0 <= index < len(m.extra_layers):
+            del m.extra_layers[index]
+            self._loading = True
+            self._show_extra(m)
+            self._loading = False
+
     def _from_current(self):
         self.materials.append(Material(_("New material"), 0.0, "",
-                                       {k: copy.copy(v) for k, v in self.current_layers.items()}))
+                                       {k: copy.copy(v) for k, v in self.current_layers.items()},
+                                       [copy.copy(x) for x in self.current_extra]))
         self._refresh_list(len(self.materials) - 1)
         self.name.setFocus()
         self.name.selectAll()

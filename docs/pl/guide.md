@@ -399,8 +399,12 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
   ruchy z wyłączonym laserem to szare przerywane linie.
 - **Materiały.** **Ustawienia → Baza materiałów…** zapamiętuje prędkości,
   przejścia i moce dla materiałów (np. „Sklejka 3 mm”). Wybór materiału z
-  listy **Materiał** nad warstwami ustawia wszystkie warstwy naraz. Bazę można
-  eksportować i importować, żeby się nią dzielić.
+  listy **Materiał** nad warstwami ustawia wszystkie warstwy naraz.
+  **Nowy z obecnych warstw** zapisuje wszystkie warstwy zadania: oprócz trzech
+  podstawowych także dodatkowe (drugie cięcie, kolejny grawer…), widoczne w
+  części **Inne warstwy** pod swoimi nazwami; zastosowanie materiału ustawia je
+  z powrotem albo dodaje. Bazę można eksportować i importować, żeby się nią
+  dzielić.
 
 <a id="s7"></a>
 

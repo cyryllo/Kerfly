@@ -41,6 +41,12 @@ jobs:
             Write-Output "::error title=test_gui log (exit $rc)::$tail"
           }
           exit $rc
+      - name: Stamp picture with Windows' own fonts and renderer
+        if: always()
+        shell: cmd
+        env:
+          QT_QPA_PLATFORM: windows
+        run: .venv\Scripts\python tests\test_stamp.py
       - name: Translations
         if: always()
         shell: cmd

@@ -31,11 +31,27 @@ class OperationSettings:
 
 
 @dataclass
+class ExtraLayer:
+    """A layer of the job besides the three basic ones (for example a second cut layer,
+    slower), kept with the material."""
+    kind: str
+    name: str
+    color: str = ""
+    speed: float = 10.0       # mm/s
+    passes: int = 1
+    power: float = 0.5
+    kerf: float = 0.0
+
+
+@dataclass
 class Material:
     name: str
     thickness_mm: float = 0.0
     notes: str = ""
-    settings: dict = field(default_factory=dict)     # kind -> OperationSettings
+    settings: dict = field(default_factory=dict)     # kind -> OperationSettings (the basic layers)
+    # the other layers (None: a material saved before they were kept; applying it sets every
+    # layer of a kind alike, as before)
+    extra_layers: list = None
 
     def get(self, kind):
         return self.settings.get(kind)
@@ -75,9 +91,10 @@ def library_path():
 
 def to_json(materials):
     return json.dumps({"version": 1, "materials": [
-        {"name": m.name, "thickness_mm": m.thickness_mm, "notes": m.notes,
-         "settings": {k: asdict(v) for k, v in m.settings.items()}} for m in materials]},
-        indent=2, ensure_ascii=False)
+        dict({"name": m.name, "thickness_mm": m.thickness_mm, "notes": m.notes,
+              "settings": {k: asdict(v) for k, v in m.settings.items()}},
+             **({"extra_layers": [asdict(x) for x in m.extra_layers]} if m.extra_layers is not None else {}))
+        for m in materials]}, indent=2, ensure_ascii=False)
 
 
 def from_json(text):
@@ -89,8 +106,14 @@ def from_json(text):
             if kind in KINDS:
                 settings[kind] = OperationSettings(float(v.get("speed", 10)), int(v.get("passes", 1)),
                                                    float(v.get("power", 0.5)), float(v.get("kerf", 0.0)))
+        extra = None
+        if isinstance(m.get("extra_layers"), list):
+            extra = [ExtraLayer(str(x.get("kind")), str(x.get("name", "")), str(x.get("color", "")),
+                                float(x.get("speed", 10)), int(x.get("passes", 1)), float(x.get("power", 0.5)),
+                                float(x.get("kerf", 0.0))) for x in m["extra_layers"]
+                     if isinstance(x, dict) and x.get("kind") in KINDS]
         out.append(Material(str(m.get("name", "?")), float(m.get("thickness_mm", 0) or 0),
-                            str(m.get("notes", "")), settings))
+                            str(m.get("notes", "")), settings, extra))
     return out
 
 

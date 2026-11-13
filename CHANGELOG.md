@@ -7,10 +7,23 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.4.1 (2026-11-13)
+
+Fixes: the stamp on Windows, materials with more than three layers, centred
+Engrave/Outline/Cut only buttons.
 
 ### Fixed
 
+- **Stamp on Windows: the streaks were still there in 1.4.0.** The text is now
+  drawn as filled letter outlines instead of through the system's text
+  renderer, so it comes out the same on Windows, Linux and macOS (with the
+  stamp editor's bold, italic, underline and sizes). Where the font list is
+  empty, Windows uses Arial.
+- **Save material from current layers kept only the three basic layers.**
+  Extra layers (a second cut, another engraving…) are saved with their name,
+  colour, speed, passes, power and kerf, shown in the material window under
+  *Other layers* (each can be changed or removed), and created again when the
+  material is applied.
 - The colour square and text of the Engrave only, Outline only and Cut only
   buttons are centred (they sat against the left edge).
 

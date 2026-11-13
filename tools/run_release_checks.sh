@@ -15,6 +15,7 @@ FULLHD=(xvfb-run -a -s "-screen 0 1920x1080x24")
 run() { echo "=== $1"; shift; "$@" 2>&1 | grep -E "FAIL|Traceback|Error|passed|failed|match|problems|steps" | tail -4; }
 run core .venv/bin/python tests/test_core.py
 run gui "${FULLHD[@]}" .venv/bin/python tests/test_gui.py
+run stamp .venv/bin/python tests/test_stamp.py
 run i18n xvfb-run -a .venv/bin/python tests/test_i18n.py
 run regression xvfb-run -a .venv/bin/python tests/regression.py
 run references xvfb-run -a .venv/bin/python tests/test_references.py

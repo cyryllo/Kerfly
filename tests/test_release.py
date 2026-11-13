@@ -999,8 +999,16 @@ def part_layers(s):
            check=lambda: (new not in w.layers, "still there"))
     # materials
     s.step("material: choose one", lambda: s.pick(panel.material, index=1), undo=False)
-    s.expect_dialog("material library", lambda d: d.accept())
-    s.step("Settings → Material library… (opens, OK)", lambda: s.trigger(w.act_materials, via="menu"), change=None, undo=False)
+    # a material made from the current layers keeps the extra ones too (only the three basic ones were saved)
+    extras = lambda: [(l.kind, l.name) for l in w.layers if w._default_layer.get(l.kind) is not l
+                      and l.kind in ("cut", "engrave", "raster")]
+    want = extras()
+    s.expect_dialog("material library: New from current layers, OK",
+                    lambda d: (s.click_dialog_button(d, tr_("New from current layers")), d.accept()))
+    s.step("Settings → Material library… → New from current layers, OK (the extra layers saved too)",
+           lambda: s.trigger(w.act_materials, via="menu"), change=None, undo=False,
+           check=lambda: (bool(want) and [(x.kind, x.name) for x in (w.materials[-1].extra_layers or [])] == want,
+                          "want %s, saved %s" % (want, w.materials[-1].extra_layers)))
     path = os.path.join(tempfile.mkdtemp(), "materials.json")
     s.files.append(path)
     s.step("Settings → Export material library…", lambda: s.trigger(w.act_export_materials, via="menu"),

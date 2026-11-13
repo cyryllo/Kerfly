@@ -1819,6 +1819,41 @@ def main():
     pw2._dirty = False
     pw2.close()
 
+    # 52j. a material made from the current layers keeps the other layers too (a second cut layer,
+    # slower), and applying it sets them by name or adds them; the basic layers as before
+    from kerfly.gui.materials_dialog import MaterialsDialog as _MD
+    from kerfly.core.layers import Layer as _Layer3
+    mw1 = make_window(grid_mm="0")
+    slow = _Layer3("cut", name="Cut 2", color="#2e7d32", speed=4.0, passes=2, power=0.7, kerf=0.15)
+    mw1.layers.append(slow)
+    captured = {}
+    _orig_md_exec = _MD.exec
+
+    def _new_from_current(dlg):
+        dlg._from_current()
+        captured["m"] = dlg.materials[-1]
+        return False                                  # not saved: the library file stays as it is
+    _MD.exec = _new_from_current
+    try:
+        mw1.edit_materials()
+    finally:
+        _MD.exec = _orig_md_exec
+    mat = captured.get("m")
+    kept = mat is not None and [(x.name, x.speed, x.passes, x.kerf) for x in mat.extra_layers] == [("Cut 2", 4.0, 2, 0.15)]
+    mw1._dirty = False
+    mw1.close()
+    mw2 = make_window(grid_mm="0")
+    mw2.materials = [mat]
+    n_before = len(mw2.layers)
+    mw2.apply_material(0)
+    added = [l for l in mw2.layers if l.kind == "cut" and l.name == "Cut 2"]
+    applied = len(mw2.layers) == n_before + 1 and len(added) == 1 and added[0].passes == 2 \
+        and abs(added[0].kerf - 0.15) < 1e-9
+    check("material from the current layers keeps the other layers; applying it adds or sets them by name",
+          kept and applied, "(%s)" % [kept, applied])
+    mw2._dirty = False
+    mw2.close()
+
     # 53. Linux: connecting fails for want of permission -> Kerfly offers the USB rule (pkexec); with
     # a rule already there, Laser → Allow USB access only says to plug the laser in again
     from kerfly.core import udev as _udev
@@ -1949,41 +1984,11 @@ def main():
     sw.close()
 
     # 55c. the stamp picture is clean: the frame unbroken along its whole length, nothing between the
-    # frame and the text (on Windows the frame came out dashed and streaks ran across the letters)
-    clean = dict(base, preset="custom", width=95.0, height=40.0, frame=0.6, corner=1.0, margin=1.0,
-                 text="Prototypowanie i Fabrykacja\nCyryl Sochacki\nul. Szczyglewskiego 21/8\n80-625 Gdańsk",
-                 invert=False, mirror=False, font="")
-    rich_clean = {k: val for k, val in clean.items() if k != "text"}
-    rich_clean["text_html"] = ""                         # the editor's default text (name bold, address)
-    stray_all, frame_all = [], True
-    for variant in (clean, rich_clean):
-        framed = _stamp.render(variant)
-        bare = _stamp.render(dict(variant, frame=0.0))
-
-        def _dark(img, x, y):
-            return img.pixelColor(x, y).lightness() < 128
-        fw, fh = framed.width(), framed.height()
-        band = int(0.6 / 25.4 * 1000)                   # the frame's width in pixels
-        corner = int(1.5 / 25.4 * 1000)
-        frame_ok = all(_dark(framed, x, y) for y in (band // 3, band // 2, fh - 1 - band // 2)
-                       for x in range(corner, fw - corner, 7))
-        frame_ok = frame_ok and all(_dark(framed, x, y) for x in (band // 2, fw - 1 - band // 2)
-                                    for y in range(corner, fh - corner, 7))
-        xs = [x for x in range(0, fw, 3) for y in range(0, fh, 6) if _dark(bare, x, y)]
-        ys = [y for y in range(0, fh, 3) for x in range(0, fw, 6) if _dark(bare, x, y)]
-        tx0, tx1, ty0, ty1 = min(xs) - 4, max(xs) + 4, min(ys) - 4, max(ys) + 4
-        inner = int(1.2 / 25.4 * 1000)
-        stray_all += [(x, y) for y in range(inner, fh - inner, 5) for x in range(inner, fw - inner, 5)
-                      if not (tx0 <= x <= tx1 and ty0 <= y <= ty1) and _dark(framed, x, y)]
-        frame_all = frame_all and frame_ok
-    frame_ok, stray = frame_all, stray_all
-    two_tone_r = all(framed.pixelColor(x, y).lightness() in (0, 255) for y in range(0, fh, 11) for x in range(0, fw, 11))
-    ring = _stamp.render_round(dict(rbase, invert=False, mirror=False, font=""))
-    two_tone_c = all(ring.pixelColor(x, y).lightness() in (0, 255) for y in range(0, ring.height(), 11)
-                     for x in range(0, ring.width(), 11))
-    check("stamp picture clean: unbroken frame, nothing between the frame and the text, black and white "
-          "(font %s)" % _stamp.default_font(), frame_ok and not stray and two_tone_r and two_tone_c,
-          "(%s)" % [frame_ok, stray[:5], two_tone_r, two_tone_c])
+    # frame and the text (on Windows the frame came out dashed and streaks ran across the letters);
+    # tests/test_stamp.py runs the same on Windows' own platform in CI
+    from test_stamp import clean_report as _stamp_clean
+    for _name, _ok, _detail in _stamp_clean():
+        check(_name + " (font %s)" % _stamp.default_font(), _ok, _detail)
 
     # 55d. the stamp's text editor (WYSIWYG): a line selected, B makes it bold, A+ bigger; the stamp
     # follows (a user asked for the name and the address in different sizes and weights)

@@ -392,8 +392,11 @@ out of the job.
   the laser off are grey dashed lines.
 - **Materials.** **Settings → Material library…** stores speeds, passes and
   powers per material (for example "Plywood 3 mm"). Choosing a material in
-  the **Material** list above the layers sets all layers at once. The library
-  can be exported and imported to share it.
+  the **Material** list above the layers sets all layers at once.
+  **New from current layers** saves every layer of the job: besides the three
+  basic ones, extra layers (a second cut, another engraving…) are kept under
+  **Other layers** by their names, and applying the material sets them again
+  or adds them. The library can be exported and imported to share it.
 
 <a id="s7"></a>
 

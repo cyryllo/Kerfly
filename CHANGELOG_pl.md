@@ -3,10 +3,23 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
-## Unreleased
+## 1.4.1 (2026-11-13)
+
+Poprawki: pieczątka na Windows, materiały z więcej niż trzema warstwami,
+wyśrodkowane przyciski Tylko grawer/obrys/cięcie.
 
 ### Poprawione
 
+- **Pieczątka na Windows: paski w 1.4.0 nadal były.** Tekst jest teraz
+  rysowany jako wypełnione kontury liter, a nie przez systemowy mechanizm
+  rysowania tekstu, więc wychodzi tak samo na Windows, Linuksie i macOS (razem z
+  pogrubieniem, kursywą, podkreśleniem i rozmiarami z edytora pieczątki). Gdy
+  lista czcionek jest pusta, Windows używa Ariala.
+- **Zapis materiału z obecnych warstw zapisywał tylko trzy podstawowe
+  warstwy.** Dodatkowe warstwy (drugie cięcie, kolejny grawer…) zapisują się z
+  nazwą, kolorem, prędkością, przejściami, mocą i szerokością cięcia, są
+  widoczne w oknie materiałów w części *Inne warstwy* (każdą można zmienić albo
+  usunąć) i tworzą się z powrotem po zastosowaniu materiału.
 - Kolorowy kwadrat i napis na przyciskach Tylko grawer, Tylko obrys i Tylko
   cięcie są wyśrodkowane (przylegały do lewej krawędzi).
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-13 22:14+0100\n"
+"POT-Creation-Date: 2026-11-13 23:01+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -1799,6 +1799,9 @@ msgstr "Operación"
 msgid "Order"
 msgstr "Orden"
 
+msgid "Other layers"
+msgstr "Otras capas"
+
 msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr "Otro lado: el texto va en sentido contrario, al otro lado de la línea"
 
@@ -2095,6 +2098,9 @@ msgstr "Quitar"
 
 msgid "Remove the selected nodes"
 msgstr "Quitar los nodos seleccionados"
+
+msgid "Remove this layer from the material"
+msgstr "Quitar esta capa del material"
 
 msgctxt "toolbar"
 msgid "Report"
@@ -2752,6 +2758,13 @@ msgstr "La resolución de la imagen debe ser mayor que cero."
 #, python-format
 msgid "The job is finished, but homing failed: %s"
 msgstr "El trabajo ha terminado, pero falló la vuelta al origen: %s"
+
+msgid ""
+"The job's layers besides the three basic ones, kept with the material: "
+"applying it sets the layer of the same name, or adds it"
+msgstr ""
+"Las capas del trabajo además de las tres básicas, guardadas con el "
+"material: al aplicarlo se ajusta la capa del mismo nombre o se añade"
 
 #, python-format
 msgid ""

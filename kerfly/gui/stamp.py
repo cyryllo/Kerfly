@@ -10,6 +10,7 @@ Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import os
+import sys
 
 from PySide6.QtCore import QPointF, QRectF, Qt
 from PySide6.QtGui import QColor, QFont, QFontMetricsF, QImage, QPainter, QPen
@@ -36,6 +37,18 @@ def default_html():
 PAINT_FORMAT = QImage.Format_ARGB32_Premultiplied
 
 
+def fill_text(p, x, y, font, text):
+    """Text as filled outlines, its baseline starting at (x, y). The letters are not
+    drawn by the system's font renderer: on Windows its large letters came out with
+    streaks (a user's report 2026-11-13); the outlines are filled with the winding
+    rule, so contours of a letter that overlap (common in today's fonts) stay filled."""
+    from PySide6.QtGui import QPainterPath
+    path = QPainterPath()
+    path.addText(x, y, font, text)
+    path.setFillRule(Qt.WindingFill)
+    p.fillPath(path, QColor("black"))
+
+
 def default_font():
     """DejaVu Sans where it is installed (Linux), Arial elsewhere (Windows, macOS):
     a missing font was replaced by another one and made bold artificially."""
@@ -44,6 +57,8 @@ def default_font():
     for name in ("DejaVu Sans", "Arial", "Liberation Sans", "Helvetica"):
         if name in families:
             return name
+    if sys.platform == "win32":                  # every Windows has Arial, even when the font list is empty
+        return "Arial"
     return QFont().defaultFamily()
 # common self-inking stamp sizes (mm)
 PRESETS = [("custom", N_("Own size")), ("26x9", "26 × 9 mm"), ("38x14", "38 × 14 mm"), ("47x18", "47 × 18 mm"),
@@ -179,8 +194,38 @@ def _draw_rich(p, html, area, v, size_px=0.0):
     p.save()
     p.translate(area.left() + (area.width() - w * scale) / 2, area.top() + (area.height() - h * scale) / 2)
     p.scale(scale, scale)
-    doc.drawContents(p)
+    p.fillPath(_document_outlines(doc), QColor("black"))
     p.restore()
+
+
+def _document_outlines(doc):
+    """The laid-out text of a document as one path of letter outlines (bold and
+    italic faces, sizes and alignment as laid out; underlines as bars), filled with
+    the winding rule: see fill_text."""
+    from PySide6.QtGui import QPainterPath
+    path = QPainterPath()
+    path.setFillRule(Qt.WindingFill)
+    block = doc.begin()
+    while block.isValid():
+        layout = block.layout()
+        origin = layout.position()
+        runs = [run for i in range(layout.lineCount()) for run in layout.lineAt(i).glyphRuns()]
+        for run in runs:                              # line by line (the whole layout gives none)
+            raw = run.rawFont()
+            indexes = run.glyphIndexes()
+            positions = run.positions()
+            for index, pos in zip(indexes, positions):
+                glyph = raw.pathForGlyph(index)
+                glyph.translate(origin + pos)
+                path.addPath(glyph)
+            if run.underline() and positions:
+                advances = raw.advancesForGlyphIndexes(indexes)
+                x0 = origin.x() + positions[0].x()
+                x1 = origin.x() + positions[-1].x() + advances[-1].x()
+                y = origin.y() + positions[0].y() + raw.underlinePosition()
+                path.addRect(QRectF(x0, y, x1 - x0, max(raw.lineThickness(), 1.0)))
+        block = block.next()
+    return path
 
 
 def _draw_lines(p, lines, area, v, size_px=0.0):
@@ -218,8 +263,10 @@ def _draw_lines(p, lines, area, v, size_px=0.0):
     p.setPen(QColor("black"))
     top = area.top() + (area.height() - sum(heights)) / 2
     for f, line, h in zip(fs, lines, heights):
-        p.setFont(f)
-        p.drawText(QRectF(area.left(), top, area.width(), h), Qt.AlignHCenter | Qt.AlignVCenter, line["text"])
+        fm = QFontMetricsF(f)
+        x = area.left() + (area.width() - fm.horizontalAdvance(line["text"])) / 2
+        baseline = top + (h - fm.height()) / 2 + fm.ascent()
+        fill_text(p, x, baseline, f, line["text"])
         top += h
 
 
@@ -332,7 +379,7 @@ def _arc_text(p, text, font, cx, cy, baseline_r, mid_r, spacing_px, top):
         p.save()
         p.translate(cx + baseline_r * math.cos(t), cy + baseline_r * math.sin(t))
         p.rotate(theta + 90 if top else theta - 90)
-        p.drawText(QPointF(-w / 2, 0), ch)
+        fill_text(p, -w / 2, 0, font, ch)
         p.restore()
         done += w + spacing_px
     return angle

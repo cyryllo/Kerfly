@@ -50,6 +50,7 @@ Self-test from source: `start_kerfly.bat --self-test` (Windows) or
 ```bash
 .venv/bin/python tests/test_core.py          # core only, no display needed
 QT_QPA_PLATFORM=offscreen .venv/bin/python tests/test_gui.py   # the window, offscreen
+.venv/bin/python tests/test_stamp.py         # the stamp picture clean (CI: also on the Windows platform)
 .venv/bin/python tests/test_i18n.py          # translations complete and up to date
 sudo apt install xvfb
 xvfb-run -a .venv/bin/python tests/regression.py   # full application
