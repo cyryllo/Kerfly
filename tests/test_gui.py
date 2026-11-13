@@ -1986,8 +1986,11 @@ def main():
     # 55c. the stamp picture is clean: the frame unbroken along its whole length, nothing between the
     # frame and the text (on Windows the frame came out dashed and streaks ran across the letters);
     # tests/test_stamp.py runs the same on Windows' own platform in CI
+    # Windows offscreen has no fonts (bold looks like regular, the text tiny): there CI checks the stamp
+    # with tests/test_stamp.py on the real Windows platform instead
+    fonts_real = not (sys.platform == "win32" and QApplication.platformName() == "offscreen")
     from test_stamp import clean_report as _stamp_clean
-    for _name, _ok, _detail in _stamp_clean():
+    for _name, _ok, _detail in (_stamp_clean() if fonts_real else []):
         check(_name + " (font %s)" % _stamp.default_font(), _ok, _detail)
 
     # 55d. the stamp's text editor (WYSIWYG): a line selected, B makes it bold, A+ bigger; the stamp
@@ -2019,7 +2022,8 @@ def main():
     rich.buttons["bigger"].click()
     after_size = rich.edit.textCursor().charFormat().fontPointSize()
     check("stamp text editor: B makes a line bold, A+ bigger, the stamp follows",
-          second_bold and bold_ink > plain_ink and after_size > before_size > 0 and "700" in bold_html,
+          second_bold and (bold_ink > plain_ink or not fonts_real) and after_size > before_size > 0
+          and "700" in bold_html,
           "(%s)" % [second_bold, plain_ink, bold_ink, before_size, after_size])
     sd.close()
 
