@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-13 23:01+0100\n"
+"POT-Creation-Date: 2026-11-14 00:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -350,6 +350,9 @@ msgid "Boundary trace as a rectangle (off: along the outline of the design)"
 msgstr ""
 
 msgid "Boundary trace gap"
+msgstr ""
+
+msgid "Boundary trace power"
 msgstr ""
 
 msgid "Boundary trace speed"
@@ -1216,6 +1219,12 @@ msgid "Laser initialized"
 msgstr ""
 
 msgid "Laser is not initialized."
+msgstr ""
+
+msgid ""
+"Laser power during the boundary trace, in per cent of the maximum power "
+"(Settings → Machine). Used by M3 boards with power per operation; on "
+"other boards the power knob of the laser sets it"
 msgstr ""
 
 msgid "Later"

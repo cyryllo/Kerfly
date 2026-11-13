@@ -455,7 +455,7 @@ lasera…** wysyła istniejący plik EGV.
 |---|---|
 | Maszyna | płyta sterująca, jednostki, rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, bazowanie głowicy po zadaniu (powrót do 0, 0 przed kolejną sztuką), odblokowanie osi i sygnał po zadaniu, współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 |
 | Raster | półtony (dithering) i ich rozdzielczość, odwrócenie kolorów, odbicie, obrót o 90°, grawer od dołu do góry, odstęp linii skanowania, krzywa poziomów |
-| Wektory | najpierw kształty wewnętrzne, objazd konturu z włączonym laserem, jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
+| Wektory | najpierw kształty wewnętrzne, objazd konturu z włączonym laserem i jego moc (w procentach mocy maksymalnej; płyta M3), jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
 | Widok | rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok), przyciski Grawer / Obrys / Cięcie przy Start |
 | Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów |
 | Zaawansowane | język (po ponownym uruchomieniu), sprawdzanie nowych wersji, Inkscape, mniejsze zużycie pamięci, przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |

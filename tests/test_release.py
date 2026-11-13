@@ -1233,6 +1233,44 @@ def part_m3_board(s):
                change=False)
     s.step("Test fire", lambda: s.click(w.btn_test_fire), change=False,
            check=lambda: ("pulse_laser" in s.fake.calls, s.fake.calls[-3:]))
+    # boundary trace with the laser on, with its own power (Settings → Vector), sent to the M3 board
+    def trace_laser(on, percent=None):
+        def answer(dlg):
+            from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QTabWidget
+            box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == "trace_w_laser")
+            field = next(c for c in dlg.findChildren(_D) if c.property("setting_key") == "Trace_power")
+            tabs = dlg.findChild(QTabWidget)
+            index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(box))
+            QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+            s.settle()
+            if box.isChecked() != on:
+                s.tick(box)
+            if percent is not None:
+                if not field.isEnabled():
+                    raise RuntimeError("the trace power field is greyed out with the laser on")
+                s.type_number(field, percent)
+            QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+        return answer
+    s.expect_dialog("settings: trace with the laser on, 25 %", trace_laser(True, 25))
+    s.step("Settings → Vector: Boundary trace with laser on, its power 25 %",
+           lambda: s.trigger(w.act_settings, via="menu"), change=False, undo=False,
+           check=lambda: (w.values.get("trace_w_laser") == "1" and float(w.values.get("Trace_power")) == 0.25,
+                          "%s, %s" % (w.values.get("trace_w_laser"), w.values.get("Trace_power"))))
+    mark_trace = {}
+
+    def trace_now():
+        mark_trace["sent"] = len(s.fake.sent)
+        s.click(w.btn_trace)
+        s.wait(lambda: w.worker is None)
+    want_power = lambda: 0.25 * float(w.values["max_power"])
+    s.step("Trace boundary with the laser on: the board gets the trace power", trace_now, change=False,
+           check=lambda: (bool(s.fake.sent[mark_trace.get("sent", 0):]) and all(
+               abs(p - want_power()) < 1e-6 for p, _d in s.fake.sent[mark_trace.get("sent", 0):]),
+               "powers %s, want %s" % ([p for p, _d in s.fake.sent[mark_trace.get("sent", 0):]], want_power())))
+    s.expect_dialog("settings: trace without the laser", trace_laser(False))
+    s.step("Settings (Ctrl+,) → Vector: Boundary trace with laser on, off again",
+           lambda: s.trigger(w.act_settings, via="key"), change=False, undo=False,
+           check=lambda: (w.values.get("trace_w_laser") == "0", w.values.get("trace_w_laser")))
     s.step("jog step: type 2", lambda: s.type_number(w.jog_step, 2.0), change=False)
     s.step("Design tab", lambda: s.tab(0), change=False)
     panel = w.layers_panel

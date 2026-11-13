@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-13 23:01+0100\n"
+"POT-Creation-Date: 2026-11-14 00:07+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -372,6 +372,9 @@ msgstr "Objazd konturu jako prostokąt (wyłączone: wzdłuż obwiedni projektu)
 
 msgid "Boundary trace gap"
 msgstr "Odstęp objazdu konturu"
+
+msgid "Boundary trace power"
+msgstr "Moc objazdu konturu"
 
 msgid "Boundary trace speed"
 msgstr "Prędkość objazdu konturu"
@@ -1297,6 +1300,15 @@ msgstr "Połączono z laserem"
 
 msgid "Laser is not initialized."
 msgstr "Laser nie jest połączony."
+
+msgid ""
+"Laser power during the boundary trace, in per cent of the maximum power "
+"(Settings → Machine). Used by M3 boards with power per operation; on "
+"other boards the power knob of the laser sets it"
+msgstr ""
+"Moc lasera podczas objazdu konturu, w procentach mocy maksymalnej "
+"(Ustawienia → Maszyna). Działa na płytach M3 z mocą dla każdej operacji; "
+"na innych płytach moc ustawia pokrętło lasera"
 
 msgid "Later"
 msgstr "Później"

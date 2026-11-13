@@ -3,6 +3,15 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
+## Unreleased
+
+### Dodane
+
+- **Moc objazdu konturu z włączonym laserem**: Ustawienia → Wektory, zaraz pod
+  *Objazd konturu z włączonym laserem* (wyszarzona, gdy ta opcja jest
+  wyłączona), w procentach mocy maksymalnej. Płyta M3 dostaje ją podczas
+  objazdu; na innych płytach moc ustawia jak dotąd pokrętło lasera.
+
 ## 1.4.1 (2026-11-13)
 
 Poprawki: pieczątka na Windows, materiały z więcej niż trzema warstwami,

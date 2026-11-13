@@ -445,7 +445,7 @@ EGV file.
 |---|---|
 | Machine | controller board, units, bed size, home in the upper right corner, home when connecting, home the head after a job (back to 0, 0, for the next piece), unlock the rail and beep after a job, X/Y scale factors, M3 power per operation and maximum power |
 | Raster | halftone (dither) and its resolution, invert colours, mirror, rotate 90°, engrave bottom to top, scan line step, levels curve |
-| Vector | cut inside shapes first, boundary trace with the laser on, as a rectangle or along the outline, trace gap and speed |
+| Vector | cut inside shapes first, boundary trace with the laser on and its power (in per cent of the maximum; M3 board), as a rectangle or along the outline, trace gap and speed |
 | View | snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu), Engrave / Outline / Cut buttons next to Start |
 | Rotary | rotary attachment, its scale factor and rapid speed |
 | Advanced | language (after a restart), checking for new versions, Inkscape, reduced memory use, USB data preparation, waiting for the laser, USB timeout and retries |

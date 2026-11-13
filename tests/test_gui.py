@@ -147,6 +147,28 @@ def main():
     else:
         skip("gui_laser_job m3 == usb_m3_power_levels")
 
+    # 3b. boundary trace with the laser on: the M3 board gets the trace power from Settings → Vector
+    # (a user asked for it: the power during the trace could not be set)
+    w = make_window(board_name="LASER-M3", show_power="1", max_power="30", trace_w_laser="1", Trace_power="0.2")
+    w.load_design(os.path.join(FIX, "shapes.dxf"))
+    fake = FakeK40()
+    w.laser.k40 = fake
+    w.start_job(trace=True)
+    run_until_idle(app, w)
+    powers = [p for p, _d in fake.sent]
+    from kerfly.gui.settings_dialog import SettingsDialog as _SD
+    sd = _SD(dict(w.values, trace_w_laser="0"), w, tab=2)
+    field = sd._widgets["Trace_power"]
+    greyed = not field.isEnabled()
+    sd._widgets["trace_w_laser"].setChecked(True)
+    field.setValue(35)
+    stored = sd.result_values()[0]["Trace_power"]
+    check("boundary trace with laser on: trace power sent (M3), its field below the tick, greyed out "
+          "without it, stored as K40 Whisperer's fraction",
+          bool(powers) and all(abs(p - 6.0) < 1e-6 for p in powers) and greyed and field.isEnabled()
+          and stored == "0.35", "(%s)" % [powers, greyed, field.isEnabled(), stored])
+    sd.close()
+
     # 4. Stop while sending: immediate e-stop, no pause, no question
     w = make_window()
     w.load_design(os.path.join(FIX, "shapes.svg"))

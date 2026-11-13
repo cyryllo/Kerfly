@@ -7,6 +7,15 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Added
+
+- **Power of the boundary trace with the laser on**: Settings → Vector, right
+  below *Boundary trace with laser on* (greyed out while it is off), in per
+  cent of the maximum power. The M3 board gets it during the trace; on other
+  boards the laser's power knob sets it, as before.
+
 ## 1.4.1 (2026-11-13)
 
 Fixes: the stamp on Windows, materials with more than three layers, centred

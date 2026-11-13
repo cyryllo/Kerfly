@@ -43,6 +43,7 @@ TABS = [
     (N_("Vector"), [
         ("inside_first", N_("Cut inside shapes first"), "bool", None),
         ("trace_w_laser", N_("Boundary trace with laser on"), "bool", None),
+        ("Trace_power", N_("Boundary trace power"), "power", None),
         ("trace_rect", N_("Boundary trace as a rectangle (off: along the outline of the design)"), "bool", None),
         ("trace_gap", N_("Boundary trace gap"), "float", (0, 100, 1, "len")),
         ("trace_speed", N_("Boundary trace speed"), "float", (0.1, 1000, 1, "speed")),
@@ -86,6 +87,7 @@ class SettingsDialog(QDialog):
         self.setWindowTitle(_("Settings"))
         self.values = dict(values)
         self._getters = {}
+        self._widgets = {}
         units = self.values.get("units", "mm")
         len_unit = units
         speed_unit = "mm/s" if units == "mm" else "in/min"
@@ -112,9 +114,18 @@ class SettingsDialog(QDialog):
                     span = 2 if kind == "path" else 1
                     grid.addWidget(widget, row, 1, 1, span)
                 self._getters[key] = getter
+                self._widgets[key] = widget
             grid.setRowStretch(len(fields), 1)
             tabs.addTab(page, _(title))
         tabs.setCurrentIndex(tab)
+        # the trace power only counts with the laser on during the trace
+        trace_on = self._widgets["trace_w_laser"]
+        trace_power = self._widgets["Trace_power"]
+        trace_power.setToolTip(_("Laser power during the boundary trace, in per cent of the maximum power "
+                                 "(Settings → Machine). Used by M3 boards with power per operation; on other "
+                                 "boards the power knob of the laser sets it"))
+        trace_power.setEnabled(trace_on.isChecked())
+        trace_on.toggled.connect(trace_power.setEnabled)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
@@ -163,6 +174,16 @@ class SettingsDialog(QDialog):
             except ValueError:
                 pass
             return w, lambda: ("%." + str(decimals) + "f") % w.value()
+        if kind == "power":                     # a fraction of the maximum power, shown in per cent
+            w = QDoubleSpinBox()
+            w.setRange(0, 100)
+            w.setDecimals(0)
+            w.setSuffix(" %")
+            try:
+                w.setValue(float(value) * 100.0)
+            except ValueError:
+                pass
+            return w, lambda: "%.2f" % (w.value() / 100.0)
         if kind == "path":
             box = QWidget()
             row = QHBoxLayout(box)
