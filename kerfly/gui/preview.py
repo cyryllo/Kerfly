@@ -77,6 +77,7 @@ class ViewSignals(QObject):
     node_selection = Signal(int)                  # number of selected nodes in the node tool
     shape_picked = Signal(str, QPointF)          # fill / text-on-path / hinge tool clicked here (scene mm)
     context_menu = Signal(QPointF, QPoint)        # right click without moving: scene mm, screen position
+    hovered = Signal(object)                      # the element under the mouse pointer, or None
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -782,7 +783,26 @@ class PreviewView(QGraphicsView):
             return
         super().mousePressEvent(event)
 
+    def _report_hover(self, pos):
+        """Tell which element is under the mouse pointer (when it changes)."""
+        p = self.mapToScene(pos)
+        found = None
+        for item in reversed(self._items):            # the topmost first
+            if item.isVisible() and item.sceneBoundingRect().contains(p) and item.contains(item.mapFromScene(p)):
+                found = item.element
+                break
+        if found is not getattr(self, "_hover_element", None):
+            self._hover_element = found
+            self.signals.hovered.emit(found)
+
+    def leaveEvent(self, event):
+        if getattr(self, "_hover_element", None) is not None:
+            self._hover_element = None
+            self.signals.hovered.emit(None)
+        super().leaveEvent(event)
+
     def mouseMoveEvent(self, event):
+        self._report_hover(event.position().toPoint())
         if self.tool not in ("select", "nodes") + PICK_TOOLS and self._draw_start is None and not self._poly_points \
                 and not self._pen and self._freehand is None and self._measure_start is None \
                 and not event.buttons():

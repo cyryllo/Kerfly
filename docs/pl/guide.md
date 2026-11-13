@@ -309,7 +309,11 @@ sekcji **Mostki**.
 
 **Lista elementów.** Zakładka **Projekt** pokazuje wszystkie elementy z
 kolorami ich warstw. Klik w wiersz zaznacza element na stole (Ctrl / Shift:
-kilka); odznaczenie pola wyłącza element z zadania.
+kilka); odznaczenie pola wyłącza element z zadania. Otwarty plik jest
+pokazany razem z folderem (**Klient A › projekt.svg**), więc pliki o tej samej
+nazwie z różnych folderów łatwo odróżnić, a dolny pasek pokazuje foldery i
+plik projektu pod kursorem myszy (albo zaznaczonego); pełna ścieżka jest w
+podpowiedzi. Zapisane projekty pamiętają, skąd pochodzi każdy plik.
 
 ![Zakładka Projekt](../img/pl/design.png)
 

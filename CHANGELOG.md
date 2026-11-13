@@ -43,6 +43,12 @@ Version numbers:
   always visible also on small screens, switched on in Settings → View (off
   by default); also in the Laser menu. Their tooltips show the time of their
   part.
+- **Where each design comes from:** the element list shows an opened file
+  with its folder (Customer A › design.svg), and the bottom bar the folders and
+  file of the design under the mouse pointer (or of the selected one), the
+  whole path in its tooltip; designs of the same name from different folders
+  (one folder per customer) can be told apart. Saved projects, copies and the
+  parts of a split file keep where they came from.
 - **Stamp text editor**: the text of the rectangular stamp is written in a
   small editor that shows it as it will look, with **B** bold, **I** italic,
   **U** underline, **A+ / A−** bigger and smaller letters and the alignment of

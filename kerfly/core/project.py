@@ -64,6 +64,8 @@ def save_project(path, elements, layers, info=None):
         item = {"name": e.name, "x": e.x, "y": e.y, "scale_x": e.scale_x, "scale_y": e.scale_y,
                 "rotation": e.rotation, "visible": e.visible,
                 "layers": {k: v for k, v in e.layers.items()}, "group": e.group}
+        if e.origin:
+            item["origin"] = e.origin                   # the file it came from, shown in the window
         if e.shape is not None:
             item["shape"] = _shape_to_dict(e.shape)
         else:
@@ -72,7 +74,7 @@ def save_project(path, elements, layers, info=None):
             arc = "files/%d_%s" % (i, os.path.basename(e.source_file))
             files.append((arc, e.source_file))
             item["file"] = arc
-            item["original_path"] = e.source_file
+            item["original_path"] = e.origin or e.source_file
             item["load_options"] = dict(e.load_options)
         data["elements"].append(item)
     tmp = path + ".tmp"

@@ -40,6 +40,7 @@ class Element:
     shape: object = None      # ShapeSpec for drawn shapes (kerfly.core.shapes), else None
     layers: dict = field(default_factory=dict)   # part kind -> layer id (missing: default layer)
     group: str = ""           # elements with the same group id are selected and moved together
+    origin: str = ""          # the file it came from (kept when a project is reopened or the file split)
 
     def placement(self):
         """Placement values (for undo snapshots)."""
@@ -53,7 +54,7 @@ class Element:
         e = Element(self.design, self.name, source_file=self.source_file,
                     load_options=dict(self.load_options),
                     shape=self.shape.copy() if self.shape is not None else None,
-                    layers=dict(self.layers), group=self.group)
+                    layers=dict(self.layers), group=self.group, origin=self.origin)
         e.set_placement(self.placement())
         return e
 

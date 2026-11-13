@@ -305,7 +305,11 @@ bridges that hold the part in the sheet: set their number and width in the
 
 **Element list.** The **Design** tab lists all elements with the colours of
 their layers. Click a row to select it on the bed (Ctrl / Shift: several);
-untick it to leave it out of the job.
+untick it to leave it out of the job. An opened file is listed with its
+folder (**Customer A › design.svg**), so files of the same name from different
+folders can be told apart, and the bottom bar shows the folders and file of
+the design under the mouse pointer (or of the selected one); the whole path
+is in its tooltip. Saved projects keep where each file came from.
 
 ![Design tab](img/en/design.png)
 

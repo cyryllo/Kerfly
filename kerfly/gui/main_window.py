@@ -170,6 +170,7 @@ class MainWindow(QMainWindow):
         self.shape_defaults["textpath"] = ShapeSpec(kind="text", operation="engrave", text=_("Text"))
         self.preview.signals.drawn.connect(self._preview_drawn)
         self.preview.signals.selected.connect(self._preview_selected)
+        self.preview.signals.hovered.connect(self._show_path)
         self.preview.signals.polyline_drawn.connect(self._preview_polyline_drawn)
         self.preview.signals.nodes_changed.connect(self._nodes_changed)
         self.preview.signals.pen_drawn.connect(self._preview_pen_drawn)
@@ -1470,7 +1471,7 @@ class MainWindow(QMainWindow):
                 d.bounds = (0.0, piece.width / dpi, 0.0, piece.height / dpi)
                 part = Element(d, name="%s %d" % (e.name, n), source_file=path, load_options={"dpi": dpi},
                                rotation=e.rotation, scale_x=e.scale_x, scale_y=e.scale_y, visible=e.visible,
-                               layers=dict(e.layers))
+                               layers=dict(e.layers), origin=self._element_path(e))
                 cx_mm, cy_mm = t.map((box[0] + box[2]) / 2.0 / dpi * 25.4, (box[1] + box[3]) / 2.0 / dpi * 25.4)
                 if self.preview.home_ur:
                     cx_mm = self.preview.bed_w_mm - cx_mm
@@ -1574,7 +1575,8 @@ class MainWindow(QMainWindow):
                         nodes.append(node(px, py, hin, hout))
                     scene_path.append({"closed": sp["closed"], "nodes": nodes})
                 part = Element(e.design, name="%s %d" % (e.name, n), rotation=e.rotation,
-                               scale_x=e.scale_x, scale_y=e.scale_y, visible=e.visible, group=gid)
+                               scale_x=e.scale_x, scale_y=e.scale_y, visible=e.visible, group=gid,
+                               origin=self._element_path(e))
                 base = ShapeSpec(kind="path", operation=kind)
                 if self._fit_path(part, scene_path, base):
                     if e.layers.get(kind):
@@ -1692,6 +1694,11 @@ class MainWindow(QMainWindow):
         self.element_list.setIconSize(QSize(3 * self.element_list.fontMetrics().height(),
                                              self.element_list.fontMetrics().height()))
         self.element_list.itemSelectionChanged.connect(self._list_selection_changed)
+        self.element_list.setMouseTracking(True)       # the path of the row under the pointer, below
+        self.element_list.itemEntered.connect(
+            lambda item: self._show_path(self.elements[self.element_list.row(item)]
+                                         if 0 <= self.element_list.row(item) < len(self.elements) else None))
+        self.element_list.viewport().installEventFilter(self)
         # the list is the order of the job: its order buttons right beside it
         self.element_list_box = QWidget()
         lb = QHBoxLayout(self.element_list_box)
@@ -2041,6 +2048,12 @@ class MainWindow(QMainWindow):
         self.progress.setFormat("%p%")
         self.progress.hide()
         self.statusBar().addPermanentWidget(self.progress)
+        # where the design under the mouse pointer (or the selected one) comes from: its folders and
+        # file, to tell apart designs of the same name (one folder per customer, a user's request)
+        self.path_label = QLabel()
+        self.path_label.setObjectName("path_label")
+        self.path_label.setTextFormat(Qt.PlainText)
+        self.statusBar().addPermanentWidget(self.path_label)
         # ... and a small moving bar on its right: Kerfly is working
         self.busy_indicator = QProgressBar()
         self.busy_indicator.setRange(0, 0)
@@ -2226,6 +2239,39 @@ class MainWindow(QMainWindow):
             element.y = round(element.y / g) * g
 
     # ---- element list ----
+    def _element_path(self, e):
+        """The file a design element came from ("" for shapes drawn in Kerfly and generated designs)."""
+        if e is None:
+            return ""
+        path = e.origin or e.source_file or ""
+        if path and os.path.basename(os.path.dirname(path)) == "generated":     # a stamp made by Kerfly
+            from kerfly.core.materials import library_path
+            if os.path.dirname(path) == os.path.join(os.path.dirname(library_path()), "generated"):
+                return ""
+        return path
+
+    def _show_path(self, e):
+        """The bottom bar: the folders and file of the design under the mouse pointer, else of
+        the selected one (shortened in the middle; the whole path in the tooltip)."""
+        if e is None:
+            e = self.selected
+        path = self._element_path(e)
+        if not path:
+            self.path_label.clear()
+            self.path_label.setToolTip("")
+            return
+        parts = [p for p in path.replace("\\", "/").split("/") if p]
+        short = " / ".join(parts[-3:])                   # e.g. Desktop / Pg4 Zosi / PG-4-wnetrze-A.svg
+        width = max(200, int(self.width() * 0.45))
+        self.path_label.setText(self.path_label.fontMetrics().elidedText(short, Qt.ElideMiddle, width))
+        self.path_label.setToolTip(path)
+
+    def eventFilter(self, obj, event):
+        from PySide6.QtCore import QEvent
+        if event.type() == QEvent.Leave and hasattr(self, "element_list") and obj is self.element_list.viewport():
+            self._show_path(None)                        # left the list: back to the selected design
+        return super().eventFilter(obj, event)
+
     def _update_element_list(self):
         lst = self.element_list
         lst.blockSignals(True)
@@ -2239,8 +2285,13 @@ class MainWindow(QMainWindow):
             kinds = [k for k in (RASTER, ENGRAVE, CUT, GCODE) if e.design is not None and part_present(e.design, k)]
             layers = [layer_of(e, k, self.layers) for k in kinds]
             layers = [l for l in layers if l is not None]
+            path = self._element_path(e)
+            if path:                                     # the folder too: designs of the same name differ
+                name = "%s \u203a %s" % (os.path.basename(os.path.dirname(path)) or "/", name)
             item = QListWidgetItem(self._layer_swatch([l.color for l in layers]),
                                    "%s  \u00b7  %s" % (name, ", ".join(l.name for l in layers)) if layers else name)
+            if path:
+                item.setToolTip(path)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if e.visible else Qt.Unchecked)
             lst.addItem(item)
@@ -2364,6 +2415,7 @@ class MainWindow(QMainWindow):
         self._update_layer_assignment()
         self._update_tool_options()
         self._sync_list_selection()
+        self._show_path(None)                            # the selected design's folder and file, below
 
     def _preview_moved(self, element, dx, dy):
         """An element was dragged; the other selected elements (a group or a
@@ -3671,6 +3723,7 @@ class MainWindow(QMainWindow):
                 if design is None:
                     return
             e = Element(design, name=item.get("name", ""), source_file=source, load_options=options,
+                        origin=str(item.get("origin") or item.get("original_path") or ""),
                         shape=shape, x=float(item["x"]), y=float(item["y"]),
                         scale_x=float(item.get("scale_x", 1)), scale_y=float(item.get("scale_y", 1)),
                         rotation=float(item.get("rotation", 0)), visible=bool(item.get("visible", True)),

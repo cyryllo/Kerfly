@@ -1781,6 +1781,44 @@ def main():
     check("built program: programs it starts get the system's library path", restored and removed,
           "(%s)" % [restored, removed])
 
+    # 52i. designs of the same name from different folders (one folder per customer): the element list
+    # shows the folder, the bottom bar the path of the design under the mouse pointer; a saved and
+    # reopened project and the parts of a split file keep where they came from
+    import shutil as _sh
+    from PySide6.QtTest import QTest as _QT2
+    tmp_dirs = tempfile.mkdtemp()
+    paths = []
+    for folder in ("Pg4 Zosi", "Pg4 OSKAR"):
+        _os_dir = os.path.join(tmp_dirs, folder)
+        os.makedirs(_os_dir)
+        paths.append(os.path.join(_os_dir, "PG-4-wnetrze-A.dxf"))
+        _sh.copy(os.path.join(FIX, "shapes.dxf"), paths[-1])
+    pw2 = make_window(grid_mm="0")
+    pw2.resize(1200, 800)
+    pw2.show()
+    app.processEvents()
+    pw2.load_design(paths[0])
+    pw2.load_design(paths[1], add=True)
+    app.processEvents()
+    rows = [pw2.element_list.item(i).text() for i in range(pw2.element_list.count())]
+    listed = rows[0].startswith("Pg4 Zosi") and rows[1].startswith("Pg4 OSKAR")
+    second = pw2.elements[1]
+    x0, x1, y0, y1 = second.bounds
+    _QT2.mouseMove(pw2.preview.viewport(), pw2.preview.mapFromScene(QPointF((x0 + x1) / 2 * 25.4, -(y0 + y1) / 2 * 25.4)))
+    app.processEvents()
+    hovered = "Pg4 OSKAR" in pw2.path_label.text() and pw2.path_label.toolTip() == paths[1]
+    proj2 = os.path.join(tmp_dirs, "both.kerfly")
+    from kerfly.core import project as _project2
+    _project2.save_project(proj2, pw2.elements, pw2.layers)
+    pw2._dirty = False
+    pw2.open_project(proj2)
+    app.processEvents()
+    reopened = [pw2._element_path(e) for e in pw2.elements] == paths
+    check("same names from different folders: the list shows the folder, the bottom bar the path under the "
+          "pointer, kept in projects", listed and hovered and reopened, "(%s)" % [listed, hovered, reopened, rows])
+    pw2._dirty = False
+    pw2.close()
+
     # 53. Linux: connecting fails for want of permission -> Kerfly offers the USB rule (pkexec); with
     # a rule already there, Laser → Allow USB access only says to plug the laser in again
     from kerfly.core import udev as _udev
