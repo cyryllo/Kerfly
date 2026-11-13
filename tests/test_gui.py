@@ -169,6 +169,65 @@ def main():
           and stored == "0.35", "(%s)" % [powers, greyed, field.isEnabled(), stored])
     sd.close()
 
+    # 3c. after a job (K40 Whisperer's Popup Report and Run Batch File): a report window with the job
+    # time (on by default, not blocking), a program run after the job with its output in the report,
+    # its errors shown even with the report off; nothing after a boundary trace
+    def _job_then(w, trace=False):
+        w.start_job(trace=trace)
+        run_until_idle(app, w)
+        t0 = time.time()
+        while getattr(w, "_after_job_process", None) is not None and time.time() - t0 < 20:
+            app.processEvents()
+            time.sleep(0.02)
+        app.processEvents()
+        box = getattr(w, "_job_report", None)
+        return box.text() if box is not None and box.isVisible() else None
+    w = make_window()
+    w.load_design(os.path.join(FIX, "shapes.dxf"))
+    w.laser.k40 = FakeK40()
+    plain = _job_then(w)
+    non_blocking = getattr(w, "_job_report", None) is not None and not w._job_report.isModal()
+    if plain is not None:
+        w._job_report.close()
+    after_trace = _job_then(w, trace=True)
+    tmp_dir = tempfile.mkdtemp(prefix="kerfly_after_job_")
+    marker = os.path.join(tmp_dir, "ran.txt")
+    if sys.platform == "win32":
+        good, bad = os.path.join(tmp_dir, "good.bat"), os.path.join(tmp_dir, "bad.bat")
+        open(good, "w").write('@echo off\r\necho done > "%s"\r\necho exhaust off\r\n' % marker)
+        open(bad, "w").write("@echo off\r\necho no plug 1>&2\r\nexit /b 3\r\n")
+    else:
+        good, bad = os.path.join(tmp_dir, "good.sh"), os.path.join(tmp_dir, "bad.sh")
+        open(good, "w").write('#!/bin/sh\necho done > "%s"\necho exhaust off\n' % marker)
+        open(bad, "w").write("#!/bin/sh\necho no plug >&2\nexit 3\n")
+    w.values.update(post_exec="1", batch_path=good)
+    with_program = _job_then(w)
+    if with_program is not None:
+        w._job_report.close()
+    w.values.update(post_disp="0", batch_path=bad)
+    with_error = _job_then(w)
+    w.values.update(post_exec="0", post_disp="0")
+    quiet = _job_then(w) if with_error is None else None
+    from kerfly.gui.settings_dialog import SettingsDialog as _SD2
+    sd = _SD2(dict(w.values, rotary="0", post_exec="0"), w)
+    greyed = not sd._widgets["LaserRscale"].isEnabled() and not sd._widgets["batch_path"].isEnabled()
+    sd._widgets["rotary"].setChecked(True)
+    sd._widgets["post_exec"].setChecked(True)
+    on_again = sd._widgets["LaserRscale"].isEnabled() and sd._widgets["rapid_feed"].isEnabled() \
+        and sd._widgets["batch_path"].isEnabled()
+    sd.close()
+    check("after a job: report with the job time (default, not blocking), none after a trace; the program "
+          "runs, its output in the report, its error shown even with the report off; rotary and program "
+          "fields greyed out without their tick",
+          plain is not None and _("Job time: %s") % "" in plain and non_blocking and after_trace is None
+          and os.path.isfile(marker) and with_program is not None and "exhaust off" in with_program
+          and with_error is not None and "no plug" in with_error and "3" in with_error
+          and greyed and on_again,
+          "(%s)" % [plain, non_blocking, after_trace, os.path.isfile(marker), with_program, with_error,
+                    quiet, greyed, on_again])
+    if getattr(w, "_job_report", None) is not None:
+        w._job_report.close()
+
     # 4. Stop while sending: immediate e-stop, no pause, no question
     w = make_window()
     w.load_design(os.path.join(FIX, "shapes.svg"))

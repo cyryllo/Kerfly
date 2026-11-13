@@ -15,6 +15,18 @@ Version numbers:
   below *Boundary trace with laser on* (greyed out while it is off), in per
   cent of the maximum power. The M3 board gets it during the trace; on other
   boards the laser's power knob sets it, as before.
+- **Report after a job** (Settings → Machine, on by default): a small window
+  with the job's time that waits until you are back at the laser (it does not
+  block Kerfly). Not after a boundary trace.
+- **Run a program after a job** (Settings → Machine): a program or script
+  (.bat, .sh) started after every finished job, for example to switch off the
+  exhaust or send a message; its output and errors are shown in the report
+  (errors also with the report off).
+
+### Changed
+
+- Settings → Rotary: the scale factor and rapid speed are greyed out while the
+  rotary attachment is off, as the trace power is without the laser on.
 
 ## 1.4.1 (2026-11-13)
 

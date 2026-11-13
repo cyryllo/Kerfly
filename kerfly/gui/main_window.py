@@ -4265,7 +4265,9 @@ class MainWindow(QMainWindow):
         self._run_worker(worker, _("Preparing job\u2026"))
 
     def _run_worker(self, worker, message):
+        import time
         self.worker = worker
+        self._job_started = time.monotonic()
         self._set_paused(False)
         worker.progress.connect(self.status)
         worker.paused.connect(self._job_paused)
@@ -4343,7 +4345,86 @@ class MainWindow(QMainWindow):
                     pass
             if is_true(self.values.get("post_beep", "0")):
                 QApplication.beep()
+            if ok and not traced:
+                self._after_job()
         self.refresh_preview()
+
+    # ------------------------------------------------------------ after a job: report, program
+    def _after_job(self):
+        """A finished laser job: run the chosen program (Settings → Machine), show the report window
+        with the job's time and the program's output (K40 Whisperer's Popup Report and Run Batch File)."""
+        import time
+        elapsed = time.monotonic() - getattr(self, "_job_started", time.monotonic())
+        text = _("The job is finished.") + "\n" + _("Job time: %s") % format_time(elapsed)
+        diag_log.info("job finished in %.1f s", elapsed)
+        program = str(self.values.get("batch_path", "")).strip()
+        if is_true(self.values.get("post_exec", "0")) and program:
+            self._run_after_job_program(program, text)
+        elif is_true(self.values.get("post_disp", "1")):
+            self._show_job_report(text)
+
+    def _run_after_job_program(self, program, text):
+        import sys
+        from PySide6.QtCore import QProcess
+        proc = QProcess(self)
+        if sys.platform == "win32" and program.lower().endswith((".bat", ".cmd")):
+            proc.setProgram(os.environ.get("COMSPEC", "cmd.exe"))
+            proc.setArguments(["/c", program])
+        elif not sys.platform == "win32" and program.endswith(".sh") and not os.access(program, os.X_OK):
+            proc.setProgram("/bin/sh")
+            proc.setArguments([program])
+        else:
+            proc.setProgram(program)
+        self._after_job_process = proc
+
+        def done(*_args):
+            if getattr(self, "_after_job_process", None) is not proc:
+                return
+            self._after_job_process = None
+            out = bytes(proc.readAllStandardOutput()).decode("utf-8", "replace").strip()
+            err = bytes(proc.readAllStandardError()).decode("utf-8", "replace").strip()
+            failed = proc.error() == QProcess.FailedToStart
+            if failed:
+                err = (_("The program could not be started: %s") % program) + ("\n" + err if err else "")
+            elif proc.exitStatus() != QProcess.NormalExit or proc.exitCode() != 0:
+                err = (_("The program ended with an error (exit code %d).") % proc.exitCode()) + \
+                    ("\n" + err if err else "")
+            diag_log.info("after-job program %s: exit %s, out %r, err %r", program,
+                          None if failed else proc.exitCode(), out[:200], err[:200])
+            report = text
+            if out:
+                report += "\n\n" + _("Program output:") + "\n" + out
+            if err:
+                report += "\n\n" + _("Program errors:") + "\n" + err
+                self.status(_("The program run after the job reported an error; see the report window."),
+                            error=True)
+            # errors are always shown, as in K40 Whisperer, even with the report window off
+            if is_true(self.values.get("post_disp", "1")) or err:
+                self._show_job_report(report, error=bool(err))
+            proc.deleteLater()
+        proc.finished.connect(done)
+        proc.errorOccurred.connect(lambda e: done() if e == QProcess.FailedToStart else None)
+        self.status(_("Running the program set to run after a job: %s") % program)
+        proc.start()
+
+    def _show_job_report(self, text, error=False):
+        """One report window, not blocking: it waits there until the user is back at the laser."""
+        box = getattr(self, "_job_report", None)
+        try:
+            if box is not None:
+                box.isVisible()
+        except RuntimeError:
+            box = None
+        if box is None:
+            box = QMessageBox(self)
+            box.setWindowTitle(_("Job report"))
+            box.setStandardButtons(QMessageBox.Ok)
+            box.setWindowModality(Qt.NonModal)
+            self._job_report = box
+        box.setIcon(QMessageBox.Warning if error else QMessageBox.Information)
+        box.setText(text)
+        box.show()
+        box.raise_()
 
     # ------------------------------------------------------------ misc
     # ------------------------------------------------------------ simulation

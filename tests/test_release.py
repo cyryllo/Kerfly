@@ -1149,6 +1149,67 @@ def part_view_and_laser(s):
     s.step("Settings (Ctrl+,) → Machine: Home after a job off again", lambda: s.trigger(w.act_settings, via="key"),
            change=False, undo=False, check=lambda: (w.values.get("post_home_xy") == "0", w.values.get("post_home_xy")))
 
+    # after a job: the report window (on by default) and a program run after the job, its output in the report
+    program_dir = tempfile.mkdtemp(prefix="kerfly_release_after_job_")
+    if sys.platform == "win32":
+        program = os.path.join(program_dir, "after.bat")
+        open(program, "w").write("@echo off\r\necho exhaust off\r\n")
+    else:
+        program = os.path.join(program_dir, "after.sh")
+        open(program, "w").write("#!/bin/sh\necho exhaust off\n")
+
+    def program_on(dlg):
+        from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QLineEdit, QTabWidget
+        box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == "post_exec")
+        tabs = dlg.findChild(QTabWidget)
+        index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(box))
+        QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+        s.settle()
+        if not box.isChecked():
+            s.tick(box)
+        field = next(e for e in dlg.findChildren(QLineEdit)
+                     if e.parentWidget() is not None and e.parentWidget().property("setting_key") == "batch_path")
+        if not field.isEnabled():
+            raise RuntimeError("the program field is greyed out with the tick on")
+        s.click(field)
+        QTest.keyClick(field, Qt.Key_A, Qt.ControlModifier)
+        QTest.keyClicks(field, program)
+        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+    s.expect_dialog("settings: run a program after a job", program_on)
+    s.step("Settings (Ctrl+,) → Machine: Run a program after a job, its path typed",
+           lambda: s.trigger(w.act_settings, via="key"), change=False, undo=False,
+           check=lambda: (w.values.get("post_exec") == "1" and w.values.get("batch_path") == program,
+                          "%s, %r" % (w.values.get("post_exec"), w.values.get("batch_path"))))
+
+    def start_and_report():
+        s.trigger(w.act_start, via="key")
+        s.wait(lambda: w.worker is None and getattr(w, "_after_job_process", None) is None)
+        s.settle()
+
+    def report_text():
+        box = getattr(w, "_job_report", None)
+        return box.text() if box is not None and box.isVisible() else None
+    s.step("Start: after the job the report shows the time and the program's output", start_and_report,
+           change=False, check=lambda: (report_text() is not None and "exhaust off" in report_text(),
+                                        "report %r" % report_text()))
+    s.step("report window: OK closes it", lambda: s.click(w._job_report.button(QMessageBox.Ok)), change=False,
+           check=lambda: (report_text() is None, "still open"))
+
+    def program_off(dlg):
+        from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QTabWidget
+        box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == "post_exec")
+        tabs = dlg.findChild(QTabWidget)
+        index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(box))
+        QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+        s.settle()
+        if box.isChecked():
+            s.tick(box)
+        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+    s.expect_dialog("settings: no program after a job", program_off)
+    s.step("Settings (Ctrl+,) → Machine: Run a program after a job off again",
+           lambda: s.trigger(w.act_settings, via="key"), change=False, undo=False,
+           check=lambda: (w.values.get("post_exec") == "0", w.values.get("post_exec")))
+
     def pause_resume():
         s.fake.slow = 1000                         # long enough to be paused also on a slow machine
         s.click(w.btn_start)

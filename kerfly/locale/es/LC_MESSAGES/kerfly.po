@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-14 00:07+0100\n"
+"POT-Creation-Date: 2026-11-14 00:34+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -1240,11 +1240,18 @@ msgstr "Trabajo"
 msgid "Job finished in %s"
 msgstr "Trabajo terminado en %s"
 
+msgid "Job report"
+msgstr "Informe del trabajo"
+
 msgid "Job running"
 msgstr "Trabajo en curso"
 
 msgid "Job simulation"
 msgstr "Simulación del trabajo"
+
+#, python-format
+msgid "Job time: %s"
+msgstr "Duración del trabajo: %s"
 
 msgid "Join the selected elements into a group that is selected and moved as one"
 msgstr ""
@@ -2015,6 +2022,15 @@ msgstr "Preprocesando datos del ráster: %s%%"
 msgid "Pressure angle"
 msgstr "Ángulo de presión"
 
+msgid "Program errors:"
+msgstr "Errores del programa:"
+
+msgid "Program output:"
+msgstr "Salida del programa:"
+
+msgid "Program to run after a job"
+msgstr "Programa tras un trabajo"
+
 #, python-format
 msgid "Project opened: %s"
 msgstr "Proyecto abierto: %s"
@@ -2204,6 +2220,9 @@ msgstr "Contorno de la regla"
 msgid "Ruler: a mark every millimetre, numbers every centimetre"
 msgstr "Regla: una marca cada milímetro, números cada centímetro"
 
+msgid "Run a program after a job"
+msgstr "Ejecutar un programa tras un trabajo"
+
 msgid "Run only the ticked cut layers"
 msgstr "Ejecutar solo las capas de corte marcadas"
 
@@ -2212,6 +2231,10 @@ msgstr "Ejecutar solo las capas de contorno (grabado vectorial) marcadas"
 
 msgid "Run only the ticked raster engrave layers"
 msgstr "Ejecutar solo las capas de grabado ráster marcadas"
+
+#, python-format
+msgid "Running the program set to run after a job: %s"
+msgstr "Ejecutando el programa ajustado para después del trabajo: %s"
 
 msgid "SVG files"
 msgstr "Archivos SVG"
@@ -2415,6 +2438,9 @@ msgstr "Vivas"
 msgid "Sheet %d"
 msgstr "Hoja %d"
 
+msgid "Show a report after a job (its time; the program's output)"
+msgstr "Mostrar un informe tras un trabajo (duración; salida del programa)"
+
 msgid "Show the report file"
 msgstr "Mostrar el archivo del informe"
 
@@ -2575,6 +2601,13 @@ msgstr ""
 
 msgid "Start the selected operations"
 msgstr "Iniciar las operaciones seleccionadas"
+
+msgid ""
+"Started after every finished job, for example to switch off the exhaust "
+"or send a message; its output goes to the report"
+msgstr ""
+"Se inicia tras cada trabajo terminado, por ejemplo para apagar el "
+"extractor o enviar un mensaje; su salida va al informe"
 
 msgid "Step:"
 msgstr "Paso:"
@@ -2771,6 +2804,9 @@ msgstr "La resolución de la imagen debe ser mayor que cero."
 msgid "The job is finished, but homing failed: %s"
 msgstr "El trabajo ha terminado, pero falló la vuelta al origen: %s"
 
+msgid "The job is finished."
+msgstr "El trabajo ha terminado."
+
 msgid ""
 "The job's layers besides the three basic ones, kept with the material: "
 "applying it sets the layer of the same name, or adds it"
@@ -2814,6 +2850,19 @@ msgstr ""
 "una sobre otra. Las hojas desde la 2 están en sus propias capas de corte,"
 " desmarcadas: corte la hoja 1, cambie el material y marque la capa de la "
 "siguiente hoja."
+
+#, python-format
+msgid "The program could not be started: %s"
+msgstr "No se pudo iniciar el programa: %s"
+
+#, python-format
+msgid "The program ended with an error (exit code %d)."
+msgstr "El programa terminó con un error (código de salida %d)."
+
+msgid "The program run after the job reported an error; see the report window."
+msgstr ""
+"El programa ejecutado tras el trabajo informó de un error; vea la ventana"
+" del informe."
 
 msgid ""
 "The report form is opening in your browser. Please drag the diagnostic "
@@ -3204,6 +3253,9 @@ msgstr "Zigzag"
 
 msgid "Zigzag cuts"
 msgstr "Cortes en zigzag"
+
+msgid "a program or script (.bat, .sh)"
+msgstr "un programa o script (.bat, .sh)"
 
 msgid "centre"
 msgstr "centro"

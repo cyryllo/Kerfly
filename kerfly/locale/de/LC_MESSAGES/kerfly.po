@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-14 00:07+0100\n"
+"POT-Creation-Date: 2026-11-14 00:34+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -1240,11 +1240,18 @@ msgstr "Auftrag"
 msgid "Job finished in %s"
 msgstr "Auftrag beendet in %s"
 
+msgid "Job report"
+msgstr "Auftragsbericht"
+
 msgid "Job running"
 msgstr "Auftrag läuft"
 
 msgid "Job simulation"
 msgstr "Auftragssimulation"
+
+#, python-format
+msgid "Job time: %s"
+msgstr "Auftragsdauer: %s"
 
 msgid "Join the selected elements into a group that is selected and moved as one"
 msgstr ""
@@ -2020,6 +2027,15 @@ msgstr "Rasterdaten werden vorverarbeitet: %s%%"
 msgid "Pressure angle"
 msgstr "Eingriffswinkel"
 
+msgid "Program errors:"
+msgstr "Fehler des Programms:"
+
+msgid "Program output:"
+msgstr "Ausgabe des Programms:"
+
+msgid "Program to run after a job"
+msgstr "Programm nach einem Auftrag"
+
 #, python-format
 msgid "Project opened: %s"
 msgstr "Projekt geöffnet: %s"
@@ -2215,6 +2231,9 @@ msgstr "Linealumriss"
 msgid "Ruler: a mark every millimetre, numbers every centimetre"
 msgstr "Lineal: ein Strich je Millimeter, Zahlen je Zentimeter"
 
+msgid "Run a program after a job"
+msgstr "Nach einem Auftrag ein Programm starten"
+
 msgid "Run only the ticked cut layers"
 msgstr "Nur die angehakten Schneideebenen ausführen"
 
@@ -2223,6 +2242,10 @@ msgstr "Nur die angehakten Kontur-Ebenen (Vektorgravur) ausführen"
 
 msgid "Run only the ticked raster engrave layers"
 msgstr "Nur die angehakten Rastergravur-Ebenen ausführen"
+
+#, python-format
+msgid "Running the program set to run after a job: %s"
+msgstr "Das Programm für nach dem Auftrag läuft: %s"
 
 msgid "SVG files"
 msgstr "SVG-Dateien"
@@ -2424,6 +2447,9 @@ msgstr "Spitz"
 msgid "Sheet %d"
 msgstr "Bogen %d"
 
+msgid "Show a report after a job (its time; the program's output)"
+msgstr "Nach einem Auftrag einen Bericht zeigen (Dauer; Ausgabe des Programms)"
+
 msgid "Show the report file"
 msgstr "Berichtsdatei anzeigen"
 
@@ -2585,6 +2611,14 @@ msgstr ""
 
 msgid "Start the selected operations"
 msgstr "Ausgewählte Vorgänge starten"
+
+msgid ""
+"Started after every finished job, for example to switch off the exhaust "
+"or send a message; its output goes to the report"
+msgstr ""
+"Wird nach jedem fertigen Auftrag gestartet, zum Beispiel um die Absaugung"
+" auszuschalten oder eine Nachricht zu senden; seine Ausgabe kommt in den "
+"Bericht"
 
 msgid "Step:"
 msgstr "Schritt:"
@@ -2780,6 +2814,9 @@ msgstr "Die Bildauflösung muss größer als null sein."
 msgid "The job is finished, but homing failed: %s"
 msgstr "Der Auftrag ist fertig, aber die Referenzfahrt ist fehlgeschlagen: %s"
 
+msgid "The job is finished."
+msgstr "Der Auftrag ist fertig."
+
 msgid ""
 "The job's layers besides the three basic ones, kept with the material: "
 "applying it sets the layer of the same name, or adds it"
@@ -2824,6 +2861,19 @@ msgstr ""
 "übereinander gezeichnet. Bögen ab 2 liegen auf eigenen, abgehakten "
 "Schneideebenen: Bogen 1 schneiden, Material wechseln, dann die Ebene des "
 "nächsten Bogens anhaken."
+
+#, python-format
+msgid "The program could not be started: %s"
+msgstr "Das Programm konnte nicht gestartet werden: %s"
+
+#, python-format
+msgid "The program ended with an error (exit code %d)."
+msgstr "Das Programm endete mit einem Fehler (Exit-Code %d)."
+
+msgid "The program run after the job reported an error; see the report window."
+msgstr ""
+"Das nach dem Auftrag gestartete Programm meldete einen Fehler; siehe "
+"Berichtsfenster."
 
 msgid ""
 "The report form is opening in your browser. Please drag the diagnostic "
@@ -3218,6 +3268,9 @@ msgstr "Zickzack"
 
 msgid "Zigzag cuts"
 msgstr "Zickzackschnitte"
+
+msgid "a program or script (.bat, .sh)"
+msgstr "ein Programm oder Skript (.bat, .sh)"
 
 msgid "centre"
 msgstr "Mitte"

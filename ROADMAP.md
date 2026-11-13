@@ -52,9 +52,12 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 - [x] Go to a given X/Y position
 - [x] Test fire (M3)
 - [x] Job time estimate
-- [ ] Batch mode and post-job actions (`post_disp`, `post_exec`)
+- [x] Post-job actions (`post_disp`, `post_exec`): a report window with the job time (on by
+  default, not blocking) and a program run after every finished job, its output and errors in
+  the report (Settings → Machine)
 - [x] Open and send EGV files
-- [ ] Rotary settings window parity
+- [x] Rotary settings window parity (Settings → Rotary; scale and rapid speed greyed out while
+  the attachment is off)
 - [x] Design follows the head (toggle under the unlock button)
 - [x] Remember the view settings without "Save settings as default": snap
   grid on / off and its size, snap to objects, design follows the head

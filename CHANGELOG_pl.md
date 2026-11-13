@@ -11,6 +11,19 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   *Objazd konturu z włączonym laserem* (wyszarzona, gdy ta opcja jest
   wyłączona), w procentach mocy maksymalnej. Płyta M3 dostaje ją podczas
   objazdu; na innych płytach moc ustawia jak dotąd pokrętło lasera.
+- **Raport po zadaniu** (Ustawienia → Maszyna, domyślnie włączony): małe okno
+  z czasem zadania, które czeka, aż wrócisz do lasera (nie blokuje Kerfly).
+  Nie pojawia się po objeździe konturu.
+- **Uruchom program po zadaniu** (Ustawienia → Maszyna): program albo skrypt
+  (.bat, .sh) uruchamiany po każdym skończonym zadaniu, np. żeby wyłączyć
+  wyciąg albo wysłać wiadomość; jego wynik i błędy są pokazane w raporcie
+  (błędy także przy wyłączonym raporcie).
+
+### Zmienione
+
+- Ustawienia → Oś obrotowa: współczynnik skali i prędkość szybkich ruchów są
+  wyszarzone, gdy oś obrotowa jest wyłączona (tak jak moc objazdu bez
+  włączonego lasera).
 
 ## 1.4.1 (2026-11-13)
 

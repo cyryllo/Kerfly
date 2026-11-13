@@ -75,7 +75,7 @@ DEFAULT_VALUES = {
     "include_Reng": "1", "include_Veng": "1", "include_Vcut": "1", "include_Gcde": "1",
     "include_Time": "0", "halftone": "1", "HomeUR": "0", "show_power": "1", "show_test": "1",
     "inputCSYS": "0", "advanced": "0", "mirror": "0", "rotate": "0", "negate": "0",
-    "engraveUP": "0", "init_home": "1", "post_home": "0", "post_beep": "0", "post_disp": "0",
+    "engraveUP": "0", "init_home": "1", "post_home": "0", "post_beep": "0", "post_disp": "1",
     "post_exec": "0", "pre_pr_crc": "1", "inside_first": "1", "comb_engrave": "0",
     "comb_vector": "0", "zoom2image": "0", "rotary": "0", "reduced_mem": "0", "wait": "1",
     "trace_w_laser": "0",

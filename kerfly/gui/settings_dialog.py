@@ -23,6 +23,10 @@ TABS = [
         ("post_home_xy", N_("Home the head after a job (back to 0, 0)"), "bool", None),
         ("post_home", N_("Unlock rail after a job"), "bool", None),
         ("post_beep", N_("Beep after a job"), "bool", None),
+        ("post_disp", N_("Show a report after a job (its time; the program's output)"), "bool", None),
+        ("post_exec", N_("Run a program after a job"), "bool", None),
+        ("batch_path", N_("Program to run after a job"), "path",
+         (N_("Program to run after a job"), N_("a program or script (.bat, .sh)"))),
         ("LaserXscale", N_("X scale factor"), "float", (0.5, 2, 4, None)),
         ("LaserYscale", N_("Y scale factor"), "float", (0.5, 2, 4, None)),
         ("show_power", N_("M3 board: set power per operation"), "bool", None),
@@ -65,7 +69,7 @@ TABS = [
         ("check_updates", N_("Check once a day for a new version (asks GitHub; nothing about you is sent)"),
          "bool", None),
         ("use_inkscape", N_("Use Inkscape for SVG files when installed (otherwise built-in)"), "bool", None),
-        ("inkscape_path", N_("Inkscape executable"), "path", None),
+        ("inkscape_path", N_("Inkscape executable"), "path", (N_("Inkscape executable"), N_("found automatically"))),
         ("ink_timeout", N_("Inkscape timeout (minutes)"), "float", (0.1, 60, 1, None)),
         ("reduced_mem", N_("Reduced memory use (500 dpi raster)"), "bool", None),
         ("pre_pr_crc", N_("Prepare USB data before sending"), "bool", None),
@@ -74,6 +78,10 @@ TABS = [
         ("n_timeouts", N_("USB retries"), "int", (1, 1000)),
     ]),
 ]
+
+# field -> the tick it depends on
+DEPENDS = {"Trace_power": "trace_w_laser", "batch_path": "post_exec", "LaserRscale": "rotary",
+           "rapid_feed": "rotary"}
 
 # settings whose change invalidates the computed raster lines / path order
 RASTER_KEYS = {"halftone", "ht_size", "negate", "mirror", "rotate", "rast_step", "bezier_M1",
@@ -88,6 +96,7 @@ class SettingsDialog(QDialog):
         self.values = dict(values)
         self._getters = {}
         self._widgets = {}
+        self._labels = {}
         units = self.values.get("units", "mm")
         len_unit = units
         speed_unit = "mm/s" if units == "mm" else "in/min"
@@ -110,7 +119,8 @@ class SettingsDialog(QDialog):
                     widget.setText(_(label))          # the text sits right next to the box
                     grid.addWidget(widget, row, 0, 1, 3)
                 else:
-                    grid.addWidget(QLabel(_(label)), row, 0)
+                    self._labels[key] = QLabel(_(label))
+                    grid.addWidget(self._labels[key], row, 0)
                     span = 2 if kind == "path" else 1
                     grid.addWidget(widget, row, 1, 1, span)
                 self._getters[key] = getter
@@ -118,14 +128,18 @@ class SettingsDialog(QDialog):
             grid.setRowStretch(len(fields), 1)
             tabs.addTab(page, _(title))
         tabs.setCurrentIndex(tab)
-        # the trace power only counts with the laser on during the trace
-        trace_on = self._widgets["trace_w_laser"]
-        trace_power = self._widgets["Trace_power"]
-        trace_power.setToolTip(_("Laser power during the boundary trace, in per cent of the maximum power "
+        self._widgets["Trace_power"].setToolTip(_("Laser power during the boundary trace, in per cent of the maximum power "
                                  "(Settings → Machine). Used by M3 boards with power per operation; on other "
                                  "boards the power knob of the laser sets it"))
-        trace_power.setEnabled(trace_on.isChecked())
-        trace_on.toggled.connect(trace_power.setEnabled)
+        self._widgets["batch_path"].setToolTip(_("Started after every finished job, for example to switch off "
+                                                 "the exhaust or send a message; its output goes to the report"))
+        # fields that count only with a tick: greyed out without it (as in K40 Whisperer)
+        for key, switch in DEPENDS.items():
+            box = self._widgets[switch]
+            parts = [self._widgets[key]] + ([self._labels[key]] if key in self._labels else [])
+            for part in parts:
+                part.setEnabled(box.isChecked())
+                box.toggled.connect(part.setEnabled)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
@@ -188,13 +202,14 @@ class SettingsDialog(QDialog):
             box = QWidget()
             row = QHBoxLayout(box)
             row.setContentsMargins(0, 0, 0, 0)
+            title, placeholder = opt
             edit = QLineEdit(str(value))
-            edit.setPlaceholderText(_("found automatically"))
+            edit.setPlaceholderText(_(placeholder))
             edit.setMinimumWidth(edit.fontMetrics().averageCharWidth() * 36)
             browse = QPushButton(_("Browse…"))
 
             def pick():
-                name, _unused = QFileDialog.getOpenFileName(self, _("Inkscape executable"), edit.text())
+                name, _unused = QFileDialog.getOpenFileName(self, _(title), edit.text())
                 if name:
                     edit.setText(name)
             browse.clicked.connect(pick)

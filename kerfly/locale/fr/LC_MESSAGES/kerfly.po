@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-14 00:07+0100\n"
+"POT-Creation-Date: 2026-11-14 00:34+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -1240,11 +1240,18 @@ msgstr "Tâche"
 msgid "Job finished in %s"
 msgstr "Tâche terminée en %s"
 
+msgid "Job report"
+msgstr "Rapport du travail"
+
 msgid "Job running"
 msgstr "Tâche en cours"
 
 msgid "Job simulation"
 msgstr "Simulation de la tâche"
+
+#, python-format
+msgid "Job time: %s"
+msgstr "Durée du travail : %s"
 
 msgid "Join the selected elements into a group that is selected and moved as one"
 msgstr ""
@@ -2019,6 +2026,15 @@ msgstr "Prétraitement des données raster : %s%%"
 msgid "Pressure angle"
 msgstr "Angle de pression"
 
+msgid "Program errors:"
+msgstr "Erreurs du programme :"
+
+msgid "Program output:"
+msgstr "Sortie du programme :"
+
+msgid "Program to run after a job"
+msgstr "Programme après un travail"
+
 #, python-format
 msgid "Project opened: %s"
 msgstr "Projet ouvert : %s"
@@ -2210,6 +2226,9 @@ msgstr "Contour de la règle"
 msgid "Ruler: a mark every millimetre, numbers every centimetre"
 msgstr "Règle : une graduation par millimètre, des nombres par centimètre"
 
+msgid "Run a program after a job"
+msgstr "Lancer un programme après un travail"
+
 msgid "Run only the ticked cut layers"
 msgstr "N'exécuter que les calques de découpe cochés"
 
@@ -2218,6 +2237,10 @@ msgstr "N'exécuter que les calques de contour (gravure vectorielle) cochés"
 
 msgid "Run only the ticked raster engrave layers"
 msgstr "N'exécuter que les calques de gravure raster cochés"
+
+#, python-format
+msgid "Running the program set to run after a job: %s"
+msgstr "Lancement du programme prévu après le travail : %s"
 
 msgid "SVG files"
 msgstr "Fichiers SVG"
@@ -2427,6 +2450,9 @@ msgstr "Vifs"
 msgid "Sheet %d"
 msgstr "Feuille %d"
 
+msgid "Show a report after a job (its time; the program's output)"
+msgstr "Afficher un rapport après un travail (durée ; sortie du programme)"
+
 msgid "Show the report file"
 msgstr "Afficher le fichier du rapport"
 
@@ -2587,6 +2613,13 @@ msgstr ""
 
 msgid "Start the selected operations"
 msgstr "Lancer les opérations sélectionnées"
+
+msgid ""
+"Started after every finished job, for example to switch off the exhaust "
+"or send a message; its output goes to the report"
+msgstr ""
+"Lancé après chaque travail terminé, par exemple pour couper l'aspiration "
+"ou envoyer un message ; sa sortie va dans le rapport"
 
 msgid "Step:"
 msgstr "Pas :"
@@ -2781,6 +2814,9 @@ msgstr "La résolution de l'image doit être supérieure à zéro."
 msgid "The job is finished, but homing failed: %s"
 msgstr "La tâche est terminée, mais le retour à l'origine a échoué : %s"
 
+msgid "The job is finished."
+msgstr "Le travail est terminé."
+
 msgid ""
 "The job's layers besides the three basic ones, kept with the material: "
 "applying it sets the layer of the same name, or adds it"
@@ -2824,6 +2860,19 @@ msgstr ""
 "matériau, dessinées les unes sur les autres. Les feuilles à partir de la "
 "2 sont sur leurs propres calques de découpe, décochés : coupez la feuille"
 " 1, changez le matériau, puis cochez le calque de la feuille suivante."
+
+#, python-format
+msgid "The program could not be started: %s"
+msgstr "Le programme n'a pas pu être lancé : %s"
+
+#, python-format
+msgid "The program ended with an error (exit code %d)."
+msgstr "Le programme s'est terminé par une erreur (code de sortie %d)."
+
+msgid "The program run after the job reported an error; see the report window."
+msgstr ""
+"Le programme lancé après le travail a signalé une erreur ; voir la "
+"fenêtre du rapport."
 
 msgid ""
 "The report form is opening in your browser. Please drag the diagnostic "
@@ -3219,6 +3268,9 @@ msgstr "Zigzag"
 
 msgid "Zigzag cuts"
 msgstr "Coupes en zigzag"
+
+msgid "a program or script (.bat, .sh)"
+msgstr "un programme ou script (.bat, .sh)"
 
 msgid "centre"
 msgstr "centre"
