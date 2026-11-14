@@ -1439,6 +1439,59 @@ def part_files_and_help(s):
     s.step("Help → Keyboard shortcuts (search F9, Close)", shortcuts_window, change=False,
            check=lambda: (any(k == "F9" for _sec, _c, k in shown.get("rows", [])) and len(shown.get("rows", [])) < 4
                           and shown.get("closed"), "rows %s, closed %s" % (shown.get("rows"), shown.get("closed"))))
+    # laser profiles: the Lasers button, New, a name typed in, Use; back with the list of the Laser tab; Delete
+    from kerfly.gui.profiles_dialog import ProfilesDialog
+    first_laser = w.profiles.current
+    first_board = w.values.get("board_name")
+
+    def add_and_use(dlg):
+        if not isinstance(dlg, ProfilesDialog):
+            raise RuntimeError("not the lasers window: %s" % dlg)
+        s.click(dlg.buttons["new"])
+        editor = dlg.list.focusWidget() if dlg.list.focusWidget() is not dlg.list else None
+        from PySide6.QtWidgets import QLineEdit
+        editor = next((e for e in dlg.list.findChildren(QLineEdit) if e.isVisible()), editor)
+        if editor is None:
+            raise RuntimeError("no name editor after New")
+        QTest.keyClick(editor, Qt.Key_A, Qt.ControlModifier)
+        QTest.keyClicks(editor, "Laptop laser")
+        QTest.keyClick(editor, Qt.Key_Return)
+        s.settle()
+        s.click(dlg.buttons["use"])
+        s.click(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Close))
+    from PySide6.QtWidgets import QDialogButtonBox
+    s.expect_dialog("lasers: New, name, Use", add_and_use)
+    s.step("Lasers (toolbar) → New, type a name, Use: its settings in the window", lambda: s.trigger(w.act_profiles),
+           change=False, undo=False,
+           check=lambda: (w.profiles.current == "Laptop laser" and w.values.get("board_name") == "LASER-M2"
+                          and w.profile_box.currentText() == "Laptop laser",
+                          "%s, %s" % (w.profiles.current, w.values.get("board_name"))))
+    s.tab(1)
+    s.step("Laser tab: the laser list back to the first laser", lambda: s.pick(w.profile_box,
+                                                                                 index=w.profile_box.findText(first_laser)),
+           change=False, undo=False,
+           check=lambda: (w.profiles.current == first_laser and w.values.get("board_name") == first_board,
+                          "%s, %s" % (w.profiles.current, w.values.get("board_name"))))
+
+    def delete_laptop(dlg):
+        dlg.list.setCurrentRow(w.profiles.names().index("Laptop laser"))
+        s.settle()
+
+        def yes():                               # the question opens inside this window: answered by a timer
+            box = QApplication.activeModalWidget()
+            if isinstance(box, QMessageBox):
+                s.click_dialog_button(box, QMessageBox.Yes)
+            else:
+                QTimer.singleShot(100, yes)
+        QTimer.singleShot(100, yes)
+        s.click(dlg.buttons["delete"])
+        s.click(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Close))
+    s.expect_dialog("lasers: Delete", delete_laptop)
+    s.step("Laser tab: manage lasers → Delete the new one", lambda: s.click(w.btn_profiles), change=False,
+           undo=False, check=lambda: ("Laptop laser" not in w.profiles.names() and w.profiles.current == first_laser,
+                                      "%s" % w.profiles.names()))
+    s.tab(0)
+
     from kerfly.gui import desktop_entry
     if desktop_entry.applies():
         s.expect_dialog("added to the applications menu", lambda d: s.click_dialog_button(d, QMessageBox.Ok))

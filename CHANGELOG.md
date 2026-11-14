@@ -21,6 +21,14 @@ Version numbers:
   menu…** for the Linux AppImage (also puts Kerfly in the desktop's menu; a
   newer AppImage updates it by itself), and on macOS.
 - A minimum window size (1024 × 680, or the whole screen when it is smaller).
+- **Laser profiles**, for more than one laser (for example a laptop taken from
+  one machine to the other): the list at the top of the Laser tab chooses the
+  laser in use, and its settings (board, bed, home corner, scale, power,
+  rotary, trace, programs before and after a job) go into the window.
+  Settings → Lasers… (toolbar **Lasers**) adds, duplicates, renames, deletes,
+  exports and imports them. A machine setting changed in Settings is kept in
+  the profile in use; the first start makes "My laser" of the settings you
+  have. One laser at a time.
 
 ### Changed
 

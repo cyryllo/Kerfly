@@ -156,6 +156,8 @@ def main(argv=None):
     viewstate.load(values)                     # grid, snapping, follow head: as left last time
     language = i18n.setup(values.get("language", ""))
     install_qt_translations(app, language)
+    from kerfly.core import profiles
+    profiles.apply_current(values, i18n._("My laser"))   # the laser in use: board, bed, power, ...
     from PySide6.QtCore import qVersion
     diag.log.info("Qt %s (%s), language %s, font %s; board %s, bed %s x %s %s",
                   qVersion(), app.platformName(), language or "en", app.font().family(),

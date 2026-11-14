@@ -112,6 +112,9 @@ class MainWindow(QMainWindow):
         self.worker = None
         self._paused = False
         self._unit_widgets = []         # (spinbox, kind, key, sign) to update when units change
+        from kerfly.core import profiles as profiles_core
+        # the lasers (one in use); the app puts the profile in use into values before the window
+        self.profiles = profiles_core.load_or_create(self.values, _("My laser"))
 
         self._update_title()
         self.resize(1200, 780)                  # replaced by the saved / screen-based size in show()
@@ -368,6 +371,8 @@ class MainWindow(QMainWindow):
                   "with a double click (only for you, no password)"))
         self.act_fit = self._action(_("&Fit to window"), lambda: self.preview.fit_all(), "Ctrl+0")
         self.act_settings = self._action(_("&Settings\u2026"), self.edit_settings, "Ctrl+,")
+        self.act_profiles = self._action(_("&Lasers\u2026"), self.manage_profiles, None,
+                                         _("Your lasers: use one, add, duplicate, rename, delete, export, import"))
         self.act_materials = self._action(_("&Material library\u2026"), lambda: self.edit_materials())
         self.act_export_materials = self._action(_("&Export material library\u2026"), self.export_materials)
         self.act_import_materials = self._action(_("&Import material library\u2026"), self.import_materials)
@@ -442,6 +447,7 @@ class MainWindow(QMainWindow):
             sub.addAction(a)
         m = mb.addMenu(_("&Settings"))
         m.addAction(self.act_settings)
+        m.addAction(self.act_profiles)
         m.addSeparator()
         for a in (self.act_materials, self.act_export_materials, self.act_import_materials):
             m.addAction(a)
@@ -557,6 +563,7 @@ class MainWindow(QMainWindow):
                 (self.act_snap, "grid-dots", C_("toolbar", "Grid")),
             ]),
             (C_("toolbar group", "Settings"), [
+                (self.act_profiles, "laser", C_("toolbar", "Lasers")),
                 (self.act_materials, "book", C_("toolbar", "Materials")),
                 (self.act_settings, "settings", C_("toolbar", "Settings")),
             ]),
@@ -1835,6 +1842,28 @@ class MainWindow(QMainWindow):
         # --- laser
         box = QGroupBox()
         v = QVBoxLayout(box)
+        # the laser in use (one at a time): its profile sets the board, bed, power, ...
+        profile_row = QHBoxLayout()
+        profile_icon = QLabel()
+        profile_icon.setPixmap(icons.tabler("laser").pixmap(22, 22))
+        profile_icon.setToolTip(_("The laser in use"))
+        profile_row.addWidget(profile_icon)
+        self.profile_box = QComboBox()
+        self.profile_box.setToolTip(_("The laser in use: choosing another one puts its settings (board, bed, "
+                                      "power, rotary, ...) into the window"))
+        self.profile_box.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.profile_box.setMinimumContentsLength(14)
+        self.profile_box.activated.connect(lambda _i: self.switch_profile(self.profile_box.currentText()))
+        profile_row.addWidget(self.profile_box, 1)
+        manage = QToolButton()
+        manage.setDefaultAction(self.act_profiles)
+        manage.setIcon(icons.tabler("settings"))
+        manage.setToolTip(_("Manage your lasers: add, duplicate, rename, delete, export, import"))
+        manage.setAutoRaise(True)
+        self.btn_profiles = manage
+        profile_row.addWidget(manage)
+        v.addLayout(profile_row)
+        self._refresh_profile_box()
         self.laser_label = QLabel()
         v.addWidget(self.laser_label)
         # machine buttons, in a column beside the jog pad
@@ -3605,11 +3634,11 @@ class MainWindow(QMainWindow):
     def set_busy(self, busy):
         for w in [self.btn_start, self.btn_trace, self.btn_connect, self.btn_home, self.btn_unlock,
                   self.btn_goto,
-                  self.btn_test_fire, self.btn_calc_time, self.selection_box] + self.corner_buttons:
+                  self.btn_test_fire, self.btn_calc_time, self.selection_box, self.profile_box] + self.corner_buttons:
             w.setEnabled(not busy)
         for a in [self.act_new, self.act_open, self.act_reload, self.act_save_egv, self.act_send_egv,
                   self.act_connect, self.act_release, self.act_home, self.act_unlock,
-                  self.act_settings, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
+                  self.act_settings, self.act_profiles, self.act_goto, self.act_calc_time, self.act_add, self.act_delete,
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v,
                   self.act_group, self.act_ungroup, self.act_distribute_h, self.act_distribute_v, self.act_place_head,
                   self.act_follow_head, self.act_undo] + list(self.act_order.values()) + [
@@ -3980,6 +4009,65 @@ class MainWindow(QMainWindow):
         new, changed = dlg.result_values()
         if not changed:
             return
+        self._apply_settings(new, changed)
+        from kerfly.core import profiles as profiles_core
+        if changed & set(profiles_core.MACHINE_KEYS):
+            # a machine setting: kept in the profile of the laser in use at once
+            self._store_profile()
+            self.status(_("Settings changed; the laser \"%s\" keeps them") % self.profiles.current)
+        else:
+            self.status(_("Settings changed (use File → Save settings as default to keep them)"))
+
+    def _store_profile(self):
+        from kerfly.core import profiles as profiles_core
+        self.profiles.set(self.profiles.current, profiles_core.from_values(self.values))
+        try:
+            profiles_core.save(self.profiles)
+        except OSError as e:
+            self.status(_("Could not save the lasers: %s") % e, error=True)
+
+    def _refresh_profile_box(self):
+        box = getattr(self, "profile_box", None)
+        if box is None:
+            return
+        box.blockSignals(True)
+        box.clear()
+        for name in self.profiles.names():
+            box.addItem(icons.tabler("laser"), name)
+        box.setCurrentIndex(max(0, box.findText(self.profiles.current)))
+        box.blockSignals(False)
+
+    def switch_profile(self, name):
+        """Work with another laser: its settings go into the window. False while a job runs."""
+        from kerfly.core import profiles as profiles_core
+        if name == self.profiles.current:
+            return True
+        if self.worker is not None or getattr(self, "_before_job_process", None) is not None:
+            self.status(_("Wait until the job ends before choosing another laser."), error=True)
+            self._refresh_profile_box()
+            return False
+        new = profiles_core.to_values(self.values, self.profiles.get(name))
+        changed = {k for k in new if str(new[k]) != str(self.values.get(k, ""))}
+        self.profiles.current = name
+        try:
+            profiles_core.save(self.profiles)
+        except OSError as e:
+            self.status(_("Could not save the lasers: %s") % e, error=True)
+        if changed:
+            self._apply_settings(new, changed)
+        self._refresh_profile_box()
+        diag_log.info("laser profile %s: board %s, bed %s x %s", name, self.values.get("board_name"),
+                      self.values.get("LaserXsize"), self.values.get("LaserYsize"))
+        self.status(_("Laser: %s") % name)
+        return True
+
+    def manage_profiles(self):
+        from kerfly.gui.profiles_dialog import ProfilesDialog
+        ProfilesDialog(self).exec()
+        self._refresh_profile_box()
+
+    def _apply_settings(self, new, changed):
+        """New settings into the window (Settings dialog, another laser)."""
         if "units" in changed:
             old = dict(new)
             old["units"] = self.values["units"]
@@ -4015,7 +4103,6 @@ class MainWindow(QMainWindow):
         if changed & RELOAD_KEYS and self.elements:
             self.reload_design()
         self.refresh_preview()
-        self.status(_("Settings changed (use File → Save settings as default to keep them)"))
 
     def save_settings(self):
         path = config.user_config_path()

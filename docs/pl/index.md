@@ -159,6 +159,7 @@ description: Kerfly to darmowy program do sterowania laserami CO2 K40 z płytami
       <li>Tylko grawer, obrys albo cięcie oraz bazowanie po każdym zadaniu, gotowe na kolejną sztukę.</li>
       <li>Raport z czasem zadania i własne programy przed zadaniem i po nim: włączenie i wyłączenie wyciągu.</li>
       <li>Jasny albo ciemny motyw i wszystkie skróty klawiszowe w jednym oknie (Pomoc → Skróty klawiszowe).</li>
+      <li>Profile laserów: dwie maszyny, jeden laptop, właściwa płyta, stół i moc jednym kliknięciem.</li>
     </ul>
   </div>
 </div>

@@ -17,6 +17,14 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   AppImage na Linuksie (dodaje też Kerfly do menu pulpitu; nowsze AppImage
   samo poprawia wpis) oraz na macOS.
 - Minimalny rozmiar okna (1024 × 680 albo cały ekran, gdy jest mniejszy).
+- **Profile laserów**, dla więcej niż jednego lasera (np. laptop przenoszony od
+  jednej maszyny do drugiej): lista na górze zakładki Laser wybiera laser w
+  użyciu, a jego ustawienia (płyta, stół, pozycja bazowa, skala, moc, oś
+  obrotowa, objazd konturu, programy przed zadaniem i po nim) trafiają do
+  okna. Ustawienia → Lasery… (na pasku **Lasery**) dodaje, duplikuje, zmienia
+  nazwę, usuwa, eksportuje i importuje lasery. Ustawienie maszyny zmienione w
+  Ustawieniach zapisuje się w profilu w użyciu; przy pierwszym uruchomieniu
+  obecne ustawienia stają się „Moim laserem”. Jeden laser naraz.
 
 ### Zmienione
 

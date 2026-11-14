@@ -346,6 +346,79 @@ def main():
           and stored == "system" and light_back,
           "(%s)" % [dark_window, dark_text, light_icons, dark_sheet, choices, stored, light_back])
 
+    # 3e3. laser profiles (one laser at a time; a laptop used with two lasers): the machine settings under a
+    # name, kept in mm whatever the units; choosing one puts them into the window; a machine setting changed
+    # in Settings goes into the profile in use, a program setting (language, grid) does not; the manager adds,
+    # duplicates, renames, deletes, exports and imports; no switching during a job; at start the profile in use
+    from kerfly.core import profiles as _pc
+    from kerfly.gui.profiles_dialog import ProfilesDialog as _PD
+    inch = config.convert_units(dict(config.DEFAULT_VALUES), "in")     # 12.80 in, rounded as K40 Whisperer does
+    mm_kept = abs(float(_pc.from_values(inch)["LaserXsize"]) - 325) < 0.2
+    back_in = abs(float(_pc.to_values(inch, {"LaserXsize": "508"})["LaserXsize"]) - 20.0) < 0.01
+    pw = make_window()
+    first = pw.profiles.current
+    pw.profiles.add("Workshop M3", dict(_pc.from_values(pw.values), board_name="LASER-M3", LaserXsize="500",
+                                         rotary="1"))
+    _pc.save(pw.profiles)
+    pw._refresh_profile_box()
+    pw.profile_box.setCurrentIndex(pw.profile_box.findText("Workshop M3"))
+    pw.profile_box.activated.emit(pw.profile_box.currentIndex())
+    switched = pw.values["board_name"] == "LASER-M3" and float(pw.values["LaserXsize"]) == 500 \
+        and pw.values["rotary"] == "1" and pw.power_per_stage() and pw.profiles.current == "Workshop M3"
+    from kerfly.gui.settings_dialog import SettingsDialog as _SD4
+    real_exec = _SD4.exec
+    _SD4.exec = lambda self: (self._widgets["LaserYsize"].setValue(300), self._widgets["grid_mm"].setValue(5),
+                              1)[2]
+    pw.edit_settings()
+    _SD4.exec = real_exec
+    saved = _pc.load()
+    machine_kept = float(saved.get("Workshop M3")["LaserYsize"]) == 300 and "grid_mm" not in saved.get("Workshop M3")
+    pw.switch_profile(first)
+    back = pw.values["board_name"] == "LASER-M2" and float(pw.values["LaserXsize"]) == 325
+    pw.worker = object()
+    refused = not pw.switch_profile("Workshop M3") and pw.profiles.current == first
+    pw.worker = None
+    # the manager
+    dlg = _PD(pw)
+    n0 = len(pw.profiles.items)
+    dlg._new()
+    new_name = dlg.selected()
+    dlg.list.currentItem().setText("Laptop K40")
+    renamed = "Laptop K40" in pw.profiles.names() and new_name not in pw.profiles.names()
+    dlg._duplicate()
+    duplicated = len(pw.profiles.items) == n0 + 2
+    export = os.path.join(tempfile.mkdtemp(), "laser.json")
+    real_save, real_open = QFileDialog.getSaveFileName, QFileDialog.getOpenFileName
+    QFileDialog.getSaveFileName = staticmethod(lambda *a, **k: (export, ""))
+    QFileDialog.getOpenFileName = staticmethod(lambda *a, **k: (export, ""))
+    dlg.list.setCurrentRow(pw.profiles.names().index("Laptop K40"))
+    dlg._export()
+    dlg._import()
+    imported = "Laptop K40 (2)" in pw.profiles.names() or any(n.startswith("Laptop K40 (") for n in pw.profiles.names())
+    QFileDialog.getSaveFileName, QFileDialog.getOpenFileName = real_save, real_open
+    real_q = QMessageBox.question
+    QMessageBox.question = staticmethod(lambda *a, **k: QMessageBox.Yes)
+    count = len(pw.profiles.items)
+    dlg._delete()
+    QMessageBox.question = real_q
+    deleted = len(pw.profiles.items) == count - 1
+    dlg.list.setCurrentRow(pw.profiles.names().index("Workshop M3"))
+    dlg._use()
+    used = pw.profiles.current == "Workshop M3" and pw.values["board_name"] == "LASER-M3"
+    in_box = [pw.profile_box.itemText(i) for i in range(pw.profile_box.count())] == pw.profiles.names()
+    dlg.close()
+    start_values = dict(config.DEFAULT_VALUES)
+    _pc.apply_current(start_values, "My laser")
+    at_start = start_values["board_name"] == "LASER-M3" and float(start_values["LaserYsize"]) == 300
+    pw.close()
+    check("laser profiles: kept in mm, chosen in the Laser tab, machine settings go into the profile in use (not "
+          "the grid), back to the first, no switch during a job, the manager (new, rename, duplicate, export, import, "
+          "delete, use), the profile in use at start",
+          mm_kept and back_in and switched and machine_kept and back and refused and renamed and duplicated
+          and imported and deleted and used and in_box and at_start,
+          "(%s)" % [mm_kept, back_in, switched, machine_kept, back, refused, renamed, duplicated, imported, deleted,
+                    used, in_box, at_start, pw.profiles.names()])
+
     # 3f. .kerfly projects open in Kerfly: the Linux AppImage writes its menu entry and file type into the
     # user's own folders, with the AppImage as the program; a newer AppImage takes the entry over
     from kerfly.gui import desktop_entry as _de

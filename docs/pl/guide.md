@@ -108,7 +108,15 @@ wszystko, dopasuj widok, siatka.
 
 ![Zakładka Laser](../img/pl/laser.png)
 
-Na zakładce **Laser** po lewej są przyciski maszyny, a po prawej strzałki.
+Na zakładce **Laser** po lewej są przyciski maszyny, a po prawej strzałki. Na
+górze jest lista **Twoich laserów**: przy dwóch laserach (np. laptop
+przenoszony od jednego do drugiego) wybierasz ten, z którym pracujesz, i jego
+ustawienia (płyta, rozmiar stołu, pozycja bazowa, skala, moc, oś obrotowa,
+objazd konturu, programy przed zadaniem i po nim) trafiają do okna. Ustawienie
+maszyny zmienione w Ustawieniach zapisuje się w profilu lasera w użyciu.
+Zębatka obok listy (albo **Ustawienia → Lasery…**, na pasku **Lasery**)
+dodaje, duplikuje, zmienia nazwę, usuwa, eksportuje i importuje lasery. W
+danej chwili pracuje się z jednym laserem.
 
 | Przycisk | Co robi |
 |---|---|

@@ -65,7 +65,8 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
   bed and the head drives to it, or the design follows the head: your
   choice. Engrave, outline or cut only, home after each job for the next
   piece, a report with the job time, your own programs before and after a
-  job (the exhaust on and off). Kerfly refuses jobs that would run the head off the bed, and tells
+  job (the exhaust on and off). Several lasers? Each gets its profile (board,
+  bed, power, rotary), chosen with one click. Kerfly refuses jobs that would run the head off the bed, and tells
   you when a new version is out.
 - **Your language and look.** English, Polish, German, Spanish and French
   (Settings → Advanced → Language); a light or dark theme (Settings → View).

@@ -142,6 +142,12 @@ def trace_icon(color=None):
 import os as _os
 
 _TABLER_DIR = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "tabler")
+_OWN_DIR = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "own")   # Kerfly's own, same style
+
+
+def _svg_path(name):
+    own = _os.path.join(_OWN_DIR, name + ".svg")
+    return own if _os.path.isfile(own) else _os.path.join(_TABLER_DIR, name + ".svg")
 _tabler_cache = {}
 
 
@@ -154,7 +160,7 @@ def tabler(name, color=None):
         return icon
     from PySide6.QtCore import QByteArray, QRectF
     from PySide6.QtSvg import QSvgRenderer
-    with open(_os.path.join(_TABLER_DIR, name + ".svg"), encoding="utf-8") as f:
+    with open(_svg_path(name), encoding="utf-8") as f:
         svg = f.read().replace("currentColor", color)
     renderer = QSvgRenderer(QByteArray(svg.encode("utf-8")))
     icon = QIcon()
@@ -173,7 +179,7 @@ def tabler(name, color=None):
 def _tabler_render(name, color, p, rect):
     from PySide6.QtCore import QByteArray
     from PySide6.QtSvg import QSvgRenderer
-    with open(_os.path.join(_TABLER_DIR, name + ".svg"), encoding="utf-8") as f:
+    with open(_svg_path(name), encoding="utf-8") as f:
         svg = f.read().replace("currentColor", color)
     QSvgRenderer(QByteArray(svg.encode("utf-8"))).render(p, rect)
 

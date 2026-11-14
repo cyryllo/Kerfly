@@ -68,7 +68,8 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
   projekt podąża za głowicą: jak wolisz. Tylko grawer, obrys albo cięcie,
   bazowanie po każdym zadaniu przed kolejną sztuką, raport z czasem zadania,
   własne programy przed zadaniem i po nim (włączenie i wyłączenie wyciągu).
-  Kerfly nie wyśle zadania,
+  Kilka laserów? Każdy ma swój profil (płyta, stół, moc, oś obrotowa),
+  wybierany jednym kliknięciem. Kerfly nie wyśle zadania,
   które wyprowadziłoby głowicę poza stół, i powie, gdy wyjdzie nowa wersja.
 - **Twój język i wygląd.** Polski, angielski, niemiecki, hiszpański i
   francuski (Ustawienia → Zaawansowane → Język); jasny albo ciemny motyw

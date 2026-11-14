@@ -107,7 +107,13 @@ select all, fit, grid.
 ![Laser tab](img/en/laser.png)
 
 The **Laser** tab has the machine buttons on the left and the jog pad on the
-right.
+right. At its top, the list of **your lasers**: with two lasers (for example
+a laptop taken from one to the other), choose the one you work with, and its
+settings (board, bed size, home corner, scale, power, rotary, trace, programs
+before and after a job) go into the window. A machine setting changed in
+Settings is kept in the profile of the laser in use. The cog next to the list
+(or **Settings → Lasers…**, toolbar **Lasers**) adds, duplicates, renames,
+deletes, exports and imports lasers. One laser is used at a time.
 
 | Button | What it does |
 |---|---|

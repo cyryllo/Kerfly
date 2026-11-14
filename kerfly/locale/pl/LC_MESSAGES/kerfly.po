@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-14 20:28+0100\n"
+"POT-Creation-Date: 2026-11-14 20:56+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -123,6 +123,9 @@ msgstr "&Skróty klawiszowe"
 msgid "&Laser"
 msgstr "&Laser"
 
+msgid "&Lasers…"
+msgstr "&Lasery…"
+
 msgid "&Material library…"
 msgstr "&Baza materiałów…"
 
@@ -210,11 +213,17 @@ msgstr ""
 "GNU General Public License w wersji 3 lub późniejszej.<br><a "
 "href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>"
 
+msgid "A copy of the selected laser, to change a few settings"
+msgstr "Kopia zaznaczonego lasera, żeby zmienić kilka ustawień"
+
 msgid "A dot on each side between the top and the bottom text"
 msgstr "Kropka z każdej strony między tekstem górnym a dolnym"
 
 msgid "A job is running. Stop it and quit?"
 msgstr "Zadanie jest w toku. Zatrzymać je i zakończyć program?"
+
+msgid "A laser of this name is already there, or the name is empty."
+msgstr "Laser o tej nazwie już jest albo nazwa jest pusta."
 
 msgid ""
 "A living hinge needs a closed shape (not a text) on a cut or outline "
@@ -231,6 +240,9 @@ msgstr "Logo lub obrazek w środku (PNG, JPG lub SVG); puste: brak"
 
 msgid "A menu: on an element its commands, on the empty bed Move the head here"
 msgstr "Menu: na elemencie jego polecenia, na pustym stole Przesuń tu głowicę"
+
+msgid "A new laser with Kerfly's default settings"
+msgstr "Nowy laser z domyślnymi ustawieniami Kerfly"
 
 msgid "A stamp prints its mirror image: mirror it left to right"
 msgstr "Pieczątka odbija lustrzane odbicie: odbij ją w poziomie"
@@ -280,6 +292,9 @@ msgstr "Dodaj kolejny plik na stół lasera"
 
 msgid "Add design"
 msgstr "Dodaj projekt"
+
+msgid "Add the lasers of a file saved with Export"
+msgstr "Dodaj lasery z pliku zapisanego przez Eksportuj"
 
 #, python-format
 msgid "Adjusting image darkness: %s%%"
@@ -367,11 +382,19 @@ msgstr "Wysokość stołu"
 msgid "Bed width"
 msgstr "Szerokość stołu"
 
+#, python-format
+msgid "Bed: %s"
+msgstr "Stół: %s"
+
 msgid "Beep after a job"
 msgstr "Sygnał dźwiękowy po zadaniu"
 
 msgid "Bigger letters"
 msgstr "Większe litery"
+
+#, python-format
+msgid "Board: %s"
+msgstr "Płyta: %s"
 
 msgid "Bold"
 msgstr "Pogrubienie"
@@ -461,6 +484,9 @@ msgstr "Wyśrodkuj wiersze"
 
 msgid "Centre the selected element, or the whole design, on the bed"
 msgstr "Wyśrodkuj zaznaczony element albo cały projekt na stole"
+
+msgid "Change the name of the selected laser"
+msgstr "Zmień nazwę zaznaczonego lasera"
 
 msgid "Check for &updates"
 msgstr "Sprawdź &aktualizacje"
@@ -635,6 +661,10 @@ msgid "Could not save settings: %s"
 msgstr "Nie można zapisać ustawień: %s"
 
 #, python-format
+msgid "Could not save the lasers: %s"
+msgstr "Nie udało się zapisać laserów: %s"
+
+#, python-format
 msgid "Could not save the material library: %s"
 msgstr "Nie można zapisać bazy materiałów: %s"
 
@@ -725,6 +755,16 @@ msgstr "Błąd transmisji danych (CRC) nr %s"
 
 msgid "Delete"
 msgstr "Usuń"
+
+msgid "Delete laser"
+msgstr "Usuń laser"
+
+#, python-format
+msgid "Delete the laser \"%s\" and its settings?"
+msgstr "Usunąć laser „%s” i jego ustawienia?"
+
+msgid "Delete the selected laser (the last one stays)"
+msgstr "Usuń zaznaczony laser (ostatni zostaje)"
 
 msgid "Delete this layer (its parts go back to the default layer)"
 msgstr "Usuń tę warstwę (jej części wrócą do warstwy domyślnej)"
@@ -960,6 +1000,9 @@ msgstr "Wykluczenie"
 
 msgid "Exclusion: keep where the shapes do not overlap"
 msgstr "Wykluczenie: zostaw to, gdzie kształty się nie nakładają"
+
+msgid "Export laser"
+msgstr "Eksportuj laser"
 
 msgid "Export material library"
 msgstr "Eksport bazy materiałów"
@@ -1238,11 +1281,17 @@ msgstr "Obraz:"
 msgid "Images"
 msgstr "Obrazy"
 
+msgid "Import lasers"
+msgstr "Importuj lasery"
+
 msgid "Import material library"
 msgstr "Import bazy materiałów"
 
 msgid "Import…"
 msgstr "Importuj…"
+
+msgid "In use"
+msgstr "W użyciu"
 
 msgid "Include this layer in the job"
 msgstr "Uwzględnij tę warstwę w zadaniu"
@@ -1364,6 +1413,9 @@ msgstr ""
 "Po przeniesieniu pliku AppImage wybierz to ponownie. Nowsza wersja sama "
 "poprawi wpis przy uruchomieniu."
 
+msgid "Kerfly lasers"
+msgstr "Lasery Kerfly"
+
 msgid "Kerfly projects"
 msgstr "Projekty Kerfly"
 
@@ -1392,6 +1444,10 @@ msgstr "Język (po ponownym uruchomieniu)"
 msgid "Laser"
 msgstr "Laser"
 
+#, python-format
+msgid "Laser \"%s\" saved to %s"
+msgstr "Laser „%s” zapisano w %s"
+
 msgid "Laser initialized"
 msgstr "Połączono z laserem"
 
@@ -1406,6 +1462,21 @@ msgstr ""
 "Moc lasera podczas objazdu konturu, w procentach mocy maksymalnej "
 "(Ustawienia → Maszyna). Działa na płytach M3 z mocą dla każdej operacji; "
 "na innych płytach moc ustawia pokrętło lasera"
+
+#, python-format
+msgid "Laser: %s"
+msgstr "Laser: %s"
+
+msgid "Lasers"
+msgstr "Lasery"
+
+msgctxt "toolbar"
+msgid "Lasers"
+msgstr "Lasery"
+
+#, python-format
+msgid "Lasers added: %s"
+msgstr "Dodane lasery: %s"
 
 msgid "Later"
 msgstr "Później"
@@ -1550,6 +1621,11 @@ msgstr ""
 
 msgid "Make the sides at the selected nodes straight lines"
 msgstr "Zamień boki przy zaznaczonych węzłach na proste"
+
+msgid "Manage your lasers: add, duplicate, rename, delete, export, import"
+msgstr ""
+"Zarządzaj laserami: dodaj, duplikuj, zmień nazwę, usuń, eksportuj, "
+"importuj"
 
 msgid "Margin"
 msgstr "Margines"
@@ -1720,6 +1796,9 @@ msgstr "Przesuń zaznaczone elementy na górę listy: laser wykona je najpierw"
 msgid "Move the selection"
 msgstr "Przesuń zaznaczenie"
 
+msgid "My laser"
+msgstr "Mój laser"
+
 msgid "Name:"
 msgstr "Nazwa:"
 
@@ -1738,6 +1817,9 @@ msgstr "Nowa linia odręczna"
 
 msgid "New from current layers"
 msgstr "Nowy z obecnych warstw"
+
+msgid "New laser"
+msgstr "Nowy laser"
 
 msgid "New line"
 msgstr "Nowa linia"
@@ -2139,6 +2221,9 @@ msgstr "Program uruchamiany po zadaniu"
 msgid "Program to run before a job"
 msgstr "Program uruchamiany przed zadaniem"
 
+msgid "Programs before / after a job"
+msgstr "Programy przed / po zadaniu"
+
 #, python-format
 msgid "Project opened: %s"
 msgstr "Otwarto projekt: %s"
@@ -2240,6 +2325,9 @@ msgstr "Usuń zaznaczone węzły"
 msgid "Remove this layer from the material"
 msgstr "Usuń tę warstwę z materiału"
 
+msgid "Rename"
+msgstr "Zmień nazwę"
+
 msgctxt "toolbar"
 msgid "Report"
 msgstr "Raport"
@@ -2269,6 +2357,9 @@ msgid "Ring text height"
 msgstr "Wysokość tekstu w otoku"
 
 msgid "Rotary"
+msgstr "Oś obrotowa"
+
+msgid "Rotary attachment"
 msgstr "Oś obrotowa"
 
 msgid "Rotary attachment in use"
@@ -2441,6 +2532,9 @@ msgstr ""
 msgid "Save the layout, layers and files in one .kerfly file"
 msgstr "Zapisz układ, warstwy i pliki w jednym pliku .kerfly"
 
+msgid "Save the selected laser to a file, for another computer"
+msgstr "Zapisz zaznaczony laser do pliku, np. na inny komputer"
+
 msgid "Scan line step (in)"
 msgstr "Odstęp linii skanowania (cale)"
 
@@ -2537,6 +2631,10 @@ msgid "Settings changed (use File → Save settings as default to keep them)"
 msgstr ""
 "Zmieniono ustawienia (aby je zachować, użyj Plik → Zapisz ustawienia jako"
 " domyślne)"
+
+#, python-format
+msgid "Settings changed; the laser \"%s\" keeps them"
+msgstr "Ustawienia zmienione; laser „%s” je zapamiętał"
 
 #, python-format
 msgid "Settings saved to %s"
@@ -2951,6 +3049,16 @@ msgstr "Laser nie odpowiada (prób: %s). Naciśnij Stop, aby przestać próbowa�
 msgid "The laser did something wrong"
 msgstr "Laser zrobił coś źle"
 
+msgid "The laser in use"
+msgstr "Laser w użyciu"
+
+msgid ""
+"The laser in use: choosing another one puts its settings (board, bed, "
+"power, rotary, ...) into the window"
+msgstr ""
+"Laser w użyciu: wybór innego wstawia do okna jego ustawienia (płytę, "
+"stół, moc, oś obrotową, …)"
+
 msgid "The laser stopped responding after the job was complete."
 msgstr "Laser przestał odpowiadać po zakończeniu zadania."
 
@@ -3024,6 +3132,15 @@ msgid ""
 msgstr ""
 "Reguła dla portu USB lasera jest już zainstalowana. Jeśli Kerfly nadal "
 "nie może się połączyć, odłącz kabel USB lasera i podłącz go ponownie."
+
+msgid ""
+"The settings of the laser in use are changed in Settings (board, bed, "
+"power, rotary, trace, programs before and after a job); they are kept in "
+"its profile."
+msgstr ""
+"Ustawienia lasera w użyciu zmieniasz w Ustawieniach (płyta, stół, moc, oś"
+" obrotowa, objazd konturu, programy przed zadaniem i po nim); zapisują "
+"się w jego profilu."
 
 msgid "The sizes are the inside of the box (off: the outside)"
 msgstr "Wymiary są wnętrzem pudełka (wyłączone: zewnętrzne)"
@@ -3100,6 +3217,10 @@ msgstr ""
 "To jest otwarty plik: najpierw kliknij Rozgrupuj, wtedy każda linia "
 "stanie się osobnym kształtem, który przesuniesz albo edytujesz "
 "dwuklikiem."
+
+#, python-format
+msgid "This is not a file of Kerfly lasers: %s"
+msgstr "To nie jest plik laserów Kerfly: %s"
 
 #, python-format
 msgid "This makes %d separate shapes, which can make Kerfly slow. Continue?"
@@ -3225,6 +3346,9 @@ msgstr "Lewy górny róg"
 msgid "Upper right corner"
 msgstr "Prawy górny róg"
 
+msgid "Use"
+msgstr "Użyj"
+
 msgid "Use Inkscape for SVG files when installed (otherwise built-in)"
 msgstr ""
 "Używaj Inkscape do plików SVG, jeśli jest zainstalowany (inaczej "
@@ -3260,6 +3384,9 @@ msgstr "Widok"
 
 msgid "Wait for the laser to finish"
 msgstr "Czekaj na zakończenie pracy lasera"
+
+msgid "Wait until the job ends before choosing another laser."
+msgstr "Poczekaj na koniec zadania, zanim wybierzesz inny laser."
 
 msgid "Waiting for the laser to finish."
 msgstr "Oczekiwanie na zakończenie pracy lasera."
@@ -3352,6 +3479,9 @@ msgstr "Szerokość:"
 msgid "With a lid"
 msgstr "Z wiekiem"
 
+msgid "Work with this laser: its settings go into the window"
+msgstr "Pracuj z tym laserem: jego ustawienia trafiają do okna"
+
 msgid "Write the selected operations to an EGV file"
 msgstr "Zapisz zaznaczone operacje do pliku EGV"
 
@@ -3384,6 +3514,14 @@ msgstr "NAZWA TWOJEJ FIRMY"
 msgid "You have the newest version (%s)."
 msgstr "Masz najnowszą wersję (%s)."
 
+msgid "Your lasers. Double-click a name to change it"
+msgstr "Twoje lasery. Kliknij dwukrotnie nazwę, aby ją zmienić"
+
+msgid "Your lasers: use one, add, duplicate, rename, delete, export, import"
+msgstr ""
+"Twoje lasery: użyj, dodaj, duplikuj, zmień nazwę, usuń, eksportuj, "
+"importuj"
+
 msgid "Zigzag"
 msgstr "Zygzak"
 
@@ -3413,6 +3551,9 @@ msgstr "g-code"
 
 msgid "in line"
 msgstr "w linii"
+
+msgid "in use"
+msgstr "w użyciu"
 
 #, python-format
 msgid "kerf = (%s mm - measured) / %d"

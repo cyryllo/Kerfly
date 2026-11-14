@@ -333,9 +333,11 @@ checked byte for byte.
   shown as messages. GRBL reports the real head position, so the "position
   unknown after Stop" problem of the K40 goes away. Tests: a fake GRBL board,
   like the fake USB device for the K40.
-- [ ] **Step 3: machine profiles.** Settings → Machine: K40 (Lihuiyu) or GRBL,
-  each with its own bed size, power range, speeds and options (air assist
-  `M8`); the window shows only what the chosen machine can do.
+- [ ] **Step 3: machine profiles.** The laser profiles exist (2026-11-14: Settings →
+  Lasers…, the list at the top of the Laser tab; board, bed, power, rotary, trace,
+  programs before / after a job per laser, one in use at a time). For GRBL a profile
+  gets its machine type, K40 (Lihuiyu) or GRBL, with its own power range, speeds and
+  options (air assist `M8`); the window shows only what the chosen machine can do.
 - [ ] **Step 4: test on a real GRBL machine** (diode laser or a K40 with a
   GRBL board). Windows: the boards usually use a CH340 USB chip; its driver
   goes into the installation guide.

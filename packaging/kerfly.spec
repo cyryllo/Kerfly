@@ -32,6 +32,7 @@ def files(pattern):
 datas = (files("kerfly/locale/*/LC_MESSAGES/*.mo")
          + files("kerfly/gui/icons/tabler/*.svg")
          + files("kerfly/gui/icons/tabler/LICENSE")
+         + files("kerfly/gui/icons/own/*.svg")
          + files("kerfly/gui/icons/kerfly.*")
          + files("tests/fixtures/shapes.svg")          # used by --self-test
          + [(os.path.join(ROOT, name), ".") for name in ("LICENSE", "THIRD-PARTY-NOTICES.md")]
