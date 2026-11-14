@@ -35,7 +35,7 @@ from kerfly.core.diag import log as diag_log
 from kerfly.core.layout import (Element, align, compile_layout, distribute, mirror, mirror_about, on_bed,
                                 rotate_about, selection_bounds, units)
 from kerfly.core.shapes import ShapeSpec, build_design, outlines
-from kerfly.gui import icons
+from kerfly.gui import icons, theme
 from kerfly.gui.image_dialog import ImageSizeDialog
 from kerfly.gui.svg_render import render_svg
 from kerfly.gui.text_shapes import update_text_spec
@@ -84,6 +84,10 @@ def _num_text(v):
     return ("%.4f" % v).rstrip("0").rstrip(".")
 
 
+# the smallest window (a 1366 x 768 laptop screen still fits it)
+MIN_WIDTH, MIN_HEIGHT = 1024, 680
+
+
 class MainWindow(QMainWindow):
     def __init__(self, values):
         super().__init__()
@@ -111,6 +115,12 @@ class MainWindow(QMainWindow):
 
         self._update_title()
         self.resize(1200, 780)                  # replaced by the saved / screen-based size in show()
+        # smaller than this the panels squeeze the bed into a strip (a user asked for a minimum);
+        # a smaller screen gets its whole available area as the minimum
+        screen = QApplication.primaryScreen()
+        area = screen.availableGeometry() if screen is not None else None
+        self.setMinimumSize(min(MIN_WIDTH, area.width()) if area else MIN_WIDTH,
+                            min(MIN_HEIGHT, area.height() - 40) if area else MIN_HEIGHT)
         self.preview = PreviewView()
         self.preview.snap_objects = is_true(self.values.get("snap_objects", "1"))
         self.tool_options = ToolOptionsBar()
@@ -352,6 +362,10 @@ class MainWindow(QMainWindow):
         self.act_usb_access = self._action(_("Allow USB access for the laser…"), self.allow_usb_access,
                                            tip=_("Linux: let this computer's users use the laser's USB port "
                                                  "without root (asks for the administrator password once)"))
+        self.act_desktop_entry = self._action(
+            _("Add Kerfly to the applications menu…"), self.install_desktop_entry,
+            tip=_("Linux AppImage: Kerfly in the menu of your desktop, and .kerfly projects open in Kerfly "
+                  "with a double click (only for you, no password)"))
         self.act_fit = self._action(_("&Fit to window"), lambda: self.preview.fit_all(), "Ctrl+0")
         self.act_settings = self._action(_("&Settings\u2026"), self.edit_settings, "Ctrl+,")
         self.act_materials = self._action(_("&Material library\u2026"), lambda: self.edit_materials())
@@ -366,6 +380,8 @@ class MainWindow(QMainWindow):
         self.act_check_updates = self._action(
             _("Check for &updates"), lambda: self.check_for_updates(manual=True), None,
             _("Ask GitHub whether a newer Kerfly is out (a bar above the bed links to it)"))
+        self.act_shortcuts = self._action(_("&Keyboard shortcuts"), self.show_shortcuts, "Ctrl+F1",
+                                          _("All keys and mouse actions in one window"))
         self.act_guide = self._action(_("&User guide"), self.open_guide, "F1",
                                       _("Open the user guide on the Kerfly website"))
         self.act_report_problem = self._action(
@@ -398,13 +414,11 @@ class MainWindow(QMainWindow):
         # generators: ready-made designs from a few numbers
         from kerfly.gui.generators import GENERATORS
         self.act_generators = {}
-        m = mb.addMenu(_("&Generators"))
         for key, title, icon, tip, _fields, _make in GENERATORS:
             act = self._action(_(title) + "…", lambda _c=False, k=key: self.open_generator(k), tip=_(tip))
             act.setToolTip("%s\n%s" % (_(title), _(tip)))
             act.setIcon(icons.tabler(icon))
             self.act_generators[key] = act
-            m.addAction(act)
         m = mb.addMenu(_("&Laser"))
         self.laser_menu = m
         for a in (self.act_connect, self.act_release, None, self.act_home, self.act_unlock,
@@ -431,8 +445,24 @@ class MainWindow(QMainWindow):
         m.addSeparator()
         for a in (self.act_materials, self.act_export_materials, self.act_import_materials):
             m.addAction(a)
+        from kerfly.gui import desktop_entry
+        if desktop_entry.applies():
+            m.addSeparator()
+            m.addAction(self.act_desktop_entry)
+            if desktop_entry.installed_for() not in (None, desktop_entry.appimage_path()):
+                # added before for another AppImage file (an older version): it now opens this one
+                try:
+                    desktop_entry.install()
+                    diag_log.info("applications menu entry moved to %s", desktop_entry.appimage_path())
+                except Exception as e:
+                    diag_log.warning("applications menu entry not updated: %s", e)
+        # after Laser and Settings, as asked by a user: the daily work comes first
+        m = mb.addMenu(_("&Generators"))
+        for act in self.act_generators.values():
+            m.addAction(act)
         m = mb.addMenu(_("&Help"))
         m.addAction(self.act_guide)
+        m.addAction(self.act_shortcuts)
         m.addAction(self.act_check_updates)
         m.addSeparator()
         m.addAction(self.act_report_problem)
@@ -521,8 +551,6 @@ class MainWindow(QMainWindow):
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
             ]),
-            (C_("toolbar group", "Generators"), "grid",
-             [(act, act.icon()) for act in self.act_generators.values()]),
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
                 (self.act_simulate, "movie", C_("toolbar", "Simulate")),
@@ -532,15 +560,17 @@ class MainWindow(QMainWindow):
                 (self.act_materials, "book", C_("toolbar", "Materials")),
                 (self.act_settings, "settings", C_("toolbar", "Settings")),
             ]),
+            (C_("toolbar group", "Generators"), "grid",
+             [(act, act.icon()) for act in self.act_generators.values()]),
             (C_("toolbar group", "Help"), [
                 (self.act_report_problem, "bug", C_("toolbar", "Bug report")),
-                (self.act_check_updates, "cloud-download", C_("toolbar", "Updates")),
                 (self.act_report, "file-report", C_("toolbar", "Report")),
             ]),
         ]
         tb = QToolBar(_("Main toolbar"))
         tb.setObjectName("main_toolbar")
         tb.setMovable(False)
+        self._ribbon_groups = []
         for i, group_def in enumerate(groups):
             title, entries = group_def[0], group_def[-1]
             if len(group_def) == 3:                  # small icon-only buttons in two rows
@@ -551,10 +581,10 @@ class MainWindow(QMainWindow):
                     tb.addWidget(line)
                 group = QWidget()
                 v = QVBoxLayout(group)
-                v.setContentsMargins(4, 2, 4, 0)
+                v.setContentsMargins(1, 2, 1, 0)
                 v.setSpacing(0)
                 grid = QGridLayout()
-                grid.setSpacing(1)
+                grid.setSpacing(0)
                 per_row = (len(entries) + 1) // 2
                 for n, (action, icon) in enumerate(entries):
                     action.setIcon(icons.tabler(icon) if isinstance(icon, str) else icon)
@@ -563,7 +593,7 @@ class MainWindow(QMainWindow):
                     button.setToolButtonStyle(Qt.ToolButtonIconOnly)
                     button.setIconSize(QSize(20, 20))
                     button.setAutoRaise(True)
-                    button.setFixedSize(30, 30)
+                    button.setFixedSize(28, 28)
                     grid.addWidget(button, n // per_row, n % per_row)
                 v.addLayout(grid)
                 v.addStretch(1)
@@ -571,6 +601,7 @@ class MainWindow(QMainWindow):
                 caption.setObjectName("ribbon_caption")
                 caption.setAlignment(Qt.AlignHCenter)
                 v.addWidget(caption)
+                self._ribbon_groups.append(group)
                 tb.addWidget(group)
                 continue
             if i:
@@ -580,10 +611,10 @@ class MainWindow(QMainWindow):
                 tb.addWidget(line)
             group = QWidget()
             v = QVBoxLayout(group)
-            v.setContentsMargins(4, 2, 4, 0)
+            v.setContentsMargins(1, 2, 1, 0)
             v.setSpacing(0)
             row = QHBoxLayout()
-            row.setSpacing(1)
+            row.setSpacing(0)
             for action, icon, short in entries:
                 action.setIcon(icons.tabler(icon))
                 action.setIconText(short)
@@ -601,6 +632,7 @@ class MainWindow(QMainWindow):
             caption.setObjectName("ribbon_caption")
             caption.setAlignment(Qt.AlignHCenter)
             v.addWidget(caption)
+            self._ribbon_groups.append(group)
             tb.addWidget(group)
         self.addToolBar(tb)
 
@@ -2315,7 +2347,7 @@ class MainWindow(QMainWindow):
         p = QPainter(pm)
         for n, c in enumerate(colors):
             p.fillRect(n * (size + 2) + 1, 1, size - 2, size - 2, QColor(c))
-            p.setPen(QColor("#555555"))
+            p.setPen(QColor(theme.token("swatch_border")))
             p.drawRect(n * (size + 2) + 1, 1, size - 3, size - 3)
         p.end()
         return QIcon(pm)
@@ -3527,6 +3559,10 @@ class MainWindow(QMainWindow):
         super().showEvent(event)
         if not getattr(self, "_shown_once", False):
             self._shown_once = True
+            # a narrow window must not squeeze the toolbar groups (labels cut to "Ot…rz"): what does not
+            # fit goes behind the toolbar's » button; measured now, with the style sheet applied
+            for group in getattr(self, "_ribbon_groups", []):
+                group.setMinimumWidth(group.sizeHint().width())
             QTimer.singleShot(0, self, self._fit_panel_width)     # layout is final only once shown
             QTimer.singleShot(0, self, self._fit_window_height)
 
@@ -3551,12 +3587,14 @@ class MainWindow(QMainWindow):
 
     def _update_laser_state(self):
         if self.laser.connected:
+            # the colour follows the theme; the translated text keeps the light theme's colour
             self.laser_label.setText(_("<b style='color:#2e7d32'>Connected</b> (%s)")
-                                     % self.values.get("board_name"))
-            self.btn_connect.setIcon(icons.tabler("plug-connected", "#2e7d32"))
+                                     .replace("#2e7d32", theme.token("ok")) % self.values.get("board_name"))
+            self.btn_connect.setIcon(icons.tabler("plug-connected", theme.token("ok")))
             self.btn_connect.setToolTip(_("Connected. Click to connect again (re-initialize)."))
         else:
-            self.laser_label.setText(_("<b style='color:#c62828'>Not connected</b>"))
+            self.laser_label.setText(_("<b style='color:#c62828'>Not connected</b>")
+                                     .replace("#c62828", theme.token("error")))
             self.btn_connect.setIcon(icons.tabler("plug-connected"))
             self.btn_connect.setToolTip(_("Connect to the laser") + " (Ctrl+I)")
         x, y = self.head
@@ -3602,7 +3640,7 @@ class MainWindow(QMainWindow):
             elif not message.endswith("%") and "%: " not in message:
                 diag_log.info("status: %s", message)     # progress percentages are left out
                 self._last_logged_status = message
-        self.statusBar().setStyleSheet("color:#c62828;" if error else "")
+        self.statusBar().setStyleSheet("color:%s;" % theme.token("error") if error else "")
         self.statusBar().showMessage(tr_message(message))
 
     def refresh_preview(self, fit=False):
@@ -3931,7 +3969,7 @@ class MainWindow(QMainWindow):
             title, _("%s \u00d7 %s mm") % (_num((xmax - xmin) * 25.4), _num((ymax - ymin) * 25.4)),
             ", ".join(parts) or _("empty"))
         if not self._layout_fits_bed():
-            text += "<br><b style='color:#c62828'>%s</b>" % _("Outside the laser bed!")
+            text += "<br><b style='color:%s'>%s</b>" % (theme.token("error"), _("Outside the laser bed!"))
         self.design_label.setText(text)
 
     # ------------------------------------------------------------ settings
@@ -3957,6 +3995,8 @@ class MainWindow(QMainWindow):
         if "language" in changed:
             QMessageBox.information(self, _("Language"),
                                     _("The new language will be used after restarting Kerfly."))
+        if "theme" in changed:
+            QMessageBox.information(self, _("Theme"), _("The new theme will be used after restarting Kerfly."))
         if "units" in changed:
             factor = (60.0 / 25.4) if self.values.get("units") == "in" else (25.4 / 60.0)
             for layer in self.layers:
@@ -4016,6 +4056,20 @@ class MainWindow(QMainWindow):
         finally:
             QApplication.restoreOverrideCursor()
         self.refresh_preview()
+
+    def install_desktop_entry(self):
+        """Linux AppImage: menu entry and .kerfly file type in the user's own folders."""
+        from kerfly.gui import desktop_entry
+        try:
+            desktop_entry.install()
+        except Exception as e:
+            QMessageBox.warning(self, _("Applications menu"), _("Kerfly could not be added: %s") % e)
+            return
+        QMessageBox.information(
+            self, _("Applications menu"),
+            _("Kerfly is in the applications menu, and .kerfly projects open in Kerfly with a double click.\n\n"
+              "After moving the AppImage file, choose this again. A newer version updates the entry "
+              "by itself when it starts."))
 
     def allow_usb_access(self, after_error=False):
         """Linux: install the udev rule for the K40 board through pkexec (one password prompt)."""
@@ -4315,7 +4369,7 @@ class MainWindow(QMainWindow):
         self._paused = paused
         self.btn_pause.setEnabled(self.worker is not None and self.worker.laser is not None)
         self.btn_pause.setIcon(icons.tabler("player-play" if paused else "player-pause",
-                                            "#2e7d32" if paused else "#2b2f36"))
+                                            "#2e7d32" if paused else None))
         self.btn_pause.setToolTip(_("Resume the job") if paused else _("Pause the laser; press again to resume"))
 
     def _job_finished(self, ok, message):
@@ -4598,6 +4652,22 @@ class MainWindow(QMainWindow):
     def _skip_update(self, version):
         self.values["update_skip"] = version
         self._remember_view()
+
+    def show_shortcuts(self):
+        """Help → Keyboard shortcuts: one window, not blocking; a second click brings it to the front."""
+        from kerfly.gui.shortcuts_dialog import ShortcutsDialog
+        dlg = getattr(self, "_shortcuts", None)
+        try:
+            if dlg is not None and dlg.isVisible():
+                dlg.raise_()
+                dlg.activateWindow()
+                return
+        except RuntimeError:
+            pass
+        dlg = ShortcutsDialog(self)
+        dlg.setAttribute(Qt.WA_DeleteOnClose)
+        dlg.show()
+        self._shortcuts = dlg
 
     def open_guide(self):
         from PySide6.QtCore import QUrl

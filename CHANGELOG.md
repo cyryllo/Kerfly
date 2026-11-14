@@ -7,6 +7,29 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Added
+
+- **Dark theme**: Settings → View → Theme: light, dark or as the system
+  (applies after a restart). The laser bed stays light: it stands for the
+  material.
+- **Help → Keyboard shortcuts** (Ctrl+F1): every key of the menus and the
+  drawing tools and the mouse actions in one window, with a search field.
+- **.kerfly projects open in Kerfly with a double click**: an option of the
+  Windows installer (ticked), **Settings → Add Kerfly to the applications
+  menu…** for the Linux AppImage (also puts Kerfly in the desktop's menu; a
+  newer AppImage updates it by itself), and on macOS.
+- A minimum window size (1024 × 680, or the whole screen when it is smaller).
+
+### Changed
+
+- The toolbar is narrower (about 290 pixels at Full HD in Polish): it now fits
+  a 1920-pixel screen; in a narrow window the groups that do not fit go
+  behind the » button instead of their labels being cut.
+- Generators come after Settings, in the menu and on the toolbar.
+- No **Updates** button on the toolbar: Help → Check for updates.
+
 ## 1.5.0 (2026-11-14)
 
 Programs before and after a job (the exhaust on and off), a report with

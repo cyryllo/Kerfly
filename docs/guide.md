@@ -446,7 +446,7 @@ EGV file.
 | Machine | controller board, units, bed size, home in the upper right corner, home when connecting, home the head after a job (back to 0, 0, for the next piece), unlock the rail and beep after a job, a report after a job (its time, on by default; a small window that waits until you are back), a program run before every job sent to the laser (for example to switch on the exhaust; the job waits until it ends, at most a minute, and asks when it fails), a program run after every finished job (for example to switch off the exhaust or send a message; its output and errors go to the report), X/Y scale factors, M3 power per operation and maximum power |
 | Raster | halftone (dither) and its resolution, invert colours, mirror, rotate 90°, engrave bottom to top, scan line step, levels curve |
 | Vector | cut inside shapes first, boundary trace with the laser on and its power (in per cent of the maximum; M3 board), as a rectangle or along the outline, trace gap and speed |
-| View | snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu), Engrave / Outline / Cut buttons next to Start |
+| View | snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu), Engrave / Outline / Cut buttons next to Start, theme: light, dark or as the system (after a restart) |
 | Rotary | rotary attachment, its scale factor and rapid speed (greyed out while the attachment is off) |
 | Advanced | language (after a restart), checking for new versions, Inkscape, reduced memory use, USB data preparation, waiting for the laser, USB timeout and retries |
 
@@ -457,12 +457,15 @@ published, whether a new version is out (nothing about you or your work is
 sent). When there is one, a bar above the bed says so: **See the release**
 opens its page with what is new and the files to download, **Later** hides
 the bar, **Skip this version** stops reminding about it. **Help → Check for
-updates** (toolbar **Updates**) asks at once. Don't want it? Untick it in
+updates** asks at once. Don't want it? Untick it in
 Settings → Advanced. Kerfly never downloads or installs anything by itself.
 
 <a id="s9"></a>
 
 ## 9. Keyboard shortcuts
+
+**Help → Keyboard shortcuts** (Ctrl+F1) shows all of them in a window, with
+the mouse actions and a search field.
 
 | Keys | Action |
 |---|---|
@@ -497,6 +500,7 @@ Settings → Advanced. Kerfly never downloads or installs anything by itself.
 | Alt (held) | Snap to nothing for a moment |
 | Ctrl+, | Settings |
 | F1 | This user guide |
+| Ctrl+F1 | All keyboard shortcuts in one window |
 | S, N, R, E, P, L, Shift+L, B, F, T, Shift+T, Shift+F, Shift+H, Shift+O, M | Tools (see section 5) |
 
 <a id="s10"></a>

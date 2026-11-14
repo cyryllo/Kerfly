@@ -9,6 +9,6 @@ Exec=kerfly %F
 Icon=kerfly
 Terminal=false
 Categories=Graphics;Engineering;
-MimeType=image/svg+xml;image/vnd.dxf;
+MimeType=application/x-kerfly;image/svg+xml;image/vnd.dxf;
 Keywords=laser;K40;engraving;cutting;
 StartupWMClass=Kerfly

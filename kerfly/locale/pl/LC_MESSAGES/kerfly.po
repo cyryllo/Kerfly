@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-14 00:49+0100\n"
+"POT-Creation-Date: 2026-11-14 20:28+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -116,6 +116,9 @@ msgstr "&Importuj bazę materiałów…"
 
 msgid "&Initialize laser"
 msgstr "&Połącz z laserem"
+
+msgid "&Keyboard shortcuts"
+msgstr "&Skróty klawiszowe"
 
 msgid "&Laser"
 msgstr "&Laser"
@@ -226,6 +229,9 @@ msgstr "Logo lub obrazek (PNG, JPG albo SVG); puste: bez obrazka"
 msgid "A logo or picture in the middle (PNG, JPG or SVG); empty: none"
 msgstr "Logo lub obrazek w środku (PNG, JPG lub SVG); puste: brak"
 
+msgid "A menu: on an element its commands, on the empty bed Move the head here"
+msgstr "Menu: na elemencie jego polecenia, na pustym stole Przesuń tu głowicę"
+
 msgid "A stamp prints its mirror image: mirror it left to right"
 msgstr "Pieczątka odbija lustrzane odbicie: odbij ją w poziomie"
 
@@ -259,6 +265,9 @@ msgstr "Dodaj"
 msgctxt "toolbar"
 msgid "Add"
 msgstr "Dodaj"
+
+msgid "Add Kerfly to the applications menu…"
+msgstr "Dodaj Kerfly do menu aplikacji…"
 
 msgid "Add a layer"
 msgstr "Dodaj warstwę"
@@ -313,6 +322,9 @@ msgstr "Wyrównaj do góry"
 msgid "All files"
 msgstr "Wszystkie pliki"
 
+msgid "All keys and mouse actions in one window"
+msgstr "Wszystkie klawisze i działania myszą w jednym oknie"
+
 msgid "Allow USB access for the laser…"
 msgstr "Zezwól na dostęp do USB lasera…"
 
@@ -328,9 +340,15 @@ msgstr "Inna liczba: wypustki są skierowane inaczej"
 msgid "Another problem"
 msgstr "Inny problem"
 
+msgid "Applications menu"
+msgstr "Menu aplikacji"
+
 msgctxt "toolbar group"
 msgid "Arrange"
 msgstr "Układ"
+
+msgid "As the system"
+msgstr "Jak w systemie"
 
 msgid "Ask GitHub whether a newer Kerfly is out (a bar above the bed links to it)"
 msgstr ""
@@ -513,6 +531,13 @@ msgstr "Kliknij wewnątrz zamkniętego kształtu, żeby go odsunąć."
 msgid "Click inside a shape to fill it."
 msgstr "Kliknij wewnątrz kształtu, żeby go wypełnić."
 
+msgid ""
+"Click the first point to close; double-click or Enter for an open line; "
+"Backspace removes the last point; Esc cancels"
+msgstr ""
+"Kliknij pierwszy punkt, aby zamknąć; dwuklik albo Enter kończy otwartą "
+"linię; Backspace usuwa ostatni punkt; Esc anuluje"
+
 msgid "Click the opened file or the group first, then Ungroup."
 msgstr "Najpierw kliknij otwarty plik albo grupę, potem Rozgrupuj."
 
@@ -546,6 +571,9 @@ msgstr "Części grzebienia"
 
 msgid "Combine shapes"
 msgstr "Łącz kształty"
+
+msgid "Command"
+msgstr "Polecenie"
 
 msgid "Concentric"
 msgstr "Koncentryczny"
@@ -681,6 +709,9 @@ msgstr "Pliki DXF"
 msgid "DXF units"
 msgstr "Jednostki DXF"
 
+msgid "Dark"
+msgstr "Ciemny"
+
 msgid "Dark pixels are engraved, light and transparent pixels are not."
 msgstr "Ciemne piksele są grawerowane, jasne i przezroczyste nie."
 
@@ -807,6 +838,20 @@ msgstr ""
 msgid "Dots between the texts"
 msgstr "Kropki między tekstami"
 
+msgid "Double-click it"
+msgstr "Kliknij go dwukrotnie"
+
+msgid "Drag a frame around them, or Ctrl+click"
+msgstr "Obwiedź je ramką albo Ctrl+klik"
+
+msgid ""
+"Drag it, or the arrow keys (1 mm or one grid step; with Shift 10 times "
+"more)"
+msgstr "Przeciągnij albo strzałki (1 mm albo krok siatki; z Shift 10 razy więcej)"
+
+msgid "Drag with the middle or the right mouse button"
+msgstr "Przeciągnij środkowym albo prawym przyciskiem myszy"
+
 msgid ""
 "Draw the new outline around the shapes selected now (or click a shape on "
 "the bed)"
@@ -850,6 +895,9 @@ msgstr ""
 "krzywych (Ctrl: jeden uchwyt osobno). Shift+klik zaznacza kolejne węzły. "
 "Dwuklik na boku dodaje węzeł, na węźle go usuwa. Przyciski u góry albo "
 "klawisze I D L C O S Z B."
+
+msgid "Edit the nodes of an element"
+msgstr "Edytuj węzły elementu"
 
 msgid "Ellipse"
 msgstr "Elipsa"
@@ -960,6 +1008,9 @@ msgstr ""
 msgid "Filled. Click another shape, or change the pattern above."
 msgstr "Wypełniono. Kliknij kolejny kształt albo zmień wzór powyżej."
 
+msgid "Find a command or a key"
+msgstr "Znajdź polecenie albo klawisz"
+
 msgid "Finger width"
 msgstr "Szerokość wczepu"
 
@@ -1062,6 +1113,9 @@ msgstr ""
 "Zgrupowano elementy (%d). Kliknij dowolny z nich, aby zaznaczyć całą "
 "grupę."
 
+msgid "H horizontally, V vertically (with the bed in focus)"
+msgstr "H w poziomie, V w pionie (gdy aktywny jest stół)"
+
 msgid "Halftone (dither) grayscale images"
 msgstr "Półtony (dithering) dla obrazów w odcieniach szarości"
 
@@ -1121,6 +1175,12 @@ msgstr ""
 msgid "Hinge removed."
 msgstr "Usunięto zawias."
 
+msgid "Hold Alt while drawing, dragging or moving a node"
+msgstr "Przytrzymaj Alt podczas rysowania, przeciągania albo przesuwania węzła"
+
+msgid "Hold Shift while drawing"
+msgstr "Przytrzymaj Shift podczas rysowania"
+
 msgid "Hole 20 mm"
 msgstr "Otwór 20 mm"
 
@@ -1161,6 +1221,13 @@ msgid ""
 msgstr ""
 "Jaka część kodu może być uszkodzona, a kod nadal się odczyta; więcej daje"
 " gęstszy kod"
+
+msgid ""
+"I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / "
+"open, B break"
+msgstr ""
+"I wstaw, D usuń, L linia, C krzywa, O gładki, S symetryczny, Z zamknij / "
+"otwórz, B rozdziel"
 
 msgid "Image size"
 msgstr "Rozmiar obrazu"
@@ -1280,6 +1347,23 @@ msgstr ""
 " dostępny bez uprawnień roota. System raz zapyta o hasło administratora. "
 "Dodać regułę teraz?"
 
+#, python-format
+msgid "Kerfly could not be added: %s"
+msgstr "Nie udało się dodać Kerfly: %s"
+
+msgid ""
+"Kerfly is in the applications menu, and .kerfly projects open in Kerfly "
+"with a double click.\n"
+"\n"
+"After moving the AppImage file, choose this again. A newer version "
+"updates the entry by itself when it starts."
+msgstr ""
+"Kerfly jest w menu aplikacji, a projekty .kerfly otwierają się w Kerfly "
+"po dwukrotnym kliknięciu.\n"
+"\n"
+"Po przeniesieniu pliku AppImage wybierz to ponownie. Nowsza wersja sama "
+"poprawi wpis przy uruchomieniu."
+
 msgid "Kerfly projects"
 msgstr "Projekty Kerfly"
 
@@ -1289,6 +1373,12 @@ msgid ""
 msgstr ""
 "Kerfly zapisze raport diagnostyczny i otworzy w przeglądarce formularz "
 "zgłoszenia na GitHubie (do wysłania potrzebne jest darmowe konto GitHub)."
+
+msgid "Keyboard shortcuts"
+msgstr "Skróty klawiszowe"
+
+msgid "Keys / mouse"
+msgstr "Klawisze / mysz"
 
 msgid "Label"
 msgstr "Opis"
@@ -1389,11 +1479,21 @@ msgstr "Waga krzywej poziomów"
 msgid "Lid"
 msgstr "Wieko"
 
+msgid "Light"
+msgstr "Jasny"
+
 msgid "Line"
 msgstr "Linia"
 
 msgid "Lines"
 msgstr "Linie"
+
+msgid ""
+"Linux AppImage: Kerfly in the menu of your desktop, and .kerfly projects "
+"open in Kerfly with a double click (only for you, no password)"
+msgstr ""
+"Linux AppImage: Kerfly w menu pulpitu, a projekty .kerfly otwierają się w"
+" Kerfly po dwukrotnym kliknięciu (tylko dla Ciebie, bez hasła)"
 
 msgid ""
 "Linux: let this computer's users use the laser's USB port without root "
@@ -1529,8 +1629,17 @@ msgstr "Odbij w p&ionie"
 msgid "Mirror design"
 msgstr "Odbicie lustrzane projektu"
 
+msgid "Mirror the selection, as in Inkscape"
+msgstr "Odbij zaznaczenie, jak w Inkscape"
+
 msgid "Module"
 msgstr "Moduł"
+
+msgid "Mouse and other keys"
+msgstr "Mysz i inne klawisze"
+
+msgid "Mouse wheel"
+msgstr "Kółko myszy"
 
 msgid "Move &down (later)"
 msgstr "Niże&j (później)"
@@ -1608,6 +1717,9 @@ msgid ""
 " them first"
 msgstr "Przesuń zaznaczone elementy na górę listy: laser wykona je najpierw"
 
+msgid "Move the selection"
+msgstr "Przesuń zaznaczenie"
+
 msgid "Name:"
 msgstr "Nazwa:"
 
@@ -1674,6 +1786,9 @@ msgstr "Nr 123"
 
 msgid "Node"
 msgstr "Węzeł"
+
+msgid "Node editing keys"
+msgstr "Klawisze edycji węzłów"
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notatki (np. dostawca, soczewka, nadmuch)"
@@ -1826,6 +1941,9 @@ msgstr "Poza polem roboczym: %s. Przesuń na stół, aby uruchomić."
 msgid "Own size"
 msgstr "Własny rozmiar"
 
+msgid "Pan the view"
+msgstr "Przesuń widok"
+
 msgid "Passes"
 msgstr "Przejścia"
 
@@ -1942,6 +2060,9 @@ msgstr "Wielokąt"
 
 msgid "Polyline"
 msgstr "Łamana"
+
+msgid "Polyline and pen: finish"
+msgstr "Łamana i pióro: zakończenie"
 
 msgid ""
 "Polyline: click the corners. Click the first point to close the shape; "
@@ -2137,6 +2258,9 @@ msgstr "Wznów zadanie"
 
 msgid "Resumed"
 msgstr "Wznowiono"
+
+msgid "Right click"
+msgstr "Prawy przycisk myszy"
 
 msgid "Right side"
 msgstr "Prawy bok"
@@ -2349,6 +2473,9 @@ msgstr ""
 " stanąć tekst, i wybierz ponownie Umieść tekst na ścieżce (Ctrl+klik "
 "zaznacza oba)."
 
+msgid "Select several elements"
+msgstr "Zaznacz kilka elementów"
+
 msgid "Select the elements to copy first."
 msgstr "Najpierw zaznacz elementy do skopiowania."
 
@@ -2499,6 +2626,9 @@ msgstr ""
 "stołu, przy rysowaniu i przesuwaniu. Przytrzymaj Alt, aby chwilowo nic "
 "nie przyciągało."
 
+msgid "Snap to nothing for a moment"
+msgstr "Chwilowo bez przyciągania"
+
 msgid "Snap to other objects"
 msgstr "Przyciągaj do innych obiektów"
 
@@ -2566,6 +2696,9 @@ msgstr ""
 
 msgid "Square 50 mm"
 msgstr "Kwadrat 50 mm"
+
+msgid "Square, circle, 45° lines"
+msgstr "Kwadrat, koło, linie pod 45°"
 
 msgid "Stamp"
 msgstr "Pieczątka"
@@ -2832,6 +2965,9 @@ msgstr "Wiersze w środku (puste: brak)"
 msgid "The new language will be used after restarting Kerfly."
 msgstr "Nowy język zostanie użyty po ponownym uruchomieniu Kerfly."
 
+msgid "The new theme will be used after restarting Kerfly."
+msgstr "Nowy motyw będzie użyty po ponownym uruchomieniu Kerfly."
+
 msgid "The numbers count centimetres or millimetres"
 msgstr "Liczby liczą centymetry albo milimetry"
 
@@ -2902,6 +3038,12 @@ msgid ""
 msgstr ""
 "Tekst pieczątki: zaznacz fragment i pogrub go, pochyl, podkreśl, powiększ"
 " lub pomniejsz albo wyrównaj wiersze (np. nazwa większa niż adres)"
+
+msgid "Theme"
+msgstr "Motyw"
+
+msgid "Theme (applies after restart)"
+msgstr "Motyw (po ponownym uruchomieniu)"
 
 #, python-format
 msgid "There are many data transmission errors (%s). Press Stop to stop trying."
@@ -3077,10 +3219,6 @@ msgstr "Odznacz element, aby pominąć go w zadaniu"
 msgid "Untitled"
 msgstr "Bez nazwy"
 
-msgctxt "toolbar"
-msgid "Updates"
-msgstr "Aktualizacje"
-
 msgid "Upper left corner"
 msgstr "Lewy górny róg"
 
@@ -3251,6 +3389,9 @@ msgstr "Zygzak"
 
 msgid "Zigzag cuts"
 msgstr "Nacięcia zygzakiem"
+
+msgid "Zoom"
+msgstr "Powiększenie"
 
 msgid "a program or script (.bat, .sh)"
 msgstr "program albo skrypt (.bat, .sh)"
@@ -3639,4 +3780,8 @@ msgstr "obrys"
 #~ "TWOJA FIRMA\n"
 #~ "ul. Przykładowa 1, 00-000 Miasto\n"
 #~ "tel. 123 456 789"
+
+#~ msgctxt "toolbar"
+#~ msgid "Updates"
+#~ msgstr "Aktualizacje"
 

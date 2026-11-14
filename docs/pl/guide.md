@@ -456,7 +456,7 @@ lasera…** wysyła istniejący plik EGV.
 | Maszyna | płyta sterująca, jednostki, rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, bazowanie głowicy po zadaniu (powrót do 0, 0 przed kolejną sztuką), odblokowanie osi i sygnał po zadaniu, raport po zadaniu (czas zadania, domyślnie włączony; małe okno, które czeka, aż wrócisz), program uruchamiany przed każdym zadaniem wysyłanym do lasera (np. żeby włączyć wyciąg; zadanie czeka, aż się skończy, najwyżej minutę, a gdy nie zadziała, pyta), program uruchamiany po każdym skończonym zadaniu (np. żeby wyłączyć wyciąg albo wysłać wiadomość; jego wynik i błędy trafiają do raportu), współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 |
 | Raster | półtony (dithering) i ich rozdzielczość, odwrócenie kolorów, odbicie, obrót o 90°, grawer od dołu do góry, odstęp linii skanowania, krzywa poziomów |
 | Wektory | najpierw kształty wewnętrzne, objazd konturu z włączonym laserem i jego moc (w procentach mocy maksymalnej; płyta M3), jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
-| Widok | rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok), przyciski Grawer / Obrys / Cięcie przy Start |
+| Widok | rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok), przyciski Grawer / Obrys / Cięcie przy Start, motyw: jasny, ciemny albo jak w systemie (po ponownym uruchomieniu) |
 | Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów (wyszarzone, gdy oś obrotowa jest wyłączona) |
 | Zaawansowane | język (po ponownym uruchomieniu), sprawdzanie nowych wersji, Inkscape, mniejsze zużycie pamięci, przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |
 
@@ -468,13 +468,16 @@ publikowany, czy wyszła nowa wersja (nic o Tobie ani o Twojej pracy nie jest
 wysyłane). Gdy jest, informuje o tym pasek nad stołem: **Zobacz wydanie**
 otwiera jej stronę z nowościami i plikami do pobrania, **Później** ukrywa
 pasek, **Pomiń tę wersję** przestaje o niej przypominać. **Pomoc → Sprawdź
-aktualizacje** (na pasku **Aktualizacje**) sprawdza od razu. Nie chcesz?
+aktualizacje** sprawdza od razu. Nie chcesz?
 Odznacz to w Ustawienia → Zaawansowane. Kerfly nigdy niczego sam nie pobiera
 ani nie instaluje.
 
 <a id="s9"></a>
 
 ## 9. Skróty klawiszowe
+
+**Pomoc → Skróty klawiszowe** (Ctrl+F1) pokazuje je wszystkie w jednym oknie,
+razem z działaniami myszą i polem wyszukiwania.
 
 | Klawisze | Działanie |
 |---|---|
@@ -509,6 +512,7 @@ ani nie instaluje.
 | Alt (przytrzymany) | Chwilowo bez przyciągania |
 | Ctrl+, | Ustawienia |
 | F1 | Ta instrukcja |
+| Ctrl+F1 | Wszystkie skróty klawiszowe w jednym oknie |
 | S, N, R, E, P, L, Shift+L, B, F, T, Shift+T, Shift+F, Shift+H, Shift+O, M | Narzędzia (punkt 5) |
 
 <a id="s10"></a>

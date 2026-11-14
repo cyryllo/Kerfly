@@ -38,6 +38,10 @@ def take(lang):
     from kerfly.gui.text_shapes import update_text_spec
 
     app = QApplication([])
+    # the look of the real program: its font sizing, Fusion, the light theme's style sheet and icons
+    from kerfly.gui import app as _appmod, theme as _theme
+    _appmod.apply_desktop_font(app)
+    _theme.apply(app, "light")
 
     def settle(n=20):
         for _ in range(n):

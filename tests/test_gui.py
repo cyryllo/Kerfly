@@ -25,6 +25,7 @@ ROOT_DIR = os.path.dirname(TESTS_DIR)
 sys.path.insert(0, ROOT_DIR)
 
 from PySide6.QtCore import Qt  # noqa: E402
+from PySide6.QtGui import QKeySequence  # noqa: E402
 from PySide6.QtWidgets import QApplication, QComboBox, QWidget, QFileDialog, QInputDialog, QLabel, QMessageBox, QToolButton  # noqa: E402
 
 from kerfly.core import config  # noqa: E402
@@ -278,6 +279,94 @@ def main():
           waited and ran_then_sent and not_for_trace and len(asked_before) == 2 and "no plug" in asked_before[0]
           and refused and anyway,
           "(%s)" % [waited, ran_then_sent, not_for_trace, asked_before, refused, anyway])
+
+    # 3e. from the 14 Nov notes: Help → Keyboard shortcuts (from the menus, the tools and the mouse, with a
+    # filter), a minimum window size, Generators after Settings, no Updates button on the toolbar
+    w = make_window()
+    w.resize(1200, 800)
+    w.show()
+    app.processEvents()
+    w.act_shortcuts.trigger()
+    app.processEvents()
+    sc = w._shortcuts
+    rows = sc.rows()
+    keys = {(c, k) for _s, c, k in rows}
+    has_menu = any(k == QKeySequence("Ctrl+N").toString(QKeySequence.NativeText) for _c, k in keys)
+    has_tool = any(sec == _("Drawing tools") and k == "S" for sec, _c, k in rows)
+    has_mouse = any(sec == _("Mouse and other keys") for sec, _c, _k in rows)
+    sc.filter.setText(QKeySequence("Ctrl+G").toString(QKeySequence.NativeText))
+    filtered = sc.rows()
+    one_window = (w.act_shortcuts.trigger(), app.processEvents(), w._shortcuts is sc)[2]
+    sc.close()
+    titles = [a.text().replace("&", "") for a in w.menuBar().actions()]
+    order_ok = titles.index(_("&Generators").replace("&", "")) == titles.index(_("&Settings").replace("&", "")) + 1
+    from PySide6.QtWidgets import QToolBar as _TB
+    toolbar = w.findChild(_TB, "main_toolbar")
+    on_toolbar = {b.defaultAction() for b in toolbar.findChildren(QToolButton)}
+    no_updates_button = w.act_check_updates not in on_toolbar and w.act_generators["gear"] in on_toolbar
+    w.resize(400, 300)
+    app.processEvents()
+    screen = QApplication.primaryScreen().availableGeometry()
+    min_ok = w.width() >= min(1024, screen.width()) and w.minimumWidth() >= min(1024, screen.width())
+    groups_kept = all(g.width() >= g.minimumWidth() > 0 for g in w._ribbon_groups if g.isVisible())
+    check("Help → Keyboard shortcuts: menus, tools and mouse, filter, one window; minimum window size; "
+          "Generators after Settings; no Updates button; toolbar groups never squeezed",
+          len(rows) > 50 and has_menu and has_tool and has_mouse and 0 < len(filtered) < 5 and one_window
+          and order_ok and no_updates_button and min_ok and groups_kept,
+          "(%s)" % [len(rows), has_menu, has_tool, has_mouse, filtered, one_window, titles, no_updates_button,
+                    w.size().toTuple(), groups_kept])
+
+    # 3e2. dark theme (Settings → View → Theme, after a restart): dark palette, light icons, readable
+    # style sheet colours; the light theme back as before
+    from kerfly.gui import theme as _theme, icons as _icons
+    from PySide6.QtGui import QPalette as _QP
+    _theme.apply(app, "dark")
+    dark_window = app.palette().color(_QP.Window).lightness() < 80
+    dark_text = app.palette().color(_QP.WindowText).lightness() > 180
+    pm = _icons.tabler("file").pixmap(32, 32).toImage()
+    inked = [pm.pixelColor(x, y) for y in range(32) for x in range(32) if pm.pixelColor(x, y).alpha() > 200]
+    light_icons = bool(inked) and min(c.lightness() for c in inked) > 150
+    dark_sheet = _theme.TOKENS["dark"]["top_bar"] in app.styleSheet()
+    dw = make_window(theme="dark")
+    from kerfly.gui.settings_dialog import SettingsDialog as _SD3
+    sd = _SD3(dict(dw.values), dw)
+    combo = sd._widgets["theme"]
+    choices = [combo.itemData(i) for i in range(combo.count())]
+    combo.setCurrentIndex(combo.findData("system"))
+    stored = sd.result_values()[0]["theme"]
+    sd.close()
+    dw.close()
+    _theme.apply(app, "light")
+    pm = _icons.tabler("file").pixmap(32, 32).toImage()
+    inked = [pm.pixelColor(x, y) for y in range(32) for x in range(32) if pm.pixelColor(x, y).alpha() > 200]
+    light_back = app.palette().color(_QP.Window).lightness() > 180 and max(c.lightness() for c in inked) < 100
+    check("dark theme: dark palette, light icons, its style sheet; Settings → View → Theme (light, dark, as the "
+          "system); light theme back",
+          dark_window and dark_text and light_icons and dark_sheet and choices == ["light", "dark", "system"]
+          and stored == "system" and light_back,
+          "(%s)" % [dark_window, dark_text, light_icons, dark_sheet, choices, stored, light_back])
+
+    # 3f. .kerfly projects open in Kerfly: the Linux AppImage writes its menu entry and file type into the
+    # user's own folders, with the AppImage as the program; a newer AppImage takes the entry over
+    from kerfly.gui import desktop_entry as _de
+    data = tempfile.mkdtemp(prefix="kerfly_xdg_data_")
+    old_env = {k: os.environ.get(k) for k in ("XDG_DATA_HOME", "APPIMAGE")}
+    fake_image = os.path.join(data, "Kerfly-9.9.9-x86_64.AppImage")
+    open(fake_image, "w").close()
+    os.environ["XDG_DATA_HOME"], os.environ["APPIMAGE"] = data, fake_image
+    commands = []
+    written = _de.install(run=lambda cmd, **k: commands.append(cmd[0]))
+    entry = open(os.path.join(data, "applications", "kerfly.desktop"), encoding="utf-8").read()
+    mime = open(os.path.join(data, "mime", "packages", "kerfly.xml"), encoding="utf-8").read()
+    for k, v in old_env.items():
+        if v is None:
+            os.environ.pop(k, None)
+        else:
+            os.environ[k] = v
+    check(".kerfly file type (Linux AppImage): menu entry runs the AppImage, the file type and icon written",
+          ("Exec=%s %%F" % fake_image) in entry and "application/x-kerfly" in entry and "*.kerfly" in mime
+          and len(written) == 3 and _de.applies() == (sys.platform.startswith("linux") and bool(old_env["APPIMAGE"])),
+          "(%s)" % [entry[:200], len(written), commands])
 
     # 4. Stop while sending: immediate e-stop, no pause, no question
     w = make_window()

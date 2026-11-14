@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-14 00:49+0100\n"
+"POT-Creation-Date: 2026-11-14 20:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -108,6 +108,9 @@ msgid "&Import material library…"
 msgstr ""
 
 msgid "&Initialize laser"
+msgstr ""
+
+msgid "&Keyboard shortcuts"
 msgstr ""
 
 msgid "&Laser"
@@ -211,6 +214,9 @@ msgstr ""
 msgid "A logo or picture in the middle (PNG, JPG or SVG); empty: none"
 msgstr ""
 
+msgid "A menu: on an element its commands, on the empty bed Move the head here"
+msgstr ""
+
 msgid "A stamp prints its mirror image: mirror it left to right"
 msgstr ""
 
@@ -239,6 +245,9 @@ msgstr ""
 
 msgctxt "toolbar"
 msgid "Add"
+msgstr ""
+
+msgid "Add Kerfly to the applications menu…"
 msgstr ""
 
 msgid "Add a layer"
@@ -294,6 +303,9 @@ msgstr ""
 msgid "All files"
 msgstr ""
 
+msgid "All keys and mouse actions in one window"
+msgstr ""
+
 msgid "Allow USB access for the laser…"
 msgstr ""
 
@@ -309,8 +321,14 @@ msgstr ""
 msgid "Another problem"
 msgstr ""
 
+msgid "Applications menu"
+msgstr ""
+
 msgctxt "toolbar group"
 msgid "Arrange"
+msgstr ""
+
+msgid "As the system"
 msgstr ""
 
 msgid "Ask GitHub whether a newer Kerfly is out (a bar above the bed links to it)"
@@ -482,6 +500,11 @@ msgstr ""
 msgid "Click inside a shape to fill it."
 msgstr ""
 
+msgid ""
+"Click the first point to close; double-click or Enter for an open line; "
+"Backspace removes the last point; Esc cancels"
+msgstr ""
+
 msgid "Click the opened file or the group first, then Ungroup."
 msgstr ""
 
@@ -514,6 +537,9 @@ msgid "Comb pieces"
 msgstr ""
 
 msgid "Combine shapes"
+msgstr ""
+
+msgid "Command"
 msgstr ""
 
 msgid "Concentric"
@@ -650,6 +676,9 @@ msgstr ""
 msgid "DXF units"
 msgstr ""
 
+msgid "Dark"
+msgstr ""
+
 msgid "Dark pixels are engraved, light and transparent pixels are not."
 msgstr ""
 
@@ -766,6 +795,20 @@ msgstr ""
 msgid "Dots between the texts"
 msgstr ""
 
+msgid "Double-click it"
+msgstr ""
+
+msgid "Drag a frame around them, or Ctrl+click"
+msgstr ""
+
+msgid ""
+"Drag it, or the arrow keys (1 mm or one grid step; with Shift 10 times "
+"more)"
+msgstr ""
+
+msgid "Drag with the middle or the right mouse button"
+msgstr ""
+
 msgid ""
 "Draw the new outline around the shapes selected now (or click a shape on "
 "the bed)"
@@ -802,6 +845,9 @@ msgid ""
 "(Ctrl: one handle alone). Shift+click selects more nodes. Double-click a "
 "side to add a node, a node to remove it. Buttons above, or keys I D L C O"
 " S Z B."
+msgstr ""
+
+msgid "Edit the nodes of an element"
 msgstr ""
 
 msgid "Ellipse"
@@ -901,6 +947,9 @@ msgstr ""
 msgid "Filled. Click another shape, or change the pattern above."
 msgstr ""
 
+msgid "Find a command or a key"
+msgstr ""
+
 msgid "Finger width"
 msgstr ""
 
@@ -998,6 +1047,9 @@ msgstr ""
 msgid "Grouped %d elements. Click any of them to select the whole group."
 msgstr ""
 
+msgid "H horizontally, V vertically (with the bed in focus)"
+msgstr ""
+
 msgid "Halftone (dither) grayscale images"
 msgstr ""
 
@@ -1053,6 +1105,12 @@ msgstr ""
 msgid "Hinge removed."
 msgstr ""
 
+msgid "Hold Alt while drawing, dragging or moving a node"
+msgstr ""
+
+msgid "Hold Shift while drawing"
+msgstr ""
+
 msgid "Hole 20 mm"
 msgstr ""
 
@@ -1090,6 +1148,11 @@ msgstr ""
 msgid ""
 "How much of the code can be damaged and still read; more makes the code "
 "denser"
+msgstr ""
+
+msgid ""
+"I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / "
+"open, B break"
 msgstr ""
 
 msgid "Image size"
@@ -1202,12 +1265,30 @@ msgid ""
 "Add the rule now?"
 msgstr ""
 
+#, python-format
+msgid "Kerfly could not be added: %s"
+msgstr ""
+
+msgid ""
+"Kerfly is in the applications menu, and .kerfly projects open in Kerfly "
+"with a double click.\n"
+"\n"
+"After moving the AppImage file, choose this again. A newer version "
+"updates the entry by itself when it starts."
+msgstr ""
+
 msgid "Kerfly projects"
 msgstr ""
 
 msgid ""
 "Kerfly saves a diagnostic report and opens the report form on GitHub in "
 "your browser (a free GitHub account is needed to send it)."
+msgstr ""
+
+msgid "Keyboard shortcuts"
+msgstr ""
+
+msgid "Keys / mouse"
 msgstr ""
 
 msgid "Label"
@@ -1302,10 +1383,18 @@ msgstr ""
 msgid "Lid"
 msgstr ""
 
+msgid "Light"
+msgstr ""
+
 msgid "Line"
 msgstr ""
 
 msgid "Lines"
+msgstr ""
+
+msgid ""
+"Linux AppImage: Kerfly in the menu of your desktop, and .kerfly projects "
+"open in Kerfly with a double click (only for you, no password)"
 msgstr ""
 
 msgid ""
@@ -1426,7 +1515,16 @@ msgstr ""
 msgid "Mirror design"
 msgstr ""
 
+msgid "Mirror the selection, as in Inkscape"
+msgstr ""
+
 msgid "Module"
+msgstr ""
+
+msgid "Mouse and other keys"
+msgstr ""
+
+msgid "Mouse wheel"
 msgstr ""
 
 msgid "Move &down (later)"
@@ -1499,6 +1597,9 @@ msgid ""
 " them first"
 msgstr ""
 
+msgid "Move the selection"
+msgstr ""
+
 msgid "Name:"
 msgstr ""
 
@@ -1564,6 +1665,9 @@ msgid "No. 123"
 msgstr ""
 
 msgid "Node"
+msgstr ""
+
+msgid "Node editing keys"
 msgstr ""
 
 msgid "Notes (e.g. supplier, lens, air assist)"
@@ -1704,6 +1808,9 @@ msgstr ""
 msgid "Own size"
 msgstr ""
 
+msgid "Pan the view"
+msgstr ""
+
 msgid "Passes"
 msgstr ""
 
@@ -1811,6 +1918,9 @@ msgid "Polygon"
 msgstr ""
 
 msgid "Polyline"
+msgstr ""
+
+msgid "Polyline and pen: finish"
 msgstr ""
 
 msgid ""
@@ -1997,6 +2107,9 @@ msgid "Resume the job"
 msgstr ""
 
 msgid "Resumed"
+msgstr ""
+
+msgid "Right click"
 msgstr ""
 
 msgid "Right side"
@@ -2189,6 +2302,9 @@ msgid ""
 "on, then choose Put text on path again (Ctrl+click selects both)."
 msgstr ""
 
+msgid "Select several elements"
+msgstr ""
+
 msgid "Select the elements to copy first."
 msgstr ""
 
@@ -2330,6 +2446,9 @@ msgid ""
 "bed, when drawing and moving. Hold Alt to snap nothing for a moment."
 msgstr ""
 
+msgid "Snap to nothing for a moment"
+msgstr ""
+
 msgid "Snap to other objects"
 msgstr ""
 
@@ -2392,6 +2511,9 @@ msgid ""
 msgstr ""
 
 msgid "Square 50 mm"
+msgstr ""
+
+msgid "Square, circle, 45° lines"
 msgstr ""
 
 msgid "Stamp"
@@ -2627,6 +2749,9 @@ msgstr ""
 msgid "The new language will be used after restarting Kerfly."
 msgstr ""
 
+msgid "The new theme will be used after restarting Kerfly."
+msgstr ""
+
 msgid "The numbers count centimetres or millimetres"
 msgstr ""
 
@@ -2684,6 +2809,12 @@ msgid ""
 "The text of the stamp: select a part and make it bold, italic, "
 "underlined, bigger or smaller, or align the lines (for example the name "
 "bigger than the address)"
+msgstr ""
+
+msgid "Theme"
+msgstr ""
+
+msgid "Theme (applies after restart)"
 msgstr ""
 
 #, python-format
@@ -2836,10 +2967,6 @@ msgid "Untick an element to leave it out of the job"
 msgstr ""
 
 msgid "Untitled"
-msgstr ""
-
-msgctxt "toolbar"
-msgid "Updates"
 msgstr ""
 
 msgid "Upper left corner"
@@ -2999,6 +3126,9 @@ msgid "Zigzag"
 msgstr ""
 
 msgid "Zigzag cuts"
+msgstr ""
+
+msgid "Zoom"
 msgstr ""
 
 msgid "a program or script (.bat, .sh)"

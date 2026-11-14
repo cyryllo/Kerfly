@@ -19,7 +19,9 @@ nie jest potrzebne.
    Kerfly albo inny program do tego lasera już z nim działał na tym
    komputerze, sterownik jest i możesz tego nie zaznaczać. Po zmianie
    sterownika LaserDRW i CorelLaser nie będą działać z laserem.
-5. Uruchom Kerfly z menu Start (albo ikoną na pulpicie, jeśli ją wybrałeś).
+5. **„Otwieraj projekty Kerfly (.kerfly) w Kerfly”** jest zaznaczone: dwuklik
+   na projekcie otwiera go w Kerfly.
+6. Uruchom Kerfly z menu Start (albo ikoną na pulpicie, jeśli ją wybrałeś).
 
 ## Linux: AppImage
 
@@ -31,7 +33,11 @@ nie jest potrzebne.
    chmod +x Kerfly-*.AppImage
    ```
 
-3. Uruchom AppImage (dwuklik albo `./Kerfly-*.AppImage`).
+3. Uruchom AppImage (dwuklik albo `./Kerfly-*.AppImage`). Żeby Kerfly był w
+   menu aplikacji pulpitu, a projekty `.kerfly` otwierały się dwuklikiem,
+   wybierz raz **Ustawienia → Dodaj Kerfly do menu aplikacji…** (tylko dla
+   Twojego użytkownika, bez hasła). Nowsze AppImage samo poprawi wpis przy
+   uruchomieniu.
 4. Daj swojemu użytkownikowi dostęp do portu USB lasera, raz na komputer.
    Najprościej: w Kerfly wybierz **Laser → Zezwól na dostęp do USB
    lasera…**. System raz zapyta o hasło; potem odłącz kabel USB lasera i

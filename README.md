@@ -21,6 +21,8 @@ Download the package for your system from the
 - **Linux:** make `Kerfly-<version>-x86_64.AppImage` executable and run it.
   Allow the laser's USB port once: **Laser → Allow USB access for the
   laser…** (asks for your password; see [INSTALL.md](INSTALL.md#linux-the-appimage)).
+  **Settings → Add Kerfly to the applications menu…** puts it in your menu and
+  opens `.kerfly` projects with a double click.
 - **macOS 11 or newer** (preview, not yet tested with a laser): open
   `Kerfly-<version>-macos-arm64.dmg` (Apple Silicon) or `-macos-x86_64.dmg`
   (Intel) and drag Kerfly to Applications. It is not signed by Apple; how to
@@ -65,8 +67,9 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
   piece, a report with the job time, your own programs before and after a
   job (the exhaust on and off). Kerfly refuses jobs that would run the head off the bed, and tells
   you when a new version is out.
-- **Your language.** English, Polish, German, Spanish and French (Settings →
-  Advanced → Language).
+- **Your language and look.** English, Polish, German, Spanish and French
+  (Settings → Advanced → Language); a light or dark theme (Settings → View).
+  Help → Keyboard shortcuts lists every key.
 
 **Kerfly 1.5 is stable and ready for everyday work.** Changes are in [CHANGELOG.md](CHANGELOG.md), plans in
 [ROADMAP.md](ROADMAP.md).

@@ -3,6 +3,29 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
+## Unreleased
+
+### Dodane
+
+- **Ciemny motyw**: Ustawienia → Widok → Motyw: jasny, ciemny albo jak w
+  systemie (po ponownym uruchomieniu). Stół lasera zostaje jasny, bo
+  przedstawia materiał.
+- **Pomoc → Skróty klawiszowe** (Ctrl+F1): wszystkie klawisze z menu i
+  narzędzi rysowania oraz działania myszą w jednym oknie, z wyszukiwaniem.
+- **Projekty .kerfly otwierają się w Kerfly dwuklikiem**: opcja instalatora
+  Windows (zaznaczona), **Ustawienia → Dodaj Kerfly do menu aplikacji…** dla
+  AppImage na Linuksie (dodaje też Kerfly do menu pulpitu; nowsze AppImage
+  samo poprawia wpis) oraz na macOS.
+- Minimalny rozmiar okna (1024 × 680 albo cały ekran, gdy jest mniejszy).
+
+### Zmienione
+
+- Pasek narzędzi jest węższy (o około 290 pikseli w Full HD po polsku): mieści
+  się teraz na ekranie 1920 pikseli; w wąskim oknie grupy, które się nie
+  mieszczą, chowają się pod przyciskiem », zamiast obcinać napisy.
+- Generatory są za Ustawieniami, w menu i na pasku narzędzi.
+- Bez przycisku **Aktualizacje** na pasku: Pomoc → Sprawdź aktualizacje.
+
 ## 1.5.0 (2026-11-14)
 
 Programy przed zadaniem i po nim (włączenie i wyłączenie wyciągu), raport z

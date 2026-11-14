@@ -157,6 +157,7 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
       <li>Test fire and power per operation on M3 boards.</li>
       <li>Engrave, outline or cut only, and home after each job, ready for the next piece.</li>
       <li>A report with the job time, and your own programs before and after a job: the exhaust on and off.</li>
+      <li>A light or dark theme, and every keyboard shortcut in one window (Help → Keyboard shortcuts).</li>
     </ul>
   </div>
 </div>

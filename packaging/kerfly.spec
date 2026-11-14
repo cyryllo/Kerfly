@@ -84,4 +84,13 @@ if MACOS:
                  info_plist={"CFBundleName": "Kerfly", "CFBundleDisplayName": "Kerfly",
                              "CFBundleShortVersionString": __version__, "CFBundleVersion": __version__,
                              "NSHighResolutionCapable": True, "LSMinimumSystemVersion": "11.0",
-                             "NSHumanReadableCopyright": "GPL-3.0-or-later, Kerfly contributors"})
+                             "NSHumanReadableCopyright": "GPL-3.0-or-later, Kerfly contributors",
+                             # .kerfly projects open in Kerfly (Finder double click)
+                             "CFBundleDocumentTypes": [{
+                                 "CFBundleTypeName": "Kerfly project", "CFBundleTypeRole": "Editor",
+                                 "LSHandlerRank": "Owner", "LSItemContentTypes": ["io.github.cyryllo.kerfly.project"],
+                                 "CFBundleTypeExtensions": ["kerfly"]}],
+                             "UTExportedTypeDeclarations": [{
+                                 "UTTypeIdentifier": "io.github.cyryllo.kerfly.project",
+                                 "UTTypeDescription": "Kerfly project", "UTTypeConformsTo": ["public.data"],
+                                 "UTTypeTagSpecification": {"public.filename-extension": ["kerfly"]}}]})

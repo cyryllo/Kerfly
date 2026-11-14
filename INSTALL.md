@@ -18,7 +18,9 @@ Nothing else is needed.
    program for this laser already worked with it on this PC, the driver is
    there and you can leave it unticked. After the driver change, LaserDRW and
    CorelLaser no longer work with the laser.
-5. Start Kerfly from the Start menu (or the desktop icon, if you chose one).
+5. **"Open Kerfly projects (.kerfly) with Kerfly"** is ticked: a double click
+   on a project opens it in Kerfly.
+6. Start Kerfly from the Start menu (or the desktop icon, if you chose one).
 
 ## Linux: the AppImage
 
@@ -30,7 +32,11 @@ Nothing else is needed.
    chmod +x Kerfly-*.AppImage
    ```
 
-3. Run the AppImage (double-click it, or `./Kerfly-*.AppImage`).
+3. Run the AppImage (double-click it, or `./Kerfly-*.AppImage`). To find
+   Kerfly in your desktop's applications menu and open `.kerfly` projects
+   with a double click, choose **Settings → Add Kerfly to the applications
+   menu…** once (only for your user, no password). A newer AppImage updates
+   the entry by itself when it starts.
 4. Let your user reach the laser's USB port, once per computer. The easy
    way: in Kerfly choose **Laser → Allow USB access for the laser…**. The
    system asks for your password once; then unplug the laser's USB cable

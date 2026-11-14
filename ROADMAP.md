@@ -84,7 +84,7 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
 | ~~Ruler, measure tool~~ (done) | `gui/toolwidgets/toolmeasure.py` |
 | ~~Job simulation (play the path)~~ (done) | `gui/simulation.py` |
 | ~~Material library (saved speed/power per material)~~ (done); export / import (done) | `gui/materialmanager.py`, `core/elements/materials.py` |
-| ~~Toolbar~~ (done; every new command gets a button), themes | `gui/ribbon.py`, `gui/themes.py` |
+| ~~Toolbar~~ (done; every new command gets a button), ~~themes~~ (done: light, dark, as the system) | `gui/ribbon.py`, `gui/themes.py` |
 
 ## New versions
 

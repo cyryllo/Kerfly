@@ -29,6 +29,8 @@ cp -a build/pyinstaller/dist/Kerfly "$APPDIR/usr/lib/kerfly"
 cp packaging/linux/99-kerfly-k40.rules "$APPDIR/usr/lib/kerfly/"
 cp packaging/linux/kerfly.desktop "$APPDIR/kerfly.desktop"
 cp packaging/linux/kerfly.desktop "$APPDIR/usr/share/applications/kerfly.desktop"
+mkdir -p "$APPDIR/usr/share/mime/packages"
+cp packaging/linux/kerfly-mime.xml "$APPDIR/usr/share/mime/packages/kerfly.xml"
 cp kerfly/gui/icons/kerfly.png "$APPDIR/kerfly.png"
 cp kerfly/gui/icons/kerfly.png "$APPDIR/usr/share/icons/hicolor/256x256/apps/kerfly.png"
 cat > "$APPDIR/AppRun" <<'RUN'

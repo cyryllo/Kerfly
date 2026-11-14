@@ -18,29 +18,9 @@ from PySide6.QtWidgets import QApplication  # noqa: E402
 from kerfly import i18n  # noqa: E402
 from kerfly.core import config  # noqa: E402
 
-STYLE = """
-QPushButton#start { background:#2e7d32; color:white; font-weight:bold; border-radius:4px; }
-QPushButton#start:disabled { background:#9e9e9e; }
-QPushButton#stop { background:#c62828; color:white; font-weight:bold; border-radius:4px; }
-QPushButton#stop:disabled { background:#bdbdbd; }
-QPushButton#start, QPushButton#stop { font-size: 14px; }
-QPushButton#jog { font-size:22px; font-weight:bold; }
-QPushButton#corner { font-size:17px; }
-QGroupBox { font-weight:bold; }
-QToolBar#main_toolbar { spacing: 1px; padding: 2px; }
-QToolBar#main_toolbar QToolButton { padding: 2px 1px; font-size: 11px; min-width: 40px; }
-QLineEdit#layer_name { background: transparent; }
-QLineEdit#layer_name:focus { background: palette(base); }
-QToolBar#tool_strip { padding: 2px 4px 2px 2px; spacing: 2px; }
-QLabel#bed_warning { color: #c62828; font-weight: bold; padding: 2px 0; }
-QFrame#update_bar { background: #e3f2fd; border-bottom: 1px solid #90caf9; }
-QLabel#node_hint { color: #4b5563; }
-QWidget#top_bar { background: #eef0f3; border-bottom: 1px solid #c4c9d0; }
-QLabel#tool_options_title { font-weight: bold; }
-QLabel#ribbon_caption { color: #6b7280; font-size: 10px; padding-bottom: 1px; }
-QFrame#ribbon_separator { color: #c4c9d0; margin: 4px 1px; }
-QGroupBox QLabel, QGroupBox QCheckBox { font-weight:normal; }
-"""
+# the style sheet of the light theme (kerfly/gui/theme.py has both themes)
+from kerfly.gui.theme import style_sheet as _style_sheet  # noqa: E402
+STYLE = _style_sheet("light")
 
 
 def desktop_font():
@@ -118,6 +98,32 @@ def restore_system_libraries():
         os.environ.pop("LD_LIBRARY_PATH", None)
 
 
+class FileOpenApplication(QApplication):
+    """macOS gives a file opened from Finder (double click on a .kerfly project) as an event, not as an
+    argument; it can arrive before the window exists, so it waits for it."""
+
+    def __init__(self, argv):
+        super().__init__(argv)
+        self._window = None
+        self._pending = []
+
+    def set_window(self, window):
+        self._window = window
+        for path in self._pending:
+            window.load_design(path)
+        self._pending = []
+
+    def event(self, event):
+        from PySide6.QtCore import QEvent
+        if event.type() == QEvent.FileOpen and event.file():
+            if self._window is None:
+                self._pending.append(event.file())
+            else:
+                self._window.load_design(event.file())
+            return True
+        return super().event(event)
+
+
 def main(argv=None):
     argv = sys.argv if argv is None else argv
     restore_system_libraries()
@@ -137,16 +143,15 @@ def main(argv=None):
             ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Kerfly.Kerfly")
         except Exception:
             pass
-    app = QApplication(argv)
+    app = FileOpenApplication(argv)
     app.setApplicationName("Kerfly")
     app.setDesktopFileName("kerfly")             # Wayland / KDE: match kerfly.desktop if installed
     from kerfly.gui import icons
     app.setWindowIcon(icons.app_icon())
-    app.setStyle("Fusion")
-    apply_desktop_font(app)
-    app.setStyleSheet(STYLE)
-
     values = config.load_user_settings()
+    from kerfly.gui import theme
+    apply_desktop_font(app)
+    theme.apply(app, values.get("theme", theme.DEFAULT))      # light, dark or as the system
     from kerfly.gui import viewstate
     viewstate.load(values)                     # grid, snapping, follow head: as left last time
     language = i18n.setup(values.get("language", ""))
@@ -162,6 +167,7 @@ def main(argv=None):
     window.remember_geometry = True
     window._restore_window_geometry()          # also brings back the maximized state
     window.show()
+    app.set_window(window)                     # macOS: a .kerfly double-clicked in Finder opens here
     files = [a for a in argv[1:] if not a.startswith("-")]
     if files:
         window.load_design(files[0])

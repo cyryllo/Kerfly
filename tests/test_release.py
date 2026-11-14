@@ -33,6 +33,11 @@ sys.stdout.reconfigure(line_buffering=True)
 os.environ["XDG_CONFIG_HOME"] = tempfile.mkdtemp(prefix="kerfly_release_cfg_")   # never the user's settings
 os.environ["APPDATA"] = os.environ["XDG_CONFIG_HOME"]
 os.environ["HOME"] = tempfile.mkdtemp(prefix="kerfly_release_home_")
+# as if running from an AppImage on Linux: Settings → Add Kerfly to the applications menu writes here
+os.environ["XDG_DATA_HOME"] = tempfile.mkdtemp(prefix="kerfly_release_data_")
+if sys.platform.startswith("linux") and not os.environ.get("APPIMAGE"):
+    os.environ["APPIMAGE"] = os.path.join(os.environ["HOME"], "Kerfly-test-x86_64.AppImage")
+    open(os.environ["APPIMAGE"], "w").close()
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(TESTS_DIR)
 sys.path.insert(0, ROOT_DIR)
@@ -1412,6 +1417,36 @@ def part_files_and_help(s):
     s.step("Settings → Settings… (opens, OK)", lambda: s.trigger(w.act_settings, via="menu"), change=False, undo=False)
     s.step("Help → User guide (F1)", lambda: s.trigger(w.act_guide, via="key"), change=False,
            check=lambda: (any("guide" in u for u in s.opened_urls), s.opened_urls))
+
+    # Help → Keyboard shortcuts: the window, a search typed into it, Close
+    def shortcuts_window():
+        s.trigger(w.act_shortcuts, via="menu")
+        dlg = getattr(w, "_shortcuts", None)
+        if dlg is None or not dlg.isVisible():
+            raise RuntimeError("no shortcuts window")
+        s.click(dlg.filter)
+        QTest.keyClicks(dlg.filter, "F9")
+        s.settle()
+        found = dlg.rows()
+        from PySide6.QtWidgets import QDialogButtonBox
+        s.click(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Close))
+        try:
+            closed = not dlg.isVisible()
+        except RuntimeError:
+            closed = True                          # closed and deleted
+        shown.update(rows=found, closed=closed)
+    shown = {}
+    s.step("Help → Keyboard shortcuts (search F9, Close)", shortcuts_window, change=False,
+           check=lambda: (any(k == "F9" for _sec, _c, k in shown.get("rows", [])) and len(shown.get("rows", [])) < 4
+                          and shown.get("closed"), "rows %s, closed %s" % (shown.get("rows"), shown.get("closed"))))
+    from kerfly.gui import desktop_entry
+    if desktop_entry.applies():
+        s.expect_dialog("added to the applications menu", lambda d: s.click_dialog_button(d, QMessageBox.Ok))
+        entry = os.path.join(os.environ["XDG_DATA_HOME"], "applications", "kerfly.desktop")
+        s.step("Settings → Add Kerfly to the applications menu… (Linux AppImage)",
+               lambda: s.trigger(w.act_desktop_entry, via="menu"), change=False,
+               check=lambda: (os.path.isfile(entry) and desktop_entry.installed_for() == desktop_entry.appimage_path(),
+                              "entry %s" % desktop_entry.installed_for()))
     report = os.path.join(s.tmp, "report.txt")
     s.files.append(report)
     s.step("Help → Save diagnostic report…", lambda: s.trigger(w.act_report, via="menu"), change=False,
@@ -1424,7 +1459,7 @@ def part_files_and_help(s):
     s.step("Help → Open the log folder", lambda: s.trigger(w.act_log_folder, via="menu"), change=False)
 
     def check_updates():
-        s.trigger(w.act_check_updates)                       # the Updates button of the toolbar
+        s.trigger(w.act_check_updates, via="menu")           # Help → Check for updates (no toolbar button)
         s.wait(lambda: w.update_bar.isVisible(), 10)
     s.step("Updates (toolbar): a newer version, the bar above the bed", check_updates, change=False,
            check=lambda: (w.update_bar.isVisible() and "99.0" in w.update_bar.text.text(), w.update_bar.text.text()))

@@ -67,6 +67,7 @@ SETTINGS_KEYS = [
     ("update_skip", TEXT),   # Kerfly only: the version the user does not want to hear about
     ("update_last", TEXT),   # Kerfly only: time of the last check (seconds)
     ("trace_rect", BOOL),    # Kerfly only: trace the bounding rectangle (off: K40 Whisperer's outline)
+    ("theme", TEXT),         # Kerfly only: light, dark or system (applies after a restart)
     ("pre_exec", BOOL),      # Kerfly only: run a program before a job (the exhaust on, ...)
     ("pre_batch_path", QUOTED),  # Kerfly only: that program
 ]
@@ -95,7 +96,7 @@ DEFAULT_VALUES = {
     "test_time": "250", "test_power": "0.5",
     "t_timeout": "200", "n_timeouts": "30", "ink_timeout": "3",
     "designfile": "", "inkscape_path": "", "batch_path": "",
-    "pre_exec": "0", "pre_batch_path": "",
+    "pre_exec": "0", "pre_batch_path": "", "theme": "light",
     "language": "",          # "" = system language
     "grid_mm": "0",
     "snap_objects": "1",

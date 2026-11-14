@@ -61,6 +61,7 @@ TABS = [
         ("follow_head", N_("The design follows the laser head"), "bool", None),
         ("kind_buttons", N_("Engrave, Outline and Cut buttons next to Start (each runs only its layers)"),
          "bool", None),
+        ("theme", N_("Theme (applies after restart)"), "theme", None),
     ]),
     (N_("Rotary"), [
         ("rotary", N_("Rotary attachment in use"), "bool", None),
@@ -167,6 +168,13 @@ class SettingsDialog(QDialog):
                 w.addItem(name, code)
             index = w.findData(value)
             w.setCurrentIndex(max(0, index))
+            return w, lambda: w.currentData()
+        if kind == "theme":
+            from kerfly.gui.theme import DEFAULT, THEMES
+            w = QComboBox()
+            for code, name in THEMES:
+                w.addItem(_(name), code)
+            w.setCurrentIndex(max(0, w.findData(value or DEFAULT)))
             return w, lambda: w.currentData()
         if kind == "choice":
             w = QComboBox()

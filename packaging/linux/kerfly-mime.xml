@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- the .kerfly project file type (installed with the desktop entry, see kerfly/gui/desktop_entry.py) -->
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-kerfly">
+    <comment>Kerfly project</comment>
+    <comment xml:lang="pl">Projekt Kerfly</comment>
+    <comment xml:lang="de">Kerfly-Projekt</comment>
+    <comment xml:lang="es">Proyecto de Kerfly</comment>
+    <comment xml:lang="fr">Projet Kerfly</comment>
+    <icon name="kerfly"/>
+    <glob pattern="*.kerfly"/>
+  </mime-type>
+</mime-info>

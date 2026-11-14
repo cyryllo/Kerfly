@@ -10,7 +10,24 @@ from PySide6.QtCore import QPointF, Qt
 from PySide6.QtGui import QBrush, QColor, QIcon, QPainter, QPainterPath, QPen, QPixmap, QPolygonF
 
 SIZE = 64          # drawing grid; the pixmap is rendered at 2x for HiDPI screens
-INK = QColor("#202124")
+# the colour icons are drawn in: dark on the light theme, light on the dark one (set_ink before the window)
+_INK = "#2b2f36"
+_ARROW_INK = "#202124"
+
+
+def set_ink(color, arrow=None):
+    """Theme: the colour of the icons (and of the jog arrows); clears the icon caches."""
+    global _INK, _ARROW_INK
+    _INK, _ARROW_INK = color, arrow or color
+    _tabler_cache.clear()
+
+
+def ink():
+    return _INK
+
+
+def _arrow_ink():
+    return QColor(_ARROW_INK)
 
 
 def _canvas():
@@ -34,20 +51,20 @@ def _arrow(p, angle_deg, length=26, shaft=9, head=22, head_len=14, center=(32, 3
     p.translate(*center)
     p.rotate(-angle_deg)
     p.setPen(Qt.NoPen)
-    p.setBrush(QBrush(INK))
+    p.setBrush(QBrush(_arrow_ink()))
     p.drawPath(path)
     p.restore()
 
 
 def _dotted_pen(width=3.0):
-    pen = QPen(INK, width, Qt.CustomDashLine, Qt.RoundCap)
+    pen = QPen(_arrow_ink(), width, Qt.CustomDashLine, Qt.RoundCap)
     pen.setDashPattern([0.1, 2.0])
     return pen
 
 
 def _dot(p, x, y, r=6.0):
     p.setPen(Qt.NoPen)
-    p.setBrush(QBrush(INK))
+    p.setBrush(QBrush(_arrow_ink()))
     p.drawEllipse(QPointF(x, y), r, r)
 
 
@@ -71,14 +88,14 @@ def corner_icon(corner):
     p.drawLine(QPointF(cx, cy), QPointF(cx - sx * 26, cy))
     p.drawLine(QPointF(cx, cy), QPointF(cx, cy - sy * 26))
     # diagonal arrow towards the corner, ending in the dot
-    p.setPen(QPen(INK, 4.0, Qt.SolidLine, Qt.RoundCap))
+    p.setPen(QPen(_arrow_ink(), 4.0, Qt.SolidLine, Qt.RoundCap))
     tip = QPointF(cx - sx * 9, cy - sy * 9)
     p.drawLine(QPointF(32 - sx * 10, 32 - sy * 10), tip)
     head = QPolygonF([tip + QPointF(sx * 3, sy * 3),
                       tip + QPointF(-sx * 10, 0) + QPointF(0, sy * 1),
                       tip + QPointF(sx * 1, -sy * 10)])
     p.setPen(Qt.NoPen)
-    p.setBrush(QBrush(INK))
+    p.setBrush(QBrush(_arrow_ink()))
     p.drawPolygon(head)
     _dot(p, cx, cy)
     p.end()
@@ -96,11 +113,11 @@ def centre_icon():
     return QIcon(pm)
 
 
-def trace_icon(color="#2b2f36"):
+def trace_icon(color=None):
     """Boundary trace: a dashed outline around a shape, with an arrow showing
     the head travelling along it."""
     pm, p = _canvas()
-    ink = QColor(color)
+    ink = QColor(color or _INK)
     # the design: a small solid shape in the middle
     p.setPen(Qt.NoPen)
     p.setBrush(QBrush(ink))
@@ -128,8 +145,9 @@ _TABLER_DIR = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "table
 _tabler_cache = {}
 
 
-def tabler(name, color="#2b2f36"):
-    """QIcon for a Tabler icon (outline style) drawn in the given colour."""
+def tabler(name, color=None):
+    """QIcon for a Tabler icon (outline style) drawn in the given colour (default: the theme's)."""
+    color = color or _INK
     key = (name, color)
     icon = _tabler_cache.get(key)
     if icon is not None:
@@ -160,12 +178,12 @@ def _tabler_render(name, color, p, rect):
     QSvgRenderer(QByteArray(svg.encode("utf-8"))).render(p, rect)
 
 
-def follow_head_icon(off="#2b2f36", on="#2e7d32"):
+def follow_head_icon(off=None, on="#2e7d32"):
     """"Design follows the head": the "to head" crosshair with a chain link in
     the lower right corner. Grey when off, green when the button is checked."""
     from PySide6.QtCore import QRectF
     icon = QIcon()
-    for state, color in ((QIcon.Off, off), (QIcon.On, on)):
+    for state, color in ((QIcon.Off, off or _INK), (QIcon.On, on)):
         for size in (24, 32, 48, 64):
             pm = QPixmap(size, size)
             pm.fill(Qt.transparent)
@@ -228,7 +246,7 @@ def pattern_icon(code, size=40, color="#1565c0"):
         for x, y in line[1:]:
             path.lineTo(x, y)
         p.drawPath(path)
-    p.setPen(QPen(QColor("#2b2f36"), 1.4))
+    p.setPen(QPen(QColor(_INK), 1.4))
     p.setBrush(Qt.NoBrush)
     p.drawRoundedRect(m, m, size - 2 * m, size - 2 * m, 4, 4)
     p.end()
@@ -237,12 +255,12 @@ def pattern_icon(code, size=40, color="#1565c0"):
     return icon
 
 
-def text_on_path_icon(color="#2b2f36"):
+def text_on_path_icon(color=None):
     """Text on a path: an arc with letters standing on it, turned along it."""
     import math as _m
     from PySide6.QtGui import QFont
     pm, p = _canvas()
-    ink = QColor(color)
+    ink = QColor(color or _INK)
     p.setPen(QPen(ink, 3.2, Qt.SolidLine, Qt.RoundCap))
     p.setBrush(Qt.NoBrush)
     cx, cy, r = 32.0, 84.0, 46.0                       # arc: part of a circle below the icon
@@ -269,10 +287,10 @@ def text_on_path_icon(color="#2b2f36"):
     return QIcon(pm)
 
 
-def hinge_icon(color="#2b2f36"):
+def hinge_icon(color=None):
     """Living hinge: a sheet with rows of staggered cuts."""
     pm, p = _canvas()
-    ink = QColor(color)
+    ink = QColor(color or _INK)
     p.setPen(QPen(ink, 3.0, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
     p.setBrush(Qt.NoBrush)
     p.drawRoundedRect(8, 10, 48, 44, 4, 4)
@@ -312,7 +330,7 @@ def hinge_pattern_icon(code, size=40, color="#c62828"):
         for x, y in line[1:]:
             path.lineTo(x, y)
         p.drawPath(path)
-    p.setPen(QPen(QColor("#2b2f36"), 1.4))
+    p.setPen(QPen(QColor(_INK), 1.4))
     p.drawRoundedRect(m, m, size - 2 * m, size - 2 * m, 4, 4)
     p.end()
     icon = QIcon(pm)
