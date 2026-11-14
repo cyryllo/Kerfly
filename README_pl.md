@@ -75,7 +75,7 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
   francuski (Ustawienia → Zaawansowane → Język); jasny albo ciemny motyw
   (Ustawienia → Widok). Pomoc → Skróty klawiszowe pokazuje wszystkie klawisze.
 
-**Kerfly 1.5 jest wersją stabilną, gotową do codziennej pracy.** Zmiany są w [CHANGELOG_pl.md](CHANGELOG_pl.md), plany w
+**Kerfly 1.6 jest wersją stabilną, gotową do codziennej pracy.** Zmiany są w [CHANGELOG_pl.md](CHANGELOG_pl.md), plany w
 [ROADMAP.md](ROADMAP.md) (po angielsku).
 
 ## Rysowanie i edycja: mysz i klawisze

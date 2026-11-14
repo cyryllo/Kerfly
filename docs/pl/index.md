@@ -219,7 +219,7 @@ Kerfly steruje prawdziwą maszyną z laserem, więc „chyba działa” to za ma
 
 ## Stan projektu
 
-**Kerfly 1.5 jest wersją stabilną, gotową do codziennej pracy** z laserem.
+**Kerfly 1.6 jest wersją stabilną, gotową do codziennej pracy** z laserem.
 Następne w planach: grawer każdego projektu na warstwie rastrowej osobno,
 wektoryzacja obrazów, więcej wzorów wypełnień,
 więcej pudełek oraz paczka dla Debiana z własnym repozytorium APT.

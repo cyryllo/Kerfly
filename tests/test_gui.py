@@ -170,6 +170,19 @@ def main():
           and stored == "0.35", "(%s)" % [powers, greyed, field.isEnabled(), stored])
     sd.close()
 
+    # 3b2. power settings only with the M3 board (the others have no power control: the knob sets it)
+    sd = _SD(dict(config.DEFAULT_VALUES, board_name="LASER-M2", trace_w_laser="1", show_power="1"), None, tab=0)
+    wd = sd._widgets
+    m2_off = not wd["show_power"].isEnabled() and not wd["max_power"].isEnabled() \
+        and not wd["Trace_power"].isEnabled()
+    wd["board_name"].setCurrentText("LASER-M3")
+    m3_on = wd["show_power"].isEnabled() and wd["max_power"].isEnabled() and wd["Trace_power"].isEnabled()
+    wd["show_power"].setChecked(False)
+    max_follows = not wd["max_power"].isEnabled() and wd["Trace_power"].isEnabled()
+    sd.close()
+    check("power settings greyed out without the M3 board (power per operation, maximum power, trace power)",
+          m2_off and m3_on and max_follows, "(%s)" % [m2_off, m3_on, max_follows])
+
     # 3c. after a job (K40 Whisperer's Popup Report and Run Batch File): a report window with the job
     # time (on by default, not blocking), a program run after the job with its output in the report,
     # its errors shown even with the report off; nothing after a boundary trace

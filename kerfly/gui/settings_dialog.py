@@ -83,6 +83,8 @@ TABS = [
     ]),
 ]
 
+M3_BOARD = "LASER-M3"           # the only board with power control
+
 # field -> the tick it depends on
 DEPENDS = {"Trace_power": "trace_w_laser", "batch_path": "post_exec", "pre_batch_path": "pre_exec", "LaserRscale": "rotary",
            "rapid_feed": "rotary"}
@@ -141,12 +143,10 @@ class SettingsDialog(QDialog):
                                                      "to switch on the exhaust or the air pump; the job waits "
                                                      "until it ends (at most a minute)"))
         # fields that count only with a tick: greyed out without it (as in K40 Whisperer)
-        for key, switch in DEPENDS.items():
-            box = self._widgets[switch]
-            parts = [self._widgets[key]] + ([self._labels[key]] if key in self._labels else [])
-            for part in parts:
-                part.setEnabled(box.isChecked())
-                box.toggled.connect(part.setEnabled)
+        for switch in set(DEPENDS.values()) | {"show_power"}:
+            self._widgets[switch].toggled.connect(self._update_enabled)
+        self._widgets["board_name"].currentTextChanged.connect(self._update_enabled)
+        self._update_enabled()
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
@@ -154,6 +154,21 @@ class SettingsDialog(QDialog):
         layout = QVBoxLayout(self)
         layout.addWidget(tabs)
         layout.addWidget(buttons)
+
+    def _update_enabled(self, *_args):
+        """Fields that count only with a tick, and the power settings only with the M3 board (the other
+        boards have no power control: the knob of the laser sets it): greyed out otherwise."""
+        m3 = self._widgets["board_name"].currentText() == M3_BOARD
+        wanted = {key: self._widgets[switch].isChecked() for key, switch in DEPENDS.items()}
+        wanted["show_power"] = m3
+        wanted["max_power"] = m3 and self._widgets["show_power"].isChecked()
+        wanted["Trace_power"] = wanted["Trace_power"] and m3
+        for key, on in wanted.items():
+            for part in [self._widgets[key]] + ([self._labels[key]] if key in self._labels else []):
+                part.setEnabled(on)
+        tip = "" if m3 else _("Only the M3 board sets the power; on other boards the power knob of the laser does")
+        for key in ("show_power", "max_power"):
+            self._widgets[key].setToolTip(tip)
 
     def _make_field(self, key, kind, opt, len_unit, speed_unit):
         value = self.values.get(key, "")

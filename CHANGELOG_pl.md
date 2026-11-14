@@ -3,7 +3,10 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
-## Unreleased
+## 1.6.0 (2026-11-14)
+
+Profile laserów, ciemny motyw, wszystkie skróty klawiszowe w jednym oknie,
+projekty .kerfly otwierane dwuklikiem, węższy pasek narzędzi.
 
 ### Dodane
 
@@ -33,6 +36,9 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   mieszczą, chowają się pod przyciskiem », zamiast obcinać napisy.
 - Generatory są za Ustawieniami, w menu i na pasku narzędzi.
 - Bez przycisku **Aktualizacje** na pasku: Pomoc → Sprawdź aktualizacje.
+- Ustawienia mocy (moc dla każdej operacji, moc maksymalna, moc objazdu) są
+  wyszarzone, gdy nie jest wybrana płyta M3: inne płyty nie sterują mocą, ustawia
+  ją pokrętło lasera.
 
 ## 1.5.0 (2026-11-14)
 

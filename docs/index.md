@@ -218,7 +218,7 @@ Kerfly drives a real machine with a laser, so "it seems to work" is not enough:
 
 ## Status
 
-**Kerfly 1.5 is stable and ready for everyday work** with your laser.
+**Kerfly 1.6 is stable and ready for everyday work** with your laser.
 Planned next: engraving each design on a raster layer separately, image
 tracing, more fill patterns, more boxes, and a Debian package with its own APT repository. See the
 [roadmap]({{ site.repo }}/blob/main/ROADMAP.md) and the

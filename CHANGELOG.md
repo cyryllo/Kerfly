@@ -7,7 +7,10 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.6.0 (2026-11-14)
+
+Laser profiles, a dark theme, all keyboard shortcuts in one window, .kerfly
+projects opened with a double click, a narrower toolbar.
 
 ### Added
 
@@ -37,6 +40,9 @@ Version numbers:
   behind the » button instead of their labels being cut.
 - Generators come after Settings, in the menu and on the toolbar.
 - No **Updates** button on the toolbar: Help → Check for updates.
+- The power settings (power per operation, maximum power, trace power) are
+  greyed out unless the M3 board is chosen: the other boards have no power
+  control, the knob of the laser sets it.
 
 ## 1.5.0 (2026-11-14)
 
