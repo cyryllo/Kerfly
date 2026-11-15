@@ -11,10 +11,16 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   pudełka ma obok płaskiego widoku **Części** zakładkę **3D**. Pokazuje
   pudełko złożone z tych samych części, które zostaną wycięte; przeciąganie
   obraca, kółko przybliża. **Rozsunięte** odsuwa części od siebie, żeby
-  pokazać połączenia, a suwak wysuwa wysuwane wieczko z rowka.
+  pokazać połączenia, a suwak wysuwa wysuwane wieczko z rowka. Części są
+  rysowane jako bryły, w kolejności, w jakiej się zasłaniają, więc przy
+  obracaniu żadna ściana nie znika.
 
 ### Zmienione
 
+- **Wysuwane wieczko (beta): nad górną listwą zostaje pas bocznej ścianki**
+  (co najmniej 3 mm albo grubość materiału), więc górna krawędź jest
+  mocniejsza; języczki listwy wchodzą w zamknięte szczeliny zamiast w
+  wycięcia krawędzi, a rowek, wieczko i niższy przód schodzą o tyle samo.
 - **Podsumowanie w oknie generatora liczy warstwy, których projekt używa**:
   dla pudełka na domyślnej warstwie cięcia pokazywało „warstw: 0”.
 - **Kerfly.exe i instalator dla Windows mają nazwę produktu i wersję**

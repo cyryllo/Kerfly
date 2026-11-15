@@ -358,8 +358,8 @@ jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
   krzyżujące się przegródki łączą nacięcia do połowy wysokości. **Wysuwane
   wieczko** (beta) wsuwa się od przodu w rowek między dwiema poziomymi
   listwami na każdej bocznej ściance; języczki listew wchodzą w szczeliny
-  ścianki (górnej listwy w wycięcia górnej krawędzi, równo z nią). Przód jest
-  niższy, więc wieczko przesuwa się nad nim. Części są układane tak, żeby
+  ścianki, a nad górną listwą zostaje pas ścianki wysoki co najmniej 3 mm, dla
+  wytrzymałości. Przód jest niższy, więc wieczko przesuwa się nad nim. Części są układane tak, żeby
   dobrze wykorzystać stół: obracane, gdy to pomaga, i dokładane w wolne
   miejsca wcześniejszych arkuszy.
 - **Okrągłe pudełko na zawiasie** (beta, jeszcze nie sprawdzone na laserze):

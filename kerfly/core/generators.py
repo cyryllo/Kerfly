@@ -324,8 +324,9 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
     evenly spaced; their tabs go through slots in the walls and the bottom, crossing dividers
     are joined by slots to half their height.
     sliding (beta, with lid): a lid that slides in from the front, in a groove between two level rails
-    on each side wall, held by tabs in slots of the wall (the upper rail at the top edge, the lower one
-    below the lid); the front wall is lower, so the lid slides over it. clearance: play of the lid in its
+    on each side wall, held by tabs in slots of the wall (the upper rail under a strip of the wall at least
+    3 mm high, for strength; the lower one below the lid); the front wall is lower, so the lid slides over
+    it. clearance: play of the lid in its
     groove and between the walls (mm)."""
     t = float(thickness)
     if inside:
@@ -380,11 +381,12 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
     c = max(0.0, float(clearance))
     rail_w = max(2 * t, 6.0)                         # how far a rail stands out from its wall (sliding lid)
     groove = t + c                                   # the lid's groove between the two rails
-    Hf = H - t - groove                              # sliding lid: the front's height (the lid slides over it)
-    if sliding and H - 3 * t - groove - t < 3 * t:
+    above = max(3.0, t)                              # wall left above the upper rail (a top edge, for strength)
+    Hf = H - above - t - groove                      # sliding lid: the front's height (the lid slides over it)
+    if sliding and H - above - 3 * t - groove - t < 3 * t:
         raise ValueError("The box is too low for a sliding lid of this material thickness.")
     if sliding:
-        Hd = H - 2 * t - groove - t                  # the dividers end below the lower rail
+        Hd = H - above - 2 * t - groove - t          # the dividers end below the lower rail
     else:
         Hd = H - t - (t if lid else 0.0)             # from the inside of the bottom to the lid
     top_off = H - t - Hd                             # the dividers' top, from the top of the walls
@@ -426,11 +428,11 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
         # the front is lower: its slots for the along dividers are measured from its own top
         front_slots = [(x0, y0 - (H - Hf), x1, y1 - (H - Hf)) for x0, y0, x1, y1 in wall_slots_front]
         front_edge = ("in", H - Hf, H)               # the side walls take the front's fingers below its top
-        # the rails' tabs go into the side walls: the upper rail's into notches of the top edge (flush with
-        # it), the lower rail's into slots under the groove
+        # the rails' tabs go into slots of the side walls, the upper rail's under a strip of the wall
+        # (`above`), the lower rail's under the groove
         rail_tabs = tab_segments(Di)
-        rail_slots = [(t + a, -1.0, t + b, t) for a, b in rail_tabs] + \
-            [(t + a, t + groove, t + b, 2 * t + groove) for a, b in rail_tabs]
+        rail_slots = [(t + a, above, t + b, above + t) for a, b in rail_tabs] + \
+            [(t + a, above + t + groove, t + b, above + 2 * t + groove) for a, b in rail_tabs]
 
         def rail():
             """A level rail: Di long, rail_w wide, its tabs t deep into the wall along one long edge."""
@@ -496,7 +498,7 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
             k = int(name.rsplit(" ", 1)[1]) - 1
             return (xs[k] - t / 2.0, 0, t + Hd), Y, down, X
         if name.endswith("rail"):
-            z0 = (H - t) if name == "upper rail" else (H - 2 * t - groove)
+            z0 = (H - above - t) if name == "upper rail" else (H - above - 2 * t - groove)
             if n_seen == 0:                         # the left wall's
                 return (t + rail_w, t, z0), Y, (-1, 0, 0), Z
             return (W - t - rail_w, t, z0), Y, (1, 0, 0), Z

@@ -1399,7 +1399,8 @@ def test_box_dividers():
 def test_sliding_lid():
     """Finger box with a sliding lid (beta): a lower front with as many fingers as the side walls have
     slots for it, the lid as wide as the inside less the play, four level rails whose tabs have their
-    slots in the side walls (the upper ones flush with the top edge), dividers below the lower rail."""
+    slots in the side walls (the upper ones under a strip of the wall at least 3 mm high, for strength),
+    dividers below the lower rail."""
     from kerfly.core import generators as gen
     failures = 0
 
@@ -1415,7 +1416,8 @@ def test_sliding_lid():
         pts = next(i for i in g.items if i.name == name).spec.points
         return max(x for x, _ in pts) - min(x for x, _ in pts), max(y for _, y in pts) - min(y for _, y in pts)
     groove = t + c
-    Hf = H - t - groove
+    above = max(3.0, t)
+    Hf = H - above - t - groove
     front_w, front_h = size("Front")
     lid_w, lid_h = size("Lid")
     check("front %.1f mm high (the lid slides over it), lid %.1f x %.1f mm" % (Hf, W - 2 * t - c, D - t - c),
@@ -1424,23 +1426,29 @@ def test_sliding_lid():
     rails = [i for i in g.items if i.name in ("Upper rail", "Lower rail")]
     check("four rails, no engraved marks", len(rails) == 4 and "Rail marks" not in names
           and not any(i.spec.operation == "engrave" for i in g.items), "(%s)" % names)
-    # rail tabs: x ranges on its wall side; side wall: top-edge notches and slots under the groove
+    # rail tabs: x ranges on its wall side; side wall: slots under the top strip and under the groove;
+    # the top edge itself is straight (no notches)
     rp = rails[0].spec.points
     rail_y = max(y for _, y in rp)
     tabs = sorted({round(x, 3) for x, y in rp if abs(y - rail_y) < 1e-6})
     left_parts = [i for i in g.items if i.name == "Left"]
     outer = left_parts[0]
     lp = outer.spec.points
-    top_notch_x = sorted({round(x - min(q[0] for q in lp) - t, 3) for x, y in lp
-                          if abs(y - min(q[1] for q in lp) - t) < 1e-6})
+    top_y = min(q[1] for q in lp)
+    top_edge_straight = len([1 for x, y in lp if abs(y - top_y) < 1e-6]) == 2
     slots = [i for i in left_parts[1:]]
-    lower = [i for i in slots if abs((i.top - outer.top) - (t + groove)) < 1e-6]
-    lower_x = sorted({round(i.left - outer.left - t + v, 3) for i in lower
-                      for v in (0.0, max(x for x, _ in i.spec.points))})
-    check("rail tabs have their notches (top edge) and slots (under the groove) at the same places",
-          tabs and all(any(abs(x - v) < 0.01 for v in top_notch_x) for x in tabs) and len(lower) == len(tabs) // 2
-          and all(any(abs(x - v) < 0.01 for v in lower_x) for x in tabs),
-          "(tabs %s, top %s, lower %s)" % (tabs, top_notch_x, lower_x))
+
+    def slot_x(row):
+        return sorted({round(i.left - outer.left - t + v, 3) for i in row
+                       for v in (0.0, max(x for x, _ in i.spec.points))})
+    upper = [i for i in slots if abs((i.top - outer.top) - above) < 1e-6]
+    lower = [i for i in slots if abs((i.top - outer.top) - (above + t + groove)) < 1e-6]
+    check("rail tabs have their slots (under a %.0f mm strip of the wall, under the groove) at the same places, "
+          "the top edge straight" % above,
+          tabs and top_edge_straight and len(upper) == len(lower) == len(tabs) // 2
+          and all(any(abs(x - v) < 0.01 for v in slot_x(upper)) for x in tabs)
+          and all(any(abs(x - v) < 0.01 for v in slot_x(lower)) for x in tabs),
+          "(tabs %s, straight %s, upper %s, lower %s)" % (tabs, top_edge_straight, slot_x(upper), slot_x(lower)))
     left = left_parts[0].spec.points
     front = next(i for i in g.items if i.name == "Front").spec.points
     fx = min(x for x, _ in front)
@@ -1451,7 +1459,7 @@ def test_sliding_lid():
     check("the side walls' slots for the front match its fingers",
           inner and all(any(abs(y - v) < 0.01 for v in front_runs) for y in inner), "(%s / %s)" % (inner, front_runs))
     div_h = size("Divider across 1")[1]
-    check("dividers end below the lower rail", div_h <= H - 2 * t - groove - t + t + 0.01, "(%s)" % div_h)
+    check("dividers end below the lower rail", div_h <= H - above - 2 * t - groove - t + t + 0.01, "(%s)" % div_h)
     try:
         gen.finger_box(60, 60, 18, 3, 10, 0.0, True, sliding=True)
         refused = False
@@ -1498,6 +1506,10 @@ def test_box_assembly():
                 if span(points(p), axis) != (lo, hi):
                     wrong.append((p["name"], span(points(p), axis)))
         sliding_lid = [p for p in g.assembly if p.get("slides")]
+        if kw.get("sliding"):                     # a strip of the side walls stays above the upper rails
+            rail_top = max(span(points(p), 2)[1] for p in g.assembly if p["name"] == "Upper rail")
+            if abs(rail_top - (H - max(3.0, t))) > 1e-6:
+                wrong.append(("Upper rail top", rail_top))
         check("finger box %s: %d parts, inside and filling %gx%gx%g, walls at their sides"
               % (kw or ("no lid" if not lid else "plain"), len(names), W, D, H),
               whole and not wrong and len(names) >= 5 + lid and

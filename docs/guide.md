@@ -351,8 +351,9 @@ remembered.
   their tabs go through slots in the walls and the bottom, crossing dividers
   are joined by slots to half their height. **Sliding lid** (beta) slides in
   from the front, in a groove between two level rails on each side wall; the
-  rails' tabs go into slots of the wall (the upper rail's into notches of the
-  top edge, flush with it). The front is lower, so the lid slides over it. The
+  rails' tabs go into slots of the wall, and a strip of the wall at least 3 mm
+  high stays above the upper rail, for strength. The front is lower, so the
+  lid slides over it. The
   parts are laid out to use the bed well: turned where that helps, into the
   room left on earlier sheets.
 - **Rounded box with a living hinge** (beta, not yet checked on a laser): a

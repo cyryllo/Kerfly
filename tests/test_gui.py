@@ -25,7 +25,7 @@ ROOT_DIR = os.path.dirname(TESTS_DIR)
 sys.path.insert(0, ROOT_DIR)
 
 from PySide6.QtCore import Qt  # noqa: E402
-from PySide6.QtGui import QKeySequence  # noqa: E402
+from PySide6.QtGui import QImage, QKeySequence, QPainter  # noqa: E402
 from PySide6.QtWidgets import QApplication, QComboBox, QWidget, QFileDialog, QInputDialog, QLabel, QMessageBox, QToolButton  # noqa: E402
 
 from kerfly.core import config  # noqa: E402
@@ -2473,6 +2473,47 @@ def main():
             slider_gone = not d3.lid_slider.isVisible()
         d3.reject()
         d3.deleteLater()
+    # the parts are drawn as solids in the right order: from each side the part on that side is seen in the
+    # middle, through an open top the bottom; and turned all round, the order never runs in a loop
+    from kerfly.core import generators as _gen3
+    from kerfly.gui.box3d import Box3DView as _B3
+    v3 = _B3()
+    v3.resize(400, 300)
+    sides3 = {"top": (0, 89), "bottom": (0, -89), "front": (0, 0), "back": (180, 0), "left": (90, 0),
+              "right": (-90, 0)}
+    expect3 = {
+        "box": (_gen3.finger_box(100, 80, 50, 3, 10, 0, True), dict(top="Lid", bottom="Bottom", front="Front",
+                                                                   back="Back", left="Left", right="Right")),
+        "open box": (_gen3.finger_box(100, 80, 50, 3, 10, 0, False), dict(top="Bottom", front="Front")),
+        "rounded box": (_gen3.hinge_box(120, 90, 50, 20, 3, 10, 0, True),
+                        dict(top="Lid", bottom="Bottom", front="Wall", left="Wall")),
+    }
+    seen3 = {}
+    for name3, (g3, want) in expect3.items():
+        v3.set_assembly(g3.assembly)
+        for side, part in want.items():
+            v3.yaw, v3.pitch = sides3[side]
+            got = v3.part_at(200, 150)
+            if got != part:
+                seen3["%s from the %s" % (name3, side)] = got
+    loops3 = []
+    img3 = QImage(400, 300, QImage.Format_RGB32)
+    for g3, ex3, lid3 in ((_gen3.finger_box(120, 90, 50, 3, 10, 0, True, sliding=True, dividers_across=1,
+                                            dividers_along=2), 0, 30), (_gen3.hinge_box(150, 100, 60, 30, 3, 10, 0,
+                                                                                         False), 25, 0)):
+        v3.set_assembly(g3.assembly)
+        v3.set_exploded(ex3)
+        v3.set_lid_out(lid3)
+        for yaw in range(-180, 180, 30):
+            for pitch in range(-80, 90, 20):
+                v3.yaw, v3.pitch = yaw, pitch
+                p3 = QPainter(img3)
+                v3.render(p3, 400, 300)
+                p3.end()
+                if v3.broken:
+                    loops3.append((yaw, pitch, v3.broken))
+    check("box 3D: solids in the right order (each side seen from its side, no loops when turned all round)",
+          not seen3 and not loops3, "(wrong %s, loops %s)" % (seen3, loops3[:5]))
     check("generators: 3D tab only for boxes, the box drawn, pulled apart, the sliding lid slides out",
           shown3d == {"finger_box": True, "hinge_box": True, "gear": False} and wood > 200 and slider
           and lid_out > 50 and apart > 0 and slider_gone,

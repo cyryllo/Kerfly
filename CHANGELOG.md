@@ -15,10 +15,16 @@ Version numbers:
   of the rounded box has a **3D** tab beside the flat **Parts** view. It shows
   the box put together from the very parts that will be cut; drag to turn it,
   the wheel zooms. **Pulled apart** moves the parts away from each other to
-  show the joints, and a slider slides a sliding lid out of its groove.
+  show the joints, and a slider slides a sliding lid out of its groove. The
+  parts are drawn as solids, in the order they hide each other, so no face
+  disappears while the box is turned.
 
 ### Changed
 
+- **Sliding lid (beta): a strip of the side walls stays above the upper
+  rail** (at least 3 mm, or the material's thickness), so the top edge is
+  stronger; the rail's tabs go into closed slots instead of notches of the
+  top edge, and the groove, the lid and the lower front move down with it.
 - **The generator window's summary counts the layers the design uses**: it
   said "0 layers" for a box on the default cut layer.
 - **Kerfly.exe and the Windows installer carry their product name and
