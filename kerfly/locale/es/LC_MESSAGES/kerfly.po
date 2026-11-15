@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 16:35+0100\n"
+"POT-Creation-Date: 2026-11-15 17:17+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -40,6 +40,10 @@ msgstr[1] "%d elementos"
 #, python-format
 msgid "%d mm"
 msgstr "%d mm"
+
+#, python-format
+msgid "%d outlines"
+msgstr "%d contornos"
 
 #, python-format
 msgid "%d × %d pixels"
@@ -637,11 +641,19 @@ msgstr "Copiar los elementos seleccionados y quitarlos"
 msgid "Copy the selected elements, to paste them here or in another project"
 msgstr "Copiar los elementos seleccionados para pegarlos aquí o en otro proyecto"
 
+msgid "Corner"
+msgstr "Esquina"
+
 msgid "Corner radius"
 msgstr "Radio de esquina"
 
 msgid "Corner radius: 0 for sharp corners"
 msgstr "Radio de las esquinas: 0 para esquinas vivas"
+
+msgid "Corner: turns sharper than this stay corners, the rest become curves"
+msgstr ""
+"Esquina: los giros más cerrados que este quedan como esquinas, el resto "
+"se vuelve curva"
 
 msgid "Corners of the new outline: rounded, or sharp like the shape's"
 msgstr "Esquinas del nuevo contorno: redondeadas, o vivas como las de la forma"
@@ -803,6 +815,16 @@ msgstr "El diseño sigue al cabezal"
 
 msgid "Design import"
 msgstr "Importación del diseño"
+
+msgid "Detail"
+msgstr "Detalle"
+
+msgid ""
+"Detail: how far the outline may stray from the pixel edges (smaller: more"
+" nodes, closer to the picture)"
+msgstr ""
+"Detalle: cuánto puede alejarse el contorno de los bordes de los píxeles "
+"(menos: más nodos, más fiel a la imagen)"
 
 #, python-format
 msgid "Diagnostic report saved: %s"
@@ -1333,6 +1355,12 @@ msgid ""
 msgstr ""
 "I insertar, D borrar, L línea, C curva, O suave, S simétrico, Z cerrar / "
 "abrir, B separar"
+
+msgid "Ignore specks"
+msgstr "Ignorar motas"
+
+msgid "Ignore specks: dark spots smaller than this many pixels are left out"
+msgstr "Ignorar motas: las manchas oscuras de menos píxeles que estos se omiten"
 
 msgid "Image size"
 msgstr "Tamaño de la imagen"
@@ -1949,6 +1977,9 @@ msgstr "Nada que hacer: cargue un diseño y seleccione al menos una operación."
 
 msgid "Nothing to draw."
 msgstr "No hay nada que dibujar."
+
+msgid "Nothing to trace at this threshold."
+msgstr "No hay nada que vectorizar con este umbral."
 
 msgid "Number"
 msgstr "Número"
@@ -2617,6 +2648,9 @@ msgstr "Ver la versión"
 msgid "Select &all"
 msgstr "Seleccionar &todo"
 
+msgid "Select a picture to trace first."
+msgstr "Seleccione primero una imagen para vectorizar."
+
 msgid "Select an opened file or a text with lines to break it apart."
 msgstr "Selecciona un archivo abierto o un texto con líneas para separarlo."
 
@@ -2781,6 +2815,9 @@ msgstr "Letras más pequeñas"
 
 msgid "Smooth"
 msgstr "Suave"
+
+msgid "Smooth curves (sharp corners stay sharp)"
+msgstr "Curvas suaves (las esquinas agudas siguen agudas)"
 
 msgid "Smooth, with both handles of the same length"
 msgstr "Suave, con ambos tiradores de la misma longitud"
@@ -3184,6 +3221,13 @@ msgstr ""
 " desmarcadas: corte la hoja 1, cambie el material y marque la capa de la "
 "siguiente hoja."
 
+msgid ""
+"The paths are put over the picture as a new element; the picture stays "
+"(delete it or leave it out of the job)."
+msgstr ""
+"Los trazados se colocan sobre la imagen como un elemento nuevo; la imagen"
+" se queda (bórrela o déjela fuera del trabajo)."
+
 #, python-format
 msgid "The program could not be started: %s"
 msgstr "No se pudo iniciar el programa: %s"
@@ -3329,6 +3373,9 @@ msgstr "Esto crea %d formas separadas, lo que puede ralentizar Kerfly. ¿Continu
 msgid "Threshold"
 msgstr "Umbral"
 
+msgid "Threshold: pixels darker than this are traced"
+msgstr "Umbral: se vectorizan los píxeles más oscuros que este"
+
 msgid "Time"
 msgstr "Tiempo"
 
@@ -3344,6 +3391,12 @@ msgstr "Al &final (últimos)"
 msgid "To the &start (first)"
 msgstr "Al &principio (primeros)"
 
+msgid "Trace"
+msgstr "Vectorizar"
+
+msgid "Trace &picture…"
+msgstr "&Vectorizar imagen…"
+
 msgid "Trace boundary"
 msgstr "Recorrer contorno"
 
@@ -3354,6 +3407,27 @@ msgstr ""
 "Recorrer contorno: el cabezal recorre el contorno del diseño (láser "
 "apagado, salvo que se indique otra cosa en Ajustes) para comprobar dónde "
 "se cortará"
+
+#, python-format
+msgid "Trace of %s"
+msgstr "Vectorización de %s"
+
+msgid "Trace picture"
+msgstr "Vectorizar imagen"
+
+msgid "Trace the light areas instead"
+msgstr "Vectorizar las zonas claras en su lugar"
+
+msgid ""
+"Trace: the dark areas of the selected picture become paths you can cut, "
+"outline, fill or edit node by node"
+msgstr ""
+"Vectorizar: las zonas oscuras de la imagen seleccionada se vuelven "
+"trazados para cortar, contornear, rellenar o editar nodo a nodo"
+
+#, python-format
+msgid "Traced: %d outlines over the picture (Undo takes them away)."
+msgstr "Vectorizado: %d contornos sobre la imagen (Deshacer los quita)."
 
 msgctxt "toolbar group"
 msgid "Transform"

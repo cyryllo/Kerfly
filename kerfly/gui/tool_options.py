@@ -158,6 +158,19 @@ class ToolOptionsBar(QWidget):
             except RuntimeError:
                 pass                             # the bar was rebuilt meanwhile
 
+    def show_picture(self, actions):
+        """A selected picture: its commands (Trace)."""
+        self.spec = None
+        self._clear()
+        for act in actions:
+            b = QToolButton()
+            b.setDefaultAction(act)
+            b.setIconSize(QSize(20, 20))
+            b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            b.setAutoRaise(True)
+            self._add(b, _("Picture"))
+        self.row.addStretch(1)
+
     def _add(self, content, caption):
         if self.row.count():
             self.row.addWidget(ribbon_separator())

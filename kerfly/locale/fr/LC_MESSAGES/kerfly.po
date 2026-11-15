@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 16:35+0100\n"
+"POT-Creation-Date: 2026-11-15 17:17+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -40,6 +40,10 @@ msgstr[1] "%d éléments"
 #, python-format
 msgid "%d mm"
 msgstr "%d mm"
+
+#, python-format
+msgid "%d outlines"
+msgstr "%d contours"
 
 #, python-format
 msgid "%d × %d pixels"
@@ -637,11 +641,19 @@ msgstr ""
 "Copier les éléments sélectionnés pour les coller ici ou dans un autre "
 "projet"
 
+msgid "Corner"
+msgstr "Coin"
+
 msgid "Corner radius"
 msgstr "Rayon des coins"
 
 msgid "Corner radius: 0 for sharp corners"
 msgstr "Rayon des coins : 0 pour des coins vifs"
+
+msgid "Corner: turns sharper than this stay corners, the rest become curves"
+msgstr ""
+"Coin : les virages plus serrés que cet angle restent des coins, le reste "
+"devient des courbes"
 
 msgid "Corners of the new outline: rounded, or sharp like the shape's"
 msgstr "Coins du nouveau contour : arrondis, ou vifs comme ceux de la forme"
@@ -805,6 +817,16 @@ msgstr "Le dessin suit la tête"
 
 msgid "Design import"
 msgstr "Import du dessin"
+
+msgid "Detail"
+msgstr "Détail"
+
+msgid ""
+"Detail: how far the outline may stray from the pixel edges (smaller: more"
+" nodes, closer to the picture)"
+msgstr ""
+"Détail : de combien le contour peut s'écarter des bords des pixels (moins"
+" : plus de nœuds, plus proche de l'image)"
 
 #, python-format
 msgid "Diagnostic report saved: %s"
@@ -1331,6 +1353,14 @@ msgid ""
 msgstr ""
 "I insérer, D supprimer, L ligne, C courbe, O lisse, S symétrique, Z "
 "fermer / ouvrir, B couper"
+
+msgid "Ignore specks"
+msgstr "Ignorer les taches"
+
+msgid "Ignore specks: dark spots smaller than this many pixels are left out"
+msgstr ""
+"Ignorer les taches : les points sombres plus petits que ce nombre de "
+"pixels sont ignorés"
 
 msgid "Image size"
 msgstr "Taille de l'image"
@@ -1952,6 +1982,9 @@ msgstr "Rien à faire : chargez un dessin et sélectionnez au moins une opérati
 
 msgid "Nothing to draw."
 msgstr "Rien à dessiner."
+
+msgid "Nothing to trace at this threshold."
+msgstr "Rien à vectoriser avec ce seuil."
 
 msgid "Number"
 msgstr "Nombre"
@@ -2623,6 +2656,9 @@ msgstr "Voir la version"
 msgid "Select &all"
 msgstr "&Tout sélectionner"
 
+msgid "Select a picture to trace first."
+msgstr "Sélectionnez d'abord une image à vectoriser."
+
 msgid "Select an opened file or a text with lines to break it apart."
 msgstr ""
 "Sélectionnez un fichier ouvert ou un texte avec des lignes pour le "
@@ -2791,6 +2827,9 @@ msgstr "Lettres plus petites"
 
 msgid "Smooth"
 msgstr "Lisse"
+
+msgid "Smooth curves (sharp corners stay sharp)"
+msgstr "Courbes lisses (les coins vifs restent vifs)"
 
 msgid "Smooth, with both handles of the same length"
 msgstr "Lisse, avec deux poignées de même longueur"
@@ -3192,6 +3231,13 @@ msgstr ""
 "2 sont sur leurs propres calques de découpe, décochés : coupez la feuille"
 " 1, changez le matériau, puis cochez le calque de la feuille suivante."
 
+msgid ""
+"The paths are put over the picture as a new element; the picture stays "
+"(delete it or leave it out of the job)."
+msgstr ""
+"Les tracés sont posés sur l'image comme un nouvel élément ; l'image reste"
+" (supprimez-la ou laissez-la hors du travail)."
+
 #, python-format
 msgid "The program could not be started: %s"
 msgstr "Le programme n'a pas pu être lancé : %s"
@@ -3338,6 +3384,9 @@ msgstr "Cela crée %d formes séparées, ce qui peut ralentir Kerfly. Continuer 
 msgid "Threshold"
 msgstr "Seuil"
 
+msgid "Threshold: pixels darker than this are traced"
+msgstr "Seuil : les pixels plus sombres sont vectorisés"
+
 msgid "Time"
 msgstr "Durée"
 
@@ -3353,6 +3402,12 @@ msgstr "À la &fin (derniers)"
 msgid "To the &start (first)"
 msgstr "Au &début (premiers)"
 
+msgid "Trace"
+msgstr "Vectoriser"
+
+msgid "Trace &picture…"
+msgstr "&Vectoriser l'image…"
+
 msgid "Trace boundary"
 msgstr "Parcourir le contour"
 
@@ -3362,6 +3417,27 @@ msgid ""
 msgstr ""
 "Parcourir le contour : la tête fait le tour du dessin (laser éteint, sauf"
 " réglage contraire dans les Paramètres) pour vérifier où il sera découpé"
+
+#, python-format
+msgid "Trace of %s"
+msgstr "Vectorisation de %s"
+
+msgid "Trace picture"
+msgstr "Vectoriser l'image"
+
+msgid "Trace the light areas instead"
+msgstr "Vectoriser plutôt les zones claires"
+
+msgid ""
+"Trace: the dark areas of the selected picture become paths you can cut, "
+"outline, fill or edit node by node"
+msgstr ""
+"Vectoriser : les zones sombres de l'image sélectionnée deviennent des "
+"tracés à découper, contourer, remplir ou modifier nœud par nœud"
+
+#, python-format
+msgid "Traced: %d outlines over the picture (Undo takes them away)."
+msgstr "Vectorisé : %d contours sur l'image (Annuler les retire)."
 
 msgctxt "toolbar group"
 msgid "Transform"

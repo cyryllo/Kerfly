@@ -24,6 +24,11 @@ Version numbers:
   Dithering method): Floyd-Steinberg (as before, the default), Atkinson (more
   contrast, clean light areas: good on wood), Jarvis, Stucki, Burkes and
   Sierra (smoother gradients), ordered Bayer (an even texture) and threshold.
+- **Trace picture** (the button of a selected picture, Edit → Trace picture…,
+  toolbar Shapes): the dark areas of a picture become paths over it, to cut,
+  outline, fill or edit node by node. Threshold, ignore specks, detail and
+  smooth curves (sharp corners stay sharp), with the outlines shown over the
+  picture while you set them.
 
 ## 1.6.0 (2026-11-14)
 

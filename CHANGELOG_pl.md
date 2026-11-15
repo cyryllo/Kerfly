@@ -21,6 +21,11 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   (większy kontrast, czyste jasne miejsca: dobra na drewno), Jarvis, Stucki,
   Burkes i Sierra (gładsze przejścia), uporządkowany Bayer (równa faktura) i
   próg.
+- **Wektoryzuj obrazek** (przycisk zaznaczonego obrazka, Edycja → Wektoryzuj
+  obrazek…, pasek Kształty): ciemne miejsca obrazka stają się ścieżkami na nim,
+  do cięcia, obrysu, wypełnienia albo edycji węzłów. Próg, pomijanie drobinek,
+  dokładność i gładkie krzywe (ostre narożniki zostają ostre), z obrysami
+  widocznymi na tle obrazka podczas ustawiania.
 
 ## 1.6.0 (2026-11-14)
 

@@ -157,7 +157,7 @@ and the default layers (it asks to save unsaved changes first).
 |---|---|
 | SVG | Red lines are cut, blue lines engraved as outlines, everything else (fills, pictures, black lines) is raster engraved. Inkscape is used when installed, otherwise the built-in renderer; Inkscape is needed for SVG text that is cut or engraved as an outline |
 | DXF | Cut lines; blue entities and layers named *engrave* become outline engraving |
-| PNG, JPG, BMP, TIFF, GIF, WebP | Raster engraving: dark pixels are engraved. Kerfly shows the image size; set the resolution or the width and height |
+| PNG, JPG, BMP, TIFF, GIF, WebP | Raster engraving: dark pixels are engraved. Kerfly shows the image size; set the resolution or the width and height. **Trace picture** (the button of a selected picture, or Edit → Trace picture…) turns its dark areas into paths over it, to cut, outline, fill with a pattern or edit node by node: set the threshold, ignore specks, detail and smooth curves while the outlines show over the picture |
 | G-code (.ngc, .gcode, .nc, .g, .tap) | Run as G-code |
 | Kerfly project (.kerfly) | The whole layout, layers and drawn shapes |
 

@@ -128,7 +128,12 @@ class Session:
                 if not s.files:
                     s.fail("dialog", "a %s file picker opened without an answer" % kind)
                     return "", ""
-                return s.files.pop(0), ""
+                name = s.files.pop(0)
+                if kind == "save" and os.path.abspath(name).startswith(os.path.abspath(TESTS_DIR) + os.sep):
+                    # answers got out of step: never write over the test files (a report once replaced a fixture)
+                    s.fail("dialog", "a save picker was answered with a test file: %s (answers out of step)" % name)
+                    return "", ""
+                return name, ""
             return staticmethod(pick)
         QFileDialog.getOpenFileName = answer("open")
         QFileDialog.getSaveFileName = answer("save")
@@ -1445,6 +1450,39 @@ def part_files_and_help(s):
     s.step("File → Add design… (SVG)", lambda: s.trigger(w.act_add, via="menu"), undo=True,
            check=lambda: (len(w.elements) == n + 1, "%d elements" % len(w.elements)))
     s.step("File → Reload design (F5)", lambda: s.trigger(w.act_reload, via="key"), change=None, undo=False)
+    # a picture: Add design (PNG), click it, Trace in its options bar, threshold moved, Trace
+    from PIL import Image as _PImage, ImageDraw as _PDraw
+    png = os.path.join(s.tmp, "logo.png")
+    im = _PImage.new("L", (300, 200), 255)
+    _PDraw.Draw(im).ellipse((40, 30, 200, 170), fill=0)
+    _PDraw.Draw(im).rectangle((90, 80, 150, 120), fill=255)
+    im.save(png, dpi=(150, 150))
+    s.files.append(png)
+    s.expect_dialog("picture size", lambda d: d.accept())
+    n_pic = len(w.elements)
+    s.step("File → Add design… (Ctrl+Shift+O, PNG picture)", lambda: s.trigger(w.act_add, via="key"), undo=True,
+           check=lambda: (len(w.elements) == n_pic + 1 and w.elements[-1].design.raster.image is not None,
+                          "%d elements" % len(w.elements)))
+    picture = w.elements[-1]
+    s.step("click the picture", lambda: s.click_bed(*s.element_at(picture)), change=False,
+           check=lambda: (w.selected is picture, "selected %s" % (w.selected.name if w.selected else None)))
+
+    def trace_it(dlg):
+        from PySide6.QtWidgets import QDialogButtonBox
+        edit = dlg.threshold_value.lineEdit()           # typed without Enter (Enter would press Trace)
+        s.click(edit)
+        QTest.keyClick(edit, Qt.Key_A, Qt.ControlModifier)
+        QTest.keyClicks(edit, "140")
+        s.settle(6, 0.05)
+        if dlg.threshold.value() != 140:
+            raise RuntimeError("threshold %s" % dlg.threshold.value())
+        s.click(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok))
+    s.expect_dialog("trace picture", trace_it)
+    s.step("picture options bar: Trace picture, threshold 140, Trace", lambda: s.trigger(w.act_trace_image),
+           check=lambda: (w.elements[-1] is not picture and w.elements[-1].shape is not None
+                          and w.elements[-1].shape.kind == "path" and len(w.elements[-1].shape.subpaths) == 2
+                          and w.elements[-1].shape.closed,
+                          "last %s" % (w.elements[-1].shape.kind if w.elements[-1].shape else w.elements[-1].name)))
     from PySide6.QtWidgets import QPushButton
     def calc_raster():
         rows = [r for r in w.layers_panel.rows.values() if r.get("calc") is not None]
@@ -1464,7 +1502,8 @@ def part_files_and_help(s):
     s.files.append(os.path.join(FIX, "shapes.dxf"))
     s.expect_dialog("DXF units", lambda d: s.click_dialog_button(d, "OK"), optional=True)
     s.step("File → Open design… (DXF, replaces)", lambda: s.trigger(w.act_open), undo=False,
-           check=lambda: (len(w.elements) == 1, "%d elements" % len(w.elements)))
+           check=lambda: (len(w.elements) == 1, "%d elements, files left %s, status %r"
+                          % (len(w.elements), s.files, w.statusBar().currentMessage())))
     s.expect_dialog("settings", lambda d: d.accept())
     s.step("Settings → Settings… (opens, OK)", lambda: s.trigger(w.act_settings, via="menu"), change=False, undo=False)
     s.step("Help → User guide (F1)", lambda: s.trigger(w.act_guide, via="key"), change=False,

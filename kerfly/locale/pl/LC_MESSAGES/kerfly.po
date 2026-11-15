@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 16:35+0100\n"
+"POT-Creation-Date: 2026-11-15 17:17+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -42,6 +42,10 @@ msgstr[2] "%d elementów"
 #, python-format
 msgid "%d mm"
 msgstr "%d mm"
+
+#, python-format
+msgid "%d outlines"
+msgstr "Obrysy: %d"
 
 #, python-format
 msgid "%d × %d pixels"
@@ -629,11 +633,19 @@ msgstr "Skopiuj zaznaczone elementy i usuń je"
 msgid "Copy the selected elements, to paste them here or in another project"
 msgstr "Skopiuj zaznaczone elementy, żeby wkleić je tutaj albo w innym projekcie"
 
+msgid "Corner"
+msgstr "Narożnik"
+
 msgid "Corner radius"
 msgstr "Promień rogów"
 
 msgid "Corner radius: 0 for sharp corners"
 msgstr "Promień rogów: 0 to ostre rogi"
+
+msgid "Corner: turns sharper than this stay corners, the rest become curves"
+msgstr ""
+"Narożnik: zakręty ostrzejsze niż ten kąt zostają narożnikami, reszta "
+"staje się krzywymi"
 
 msgid "Corners of the new outline: rounded, or sharp like the shape's"
 msgstr "Narożniki nowego obrysu: zaokrąglone albo ostre jak w kształcie"
@@ -793,6 +805,16 @@ msgstr "Projekt podąża za głowicą"
 
 msgid "Design import"
 msgstr "Import projektu"
+
+msgid "Detail"
+msgstr "Dokładność"
+
+msgid ""
+"Detail: how far the outline may stray from the pixel edges (smaller: more"
+" nodes, closer to the picture)"
+msgstr ""
+"Dokładność: jak daleko obrys może odejść od krawędzi pikseli (mniej: "
+"więcej węzłów, bliżej obrazka)"
 
 #, python-format
 msgid "Diagnostic report saved: %s"
@@ -1312,6 +1334,12 @@ msgid ""
 msgstr ""
 "I wstaw, D usuń, L linia, C krzywa, O gładki, S symetryczny, Z zamknij / "
 "otwórz, B rozdziel"
+
+msgid "Ignore specks"
+msgstr "Pomiń drobinki"
+
+msgid "Ignore specks: dark spots smaller than this many pixels are left out"
+msgstr "Pomiń drobinki: ciemne plamki mniejsze niż tyle pikseli są pomijane"
 
 msgid "Image size"
 msgstr "Rozmiar obrazu"
@@ -1927,6 +1955,9 @@ msgstr "Nic do zrobienia: wczytaj projekt i zaznacz co najmniej jedną operację
 
 msgid "Nothing to draw."
 msgstr "Nie ma czego narysować."
+
+msgid "Nothing to trace at this threshold."
+msgstr "Przy tym progu nie ma czego wektoryzować."
 
 msgid "Number"
 msgstr "Liczba"
@@ -2593,6 +2624,9 @@ msgstr "Zobacz wydanie"
 msgid "Select &all"
 msgstr "&Zaznacz wszystko"
 
+msgid "Select a picture to trace first."
+msgstr "Najpierw zaznacz obrazek do wektoryzacji."
+
 msgid "Select an opened file or a text with lines to break it apart."
 msgstr "Zaznacz otwarty plik albo tekst z liniami, aby go rozbić."
 
@@ -2755,6 +2789,9 @@ msgstr "Mniejsze litery"
 
 msgid "Smooth"
 msgstr "Gładki"
+
+msgid "Smooth curves (sharp corners stay sharp)"
+msgstr "Gładkie krzywe (ostre narożniki zostają ostre)"
 
 msgid "Smooth, with both handles of the same length"
 msgstr "Gładki, z oboma uchwytami tej samej długości"
@@ -3148,6 +3185,13 @@ msgstr ""
 "cięcia, odhaczonych: wytnij arkusz 1, zmień materiał, potem zaznacz "
 "warstwę kolejnego arkusza."
 
+msgid ""
+"The paths are put over the picture as a new element; the picture stays "
+"(delete it or leave it out of the job)."
+msgstr ""
+"Ścieżki trafiają na obrazek jako nowy element; obrazek zostaje (usuń go "
+"albo wyłącz z zadania)."
+
 #, python-format
 msgid "The program could not be started: %s"
 msgstr "Nie udało się uruchomić programu: %s"
@@ -3287,6 +3331,9 @@ msgstr "Powstanie %d osobnych kształtów, co może spowolnić Kerfly. Kontynuow
 msgid "Threshold"
 msgstr "Próg"
 
+msgid "Threshold: pixels darker than this are traced"
+msgstr "Próg: wektoryzowane są piksele ciemniejsze od tego"
+
 msgid "Time"
 msgstr "Czas"
 
@@ -3302,6 +3349,12 @@ msgstr "Na &koniec (ostatnie)"
 msgid "To the &start (first)"
 msgstr "Na &początek (pierwsze)"
 
+msgid "Trace"
+msgstr "Wektoryzuj"
+
+msgid "Trace &picture…"
+msgstr "&Wektoryzuj obrazek…"
+
 msgid "Trace boundary"
 msgstr "Objazd konturu"
 
@@ -3312,6 +3365,27 @@ msgstr ""
 "Objazd konturu: głowica objeżdża obrys projektu (z wyłączonym laserem, "
 "chyba że w Ustawieniach zaznaczono inaczej), aby sprawdzić, gdzie "
 "zostanie wycięty"
+
+#, python-format
+msgid "Trace of %s"
+msgstr "Wektoryzacja: %s"
+
+msgid "Trace picture"
+msgstr "Wektoryzuj obrazek"
+
+msgid "Trace the light areas instead"
+msgstr "Wektoryzuj jasne miejsca zamiast ciemnych"
+
+msgid ""
+"Trace: the dark areas of the selected picture become paths you can cut, "
+"outline, fill or edit node by node"
+msgstr ""
+"Wektoryzacja: ciemne miejsca zaznaczonego obrazka stają się ścieżkami do "
+"cięcia, obrysu, wypełnienia albo edycji węzłów"
+
+#, python-format
+msgid "Traced: %d outlines over the picture (Undo takes them away)."
+msgstr "Zwektoryzowano: %d obrysów na obrazku (Cofnij je usuwa)."
 
 msgctxt "toolbar group"
 msgid "Transform"

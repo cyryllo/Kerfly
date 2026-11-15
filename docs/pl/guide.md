@@ -161,7 +161,7 @@ pozostałych.
 |---|---|
 | SVG | Czerwone linie są cięte, niebieskie grawerowane jako obrys, a cała reszta (wypełnienia, obrazy, czarne linie) grawerowana rastrowo. Kerfly używa Inkscape, jeśli jest zainstalowany, a bez niego własnego renderera; Inkscape jest potrzebny do tekstu w SVG, który ma być cięty albo grawerowany jako obrys |
 | DXF | Linie cięcia; niebieskie obiekty i warstwy o nazwie *engrave* to obrys |
-| PNG, JPG, BMP, TIFF, GIF, WebP | Grawer rastrowy: ciemne piksele są grawerowane. Kerfly pokazuje rozmiar obrazu; ustaw rozdzielczość albo szerokość i wysokość |
+| PNG, JPG, BMP, TIFF, GIF, WebP | Grawer rastrowy: ciemne piksele są grawerowane. Kerfly pokazuje rozmiar obrazu; ustaw rozdzielczość albo szerokość i wysokość. **Wektoryzuj obrazek** (przycisk zaznaczonego obrazka albo Edycja → Wektoryzuj obrazek…) zamienia jego ciemne miejsca w ścieżki nałożone na obrazek, do cięcia, obrysu, wypełnienia wzorem albo edycji węzłów: ustaw próg, pomijanie drobinek, dokładność i gładkie krzywe, patrząc na obrysy na tle obrazka |
 | G-code (.ngc, .gcode, .nc, .g, .tap) | Wykonywany jako G-code |
 | Projekt Kerfly (.kerfly) | Cały układ, warstwy i narysowane kształty |
 

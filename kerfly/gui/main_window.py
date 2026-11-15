@@ -312,6 +312,10 @@ class MainWindow(QMainWindow):
                                        _("Offset: a new outline around a shape (or inside it), a set distance "
                                          "away"))
         self.act_offset.setIcon(icons.tabler("box-padding"))
+        self.act_trace_image = self._action(_("Trace &picture…"), self.trace_image, None,
+                                            _("Trace: the dark areas of the selected picture become paths you can "
+                                              "cut, outline, fill or edit node by node"))
+        self.act_trace_image.setIcon(icons.tabler("vector-spline"))
         self.act_mirror_h = self._action(_("&Mirror horizontally"), lambda: self.mirror_selected(True), "Ctrl+Shift+H",
                                          _("Flip the selected elements left to right"))
         self.act_mirror_v = self._action(_("Mirror &vertically"), lambda: self.mirror_selected(False), "Ctrl+Shift+V",
@@ -413,6 +417,7 @@ class MainWindow(QMainWindow):
         for a in self.act_boolean.values():
             sub2.addAction(a)
         m.addAction(self.act_offset)
+        m.addAction(self.act_trace_image)
         sub = m.addMenu(_("Align and distribute"))
         for a in list(self.act_align.values()) + [None, self.act_distribute_h, self.act_distribute_v]:
             sub.addSeparator() if a is None else sub.addAction(a)
@@ -556,6 +561,7 @@ class MainWindow(QMainWindow):
                 (self.act_ungroup, "squares"),
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
+                (self.act_trace_image, "vector-spline"),
             ]),
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
@@ -787,6 +793,11 @@ class MainWindow(QMainWindow):
                 return                   # already shown; rebuilding would interrupt typing
             self._options_target, self._options_element = "selected", e
             self.tool_options.show_spec(e.shape, e.name)
+        elif e is not None and e.design.raster.image is not None and self.preview.tool == "select":
+            if force or getattr(self, "_options_target", None) != "picture" \
+                    or getattr(self, "_options_element", None) is not e:
+                self._options_target, self._options_element = "picture", e
+                self.tool_options.show_picture([self.act_trace_image])
         elif self.preview.tool in self.shape_defaults:
             self._options_target, self._options_element = self.preview.tool, None
             self.tool_options.show_spec(self.shape_defaults[self.preview.tool],
@@ -4744,6 +4755,51 @@ class MainWindow(QMainWindow):
     def _skip_update(self, version):
         self.values["update_skip"] = version
         self._remember_view()
+
+    def trace_image(self):
+        """Edit → Trace picture…: the dark areas of the selected picture as a new path element over it."""
+        from kerfly.core import curves
+        from kerfly.gui.trace_dialog import TraceDialog
+        e = self.selected
+        if e is None or e.design.raster.image is None:
+            self.status(_("Select a picture to trace first."), error=True)
+            return
+        dlg = TraceDialog(e.design.raster.image, self)
+        if not dlg.exec():
+            return
+        paths = dlg.result_paths()
+        if not paths:
+            self.status(_("Nothing to trace at this threshold."), error=True)
+            return
+        d = e.design
+        dpi = float(d.input_dpi)
+        xmin, _xmax, _ymin, ymax = d.bounds
+        # pixels (y down) -> the picture's design (inches, y up) -> mm, y down, from the traced outline
+        x0p, x1p, y0p, y1p = curves.bounds(paths)
+        local = curves.translate(paths, -x0p, -y0p)
+        k = 25.4 / dpi
+        for sp in local:
+            for nd in sp["nodes"]:
+                for i in (0, 1, 2, 3, 4, 5):
+                    if nd[i] is not None:
+                        nd[i] *= k
+        spec = ShapeSpec(kind="path", operation="engrave")
+        spec.subpaths = local
+        spec.width, spec.height = (x1p - x0p) * k, (y1p - y0p) * k
+        design = build_design(spec)
+        self._checkpoint()
+        traced = Element(design, name=_("Trace of %s") % e.name, shape=spec)
+        traced.scale_x, traced.scale_y, traced.rotation = e.scale_x, e.scale_y, e.rotation
+        # its middle where that part of the picture is on the bed
+        cx = xmin + (x0p + x1p) / 2.0 / dpi
+        cy = ymax - (y0p + y1p) / 2.0 / dpi
+        traced.set_centre(*e.transform()(cx, cy))
+        self.elements.append(traced)
+        self.selected = traced
+        self._compiled = None
+        self._layout_changed()
+        diag_log.info("traced %s: %d paths", e.name, len(paths))
+        self.status(_("Traced: %d outlines over the picture (Undo takes them away).") % len(paths))
 
     def show_shortcuts(self):
         """Help → Keyboard shortcuts: one window, not blocking; a second click brings it to the front."""

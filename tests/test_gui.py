@@ -446,6 +446,51 @@ def main():
           "(%s)" % [mm_kept, back_in, switched, machine_kept, back, refused, renamed, duplicated, imported, deleted,
                     used, in_box, at_start, pw.profiles.names()])
 
+    # 3e4. Trace picture: the dark areas of a picture become a path element exactly over them (also with the
+    # picture turned, and with home in the upper right corner); the picture's options bar has the button
+    from PIL import Image as _PImage, ImageDraw as _PDraw
+    from kerfly.gui.trace_dialog import TraceDialog as _TD
+    pic = os.path.join(tempfile.mkdtemp(), "square.png")
+    im = _PImage.new("L", (200, 100), 255)                # 100 dpi: 50.8 x 25.4 mm
+    _PDraw.Draw(im).rectangle((20, 10, 59, 49), fill=0)   # 40 x 40 px = 10.16 mm, 5.08 mm from the left
+    im.save(pic, dpi=(100, 100))
+    real_exec = _TD.exec
+    _TD.exec = lambda self: 1
+    from kerfly.gui import image_dialog as _imgd
+    real_size_exec = _imgd.ImageSizeDialog.exec
+    _imgd.ImageSizeDialog.exec = lambda self: True          # the size of the picture: as in the file
+    results = []
+    for home_ur, turn in (("0", 0), ("0", 90), ("1", 0)):
+        tw = make_window(HomeUR=home_ur, grid_mm="0", follow_head="0")
+        tw.load_design(pic)
+        picture = tw.elements[-1]
+        if turn:
+            picture.rotation = turn
+        select(tw, picture)
+        bar_button = any(b.defaultAction() is tw.act_trace_image for b in tw.tool_options.findChildren(QToolButton))
+        f = picture.transform()
+        d = picture.design
+        dpi = float(d.input_dpi)
+        corners = [f(d.bounds[0] + px * (dpi / 100.0) / dpi, d.bounds[3] - py * (dpi / 100.0) / dpi)
+                   for px, py in ((20, 10), (60, 50))]
+        want = (min(c[0] for c in corners), max(c[0] for c in corners), min(c[1] for c in corners),
+                max(c[1] for c in corners))
+        n = len(tw.elements)
+        tw.trace_image()
+        traced = tw.elements[-1]
+        got = traced.bounds
+        close = all(abs(a - b) * 25.4 < 0.4 for a, b in zip(got, want))
+        tw.act_undo.trigger()
+        undone = len(tw.elements) == n
+        results.append((home_ur, turn, bar_button, len(traced.shape.subpaths) >= 1 and traced.shape.closed, close,
+                        undone, [round(v * 25.4, 2) for v in got], [round(v * 25.4, 2) for v in want]))
+        tw.close()
+    _TD.exec = real_exec
+    _imgd.ImageSizeDialog.exec = real_size_exec
+    check("Trace picture: a closed path exactly over the dark square (turned picture, home upper right), Undo, "
+          "the button in the picture's options bar",
+          all(r[2] and r[3] and r[4] and r[5] for r in results), "(%s)" % results)
+
     # 3f. .kerfly projects open in Kerfly: the Linux AppImage writes its menu entry and file type into the
     # user's own folders, with the AppImage as the program; a newer AppImage takes the entry over
     from kerfly.gui import desktop_entry as _de

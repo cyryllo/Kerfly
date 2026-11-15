@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 16:35+0100\n"
+"POT-Creation-Date: 2026-11-15 17:17+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -40,6 +40,10 @@ msgstr[1] "%d Elemente"
 #, python-format
 msgid "%d mm"
 msgstr "%d mm"
+
+#, python-format
+msgid "%d outlines"
+msgstr "%d Umrisse"
 
 #, python-format
 msgid "%d × %d pixels"
@@ -637,11 +641,19 @@ msgstr ""
 "Die ausgewählten Elemente kopieren, um sie hier oder in einem anderen "
 "Projekt einzufügen"
 
+msgid "Corner"
+msgstr "Ecke"
+
 msgid "Corner radius"
 msgstr "Eckenradius"
 
 msgid "Corner radius: 0 for sharp corners"
 msgstr "Eckenradius: 0 für spitze Ecken"
+
+msgid "Corner: turns sharper than this stay corners, the rest become curves"
+msgstr ""
+"Ecke: Knicke schärfer als dieser Winkel bleiben Ecken, der Rest wird zu "
+"Kurven"
 
 msgid "Corners of the new outline: rounded, or sharp like the shape's"
 msgstr "Ecken des neuen Umrisses: abgerundet oder spitz wie bei der Form"
@@ -803,6 +815,16 @@ msgstr "Entwurf folgt dem Laserkopf"
 
 msgid "Design import"
 msgstr "Entwurfsimport"
+
+msgid "Detail"
+msgstr "Detail"
+
+msgid ""
+"Detail: how far the outline may stray from the pixel edges (smaller: more"
+" nodes, closer to the picture)"
+msgstr ""
+"Detail: wie weit der Umriss von den Pixelkanten abweichen darf (kleiner: "
+"mehr Knoten, näher am Bild)"
 
 #, python-format
 msgid "Diagnostic report saved: %s"
@@ -1333,6 +1355,14 @@ msgid ""
 msgstr ""
 "I einfügen, D löschen, L Linie, C Kurve, O glatt, S symmetrisch, Z "
 "schließen / öffnen, B trennen"
+
+msgid "Ignore specks"
+msgstr "Flecken ignorieren"
+
+msgid "Ignore specks: dark spots smaller than this many pixels are left out"
+msgstr ""
+"Flecken ignorieren: dunkle Punkte kleiner als so viele Pixel werden "
+"ausgelassen"
 
 msgid "Image size"
 msgstr "Bildgröße"
@@ -1952,6 +1982,9 @@ msgstr "Nichts zu tun: Entwurf laden und mindestens einen Vorgang auswählen."
 
 msgid "Nothing to draw."
 msgstr "Nichts zu zeichnen."
+
+msgid "Nothing to trace at this threshold."
+msgstr "Bei diesem Schwellwert gibt es nichts zu vektorisieren."
 
 msgid "Number"
 msgstr "Zahl"
@@ -2626,6 +2659,9 @@ msgstr "Version ansehen"
 msgid "Select &all"
 msgstr "&Alles auswählen"
 
+msgid "Select a picture to trace first."
+msgstr "Wählen Sie zuerst ein Bild zum Vektorisieren aus."
+
 msgid "Select an opened file or a text with lines to break it apart."
 msgstr "Wählen Sie eine geöffnete Datei oder einen Text mit Linien zum Zerlegen."
 
@@ -2790,6 +2826,9 @@ msgstr "Kleinere Buchstaben"
 
 msgid "Smooth"
 msgstr "Glatt"
+
+msgid "Smooth curves (sharp corners stay sharp)"
+msgstr "Glatte Kurven (scharfe Ecken bleiben scharf)"
 
 msgid "Smooth, with both handles of the same length"
 msgstr "Glatt, beide Griffe gleich lang"
@@ -3195,6 +3234,13 @@ msgstr ""
 "Schneideebenen: Bogen 1 schneiden, Material wechseln, dann die Ebene des "
 "nächsten Bogens anhaken."
 
+msgid ""
+"The paths are put over the picture as a new element; the picture stays "
+"(delete it or leave it out of the job)."
+msgstr ""
+"Die Pfade kommen als neues Element über das Bild; das Bild bleibt "
+"(löschen oder aus dem Auftrag nehmen)."
+
 #, python-format
 msgid "The program could not be started: %s"
 msgstr "Das Programm konnte nicht gestartet werden: %s"
@@ -3341,6 +3387,9 @@ msgstr "Das ergibt %d einzelne Formen und kann Kerfly verlangsamen. Fortfahren?"
 msgid "Threshold"
 msgstr "Schwellwert"
 
+msgid "Threshold: pixels darker than this are traced"
+msgstr "Schwellwert: dunklere Pixel werden vektorisiert"
+
 msgid "Time"
 msgstr "Zeit"
 
@@ -3356,6 +3405,12 @@ msgstr "Ans &Ende (zuletzt)"
 msgid "To the &start (first)"
 msgstr "An den &Anfang (zuerst)"
 
+msgid "Trace"
+msgstr "Vektorisieren"
+
+msgid "Trace &picture…"
+msgstr "Bild &vektorisieren…"
+
 msgid "Trace boundary"
 msgstr "Umriss abfahren"
 
@@ -3366,6 +3421,27 @@ msgstr ""
 "Umriss abfahren: der Kopf fährt um den Umriss des Entwurfs (Laser aus, "
 "außer in den Einstellungen anders gewählt), um zu prüfen, wo geschnitten "
 "wird"
+
+#, python-format
+msgid "Trace of %s"
+msgstr "Vektorisierung von %s"
+
+msgid "Trace picture"
+msgstr "Bild vektorisieren"
+
+msgid "Trace the light areas instead"
+msgstr "Stattdessen die hellen Bereiche vektorisieren"
+
+msgid ""
+"Trace: the dark areas of the selected picture become paths you can cut, "
+"outline, fill or edit node by node"
+msgstr ""
+"Vektorisieren: die dunklen Bereiche des gewählten Bildes werden zu Pfaden"
+" zum Schneiden, Umreißen, Füllen oder Knotenbearbeiten"
+
+#, python-format
+msgid "Traced: %d outlines over the picture (Undo takes them away)."
+msgstr "Vektorisiert: %d Umrisse über dem Bild (Rückgängig entfernt sie)."
 
 msgctxt "toolbar group"
 msgid "Transform"
