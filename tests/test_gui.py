@@ -25,7 +25,7 @@ ROOT_DIR = os.path.dirname(TESTS_DIR)
 sys.path.insert(0, ROOT_DIR)
 
 from PySide6.QtCore import Qt  # noqa: E402
-from PySide6.QtGui import QImage, QKeySequence, QPainter  # noqa: E402
+from PySide6.QtGui import QColor, QImage, QKeySequence, QPainter  # noqa: E402
 from PySide6.QtWidgets import QApplication, QComboBox, QWidget, QFileDialog, QInputDialog, QLabel, QMessageBox, QToolButton  # noqa: E402
 
 from kerfly.core import config  # noqa: E402
@@ -2496,24 +2496,58 @@ def main():
             got = v3.part_at(200, 150)
             if got != part:
                 seen3["%s from the %s" % (name3, side)] = got
-    loops3 = []
-    img3 = QImage(400, 300, QImage.Format_RGB32)
-    for g3, ex3, lid3 in ((_gen3.finger_box(120, 90, 50, 3, 10, 0, True, sliding=True, dividers_across=1,
-                                            dividers_along=2), 0, 30), (_gen3.hinge_box(150, 100, 60, 30, 3, 10, 0,
-                                                                                         False), 25, 0)):
+    # what is drawn is what a ray from each point of the view hits first (the parts' faces, cast one by one):
+    # boxes with fingers, rails, a sliding lid half out, crossing dividers, slots of a bent wall, pulled apart
+    def ray_part(view3, sx, sy, w3, h3):
+        polys3, _tree, _edges, mid3, radius3 = view3.model()
+        k3 = 0.47 * min(w3, h3) / radius3 * view3.zoom
+        x, z = (sx - w3 / 2.0) / k3, (h3 / 2.0 - sy) / k3
+        best, part = None, -1
+        for poly in polys3:
+            nv = view3.turn(poly.normal)
+            if abs(nv[1]) < 1e-6:
+                continue
+            flat = [[view3.turn((q[0] - mid3[0], q[1] - mid3[1], q[2] - mid3[2])) for q in lp] for lp in poly.loops]
+            xs3 = [q[0] for q in flat[0]]
+            zs3 = [q[2] for q in flat[0]]
+            if not (min(xs3) <= x <= max(xs3) and min(zs3) <= z <= max(zs3)):
+                continue
+            inside = False
+            for lp in flat:
+                for (x1, _y1, z1), (x2, _y2, z2) in zip(lp, lp[1:] + lp[:1]):
+                    if (z1 > z) != (z2 > z) and x < x1 + (z - z1) * (x2 - x1) / (z2 - z1):
+                        inside = not inside
+            if not inside:
+                continue
+            p0 = flat[0][0]
+            depth = p0[1] - (nv[0] * (x - p0[0]) + nv[2] * (z - p0[2])) / nv[1]
+            if best is None or depth < best:
+                best, part = depth, poly.part
+        return part
+    wrong_rays = []
+    for g3, ex3, lid3 in ((_gen3.finger_box(150, 100, 50, 3, 10, 0.15, True, sliding=True, dividers_across=1,
+                                            dividers_along=1), 0, 40),
+                          (_gen3.finger_box(120, 90, 50, 3, 10, 0, False, dividers_across=1, dividers_along=2), 25, 0),
+                          (_gen3.hinge_box(120, 90, 50, 20, 3, 10, 0.15, True), 0, 0)):
         v3.set_assembly(g3.assembly)
         v3.set_exploded(ex3)
         v3.set_lid_out(lid3)
-        for yaw in range(-180, 180, 30):
-            for pitch in range(-80, 90, 20):
-                v3.yaw, v3.pitch = yaw, pitch
-                p3 = QPainter(img3)
-                v3.render(p3, 400, 300)
-                p3.end()
-                if v3.broken:
-                    loops3.append((yaw, pitch, v3.broken))
-    check("box 3D: solids in the right order (each side seen from its side, no loops when turned all round)",
-          not seen3 and not loops3, "(wrong %s, loops %s)" % (seen3, loops3[:5]))
+        for yaw, pitch in ((-20, 30), (140, 55), (-110, -35)):
+            v3.yaw, v3.pitch = yaw, pitch
+            img3 = QImage(400, 300, QImage.Format_RGB32)
+            img3.fill(QColor(0, 0, 0))
+            p3 = QPainter(img3)
+            v3.render(p3, 400, 300, ids=True)
+            p3.end()
+            for sy in range(10, 300, 14):
+                for sx in range(10, 400, 14):
+                    want = ray_part(v3, sx + 0.5, sy + 0.5, 400, 300)
+                    near = {img3.pixelColor(sx + dx, sy + dy).red() - 1 for dx in (-1, 0, 1) for dy in (-1, 0, 1)}
+                    if want not in near:
+                        wrong_rays.append((g3.name, yaw, pitch, sx, sy, want, sorted(near)))
+    check("box 3D: solids drawn in the right order (each side seen from its side; what is drawn is what a ray "
+          "hits first, from 9 views of 3 boxes)",
+          not seen3 and not wrong_rays, "(wrong %s, rays %d %s)" % (seen3, len(wrong_rays), wrong_rays[:4]))
     check("generators: 3D tab only for boxes, the box drawn, pulled apart, the sliding lid slides out",
           shown3d == {"finger_box": True, "hinge_box": True, "gear": False} and wood > 200 and slider
           and lid_out > 50 and apart > 0 and slider_gone,

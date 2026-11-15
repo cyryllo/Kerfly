@@ -11,9 +11,12 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   pudełka ma obok płaskiego widoku **Części** zakładkę **3D**. Pokazuje
   pudełko złożone z tych samych części, które zostaną wycięte; przeciąganie
   obraca, kółko przybliża. **Rozsunięte** odsuwa części od siebie, żeby
-  pokazać połączenia, a suwak wysuwa wysuwane wieczko z rowka. Części są
-  rysowane jako bryły, w kolejności, w jakiej się zasłaniają, więc przy
-  obracaniu żadna ściana nie znika.
+  pokazać połączenia, **Ukryte krawędzie** pokazuje krawędzie schowane za
+  innymi częściami linią przerywaną, a suwak wysuwa wysuwane wieczko z rowka.
+  Każda ściana jest rysowana w kolejności, w jakiej ściany się zasłaniają
+  (także tam, gdzie wczepy i języczki wchodzą w szczeliny), więc przy
+  obracaniu nic nie prześwituje ani nie znika; zgięta ścianka okrągłego
+  pudełka ma swoje szczeliny.
 
 ### Zmienione
 

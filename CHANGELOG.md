@@ -15,9 +15,11 @@ Version numbers:
   of the rounded box has a **3D** tab beside the flat **Parts** view. It shows
   the box put together from the very parts that will be cut; drag to turn it,
   the wheel zooms. **Pulled apart** moves the parts away from each other to
-  show the joints, and a slider slides a sliding lid out of its groove. The
-  parts are drawn as solids, in the order they hide each other, so no face
-  disappears while the box is turned.
+  show the joints, **Hidden edges** shows the edges behind other parts
+  dashed, and a slider slides a sliding lid out of its groove. Every face is
+  drawn in the order the faces hide each other (also where fingers and tabs
+  reach into slots), so nothing shows through or disappears while the box is
+  turned; the bent wall of the rounded box has its slots.
 
 ### Changed
 

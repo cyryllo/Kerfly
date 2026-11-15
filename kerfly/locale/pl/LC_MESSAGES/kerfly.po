@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 20:28+0100\n"
+"POT-Creation-Date: 2026-11-15 21:32+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -1315,6 +1315,9 @@ msgstr "Pomoc"
 
 msgid "Herringbone"
 msgstr "Jodełka"
+
+msgid "Hidden edges"
+msgstr "Ukryte krawędzie"
 
 msgid "Hide this until the next check"
 msgstr "Ukryj do następnego sprawdzenia"
@@ -3261,6 +3264,11 @@ msgstr "Projekt przesuwa się teraz razem z głowicą lasera."
 
 msgid "The design stays in place when the laser head moves."
 msgstr "Projekt zostaje na miejscu, gdy głowica się przesuwa."
+
+msgid "The edges behind other parts, dashed (as in a technical drawing)"
+msgstr ""
+"Krawędzie schowane za innymi częściami, przerywaną linią (jak na rysunku "
+"technicznym)"
 
 msgid ""
 "The elements stay on the bed but are not sent to the laser (as the tick "

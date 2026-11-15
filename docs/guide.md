@@ -367,8 +367,9 @@ For both boxes the preview has a **3D** tab beside **Parts**: the box put
 together from the very parts that will be cut (fingers, slots, rails,
 dividers). Drag to turn it, the mouse wheel zooms, a double click turns it
 back. **Pulled apart** moves the parts away from each other, to see how their
-fingers and tabs go together; with a sliding lid, the **Slide the lid out**
-slider pulls the lid out of its groove.
+fingers and tabs go together; **Hidden edges** shows the edges behind other
+parts dashed, as in a technical drawing; with a sliding lid, the **Slide the
+lid out** slider pulls the lid out of its groove.
 
 ![The finger-joint box in 3D](img/en/box3d.png)
 - **Kerf test**: a comb cut into pieces (push them together and measure:

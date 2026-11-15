@@ -1466,6 +1466,9 @@ def part_generators(s):
         s.tick(dlg.exploded)
         if view.exploded <= 0:
             raise RuntimeError("Pulled apart did not move the parts")
+        s.tick(dlg.hidden_edges)
+        if view.hidden_edges:
+            raise RuntimeError("Hidden edges did not switch the dashed edges off")
         s.click(dlg.lid_slider)
         QTest.keyClick(dlg.lid_slider, Qt.Key_End)
         s.settle()
@@ -1475,7 +1478,7 @@ def part_generators(s):
         QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
     s.expect_dialog("finger box with dividers", box_with_dividers)
     s.step("Generators → Finger-joint box with dividers across 1 and along 1 and a sliding lid (beta), 3D tab: "
-           "turned, pulled apart, lid slid out",
+           "turned, pulled apart, hidden edges off, lid slid out",
            lambda: s.trigger(w.act_generators["finger_box"], via="menu"),
            check=lambda: (any(e.name.startswith(tr_("Divider across")) for e in w.elements)
                           and any(e.name.startswith(tr_("Divider along")) for e in w.elements)

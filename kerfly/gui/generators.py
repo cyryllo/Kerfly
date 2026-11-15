@@ -502,6 +502,7 @@ class GeneratorDialog(QDialog):
         self.summary.setWordWrap(True)
         # boxes: a 3D tab with the parts put together
         from PySide6.QtWidgets import QSlider, QTabWidget
+        from kerfly.gui import icons
         from kerfly.gui.box3d import Box3DView
         self.box3d = Box3DView()
         box3d_page = QWidget()
@@ -510,14 +511,26 @@ class GeneratorDialog(QDialog):
         b3.addWidget(self.box3d, 1)
         controls = QHBoxLayout()
         self.exploded = QCheckBox(_("Pulled apart"))
+        self.exploded.setIcon(icons.tabler("box-padding"))
         self.exploded.setToolTip(_("The parts moved apart, to see how their fingers and tabs go together"))
         self.exploded.toggled.connect(lambda on: self.box3d.set_exploded(25.0 if on else 0.0))
         controls.addWidget(self.exploded)
+        self.hidden_edges = QCheckBox(_("Hidden edges"))
+        self.hidden_edges.setChecked(True)
+        self.hidden_edges.setIcon(icons.tabler("circle-dashed"))
+        self.hidden_edges.setToolTip(_("The edges behind other parts, dashed (as in a technical drawing)"))
+        self.hidden_edges.toggled.connect(self.box3d.set_hidden_edges)
+        controls.addWidget(self.hidden_edges)
+        self.lid_icon = QLabel()
+        self.lid_icon.setPixmap(icons.tabler("arrows-horizontal").pixmap(16, 16))
+        self.lid_icon.setToolTip(_("Slide the sliding lid out of its groove"))
         self.lid_label = QLabel(_("Slide the lid out"))
+        self.lid_label.setToolTip(_("Slide the sliding lid out of its groove"))
         self.lid_slider = QSlider(Qt.Horizontal)
         self.lid_slider.setRange(0, 100)
         self.lid_slider.setToolTip(_("Slide the sliding lid out of its groove"))
         self.lid_slider.valueChanged.connect(self._lid_moved)
+        controls.addWidget(self.lid_icon)
         controls.addWidget(self.lid_label)
         controls.addWidget(self.lid_slider, 1)
         b3.addLayout(controls)
@@ -612,6 +625,7 @@ class GeneratorDialog(QDialog):
         self.preview_tabs.setTabVisible(1, bool(assembly))
         self.preview_tabs.tabBar().setVisible(bool(assembly))
         sliding = self.box3d.has_sliding_lid()
+        self.lid_icon.setVisible(sliding)
         self.lid_label.setVisible(sliding)
         self.lid_slider.setVisible(sliding)
         if sliding:

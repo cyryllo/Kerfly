@@ -52,7 +52,9 @@ class Generated:
     # the parts put together, for the 3D preview of boxes: dicts with "name", "loops" (the part's outline and
     # holes in its own frame, mm, y down), "origin", "u", "v", "n" (3D mm: where its (0, 0) is, the 3D
     # directions of its x and y, the direction of its thickness), "t"; or kind "band" (a bent wall: "path"
-    # of 3D points along its inner face, "out" outward directions, "height", "t")
+    # of 3D points along its inner face, "out" outward directions, "height", "t", "closed"; "strips": the flat
+    # strips it is made of, {"loops" (x along the face, y down from the top), "start" (where x = 0 is along the
+    # path, mm)}, "length": the path's length the strips are measured on)
     assembly: list = field(default_factory=list)
 
 
@@ -637,8 +639,12 @@ def hinge_box(width=100.0, depth=80.0, height=50.0, radius=20.0, thickness=3.0, 
             a = a0 + (_m.pi / 2) * i / 12.0
             path.append((t + cx + rp * _m.cos(a), t + cy + rp * _m.sin(a), 0.0))
             normals.append((_m.cos(a), _m.sin(a), 0.0))
+    # the two strips round the plates (their slots with them): strip 1 from the middle of the plates' first
+    # straight side (half a side before the path's start), strip 2 after it; y of a strip from the top
     out.assembly.append({"kind": "band", "name": names.get("wall", "Wall"), "path": path, "out": normals,
-                         "height": H, "t": t, "closed": True})
+                         "height": H, "t": t, "closed": True, "length": 2 * L,
+                         "strips": [{"loops": [list(lp) for lp in strip_loops], "start": -half},
+                                    {"loops": [list(lp) for lp in strip_loops], "start": L - half}]})
     shapes = []
     for name, loops, cuts in parts:
         xs_ = [p_[0] for lp in loops for p_ in lp]
