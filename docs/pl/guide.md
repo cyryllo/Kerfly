@@ -344,7 +344,20 @@ jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
   nie mieszczą, trafiają na kolejny arkusz (**Arkusz 2**, …), w tym samym
   miejscu, na osobnej odhaczonej warstwie cięcia: wytnij arkusz 1, zmień
   materiał, zaznacz kolejny arkusz. **Każda część na osobnej warstwie** daje
-  każdej części jej własną warstwę cięcia.
+  każdej części jej własną warstwę cięcia. **Przegródki w poprzek / wzdłuż**
+  (beta, jeszcze nie sprawdzone na laserze) dodają wewnętrzne ścianki
+  rozłożone równo: ich wypusty wchodzą w szczeliny w ściankach i dnie, a
+  krzyżujące się przegródki łączą nacięcia do połowy wysokości. **Wysuwane
+  wieczko** (beta) wsuwa się od przodu w rowek z dwóch listew przyklejonych od
+  środka do każdej bocznej ścianki (ich miejsca są wygrawerowane na ściankach,
+  przyklej je grawerem do środka); przód jest niższy, więc wieczko przesuwa
+  się nad nim.
+- **Okrągłe pudełko na zawiasie** (beta, jeszcze nie sprawdzone na laserze):
+  dno i wieko z zaokrąglonymi rogami, ścianka z dwóch jednakowych pasków,
+  które gną się na rogach dzięki zawiasowi giętkiemu; całość trzymają wypusty
+  dna i wieka. Szerokość, głębokość, wysokość, promień rogów, materiał,
+  szerokość wypustu, kerf oraz długość nacięcia, mostek i odstęp rzędów
+  zawiasu.
 - **Test kerfu**: grzebień cięty na części (zsuń je i zmierz: kerf =
   (długość − zmierzone) / liczba części) i płytka ze szczelinami o grubości
   materiału plus luz, żeby znaleźć najciaśniejsze pasowanie.

@@ -1,0 +1,18 @@
+<!-- Kerfly's own icon (GPL-3.0-or-later, Kerfly contributors), in the style of Tabler Icons:
+     a box with rounded corners and the cuts of a living hinge on its corner -->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M4 9a5 5 0 0 1 5 -5h6a5 5 0 0 1 5 5v6a5 5 0 0 1 -5 5h-6a5 5 0 0 1 -5 -5z" />
+  <path d="M15.5 7v3" />
+  <path d="M17.5 8v3" />
+  <path d="M15.5 12v1.5" />
+</svg>

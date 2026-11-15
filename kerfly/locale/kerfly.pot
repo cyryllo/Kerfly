@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 17:17+0100\n"
+"POT-Creation-Date: 2026-11-15 17:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,6 +216,9 @@ msgstr ""
 msgid "A laser of this name is already there, or the name is empty."
 msgstr ""
 
+msgid "A lid like the bottom (off: an open box)"
+msgstr ""
+
 msgid ""
 "A living hinge needs a closed shape (not a text) on a cut or outline "
 "layer."
@@ -248,6 +251,9 @@ msgstr ""
 msgid ""
 "About how wide one finger is (each edge gets an odd number of equal "
 "fingers)"
+msgstr ""
+
+msgid "About how wide one tab of the bottom and the lid is"
 msgstr ""
 
 msgid "Above the text"
@@ -813,6 +819,9 @@ msgid ""
 "%(a).1f°"
 msgstr ""
 
+msgid "Distance between the rows of cuts (smaller: bends more easily, weaker)"
+msgstr ""
+
 msgid "Distance between the rows of cuts (smaller: bends more)"
 msgstr ""
 
@@ -852,6 +861,18 @@ msgid ""
 msgstr ""
 
 msgid "Dithering method"
+msgstr ""
+
+msgid "Divider across"
+msgstr ""
+
+msgid "Divider along"
+msgstr ""
+
+msgid "Dividers across (beta)"
+msgstr ""
+
+msgid "Dividers along (beta)"
 msgstr ""
 
 msgid "Do not remind about this version again (a later one is shown)"
@@ -1187,10 +1208,22 @@ msgstr ""
 msgid "Hilbert curve"
 msgstr ""
 
+msgid "Hinge"
+msgstr ""
+
+msgid "Hinge bridge"
+msgstr ""
+
 msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
 msgstr ""
 
+msgid "Hinge cut length"
+msgstr ""
+
 msgid "Hinge removed."
+msgstr ""
+
+msgid "Hinge row spacing"
 msgstr ""
 
 msgid "Hold Alt while drawing, dragging or moving a node"
@@ -1287,6 +1320,17 @@ msgid "Inkscape timeout (minutes)"
 msgstr ""
 
 msgid "Inner ring"
+msgstr ""
+
+msgid ""
+"Inner walls parallel to the front, evenly spaced; their tabs go through "
+"slots in the walls and the bottom (beta: not yet checked on a laser)"
+msgstr ""
+
+msgid ""
+"Inner walls parallel to the sides, evenly spaced; where they cross the "
+"others both have slots to half their height (beta: not yet checked on a "
+"laser)"
 msgstr ""
 
 msgid "Inside sizes"
@@ -1488,6 +1532,9 @@ msgstr ""
 msgid "Length of one cut"
 msgstr ""
 
+msgid "Length of one cut of the hinge (longer: bends more easily)"
+msgstr ""
+
 msgid "Length of the comb before cutting"
 msgstr ""
 
@@ -1550,6 +1597,9 @@ msgid "Low (7 %)"
 msgstr ""
 
 msgid "Lower left corner"
+msgstr ""
+
+msgid "Lower rail"
 msgstr ""
 
 msgid "Lower right corner"
@@ -2183,6 +2233,12 @@ msgstr ""
 msgid "QR code: a text or web address as a code to engrave (raster)"
 msgstr ""
 
+msgid "Radius of the rounded corners (outside); the wall bends round them"
+msgstr ""
+
+msgid "Rail marks"
+msgstr ""
+
 msgid "Rail unlocked"
 msgstr ""
 
@@ -2314,6 +2370,15 @@ msgstr ""
 msgid ""
 "Round stamp: text around the top and the bottom, rings, and text or a "
 "picture in the middle; burnt for rubber like the stamp"
+msgstr ""
+
+msgid ""
+"Rounded box (beta): a bottom and a lid with rounded corners, the wall two"
+" strips that bend round the corners with a living hinge; tabs hold it "
+"together. Not yet checked on a laser"
+msgstr ""
+
+msgid "Rounded box with a living hinge (beta)"
 msgstr ""
 
 msgid "Rounded corners of the frame and outline"
@@ -2588,6 +2653,9 @@ msgstr ""
 msgid "Skip this version"
 msgstr ""
 
+msgid "Sliding lid (beta)"
+msgstr ""
+
 msgid "Slot plate"
 msgstr ""
 
@@ -2768,6 +2836,9 @@ msgstr ""
 msgid "Tab size (%)"
 msgstr ""
 
+msgid "Tab width"
+msgstr ""
+
 msgid "Take the text off the path: back to a straight line of text"
 msgstr ""
 
@@ -2929,6 +3000,12 @@ msgid "The laser stopped responding after the job was complete."
 msgstr ""
 
 msgid "The laser was found, but this user may not use its USB port."
+msgstr ""
+
+msgid ""
+"The lid slides in from the front, in a groove of two rails glued inside "
+"each side wall (their places are engraved there); the front is lower so "
+"the lid slides over it (beta: not yet checked on a laser)"
 msgstr ""
 
 msgid "The lines in the middle (empty: none)"
@@ -3165,6 +3242,9 @@ msgstr ""
 msgid "Un&freeze laser"
 msgstr ""
 
+msgid "Uncut material between two cuts in a row"
+msgstr ""
+
 msgid "Underline (Ctrl+U)"
 msgstr ""
 
@@ -3212,6 +3292,9 @@ msgstr ""
 msgid "Upper left corner"
 msgstr ""
 
+msgid "Upper rail"
+msgstr ""
+
 msgid "Upper right corner"
 msgstr ""
 
@@ -3256,6 +3339,9 @@ msgid "Wait until the job ends before choosing another laser."
 msgstr ""
 
 msgid "Waiting for the laser to finish."
+msgstr ""
+
+msgid "Wall"
 msgstr ""
 
 msgid "Waves"
@@ -3312,6 +3398,11 @@ msgstr ""
 msgid ""
 "Width of the laser's cut: the parts grow by half of it so the fingers fit"
 " tightly (measure it with the kerf test)"
+msgstr ""
+
+msgid ""
+"Width of the laser's cut: the parts grow by half of it so the tabs fit "
+"tightly"
 msgstr ""
 
 msgid "Width of the puzzle"

@@ -1345,6 +1345,150 @@ def test_home_upper_right_layout():
     return errors
 
 
+def test_box_dividers():
+    """Finger box dividers (beta): every divider tab has its slot (walls, bottom) at the same place and
+    size, crossing dividers have matching half-height slots, no part without dividers changes."""
+    from kerfly.core import generators as gen
+    failures = 0
+
+    def check(name, ok, detail=""):
+        nonlocal failures
+        print("%-5s box dividers: %s %s" % ("OK" if ok else "FAIL", name, "" if ok else detail))
+        failures += not ok
+    plain = gen.finger_box(120, 90, 50, 3, 10, 0.0, True)
+    same = gen.finger_box(120, 90, 50, 3, 10, 0.0, True, dividers_across=0, dividers_along=0)
+    check("no dividers: the same parts as before",
+          [(i.name, i.left, i.top, i.spec.points) for i in plain.items] ==
+          [(i.name, i.left, i.top, i.spec.points) for i in same.items])
+    g = gen.finger_box(120, 90, 50, 3, 10, 0.0, True, dividers_across=2, dividers_along=1)
+
+    def loops(name):
+        return [i for i in g.items if i.name == name]
+
+    def holes(name):                       # inner loops (slots) of a part, in its own frame
+        parts = loops(name)
+        outer = parts[0]
+        return sorted((round(i.left - outer.left, 3), round(i.top - outer.top, 3),
+                       round(max(x for x, _ in i.spec.points), 3), round(max(y for _, y in i.spec.points), 3))
+                      for i in parts[1:])
+    t, H, lid_t = 3.0, 50.0, 3.0
+    Hd = H - t - lid_t
+    bottom = holes("Bottom")
+    across = loops("Divider across 1")[0]
+    pts = across.spec.points
+    tabs = sorted({round(x, 3) for x, y in pts if abs(y - (Hd + t)) < 1e-6})     # x of the bottom tab ends
+    slot_x = sorted({v for h in bottom if abs(h[3] - t) < 1e-6 for v in (h[0], h[0] + h[2])})
+    matched = all(any(abs(x - v) < 0.01 for v in slot_x) for x in tabs)
+    check("bottom: one slot per bottom tab of the across dividers, at the same x (no along tabs: they cross)",
+          len(bottom) == 2 * (len(tabs) // 2) and matched,
+          "(%d slots, tabs %s, slots %s)" % (len(bottom), tabs, slot_x))
+    left = holes("Left")
+    front = holes("Front")
+    check("walls: slots for the side tabs (left: 2 across dividers, front: 1 along divider), t wide, "
+          "half the divider height", len(left) == 2 and len(front) == 1
+          and all(abs(h[2] - t) < 1e-6 and abs(h[3] - Hd / 2) < 1e-6 for h in left + front),
+          "(%s %s)" % (left, front))
+    along = loops("Divider along 1")[0].spec.points
+    from_top = [p for p in pts if abs(p[1] - Hd / 2.0) < 1e-6]
+    from_bottom = [p for p in along if abs(p[1] - Hd / 2.0) < 1e-6]
+    check("crossing: the across divider has a slot from the top, the along divider from the bottom, both to half "
+          "height", len(from_top) == 2 and len(from_bottom) == 4, "(%s %s)" % (from_top, from_bottom))
+    return failures
+
+
+def test_sliding_lid():
+    """Finger box with a sliding lid (beta): a lower front with as many fingers as the side walls have
+    slots for it, the lid as wide as the inside less the play, four rails, glue marks, dividers below the
+    lower rail."""
+    from kerfly.core import generators as gen
+    failures = 0
+
+    def check(name, ok, detail=""):
+        nonlocal failures
+        print("%-5s sliding lid: %s %s" % ("OK" if ok else "FAIL", name, "" if ok else detail))
+        failures += not ok
+    W, D, H, t, c = 120.0, 90.0, 50.0, 3.0, 0.5
+    g = gen.finger_box(W, D, H, t, 10.0, 0.0, True, sliding=True, clearance=c, dividers_across=1)
+    names = [i.name for i in g.items]
+
+    def size(name):
+        pts = next(i for i in g.items if i.name == name).spec.points
+        return max(x for x, _ in pts) - min(x for x, _ in pts), max(y for _, y in pts) - min(y for _, y in pts)
+    Hf = H - 2 * t - (t + c)
+    front_w, front_h = size("Front")
+    lid_w, lid_h = size("Lid")
+    check("front %.1f mm high (the lid slides over it), lid %.1f x %.1f mm" % (Hf, W - 2 * t - c, D - t - c),
+          abs(front_h - Hf) < 0.01 and abs(lid_w - (W - 2 * t - c)) < 0.01 and abs(lid_h - (D - t - c)) < 0.01,
+          "(front %s, lid %s)" % ((front_w, front_h), (lid_w, lid_h)))
+    check("four rails and the glue marks on both side walls",
+          names.count("Upper rail") == 2 and names.count("Lower rail") == 2 and names.count("Rail marks") == 2)
+    left = next(i for i in g.items if i.name == "Left").spec.points
+    front = next(i for i in g.items if i.name == "Front").spec.points
+    # the front's fingers on its left edge vs the side wall's slots on its front edge (both from their tops)
+    fx = min(x for x, _ in front)
+    front_runs = sorted(round(y, 3) for x, y in front if abs(x - fx) < 1e-6)
+    lx = min(x for x, _ in left)
+    left_runs = sorted(round(y - (H - Hf), 3) for x, y in left if abs(x - lx) < 1e-6 and y > H - Hf - 1e-6)
+    inner = [y for y in left_runs if 0.01 < y < Hf - 0.01]
+    check("the side walls' slots for the front match its fingers",
+          inner and all(any(abs(y - v) < 0.01 for v in front_runs) for y in inner), "(%s / %s)" % (inner, front_runs))
+    div_h = size("Divider across 1")[1]
+    check("dividers end below the lower rail", div_h <= H - 2 * (2 * t) - (t + c) - t + t + 0.01, "(%s)" % div_h)
+    try:
+        gen.finger_box(60, 60, 18, 3, 10, 0.0, True, sliding=True)
+        refused = False
+    except ValueError:
+        refused = True
+    check("a box too low for a sliding lid is refused", refused)
+    return failures
+
+
+def test_hinge_box():
+    """Rounded box (beta): each wall strip is half the plate's perimeter, has one slot per tab of the bottom
+    and of the lid that falls on it, slots as long as the tabs, hinge cuts only on the bends."""
+    import math
+    from kerfly.core import generators as gen
+    failures = 0
+
+    def check(name, ok, detail=""):
+        nonlocal failures
+        print("%-5s hinge box: %s %s" % ("OK" if ok else "FAIL", name, "" if ok else detail))
+        failures += not ok
+    W, D, H, r, t = 120.0, 90.0, 50.0, 20.0, 3.0
+    g = gen.hinge_box(W, D, H, r, t, 10.0, 0.0, True)
+    walls = [i for i in g.items if i.name == "Wall"]
+    outlines = [i for i in walls if max(y for _, y in i.spec.points) > H - 0.01]
+    slots = [i for i in walls if i not in outlines]
+    rp = r - t
+    half_perimeter = (W - 2 * t - 2 * rp) + (D - 2 * t - 2 * rp) + math.pi * rp
+    lengths = [max(x for x, _ in i.spec.points) for i in outlines]
+    check("two strips, each half the perimeter of the plates (%.1f mm)" % half_perimeter,
+          len(outlines) == 2 and all(abs(L - half_perimeter) < 0.01 for L in lengths), "(%s)" % lengths)
+    bottom = next(i for i in g.items if i.name == "Bottom").spec.points
+    tab_widths = []
+    # tabs of the plate: runs of the outline t out from the plate (top edge: y = -t, relative to the plate)
+    ys = [y for _, y in bottom]
+    top_y = min(ys)
+    xs_top = sorted(x for x, y in bottom if abs(y - top_y) < 1e-6)
+    tab_widths += [round(b - a, 3) for a, b in zip(xs_top[0::2], xs_top[1::2])]
+    right_x = max(x for x, _ in bottom)
+    ys_right = sorted(y for x, y in bottom if abs(x - right_x) < 1e-6)
+    tab_widths += [round(b - a, 3) for a, b in zip(ys_right[0::2], ys_right[1::2])]       # the sides
+    slot_lengths = sorted({round(max(x for x, _ in i.spec.points), 3) for i in slots})
+    check("slots as long as the tabs, two rows (bottom and lid)", set(slot_lengths) <= set(tab_widths) and
+          len(slots) % 2 == 0, "(slots %s, tabs %s)" % (slot_lengths, tab_widths))
+    hinges = [i for i in g.items if i.name == "Hinge"]
+    check("hinge cuts on both bends of each strip", len(hinges) == 2 and all(len(i.spec.subpaths) > 20 for i in hinges),
+          "(%s)" % [len(i.spec.subpaths) for i in hinges])
+    try:
+        gen.hinge_box(60, 60, 50, 2, 3)
+        refused = False
+    except ValueError:
+        refused = True
+    check("a radius too small for the material is refused", refused)
+    return failures
+
+
 def test_dither():
     """Settings → Raster → Dithering method: every method gives a 1-bit picture with about as much black
     as the grey asks for; Floyd-Steinberg (the default) is exactly K40 Whisperer's (Pillow's)."""
@@ -1527,6 +1671,9 @@ def main():
     failures += test_cut_order()
     failures += test_pattern_fill()
     failures += test_dither()
+    failures += test_box_dividers()
+    failures += test_hinge_box()
+    failures += test_sliding_lid()
     failures += test_offset()
     failures += test_file_encodings()
     failures += test_job_cache()

@@ -338,7 +338,18 @@ remembered.
   tightly). The parts are laid out to fit the bed; those that do not fit go
   on a next sheet (**Sheet 2**, …), at the same place on its own unticked cut
   layer: cut sheet 1, change the material, tick the next sheet. **Each part on
-  its own layer** puts every part on a cut layer of its own.
+  its own layer** puts every part on a cut layer of its own. **Dividers across
+  / along** (beta, not yet checked on a laser) add inner walls, evenly spaced:
+  their tabs go through slots in the walls and the bottom, crossing dividers
+  are joined by slots to half their height. **Sliding lid** (beta) slides in
+  from the front, in a groove of two rails glued inside each side wall (their
+  places are engraved on the walls, glue the engraved side inwards); the front
+  is lower, so the lid slides over it.
+- **Rounded box with a living hinge** (beta, not yet checked on a laser): a
+  bottom and a lid with rounded corners, the wall two equal strips that bend
+  round the corners with a living hinge; the tabs of the bottom and the lid
+  hold it together. Width, depth, height, corner radius, material, tab width,
+  kerf and the hinge's cut length, bridge and row spacing.
 - **Kerf test**: a comb cut into pieces (push them together and measure:
   kerf = (length − measured) / pieces) and a plate with slots of the
   material's thickness plus a clearance each, to find the tightest fit.

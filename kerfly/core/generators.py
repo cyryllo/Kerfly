@@ -227,7 +227,7 @@ def _fingers(length, finger):
 
 def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0, kerf=0.1, lid=True,
                inside=False, spacing=4.0, names=None, bed=None, each_layer=False, cut=(10.0, 0.5, 1),
-               sheet_name="Sheet %d"):
+               sheet_name="Sheet %d", dividers_across=0, dividers_along=0, sliding=False, clearance=0.5):
     """A box joined with fingers: bottom, four walls and (lid) a top, laid out side by
     side. Sizes are outside sizes (inside=True: inside sizes). kerf: width of the cut;
     every part grows by half of it, so the fingers fit tightly after cutting.
@@ -236,7 +236,14 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
     fit it, and parts that do not fit go on a next sheet, at the same place on its
     own unticked cut layer (cut sheet 1, change the material, tick sheet 2).
     each_layer: every part on its own cut layer (named after the part).
-    cut: (speed, power, passes) for the new layers (those of the cut layer)."""
+    cut: (speed, power, passes) for the new layers (those of the cut layer).
+    dividers_across / dividers_along (beta): inner walls parallel to the front / to the sides,
+    evenly spaced; their tabs go through slots in the walls and the bottom, crossing dividers
+    are joined by slots to half their height.
+    sliding (beta, with lid): a lid that slides in from the front, in a groove made of two rails glued
+    inside each side wall (an upper one at the top edge, a lower one below the lid; their places are
+    engraved on the side walls); the front wall is lower, so the lid slides over it. clearance: play
+    of the lid in its groove and between the walls (mm)."""
     t = float(thickness)
     if inside:
         width, depth, height = width + 2 * t, depth + 2 * t, height + (2 if lid else 1) * t
@@ -247,25 +254,29 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
     k2 = max(0.0, float(kerf)) / 2.0
     out = Generated(name="Finger-joint box")
 
-    def notches(w, h, edges):
+    def notches(w, h, edges, extra=()):
         """edges: (top, right, bottom, left), each "in" (slots where the other part's
-        fingers go), "out" (fingers) or "flat"."""
-        holes = []
+        fingers go), "out" (fingers) or "flat". extra: more rectangular holes (slots)."""
+        holes = list(extra)
         for side, kind in zip(("top", "right", "bottom", "left"), edges):
             if kind == "flat":
                 continue
-            length = w if side in ("top", "bottom") else h
+            full = w if side in ("top", "bottom") else h
+            start, end = 0.0, full
+            if isinstance(kind, tuple):            # fingers on a part of the edge only (kind, start, end)
+                kind, start, end = kind
+            length = end - start
             n = _fingers(length, finger)
             seg = length / n
             for s in range(n):
                 notch = (s % 2 == 0) if kind == "in" else (s % 2 == 1)
                 if not notch:
                     continue
-                a, b = s * seg, (s + 1) * seg
-                if s == 0:
+                a, b = start + s * seg, start + (s + 1) * seg
+                if s == 0 and start <= 0:
                     a = -1.0                       # past the corner, so the kerf does not leave a sliver
-                if s == n - 1:
-                    b = length + 1.0
+                if s == n - 1 and end >= full:
+                    b = full + 1.0
                 if side == "top":
                     holes.append((a, -1, b, t))
                 elif side == "bottom":
@@ -279,13 +290,82 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
         return _region_outline((-k2, -k2, w + k2, h + k2), holes)
 
     top_edge = "out" if lid else "flat"
-    parts = [("bottom", W, D, ("in", "in", "in", "in")),
-             ("front", W, H, (top_edge, "out", "out", "out")),
-             ("back", W, H, (top_edge, "out", "out", "out")),
-             ("left", D, H, (top_edge, "in", "out", "in")),
-             ("right", D, H, (top_edge, "in", "out", "in"))]
-    if lid:
-        parts.append(("lid", W, D, ("in", "in", "in", "in")))
+    # dividers (beta): positions, height, their tabs and the slots that take them
+    na, nb = max(0, int(dividers_across)), max(0, int(dividers_along))
+    Wi, Di = W - 2 * t, D - 2 * t
+    sliding = bool(sliding) and bool(lid)
+    c = max(0.0, float(clearance))
+    rail_h = 2 * t                                   # height of a rail (sliding lid)
+    groove = t + c                                   # the lid's groove between the two rails
+    Hf = H - rail_h - groove                         # sliding lid: the front's height (the lid slides over it)
+    if sliding and Hf - 2 * t < 3 * t:
+        raise ValueError("The box is too low for a sliding lid of this material thickness.")
+    if sliding:
+        Hd = H - 2 * rail_h - groove - t             # the dividers end below the lower rail
+    else:
+        Hd = H - t - (t if lid else 0.0)             # from the inside of the bottom to the lid
+    top_off = H - t - Hd                             # the dividers' top, from the top of the walls
+    ys = [t + Di * k / (na + 1.0) for k in range(1, na + 1)]     # across: from the front's outer face
+    xs = [t + Wi * k / (nb + 1.0) for k in range(1, nb + 1)]     # along: from the left's outer face
+    tab0, tab1 = Hd / 4.0, 3 * Hd / 4.0              # the side tab of a divider (from its top)
+
+    def tab_segments(length):
+        n = _fingers(length, finger)
+        seg = length / n
+        return [(s * seg, (s + 1) * seg) for s in range(n) if s % 2 == 1]
+    wall_slots_front = [(x - t / 2, top_off + tab0, x + t / 2, top_off + tab1) for x in xs]
+    wall_slots_side = [(y - t / 2, top_off + tab0, y + t / 2, top_off + tab1) for y in ys]
+    bottom_slots = [(t + a, y - t / 2, t + b, y + t / 2) for y in ys for a, b in tab_segments(Wi)]
+    if not na:                                       # along dividers stand on the bottom with tabs too
+        bottom_slots += [(x - t / 2, t + a, x + t / 2, t + b) for x in xs for a, b in tab_segments(Di)]
+
+    def divider(length, crossings, from_top, with_tabs):
+        """A divider: length inside, its side tabs out by t through the walls, bottom tabs (with_tabs)
+        through the bottom, slots to half height where it crosses the others (from the top or the bottom)."""
+        w_, h_ = length + 2 * t, Hd + t
+        holes = [(-1, -1, t, tab0), (-1, tab1, t, h_ + 1), (t + length, -1, w_ + 1, tab0),
+                 (t + length, tab1, w_ + 1, h_ + 1)]
+        # below the inside height: only the bottom tabs stay (the cuts go past the corners, so the kerf
+        # leaves no sliver there)
+        if with_tabs:
+            last = -1.0
+            for a, b in tab_segments(length):
+                holes.append((last, Hd, t + a, h_ + 1))
+                last = t + b
+            holes.append((last, Hd, w_ + 1, h_ + 1))
+        else:
+            holes.append((-1.0, Hd, w_ + 1, h_ + 1))
+        for c in crossings:
+            holes.append((c - t / 2, -1, c + t / 2, Hd / 2.0) if from_top else (c - t / 2, Hd / 2.0, c + t / 2, h_ + 1))
+        holes = [(x0 + k2, y0 + k2, x1 - k2, y1 - k2) for x0, y0, x1, y1 in holes if x1 - x0 > 2 * k2]
+        return _region_outline((-k2, -k2, w_ + k2, h_ + k2), holes), w_, h_
+    if sliding:
+        # the front is lower: its slots for the along dividers are measured from its own top
+        front_slots = [(x0, y0 - (H - Hf), x1, y1 - (H - Hf)) for x0, y0, x1, y1 in wall_slots_front]
+        front_edge = ("in", H - Hf, H)               # the side walls take the front's fingers below its top
+        marks = [[(t, y), (D - t, y)] for y in (rail_h, rail_h + groove, 2 * rail_h + groove)]
+        parts = [("bottom", W, D, ("in", "in", "in", "in"), bottom_slots),
+                 ("front", W, Hf, ("flat", "out", "out", "out"), front_slots),
+                 ("back", W, H, ("flat", "out", "out", "out"), wall_slots_front),
+                 ("left", D, H, ("flat", "in", "out", front_edge), wall_slots_side, marks),
+                 ("right", D, H, ("flat", front_edge, "out", "in"), wall_slots_side, marks),
+                 ("lid", Wi - c, D - t - c, ("flat",) * 4, ())]
+        for name in ("upper rail", "upper rail", "lower rail", "lower rail"):
+            parts.append((name, Di, rail_h, ("flat",) * 4, ()))
+    else:
+        parts = [("bottom", W, D, ("in", "in", "in", "in"), bottom_slots),
+                 ("front", W, H, (top_edge, "out", "out", "out"), wall_slots_front),
+                 ("back", W, H, (top_edge, "out", "out", "out"), wall_slots_front),
+                 ("left", D, H, (top_edge, "in", "out", "in"), wall_slots_side),
+                 ("right", D, H, (top_edge, "in", "out", "in"), wall_slots_side)]
+        if lid:
+            parts.append(("lid", W, D, ("in", "in", "in", "in"), ()))
+    for k in range(na):
+        parts.append(("divider across %d" % (k + 1), Wi + 2 * t, Hd + t, None,
+                      divider(Wi, xs, True, True)[0]))
+    for k in range(nb):
+        parts.append(("divider along %d" % (k + 1), Di + 2 * t, Hd + t, None,
+                      divider(Di, ys, False, not na)[0]))
     row_w = max(2 * W + spacing, W + D + spacing) + 1
     if bed is not None:
         bed_w, bed_h = (max(10.0, float(v) - 2.0) for v in bed)     # a little room to the bed's edges
@@ -295,7 +375,9 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
     speed, power, passes = cut
     sheet, x, y, row_h = 1, 0.0, 0.0, 0.0
     sheet_keys = {}
-    for name, w, h, edges in parts:
+    for part in parts:
+        name, w, h, edges, extra = part[:5]
+        marks = part[5] if len(part) > 5 else ()
         if x > 0 and x + w > row_w:                                 # next row
             x, y, row_h = 0.0, y + row_h + spacing, 0.0
         if y > 0 and y + h > bed_h:                                 # does not fit: next sheet, same place
@@ -311,12 +393,121 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
                 layer = sheet_keys[sheet] = "sheet %d" % sheet
                 out.layers.append(LayerSpec(layer, CUT, sheet_name % sheet, speed, power, passes,
                                             EXTRA_COLORS[(sheet - 2) % len(EXTRA_COLORS)], enabled=False))
-        for loop in notches(w, h, edges):
+        loops = notches(w, h, edges, extra) if edges is not None else extra       # a divider: its outline
+        if name.startswith("divider"):
+            base, number = name.rsplit(" ", 1)
+            label = "%s %s" % (names.get(base, base.capitalize()), number)       # Divider across 1, ...
+        else:
+            label = names.get(name, name.capitalize())
+        for loop in loops:
             out.items.append(_polygon_item([(px + x, py + y) for px, py in loop], 0, 0, "cut",
-                                           names.get(name, name.capitalize()), layer))  # Bottom, Front, ...
+                                           label, layer))  # Bottom, Front, ...
+        if marks:                                    # where to glue the rails: engraved on the inside
+            item = _path_item([[(px + x, py + y) for px, py in m] for m in marks], 0, 0, "engrave",
+                              names.get("rail marks", "Rail marks"))
+            out.items.append(item)
         x += w + spacing
         row_h = max(row_h, h)
     out.sheets = sheet
+    return out
+
+
+# ------------------------------------------------------------------ rounded box with a living hinge (beta)
+def hinge_box(width=100.0, depth=80.0, height=50.0, radius=20.0, thickness=3.0, finger=10.0, kerf=0.1,
+              lid=True, cut_len=16.0, gap=3.0, spacing=1.5, spacing_parts=4.0, names=None, bed=None):
+    """A box with rounded corners (beta): the bottom and the lid are rounded rectangles with tabs on their
+    straight sides; the wall is two equal strips that bend round the corners with a living hinge, the
+    tabs going through slots in them. Sizes are outside sizes; radius is the outside corner radius.
+    The plates sit one material thickness in from the wall's edges."""
+    import math as _m
+    from .patterns import hinge_lines
+    t = float(thickness)
+    W, D, H, r = float(width), float(depth), float(height), float(radius)
+    if r < t + 3:
+        raise ValueError("The corner radius must be at least the material thickness plus 3 mm.")
+    if min(W, D) < 2 * r + 2 * finger or H < 4 * t + 10:
+        raise ValueError("The box is too small for this corner radius, finger width and material thickness.")
+    names = names or {}
+    k = max(0.0, float(kerf)) / 2.0
+    Wp, Dp, rp = W - 2 * t, D - 2 * t, r - t            # the inside of the wall: the plates
+    Lx, Ly, La = Wp - 2 * rp, Dp - 2 * rp, _m.pi * rp / 2.0
+    out = Generated(name="Rounded box")
+
+    def segments(length, seam):
+        """Tabs (a, b) along a straight side: an odd number of segments, tabs at the odd ones; with a seam in
+        the middle (front and back) the middle segment is a gap, so no tab is cut in two."""
+        n = _fingers(length, finger)
+        if seam and n % 4 == 3:
+            n = n + 2 if n < 5 else n - 2
+        seg = length / n
+        return [(i * seg, (i + 1) * seg) for i in range(n) if i % 2 == 1]
+    tabs_x, tabs_y = segments(Lx, True), segments(Ly, False)
+
+    def arc(cx, cy, rad, a0, a1):
+        steps = max(6, int(abs(a1 - a0) * rad / 0.5))
+        return [(cx + rad * _m.cos(a0 + (a1 - a0) * i / steps), cy + rad * _m.sin(a0 + (a1 - a0) * i / steps))
+                for i in range(steps + 1)]
+
+    def plate():
+        R = rp + k
+        pts = [(rp, -k)]
+        for a, b in tabs_x:                                     # top: tabs up
+            pts += [(rp + a - k, -k), (rp + a - k, -t - k), (rp + b + k, -t - k), (rp + b + k, -k)]
+        pts += arc(Wp - rp, rp, R, -_m.pi / 2, 0.0)
+        for a, b in tabs_y:                                     # right: tabs to the right
+            pts += [(Wp + k, rp + a - k), (Wp + t + k, rp + a - k), (Wp + t + k, rp + b + k), (Wp + k, rp + b + k)]
+        pts += arc(Wp - rp, Dp - rp, R, 0.0, _m.pi / 2)
+        for a, b in reversed(tabs_x):                           # bottom: tabs down, right to left
+            pts += [(rp + b + k, Dp + k), (rp + b + k, Dp + t + k), (rp + a - k, Dp + t + k), (rp + a - k, Dp + k)]
+        pts += arc(rp, Dp - rp, R, _m.pi / 2, _m.pi)
+        for a, b in reversed(tabs_y):                           # left: tabs to the left, bottom to top
+            pts += [(-k, rp + b + k), (-t - k, rp + b + k), (-t - k, rp + a - k), (-k, rp + a - k)]
+        pts += arc(rp, rp, R, _m.pi, 1.5 * _m.pi)
+        clean = []
+        for p_ in pts:
+            if not clean or abs(clean[-1][0] - p_[0]) > 1e-9 or abs(clean[-1][1] - p_[1]) > 1e-9:
+                clean.append(p_)
+        if abs(clean[0][0] - clean[-1][0]) < 1e-9 and abs(clean[0][1] - clean[-1][1]) < 1e-9:
+            clean.pop()
+        return clean
+
+    # one wall strip: from the middle of the back, round two corners and one side, to the middle of the front
+    half = Lx / 2.0
+    L = 2 * half + 2 * La + Ly
+    slot_s = [(a - half, b - half) for a, b in tabs_x if a >= half]                 # back, right half
+    slot_s += [(half + La + a, half + La + b) for a, b in tabs_y]                   # the side
+    base = half + 2 * La + Ly
+    slot_s += [(base + Lx - b, base + Lx - a) for a, b in tabs_x if a >= half]       # front, right end to middle
+    rows = [(H - 2 * t, H - t)] + ([(t, 2 * t)] if lid else [])
+    holes = [(a + k, y0 + k, b - k, y1 - k) for a, b in slot_s for y0, y1 in rows]
+    strip_loops = _region_outline((-k, -k, L + k, H + k), holes)
+    hinge = []
+    margin = 2.0
+    for z0 in (half, half + La + Ly):                                             # the two bends
+        zone = [(z0 - 1.0, 0.0), (z0 + La + 1.0, 0.0), (z0 + La + 1.0, H), (z0 - 1.0, H), (z0 - 1.0, 0.0)]
+        hinge += hinge_lines("straight", [zone], max(2.0, float(cut_len)), max(0.5, float(gap)),
+                             max(0.3, float(spacing)), 90.0, margin)
+    parts = [("bottom", plate(), None), ("wall", strip_loops, hinge), ("wall", strip_loops, hinge)]
+    if lid:
+        parts.insert(1, ("lid", plate(), None))
+    row_w = (bed[0] - 2.0) if bed else float("inf")
+    x = y = row_h = 0.0
+    for name, shape, cuts in parts:
+        loops = [shape] if name in ("bottom", "lid") else shape
+        xs_ = [p_[0] for lp in loops for p_ in lp]
+        ys_ = [p_[1] for lp in loops for p_ in lp]
+        w_, h_ = max(xs_) - min(xs_), max(ys_) - min(ys_)
+        if x > 0 and x + w_ > row_w:
+            x, y, row_h = 0.0, y + row_h + spacing_parts, 0.0
+        ox, oy = x - min(xs_), y - min(ys_)
+        label = names.get(name, name.capitalize())
+        for lp in loops:
+            out.items.append(_polygon_item([(px + ox, py + oy) for px, py in lp], 0, 0, "cut", label))
+        if cuts:
+            out.items.append(_path_item([[(px + ox, py + oy) for px, py in c] for c in cuts], 0, 0, "cut",
+                                        names.get("hinge", "Hinge")))
+        x += w_ + spacing_parts
+        row_h = max(row_h, h_)
     return out
 
 

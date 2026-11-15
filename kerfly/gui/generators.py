@@ -66,7 +66,9 @@ GENERATORS = [
 
 def _finger_box(v, window):
     names = {"bottom": _("Bottom"), "front": _("Front"), "back": _("Back"), "left": _("Left side"),
-             "right": _("Right side"), "lid": _("Lid")}
+             "right": _("Right side"), "lid": _("Lid"), "divider across": _("Divider across"),
+             "divider along": _("Divider along"), "upper rail": _("Upper rail"), "lower rail": _("Lower rail"),
+             "rail marks": _("Rail marks")}
     from kerfly.core import config
     from kerfly.core.layers import CUT
     try:
@@ -77,7 +79,19 @@ def _finger_box(v, window):
     cut = (layer.speed, layer.power, layer.passes) if layer is not None else (10.0, 0.5, 1)
     return gen.finger_box(v["width"], v["depth"], v["height"], v["thickness"], v["finger"], v["kerf"], v["lid"],
                           v["inside"], names=names, bed=bed, each_layer=bool(v.get("each_layer", False)),
-                          cut=cut, sheet_name=_("Sheet %d"))
+                          cut=cut, sheet_name=_("Sheet %d"), dividers_across=int(v.get("dividers_across", 0)),
+                          dividers_along=int(v.get("dividers_along", 0)), sliding=bool(v.get("sliding", False)))
+
+
+def _hinge_box(v, window):
+    names = {"bottom": _("Bottom"), "lid": _("Lid"), "wall": _("Wall"), "hinge": _("Hinge")}
+    from kerfly.core import config
+    try:
+        bed = tuple(v_in * 25.4 for v_in in config.bed_size_inches(window.values))
+    except (ValueError, AttributeError):
+        bed = None
+    return gen.hinge_box(v["width"], v["depth"], v["height"], v["radius"], v["thickness"], v["finger"], v["kerf"],
+                         v["lid"], v["cut_len"], v["gap"], v["spacing"], names=names, bed=bed)
 
 
 def _kerf_test(v, window):
@@ -121,10 +135,39 @@ GENERATORS += [
        N_("Width of the laser's cut: the parts grow by half of it so the fingers fit tightly "
           "(measure it with the kerf test)")),
       ("lid", N_("With a lid"), "bool", True, None, N_("Six parts with a lid (off: an open box of five parts)")),
+      ("sliding", N_("Sliding lid (beta)"), "bool", False, None,
+       N_("The lid slides in from the front, in a groove of two rails glued inside each side wall (their places "
+          "are engraved there); the front is lower so the lid slides over it (beta: not yet checked on a laser)")),
+      ("dividers_across", N_("Dividers across (beta)"), "int", 0, (0, 20),
+       N_("Inner walls parallel to the front, evenly spaced; their tabs go through slots in the walls and the "
+          "bottom (beta: not yet checked on a laser)")),
+      ("dividers_along", N_("Dividers along (beta)"), "int", 0, (0, 20),
+       N_("Inner walls parallel to the sides, evenly spaced; where they cross the others both have slots to half "
+          "their height (beta: not yet checked on a laser)")),
       ("each_layer", N_("Each part on its own layer"), "bool", False, None,
        N_("Every part on its own cut layer, to cut them one by one. Parts that do not fit the bed go on a "
           "next sheet anyway (its layer unticked)"))],
      _finger_box),
+    ("hinge_box", N_("Rounded box with a living hinge (beta)"), "hinge-box",
+     N_("Rounded box (beta): a bottom and a lid with rounded corners, the wall two strips that bend round the "
+        "corners with a living hinge; tabs hold it together. Not yet checked on a laser"),
+     [("width", N_("Width"), "float", 120.0, (40, 1000, 1, "mm"), N_("Width of the box (left to right)")),
+      ("depth", N_("Depth"), "float", 90.0, (40, 1000, 1, "mm"), N_("Depth of the box (front to back)")),
+      ("height", N_("Height"), "float", 50.0, (20, 1000, 1, "mm"), N_("Height of the box")),
+      ("radius", N_("Corner radius"), "float", 20.0, (6, 200, 1, "mm"),
+       N_("Radius of the rounded corners (outside); the wall bends round them")),
+      ("thickness", N_("Material thickness"), "float", 3.0, (0.5, 10, 2, "mm"), N_("Thickness of the sheet")),
+      ("finger", N_("Tab width"), "float", 10.0, (3, 100, 1, "mm"),
+       N_("About how wide one tab of the bottom and the lid is")),
+      ("kerf", N_("Kerf"), "float", 0.15, (0, 1, 2, "mm"),
+       N_("Width of the laser's cut: the parts grow by half of it so the tabs fit tightly")),
+      ("lid", N_("With a lid"), "bool", True, None, N_("A lid like the bottom (off: an open box)")),
+      ("cut_len", N_("Hinge cut length"), "float", 16.0, (3, 200, 1, "mm"),
+       N_("Length of one cut of the hinge (longer: bends more easily)")),
+      ("gap", N_("Hinge bridge"), "float", 3.0, (0.5, 20, 1, "mm"), N_("Uncut material between two cuts in a row")),
+      ("spacing", N_("Hinge row spacing"), "float", 1.5, (0.3, 10, 2, "mm"),
+       N_("Distance between the rows of cuts (smaller: bends more easily, weaker)"))],
+     _hinge_box),
     ("kerf_test", N_("Kerf test"), "ruler-2",
      N_("Kerf test: a comb to measure how wide the laser cuts, and slots to find the tightest fit for the "
         "material"),

@@ -1442,6 +1442,23 @@ def part_generators(s):
                check=lambda c=count: (len(w.elements) > c, "%d elements (was %d)" % (len(w.elements), c)))
         s.trigger(w.act_undo)                             # an empty bed for the next one
 
+    # the finger box with dividers (beta): 1 across and 1 along typed in, their parts and slots come
+    def box_with_dividers(dlg):
+        for key in ("dividers_across", "dividers_along"):
+            s.type_number(dlg.widgets[key], 1)
+        if not dlg.widgets["sliding"].isChecked():
+            s.tick(dlg.widgets["sliding"])
+        from PySide6.QtWidgets import QDialogButtonBox
+        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+    s.expect_dialog("finger box with dividers", box_with_dividers)
+    s.step("Generators → Finger-joint box with dividers across 1 and along 1 and a sliding lid (beta)",
+           lambda: s.trigger(w.act_generators["finger_box"], via="menu"),
+           check=lambda: (any(e.name.startswith(tr_("Divider across")) for e in w.elements)
+                          and any(e.name.startswith(tr_("Divider along")) for e in w.elements)
+                          and any(e.name == tr_("Upper rail") for e in w.elements),
+                          "%s" % sorted({e.name for e in w.elements})))
+    s.trigger(w.act_undo)
+
 
 def part_files_and_help(s):
     w = s.w

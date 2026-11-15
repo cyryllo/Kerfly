@@ -29,6 +29,16 @@ Version numbers:
   outline, fill or edit node by node. Threshold, ignore specks, detail and
   smooth curves (sharp corners stay sharp), with the outlines shown over the
   picture while you set them.
+- **Box dividers** (beta, not yet checked on a laser): the finger-joint box
+  gets inner walls across and along, evenly spaced, with tabs through slots
+  in the walls and the bottom; crossing dividers are joined by half-height
+  slots.
+- **Sliding lid** (beta, not yet checked on a laser) for the finger-joint
+  box: the lid slides in from the front in a groove of two rails glued inside
+  each side wall (their places are engraved); the front is lower.
+- **Rounded box with a living hinge** (beta, not yet checked on a laser): a
+  new generator; rounded bottom and lid with tabs, the wall two strips that
+  bend round the corners.
 
 ## 1.6.0 (2026-11-14)
 

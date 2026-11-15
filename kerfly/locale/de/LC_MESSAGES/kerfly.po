@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 17:17+0100\n"
+"POT-Creation-Date: 2026-11-15 17:44+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -227,6 +227,9 @@ msgstr "Ein Auftrag läuft. Anhalten und beenden?"
 msgid "A laser of this name is already there, or the name is empty."
 msgstr "Ein Laser mit diesem Namen existiert bereits, oder der Name ist leer."
 
+msgid "A lid like the bottom (off: an open box)"
+msgstr "Ein Deckel wie der Boden (aus: eine offene Schachtel)"
+
 msgid ""
 "A living hinge needs a closed shape (not a text) on a cut or outline "
 "layer."
@@ -268,6 +271,9 @@ msgid ""
 msgstr ""
 "Ungefähre Breite eines Zinkens (jede Kante bekommt eine ungerade Zahl "
 "gleicher Zinken)"
+
+msgid "About how wide one tab of the bottom and the lid is"
+msgstr "Ungefähre Breite einer Lasche von Boden und Deckel"
 
 msgid "Above the text"
 msgstr "Über dem Text"
@@ -864,6 +870,11 @@ msgstr ""
 "Abstand %(d).2f %(u)s: Breite %(w).2f %(u)s, Höhe %(h).2f %(u)s, Winkel "
 "%(a).1f°"
 
+msgid "Distance between the rows of cuts (smaller: bends more easily, weaker)"
+msgstr ""
+"Abstand zwischen den Schnittreihen (kleiner: biegt sich leichter, "
+"schwächer)"
+
 msgid "Distance between the rows of cuts (smaller: bends more)"
 msgstr "Abstand zwischen den Schnittreihen (kleiner: biegt sich stärker)"
 
@@ -910,6 +921,18 @@ msgstr ""
 
 msgid "Dithering method"
 msgstr "Rasterverfahren"
+
+msgid "Divider across"
+msgstr "Trennwand quer"
+
+msgid "Divider along"
+msgstr "Trennwand längs"
+
+msgid "Dividers across (beta)"
+msgstr "Trennwände quer (beta)"
+
+msgid "Dividers along (beta)"
+msgstr "Trennwände längs (beta)"
 
 msgid "Do not remind about this version again (a later one is shown)"
 msgstr "Nicht mehr an diese Version erinnern (eine spätere wird angezeigt)"
@@ -1282,13 +1305,25 @@ msgstr "Höchste (30 %)"
 msgid "Hilbert curve"
 msgstr "Hilbert-Kurve"
 
+msgid "Hinge"
+msgstr "Scharnier"
+
+msgid "Hinge bridge"
+msgstr "Steg des Scharniers"
+
 msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
 msgstr ""
 "Scharnier in die Form geschnitten. Eine weitere Form anklicken oder oben "
 "die Schnitte ändern."
 
+msgid "Hinge cut length"
+msgstr "Schnittlänge des Scharniers"
+
 msgid "Hinge removed."
 msgstr "Scharnier entfernt."
+
+msgid "Hinge row spacing"
+msgstr "Reihenabstand des Scharniers"
 
 msgid "Hold Alt while drawing, dragging or moving a node"
 msgstr "Alt gedrückt halten beim Zeichnen, Ziehen oder Verschieben eines Knotens"
@@ -1396,6 +1431,23 @@ msgstr "Inkscape-Zeitlimit (Minuten)"
 
 msgid "Inner ring"
 msgstr "Innerer Ring"
+
+msgid ""
+"Inner walls parallel to the front, evenly spaced; their tabs go through "
+"slots in the walls and the bottom (beta: not yet checked on a laser)"
+msgstr ""
+"Innenwände parallel zur Vorderseite, gleichmäßig verteilt; ihre Laschen "
+"gehen durch Schlitze in Wänden und Boden (beta: noch nicht am Laser "
+"geprüft)"
+
+msgid ""
+"Inner walls parallel to the sides, evenly spaced; where they cross the "
+"others both have slots to half their height (beta: not yet checked on a "
+"laser)"
+msgstr ""
+"Innenwände parallel zu den Seiten, gleichmäßig verteilt; wo sie die "
+"anderen kreuzen, haben beide Schlitze bis zur halben Höhe (beta: noch "
+"nicht am Laser geprüft)"
 
 msgid "Inside sizes"
 msgstr "Innenmaße"
@@ -1619,6 +1671,9 @@ msgstr "Länge"
 msgid "Length of one cut"
 msgstr "Länge eines Schnitts"
 
+msgid "Length of one cut of the hinge (longer: bends more easily)"
+msgstr "Länge eines Scharnierschnitts (länger: biegt sich leichter)"
+
 msgid "Length of the comb before cutting"
 msgstr "Länge des Kamms vor dem Schneiden"
 
@@ -1693,6 +1748,9 @@ msgstr "Niedrig (7 %)"
 
 msgid "Lower left corner"
 msgstr "Untere linke Ecke"
+
+msgid "Lower rail"
+msgstr "Untere Leiste"
 
 msgid "Lower right corner"
 msgstr "Untere rechte Ecke"
@@ -2377,6 +2435,12 @@ msgstr "QR-Code"
 msgid "QR code: a text or web address as a code to engrave (raster)"
 msgstr "QR-Code: ein Text oder eine Webadresse als Code zum Gravieren (Raster)"
 
+msgid "Radius of the rounded corners (outside); the wall bends round them"
+msgstr "Radius der runden Ecken (außen); die Wand biegt sich um sie"
+
+msgid "Rail marks"
+msgstr "Leistenmarkierungen"
+
 msgid "Rail unlocked"
 msgstr "Achsen freigegeben"
 
@@ -2519,6 +2583,18 @@ msgid ""
 msgstr ""
 "Runder Stempel: Text oben und unten im Kreis, Ringe und Text oder ein "
 "Bild in der Mitte; für Gummi gelasert wie der Stempel"
+
+msgid ""
+"Rounded box (beta): a bottom and a lid with rounded corners, the wall two"
+" strips that bend round the corners with a living hinge; tabs hold it "
+"together. Not yet checked on a laser"
+msgstr ""
+"Runde Schachtel (beta): Boden und Deckel mit runden Ecken, die Wand aus "
+"zwei Streifen, die sich mit einem Biegescharnier um die Ecken biegen; "
+"Laschen halten alles zusammen. Noch nicht am Laser geprüft"
+
+msgid "Rounded box with a living hinge (beta)"
+msgstr "Runde Schachtel mit Biegescharnier (beta)"
 
 msgid "Rounded corners of the frame and outline"
 msgstr "Abgerundete Ecken von Rahmen und Umriss"
@@ -2815,6 +2891,9 @@ msgstr ""
 msgid "Skip this version"
 msgstr "Diese Version überspringen"
 
+msgid "Sliding lid (beta)"
+msgstr "Schiebedeckel (beta)"
+
 msgid "Slot plate"
 msgstr "Schlitzplatte"
 
@@ -3015,6 +3094,9 @@ msgstr "Systemstandard"
 msgid "Tab size (%)"
 msgstr "Nasengröße (%)"
 
+msgid "Tab width"
+msgstr "Laschenbreite"
+
 msgid "Take the text off the path: back to a straight line of text"
 msgstr "Den Text vom Pfad nehmen: wieder eine gerade Textzeile"
 
@@ -3210,6 +3292,16 @@ msgid "The laser was found, but this user may not use its USB port."
 msgstr ""
 "Der Laser wurde gefunden, aber dieser Benutzer darf seinen USB-Anschluss "
 "nicht verwenden."
+
+msgid ""
+"The lid slides in from the front, in a groove of two rails glued inside "
+"each side wall (their places are engraved there); the front is lower so "
+"the lid slides over it (beta: not yet checked on a laser)"
+msgstr ""
+"Der Deckel wird von vorn in eine Nut aus zwei Leisten geschoben, die "
+"innen an jede Seitenwand geklebt werden (ihre Stellen sind dort "
+"graviert); die Vorderseite ist niedriger, damit der Deckel darüber "
+"gleitet (beta: noch nicht am Laser geprüft)"
 
 msgid "The lines in the middle (empty: none)"
 msgstr "Die Zeilen in der Mitte (leer: keine)"
@@ -3491,6 +3583,9 @@ msgstr "USB-Zeitlimit (ms)"
 msgid "Un&freeze laser"
 msgstr "Laser &entsperren"
 
+msgid "Uncut material between two cuts in a row"
+msgstr "Ungeschnittenes Material zwischen zwei Schnitten einer Reihe"
+
 msgid "Underline (Ctrl+U)"
 msgstr "Unterstrichen (Strg+U)"
 
@@ -3544,6 +3639,9 @@ msgstr "Unbenannt"
 msgid "Upper left corner"
 msgstr "Obere linke Ecke"
 
+msgid "Upper rail"
+msgstr "Obere Leiste"
+
 msgid "Upper right corner"
 msgstr "Obere rechte Ecke"
 
@@ -3591,6 +3689,9 @@ msgstr ""
 
 msgid "Waiting for the laser to finish."
 msgstr "Warten, bis der Laser fertig ist."
+
+msgid "Wall"
+msgstr "Wand"
 
 msgid "Waves"
 msgstr "Wellen"
@@ -3656,6 +3757,13 @@ msgid ""
 msgstr ""
 "Schnittbreite des Lasers: die Teile wachsen um die Hälfte, damit die "
 "Zinken fest sitzen (mit dem Schnittbreitentest messen)"
+
+msgid ""
+"Width of the laser's cut: the parts grow by half of it so the tabs fit "
+"tightly"
+msgstr ""
+"Schnittbreite des Lasers: die Teile wachsen um die Hälfte, damit die "
+"Laschen fest sitzen"
 
 msgid "Width of the puzzle"
 msgstr "Breite des Puzzles"

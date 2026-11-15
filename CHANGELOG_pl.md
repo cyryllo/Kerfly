@@ -26,6 +26,17 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   do cięcia, obrysu, wypełnienia albo edycji węzłów. Próg, pomijanie drobinek,
   dokładność i gładkie krzywe (ostre narożniki zostają ostre), z obrysami
   widocznymi na tle obrazka podczas ustawiania.
+- **Przegródki w pudełku** (beta, jeszcze nie sprawdzone na laserze): pudełko
+  z wczepami dostaje wewnętrzne ścianki w poprzek i wzdłuż, rozłożone równo,
+  z wypustami w szczelinach ścianek i dna; krzyżujące się przegródki łączą
+  nacięcia do połowy wysokości.
+- **Wysuwane wieczko** (beta, jeszcze nie sprawdzone na laserze) w pudełku z
+  wczepami: wieczko wsuwa się od przodu w rowek z dwóch listew przyklejonych
+  od środka do bocznych ścianek (ich miejsca są wygrawerowane); przód jest
+  niższy.
+- **Okrągłe pudełko na zawiasie** (beta, jeszcze nie sprawdzone na laserze):
+  nowy generator; zaokrąglone dno i wieko z wypustami, ścianka z dwóch pasków,
+  które gną się na rogach.
 
 ## 1.6.0 (2026-11-14)
 
