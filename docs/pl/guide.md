@@ -369,6 +369,15 @@ jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
   głębokość, wysokość, promień rogów, materiał,
   szerokość wypustu, kerf oraz długość nacięcia, mostek i odstęp rzędów
   zawiasu.
+
+W obu pudełkach podgląd ma obok zakładki **Części** zakładkę **3D**: pudełko
+złożone z tych samych części, które zostaną wycięte (wczepy, szczeliny,
+listwy, przegródki). Przeciągnij, aby je obrócić, kółko myszy przybliża,
+dwuklik przywraca widok. **Rozsunięte** odsuwa części od siebie, żeby było
+widać, jak łączą się wczepy i języczki; przy wysuwanym wieczku suwak **Wysuń
+wieczko** wyciąga wieczko z rowka.
+
+![Pudełko na wczepy w 3D](../img/pl/box3d.png)
 - **Test kerfu**: grzebień cięty na części (zsuń je i zmierz: kerf =
   (długość − zmierzone) / liczba części) i płytka ze szczelinami o grubości
   materiału plus luz, żeby znaleźć najciaśniejsze pasowanie.

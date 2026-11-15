@@ -361,6 +361,15 @@ remembered.
   hold it together; without a lid a rim round the top holds the wall in shape.
   Width, depth, height, corner radius, material, tab width, kerf and the
   hinge's cut length, bridge and row spacing.
+
+For both boxes the preview has a **3D** tab beside **Parts**: the box put
+together from the very parts that will be cut (fingers, slots, rails,
+dividers). Drag to turn it, the mouse wheel zooms, a double click turns it
+back. **Pulled apart** moves the parts away from each other, to see how their
+fingers and tabs go together; with a sliding lid, the **Slide the lid out**
+slider pulls the lid out of its groove.
+
+![The finger-joint box in 3D](img/en/box3d.png)
 - **Kerf test**: a comb cut into pieces (push them together and measure:
   kerf = (length − measured) / pieces) and a plate with slots of the
   material's thickness plus a clearance each, to find the tightest fit.

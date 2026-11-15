@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 18:51+0100\n"
+"POT-Creation-Date: 2026-11-15 20:28+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -201,6 +201,9 @@ msgstr "(sterownik libUSB nie jest zainstalowany)"
 
 msgid "(own settings)"
 msgstr "(własne ustawienia)"
+
+msgid "3D"
+msgstr "3D"
 
 #, python-format
 msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
@@ -983,6 +986,9 @@ msgstr "Przeciągnij albo strzałki (1 mm albo krok siatki; z Shift 10 razy wię
 
 msgid "Drag over a picture to cut a piece out of it."
 msgstr "Przeciągnij po obrazku, żeby wyciąć z niego fragment."
+
+msgid "Drag to turn the box, the wheel zooms, a double click turns it back"
+msgstr "Przeciągnij, aby obrócić pudełko; kółko przybliża, dwuklik przywraca widok"
 
 msgid "Drag with the middle or the right mouse button"
 msgstr "Przeciągnij środkowym albo prawym przyciskiem myszy"
@@ -2211,6 +2217,9 @@ msgstr "Własny rozmiar"
 msgid "Pan the view"
 msgstr "Przesuń widok"
 
+msgid "Parts"
+msgstr "Części"
+
 msgid "Passes"
 msgstr "Przejścia"
 
@@ -2425,6 +2434,9 @@ msgstr "Proporcje są zachowane"
 
 msgid "Proportions are not kept: width and height change separately"
 msgstr "Proporcje nie są zachowane: szerokość i wysokość zmieniają się osobno"
+
+msgid "Pulled apart"
+msgstr "Rozsunięte"
 
 msgid "Put text on &path"
 msgstr "Umieść tekst na ś&cieżce"
@@ -2908,6 +2920,12 @@ msgstr ""
 msgid "Skip this version"
 msgstr "Pomiń tę wersję"
 
+msgid "Slide the lid out"
+msgstr "Wysuń wieczko"
+
+msgid "Slide the sliding lid out of its groove"
+msgstr "Wysuwa wieczko z jego rowka"
+
 msgid "Sliding lid (beta)"
 msgstr "Wysuwane wieczko (beta)"
 
@@ -3217,6 +3235,9 @@ msgstr ""
 "72).\n"
 "Przy %g px/cal projekt ma %.1f x %.1f mm."
 
+msgid "The box put together from its parts (drag to turn it)"
+msgstr "Pudełko złożone z jego części (przeciągnij, aby je obrócić)"
+
 msgid "The design does not fit on the laser bed at this position."
 msgstr "Projekt w tym miejscu nie mieści się na stole lasera."
 
@@ -3341,6 +3362,11 @@ msgstr ""
 " narysowane jeden na drugim. Arkusze od 2. są na osobnych warstwach "
 "cięcia, odhaczonych: wytnij arkusz 1, zmień materiał, potem zaznacz "
 "warstwę kolejnego arkusza."
+
+msgid "The parts moved apart, to see how their fingers and tabs go together"
+msgstr ""
+"Części odsunięte od siebie, żeby było widać, jak łączą się wczepy i "
+"języczki"
 
 msgid ""
 "The paths are put over the picture as a new element; the picture stays "

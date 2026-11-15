@@ -49,6 +49,11 @@ class Generated:
     items: list = field(default_factory=list)
     layers: list = field(default_factory=list)
     sheets: int = 1                # sheets of material it needs (the parts that fit the bed at once)
+    # the parts put together, for the 3D preview of boxes: dicts with "name", "loops" (the part's outline and
+    # holes in its own frame, mm, y down), "origin", "u", "v", "n" (3D mm: where its (0, 0) is, the 3D
+    # directions of its x and y, the direction of its thickness), "t"; or kind "band" (a bent wall: "path"
+    # of 3D points along its inner face, "out" outward directions, "height", "t")
+    assembly: list = field(default_factory=list)
 
 
 def _steps(lo, hi, n):
@@ -462,6 +467,40 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
     speed, power, passes = cut
     sheet_keys = {}
     places = _pack_parts([(p_[1], p_[2]) for p_ in parts], bed, spacing, row_w)
+    seen = {}
+
+    def placement(name, w, h):
+        """Where a part stands in the box (z up, x to the right, y from the front to the back)."""
+        n_seen = seen.get(name, 0)
+        seen[name] = n_seen + 1
+        X, Y, Z = (1, 0, 0), (0, 1, 0), (0, 0, 1)
+        down = (0, 0, -1)
+        if name == "bottom":
+            return (0, 0, 0), X, Y, Z
+        if name == "lid" and sliding:
+            return (t + c / 2.0, 0, Hf), X, Y, Z
+        if name == "lid":
+            return (0, 0, H - t), X, Y, Z
+        if name == "front":
+            return (0, 0, h), X, down, Y
+        if name == "back":
+            return (0, D - t, H), X, down, Y
+        if name == "left":
+            return (0, 0, H), Y, down, X
+        if name == "right":
+            return (W - t, D, H), (0, -1, 0), down, X
+        if name.startswith("divider across"):
+            k = int(name.rsplit(" ", 1)[1]) - 1
+            return (0, ys[k] - t / 2.0, t + Hd), X, down, Y
+        if name.startswith("divider along"):
+            k = int(name.rsplit(" ", 1)[1]) - 1
+            return (xs[k] - t / 2.0, 0, t + Hd), Y, down, X
+        if name.endswith("rail"):
+            z0 = (H - t) if name == "upper rail" else (H - 2 * t - groove)
+            if n_seen == 0:                         # the left wall's
+                return (t + rail_w, t, z0), Y, (-1, 0, 0), Z
+            return (W - t - rail_w, t, z0), Y, (1, 0, 0), Z
+        return (0, 0, 0), X, Y, Z
     for part, (sheet, x, y, turned) in zip(parts, places):
         name, w, h, edges, extra = part[:5]
         layer = ""
@@ -481,6 +520,9 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
             label = "%s %s" % (names.get(base, base.capitalize()), number)       # Divider across 1, ...
         else:
             label = names.get(name, name.capitalize())
+        origin, u, v, n = placement(name, w, h)
+        out.assembly.append({"name": label, "loops": [list(lp) for lp in loops], "origin": origin, "u": u,
+                             "v": v, "n": n, "t": t, "slides": sliding and name == "lid"})
         if turned:
             loops = [_turned(lp, h) for lp in loops]
         for loop in loops:
@@ -579,6 +621,22 @@ def hinge_box(width=100.0, depth=80.0, height=50.0, radius=20.0, thickness=3.0, 
     parts = [("bottom", [plate()], None)]
     parts.append(("lid", [plate()], None) if lid else ("rim", [plate(), rim_hole()], None))
     parts += [("wall", strip_loops, hinge), ("wall", strip_loops, hinge)]
+    # 3D preview: the plates t in from the wall's edges, the wall bent round them (its inner face along
+    # the plates' outline)
+    X, Y, Z = (1, 0, 0), (0, 1, 0), (0, 0, 1)
+    for name, loops, _c in parts[:2]:
+        z = t if name == "bottom" else H - 2 * t
+        out.assembly.append({"name": names.get(name, name.capitalize()), "loops": [list(lp) for lp in loops],
+                             "origin": (t, t, z), "u": X, "v": Y, "n": Z, "t": t})
+    path, normals = [], []
+    for cx, cy, a0 in ((Wp - rp, rp, -_m.pi / 2), (Wp - rp, Dp - rp, 0.0), (rp, Dp - rp, _m.pi / 2),
+                       (rp, rp, _m.pi)):
+        for i in range(13):
+            a = a0 + (_m.pi / 2) * i / 12.0
+            path.append((t + cx + rp * _m.cos(a), t + cy + rp * _m.sin(a), 0.0))
+            normals.append((_m.cos(a), _m.sin(a), 0.0))
+    out.assembly.append({"kind": "band", "name": names.get("wall", "Wall"), "path": path, "out": normals,
+                         "height": H, "t": t, "closed": True})
     shapes = []
     for name, loops, cuts in parts:
         xs_ = [p_[0] for lp in loops for p_ in lp]

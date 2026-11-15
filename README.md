@@ -49,10 +49,10 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
   outline is still cut. The **Living hinge** tool cuts hinges that let
   plywood bend.
 - **Generators.** Ready designs from a few numbers: material test, finger-joint
-  box (laid out to fit the bed, sheet by sheet), kerf test, gear, puzzle,
-  ruler, QR code, rubber stamps, rectangular (with a text editor: bold,
-  italic, sizes) and round (inverted and mirrored), and a test card for the
-  laser.
+  box (laid out to fit the bed, sheet by sheet, with a 3D preview), kerf
+  test, gear, puzzle, ruler, QR code, rubber stamps, rectangular (with a text
+  editor: bold, italic, sizes) and round (inverted and mirrored), and a test
+  card for the laser.
 - **Layers, like LightBurn.** Raster engrave, outline engrave and cut, each
   with its own speed, passes and power (M3 boards) and colour; cut layers
   compensate the kerf, so parts come out at their drawn size. A material

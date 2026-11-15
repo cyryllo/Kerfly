@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 18:51+0100\n"
+"POT-Creation-Date: 2026-11-15 20:28+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -199,6 +199,9 @@ msgstr "(controlador libUSB no instalado)"
 
 msgid "(own settings)"
 msgstr "(ajustes propios)"
+
+msgid "3D"
+msgstr "3D"
 
 #, python-format
 msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
@@ -997,6 +1000,9 @@ msgstr ""
 
 msgid "Drag over a picture to cut a piece out of it."
 msgstr "Arrastre sobre una imagen para recortar un trozo."
+
+msgid "Drag to turn the box, the wheel zooms, a double click turns it back"
+msgstr "Arrastra para girar la caja, la rueda acerca, un doble clic la devuelve"
 
 msgid "Drag with the middle or the right mouse button"
 msgstr "Arrastrar con el botón central o derecho del ratón"
@@ -2235,6 +2241,9 @@ msgstr "Tamaño propio"
 msgid "Pan the view"
 msgstr "Desplazar la vista"
 
+msgid "Parts"
+msgstr "Piezas"
+
 msgid "Passes"
 msgstr "Pasadas"
 
@@ -2451,6 +2460,9 @@ msgstr "Se mantienen las proporciones"
 
 msgid "Proportions are not kept: width and height change separately"
 msgstr "No se mantienen las proporciones: ancho y alto cambian por separado"
+
+msgid "Pulled apart"
+msgstr "Separadas"
 
 msgid "Put text on &path"
 msgstr "Poner texto en &trazado"
@@ -2934,6 +2946,12 @@ msgstr ""
 msgid "Skip this version"
 msgstr "Omitir esta versión"
 
+msgid "Slide the lid out"
+msgstr "Sacar la tapa"
+
+msgid "Slide the sliding lid out of its groove"
+msgstr "Desliza la tapa corredera fuera de su ranura"
+
 msgid "Sliding lid (beta)"
 msgstr "Tapa corredera (beta)"
 
@@ -3253,6 +3271,9 @@ msgstr ""
 "Illustrator: 72).\n"
 "A %g px/pulg. el diseño mide %.1f x %.1f mm."
 
+msgid "The box put together from its parts (drag to turn it)"
+msgstr "La caja montada con sus piezas (arrastra para girarla)"
+
 msgid "The design does not fit on the laser bed at this position."
 msgstr "El diseño no cabe en el área de trabajo en esta posición."
 
@@ -3380,6 +3401,9 @@ msgstr ""
 "una sobre otra. Las hojas desde la 2 están en sus propias capas de corte,"
 " desmarcadas: corte la hoja 1, cambie el material y marque la capa de la "
 "siguiente hoja."
+
+msgid "The parts moved apart, to see how their fingers and tabs go together"
+msgstr "Las piezas separadas, para ver cómo encajan sus dientes y lengüetas"
 
 msgid ""
 "The paths are put over the picture as a new element; the picture stays "

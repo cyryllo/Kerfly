@@ -7,6 +7,23 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Added
+
+- **3D preview of boxes**: the Generators window of the finger-joint box and
+  of the rounded box has a **3D** tab beside the flat **Parts** view. It shows
+  the box put together from the very parts that will be cut; drag to turn it,
+  the wheel zooms. **Pulled apart** moves the parts away from each other to
+  show the joints, and a slider slides a sliding lid out of its groove.
+
+### Changed
+
+- **The generator window's summary counts the layers the design uses**: it
+  said "0 layers" for a box on the default cut layer.
+- **Kerfly.exe and the Windows installer carry their product name and
+  version** (shown in the file's Properties), ready for code signing.
+
 ## 1.7.1 (2026-11-15)
 
 ### Fixed

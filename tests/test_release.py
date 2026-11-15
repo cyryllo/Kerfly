@@ -1448,10 +1448,34 @@ def part_generators(s):
             s.type_number(dlg.widgets[key], 1)
         if not dlg.widgets["sliding"].isChecked():
             s.tick(dlg.widgets["sliding"])
+        s.settle(6, 0.05)
+        # the 3D tab: clicked, the box turned by a drag, pulled apart, the lid slid out (slider clicked, End)
+        bar = dlg.preview_tabs.tabBar()
+        if not bar.isVisible() or not bar.isTabVisible(1):
+            raise RuntimeError("no 3D tab for a box")
+        QTest.mouseClick(bar, Qt.LeftButton, Qt.NoModifier, bar.tabRect(1).center())
+        s.settle()
+        if dlg.preview_tabs.currentIndex() != 1:
+            raise RuntimeError("the 3D tab did not open")
+        view = dlg.box3d
+        yaw, pitch = view.yaw, view.pitch
+        c = view.rect().center()
+        s.drag(c, c + QPoint(80, 30), widget=view)
+        if view.yaw == yaw or view.pitch == pitch:
+            raise RuntimeError("the drag did not turn the box (%s, %s)" % (view.yaw, view.pitch))
+        s.tick(dlg.exploded)
+        if view.exploded <= 0:
+            raise RuntimeError("Pulled apart did not move the parts")
+        s.click(dlg.lid_slider)
+        QTest.keyClick(dlg.lid_slider, Qt.Key_End)
+        s.settle()
+        if view.lid_out <= 0:
+            raise RuntimeError("the slider did not slide the lid out")
         from PySide6.QtWidgets import QDialogButtonBox
         QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
     s.expect_dialog("finger box with dividers", box_with_dividers)
-    s.step("Generators → Finger-joint box with dividers across 1 and along 1 and a sliding lid (beta)",
+    s.step("Generators → Finger-joint box with dividers across 1 and along 1 and a sliding lid (beta), 3D tab: "
+           "turned, pulled apart, lid slid out",
            lambda: s.trigger(w.act_generators["finger_box"], via="menu"),
            check=lambda: (any(e.name.startswith(tr_("Divider across")) for e in w.elements)
                           and any(e.name.startswith(tr_("Divider along")) for e in w.elements)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 18:51+0100\n"
+"POT-Creation-Date: 2026-11-15 20:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -191,6 +191,9 @@ msgid "(libUSB driver not installed)"
 msgstr ""
 
 msgid "(own settings)"
+msgstr ""
+
+msgid "3D"
 msgstr ""
 
 #, python-format
@@ -928,6 +931,9 @@ msgid ""
 msgstr ""
 
 msgid "Drag over a picture to cut a piece out of it."
+msgstr ""
+
+msgid "Drag to turn the box, the wheel zooms, a double click turns it back"
 msgstr ""
 
 msgid "Drag with the middle or the right mouse button"
@@ -2052,6 +2058,9 @@ msgstr ""
 msgid "Pan the view"
 msgstr ""
 
+msgid "Parts"
+msgstr ""
+
 msgid "Passes"
 msgstr ""
 
@@ -2252,6 +2261,9 @@ msgid "Proportions are kept"
 msgstr ""
 
 msgid "Proportions are not kept: width and height change separately"
+msgstr ""
+
+msgid "Pulled apart"
 msgstr ""
 
 msgid "Put text on &path"
@@ -2700,6 +2712,12 @@ msgstr ""
 msgid "Skip this version"
 msgstr ""
 
+msgid "Slide the lid out"
+msgstr ""
+
+msgid "Slide the sliding lid out of its groove"
+msgstr ""
+
 msgid "Sliding lid (beta)"
 msgstr ""
 
@@ -2979,6 +2997,9 @@ msgid ""
 "At %g px/in the design is %.1f x %.1f mm."
 msgstr ""
 
+msgid "The box put together from its parts (drag to turn it)"
+msgstr ""
+
 msgid "The design does not fit on the laser bed at this position."
 msgstr ""
 
@@ -3083,6 +3104,9 @@ msgid ""
 "The parts do not fit the bed at once: %d sheets of material, drawn on top"
 " of each other. Sheets 2 and on are on their own cut layers, unticked: "
 "cut sheet 1, change the material, then tick the next sheet's layer."
+msgstr ""
+
+msgid "The parts moved apart, to see how their fingers and tabs go together"
 msgstr ""
 
 msgid ""

@@ -51,10 +51,10 @@ obsługi](https://cyryllo.github.io/Kerfly/pl/guide.html).
   nadal jest cięty. Narzędzie **Zawias giętki** nacina zawiasy, dzięki którym
   sklejka się wygina.
 - **Generatory.** Gotowe projekty z kilku liczb: test materiału, pudełko na
-  wczepy (ułożone tak, żeby mieściły się na stole, arkusz po arkuszu),
-  test kerfu, koło zębate, puzzle, linijka, kod QR, gumowe pieczątki,
-  prostokątne (z edytorem tekstu: pogrubienie, kursywa, rozmiary) i okrągłe
-  (odwrócone i odbite), i karta testowa lasera.
+  wczepy (ułożone tak, żeby mieściły się na stole, arkusz po arkuszu, z
+  podglądem 3D), test kerfu, koło zębate, puzzle, linijka, kod QR, gumowe
+  pieczątki, prostokątne (z edytorem tekstu: pogrubienie, kursywa, rozmiary)
+  i okrągłe (odwrócone i odbite), i karta testowa lasera.
 - **Warstwy jak w LightBurnie.** Grawer rastrowy, obrys i cięcie, każda z
   własną prędkością, liczbą przejść, mocą (płyty M3) i kolorem; warstwy
   cięcia kompensują kerf, więc części wychodzą w narysowanym rozmiarze. Baza

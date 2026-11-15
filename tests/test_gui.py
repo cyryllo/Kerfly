@@ -2443,6 +2443,41 @@ def main():
     check("generators: every one inserts a group as one undo step, window tells the truth; numbers remembered",
           all(made.values()) and remembered and enter_stays,
           "(%s, remembered %s, Enter keeps the dialog %s)" % (made, remembered, enter_stays))
+
+    # 54b. the generators' 3D tab: only for boxes (finger box, rounded box), drawn (wood on the background),
+    # Pulled apart moves the parts, the lid slider only with a sliding lid and moves it out
+    shown3d = {}
+    for key in ("finger_box", "hinge_box", "gear"):
+        d3 = _GD(gw, key, remember=False)
+        d3.resize(1200, 700)
+        d3.show()
+        app.processEvents()
+        shown3d[key] = d3.preview_tabs.isTabVisible(1) and d3.preview_tabs.tabBar().isVisible()
+        if key == "finger_box":
+            d3.widgets["sliding"].setChecked(True)
+            d3._preview()                                   # (the preview waits 150 ms after a change)
+            app.processEvents()
+            d3.preview_tabs.setCurrentIndex(1)
+            app.processEvents()
+            img = d3.box3d.grab().toImage()
+            wood = sum(1 for y in range(0, img.height(), 6) for x in range(0, img.width(), 6)
+                       if img.pixelColor(x, y).red() - img.pixelColor(x, y).blue() > 40)
+            slider = d3.lid_slider.isVisible()
+            d3.lid_slider.setValue(100)
+            lid_out = d3.box3d.lid_out
+            d3.exploded.setChecked(True)
+            apart = d3.box3d.exploded
+            d3.widgets["sliding"].setChecked(False)
+            d3._preview()
+            app.processEvents()
+            slider_gone = not d3.lid_slider.isVisible()
+        d3.reject()
+        d3.deleteLater()
+    check("generators: 3D tab only for boxes, the box drawn, pulled apart, the sliding lid slides out",
+          shown3d == {"finger_box": True, "hinge_box": True, "gear": False} and wood > 200 and slider
+          and lid_out > 50 and apart > 0 and slider_gone,
+          "(%s, wood %d, slider %s, lid out %.1f, apart %.1f, slider hidden %s)"
+          % (shown3d, wood, slider, lid_out, apart, slider_gone))
     gw._dirty = False
     gw.close()
 

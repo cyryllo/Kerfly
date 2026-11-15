@@ -1461,6 +1461,61 @@ def test_sliding_lid():
     return failures
 
 
+def test_box_assembly():
+    """The 3D preview's assembly: every part of the box in its place, the whole inside W x D x H and filling it
+    (each wall a slab of the material's thickness at its side, the lid on top, the band of a rounded box)."""
+    from kerfly.core import generators as gen
+    failures = 0
+
+    def check(name, ok, detail=""):
+        nonlocal failures
+        print("%-5s box 3D: %s %s" % ("OK" if ok else "FAIL", name, "" if ok else detail))
+        failures += not ok
+
+    def points(part):
+        if part.get("kind") == "band":
+            return [(x + nx * d, y + ny * d, z + h) for (x, y, z), (nx, ny, _nz) in zip(part["path"], part["out"])
+                    for d in (0.0, part["t"]) for h in (0.0, part["height"])]
+        o, u, v, n = part["origin"], part["u"], part["v"], part["n"]
+        return [tuple(o[i] + u[i] * x + v[i] * y + n[i] * d for i in range(3))
+                for loop in part["loops"] for x, y in loop for d in (0.0, part["t"])]
+
+    def span(pts, i):
+        return round(min(p[i] for p in pts), 3), round(max(p[i] for p in pts), 3)
+    W, D, H, t = 100.0, 80.0, 50.0, 3.0
+    slabs = {"Bottom": (2, (0.0, t)), "Lid": (2, (H - t, H)), "Front": (1, (0.0, t)), "Back": (1, (D - t, D)),
+             "Left": (0, (0.0, t)), "Right": (0, (W - t, W))}
+    for kw in ({}, dict(sliding=True), dict(sliding=True, dividers_across=1, dividers_along=2), dict(lid=False)):
+        lid = kw.pop("lid", True)
+        g = gen.finger_box(W, D, H, t, 10.0, 0.0, lid, **kw)
+        names = [p["name"] for p in g.assembly]
+        everything = [q for p in g.assembly for q in points(p)]
+        whole = [span(everything, i) for i in range(3)] == [(0.0, W), (0.0, D), (0.0, H)]
+        wrong = []
+        for p in g.assembly:
+            if p["name"] in slabs and not (p["name"] == "Lid" and kw.get("sliding")):
+                axis, (lo, hi) = slabs[p["name"]]
+                if span(points(p), axis) != (lo, hi):
+                    wrong.append((p["name"], span(points(p), axis)))
+        sliding_lid = [p for p in g.assembly if p.get("slides")]
+        check("finger box %s: %d parts, inside and filling %gx%gx%g, walls at their sides"
+              % (kw or ("no lid" if not lid else "plain"), len(names), W, D, H),
+              whole and not wrong and len(names) >= 5 + lid and
+              (len(sliding_lid) == 1 if kw.get("sliding") else not sliding_lid),
+              "(%s, %s, %s)" % (names, [span(everything, i) for i in range(3)], wrong))
+    for lid in (True, False):
+        g = gen.hinge_box(120.0, 90.0, 50.0, 20.0, t, 10.0, 0.0, lid)
+        names = [p["name"] for p in g.assembly]
+        everything = [q for p in g.assembly for q in points(p)]
+        band = next((p for p in g.assembly if p.get("kind") == "band"), None)
+        check("rounded box %s: bottom, %s and the wall band inside 120x90x50" % ("with lid" if lid else "with rim",
+                                                                                  "lid" if lid else "rim"),
+              [span(everything, i) for i in range(3)] == [(0.0, 120.0), (0.0, 90.0), (0.0, 50.0)] and
+              band is not None and band["closed"] and len(names) == 3,
+              "(%s, %s)" % (names, [span(everything, i) for i in range(3)]))
+    return failures
+
+
 def test_box_sheets():
     """Box parts on the bed: no part over another, all inside the bed, as few sheets as fit (parts turned
     and put into the room left on earlier sheets); a part on a later sheet is on that sheet's layer."""
@@ -1734,6 +1789,7 @@ def main():
     failures += test_hinge_box()
     failures += test_sliding_lid()
     failures += test_box_sheets()
+    failures += test_box_assembly()
     failures += test_offset()
     failures += test_file_encodings()
     failures += test_job_cache()

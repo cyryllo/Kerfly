@@ -500,8 +500,33 @@ class GeneratorDialog(QDialog):
         self.view.setBackgroundBrush(QBrush(QColor("#e9ebef")))
         self.summary = QLabel()
         self.summary.setWordWrap(True)
+        # boxes: a 3D tab with the parts put together
+        from PySide6.QtWidgets import QSlider, QTabWidget
+        from kerfly.gui.box3d import Box3DView
+        self.box3d = Box3DView()
+        box3d_page = QWidget()
+        b3 = QVBoxLayout(box3d_page)
+        b3.setContentsMargins(0, 0, 0, 0)
+        b3.addWidget(self.box3d, 1)
+        controls = QHBoxLayout()
+        self.exploded = QCheckBox(_("Pulled apart"))
+        self.exploded.setToolTip(_("The parts moved apart, to see how their fingers and tabs go together"))
+        self.exploded.toggled.connect(lambda on: self.box3d.set_exploded(25.0 if on else 0.0))
+        controls.addWidget(self.exploded)
+        self.lid_label = QLabel(_("Slide the lid out"))
+        self.lid_slider = QSlider(Qt.Horizontal)
+        self.lid_slider.setRange(0, 100)
+        self.lid_slider.setToolTip(_("Slide the sliding lid out of its groove"))
+        self.lid_slider.valueChanged.connect(self._lid_moved)
+        controls.addWidget(self.lid_label)
+        controls.addWidget(self.lid_slider, 1)
+        b3.addLayout(controls)
+        self.preview_tabs = QTabWidget()
+        self.preview_tabs.addTab(self.view, _("Parts"))
+        self.preview_tabs.addTab(box3d_page, _("3D"))
+        self.preview_tabs.setTabToolTip(1, _("The box put together from its parts (drag to turn it)"))
         right = QVBoxLayout()
-        right.addWidget(self.view, 1)
+        right.addWidget(self.preview_tabs, 1)
         right.addWidget(self.summary)
         top = QHBoxLayout()
         top.addLayout(form)
@@ -570,6 +595,10 @@ class GeneratorDialog(QDialog):
                 if name in self.widgets:
                     self.widgets[name].setEnabled(own)
 
+    def _lid_moved(self, value):
+        depth = max((max(y for _x, y in p["loops"][0]) for p in self.box3d.assembly if p.get("slides")), default=0.0)
+        self.box3d.set_lid_out(depth * value / 100.0)
+
     def _preview(self):
         from kerfly.gui.text_shapes import update_text_spec
         self.scene.clear()
@@ -578,6 +607,15 @@ class GeneratorDialog(QDialog):
         except Exception as e:                    # a combination of numbers that makes no design
             self.summary.setText(str(e))
             return
+        assembly = getattr(design, "assembly", None) or []
+        self.box3d.set_assembly(assembly)
+        self.preview_tabs.setTabVisible(1, bool(assembly))
+        self.preview_tabs.tabBar().setVisible(bool(assembly))
+        sliding = self.box3d.has_sliding_lid()
+        self.lid_label.setVisible(sliding)
+        self.lid_slider.setVisible(sliding)
+        if sliding:
+            self._lid_moved(self.lid_slider.value())
         colors = {l.key: l.color for l in design.layers}
         xs, ys = [], []
         for item in design.items:
@@ -619,7 +657,10 @@ class GeneratorDialog(QDialog):
             self.scene.setSceneRect(rect)
             self.view.fitInView(rect, Qt.KeepAspectRatio)
             text = _("%(w).1f × %(h).1f mm, %(n)d shapes, %(l)d layers") % {
-                "w": max(xs) - min(xs), "h": max(ys) - min(ys), "n": len(design.items), "l": len(design.layers)}
+                "w": max(xs) - min(xs), "h": max(ys) - min(ys), "n": len(design.items),
+                "l": len({l.key for l in design.layers} |      # "" = the default layer of the shape's kind
+                         {item.layer or (item.spec.operation if item.spec is not None else "raster")
+                          for item in design.items})}
             sheets = getattr(design, "sheets", 1)
             if sheets > 1:
                 text += "\n" + _("The parts do not fit the bed at once: %d sheets of material, drawn on top of each "

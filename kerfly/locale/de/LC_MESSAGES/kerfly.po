@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 18:51+0100\n"
+"POT-Creation-Date: 2026-11-15 20:28+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -199,6 +199,9 @@ msgstr "(libUSB-Treiber nicht installiert)"
 
 msgid "(own settings)"
 msgstr "(eigene Einstellungen)"
+
+msgid "3D"
+msgstr "3D"
 
 #, python-format
 msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
@@ -1001,6 +1004,11 @@ msgstr ""
 
 msgid "Drag over a picture to cut a piece out of it."
 msgstr "Über ein Bild ziehen, um ein Stück daraus zu schneiden."
+
+msgid "Drag to turn the box, the wheel zooms, a double click turns it back"
+msgstr ""
+"Ziehen dreht die Schachtel, das Mausrad zoomt, ein Doppelklick dreht sie "
+"zurück"
 
 msgid "Drag with the middle or the right mouse button"
 msgstr "Mit der mittleren oder rechten Maustaste ziehen"
@@ -2248,6 +2256,9 @@ msgstr "Eigene Größe"
 msgid "Pan the view"
 msgstr "Ansicht verschieben"
 
+msgid "Parts"
+msgstr "Teile"
+
 msgid "Passes"
 msgstr "Durchgänge"
 
@@ -2464,6 +2475,9 @@ msgid "Proportions are not kept: width and height change separately"
 msgstr ""
 "Seitenverhältnis wird nicht beibehalten: Breite und Höhe ändern sich "
 "getrennt"
+
+msgid "Pulled apart"
+msgstr "Auseinandergezogen"
 
 msgid "Put text on &path"
 msgstr "Text auf &Pfad setzen"
@@ -2949,6 +2963,12 @@ msgstr ""
 msgid "Skip this version"
 msgstr "Diese Version überspringen"
 
+msgid "Slide the lid out"
+msgstr "Deckel herausschieben"
+
+msgid "Slide the sliding lid out of its groove"
+msgstr "Den Schiebedeckel aus seiner Nut schieben"
+
 msgid "Sliding lid (beta)"
 msgstr "Schiebedeckel (beta)"
 
@@ -3269,6 +3289,9 @@ msgstr ""
 "72).\n"
 "Bei %g px/Zoll ist der Entwurf %.1f x %.1f mm groß."
 
+msgid "The box put together from its parts (drag to turn it)"
+msgstr "Die Schachtel aus ihren Teilen zusammengesetzt (ziehen zum Drehen)"
+
 msgid "The design does not fit on the laser bed at this position."
 msgstr "Der Entwurf passt an dieser Position nicht auf die Arbeitsfläche."
 
@@ -3396,6 +3419,11 @@ msgstr ""
 "übereinander gezeichnet. Bögen ab 2 liegen auf eigenen, abgehakten "
 "Schneideebenen: Bogen 1 schneiden, Material wechseln, dann die Ebene des "
 "nächsten Bogens anhaken."
+
+msgid "The parts moved apart, to see how their fingers and tabs go together"
+msgstr ""
+"Die Teile auseinandergezogen, um zu sehen, wie Zinken und Laschen "
+"ineinandergreifen"
 
 msgid ""
 "The paths are put over the picture as a new element; the picture stays "

@@ -3,6 +3,23 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
+## Niewydane
+
+### Dodane
+
+- **Podgląd pudełek w 3D**: okno generatora pudełka na wczepy i okrągłego
+  pudełka ma obok płaskiego widoku **Części** zakładkę **3D**. Pokazuje
+  pudełko złożone z tych samych części, które zostaną wycięte; przeciąganie
+  obraca, kółko przybliża. **Rozsunięte** odsuwa części od siebie, żeby
+  pokazać połączenia, a suwak wysuwa wysuwane wieczko z rowka.
+
+### Zmienione
+
+- **Podsumowanie w oknie generatora liczy warstwy, których projekt używa**:
+  dla pudełka na domyślnej warstwie cięcia pokazywało „warstw: 0”.
+- **Kerfly.exe i instalator dla Windows mają nazwę produktu i wersję**
+  (widoczne we Właściwościach pliku), przygotowane do podpisywania kodu.
+
 ## 1.7.1 (2026-11-15)
 
 ### Poprawione
