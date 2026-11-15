@@ -7,6 +7,15 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## 1.7.1 (2026-11-15)
+
+### Fixed
+
+- **The Text tool's font list showed another font than the text's** on a
+  computer with few fonts ("Sans Serif" instead of "DejaVu Sans"), and a font
+  that is not installed was not kept. The list now shows the text's own font,
+  and a text keeps a font that is missing on this computer.
+
 ## 1.7.0 (2026-11-15)
 
 Single-line fonts, ten more fill patterns, dithering methods, picture tracing

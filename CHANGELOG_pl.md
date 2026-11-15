@@ -3,6 +3,16 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
+## 1.7.1 (2026-11-15)
+
+### Poprawione
+
+- **Lista czcionek narzędzia Tekst pokazywała inną czcionkę niż w tekście** na
+  komputerze z małą liczbą czcionek („Sans Serif” zamiast „DejaVu Sans”), a
+  czcionka, której nie ma na komputerze, nie była zachowywana. Lista pokazuje
+  teraz czcionkę tekstu, a tekst zachowuje czcionkę, której na tym komputerze
+  brakuje.
+
 ## 1.7.0 (2026-11-15)
 
 Czcionki jednokreskowe, dziesięć nowych wzorów wypełnienia, metody ditheringu,

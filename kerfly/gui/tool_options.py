@@ -271,7 +271,8 @@ class ToolOptionsBar(QWidget):
             font.setFixedWidth(chars_width(font, 16) + 28)
             font.setToolTip(_("Font. At the top of the list: single-line fonts, built into Kerfly, for fast "
                               "engraving (the laser runs once along each letter, nothing to fill)"))
-            font.currentIndexChanged.connect(lambda _i, f=font: self._set("font_family", f.family()))
+            font.family_chosen.connect(lambda fam: self._set("font_family", fam)
+                                       if self.spec is not None and fam != self.spec.font_family else None)
             font.setProperty("spec_attr", "font_family")
             g.addWidget(font, 0, 0, 1, 4)
             spacing = self._dspin("text_spacing", -50.0, 200.0, " mm", decimals=2)

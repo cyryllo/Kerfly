@@ -15,6 +15,17 @@ FULLHD=(xvfb-run -a -s "-screen 0 1920x1080x24")
 run() { echo "=== $1"; shift; "$@" 2>&1 | grep -E "FAIL|Traceback|Error|passed|failed|match|problems|steps" | tail -4; }
 run core .venv/bin/python tests/test_core.py
 run gui "${FULLHD[@]}" .venv/bin/python tests/test_gui.py
+# the window with only the DejaVu fonts and no screen, as on the GitHub runners (few fonts there once
+# made the font list show "Sans Serif" instead of the text's font)
+FEW_FONTS=$(mktemp -d)
+cat > "$FEW_FONTS/fonts.conf" <<EOC
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig><dir>/usr/share/fonts/truetype/dejavu</dir><cachedir>$FEW_FONTS/cache</cachedir></fontconfig>
+EOC
+run "gui (few fonts, no screen)" env FONTCONFIG_FILE="$FEW_FONTS/fonts.conf" QT_QPA_PLATFORM=offscreen \
+    .venv/bin/python tests/test_gui.py
+rm -rf "$FEW_FONTS"
 run stamp .venv/bin/python tests/test_stamp.py
 run i18n xvfb-run -a .venv/bin/python tests/test_i18n.py
 run regression xvfb-run -a .venv/bin/python tests/regression.py
