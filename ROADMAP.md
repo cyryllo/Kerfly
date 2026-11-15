@@ -196,7 +196,7 @@ the right mouse button only pans the view. K40 Whisperer had no menu there
 | ~~Bezier / vector path (pen tool)~~ (done) | `toolvector.py` |
 | ~~Text (system fonts)~~ (done); ~~text on a path~~ (done) | `tooltext.py`, `toollinetext.py` |
 | ~~Node editing with Bezier handles, for drawn shapes and broken-apart SVG / DXF~~ (done) | `toolnodeedit.py`, `toolnodemove.py` |
-| Cut a region out of an image | `toolimagecut.py` |
+| ~~Cut a region out of an image~~ (done: Cut out of a picture tool, rectangle or ellipse) | `toolimagecut.py` |
 | ~~Tabs (bridges) on cut paths~~ (done: count and width per outline) | `tooltabedit.py` |
 
 ## Generators and processing

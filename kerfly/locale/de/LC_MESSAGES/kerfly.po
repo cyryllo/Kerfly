@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 17:44+0100\n"
+"POT-Creation-Date: 2026-11-15 18:01+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -250,6 +250,11 @@ msgstr ""
 
 msgid "A new laser with Kerfly's default settings"
 msgstr "Ein neuer Laser mit den Standardeinstellungen von Kerfly"
+
+msgid "A piece was cut out of the picture (Undo brings the whole picture back)."
+msgstr ""
+"Ein Stück wurde aus dem Bild geschnitten (Rückgängig bringt das ganze "
+"Bild zurück)."
 
 msgid "A stamp prints its mirror image: mirror it left to right"
 msgstr "Ein Stempel druckt sein Spiegelbild: links-rechts spiegeln"
@@ -743,6 +748,17 @@ msgstr "Auftrennen"
 msgid "Cut or engrave the outline too (off: only the pattern)"
 msgstr "Auch die Kontur schneiden oder gravieren (aus: nur das Muster)"
 
+msgid "Cut out of a picture"
+msgstr "Aus einem Bild ausschneiden"
+
+msgid ""
+"Cut out of a picture: drag a rectangle or an ellipse (options bar) over a"
+" picture; the piece inside stays, the rest goes. Undo brings it back."
+msgstr ""
+"Aus einem Bild ausschneiden: ein Rechteck oder eine Ellipse "
+"(Optionsleiste) über ein Bild ziehen; das Stück darin bleibt, der Rest "
+"verschwindet. Rückgängig holt es zurück."
+
 msgid "Cut the outline"
 msgstr "Umriss schneiden"
 
@@ -960,6 +976,9 @@ msgid ""
 msgstr ""
 "Ziehen oder Pfeiltasten (1 mm oder ein Rasterschritt; mit Umschalt 10-mal"
 " mehr)"
+
+msgid "Drag over a picture to cut a piece out of it."
+msgstr "Über ein Bild ziehen, um ein Stück daraus zu schneiden."
 
 msgid "Drag with the middle or the right mouse button"
 msgstr "Mit der mittleren oder rechten Maustaste ziehen"
@@ -2838,6 +2857,13 @@ msgstr "Einstellungen gespeichert in %s"
 
 msgid "Shape"
 msgstr "Form"
+
+msgid ""
+"Shape of the piece that stays: drag it over a picture; the rest of the "
+"picture goes"
+msgstr ""
+"Form des Stücks, das bleibt: über ein Bild ziehen; der Rest des Bildes "
+"verschwindet"
 
 msgid "Shape of the teeth (20° is usual; meshing gears need the same angle)"
 msgstr "Form der Zähne (20° ist üblich; kämmende Räder brauchen denselben Winkel)"

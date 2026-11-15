@@ -511,7 +511,7 @@ class PreviewView(QGraphicsView):
             side = max(rect.width(), rect.height())
             rect = QRectF(start.x() if end.x() >= start.x() else start.x() - side,
                           start.y() if end.y() >= start.y() else start.y() - side, side, side)
-        if self.tool == "ellipse":
+        if self.tool == "ellipse" or (self.tool == "crop" and getattr(self, "crop_shape", "rect") == "ellipse"):
             self._draw_item = self.scene().addEllipse(rect, pen)
         else:
             self._draw_item = self.scene().addRect(rect, pen)

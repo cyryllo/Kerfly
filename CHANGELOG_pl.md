@@ -37,6 +37,9 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 - **Okrągłe pudełko na zawiasie** (beta, jeszcze nie sprawdzone na laserze):
   nowy generator; zaokrąglone dno i wieko z wypustami, ścianka z dwóch pasków,
   które gną się na rogach.
+- Narzędzie **Wytnij fragment obrazka** (pasek po prawej, Shift+C): przeciągnij
+  prostokąt albo elipsę po obrazku; fragment w środku zostaje na swoim
+  miejscu, reszta znika.
 
 ## 1.6.0 (2026-11-14)
 

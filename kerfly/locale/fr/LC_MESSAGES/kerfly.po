@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 17:44+0100\n"
+"POT-Creation-Date: 2026-11-15 18:01+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -250,6 +250,9 @@ msgstr ""
 
 msgid "A new laser with Kerfly's default settings"
 msgstr "Un nouveau laser avec les réglages par défaut de Kerfly"
+
+msgid "A piece was cut out of the picture (Undo brings the whole picture back)."
+msgstr "Un morceau a été découpé dans l'image (Annuler rend l'image entière)."
 
 msgid "A stamp prints its mirror image: mirror it left to right"
 msgstr "Un tampon imprime son image miroir : le retourner de gauche à droite"
@@ -743,6 +746,17 @@ msgstr "Ouvrir"
 msgid "Cut or engrave the outline too (off: only the pattern)"
 msgstr "Découper ou graver aussi le contour (désactivé : seulement le motif)"
 
+msgid "Cut out of a picture"
+msgstr "Découper dans une image"
+
+msgid ""
+"Cut out of a picture: drag a rectangle or an ellipse (options bar) over a"
+" picture; the piece inside stays, the rest goes. Undo brings it back."
+msgstr ""
+"Découper dans une image : faites glisser un rectangle ou une ellipse "
+"(barre d'options) sur une image ; le morceau à l'intérieur reste, le "
+"reste disparaît. Annuler le rend."
+
 msgid "Cut the outline"
 msgstr "Découper le contour"
 
@@ -958,6 +972,9 @@ msgid ""
 "Drag it, or the arrow keys (1 mm or one grid step; with Shift 10 times "
 "more)"
 msgstr "Glisser, ou les flèches (1 mm ou un pas de grille ; avec Maj 10 fois plus)"
+
+msgid "Drag over a picture to cut a piece out of it."
+msgstr "Faites glisser sur une image pour en découper un morceau."
 
 msgid "Drag with the middle or the right mouse button"
 msgstr "Glisser avec le bouton du milieu ou le bouton droit"
@@ -2837,6 +2854,13 @@ msgstr "Paramètres enregistrés dans %s"
 
 msgid "Shape"
 msgstr "Forme"
+
+msgid ""
+"Shape of the piece that stays: drag it over a picture; the rest of the "
+"picture goes"
+msgstr ""
+"Forme du morceau qui reste : faites-la glisser sur une image ; le reste "
+"de l'image disparaît"
 
 msgid "Shape of the teeth (20° is usual; meshing gears need the same angle)"
 msgstr ""

@@ -118,6 +118,8 @@ def expected_bar(w):
     if tool == "offset":
         values = dict(w.offset_defaults)
         return values, set(values)
+    if tool == "crop":
+        return None, set()                       # its own bar: the shape of the piece (no shape settings)
     e = w.selected
     if tool == "textpath":
         if e is not None and e.shape is not None and e.shape.kind == "text":

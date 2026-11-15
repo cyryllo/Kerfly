@@ -130,6 +130,7 @@ class MainWindow(QMainWindow):
         self.tool_options.changed.connect(self._tool_options_changed)
         self.tool_options.node_action.connect(lambda code: self.preview.node_editor.action(code))
         self.tool_options.offset_changed.connect(self._offset_values_changed)
+        self.tool_options.crop_changed.connect(self._crop_values_changed)
         self.tool_options.offset_apply.connect(self.offset_selected)
         central = QWidget()
         central_layout = QVBoxLayout(central)
@@ -198,6 +199,7 @@ class MainWindow(QMainWindow):
         self.hinge_defaults = ShapeSpec(kind="rectangle", hinge_pattern="straight")
         # the Offset tool: what a click on a shape (or "Offset selected") does
         self.offset_defaults = {"offset_distance": 2.0, "offset_join": "round", "offset_keep": True}
+        self.crop_defaults = {"crop_shape": "rect"}
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
@@ -676,6 +678,7 @@ class MainWindow(QMainWindow):
                  ("fill", "bucket-droplet", N_("Fill with a pattern"), "Shift+F"),
                  ("hinge", icons.hinge_icon(), N_("Living hinge"), "Shift+H"),
                  ("offset", "box-padding", N_("Offset"), "Shift+O"),
+                 ("crop", "picture-cut", N_("Cut out of a picture"), "Shift+C"),
                  ("measure", "ruler-measure", N_("Measure"), "M")]
         for entry in tools:
             if entry is None:
@@ -734,6 +737,9 @@ class MainWindow(QMainWindow):
             self.status(_("Fill: choose a pattern above, then click a closed shape (cut or outline) to fill it. "
                           "Selected shapes get the pattern you choose. The outline stays on its layer; the "
                           "pattern is engraved."))
+        if tool == "crop":
+            self.status(_("Cut out of a picture: drag a rectangle or an ellipse (options bar) over a picture; the "
+                          "piece inside stays, the rest goes. Undo brings it back."))
         if tool == "polyline":
             self.status(_("Polyline: click the corners. Click the first point to close the shape; double-click or "
                           "press Enter to finish an open line. Backspace removes the last corner, Shift keeps "
@@ -767,6 +773,11 @@ class MainWindow(QMainWindow):
                     self.tool_options.show_fill_tool(spec)
                 else:
                     self.tool_options.show_hinge_tool(spec)
+            return
+        if self.preview.tool == "crop":
+            if force or getattr(self, "_options_target", None) != "crop":
+                self._options_target, self._options_element = "crop", None
+                self.tool_options.show_crop_tool(self.crop_defaults)
             return
         if self.preview.tool == "offset":
             if force or getattr(self, "_options_target", None) != "offset":
@@ -1165,6 +1176,9 @@ class MainWindow(QMainWindow):
         """A shape was drawn in the bed view (scene mm, y down)."""
         if tool == "cancel":
             self.set_tool("select")
+            return
+        if tool == "crop":
+            self.crop_picture(start, end)
             return
         spec = self.shape_defaults[tool].copy()
         dx, dy = end.x() - start.x(), end.y() - start.y()
@@ -4755,6 +4769,75 @@ class MainWindow(QMainWindow):
     def _skip_update(self, version):
         self.values["update_skip"] = version
         self._remember_view()
+
+    def _crop_values_changed(self, values):
+        self.crop_defaults = dict(values)
+        self.preview.crop_shape = values.get("crop_shape", "rect")
+
+    def crop_picture(self, start, end):
+        """Cut out of a picture tool: the piece of the picture inside the dragged rectangle or ellipse
+        (scene mm) stays, in its place on the bed; the rest of the picture goes. One undo step."""
+        from PySide6.QtCore import QPointF, QRectF
+        from kerfly.core import crop
+        from kerfly.core import loaders as _loaders
+        from kerfly.gui.preview import element_transform
+        x0, y0, x1, y1 = min(start.x(), end.x()), min(start.y(), end.y()), max(start.x(), end.x()), max(start.y(), end.y())
+        if x1 - x0 < 0.5 or y1 - y0 < 0.5:
+            self.status(_("Drag over a picture to cut a piece out of it."), error=True)
+            return
+        home_ur, bed_w_mm = self.preview.home_ur, self.preview.bed_w_mm
+        outline = crop.outline_points(x0, y0, x1, y1, self.crop_defaults.get("crop_shape", "rect"))
+        cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+        candidates = [self.selected] if self.selected is not None else []
+        candidates += list(reversed(self.elements))
+        picture = None
+        for e in candidates:
+            if e is None or e.design.raster.image is None or not e.visible:
+                continue
+            t = element_transform(e, home_ur, bed_w_mm)
+            if t.mapRect(QRectF(0, 0, *[(b - a) * 25.4 for a, b in ((e.design.bounds[0], e.design.bounds[1]),
+                                                                     (e.design.bounds[2], e.design.bounds[3]))])) \
+                    .contains(QPointF(cx, cy)):
+                picture = e
+                break
+        if picture is None:
+            self.status(_("Drag over a picture to cut a piece out of it."), error=True)
+            return
+        d = picture.design
+        dpi = float(d.input_dpi)
+        inverse, ok = element_transform(picture, home_ur, bed_w_mm).inverted()
+        if not ok:
+            return
+        k = dpi / 25.4
+        polygon = []
+        for x, y in outline:
+            p = inverse.map(QPointF(x, y))
+            polygon.append((p.x() * k, p.y() * k))                     # local mm -> pixels of the picture
+        result = crop.cut_out(d.raster.image, polygon)
+        if result is None:
+            self.status(_("Drag over a picture to cut a piece out of it."), error=True)
+            return
+        piece, (left, top) = result
+        # where the middle of the piece is on the bed now
+        t = element_transform(picture, home_ur, bed_w_mm)
+        mid = t.map(QPointF((left + piece.width / 2.0) / k, (top + piece.height / 2.0) / k))
+        path = self._save_generated_image(piece, os.path.splitext(picture.name)[0] + "-cut")
+        design = Design()
+        _loaders.load_image(path, design, dpi, False)
+        design.input_dpi = dpi
+        self._checkpoint()
+        cut = Element(design, name=picture.name, source_file=path, load_options={"dpi": dpi},
+                      layers=dict(picture.layers), group=picture.group)
+        cut.scale_x, cut.scale_y, cut.rotation = picture.scale_x, picture.scale_y, picture.rotation
+        bx = ((bed_w_mm - mid.x()) if home_ur else mid.x()) / 25.4
+        cut.set_centre(bx, -mid.y() / 25.4)
+        self.elements[self.elements.index(picture)] = cut
+        self.selected = cut
+        self._compiled = None
+        self._layer_cache.clear()
+        self._layout_changed()
+        diag_log.info("cut out of %s: %d x %d px", picture.name, piece.width, piece.height)
+        self.status(_("A piece was cut out of the picture (Undo brings the whole picture back)."))
 
     def trace_image(self):
         """Edit → Trace picture…: the dark areas of the selected picture as a new path element over it."""

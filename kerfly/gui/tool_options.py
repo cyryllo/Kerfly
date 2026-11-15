@@ -90,6 +90,7 @@ class ToolOptionsBar(QWidget):
     changed = Signal(object)
     node_action = Signal(str)
     offset_changed = Signal(dict)       # the Offset tool's settings
+    crop_changed = Signal(dict)         # the Cut out of picture tool's settings
     offset_apply = Signal()             # the Offset tool's "Offset selected" button
 
     def __init__(self, parent=None):
@@ -157,6 +158,30 @@ class ToolOptionsBar(QWidget):
                 b.setEnabled(count > 0 or not needs_node)
             except RuntimeError:
                 pass                             # the bar was rebuilt meanwhile
+
+    def show_crop_tool(self, values):
+        """Options of the Cut out of picture tool: the shape of the piece that stays."""
+        self.spec = None
+        self._clear()
+        self.crop_values = dict(values)
+        shape = QComboBox()
+        for code, icon, name in (("rect", "square", N_("Rectangle")), ("ellipse", "circle", N_("Ellipse"))):
+            shape.addItem(icons.tabler(icon), _(name), code)
+        shape.setCurrentIndex(max(0, shape.findData(values.get("crop_shape", "rect"))))
+        shape.setToolTip(_("Shape of the piece that stays: drag it over a picture; the rest of the picture goes"))
+        shape.currentIndexChanged.connect(lambda _i, c=shape: self._set_crop("crop_shape", c.currentData()))
+        self.crop_shape_box = shape
+        box = QWidget()
+        h = QHBoxLayout(box)
+        h.setContentsMargins(0, 0, 0, 0)
+        h.addWidget(self._icon_label("picture-cut", shape.toolTip()))
+        h.addWidget(shape)
+        self._add(box, _("Cut out of a picture"))
+        self.row.addStretch(1)
+
+    def _set_crop(self, key, value):
+        self.crop_values[key] = value
+        self.crop_changed.emit(dict(self.crop_values))
 
     def show_picture(self, actions):
         """A selected picture: its commands (Trace)."""

@@ -197,6 +197,7 @@ narysowaniem i po nim.
 | Wypełnij wzorem | Shift+F | Wybierz wzór na pasku opcji i klikaj zamknięte kształty, żeby je wypełnić (opis niżej) |
 | Zawias giętki | Shift+H | Wybierz nacięcia na pasku opcji i klikaj zamknięte kształty, żeby naciąć w nich zawias (opis niżej) |
 | Odsunięcie | Shift+O | Ustaw odległość na pasku opcji i klikaj zamknięte kształty, żeby narysować wokół nich nowy obrys (opis niżej) |
+| Wytnij fragment obrazka | Shift+C | Przeciągnij prostokąt albo elipsę (pasek opcji) po obrazku: fragment w środku zostaje na swoim miejscu, reszta obrazka znika (Cofnij przywraca całość) |
 
 **Przyciąganie.** Rysowanie i przesuwanie przyciąga do narożników, środków i
 krawędzi innych elementów i do stołu (**Widok → Przyciągaj do obiektów**,

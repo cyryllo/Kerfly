@@ -70,7 +70,7 @@ originals, and the regression tests pass unchanged.
 |---|---|---|
 | `kerfly/gui/icons/tabler/*.svg` | [Tabler Icons](https://tabler.io/icons), Copyright (c) 2020-2026 Paweł Kuna | MIT (`kerfly/gui/icons/tabler/LICENSE`) |
 | `kerfly/gui/icons/__init__.py` jog pad icons | drawn for Kerfly in the style of the K40 Whisperer icons | GPL-3.0-or-later |
-| `kerfly/gui/icons/own/*.svg` (laser, hinge box) | drawn for Kerfly in the style of Tabler Icons | GPL-3.0-or-later |
+| `kerfly/gui/icons/own/*.svg` (laser, hinge box, picture cut) | drawn for Kerfly in the style of Tabler Icons | GPL-3.0-or-later |
 
 ## Single-line fonts
 

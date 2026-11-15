@@ -491,6 +491,49 @@ def main():
           "the button in the picture's options bar",
           all(r[2] and r[3] and r[4] and r[5] for r in results), "(%s)" % results)
 
+    # 3e5. Cut out of a picture: the piece inside the dragged rectangle / ellipse stays exactly where it was
+    # dragged (also turned, home upper right), the rest goes; one undo step; outside an ellipse is white
+    from PySide6.QtCore import QPointF as _QPF, QRectF as _QRF
+    from kerfly.gui.preview import element_transform as _et
+    from kerfly.gui import image_dialog as _imgd2
+    real_size_exec2 = _imgd2.ImageSizeDialog.exec
+    _imgd2.ImageSizeDialog.exec = lambda self: True
+    crop_results = []
+    for home_ur, turn, shape in (("0", 0, "rect"), ("0", 90, "rect"), ("1", 0, "rect"), ("0", 0, "ellipse")):
+        cw = make_window(HomeUR=home_ur, grid_mm="0", follow_head="0")
+        cw.load_design(pic)
+        picture = cw.elements[-1]
+        picture.rotation = turn
+        cw._layout_changed()
+        cw.set_tool("crop")
+        if shape == "ellipse":
+            cw.tool_options.crop_shape_box.setCurrentIndex(cw.tool_options.crop_shape_box.findData("ellipse"))
+        db = picture.design.bounds
+        local = _QRF(0, 0, (db[1] - db[0]) * 25.4, (db[3] - db[2]) * 25.4)
+        r = _et(picture, cw.preview.home_ur, cw.preview.bed_w_mm).mapRect(local)
+        drag = _QRF(r.left() + r.width() * 0.1, r.top() + r.height() * 0.05, r.width() * 0.3, r.height() * 0.6)
+        n = len(cw.elements)
+        cw._preview_drawn("crop", drag.topLeft(), drag.bottomRight(), False)
+        piece = cw.elements[-1]
+        pd = piece.design.bounds
+        got = _et(piece, cw.preview.home_ur, cw.preview.bed_w_mm).mapRect(_QRF(0, 0, (pd[1] - pd[0]) * 25.4,
+                                                                                 (pd[3] - pd[2]) * 25.4))
+        placed = all(abs(a - b) < 0.3 for a, b in ((got.left(), drag.left()), (got.top(), drag.top()),
+                                                   (got.right(), drag.right()), (got.bottom(), drag.bottom())))
+        img = piece.design.raster.image.convert("L")
+        corner_white = img.getpixel((1, 1)) == 255 if shape == "ellipse" else True
+        replaced = len(cw.elements) == n and piece is not picture
+        cw.act_undo.trigger()
+        undone = cw.elements[-1].design is picture.design
+        crop_results.append((home_ur, turn, shape, placed, corner_white, replaced, undone,
+                             [round(v, 2) for v in (got.left(), got.top(), got.right(), got.bottom())],
+                             [round(v, 2) for v in (drag.left(), drag.top(), drag.right(), drag.bottom())]))
+        cw.close()
+    _imgd2.ImageSizeDialog.exec = real_size_exec2
+    check("Cut out of a picture: the piece stays exactly where it was dragged (turned, home upper right, "
+          "ellipse with white corners), the picture replaced, Undo",
+          all(r[3] and r[4] and r[5] and r[6] for r in crop_results), "(%s)" % crop_results)
+
     # 3f. .kerfly projects open in Kerfly: the Linux AppImage writes its menu entry and file type into the
     # user's own folders, with the AppImage as the program; a newer AppImage takes the entry over
     from kerfly.gui import desktop_entry as _de

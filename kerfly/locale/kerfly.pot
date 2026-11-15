@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 17:44+0100\n"
+"POT-Creation-Date: 2026-11-15 18:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -234,6 +234,9 @@ msgid "A menu: on an element its commands, on the empty bed Move the head here"
 msgstr ""
 
 msgid "A new laser with Kerfly's default settings"
+msgstr ""
+
+msgid "A piece was cut out of the picture (Undo brings the whole picture back)."
 msgstr ""
 
 msgid "A stamp prints its mirror image: mirror it left to right"
@@ -698,6 +701,14 @@ msgstr ""
 msgid "Cut or engrave the outline too (off: only the pattern)"
 msgstr ""
 
+msgid "Cut out of a picture"
+msgstr ""
+
+msgid ""
+"Cut out of a picture: drag a rectangle or an ellipse (options bar) over a"
+" picture; the piece inside stays, the rest goes. Undo brings it back."
+msgstr ""
+
 msgid "Cut the outline"
 msgstr ""
 
@@ -896,6 +907,9 @@ msgstr ""
 msgid ""
 "Drag it, or the arrow keys (1 mm or one grid step; with Shift 10 times "
 "more)"
+msgstr ""
+
+msgid "Drag over a picture to cut a piece out of it."
 msgstr ""
 
 msgid "Drag with the middle or the right mouse button"
@@ -2601,6 +2615,11 @@ msgid "Settings saved to %s"
 msgstr ""
 
 msgid "Shape"
+msgstr ""
+
+msgid ""
+"Shape of the piece that stays: drag it over a picture; the rest of the "
+"picture goes"
 msgstr ""
 
 msgid "Shape of the teeth (20° is usual; meshing gears need the same angle)"

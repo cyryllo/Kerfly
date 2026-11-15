@@ -39,6 +39,8 @@ Version numbers:
 - **Rounded box with a living hinge** (beta, not yet checked on a laser): a
   new generator; rounded bottom and lid with tabs, the wall two strips that
   bend round the corners.
+- **Cut out of a picture** tool (right strip, Shift+C): drag a rectangle or an
+  ellipse over a picture; the piece inside stays in its place, the rest goes.
 
 ## 1.6.0 (2026-11-14)
 

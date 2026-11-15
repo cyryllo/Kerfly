@@ -193,6 +193,7 @@ before or after drawing.
 | Fill with a pattern | Shift+F | Choose a pattern in the options bar, then click closed shapes to fill them (see below) |
 | Living hinge | Shift+H | Choose the cuts in the options bar, then click closed shapes to cut a hinge into them (see below) |
 | Offset | Shift+O | Set the distance in the options bar, then click closed shapes to draw a new outline around them (see below) |
+| Cut out of a picture | Shift+C | Drag a rectangle or an ellipse (options bar) over a picture: the piece inside stays where it is, the rest of the picture goes (Undo brings it back) |
 
 **Snapping.** Drawing and moving snap to the corners, centres and edges of
 other elements and to the bed (**View → Snap to objects**, Ctrl+;), and to

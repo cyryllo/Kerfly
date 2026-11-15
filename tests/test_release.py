@@ -1500,6 +1500,25 @@ def part_files_and_help(s):
                           and w.elements[-1].shape.kind == "path" and len(w.elements[-1].shape.subpaths) == 2
                           and w.elements[-1].shape.closed,
                           "last %s" % (w.elements[-1].shape.kind if w.elements[-1].shape else w.elements[-1].name)))
+    # Cut out of a picture: the tool from the strip, a rectangle dragged over the picture with the mouse
+    pic_e = picture
+    xmin, xmax, ymin, ymax = pic_e.bounds
+    left, right = xmin * MM, xmax * MM
+    top, bottom = -ymax * MM, -ymin * MM
+    if w.job_settings().home_upper_right:
+        left, right = w.preview.bed_w_mm - right, w.preview.bed_w_mm - left
+    a = (left + (right - left) * 0.2, top + (bottom - top) * 0.15)
+    b = (left + (right - left) * 0.7, top + (bottom - top) * 0.85)
+    s.step("tool strip: Cut out of a picture", lambda: s.click(next(bt for bt in w.findChildren(QToolButton)
+                                                                     if bt.defaultAction() is w.tool_actions["crop"])),
+           change=False, undo=False, check=lambda: (w.preview.tool == "crop", w.preview.tool))
+    s.step("drag a rectangle over the picture (Alt: no snapping): the piece inside stays",
+           lambda: s.drag(a, b, mods=Qt.AltModifier),
+           check=lambda: (w.selected is not None and w.selected.design.raster.image is not None
+                          and w.selected is not pic_e and abs(w.selected.size[0] * MM - (b[0] - a[0])) < 0.5,
+                          "selected %s, width %s" % (w.selected.name if w.selected else None,
+                                                     w.selected.size[0] * MM if w.selected else None)))
+    s.trigger(w.tool_actions["select"])
     from PySide6.QtWidgets import QPushButton
     def calc_raster():
         rows = [r for r in w.layers_panel.rows.values() if r.get("calc") is not None]
