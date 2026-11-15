@@ -69,13 +69,46 @@ a = Analysis(
 pyz = PYZ(a.pure)
 
 icon = os.path.join(ROOT, "kerfly", "gui", "icons", "kerfly.ico")
+
+
+def version_file():
+    """Windows: the product name and version inside Kerfly.exe (code signing needs them set, the same
+    in every build; File → Properties → Details shows them)."""
+    sys.path.insert(0, ROOT)
+    from kerfly import __version__
+    nums = [int(p) for p in (__version__.split(".") + ["0", "0", "0"])[:4]]
+    text = """VSVersionInfo(
+  ffi=FixedFileInfo(filevers=%(t)s, prodvers=%(t)s, mask=0x3f, flags=0x0, OS=0x40004, fileType=0x1,
+                    subtype=0x0, date=(0, 0)),
+  kids=[
+    StringFileInfo([StringTable('040904B0', [
+      StringStruct('CompanyName', 'Kerfly contributors'),
+      StringStruct('FileDescription', 'Kerfly laser control'),
+      StringStruct('FileVersion', '%(v)s'),
+      StringStruct('InternalName', 'Kerfly'),
+      StringStruct('LegalCopyright', 'GPL-3.0-or-later, Kerfly contributors'),
+      StringStruct('OriginalFilename', 'Kerfly.exe'),
+      StringStruct('ProductName', 'Kerfly'),
+      StringStruct('ProductVersion', '%(v)s')])]),
+    VarFileInfo([VarStruct('Translation', [1033, 1200])])
+  ]
+)
+""" % {"t": tuple(nums), "v": __version__}
+    path = os.path.join(workpath, "kerfly_version_info.txt")
+    os.makedirs(workpath, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
+    return path
+
+
+version_info = version_file() if WINDOWS else None
 exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name="Kerfly", console=False,
-          icon=icon if WINDOWS else None, upx=False)
+          icon=icon if WINDOWS else None, upx=False, version=version_info)
 executables = [exe]
 if WINDOWS:
     # the same program with a console window: "kerfly-console.exe --self-test" prints its checks
     executables.append(EXE(pyz, a.scripts, [], exclude_binaries=True, name="kerfly-console", console=True,
-                           icon=icon, upx=False))
+                           icon=icon, upx=False, version=version_info))
 
 coll = COLLECT(*executables, a.binaries, a.datas, strip=False, upx=False, name="Kerfly")
 

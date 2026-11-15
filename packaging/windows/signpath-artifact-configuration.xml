@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SignPath artifact configuration for Kerfly (paste into the SignPath project as
+  the default artifact configuration). The release workflow uploads the
+  Windows installer with actions/upload-artifact, which packs it in a ZIP; the
+  installer inside is signed with Authenticode. Its product name and version
+  must be set (packaging/windows/kerfly.iss, VersionInfo*), as the SignPath
+  Foundation's terms ask. The workflow gives the version with the signing
+  request (parameters: version: "1.7.2").
+
+  Written from docs.signpath.io (artifact configuration: syntax, reference,
+  examples), 2026-11-15.
+-->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <parameters>
+    <parameter name="version" required="true" />
+  </parameters>
+  <zip-file>
+    <pe-file path="Kerfly-${version}-windows-setup.exe" product-name="Kerfly" product-version="${version}">
+      <authenticode-sign />
+    </pe-file>
+  </zip-file>
+</artifact-configuration>

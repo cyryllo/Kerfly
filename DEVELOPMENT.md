@@ -216,3 +216,16 @@ Plans are in [ROADMAP.md](ROADMAP.md), changes in [CHANGELOG.md](CHANGELOG.md).
 Kerfly is a fork of K40 Whisperer 0.71 by Scorch; the original release is
 tagged `upstream-0.71` in this repository. See the license section of the
 [README](README.md#license).
+
+## Code signing (SignPath, Windows)
+
+Kerfly applied to the SignPath Foundation's free code signing for open source
+(2026-11-15). The website and the READMEs carry the code signing policy and
+the privacy policy (docs/privacy.md, docs/pl/privacy.md) that SignPath asks
+for. `Kerfly.exe` and the installer carry the product name and version
+(packaging/kerfly.spec `version_file()`, packaging/windows/kerfly.iss
+`VersionInfo*`). `packaging/windows/signpath-artifact-configuration.xml` is the
+artifact configuration to paste into the SignPath project. Once accepted, the
+release workflow uploads the installer, submits a signing request
+(`signpath/github-action-submit-signing-request`, secret `SIGNPATH_API_TOKEN`,
+parameter `version`) and waits for the maintainer's manual approval.

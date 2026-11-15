@@ -21,6 +21,14 @@ AppName=Kerfly
 AppVersion={#AppVersion}
 AppVerName=Kerfly {#AppVersion}
 AppPublisher=Kerfly contributors
+; the installer's own file details (code signing needs the product name and version set)
+VersionInfoVersion={#AppVersion}
+VersionInfoProductName=Kerfly
+VersionInfoProductVersion={#AppVersion}
+VersionInfoProductTextVersion={#AppVersion}
+VersionInfoCompany=Kerfly contributors
+VersionInfoDescription=Kerfly setup
+VersionInfoCopyright=GPL-3.0-or-later, Kerfly contributors
 AppPublisherURL=https://cyryllo.github.io/Kerfly/
 AppSupportURL=https://github.com/cyryllo/Kerfly/issues
 AppUpdatesURL=https://github.com/cyryllo/Kerfly/releases
