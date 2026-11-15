@@ -239,7 +239,8 @@ GENERATORS.insert(len(GENERATORS) - 1, (
     N_("Round stamp: text around the top and the bottom, rings, and text or a picture in the middle; burnt "
        "for rubber like the stamp"),
     _stamp.ROUND_FIELDS, _stamp.make_round))
-# the button that makes the design (default: Insert)
+# the button that makes the design (default: Insert; on its own line, so the translation tools find it)
+INSERT_TEXT = N_("Insert")
 ACCEPT_TEXT = {"stamp": N_("Generate stamp"), "round_stamp": N_("Generate stamp")}
 
 # names of the generated elements (kerfly.core.generators), shown in the element list
@@ -504,7 +505,7 @@ class GeneratorDialog(QDialog):
         info = QLabel(_(tip))
         info.setWordWrap(True)
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.button(QDialogButtonBox.Ok).setText(_(ACCEPT_TEXT.get(key, N_("Insert"))))
+        buttons.button(QDialogButtonBox.Ok).setText(_(ACCEPT_TEXT.get(key, INSERT_TEXT)))
         for b in buttons.buttons():                    # Enter in a field updates the preview, it does not insert
             b.setAutoDefault(False)
             b.setDefault(False)

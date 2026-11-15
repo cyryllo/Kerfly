@@ -42,6 +42,11 @@ Version numbers:
 - **Cut out of a picture** tool (right strip, Shift+C): drag a rectangle or an
   ellipse over a picture; the piece inside stays in its place, the rest goes.
 
+### Fixed
+
+- The **Insert** button of the generators was always in English; now it is
+  translated (a check keeps such texts from being missed again).
+
 ## 1.6.0 (2026-11-14)
 
 Laser profiles, a dark theme, all keyboard shortcuts in one window, .kerfly

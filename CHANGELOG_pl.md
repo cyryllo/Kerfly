@@ -41,6 +41,11 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   prostokąt albo elipsę po obrazku; fragment w środku zostaje na swoim
   miejscu, reszta znika.
 
+### Poprawione
+
+- Przycisk **Wstaw** w generatorach był zawsze po angielsku; teraz jest
+  przetłumaczony (test pilnuje, żeby takie napisy nie umykały).
+
 ## 1.6.0 (2026-11-14)
 
 Profile laserów, ciemny motyw, wszystkie skróty klawiszowe w jednym oknie,
