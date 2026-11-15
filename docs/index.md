@@ -206,6 +206,16 @@ Kerfly drives a real machine with a laser, so "it seems to work" is not enough:
   <a class="button" href="{{ site.repo }}/blob/main/INSTALL.md">Step-by-step installation</a>
 </div>
 
+<h3 id="code-signing">Code signing policy</h3>
+
+<p>Free code signing provided by <a href="https://about.signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a>.</p>
+<p>The Windows installers are built from this repository by GitHub Actions and signed only after a team member approves each release.</p>
+<ul>
+  <li>Committers and reviewers: <a href="{{ site.repo }}/graphs/contributors">project members</a></li>
+  <li>Approvers: <a href="https://github.com/cyryllo">cyryllo</a> (owner)</li>
+</ul>
+<p>Privacy: see the <a href="privacy.html">privacy policy</a>. Kerfly asks GitHub once a day whether a new version is out (it can be switched off) and sends nothing else unless you do it yourself.</p>
+
 ## Questions
 
 <div class="faq">

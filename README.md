@@ -129,6 +129,18 @@ Kerfly is free and stays free. You can help it grow:
   mentioning Kerfly to your customers, or your own idea. Contact me through my
   GitHub profile, [@cyryllo](https://github.com/cyryllo).
 
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io),
+certificate by [SignPath Foundation](https://signpath.org). The Windows
+installers are built from this repository by GitHub Actions and signed only
+after a team member approves each release. Committers and reviewers: the
+[project members](https://github.com/cyryllo/Kerfly/graphs/contributors);
+approvers: [cyryllo](https://github.com/cyryllo) (owner). Privacy: Kerfly asks
+GitHub once a day whether a new version is out (Settings → Advanced switches
+it off) and sends nothing else; see the
+[privacy policy](https://cyryllo.github.io/Kerfly/privacy.html).
+
 ## License
 
 Kerfly is free software, distributed under the **GNU General Public License,

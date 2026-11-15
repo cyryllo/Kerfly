@@ -207,6 +207,17 @@ Kerfly steruje prawdziwą maszyną z laserem, więc „chyba działa” to za ma
   <a class="button" href="{{ site.repo }}/blob/main/INSTALL_pl.md">Instalacja krok po kroku</a>
 </div>
 
+
+<h3 id="podpisywanie">Zasady podpisywania kodu</h3>
+
+<p>Free code signing provided by <a href="https://about.signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a> (darmowe podpisywanie kodu przez SignPath.io, certyfikat SignPath Foundation).</p>
+<p>Instalatory Windows są budowane z tego repozytorium przez GitHub Actions i podpisywane dopiero po zatwierdzeniu każdego wydania przez członka zespołu.</p>
+<ul>
+  <li>Autorzy i recenzenci zmian: <a href="{{ site.repo }}/graphs/contributors">członkowie projektu</a></li>
+  <li>Zatwierdzający: <a href="https://github.com/cyryllo">cyryllo</a> (właściciel)</li>
+</ul>
+<p>Prywatność: zobacz <a href="privacy.html">politykę prywatności</a>. Kerfly raz dziennie pyta GitHuba o nową wersję (można to wyłączyć) i nie wysyła nic więcej, dopóki sam tego nie zrobisz.</p>
+
 ## Pytania
 
 <div class="faq">
