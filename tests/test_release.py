@@ -1486,6 +1486,49 @@ def part_generators(s):
                           "%s" % sorted({e.name for e in w.elements})))
     s.trigger(w.act_undo)
 
+    # a box too big for one sheet: in the element list one group with a group for each sheet; a sheet's row
+    # selects that sheet alone, Space unticks it; a click on the bed takes the whole box, Ungroup one level
+    def big_box(dlg):
+        for key, value in (("width", 280), ("depth", 190), ("height", 60)):
+            s.type_number(dlg.widgets[key], value)
+        s.settle(6, 0.05)
+        from PySide6.QtWidgets import QDialogButtonBox
+        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+    lst = w.element_list
+    s.expect_dialog("big finger box", big_box)
+    s.step("Generators → Finger-joint box 280 x 190 x 60 (several sheets: a group for each sheet in the "
+           "element list)", lambda: s.trigger(w.act_generators["finger_box"], via="button"), undo=False,
+           check=lambda: (lst.topLevelItemCount() == 1 and lst.topLevelItem(0).childCount() >= 2,
+                          "%d rows, %s" % (lst.topLevelItemCount(), [lst.topLevelItem(i).text()
+                                                                    for i in range(lst.topLevelItemCount())])))
+
+    def sheet_row(n):
+        return lst.topLevelItem(0).child(n - 1)
+
+    def click_row(item):
+        QTest.mouseClick(lst.viewport(), Qt.LeftButton, Qt.NoModifier, lst.visualItemRect(item).center())
+        s.settle()
+
+    def sheet2():
+        return [w.elements[n] for n in lst.members(lst.group_of(sheet_row(2)))]
+    s.covered_widgets.add("element list groups")
+    s.step("element list: click the row of Sheet 2 (that sheet alone is selected)",
+           lambda: click_row(sheet_row(2)), change=False,
+           check=lambda: ({id(e) for e in w._selection()} == {id(e) for e in sheet2()},
+                          "%d selected, sheet 2 has %d" % (len(w._selection()), len(sheet2()))))
+    s.step("element list: Space unticks Sheet 2 (out of the job)",
+           lambda: (QTest.keyClick(lst, Qt.Key_Space), s.settle()),
+           check=lambda: (all(not e.visible for e in sheet2()) and sum(e.visible for e in w.elements) > 0,
+                          "%s" % [e.visible for e in w.elements]))
+    s.step("click the box on the bed (the whole box is selected)",
+           lambda: s.click_bed(*s.element_at(w.elements[0])), change=False,
+           check=lambda: (len(w._selection()) == len(w.elements), "%d of %d selected"
+                          % (len(w._selection()), len(w.elements))))
+    s.step("Edit → Ungroup (Ctrl+Shift+G): the sheets stay groups", lambda: s.trigger(w.act_ungroup, via="key"),
+           check=lambda: (lst.topLevelItemCount() >= 2 and all(e.group and "/" not in e.group for e in w.elements),
+                          "%d rows" % lst.topLevelItemCount()))
+    s.trigger(w.act_undo)
+
 
 def part_files_and_help(s):
     w = s.w
@@ -1747,4 +1790,9 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    code = main()
+    sys.stdout.flush()
+    sys.stderr.flush()
+    # out at once: Python's own clean-up of the many windows and dialogs of the session crashed at the end
+    # (after the result, in Qt's code), which hid the exit code
+    os._exit(code)

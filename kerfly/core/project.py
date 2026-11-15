@@ -54,11 +54,15 @@ def _shape_from_dict(d):
     return hatch_as_fill(spec)                  # hatch of older projects: now a pattern fill
 
 
-def save_project(path, elements, layers, info=None):
+def save_project(path, elements, layers, info=None, group_names=None):
     """Write elements and layers to a .kerfly file. info: extra dict saved as is
-    (e.g. chosen material). Source files are copied into the archive."""
+    (e.g. chosen material); group_names: {group id: name} of the groups (a group in a group: its
+    element's "group" is the path "outer/inner"). Source files are copied into the archive."""
+    from .groups import ids
+    used = {gid for e in elements for gid in ids(e.group)}
     data = {"format": "kerfly-project", "version": FORMAT_VERSION, "info": info or {},
-            "layers": [_layer_to_dict(layer) for layer in layers], "elements": []}
+            "layers": [_layer_to_dict(layer) for layer in layers], "elements": [],
+            "groups": {k: v for k, v in (group_names or {}).items() if k in used}}
     files = []                                   # (archive name, source path)
     for i, e in enumerate(elements):
         item = {"name": e.name, "x": e.x, "y": e.y, "scale_x": e.scale_x, "scale_y": e.scale_y,

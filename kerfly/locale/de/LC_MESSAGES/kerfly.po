@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 21:32+0100\n"
+"POT-Creation-Date: 2026-11-15 21:58+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -1283,8 +1283,8 @@ msgid "Grid size"
 msgstr "Rastergröße"
 
 #, python-format
-msgid "Group %d: %s"
-msgstr "Gruppe %d: %s"
+msgid "Group %d"
+msgstr "Gruppe %d"
 
 #, python-format
 msgid "Grouped %d elements. Click any of them to select the whole group."
@@ -2651,6 +2651,9 @@ msgid ""
 msgstr ""
 "Runder Stempel: Text oben und unten im Kreis, Ringe und Text oder ein "
 "Bild in der Mitte; für Gummi gelasert wie der Stempel"
+
+msgid "Rounded box"
+msgstr "Runde Schachtel"
 
 msgid ""
 "Rounded box (beta): a bottom and a lid with rounded corners, the wall two"
@@ -4406,4 +4409,7 @@ msgstr "Vektorgravur"
 #~ "graviert); die Vorderseite ist niedriger, "
 #~ "damit der Deckel darüber gleitet (beta:"
 #~ " noch nicht am Laser geprüft)"
+
+#~ msgid "Group %d: %s"
+#~ msgstr "Gruppe %d: %s"
 

@@ -248,9 +248,16 @@ na górę albo na dół listy (Ctrl+PgUp, Ctrl+PgDown). Grupy przesuwają się r
 
 **Grupy.** **Grupuj** (Ctrl+G) sprawia, że kilka elementów przesuwa
 się razem; klik w jeden z nich zaznacza całą grupę, drugi klik tylko ten
-element. **Rozgrupuj** (Ctrl+Shift+G) dzieli grupę, a także otwarty plik SVG
-albo DXF: każda jego linia staje się kształtem do edycji, a obrazy dzielą się
-na osobne części. Dwuklik na dowolnym elemencie otwiera edycję węzłów.
+element. Grupy mogą zawierać grupy: na liście elementów grupa to wiersz,
+który się rozwija i zwija, z jej elementami (i grupami) w środku; ptaszek
+przy grupie włącza ją całą do zadania albo ją wyłącza, a klik w jej wiersz
+zaznacza tylko tę grupę (na przykład jeden arkusz pudełka). **Rozgrupuj**
+(Ctrl+Shift+G) zdejmuje jeden poziom (grupy w środku zostają grupami), a
+także dzieli otwarty plik SVG albo DXF: każda jego linia staje się kształtem
+do edycji, a obrazy dzielą się na osobne części. Dwuklik na dowolnym
+elemencie otwiera edycję węzłów.
+
+![Pudełko na kilku arkuszach na liście elementów: grupa z osobną grupą dla każdego arkusza](../img/pl/groups.png)
 
 **Wypełnienia wzorami.** Narzędzie
 **Wypełnij wzorem** (wiaderko, Shift+F) wypełnia zamknięte kształty
@@ -351,7 +358,8 @@ jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
   ciasno). Części są układane tak, żeby mieściły się na stole; te, które się
   nie mieszczą, trafiają na kolejny arkusz (**Arkusz 2**, …), w tym samym
   miejscu, na osobnej odhaczonej warstwie cięcia: wytnij arkusz 1, zmień
-  materiał, zaznacz kolejny arkusz. **Każda część na osobnej warstwie** daje
+  materiał, zaznacz kolejny arkusz. Na liście elementów pudełko jest jedną
+  grupą z osobną grupą dla każdego arkusza. **Każda część na osobnej warstwie** daje
   każdej części jej własną warstwę cięcia. **Przegródki w poprzek / wzdłuż**
   (beta, jeszcze nie sprawdzone na laserze) dodają wewnętrzne ścianki
   rozłożone równo: ich wypusty wchodzą w szczeliny w ściankach i dnie, a

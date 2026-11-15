@@ -40,6 +40,9 @@ def _material_test(v, window):
                              v["size"], v["gap"], v["labels"], unit, legend if v["labels"] else "")
 
 
+# names of generated designs that are not a generator's name (the group's name in the element list)
+DESIGN_NAMES = (N_("Rounded box"),)
+
 GENERATORS = [
     ("material_test", N_("Material test"), "table",
      N_("Material test: a grid of fields, each with its own speed and power (or passes), to find the right "

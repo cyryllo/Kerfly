@@ -15,7 +15,7 @@ from PySide6.QtGui import QAction, QColor, QIcon, QKeySequence, QPixmap
 from PySide6.QtGui import QActionGroup
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QDockWidget, QDoubleSpinBox, QFileDialog,
                                QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
-                               QListWidget, QListWidgetItem, QMainWindow, QMessageBox, QProgressBar,
+                               QMainWindow, QMessageBox, QProgressBar,
                                QPushButton, QScrollArea, QSpinBox, QTabWidget, QToolBar, QToolButton,
                                QVBoxLayout, QWidget, QFrame, QSizePolicy)
 
@@ -95,6 +95,7 @@ class MainWindow(QMainWindow):
         wheelguard.install()            # the wheel changes a field only after it was clicked
         self.values = values
         self.elements = []              # design elements placed on the bed
+        self.group_names = {}           # group id -> its name (a generator's design, a sheet of a box)
         self.selected = None            # selected element
         self._compiled = None           # cached (design, origin) compiled from the elements
         self.layers = []                # layers; the first of each kind is the default one
@@ -1754,7 +1755,8 @@ class MainWindow(QMainWindow):
         self.design_label = QLabel(_("No design loaded"))
         self.design_label.setWordWrap(True)
         v.addWidget(self.design_label, 0, Qt.AlignTop)
-        self.element_list = QListWidget()
+        from kerfly.gui.element_tree import ElementTree
+        self.element_list = ElementTree()
         # fills the free height of the Design tab (as tall as the Laser tab)
         self.element_list.setMinimumHeight(self.element_list.fontMetrics().lineSpacing() * 4 + 8)
         self.element_list.setToolTip(_("Untick an element to leave it out of the job"))
@@ -1765,8 +1767,9 @@ class MainWindow(QMainWindow):
         self.element_list.itemSelectionChanged.connect(self._list_selection_changed)
         self.element_list.setMouseTracking(True)       # the path of the row under the pointer, below
         self.element_list.itemEntered.connect(
-            lambda item: self._show_path(self.elements[self.element_list.row(item)]
-                                         if 0 <= self.element_list.row(item) < len(self.elements) else None))
+            lambda item, _column=0: self._show_path(self.elements[self.element_list.row(item)]
+                                                    if 0 <= self.element_list.row(item) < len(self.elements)
+                                                    else None))
         self.element_list.viewport().installEventFilter(self)
         # the list is the order of the job: its order buttons right beside it
         self.element_list_box = QWidget()
@@ -2371,28 +2374,29 @@ class MainWindow(QMainWindow):
         return super().eventFilter(obj, event)
 
     def _update_element_list(self):
+        from kerfly.core.groups import paths
         lst = self.element_list
         lst.blockSignals(True)
-        lst.clear()
         numbers = {}
+        rows = []
         for e in self.elements:
-            if e.group and e.group not in numbers:
-                numbers[e.group] = len(numbers) + 1
-        for e in self.elements:
-            name = _("Group %d: %s") % (numbers[e.group], e.name) if e.group else e.name
+            name = e.name
+            groups = []
+            for path in paths(e.group):
+                gid = path.rsplit("/", 1)[-1]
+                if gid not in self.group_names and gid not in numbers:
+                    numbers[gid] = len(numbers) + 1
+                groups.append((path, self.group_names.get(gid) or _("Group %d") % numbers[gid]))
             kinds = [k for k in (RASTER, ENGRAVE, CUT, GCODE) if e.design is not None and part_present(e.design, k)]
             layers = [layer_of(e, k, self.layers) for k in kinds]
             layers = [l for l in layers if l is not None]
             path = self._element_path(e)
             if path:                                     # the folder too: designs of the same name differ
                 name = "%s \u203a %s" % (os.path.basename(os.path.dirname(path)) or "/", name)
-            item = QListWidgetItem(self._layer_swatch([l.color for l in layers]),
-                                   "%s  \u00b7  %s" % (name, ", ".join(l.name for l in layers)) if layers else name)
-            if path:
-                item.setToolTip(path)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Checked if e.visible else Qt.Unchecked)
-            lst.addItem(item)
+            rows.append((groups, (self._layer_swatch([l.color for l in layers]),
+                                  "%s  \u00b7  %s" % (name, ", ".join(l.name for l in layers)) if layers else name,
+                                  path, e.visible)))
+        lst.fill(rows)
         lst.blockSignals(False)
         self._sync_list_selection()
         self.element_list_box.setVisible(bool(self.elements))      # also for a single element
@@ -2427,15 +2431,26 @@ class MainWindow(QMainWindow):
             item.setSelected(on)
             if on and current is None:
                 current = row
+        for path, node in lst._groups.items():     # a group's row: all of it selected
+            members = lst.members(path)
+            node.setSelected(bool(members) and all(n < len(self.elements) and id(self.elements[n]) in chosen
+                                                   for n in members))
         if current is not None:
             lst.setCurrentRow(current, QItemSelectionModel.NoUpdate)
             lst.scrollToItem(lst.item(current))
         lst.blockSignals(False)
 
     def _list_selection_changed(self):
-        """Rows picked in the element list select those elements on the bed."""
-        rows = sorted(self.element_list.row(i) for i in self.element_list.selectedItems())
-        chosen = [self.elements[r] for r in rows if 0 <= r < len(self.elements)]
+        """Rows picked in the element list select those elements on the bed; a group's row its group alone
+        (also a group inside a group)."""
+        lst = self.element_list
+        picked = lst.selectedItems()
+        groups = [lst.group_of(i) for i in picked if lst.group_of(i)]
+        rows = {lst.row(i) for i in picked if lst.row(i) >= 0}
+        for path in groups:
+            rows.update(lst.members(path))
+        self.preview.scope = groups[0] if len(groups) == 1 else ""   # that group alone, not the one around it
+        chosen = [self.elements[r] for r in sorted(rows) if 0 <= r < len(self.elements)]
         self.preview.select_element(chosen)
         self.selected = chosen[0] if len(chosen) == 1 else None
         self._update_selection_panel()
@@ -2443,14 +2458,36 @@ class MainWindow(QMainWindow):
         self._update_tool_options()
         self._sync_list_selection()                  # a group member brings its whole group
 
-    def _element_item_changed(self, item):
-        row = self.element_list.row(item)
+    def _element_item_changed(self, item, _column=0):
+        lst = self.element_list
+        path = lst.group_of(item)
+        if path:                                     # a group's tick: all of it in or out of the job
+            visible = item.checkState() != Qt.Unchecked
+            members = [self.elements[n] for n in lst.members(path) if n < len(self.elements)]
+            if any(e.visible != visible for e in members):
+                self._checkpoint()
+                for e in members:
+                    e.visible = visible
+                self._layout_changed_soon()
+            return
+        row = lst.row(item)
         if 0 <= row < len(self.elements):
             visible = item.checkState() == Qt.Checked
             if self.elements[row].visible != visible:
                 self._checkpoint()
                 self.elements[row].visible = visible
+                self._layout_changed_soon()
+
+    def _layout_changed_soon(self):
+        """_layout_changed() once the list's click is over: it fills the list again, and the row clicked must
+        not go away while Qt still handles its click."""
+        if not getattr(self, "_layout_pending", False):
+            self._layout_pending = True
+
+            def run():
+                self._layout_pending = False
                 self._layout_changed()
+            QTimer.singleShot(0, run)
 
     # ---- more editing commands ----
     def duplicate_selected(self):
@@ -2463,7 +2500,7 @@ class MainWindow(QMainWindow):
         for src in chosen:
             e = src.copy()
             if e.group:                                  # a copied group is a new group
-                e.group = new_groups.setdefault(e.group, self._new_group_id())
+                e.group = self._renewed_group(e.group, new_groups, self.group_names)
             e.x += 5 / 25.4
             e.y -= 5 / 25.4
             copies.append(e)
@@ -2581,9 +2618,10 @@ class MainWindow(QMainWindow):
         chosen = [e for e in self.elements if id(e) in picked]
         if not chosen and self.selected is not None:
             chosen = [self.selected]
-        groups = {e.group for e in chosen if e.group}
-        if groups:
-            chosen = [e for e in self.elements if e in chosen or (e.group and e.group in groups)]
+        from kerfly.core.groups import unit_of, within
+        units = {unit_of(e.group, self.preview.scope) for e in chosen if e.group}
+        if units:
+            chosen = [e for e in self.elements if e in chosen or any(within(e.group, u) for u in units)]
         return chosen
 
     def reorder_selected(self, how):
@@ -2648,6 +2686,17 @@ class MainWindow(QMainWindow):
             self.layers.insert(index, layer)
             layer_of_key[spec.key] = layer
         group = self._new_group_id() if len(design.items) > 1 else ""
+        if group:
+            self.group_names[group] = _(design.name)
+        sheets = {}                                      # a box's sheets: groups inside its group
+
+        def group_of(item):
+            if not group or not item.group:
+                return group
+            if item.group not in sheets:
+                sheets[item.group] = self._new_group_id()
+                self.group_names[sheets[item.group]] = item.group
+            return group + "/" + sheets[item.group]
         hx, hy = self.head
         made = []
         for item in design.items:
@@ -2656,7 +2705,7 @@ class MainWindow(QMainWindow):
                 built = Design()
                 loaders.load_image(path, built, item.dpi, is_true(self.values.get("reduced_mem", "0")))
                 e = Element(built, name=_(item.name or design.name), source_file=path,
-                            load_options={"dpi": item.dpi}, group=group)
+                            load_options={"dpi": item.dpi}, group=group_of(item))
                 e.x, e.y = hx + item.left / 25.4, hy - item.top / 25.4
                 made.append((item, e))
                 continue
@@ -2671,7 +2720,7 @@ class MainWindow(QMainWindow):
             if xmax - xmin <= 0 and ymax - ymin <= 0:
                 continue
             e = Element(built, name=_(item.name) if item.name else _(KIND_NAMES.get(spec.kind, "Path")),
-                        shape=spec, group=group)
+                        shape=spec, group=group_of(item))
             e.x, e.y = hx + item.left / 25.4, hy - item.top / 25.4
             if item.layer in layer_of_key:
                 e.layers[KIND_OF_OPERATION.get(spec.operation, CUT)] = layer_of_key[item.layer].id
@@ -2733,15 +2782,29 @@ class MainWindow(QMainWindow):
         import uuid
         return uuid.uuid4().hex[:8]
 
+    def _renewed_group(self, group, new_ids, names):
+        """A copy of `group` with new ids (each copied group is a new group), keeping their names."""
+        from kerfly.core.groups import ids, renamed
+        for gid in ids(group):
+            if gid not in new_ids:
+                new_ids[gid] = self._new_group_id()
+                if gid in names:
+                    self.group_names[new_ids[gid]] = names[gid]
+        return renamed(group, new_ids)
+
     def group_selected(self):
+        from kerfly.core.groups import common, wrap
         chosen = self._selection()
         if len(chosen) < 2 or self.worker is not None:
             self.status(_("Select two or more elements to group them."), error=True)
             return
         self._checkpoint()
         gid = self._new_group_id()
+        inside = common([e.group for e in chosen])
+        if inside and all(e in chosen for e in self.elements if e.group.startswith(inside + "/") or e.group == inside):
+            inside = inside.rsplit("/", 1)[0] if "/" in inside else ""     # the whole group: around it
         for e in chosen:
-            e.group = gid
+            e.group = wrap(e.group, inside, gid)
         self._arranged(chosen)
         self.status(_("Grouped %d elements. Click any of them to select the whole group.") % len(chosen))
 
@@ -2779,13 +2842,17 @@ class MainWindow(QMainWindow):
                 self.status(_("Ungrouped into %d shapes: click one to move it, double-click it to edit its "
                               "nodes.") % made)
             return
+        from kerfly.core.groups import unit_of, without
         chosen = [e for e in self._selection() if e.group]
         if not chosen or self.worker is not None:
             self.status(_("Click the opened file or the group first, then Ungroup."), error=True)
             return
         self._checkpoint()
-        for e in chosen:
-            e.group = ""
+        units = {unit_of(e.group, self.preview.scope) for e in chosen}
+        for e in chosen:                             # one level: the groups inside stay groups
+            for u in units:
+                e.group = without(e.group, u)
+        self.preview.scope = ""
         self._arranged(chosen)
 
     def _arranged(self, chosen):
@@ -3007,7 +3074,8 @@ class MainWindow(QMainWindow):
             return False
         names = {l.id: (l.kind, l.name) for l in self.layers}
         self._clipboard = ([e.copy() for e in chosen],
-                           [{kind: names.get(lid) for kind, lid in e.layers.items()} for e in chosen])
+                           [{kind: names.get(lid) for kind, lid in e.layers.items()} for e in chosen],
+                           dict(self.group_names))
         self._paste_count = 0
         self.status(_("Copied: %d element(s).") % len(chosen))
         return True
@@ -3030,13 +3098,13 @@ class MainWindow(QMainWindow):
         if self._clipboard is None:
             self.status(_("Nothing copied yet: select elements and press Ctrl+C."), error=True)
             return
-        originals, layer_names = self._clipboard
+        originals, layer_names, group_names = self._clipboard
         new_groups = {}
         made = []
         for c, wanted in zip(originals, layer_names):
             e = c.copy()
             if e.group:
-                e.group = new_groups.setdefault(e.group, self._new_group_id())
+                e.group = self._renewed_group(e.group, new_groups, group_names)
             layers = {}
             for kind, name in wanted.items():
                 same = [l for l in self.layers if (l.kind, l.name) == name and l.kind == kind]
@@ -3730,6 +3798,7 @@ class MainWindow(QMainWindow):
         if self.worker is not None or not self._confirm_discard():
             return
         self.elements = []
+        self.group_names = {}
         self.selected = None
         self._default_layer = {}
         self._init_layers()
@@ -3813,7 +3882,7 @@ class MainWindow(QMainWindow):
 
     def _write_project(self, path):
         try:
-            project_io.save_project(path, self.elements, self.layers)
+            project_io.save_project(path, self.elements, self.layers, group_names=self.group_names)
         except (OSError, project_io.ProjectError) as e:
             QMessageBox.critical(self, _("Could not save the project"), str(e))
             return False
@@ -3864,6 +3933,7 @@ class MainWindow(QMainWindow):
         for layer in self._default_layer.values():
             self._layer_to_values(layer)
         self.elements = elements
+        self.group_names = {str(k): str(v) for k, v in (data.get("groups") or {}).items()}
         self.selected = None
         self._undo.clear()
         self._redo.clear()

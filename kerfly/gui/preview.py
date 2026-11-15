@@ -189,6 +189,9 @@ class ElementItem(QGraphicsItem):
         return super().itemChange(change, value)
 
     def mousePressEvent(self, event):
+        from kerfly.core.groups import within
+        if not within(self.element.group, self.view.scope):     # outside the group picked in the list
+            self.view.scope = ""
         self._press_pos = self.pos()
         self._press_screen = event.screenPos()
         self._drag_started = False
@@ -328,6 +331,7 @@ class PreviewView(QGraphicsView):
         self._fitted = False
         self._panning = None
         self._rebuilding = False
+        self.scope = ""             # a group picked in the element list: selected on its own, not its outer group
         self.scene().selectionChanged.connect(self._selection_changed)
 
     # ---- navigation: wheel zooms, middle (or right) button drags the view ----
@@ -993,12 +997,13 @@ class PreviewView(QGraphicsView):
     def _selection_changed(self):
         if self._rebuilding or getattr(self, "_expanding", False):
             return
+        from kerfly.core.groups import unit_of, within
         selected = self._selected_items()
-        groups = {i.element.group for i in selected if i.element.group}
-        if groups and self.tool != "nodes":         # a group is selected as a whole (nodes: one shape)
+        units = {unit_of(i.element.group, self.scope) for i in selected if i.element.group}
+        if units and self.tool != "nodes":          # a group is selected as a whole (nodes: one shape)
             self._expanding = True
             for item in self._items:
-                if item.element.group in groups and not item.isSelected():
+                if not item.isSelected() and any(within(item.element.group, u) for u in units):
                     item.setSelected(True)
             self._expanding = False
         self._place_handles()

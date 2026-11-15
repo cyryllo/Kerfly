@@ -41,6 +41,7 @@ class Item:
     on_path_of: int = -1           # a text put on the path of item number ... (after placing)
     image: object = None           # a picture to engrave as a raster (made by the window)
     dpi: float = 0.0               # its resolution
+    group: str = ""                # a group inside the design's group (e.g. "Sheet 2" of a box)
 
 
 @dataclass
@@ -56,6 +57,17 @@ class Generated:
     # strips it is made of, {"loops" (x along the face, y down from the top), "start" (where x = 0 is along the
     # path, mm)}, "length": the path's length the strips are measured on)
     assembly: list = field(default_factory=list)
+
+
+def _sheet_groups(out, sheet_name):
+    """The parts in the order of their sheets (sheet 1 first); on one sheet they keep no sheet group (the
+    design's group is enough)."""
+    if out.sheets <= 1:
+        for item in out.items:
+            item.group = ""
+        return
+    order = {sheet_name % n: n for n in range(1, out.sheets + 1)}
+    out.items.sort(key=lambda item: order.get(item.group, 0))
 
 
 def _steps(lo, hi, n):
@@ -532,7 +544,9 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
         for loop in loops:
             out.items.append(_polygon_item([(px + x, py + y) for px, py in loop], 0, 0, "cut",
                                            label, layer))  # Bottom, Front, ...
+            out.items[-1].group = sheet_name % sheet
     out.sheets = max(p_[0] for p_ in places) if places else 1
+    _sheet_groups(out, sheet_name)
     return out
 
 
@@ -671,12 +685,15 @@ def hinge_box(width=100.0, depth=80.0, height=50.0, radius=20.0, thickness=3.0, 
         label = names.get(name, name.capitalize())
         for lp in loops:
             out.items.append(_polygon_item([(px + x, py + y) for px, py in lp], 0, 0, "cut", label, layer))
+            out.items[-1].group = sheet_name % sheet
         if cuts:
             item = _path_item([[(px + x, py + y) for px, py in c_] for c_ in cuts], 0, 0, "cut",
                               names.get("hinge", "Hinge"))
             item.layer = layer
+            item.group = sheet_name % sheet
             out.items.append(item)
     out.sheets = max(p_[0] for p_ in places) if places else 1
+    _sheet_groups(out, sheet_name)
     return out
 
 

@@ -203,13 +203,15 @@ class Unit:
 def units(elements):
     """Elements as arrange units: the members of a group together, others alone
     (in the order of their first appearance)."""
+    from .groups import top
     out, by_group = [], {}
     for e in elements:
         if e.group:
-            if e.group not in by_group:
-                by_group[e.group] = []
-                out.append(by_group[e.group])
-            by_group[e.group].append(e)
+            key = top(e.group)                       # a group inside a group goes with the outer one
+            if key not in by_group:
+                by_group[key] = []
+                out.append(by_group[key])
+            by_group[key].append(e)
         else:
             out.append([e])
     return [u[0] if len(u) == 1 else Unit(u) for u in out]

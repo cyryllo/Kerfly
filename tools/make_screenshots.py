@@ -280,6 +280,24 @@ def take(lang):
     settle()
     dlg.grab().save(os.path.join(out, "box3d.png"))
     dlg.close()
+    # the element list with a box on several sheets: a group with a group for each sheet
+    st._dirty = False
+    st.new_project()
+    dlg = GeneratorDialog(st, "finger_box", remember=False)
+    for key, value in (("width", 280), ("depth", 190), ("height", 60)):
+        dlg.widgets[key].setValue(value)
+    dlg.widgets["sliding"].setChecked(True)
+    st.insert_generated(dlg.result_design())
+    dlg.close()
+    lst = st.element_list
+    for i in range(1, lst.topLevelItem(0).childCount()):
+        lst.topLevelItem(0).child(i).setExpanded(False)           # sheet 1 open, the others closed
+    st.preview.select_element([])
+    st.tabs.setCurrentIndex(0)
+    st.show()
+    lst.doItemsLayout()
+    settle(10)
+    st.tabs.grab().save(os.path.join(out, "groups.png"))
     st._dirty = False
     st.close()
     print("screenshots (%s) written" % lang)

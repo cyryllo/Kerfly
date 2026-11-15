@@ -20,6 +20,14 @@ Version numbers:
   drawn in the order the faces hide each other (also where fingers and tabs
   reach into slots), so nothing shows through or disappears while the box is
   turned; the bent wall of the rounded box has its slots.
+- **Groups in groups**, shown as a tree in the element list: a group is a row
+  that opens and closes, its tick takes all of it in or out of the job, and
+  clicking its row selects that group alone. A generated box on several
+  sheets is one group with a group for each sheet (**Sheet 1**, **Sheet 2**,
+  …), its parts in the order of the sheets. **Ungroup** takes one level away;
+  copies and saved projects keep the groups and their names.
+
+### Changed
 
 ### Changed
 

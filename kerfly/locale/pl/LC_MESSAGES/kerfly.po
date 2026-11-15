@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 21:32+0100\n"
+"POT-Creation-Date: 2026-11-15 21:58+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -1259,8 +1259,8 @@ msgid "Grid size"
 msgstr "Rozmiar siatki"
 
 #, python-format
-msgid "Group %d: %s"
-msgstr "Grupa %d: %s"
+msgid "Group %d"
+msgstr "Grupa %d"
 
 #, python-format
 msgid "Grouped %d elements. Click any of them to select the whole group."
@@ -2608,6 +2608,9 @@ msgid ""
 msgstr ""
 "Pieczątka okrągła: tekst wokół góry i dołu, pierścienie oraz tekst lub "
 "obrazek w środku; wypalana w gumie jak zwykła pieczątka"
+
+msgid "Rounded box"
+msgstr "Okrągłe pudełko"
 
 msgid ""
 "Rounded box (beta): a bottom and a lid with rounded corners, the wall two"
@@ -4329,4 +4332,7 @@ msgstr "obrys"
 #~ "przód jest niższy, więc wieczko przesuwa"
 #~ " się nad nim (beta: jeszcze nie "
 #~ "sprawdzone na laserze)"
+
+#~ msgid "Group %d: %s"
+#~ msgstr "Grupa %d: %s"
 

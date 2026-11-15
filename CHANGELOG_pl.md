@@ -17,6 +17,15 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   (także tam, gdzie wczepy i języczki wchodzą w szczeliny), więc przy
   obracaniu nic nie prześwituje ani nie znika; zgięta ścianka okrągłego
   pudełka ma swoje szczeliny.
+- **Grupy w grupach**, pokazane na liście elementów jako drzewo: grupa to
+  wiersz, który się rozwija i zwija, ptaszek przy niej włącza ją całą do
+  zadania albo wyłącza, a klik w jej wiersz zaznacza tylko tę grupę.
+  Pudełko z generatora na kilku arkuszach to jedna grupa z osobną grupą dla
+  każdego arkusza (**Arkusz 1**, **Arkusz 2**, …), części ułożone arkuszami
+  po kolei. **Rozgrupuj** zdejmuje jeden poziom; kopie i zapisane projekty
+  zachowują grupy i ich nazwy.
+
+### Zmienione
 
 ### Zmienione
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 21:32+0100\n"
+"POT-Creation-Date: 2026-11-15 21:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1181,7 +1181,7 @@ msgid "Grid size"
 msgstr ""
 
 #, python-format
-msgid "Group %d: %s"
+msgid "Group %d"
 msgstr ""
 
 #, python-format
@@ -2427,6 +2427,9 @@ msgstr ""
 msgid ""
 "Round stamp: text around the top and the bottom, rings, and text or a "
 "picture in the middle; burnt for rubber like the stamp"
+msgstr ""
+
+msgid "Rounded box"
 msgstr ""
 
 msgid ""

@@ -12,7 +12,7 @@
 cd "$(dirname "$0")/.." || exit 1
 export QT_QPA_PLATFORM=xcb                  # never a window on the desktop: everything runs in xvfb
 FULLHD=(xvfb-run -a -s "-screen 0 1920x1080x24")
-run() { echo "=== $1"; shift; "$@" 2>&1 | grep -E "FAIL|Traceback|Error|passed|failed|match|problems|steps" | tail -4; }
+run() { echo "=== $1"; shift; "$@" 2>&1 | grep -E "FAIL|Traceback|Error|Fatal|Segmentation|passed|failed|match|problems|steps" | tail -4; }
 run core .venv/bin/python tests/test_core.py
 run gui "${FULLHD[@]}" .venv/bin/python tests/test_gui.py
 # the window with only the DejaVu fonts and no screen, as on the GitHub runners (few fonts there once

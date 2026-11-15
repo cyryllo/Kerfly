@@ -240,6 +240,22 @@ def check_element_list(w):
             problems.append("element list row %d (%s): %s in the list, %s on the bed" % (
                 row + 1, e.name, "selected" if item.isSelected() else "not selected",
                 "selected" if id(e) in chosen else "not selected"))
+        # in the rows of its groups (a group inside a group: inside that group's row)
+        from kerfly.core.groups import paths
+        chain, parent = [], item.parent()
+        while parent is not None:
+            chain.insert(0, lst.group_of(parent))
+            parent = parent.parent()
+        if chain != paths(e.group):
+            problems.append("element list row %d (%s): in the groups %s, the element is in %s" % (
+                row + 1, e.name, chain, paths(e.group)))
+    for path, node in getattr(lst, "_groups", {}).items():
+        members = [w.elements[n] for n in lst.members(path)]
+        want = Qt.Checked if all(e.visible for e in members) else (
+            Qt.Unchecked if not any(e.visible for e in members) else Qt.PartiallyChecked)
+        if node.checkState() != want:
+            problems.append("element list: group %s ticked %s, its elements %s" % (
+                node.text(), node.checkState(), [e.visible for e in members]))
     return problems
 
 
@@ -387,11 +403,13 @@ def state(w):
                                 "layers": {k: index.get(v, v) for k, v in sorted(e.layers.items())},
                                 "group": bool(e.group), "source": e.source_file,
                                 "bounds": list(e.design.bounds) if e.design is not None else None}))
+    from kerfly.core.groups import paths
     groups = {}
-    for e in w.elements:                         # group ids are random: compare who is with whom
-        if e.group:
-            groups.setdefault(e.group, []).append(w.elements.index(e))
-    return {"layers": layers, "elements": elements, "groups": sorted(groups.values())}
+    for n, e in enumerate(w.elements):           # group ids are random: compare who is with whom, at each
+        for path in paths(e.group):              # level (a group inside a group is a group of its own too)
+            groups.setdefault(path, []).append(n)
+    return {"layers": layers, "elements": elements,
+            "groups": sorted((path.count("/"), members) for path, members in groups.items())}
 
 
 def difference(a, b):
