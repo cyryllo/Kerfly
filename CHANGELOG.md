@@ -7,7 +7,11 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.7.0 (2026-11-15)
+
+Single-line fonts, ten more fill patterns, dithering methods, picture tracing
+and cutting, boxes with dividers, a sliding lid and rounded corners (beta),
+the USB port of each laser (beta).
 
 ### Added
 
@@ -42,6 +46,10 @@ Version numbers:
 - **Rounded box with a living hinge** (beta, not yet checked on a laser): a
   new generator; rounded bottom and lid with tabs, the wall two strips that
   bend round the corners; without a lid a rim holds the top in shape.
+- **USB port per laser** (beta, not yet checked with two lasers): with two
+  K40 plugged into one computer, each laser profile keeps the USB port of its
+  board (Settings → Machine → USB port, **Which one?** moves that head a
+  little); without one, Kerfly asks which laser to connect to and remembers it.
 - **Cut out of a picture** tool (right strip, Shift+C): drag a rectangle or an
   ellipse over a picture; the piece inside stays in its place, the rest goes.
 

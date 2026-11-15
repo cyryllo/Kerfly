@@ -69,6 +69,7 @@ SETTINGS_KEYS = [
     ("trace_rect", BOOL),    # Kerfly only: trace the bounding rectangle (off: K40 Whisperer's outline)
     ("theme", TEXT),         # Kerfly only: light, dark or system (applies after a restart)
     ("dither", TEXT),        # Kerfly only: halftone method (kerfly.core.dither; floyd = K40 Whisperer's)
+    ("usb_port", TEXT),      # Kerfly only: USB port of this machine's board ("" = the first K40 found)
     ("pre_exec", BOOL),      # Kerfly only: run a program before a job (the exhaust on, ...)
     ("pre_batch_path", QUOTED),  # Kerfly only: that program
 ]
@@ -97,7 +98,7 @@ DEFAULT_VALUES = {
     "test_time": "250", "test_power": "0.5",
     "t_timeout": "200", "n_timeouts": "30", "ink_timeout": "3",
     "designfile": "", "inkscape_path": "", "batch_path": "",
-    "pre_exec": "0", "pre_batch_path": "", "theme": "light", "dither": "floyd",
+    "pre_exec": "0", "pre_batch_path": "", "theme": "light", "dither": "floyd", "usb_port": "",
     "language": "",          # "" = system language
     "grid_mm": "0",
     "snap_objects": "1",

@@ -534,6 +534,81 @@ def main():
           "ellipse with white corners), the picture replaced, Undo",
           all(r[3] and r[4] and r[5] and r[6] for r in crop_results), "(%s)" % crop_results)
 
+    # 3e6. USB port per laser (beta; two K40 on one computer): the remembered port is used without asking,
+    # two plugged in and none remembered: the user chooses and it goes into the profile, one plugged in: no
+    # question; "Which one?" moves that head right and back; another profile's port releases the USB
+    import nano_library as _nl
+    from kerfly.core import usbports as _up
+    from kerfly.gui import usb_port_dialog as _upd
+    calls = []
+
+    class _FakeBoard:
+        def __init__(self):
+            self.USB_Location = None
+
+        def initialize_device(self, location=None, verbose=False):
+            calls.append(("init", location))
+            self.USB_Location = location or (1, 5)
+
+        def say_hello(self):
+            return 1
+
+        def home_position(self):
+            calls.append(("home", self.USB_Location))
+
+        def unlock_rail(self):
+            calls.append(("unlock", self.USB_Location))
+
+        def rapid_move(self, dx, dy):
+            calls.append(("move", self.USB_Location, dx))
+
+        def release_usb(self):
+            calls.append(("release", self.USB_Location))
+    real_board, real_list = _nl.K40_CLASS, _up.list_lasers
+    two = [_up.Port("1-2", 1, 5, True), _up.Port("1-3", 1, 7, True)]
+    _nl.K40_CLASS = _FakeBoard
+    _up.list_lasers = lambda: list(two)
+    uw = make_window(usb_port="1-3")
+    uw.connect_laser()
+    remembered = calls[0] == ("init", (1, 7)) and uw.laser.port_key == "1-3"
+    calls.clear()
+    real_dlg_exec = _upd.ChooseLaserDialog.exec
+
+    def pick_second(self):
+        self.list.setCurrentRow(1)
+        self.which.click()                               # Which one?
+        return 1
+    _upd.ChooseLaserDialog.exec = pick_second
+    uw.values["usb_port"] = ""
+    uw.connect_laser()
+    which = [c for c in calls if c[0] == "move"]
+    asked = ("init", (1, 7)) in calls and uw.values["usb_port"] == "1-3" \
+        and _pc.load().get(uw.profiles.current).get("usb_port") == "1-3"
+    moved_right_back = len(which) == 2 and which[0][1] == (1, 7) and which[0][2] > 0 and which[1][2] < 0
+    _upd.ChooseLaserDialog.exec = real_dlg_exec
+    calls.clear()
+    _up.list_lasers = lambda: [two[0]]
+    uw.values["usb_port"] = ""
+    uw.connect_laser()
+    single = next((c for c in calls if c[0] == "init"), None) == ("init", None)
+    # another laser profile on another port: the USB is released
+    _up.list_lasers = lambda: list(two)
+    uw.values["usb_port"] = "1-2"
+    uw.connect_laser()
+    uw.profiles.add("Second K40", dict(_pc.from_values(uw.values), usb_port="1-3"))
+    uw.switch_profile("Second K40")
+    released = not uw.laser.connected
+    from kerfly.gui.settings_dialog import SettingsDialog as _SD5
+    sd = _SD5(dict(uw.values), uw)
+    listed = [sd.usb_port_box.itemData(i) for i in range(sd.usb_port_box.count())]
+    sd.close()
+    _nl.K40_CLASS, _up.list_lasers = real_board, real_list
+    uw.close()
+    check("USB port per laser: remembered port used, chosen when two (and kept in the profile), Which one? "
+          "moves that head, one laser: no question, another profile's port releases the USB, Settings lists them",
+          remembered and asked and moved_right_back and single and released and listed == ["", "1-2", "1-3"],
+          "(%s)" % [remembered, asked, moved_right_back, single, released, listed, calls[:6]])
+
     # 3f. .kerfly projects open in Kerfly: the Linux AppImage writes its menu entry and file type into the
     # user's own folders, with the AppImage as the program; a newer AppImage takes the entry over
     from kerfly.gui import desktop_entry as _de
@@ -2317,7 +2392,7 @@ def main():
         QMessageBox.question = staticmethod(lambda *a, **k: asked.append(a[2]) or QMessageBox.Yes)
         QMessageBox.information = staticmethod(lambda *a, **k: informed.append(a[2]))
 
-        def refuse(init_home=True):
+        def refuse(init_home=True, **_kw):
             raise _LaserError("USB error: [Errno 13] Access denied (insufficient permissions)")
         u.laser.connect = refuse
         u.connect_laser()

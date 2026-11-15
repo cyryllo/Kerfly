@@ -24,6 +24,7 @@ MACHINE_KEYS = (
     "post_disp", "pre_exec", "pre_batch_path", "post_exec", "batch_path", "LaserXscale", "LaserYscale",
     "show_power", "max_power", "rotary", "LaserRscale", "rapid_feed", "trace_w_laser", "trace_rect", "trace_gap",
     "trace_speed", "Trace_power", "test_time", "test_power", "t_timeout", "n_timeouts", "pre_pr_crc", "wait",
+    "usb_port",
 )
 
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 18:35+0100\n"
+"POT-Creation-Date: 2026-11-15 18:51+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -38,6 +38,14 @@ msgstr[0] "%d elemento"
 msgstr[1] "%d elementos"
 
 #, python-format
+msgid ""
+"%d lasers are plugged into this computer. Which one is \"%s\"? Kerfly "
+"remembers it in this laser's settings."
+msgstr ""
+"Hay %d láseres conectados a este ordenador. ¿Cuál es «%s»? Kerfly lo "
+"recuerda en los ajustes de este láser."
+
+#, python-format
 msgid "%d mm"
 msgstr "%d mm"
 
@@ -52,6 +60,10 @@ msgstr "%d × %d píxeles"
 #, python-format
 msgid "%s (copy)"
 msgstr "%s (copia)"
+
+#, python-format
+msgid "%s (not plugged in now)"
+msgstr "%s (no conectado ahora)"
 
 #, python-format
 msgid "%s The laser head position is now unknown: press Home before the next job."
@@ -525,6 +537,9 @@ msgstr "Buscando una versión nueva…"
 msgid "Choose a file"
 msgstr "Elegir un archivo"
 
+msgid "Choose a laser that is plugged in now."
+msgstr "Elija un láser que esté conectado ahora."
+
 msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr ""
 "Elija un material para ajustar la velocidad, las pasadas y la potencia de"
@@ -628,6 +643,9 @@ msgstr "Comando"
 
 msgid "Concentric"
 msgstr "Concéntrico"
+
+msgid "Connect"
+msgstr "Conectar"
 
 msgid "Connect to the laser"
 msgstr "Conectar con el láser"
@@ -1617,6 +1635,10 @@ msgstr "Láser «%s» guardado en %s"
 msgid "Laser initialized"
 msgstr "Láser conectado"
 
+#, python-format
+msgid "Laser initialized; \"%s\" remembers its USB port (%s)"
+msgstr "Láser iniciado; «%s» recuerda su puerto USB (%s)"
+
 msgid "Laser is not initialized."
 msgstr "El láser no está conectado."
 
@@ -2027,6 +2049,9 @@ msgstr "No hay ningún diseño cargado"
 
 msgid "No hinge"
 msgstr "Sin bisagra"
+
+msgid "No laser chosen."
+msgstr "No se eligió ningún láser."
 
 msgid "No laser data was generated."
 msgstr "No se generaron datos para el láser."
@@ -3265,6 +3290,21 @@ msgstr "El archivo no indica el tamaño de la imagen. Indique su tamaño."
 msgid "The file is not a Kerfly material library."
 msgstr "El archivo no es una biblioteca de materiales de Kerfly."
 
+msgid "The first K40 found"
+msgstr "El primer K40 encontrado"
+
+msgid ""
+"The head of the laser on the chosen port moves a little to the right and "
+"back"
+msgstr ""
+"El cabezal del láser del puerto elegido se mueve un poco a la derecha y "
+"vuelve"
+
+msgid "The head of the laser selected above moves a little to the right and back"
+msgstr ""
+"El cabezal del láser seleccionado arriba se mueve un poco a la derecha y "
+"vuelve"
+
 msgid "The image resolution must be greater than zero."
 msgstr "La resolución de la imagen debe ser mayor que cero."
 
@@ -3575,6 +3615,12 @@ msgstr "Datos USB listos"
 msgid "USB error: %s"
 msgstr "Error de USB: %s"
 
+msgid "USB port"
+msgstr "Puerto USB"
+
+msgid "USB port (beta)"
+msgstr "Puerto USB (beta)"
+
 msgid "USB released"
 msgstr "USB liberado"
 
@@ -3733,6 +3779,12 @@ msgstr ""
 msgid "Where the picture goes"
 msgstr "Dónde va la imagen"
 
+msgid "Which laser?"
+msgstr "¿Qué láser?"
+
+msgid "Which one?"
+msgstr "¿Cuál es?"
+
 msgid "Width"
 msgstr "Ancho"
 
@@ -3798,6 +3850,13 @@ msgstr "Ancho:"
 msgid "With a lid"
 msgstr "Con tapa"
 
+msgid ""
+"With two lasers plugged into this computer: the USB port of this laser's "
+"board, kept in its profile (beta: not yet checked with two lasers)"
+msgstr ""
+"Con dos láseres conectados a este ordenador: el puerto USB de la placa de"
+" este láser, guardado en su perfil (beta: aún no probado con dos láseres)"
+
 msgid "Work with this laser: its settings go into the window"
 msgstr "Trabajar con este láser: sus ajustes pasan a la ventana"
 
@@ -3854,6 +3913,9 @@ msgstr "un programa o script (.bat, .sh)"
 
 msgid "centre"
 msgstr "centro"
+
+msgid "connect to it with the plug button"
+msgstr "conéctese con el botón del enchufe"
 
 msgid "corner"
 msgstr "esquina"

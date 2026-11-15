@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 18:35+0100\n"
+"POT-Creation-Date: 2026-11-15 18:51+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -38,6 +38,14 @@ msgstr[0] "%d élément"
 msgstr[1] "%d éléments"
 
 #, python-format
+msgid ""
+"%d lasers are plugged into this computer. Which one is \"%s\"? Kerfly "
+"remembers it in this laser's settings."
+msgstr ""
+"%d lasers sont branchés sur cet ordinateur. Lequel est « %s » ? Kerfly "
+"s'en souvient dans les réglages de ce laser."
+
+#, python-format
 msgid "%d mm"
 msgstr "%d mm"
 
@@ -52,6 +60,10 @@ msgstr "%d × %d pixels"
 #, python-format
 msgid "%s (copy)"
 msgstr "%s (copie)"
+
+#, python-format
+msgid "%s (not plugged in now)"
+msgstr "%s (pas branché maintenant)"
 
 #, python-format
 msgid "%s The laser head position is now unknown: press Home before the next job."
@@ -525,6 +537,9 @@ msgstr "Recherche d'une nouvelle version…"
 msgid "Choose a file"
 msgstr "Choisir un fichier"
 
+msgid "Choose a laser that is plugged in now."
+msgstr "Choisissez un laser branché en ce moment."
+
 msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr ""
 "Choisissez un matériau pour régler la vitesse, les passes et la puissance"
@@ -626,6 +641,9 @@ msgstr "Commande"
 
 msgid "Concentric"
 msgstr "Concentrique"
+
+msgid "Connect"
+msgstr "Connecter"
 
 msgid "Connect to the laser"
 msgstr "Connecter le laser"
@@ -1621,6 +1639,10 @@ msgstr "Laser « %s » enregistré dans %s"
 msgid "Laser initialized"
 msgstr "Laser connecté"
 
+#, python-format
+msgid "Laser initialized; \"%s\" remembers its USB port (%s)"
+msgstr "Laser initialisé ; « %s » retient son port USB (%s)"
+
 msgid "Laser is not initialized."
 msgstr "Le laser n'est pas connecté."
 
@@ -2032,6 +2054,9 @@ msgstr "Aucun dessin chargé"
 
 msgid "No hinge"
 msgstr "Aucune charnière"
+
+msgid "No laser chosen."
+msgstr "Aucun laser choisi."
 
 msgid "No laser data was generated."
 msgstr "Aucune donnée laser n'a été générée."
@@ -3277,6 +3302,19 @@ msgstr "Le fichier n'indique pas la taille de l'image. Indiquez sa taille."
 msgid "The file is not a Kerfly material library."
 msgstr "Le fichier n'est pas une bibliothèque de matériaux Kerfly."
 
+msgid "The first K40 found"
+msgstr "Le premier K40 trouvé"
+
+msgid ""
+"The head of the laser on the chosen port moves a little to the right and "
+"back"
+msgstr "La tête du laser du port choisi se déplace un peu à droite puis revient"
+
+msgid "The head of the laser selected above moves a little to the right and back"
+msgstr ""
+"La tête du laser sélectionné ci-dessus se déplace un peu à droite puis "
+"revient"
+
 msgid "The image resolution must be greater than zero."
 msgstr "La résolution de l'image doit être supérieure à zéro."
 
@@ -3588,6 +3626,12 @@ msgstr "Données USB prêtes"
 msgid "USB error: %s"
 msgstr "Erreur USB : %s"
 
+msgid "USB port"
+msgstr "Port USB"
+
+msgid "USB port (beta)"
+msgstr "Port USB (bêta)"
+
 msgid "USB released"
 msgstr "USB libéré"
 
@@ -3750,6 +3794,12 @@ msgstr ""
 msgid "Where the picture goes"
 msgstr "Où va l'image"
 
+msgid "Which laser?"
+msgstr "Quel laser ?"
+
+msgid "Which one?"
+msgstr "Lequel ?"
+
 msgid "Width"
 msgstr "Largeur"
 
@@ -3816,6 +3866,14 @@ msgstr "Largeur :"
 msgid "With a lid"
 msgstr "Avec couvercle"
 
+msgid ""
+"With two lasers plugged into this computer: the USB port of this laser's "
+"board, kept in its profile (beta: not yet checked with two lasers)"
+msgstr ""
+"Avec deux lasers branchés sur cet ordinateur : le port USB de la carte de"
+" ce laser, gardé dans son profil (bêta : pas encore vérifié avec deux "
+"lasers)"
+
 msgid "Work with this laser: its settings go into the window"
 msgstr "Travailler avec ce laser : ses réglages vont dans la fenêtre"
 
@@ -3874,6 +3932,9 @@ msgstr "un programme ou script (.bat, .sh)"
 
 msgid "centre"
 msgstr "centre"
+
+msgid "connect to it with the plug button"
+msgstr "connectez-vous avec le bouton de la prise"
 
 msgid "corner"
 msgstr "coin"

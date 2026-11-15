@@ -3,7 +3,11 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
-## Unreleased
+## 1.7.0 (2026-11-15)
+
+Czcionki jednokreskowe, dziesięć nowych wzorów wypełnienia, metody ditheringu,
+wektoryzacja i wycinanie obrazków, pudełka z przegródkami, wysuwanym wieczkiem
+i zaokrąglonymi rogami (beta), port USB każdego lasera (beta).
 
 ### Dodane
 
@@ -40,6 +44,11 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 - **Okrągłe pudełko na zawiasie** (beta, jeszcze nie sprawdzone na laserze):
   nowy generator; zaokrąglone dno i wieko z wypustami, ścianka z dwóch pasków,
   które gną się na rogach; bez wieka kształt u góry trzyma obrzeże.
+- **Port USB dla każdego lasera** (beta, jeszcze nie sprawdzone z dwoma
+  laserami): przy dwóch K40 podłączonych do jednego komputera profil każdego
+  lasera pamięta port USB swojej płyty (Ustawienia → Maszyna → Port USB, **Który
+  to?** rusza lekko jego głowicą); bez zapamiętanego portu Kerfly pyta, z którym
+  laserem się połączyć, i zapamiętuje odpowiedź.
 - Narzędzie **Wytnij fragment obrazka** (pasek po prawej, Shift+C): przeciągnij
   prostokąt albo elipsę po obrazku; fragment w środku zostaje na swoim
   miejscu, reszta znika.

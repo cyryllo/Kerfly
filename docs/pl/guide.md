@@ -117,6 +117,13 @@ maszyny zmienione w Ustawieniach zapisuje się w profilu lasera w użyciu.
 Zębatka obok listy (albo **Ustawienia → Lasery…**, na pasku **Lasery**)
 dodaje, duplikuje, zmienia nazwę, usuwa, eksportuje i importuje lasery. W
 danej chwili pracuje się z jednym laserem.
+**Dwa lasery podłączone do jednego komputera** (beta): Ustawienia → Maszyna →
+**Port USB** zapisuje port płyty każdego lasera w jego profilu (**Który to?**
+przesuwa głowicę tego lasera trochę w prawo i z powrotem). Bez zapamiętanego
+portu, gdy podłączone są dwa lasery, Kerfly pyta, z którym się połączyć, i
+zapamiętuje odpowiedź. Na Linuksie port się nie zmienia, dopóki kabel jest w
+tym samym gnieździe; na Windows Kerfly może zapytać ponownie po przepięciu
+kabla albo restarcie.
 
 | Przycisk | Co robi |
 |---|---|

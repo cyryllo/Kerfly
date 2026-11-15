@@ -71,21 +71,34 @@ class PauseControl:
 class LaserController:
     def __init__(self):
         self.k40 = None
+        self.port_key = ""             # USB port of the connected board (kerfly.core.usbports)
 
     @property
     def connected(self):
         return self.k40 is not None
 
-    def connect(self, init_home=True):
-        """Open the USB device. Raises LaserError with a readable message."""
-        from nano_library import K40_CLASS   # needs pyusb; imported lazily
+    def connect(self, init_home=True, port="", choose=None):
+        """Open the USB device. port: the USB port key of the wanted board (kerfly.core.usbports; "" = the
+        first K40 found). choose(ports) -> Port or None is asked when several boards are plugged in and the
+        wanted one is not among them. Raises LaserError with a readable message."""
+        import nano_library
+        from kerfly.core import usbports
         from kerfly.core.usblib import ensure_libusb
         self.release()
-        log.info("laser: connect (home after connecting: %s)", init_home)
+        log.info("laser: connect (home after connecting: %s, port %r)", init_home, port)
         ensure_libusb()                       # Windows: find libusb0.dll (also in System32, next to the program)
-        k40 = K40_CLASS()
+        ports = usbports.list_lasers()
+        wanted = usbports.find(ports, port)
+        if wanted is None and len(ports) > 1 and choose is not None:
+            wanted = choose(ports)
+            if wanted is None:
+                raise LaserError(_("No laser chosen."))
+        location = (wanted.bus, wanted.address) if wanted is not None else None
+        log.info("laser: %d K40 board(s) plugged in %s; using %s", len(ports), [p.key for p in ports],
+                 wanted.key if wanted else "the first that answers")
+        k40 = nano_library.K40_CLASS()
         try:
-            k40.initialize_device()
+            k40.initialize_device(location) if location else k40.initialize_device()
             k40.say_hello()
         except Exception as e:
             log.error("laser: connect failed: %r", e)
@@ -94,11 +107,37 @@ class LaserController:
                 text += " " + _("(libUSB driver not installed)")
             raise LaserError(_("USB error: %s") % text)
         self.k40 = k40
-        log.info("laser: connected (USB location %s)", getattr(k40, "USB_Location", None))
+        self.port_key = wanted.key if wanted is not None else usbports.key_of(ports, getattr(k40, "USB_Location", None))
+        log.info("laser: connected (USB location %s, port %s)", getattr(k40, "USB_Location", None), self.port_key)
         if init_home:
             self.home()
         else:
             self.unlock()
+
+    def identify(self, port, mils=400):
+        """Which one is it: the head of the board at `port` moves a little to the right and back (no homing)."""
+        import nano_library
+        from kerfly.core.usblib import ensure_libusb
+        ensure_libusb()
+        log.info("laser: identify %s", port.key)
+        if self.k40 is not None and self.port_key == port.key:
+            k40, own = self.k40, False
+        else:
+            k40, own = nano_library.K40_CLASS(), True
+            try:
+                k40.initialize_device((port.bus, port.address))
+                k40.say_hello()
+            except Exception as e:
+                raise LaserError(_("USB error: %s") % e)
+        try:
+            k40.rapid_move(mils, 0)
+            k40.rapid_move(-mils, 0)
+        finally:
+            if own:
+                try:
+                    k40.release_usb()
+                except Exception:
+                    pass
 
     def release(self):
         if self.k40 is not None:

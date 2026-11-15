@@ -114,6 +114,13 @@ before and after a job) go into the window. A machine setting changed in
 Settings is kept in the profile of the laser in use. The cog next to the list
 (or **Settings → Lasers…**, toolbar **Lasers**) adds, duplicates, renames,
 deletes, exports and imports lasers. One laser is used at a time.
+**Two lasers plugged into one computer** (beta): Settings → Machine → **USB
+port** keeps the port of each laser's board in its profile (**Which one?**
+moves that laser's head a little to the right and back). Without a remembered
+port, when two are plugged in, Kerfly asks which one to connect to and
+remembers the answer. On Linux the port stays the same as long as the cable
+stays in the same socket; on Windows Kerfly may ask again after a replug or a
+restart.
 
 | Button | What it does |
 |---|---|

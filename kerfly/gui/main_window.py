@@ -4085,10 +4085,17 @@ class MainWindow(QMainWindow):
             self.status(_("Could not save the lasers: %s") % e, error=True)
         if changed:
             self._apply_settings(new, changed)
+        released = False
+        if self.laser.connected and "usb_port" in changed and self.values.get("usb_port") \
+                and self.values.get("usb_port") != self.laser.port_key:
+            # another machine on another USB port: the next Connect opens it
+            self.laser.release()
+            self._update_laser_state()
+            released = True
         self._refresh_profile_box()
         diag_log.info("laser profile %s: board %s, bed %s x %s", name, self.values.get("board_name"),
                       self.values.get("LaserXsize"), self.values.get("LaserYsize"))
-        self.status(_("Laser: %s") % name)
+        self.status(_("Laser: %s") % name + (" — " + _("connect to it with the plug button") if released else ""))
         return True
 
     def manage_profiles(self):
@@ -4156,12 +4163,30 @@ class MainWindow(QMainWindow):
         self.status(ok_message)
         return True
 
+    def _choose_laser(self, ports):
+        """Several K40 plugged in, none on this laser's port: ask which one (None: cancelled)."""
+        from kerfly.gui.usb_port_dialog import ChooseLaserDialog
+        QApplication.restoreOverrideCursor()
+        dlg = ChooseLaserDialog(ports, self.laser, self.profiles.current, self)
+        chosen = dlg.chosen() if dlg.exec() else None
+        self._port_chosen = chosen is not None
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        return chosen
+
     def connect_laser(self):
         QApplication.setOverrideCursor(Qt.WaitCursor)
+        self._port_chosen = False
         try:
-            self.laser.connect(init_home=is_true(self.values.get("init_home", "1")))
+            self.laser.connect(init_home=is_true(self.values.get("init_home", "1")),
+                               port=self.values.get("usb_port", ""), choose=self._choose_laser)
             self.head = (0.0, 0.0)
             self.status(_("Laser initialized"))
+            if self._port_chosen and self.laser.port_key:
+                # remembered in this laser's profile: next time no question
+                self.values["usb_port"] = self.laser.port_key
+                self._store_profile()
+                self.status(_("Laser initialized; \"%s\" remembers its USB port (%s)")
+                            % (self.profiles.current, self.laser.port_key))
         except LaserError as e:
             self.status(str(e), error=True)
             from kerfly.core import udev

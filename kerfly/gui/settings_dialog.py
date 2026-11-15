@@ -15,6 +15,7 @@ from kerfly.i18n import LANGUAGES, N_, _
 TABS = [
     (N_("Machine"), [
         ("board_name", N_("Controller board"), "choice", BOARD_NAMES),
+        ("usb_port", N_("USB port (beta)"), "usb_port", None),
         ("units", N_("Units"), "choice", ["mm", "in"]),
         ("LaserXsize", N_("Bed width"), "float", (1, 5000, 1, "len")),
         ("LaserYsize", N_("Bed height"), "float", (1, 5000, 1, "len")),
@@ -185,6 +186,40 @@ class SettingsDialog(QDialog):
             index = w.findData(value)
             w.setCurrentIndex(max(0, index))
             return w, lambda: w.currentData()
+        if kind == "usb_port":
+            from kerfly.core import usbports
+            from kerfly.gui import icons
+            box = QWidget()
+            row = QHBoxLayout(box)
+            row.setContentsMargins(0, 0, 0, 0)
+            combo = QComboBox()
+            combo.addItem(_("The first K40 found"), "")
+            ports = usbports.list_lasers()
+            for p in ports:
+                combo.addItem(p.label, p.key)
+            if value and combo.findData(value) < 0:
+                combo.addItem(_("%s (not plugged in now)") % value, value)
+            combo.setCurrentIndex(max(0, combo.findData(value)))
+            combo.setToolTip(_("With two lasers plugged into this computer: the USB port of this laser's board, "
+                               "kept in its profile (beta: not yet checked with two lasers)"))
+            which = QPushButton(icons.tabler("arrows-horizontal"), _("Which one?"))
+            which.setToolTip(_("The head of the laser on the chosen port moves a little to the right and back"))
+            parent = self.parent()
+
+            def identify():
+                port = usbports.find(ports, combo.currentData())
+                if port is None:
+                    from PySide6.QtWidgets import QMessageBox
+                    QMessageBox.information(self, _("USB port"), _("Choose a laser that is plugged in now."))
+                    return
+                from kerfly.gui.usb_port_dialog import identify as _identify
+                _identify(self, parent.laser, port)
+            which.clicked.connect(identify)
+            which.setEnabled(bool(ports) and parent is not None and hasattr(parent, "laser"))
+            row.addWidget(combo, 1)
+            row.addWidget(which)
+            self.usb_port_box = combo
+            return box, lambda: combo.currentData() or ""
         if kind == "dither":
             from kerfly.core.dither import DEFAULT, METHODS
             w = QComboBox()

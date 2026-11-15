@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 18:35+0100\n"
+"POT-Creation-Date: 2026-11-15 18:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,6 +35,12 @@ msgstr[0] ""
 msgstr[1] ""
 
 #, python-format
+msgid ""
+"%d lasers are plugged into this computer. Which one is \"%s\"? Kerfly "
+"remembers it in this laser's settings."
+msgstr ""
+
+#, python-format
 msgid "%d mm"
 msgstr ""
 
@@ -48,6 +54,10 @@ msgstr ""
 
 #, python-format
 msgid "%s (copy)"
+msgstr ""
+
+#, python-format
+msgid "%s (not plugged in now)"
 msgstr ""
 
 #, python-format
@@ -492,6 +502,9 @@ msgstr ""
 msgid "Choose a file"
 msgstr ""
 
+msgid "Choose a laser that is plugged in now."
+msgstr ""
+
 msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr ""
 
@@ -584,6 +597,9 @@ msgid "Command"
 msgstr ""
 
 msgid "Concentric"
+msgstr ""
+
+msgid "Connect"
 msgstr ""
 
 msgid "Connect to the laser"
@@ -1483,6 +1499,10 @@ msgstr ""
 msgid "Laser initialized"
 msgstr ""
 
+#, python-format
+msgid "Laser initialized; \"%s\" remembers its USB port (%s)"
+msgstr ""
+
 msgid "Laser is not initialized."
 msgstr ""
 
@@ -1860,6 +1880,9 @@ msgid "No design loaded"
 msgstr ""
 
 msgid "No hinge"
+msgstr ""
+
+msgid "No laser chosen."
 msgstr ""
 
 msgid "No laser data was generated."
@@ -2988,6 +3011,17 @@ msgstr ""
 msgid "The file is not a Kerfly material library."
 msgstr ""
 
+msgid "The first K40 found"
+msgstr ""
+
+msgid ""
+"The head of the laser on the chosen port moves a little to the right and "
+"back"
+msgstr ""
+
+msgid "The head of the laser selected above moves a little to the right and back"
+msgstr ""
+
 msgid "The image resolution must be greater than zero."
 msgstr ""
 
@@ -3244,6 +3278,12 @@ msgstr ""
 msgid "USB error: %s"
 msgstr ""
 
+msgid "USB port"
+msgstr ""
+
+msgid "USB port (beta)"
+msgstr ""
+
 msgid "USB released"
 msgstr ""
 
@@ -3396,6 +3436,12 @@ msgstr ""
 msgid "Where the picture goes"
 msgstr ""
 
+msgid "Which laser?"
+msgstr ""
+
+msgid "Which one?"
+msgstr ""
+
 msgid "Width"
 msgstr ""
 
@@ -3453,6 +3499,11 @@ msgstr ""
 msgid "With a lid"
 msgstr ""
 
+msgid ""
+"With two lasers plugged into this computer: the USB port of this laser's "
+"board, kept in its profile (beta: not yet checked with two lasers)"
+msgstr ""
+
 msgid "Work with this laser: its settings go into the window"
 msgstr ""
 
@@ -3505,6 +3556,9 @@ msgid "a program or script (.bat, .sh)"
 msgstr ""
 
 msgid "centre"
+msgstr ""
+
+msgid "connect to it with the plug button"
 msgstr ""
 
 msgid "corner"

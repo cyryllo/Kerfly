@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 18:35+0100\n"
+"POT-Creation-Date: 2026-11-15 18:51+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -40,6 +40,14 @@ msgstr[1] "%d elementy"
 msgstr[2] "%d elementów"
 
 #, python-format
+msgid ""
+"%d lasers are plugged into this computer. Which one is \"%s\"? Kerfly "
+"remembers it in this laser's settings."
+msgstr ""
+"Do tego komputera są podłączone lasery: %d. Który z nich to „%s”? Kerfly "
+"zapamięta to w ustawieniach tego lasera."
+
+#, python-format
 msgid "%d mm"
 msgstr "%d mm"
 
@@ -54,6 +62,10 @@ msgstr "%d × %d pikseli"
 #, python-format
 msgid "%s (copy)"
 msgstr "%s (kopia)"
+
+#, python-format
+msgid "%s (not plugged in now)"
+msgstr "%s (teraz niepodłączony)"
 
 #, python-format
 msgid "%s The laser head position is now unknown: press Home before the next job."
@@ -521,6 +533,9 @@ msgstr "Sprawdzanie, czy jest nowa wersja…"
 msgid "Choose a file"
 msgstr "Wybierz plik"
 
+msgid "Choose a laser that is plugged in now."
+msgstr "Wybierz laser, który jest teraz podłączony."
+
 msgid "Choose a material to set the speed, passes and power of all layers"
 msgstr "Wybierz materiał, aby ustawić prędkość, przejścia i moc wszystkich warstw"
 
@@ -620,6 +635,9 @@ msgstr "Polecenie"
 
 msgid "Concentric"
 msgstr "Koncentryczny"
+
+msgid "Connect"
+msgstr "Połącz"
 
 msgid "Connect to the laser"
 msgstr "Połącz z laserem"
@@ -1594,6 +1612,10 @@ msgstr "Laser „%s” zapisano w %s"
 msgid "Laser initialized"
 msgstr "Połączono z laserem"
 
+#, python-format
+msgid "Laser initialized; \"%s\" remembers its USB port (%s)"
+msgstr "Laser zainicjowany; „%s” zapamiętał swój port USB (%s)"
+
 msgid "Laser is not initialized."
 msgstr "Laser nie jest połączony."
 
@@ -2005,6 +2027,9 @@ msgstr "Nie wczytano projektu"
 
 msgid "No hinge"
 msgstr "Bez zawiasu"
+
+msgid "No laser chosen."
+msgstr "Nie wybrano lasera."
 
 msgid "No laser data was generated."
 msgstr "Nie wygenerowano danych dla lasera."
@@ -3229,6 +3254,17 @@ msgstr "Plik nie określa rozmiaru obrazu. Ustaw jego wymiary."
 msgid "The file is not a Kerfly material library."
 msgstr "Ten plik nie jest bazą materiałów Kerfly."
 
+msgid "The first K40 found"
+msgstr "Pierwszy znaleziony K40"
+
+msgid ""
+"The head of the laser on the chosen port moves a little to the right and "
+"back"
+msgstr "Głowica lasera na wybranym porcie przesuwa się trochę w prawo i z powrotem"
+
+msgid "The head of the laser selected above moves a little to the right and back"
+msgstr "Głowica lasera zaznaczonego wyżej przesuwa się trochę w prawo i z powrotem"
+
 msgid "The image resolution must be greater than zero."
 msgstr "Rozdzielczość obrazu musi być większa od zera."
 
@@ -3534,6 +3570,12 @@ msgstr "Dane USB gotowe"
 msgid "USB error: %s"
 msgstr "Błąd USB: %s"
 
+msgid "USB port"
+msgstr "Port USB"
+
+msgid "USB port (beta)"
+msgstr "Port USB (beta)"
+
 msgid "USB released"
 msgstr "Zwolniono USB"
 
@@ -3694,6 +3736,12 @@ msgstr ""
 msgid "Where the picture goes"
 msgstr "Gdzie jest obrazek"
 
+msgid "Which laser?"
+msgstr "Który laser?"
+
+msgid "Which one?"
+msgstr "Który to?"
+
 msgid "Width"
 msgstr "Szerokość"
 
@@ -3757,6 +3805,14 @@ msgstr "Szerokość:"
 msgid "With a lid"
 msgstr "Z wiekiem"
 
+msgid ""
+"With two lasers plugged into this computer: the USB port of this laser's "
+"board, kept in its profile (beta: not yet checked with two lasers)"
+msgstr ""
+"Przy dwóch laserach podłączonych do tego komputera: port USB płyty tego "
+"lasera, zapisany w jego profilu (beta: jeszcze nie sprawdzone z dwoma "
+"laserami)"
+
 msgid "Work with this laser: its settings go into the window"
 msgstr "Pracuj z tym laserem: jego ustawienia trafiają do okna"
 
@@ -3814,6 +3870,9 @@ msgstr "program albo skrypt (.bat, .sh)"
 
 msgid "centre"
 msgstr "środek"
+
+msgid "connect to it with the plug button"
+msgstr "połącz się z nim przyciskiem wtyczki"
 
 msgid "corner"
 msgstr "narożnik"
