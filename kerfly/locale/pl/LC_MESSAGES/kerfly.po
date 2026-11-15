@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 16:12+0100\n"
+"POT-Creation-Date: 2026-11-15 16:21+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -684,6 +684,9 @@ msgstr "Tworzenie linii skanowania: %s%%"
 msgid "Cross-hatch"
 msgstr "Krzyżowe"
 
+msgid "Crosses"
+msgstr "Krzyżyki"
+
 msgid "Cu&t"
 msgstr "Wy&tnij"
 
@@ -874,6 +877,9 @@ msgid "Done. Unplug the laser's USB cable, plug it in again, then connect."
 msgstr ""
 "Gotowe. Odłącz kabel USB lasera, podłącz go ponownie, a potem połącz się "
 "z laserem."
+
+msgid "Dots"
+msgstr "Kropki"
 
 msgid "Dots between the texts"
 msgstr "Kropki między tekstami"
@@ -1068,6 +1074,9 @@ msgstr "Pudełko na wczepy: dno, cztery ścianki i wieko łączone wczepami"
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Krótko odpal laser (płyty M3)"
 
+msgid "Fish scales"
+msgstr "Łuski"
+
 msgctxt "toolbar"
 msgid "Fit"
 msgstr "Dopasuj"
@@ -1209,6 +1218,9 @@ msgctxt "toolbar group"
 msgid "Help"
 msgstr "Pomoc"
 
+msgid "Herringbone"
+msgstr "Jodełka"
+
 msgid "Hide this until the next check"
 msgstr "Ukryj do następnego sprawdzenia"
 
@@ -1217,6 +1229,9 @@ msgstr "Wysoka (25 %)"
 
 msgid "Highest (30 %)"
 msgstr "Najwyższa (30 %)"
+
+msgid "Hilbert curve"
+msgstr "Krzywa Hilberta"
 
 msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
 msgstr ""
@@ -2788,6 +2803,9 @@ msgstr "Prędkość:"
 msgid "Speeds are stored in mm/s and converted to in/min for the layers."
 msgstr "Prędkości są zapisane w mm/s i przeliczane na in/min dla warstw."
 
+msgid "Spiral"
+msgstr "Spirala"
+
 msgid "Split the selected group into separate elements"
 msgstr "Rozdziel zaznaczoną grupę na osobne elementy"
 
@@ -2807,6 +2825,9 @@ msgstr ""
 
 msgid "Square 50 mm"
 msgstr "Kwadrat 50 mm"
+
+msgid "Square waves"
+msgstr "Fale prostokątne"
 
 msgid "Square, circle, 45° lines"
 msgstr "Kwadrat, koło, linie pod 45°"
@@ -2880,6 +2901,9 @@ msgstr "Prosty tekst"
 
 msgid "Street 1, 00-000 City"
 msgstr "ul. Przykładowa 1, 00-000 Miasto"
+
+msgid "Sunburst"
+msgstr "Promienie"
 
 msgid "Symmetric"
 msgstr "Symetryczny"
@@ -3268,6 +3292,12 @@ msgstr ""
 msgctxt "toolbar group"
 msgid "Transform"
 msgstr "Przekształć"
+
+msgid "Triangles"
+msgstr "Trójkąty"
+
+msgid "Truchet"
+msgstr "Truchet"
 
 msgid "Type the text in the bar above first."
 msgstr "Najpierw wpisz tekst na pasku powyżej."

@@ -13,6 +13,9 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   konturu do wypełnienia; polskie litery (ą, ę, ł, ń, ś, ź, ż) są składane z
   litery i znaku. Działają też w tekście na ścieżce. Tekst rastrowy
   przełączony na taką czcionkę jest grawerowany wzdłuż linii.
+- **Dziesięć nowych wzorów wypełnienia** (razem 19): trójkąty, jodełka, łuski,
+  fale prostokątne, spirala, promienie, kropki, krzyżyki, kafelki Truchet i
+  krzywa Hilberta, w sekcji Wypełnienie paska opcji.
 
 ## 1.6.0 (2026-11-14)
 

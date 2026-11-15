@@ -17,6 +17,9 @@ Version numbers:
   to fill; Polish letters (ą, ę, ł, ń, ś, ź, ż) are put together from the
   letter and its mark. Also for text on a path. A raster text switched to such
   a font is engraved along its lines.
+- **Ten more fill patterns** (19 in all): triangles, herringbone, fish scales,
+  square waves, spiral, sunburst, dots, crosses, Truchet tiles and a Hilbert
+  curve, in the Fill section of the options bar.
 
 ## 1.6.0 (2026-11-14)
 

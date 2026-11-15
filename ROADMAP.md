@@ -223,9 +223,10 @@ pattern, clipped to its outline; holes stay empty.
   eight patterns: lines, cross-hatch, waves, zigzag, circles, honeycomb,
   diamonds, bricks. Own clipping code (`kerfly/core/patterns.py`), no
   optional library needed.
-- [ ] Step 2: more patterns (below), ~~concentric rings following the
-  outline~~ (done, with the path offset of kerf compensation), custom tile,
-  line width of the motif.
+- [ ] Step 2: ~~more patterns~~ (done 2026-11-15: triangles, herringbone, fish scales,
+  square waves, spiral, sunburst, dots, crosses, Truchet, Hilbert curve; 19 in all),
+  ~~concentric rings following the outline~~ (done, with the path offset of kerf
+  compensation), custom tile, line width of the motif.
 
 - **The outline stays.** It keeps its own layer (cut or outline), and the fill
   is a separate part on a vector engrave layer, with its own speed and power.

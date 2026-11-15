@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 16:12+0100\n"
+"POT-Creation-Date: 2026-11-15 16:21+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -694,6 +694,9 @@ msgstr "Creando líneas de barrido: %s%%"
 msgid "Cross-hatch"
 msgstr "Rayado cruzado"
 
+msgid "Crosses"
+msgstr "Cruces"
+
 msgid "Cu&t"
 msgstr "Cor&tar"
 
@@ -886,6 +889,9 @@ msgid "Done. Unplug the laser's USB cable, plug it in again, then connect."
 msgstr ""
 "Listo. Desconecte el cable USB del láser, vuelva a conectarlo y luego "
 "conecte."
+
+msgid "Dots"
+msgstr "Puntos"
 
 msgid "Dots between the texts"
 msgstr "Puntos entre los textos"
@@ -1086,6 +1092,9 @@ msgstr ""
 msgid "Fire the laser briefly (M3 boards)"
 msgstr "Disparar el láser brevemente (placas M3)"
 
+msgid "Fish scales"
+msgstr "Escamas"
+
 msgctxt "toolbar"
 msgid "Fit"
 msgstr "Ajustar"
@@ -1229,6 +1238,9 @@ msgctxt "toolbar group"
 msgid "Help"
 msgstr "Ayuda"
 
+msgid "Herringbone"
+msgstr "Espiga"
+
 msgid "Hide this until the next check"
 msgstr "Ocultar hasta la próxima comprobación"
 
@@ -1237,6 +1249,9 @@ msgstr "Alta (25 %)"
 
 msgid "Highest (30 %)"
 msgstr "Máxima (30 %)"
+
+msgid "Hilbert curve"
+msgstr "Curva de Hilbert"
 
 msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
 msgstr ""
@@ -2815,6 +2830,9 @@ msgstr ""
 "Las velocidades se guardan en mm/s y se convierten a in/min para las "
 "capas."
 
+msgid "Spiral"
+msgstr "Espiral"
+
 msgid "Split the selected group into separate elements"
 msgstr "Separar el grupo seleccionado en elementos independientes"
 
@@ -2834,6 +2852,9 @@ msgstr ""
 
 msgid "Square 50 mm"
 msgstr "Cuadrado de 50 mm"
+
+msgid "Square waves"
+msgstr "Ondas cuadradas"
 
 msgid "Square, circle, 45° lines"
 msgstr "Cuadrado, círculo, líneas a 45°"
@@ -2909,6 +2930,9 @@ msgstr "Texto recto"
 
 msgid "Street 1, 00-000 City"
 msgstr "Calle Ejemplo 1, 00000 Ciudad"
+
+msgid "Sunburst"
+msgstr "Rayos"
 
 msgid "Symmetric"
 msgstr "Simétrico"
@@ -3309,6 +3333,12 @@ msgstr ""
 msgctxt "toolbar group"
 msgid "Transform"
 msgstr "Transformar"
+
+msgid "Triangles"
+msgstr "Triángulos"
+
+msgid "Truchet"
+msgstr "Truchet"
 
 msgid "Type the text in the bar above first."
 msgstr "Escriba primero el texto arriba."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 16:12+0100\n"
+"POT-Creation-Date: 2026-11-15 16:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -651,6 +651,9 @@ msgstr ""
 msgid "Cross-hatch"
 msgstr ""
 
+msgid "Crosses"
+msgstr ""
+
 msgid "Cu&t"
 msgstr ""
 
@@ -832,6 +835,9 @@ msgstr ""
 msgid "Done. Unplug the laser's USB cable, plug it in again, then connect."
 msgstr ""
 
+msgid "Dots"
+msgstr ""
+
 msgid "Dots between the texts"
 msgstr ""
 
@@ -1007,6 +1013,9 @@ msgstr ""
 msgid "Fire the laser briefly (M3 boards)"
 msgstr ""
 
+msgid "Fish scales"
+msgstr ""
+
 msgctxt "toolbar"
 msgid "Fit"
 msgstr ""
@@ -1138,6 +1147,9 @@ msgctxt "toolbar group"
 msgid "Help"
 msgstr ""
 
+msgid "Herringbone"
+msgstr ""
+
 msgid "Hide this until the next check"
 msgstr ""
 
@@ -1145,6 +1157,9 @@ msgid "High (25 %)"
 msgstr ""
 
 msgid "Highest (30 %)"
+msgstr ""
+
+msgid "Hilbert curve"
 msgstr ""
 
 msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
@@ -2603,6 +2618,9 @@ msgstr ""
 msgid "Speeds are stored in mm/s and converted to in/min for the layers."
 msgstr ""
 
+msgid "Spiral"
+msgstr ""
+
 msgid "Split the selected group into separate elements"
 msgstr ""
 
@@ -2617,6 +2635,9 @@ msgid ""
 msgstr ""
 
 msgid "Square 50 mm"
+msgstr ""
+
+msgid "Square waves"
 msgstr ""
 
 msgid "Square, circle, 45° lines"
@@ -2683,6 +2704,9 @@ msgid "Straight text"
 msgstr ""
 
 msgid "Street 1, 00-000 City"
+msgstr ""
+
+msgid "Sunburst"
 msgstr ""
 
 msgid "Symmetric"
@@ -3009,6 +3033,12 @@ msgstr ""
 
 msgctxt "toolbar group"
 msgid "Transform"
+msgstr ""
+
+msgid "Triangles"
+msgstr ""
+
+msgid "Truchet"
 msgstr ""
 
 msgid "Type the text in the bar above first."

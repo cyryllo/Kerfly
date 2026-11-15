@@ -80,7 +80,7 @@ description: Kerfly is free laser control software for K40 CO2 lasers with Lihui
   <div class="shot-col"><a href="{{ img }}site-fill.png"><img loading="lazy" src="{{ img }}site-fill.png" alt="Shapes filled with honeycomb, waves, bricks, circles and diamonds"></a></div>
   <div class="text-col">
     <h3>Pattern fills</h3>
-    <p>Fill any closed shape with engraved lines in a pattern while its outline is still cut: lines, cross-hatch, waves, zigzag, circles, honeycomb, diamonds and bricks. Choose the size, angle and the free margin; pick the bucket tool and click the shapes.</p>
+    <p>Fill any closed shape with engraved lines in a pattern while its outline is still cut: lines, cross-hatch, waves, zigzag, circles, honeycomb, diamonds, bricks, spiral, sunburst, fish scales, Truchet tiles and more: 19 patterns. Choose the size, angle and the free margin; pick the bucket tool and click the shapes.</p>
     <p>A coaster with a cut edge and an engraved honeycomb inside is two clicks.</p>
   </div>
 </div>

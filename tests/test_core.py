@@ -710,6 +710,13 @@ def test_pattern_fill():
             check("%s, margin %g mm: inside, holes empty" % (code, margin), ok,
                   "(%d lines, closest %.3f mm)" % (len(lines), near))
 
+    # the same pattern every time (Truchet's tiles look random but are fixed: the laser data do not change)
+    again = [patterns.pattern_lines(c, [outer, hole], 5.0, 20.0, 0.0) == patterns.pattern_lines(c, [outer, hole], 5.0,
+                                                                                             20.0, 0.0)
+             for c in ("truchet", "spiral", "hilbert", "scales")]
+    check("patterns are the same every time (Truchet, spiral, Hilbert, scales); %d patterns"
+          % len(patterns.PATTERN_CODES), all(again) and len(patterns.PATTERN_CODES) == 19, "(%s)" % again)
+
     # shapes: the cut outline stays a cut part, the pattern is an engrave part
     cut = build_design(ShapeSpec(kind="ellipse", width=60, height=40, operation="cut",
                                  fill_pattern="waves", fill_spacing=3.0))

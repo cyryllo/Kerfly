@@ -13,13 +13,17 @@ Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import math
+import random
 
 from .hatch import hatch_lines
 
 # pattern code -> English name (translated in the GUI); the order of the pattern list
 PATTERNS = (("lines", "Lines"), ("cross", "Cross-hatch"), ("waves", "Waves"), ("zigzag", "Zigzag"),
             ("circles", "Circles"), ("honeycomb", "Honeycomb"), ("diamonds", "Diamonds"),
-            ("bricks", "Bricks"), ("concentric", "Concentric"))
+            ("bricks", "Bricks"), ("concentric", "Concentric"), ("triangles", "Triangles"),
+            ("herringbone", "Herringbone"), ("scales", "Fish scales"), ("squarewave", "Square waves"),
+            ("spiral", "Spiral"), ("radial", "Sunburst"), ("dots", "Dots"), ("crosses", "Crosses"),
+            ("truchet", "Truchet"), ("hilbert", "Hilbert curve"))
 PATTERN_CODES = tuple(code for code, _name in PATTERNS)
 
 
@@ -265,6 +269,126 @@ def _hex_edges(half, size):
     return [list(e) for e in edges]
 
 
+def _arc(cx, cy, r, a0, a1, step):
+    n = max(4, int(abs(a1 - a0) * r / step) + 1)
+    return [(cx + r * math.cos(a0 + (a1 - a0) * i / n), cy + r * math.sin(a0 + (a1 - a0) * i / n))
+            for i in range(n + 1)]
+
+
+def _hilbert(order):
+    """Points of the Hilbert curve of the given order on a (2**order) grid."""
+    n = 2 ** order
+    pts = []
+    for d in range(n * n):
+        x = y = 0
+        t = d
+        s = 1
+        while s < n:
+            rx = 1 & (t // 2)
+            ry = 1 & (t ^ rx)
+            if ry == 0:
+                if rx == 1:
+                    x, y = s - 1 - x, s - 1 - y
+                x, y = y, x
+            x += s * rx
+            y += s * ry
+            t //= 4
+            s *= 2
+        pts.append((x, y))
+    return pts
+
+
+def _more_patterns(pattern, half, s):
+    """The patterns of step 2 (ROADMAP: pattern fills), in the pattern frame; None: unknown."""
+    if pattern == "triangles":
+        local = []
+        for turn in (0.0, 60.0, -60.0):
+            t = math.radians(turn)
+            c, sn = math.cos(t), math.sin(t)
+            for v in _rows(half, s * math.sqrt(3) / 2):
+                local.append([(u * c - w * sn, u * sn + w * c) for u, w in ((-half, v), (half, v))])
+        return local
+    if pattern == "herringbone":
+        local = []
+        n = int(half / s) + 2
+        for j in range(-n, n + 1):
+            u0 = j * s
+            for k in range(-2 * n, 2 * n + 1):
+                v = k * s / 2.0
+                local.append([(u0, v), (u0 + s, v + s)] if j % 2 == 0 else [(u0, v + s), (u0 + s, v)])
+        return local
+    if pattern == "scales":
+        local = []
+        n = int(half / s) + 2
+        for k in range(-2 * n, 2 * n + 1):
+            v = k * s / 2.0
+            off = s / 2.0 if k % 2 else 0.0
+            for j in range(-n, n + 1):
+                local.append(_arc(j * s + off, v, s / 2.0, 0.0, math.pi, s / 10.0))
+        return local
+    if pattern == "squarewave":
+        local = []
+        for r, v0 in enumerate(_rows(half, s)):
+            pts = []
+            n = int(half / (s / 2.0)) + 2
+            for j in range(-n, n):
+                u = j * s / 2.0
+                hi = v0 + (0.25 * s if j % 2 else -0.25 * s)
+                pts += [(u, hi), (u + s / 2.0, hi)]
+            local.append(pts if r % 2 == 0 else list(reversed(pts)))
+        return local
+    if pattern == "spiral":
+        pts, theta = [], 0.0
+        while True:
+            r = s * theta / (2 * math.pi)
+            if r > half * 1.05:
+                break
+            pts.append((r * math.cos(theta), r * math.sin(theta)))
+            theta += max(0.02, min(0.3, (s / 6.0) / max(r, s / 6.0)))
+        return [pts]
+    if pattern == "radial":
+        n = max(8, int(math.pi * half / s))
+        r0 = s * 0.5
+        return [[(r0 * math.cos(2 * math.pi * k / n), r0 * math.sin(2 * math.pi * k / n)),
+                 (half * 1.05 * math.cos(2 * math.pi * k / n), half * 1.05 * math.sin(2 * math.pi * k / n))]
+                for k in range(n)]
+    if pattern in ("dots", "crosses"):
+        local = []
+        n = int(half / s) + 1
+        for i in range(-n, n + 1):
+            for j in range(-n, n + 1):
+                u, v = i * s, j * s
+                if pattern == "dots":
+                    r = s * 0.15
+                    local.append([(u + r * math.cos(2 * math.pi * a / 12), v + r * math.sin(2 * math.pi * a / 12))
+                                  for a in range(13)])
+                else:
+                    a = s * 0.25
+                    local += [[(u - a, v), (u + a, v)], [(u, v - a), (u, v + a)]]
+        return local
+    if pattern == "truchet":
+        local = []
+        n = int(half / s) + 1
+        for i in range(-n, n + 1):
+            for j in range(-n, n + 1):
+                u, v = i * s, j * s
+                flip = random.Random(i * 1000003 + j).random() < 0.5   # the same tiles every time
+                step = s / 10.0
+                if flip:
+                    local.append(_arc(u, v, s / 2.0, 0.0, math.pi / 2, step))
+                    local.append(_arc(u + s, v + s, s / 2.0, math.pi, 1.5 * math.pi, step))
+                else:
+                    local.append(_arc(u + s, v, s / 2.0, math.pi / 2, math.pi, step))
+                    local.append(_arc(u, v + s, s / 2.0, 1.5 * math.pi, 2 * math.pi, step))
+        return local
+    if pattern == "hilbert":
+        order = max(1, min(7, int(math.ceil(math.log(max(2.0, 2 * half / s), 2)))))
+        cells = 2 ** order
+        cell = 2 * half / cells
+        return [[(-half + (x + 0.5) * cell, -half + (y + 0.5) * cell) for x, y in _hilbert(order)]]
+    return None
+
+
 def pattern_lines(pattern, polygons, spacing, angle_deg=0.0, margin=0.0):
     """Polylines of `pattern` filling the closed polygons, every `spacing`
     units (the size of one repeat), turned by angle_deg, kept `margin` away
@@ -328,7 +452,9 @@ def pattern_lines(pattern, polygons, spacing, angle_deg=0.0, margin=0.0):
                 u = j * 2 * s + off
                 local.append([(u, v), (u, v + s)])
     else:
-        raise ValueError("unknown fill pattern: %r" % (pattern,))
+        local = _more_patterns(pattern, half, s)
+        if local is None:
+            raise ValueError("unknown fill pattern: %r" % (pattern,))
     world = [[to_world(u, v) for u, v in line] for line in local]
     return chain_polylines(clip_polylines(world, rings, margin))
 

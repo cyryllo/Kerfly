@@ -81,7 +81,7 @@ description: Kerfly to darmowy program do sterowania laserami CO2 K40 z płytami
   <div class="shot-col"><a href="{{ img }}site-fill.png"><img loading="lazy" src="{{ img }}site-fill.png" alt="Kształty wypełnione plastrem miodu, falami, cegłami, okręgami i rombami"></a></div>
   <div class="text-col">
     <h3>Wypełnienia wzorami</h3>
-    <p>Wypełnij dowolny zamknięty kształt grawerowanymi liniami we wzór, a jego obrys nadal zostanie wycięty: linie, krzyżowe, fale, zygzak, okręgi, plaster miodu, romby i cegły. Ustawiasz wielkość, kąt i wolny margines; bierzesz wiaderko i klikasz kształty.</p>
+    <p>Wypełnij dowolny zamknięty kształt grawerowanymi liniami we wzór, a jego obrys nadal zostanie wycięty: linie, krzyżowe, fale, zygzak, okręgi, plaster miodu, romby, cegły, spirala, promienie, łuski, kafelki Truchet i inne: 19 wzorów. Ustawiasz wielkość, kąt i wolny margines; bierzesz wiaderko i klikasz kształty.</p>
     <p>Podkładka z wyciętym brzegiem i wygrawerowanym plastrem miodu w środku to dwa kliknięcia.</p>
   </div>
 </div>

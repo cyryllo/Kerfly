@@ -244,7 +244,9 @@ its nodes.
 **Pattern fills.** The **Fill with a pattern**
 tool (the bucket, Shift+F) fills closed shapes with engraved lines in a
 pattern: lines, cross-hatch, waves, zigzag, circles, honeycomb, diamonds,
-bricks or concentric (rings following the outline inwards).
+bricks, concentric (rings following the outline inwards), triangles,
+herringbone, fish scales, square waves, spiral, sunburst, dots, crosses,
+Truchet tiles or a Hilbert curve.
 
 ![Shapes filled with patterns](img/en/fill.png)
 

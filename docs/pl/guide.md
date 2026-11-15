@@ -247,8 +247,9 @@ na osobne części. Dwuklik na dowolnym elemencie otwiera edycję węzłów.
 **Wypełnienia wzorami.** Narzędzie
 **Wypełnij wzorem** (wiaderko, Shift+F) wypełnia zamknięte kształty
 grawerowanymi liniami we wzór: linie, krzyżowe, fale, zygzak, okręgi, plaster
-miodu, romby, cegły albo koncentryczny (pierścienie idące za obrysem do
-środka).
+miodu, romby, cegły, koncentryczny (pierścienie idące za obrysem do
+środka), trójkąty, jodełka, łuski, fale prostokątne, spirala, promienie,
+kropki, krzyżyki, kafelki Truchet albo krzywa Hilberta.
 
 ![Kształty wypełnione wzorami](../img/pl/fill.png)
 
