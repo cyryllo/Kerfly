@@ -41,6 +41,7 @@ class Item:
     on_path_of: int = -1           # a text put on the path of item number ... (after placing)
     image: object = None           # a picture to engrave as a raster (made by the window)
     dpi: float = 0.0               # its resolution
+    active: bool = True            # in the job at first (a box's sheets 2 and on: ticked when their turn comes)
     group: tuple = ()              # groups inside the design's group, outermost first: ((key, name), ...),
     #                                e.g. (("sheet 2", "Sheet 2"), ("part 7", "Left side")) for a box
 
@@ -490,7 +491,6 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
                       divider(Di, ys, False, not na)[0]))
     row_w = max(2 * W + spacing, W + D + spacing) + 1
     speed, power, passes = cut
-    sheet_keys = {}
     places = _pack_parts([(p_[1], p_[2]) for p_ in parts], bed, spacing, row_w)
     n_sheets = max(p_[0] for p_ in places) if places else 1
     seen = {}
@@ -533,13 +533,7 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
         if each_layer:
             layer = "part " + name
             out.layers.append(LayerSpec(layer, CUT, names.get(name, name.capitalize()), speed, power, passes,
-                                        EXTRA_COLORS[len(out.layers) % len(EXTRA_COLORS)], enabled=sheet == 1))
-        elif sheet > 1:
-            layer = sheet_keys.get(sheet)
-            if layer is None:
-                layer = sheet_keys[sheet] = "sheet %d" % sheet
-                out.layers.append(LayerSpec(layer, CUT, sheet_name % sheet, speed, power, passes,
-                                            EXTRA_COLORS[(sheet - 2) % len(EXTRA_COLORS)], enabled=False))
+                                        EXTRA_COLORS[len(out.layers) % len(EXTRA_COLORS)]))
         loops = notches(w, h, edges, extra) if edges is not None else extra   # a divider, a rail: its outline
         if name.startswith("divider") and name[-1].isdigit():
             base, number = name.rsplit(" ", 1)
@@ -556,6 +550,7 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
             out.items.append(_polygon_item([(px + x, py + y) for px, py in loop], 0, 0, "cut",
                                            label, layer))  # Bottom, Front, ...
             out.items[-1].group = groups
+            out.items[-1].active = sheet == 1
     out.sheets = max(p_[0] for p_ in places) if places else 1
     _by_sheet(out)
     return out
@@ -683,15 +678,8 @@ def hinge_box(width=100.0, depth=80.0, height=50.0, radius=20.0, thickness=3.0, 
                          max(W, D) * 2 + spacing_parts + 1)
     n_sheets = max(p_[0] for p_ in places) if places else 1
     speed, power, passes = cut
-    sheet_keys = {}
     for (name, loops, cuts, w_, h_), (sheet, x, y, turned) in zip(shapes, places):
         layer = ""
-        if sheet > 1:
-            layer = sheet_keys.get(sheet)
-            if layer is None:
-                layer = sheet_keys[sheet] = "sheet %d" % sheet
-                out.layers.append(LayerSpec(layer, CUT, sheet_name % sheet, speed, power, passes,
-                                            EXTRA_COLORS[(sheet - 2) % len(EXTRA_COLORS)], enabled=False))
         if turned:
             loops = [_turned(lp, h_) for lp in loops]
             cuts = [_turned(c_, h_) for c_ in cuts] if cuts else None
@@ -701,11 +689,13 @@ def hinge_box(width=100.0, depth=80.0, height=50.0, radius=20.0, thickness=3.0, 
         for lp in loops:
             out.items.append(_polygon_item([(px + x, py + y) for px, py in lp], 0, 0, "cut", label, layer))
             out.items[-1].group = groups
+            out.items[-1].active = sheet == 1
         if cuts:
             item = _path_item([[(px + x, py + y) for px, py in c_] for c_ in cuts], 0, 0, "cut",
                               names.get("hinge", "Hinge"))
             item.layer = layer
             item.group = groups
+            item.active = sheet == 1
             out.items.append(item)
     out.sheets = max(p_[0] for p_ in places) if places else 1
     _by_sheet(out)

@@ -681,8 +681,8 @@ class GeneratorDialog(QDialog):
             sheets = getattr(design, "sheets", 1)
             if sheets > 1:
                 text += "\n" + _("The parts do not fit the bed at once: %d sheets of material, drawn on top of each "
-                                  "other. Sheets 2 and on are on their own cut layers, unticked: cut sheet 1, "
-                                  "change the material, then tick the next sheet's layer.") % sheets
+                                  "other. In the element list each sheet is a group, sheets 2 and on unticked: cut "
+                                  "sheet 1, change the material, then untick sheet 1 and tick the next one.") % sheets
             self.summary.setText(text)
 
     def keyPressEvent(self, event):

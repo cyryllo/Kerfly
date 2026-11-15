@@ -351,11 +351,12 @@ remembered.
   together with fingers; outside or inside sizes, material thickness, finger
   width and the kerf (the parts grow by half of it so the fingers fit
   tightly). The parts are laid out to fit the bed; those that do not fit go
-  on a next sheet (**Sheet 2**, …), at the same place on its own unticked cut
-  layer: cut sheet 1, change the material, tick the next sheet. In the element
-  list the box is one group with a group for each sheet, and each part made
-  of several shapes (an outline and its slots) is a group of its own. **Each part on
-  its own layer** puts every part on a cut layer of its own. **Dividers across
+  on a next sheet (**Sheet 2**, …), at the same place, on the same cut layer.
+  In the element list the box is one group with a group for each sheet (and
+  each part made of several shapes, an outline and its slots, is a group of
+  its own); sheets 2 and on start unticked: cut sheet 1, change the material,
+  untick sheet 1 and tick the next one. **Each part on its own layer** puts
+  every part on a cut layer of its own. **Dividers across
   / along** (beta, not yet checked on a laser) add inner walls, evenly spaced:
   their tabs go through slots in the walls and the bottom, crossing dividers
   are joined by slots to half their height. **Sliding lid** (beta) slides in

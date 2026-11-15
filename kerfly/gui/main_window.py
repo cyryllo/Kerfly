@@ -2741,6 +2741,7 @@ class MainWindow(QMainWindow):
             e = Element(built, name=_(item.name) if item.name else _(KIND_NAMES.get(spec.kind, "Path")),
                         shape=spec, group=group_of(item))
             e.x, e.y = hx + item.left / 25.4, hy - item.top / 25.4
+            e.visible = getattr(item, "active", True)        # a box's later sheets: unticked until their turn
             if item.layer in layer_of_key:
                 e.layers[KIND_OF_OPERATION.get(spec.operation, CUT)] = layer_of_key[item.layer].id
             made.append((item, e))

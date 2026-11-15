@@ -1546,10 +1546,35 @@ def part_generators(s):
     s.step("element list: click the row of Sheet 2 again", lambda: click_row(sheet_row(2)), change=False,
            check=lambda: ({id(e) for e in w._selection()} == {id(e) for e in sheet2()},
                           "%d selected, sheet 2 has %d" % (len(w._selection()), len(sheet2()))))
-    s.step("element list: Space unticks Sheet 2 (out of the job)",
+    s.step("element list: Space ticks Sheet 2 (in the job; sheets 2 and on start unticked)",
            lambda: (QTest.keyClick(lst, Qt.Key_Space), s.settle()),
-           check=lambda: (all(not e.visible for e in sheet2()) and sum(e.visible for e in w.elements) > 0,
+           check=lambda: (all(e.visible for e in sheet2()) and not all(e.visible for e in w.elements),
                           "%s" % [e.visible for e in w.elements]))
+    def next_sheet_and_simulate():                       # (sheet 2 was ticked by the step above)
+        click_row(sheet_row(1))
+        QTest.keyClick(lst, Qt.Key_Space)                # sheet 1 cut: out of the job
+        s.settle()
+        s.trigger(w.act_simulate, via="key")
+        s.settle(6, 0.05)
+
+    def simulating():
+        sim = getattr(w, "_simulation", None)
+        try:
+            shown = sim is not None and sim.isVisible()
+        except RuntimeError:
+            shown = False
+        return (shown and all(e.visible for e in sheet2()) and not any(
+            e.visible for e in w.elements if e not in sheet2()),
+            "simulation shown %s, %d of %d in the job (sheet 2: %d), status '%s'" % (
+                shown, sum(e.visible for e in w.elements), len(w.elements), len(sheet2()),
+                w.statusBar().currentMessage()))
+    s.step("element list: Space unticks Sheet 1 (Sheet 2 ticked above), Laser → Simulate (Ctrl+Shift+J): sheet 2 "
+           "is simulated", next_sheet_and_simulate, check=simulating)
+    try:
+        w._simulation.close()
+    except (AttributeError, RuntimeError):
+        pass
+    s.settle()
     corner = tuple(v * 25.4 - 4.0 for v in config.bed_size_inches(w.values))
     s.step("click the empty bed, then the box (the whole box is selected)",
            lambda: (s.click_bed(*corner), s.click_bed(*s.element_at(w.elements[0]))), change=False,

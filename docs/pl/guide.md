@@ -358,10 +358,11 @@ jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
   szerokość wczepu i kerf (części rosną o jego połowę, żeby wczepy pasowały
   ciasno). Części są układane tak, żeby mieściły się na stole; te, które się
   nie mieszczą, trafiają na kolejny arkusz (**Arkusz 2**, …), w tym samym
-  miejscu, na osobnej odhaczonej warstwie cięcia: wytnij arkusz 1, zmień
-  materiał, zaznacz kolejny arkusz. Na liście elementów pudełko jest jedną
-  grupą z osobną grupą dla każdego arkusza, a każda część złożona z kilku
-  kształtów (obrys i jego szczeliny) jest osobną grupą. **Każda część na osobnej warstwie** daje
+  miejscu, na tej samej warstwie cięcia. Na liście elementów pudełko jest
+  jedną grupą z osobną grupą dla każdego arkusza (a każda część złożona z
+  kilku kształtów, obrys i jego szczeliny, jest osobną grupą); arkusze od 2.
+  są na początku odhaczone: wytnij arkusz 1, zmień materiał, odhacz arkusz 1
+  i zaznacz kolejny. **Każda część na osobnej warstwie** daje
   każdej części jej własną warstwę cięcia. **Przegródki w poprzek / wzdłuż**
   (beta, jeszcze nie sprawdzone na laserze) dodają wewnętrzne ścianki
   rozłożone równo: ich wypusty wchodzą w szczeliny w ściankach i dnie, a

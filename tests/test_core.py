@@ -1041,21 +1041,23 @@ def test_generators():
     except ValueError:
         too_small = True
     results.append(("finger box: too small for the material is refused", too_small))
-    # a box bigger than the bed: the parts in rows that fit it, the rest on next sheets (own cut
-    # layers, unticked); a small box stays on one sheet; each part on its own layer on request
+    # a box bigger than the bed: the parts in rows that fit it, the rest on next sheets (each sheet a group,
+    # on the cut layer, sheets 2+ out of the job at first); a small box stays on one sheet; each part on its own
+    # layer on request
     big = g.finger_box(200, 150, 120, 3, 10, 0.15, True, bed=(325, 220))
     by_sheet = {}
     for it in big.items:
-        by_sheet.setdefault(it.layer, []).append(it)
+        by_sheet.setdefault(it.group[0][0], []).append(it)
 
     def fits(items):
         return (max(it.left + it.spec.width for it in items) <= 325 and
                 max(it.top + it.spec.height for it in items) <= 220)
     small = g.finger_box(100, 80, 50, 3, 10, 0.15, True, bed=(325, 220))
     each = g.finger_box(100, 80, 50, 3, 10, 0.15, True, bed=(325, 220), each_layer=True)
-    results.append(("finger box on a small bed: %d sheets that fit it, sheets 2+ on unticked layers; a small "
-                    "box on one sheet; each part on its own layer" % big.sheets,
-                    big.sheets > 1 and len(big.layers) == big.sheets - 1 and all(not l.enabled for l in big.layers)
+    results.append(("finger box on a small bed: %d sheets that fit it, each a group, sheets 2+ out of the job at "
+                    "first; a small box on one sheet; each part on its own layer" % big.sheets,
+                    big.sheets > 1 and len(by_sheet) == big.sheets and not big.layers
+                    and all(it.active == (key == "sheet 1") for key, items in by_sheet.items() for it in items)
                     and all(fits(items) for items in by_sheet.values()) and small.sheets == 1
                     and not small.layers and len(each.layers) == 6))
 
@@ -1530,7 +1532,7 @@ def test_box_assembly():
 
 def test_box_sheets():
     """Box parts on the bed: no part over another, all inside the bed, as few sheets as fit (parts turned
-    and put into the room left on earlier sheets); a part on a later sheet is on that sheet's layer."""
+    and put into the room left on earlier sheets); a part on a later sheet is in that sheet's group."""
     from kerfly.core import generators as gen
     failures = 0
 
@@ -1546,7 +1548,8 @@ def test_box_sheets():
         boxes = []                         # every loop: (layer, name, bounding box); slots lie inside their part
         for i in g.items:
             pts = [(i.left + x, i.top + y) for x, y in i.spec.points]
-            boxes.append((i.layer or "", i.name, (min(x for x, _ in pts), min(y for _, y in pts),
+            sheet = next((k for k, _n in i.group if k.startswith("sheet ")), "sheet 1")
+            boxes.append((sheet, i.name, (min(x for x, _ in pts), min(y for _, y in pts),
                                                   max(x for x, _ in pts), max(y for _, y in pts))))
         inside = all(b[0] >= -0.2 and b[1] >= -0.2 and b[2] <= bed[0] and b[3] <= bed[1] for _l, _n, b in boxes)
 

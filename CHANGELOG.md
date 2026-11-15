@@ -31,6 +31,11 @@ Version numbers:
 
 ### Changed
 
+- **A generated box's sheets are on the cut layer** (one colour), not on
+  their own unticked layers: each sheet is a group in the element list,
+  sheets 2 and on start unticked; untick the sheet you cut and tick the next.
+  (With a sheet ticked in the list but its layer unticked, Simulate and Start
+  found nothing to do.)
 ### Changed
 
 - **Sliding lid (beta): a strip of the side walls stays above the upper

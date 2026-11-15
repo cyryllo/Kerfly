@@ -2598,7 +2598,9 @@ def main():
         name_of(left4[0].group) == "Left side" and \
         all(len(_gpaths(e.group)) == 2 for e in els4 if sum(x.group == e.group for x in els4) == 1 and
             e.name.endswith("rail"))                         # a part of one shape: no group of its own
-    on_layer = all((name_of(sheet_of(e)) == "Sheet 1") == (not e.layers) for e in els4)
+    # every sheet on the cut layer (one colour), sheet 1 in the job, the others ticked when their turn comes
+    on_layer = all(not e.layers for e in els4) and not [l for l in gw4.layers if l.name.startswith("Sheet ")]
+    one_colour = all(e.visible == (name_of(sheet_of(e)) == "Sheet 1") for e in els4)
     gw4.preview.select_element(els4[-1])                     # a click on the bed: the whole box
     whole = len(gw4._selection()) == len(els4)
     sheet2 = next(p for p in sheets4 if name_of(p) == "Sheet 2")
@@ -2613,11 +2615,16 @@ def main():
     lst4.item(gw4.elements.index(left4[0])).setSelected(True)  # a shape's row: that shape
     shape_alone = gw4._selection() == [left4[0]]
     sheet3 = next(p for p in sheets4 if name_of(p) == "Sheet 3")
-    lst4.group_item(sheet3).setCheckState(Qt.Unchecked)       # sheet 3 out of the job
+    sheet1 = next(p for p in sheets4 if name_of(p) == "Sheet 1")
+    lst4.group_item(sheet1).setCheckState(Qt.Unchecked)       # sheet 1 cut: out of the job,
     app.processEvents()                                       # (the list is filled again after the click)
-    out3 = all(not e.visible for e in els4 if _within(e.group, sheet3)) and \
-        all(e.visible for e in els4 if not _within(e.group, sheet3)) and \
-        lst4.topLevelItem(0).checkState() == Qt.PartiallyChecked
+    lst4.group_item(sheet3).setCheckState(Qt.Checked)         # sheet 3 in
+    app.processEvents()
+    from kerfly.gui.simulation import simulation_steps as _sim_steps
+    out3 = all(e.visible == _within(e.group, sheet3) for e in els4) and \
+        lst4.topLevelItem(0).checkState() == Qt.PartiallyChecked and \
+        lst4.group_item(sheet1).checkState() == Qt.Unchecked and bool(_sim_steps(gw4))   # sheet 3 simulated
+    gw4.undo()
     gw4.undo()
     gw4.preview.scope = ""
     gw4.preview.select_element(els4[0])
@@ -2646,12 +2653,13 @@ def main():
         gw5.element_list.topLevelItemCount() == 2 and \
         gw5.element_list.topLevelItem(0).text() == lst4.topLevelItem(0).text() and \
         not _truth.check_window(gw5) and not _truth.check_window(gw4)
-    check("groups in groups: a box on several sheets, a group for each sheet and each part of several shapes; "
-          "bed click takes the box, a sheet's / part's / shape's row that alone; a sheet's tick; Ungroup one "
+    check("groups in groups: a box on several sheets (all on the cut layer, sheet 1 in the job), a group for "
+          "each sheet and each part of several shapes; "
+          "bed click takes the box, a sheet's / part's / shape's row that alone; sheet ticks; Ungroup one "
           "level, Group again; copied and saved with their names",
-          tree4 and parts4 and on_layer and whole and alone and part_alone and shape_alone and out3 and
+          tree4 and parts4 and on_layer and one_colour and whole and alone and part_alone and shape_alone and out3 and
           after_ungroup and regrouped and back and copied and kept,
-          "(%s)" % [tree4, parts4, on_layer, whole, alone, part_alone, shape_alone, out3, after_ungroup,
+          "(%s)" % [tree4, parts4, on_layer, one_colour, whole, alone, part_alone, shape_alone, out3, after_ungroup,
                     regrouped, back, copied, kept])
     for win in (gw4, gw5):
         win._dirty = False

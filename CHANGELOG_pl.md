@@ -28,6 +28,11 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 
 ### Zmienione
 
+- **Arkusze pudełka z generatora są na warstwie cięcia** (jeden kolor), a nie
+  na osobnych, odhaczonych warstwach: każdy arkusz to grupa na liście
+  elementów, arkusze od 2. są na początku odhaczone; odhacz wycięty arkusz i
+  zaznacz kolejny. (Gdy arkusz był zaznaczony na liście, a jego warstwa
+  odhaczona, Symulacja i Start nie miały nic do zrobienia.)
 ### Zmienione
 
 - **Wysuwane wieczko (beta): nad górną listwą zostaje pas bocznej ścianki**
