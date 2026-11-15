@@ -99,7 +99,17 @@ class ShapeSpec:
         if self.kind == "path":
             from .curves import all_closed
             return all_closed(self.subpaths)
+        if self.kind == "text" and self.single_line:
+            return False                       # a single-line font: lines the laser runs along, nothing to fill
         return self.kind != "line"
+
+    @property
+    def single_line(self):
+        """Text in a single-line (stroke) font: open lines, engraved once."""
+        if self.kind != "text":
+            return False
+        from .stroke_fonts import is_stroke
+        return is_stroke(self.font_family)
 
 
 def _ellipse_points(w, h, segments=None):
@@ -158,6 +168,8 @@ def outlines(spec):
         from .curves import flatten
         return flatten(spec.subpaths)
     elif spec.kind == "text":
+        if spec.single_line:
+            return [list(p) for p in spec.text_outlines if len(p) >= 2]     # open strokes, as they are
         polys = [list(p) for p in spec.text_outlines]
     else:
         raise ValueError(spec.kind)

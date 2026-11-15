@@ -3,6 +3,17 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
+## Unreleased
+
+### Dodane
+
+- **Czcionki jednokreskowe** do szybkiego grawerowania, wbudowane w Kerfly
+  (18 czcionek Hershey i EMS, bez Inkscape): na górze listy czcionek narzędzia
+  Tekst. Każda litera to kilka linii, po których laser przejeżdża raz, zamiast
+  konturu do wypełnienia; polskie litery (ą, ę, ł, ń, ś, ź, ż) są składane z
+  litery i znaku. Działają też w tekście na ścieżce. Tekst rastrowy
+  przełączony na taką czcionkę jest grawerowany wzdłuż linii.
+
 ## 1.6.0 (2026-11-14)
 
 Profile laserów, ciemny motyw, wszystkie skróty klawiszowe w jednym oknie,

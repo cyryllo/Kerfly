@@ -203,7 +203,7 @@ the right mouse button only pans the view. K40 Whisperer had no menu there
 
 | Feature | MeerK40t reference |
 |---|---|
-| Text from Hershey / TrueType / SHX fonts (no Inkscape) | `extra/hershey.py`, `tools/ttfparser.py`, `tools/shxparser.py`, `tools/jhfparser.py` |
+| ~~Text from Hershey single-line fonts (no Inkscape)~~ (done: 18 Hershey and EMS fonts built in, Polish letters put together, at the top of the Text tool's font list); SHX fonts | `extra/hershey.py`, `tools/ttfparser.py`, `tools/shxparser.py`, `tools/jhfparser.py` |
 | ~~Hatch fill~~ (done; since 0.17 part of the pattern fills: Lines / Cross-hatch without the outline); pattern fills (step 1 done, see below) | `fill/fills.py`, `fill/patterns.py` (`fill/patternfill.py` is obsolete in MeerK40t) |
 | ~~Living hinges~~ (step 1 done: Living hinge tool, straight / wavy / zigzag cuts, cut length, bridge, row spacing, direction, solid border); more hinge patterns: see Maybe some day | `tools/livinghinges.py`, `tools/living_hinge_optimizer.py` |
 | Image dithering (more methods than Floyd-Steinberg) | `image/dither.py` |

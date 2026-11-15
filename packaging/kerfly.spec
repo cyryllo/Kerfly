@@ -33,6 +33,8 @@ datas = (files("kerfly/locale/*/LC_MESSAGES/*.mo")
          + files("kerfly/gui/icons/tabler/*.svg")
          + files("kerfly/gui/icons/tabler/LICENSE")
          + files("kerfly/gui/icons/own/*.svg")
+         + files("kerfly/fonts/single_line/*.svg")      # single-line fonts (Hershey, EMS)
+         + files("kerfly/fonts/single_line/OFL.txt")
          + files("kerfly/gui/icons/kerfly.*")
          + files("tests/fixtures/shapes.svg")          # used by --self-test
          + [(os.path.join(ROOT, name), ".") for name in ("LICENSE", "THIRD-PARTY-NOTICES.md")]

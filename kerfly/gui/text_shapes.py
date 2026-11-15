@@ -9,6 +9,8 @@ import math
 from PySide6.QtCore import QPointF
 from PySide6.QtGui import QFont, QFontMetricsF, QPainterPath
 
+from kerfly.core import stroke_fonts
+
 REFERENCE_PX = 1000      # outlines are made at this size, then scaled (smooth small text)
 
 
@@ -26,7 +28,9 @@ def _font(family, size_mm, bold, italic, spacing_mm=0.0):
 def text_outlines(text, family, size_mm, bold=False, italic=False, spacing_mm=0.0):
     """Closed polylines (mm, y down) of the text outlines; size_mm is the font
     em height, spacing_mm is added between letters. Several lines are
-    separated by newlines."""
+    separated by newlines. A single-line font gives its open strokes instead."""
+    if stroke_fonts.is_stroke(family):
+        return stroke_fonts.text_lines(text, family, size_mm, italic, spacing_mm)
     font = _font(family, size_mm, bold, italic, spacing_mm)
     metrics = QFontMetricsF(font)
     path = QPainterPath()
@@ -96,6 +100,8 @@ def path_text_outlines(text, family, size_mm, bold, italic, path, offset=0.0, fl
     the start of the path, its foot `distance` mm away from the line. flip runs
     the text the other way along the same stretch of the path, so it stands on
     the other side of the line in the same place."""
+    if stroke_fonts.is_stroke(family):
+        return _path_stroke_lines(text, family, size_mm, italic, path, offset, flip, distance, spacing_mm)
     font = _font(family, size_mm, bold, italic, spacing_mm)
     metrics = QFontMetricsF(font)
     k = size_mm / float(REFERENCE_PX)
@@ -127,6 +133,32 @@ def path_text_outlines(text, family, size_mm, bold, italic, path, offset=0.0, fl
     return polys
 
 
+def _path_stroke_lines(text, family, size_mm, italic, path, offset, flip, distance, spacing_mm):
+    """path_text_outlines for a single-line font: the open strokes of each letter, turned along the path."""
+    line = (text or "").replace("\n", " ")
+    if flip:
+        total, _at = _path_walker(path)
+        path = list(reversed(path))
+        offset = total - offset - stroke_fonts.line_width(family, line, size_mm, spacing_mm)
+    _length, at = _path_walker(path)
+    polys = []
+    x0 = 0.0
+    for ch in line:
+        w = stroke_fonts.advance(family, ch, size_mm)
+        if not ch.isspace():
+            (px, py), angle = at(offset + x0 + w / 2.0)
+            c, s_ = math.cos(angle), math.sin(angle)
+            for stroke in stroke_fonts.glyph_lines(family, ch, size_mm, italic):
+                pts = []
+                for u, v in stroke:
+                    u, v = u - w / 2.0, v - distance
+                    pts.append((px + u * c - v * s_, py + u * s_ + v * c))
+                if len(pts) >= 2:
+                    polys.append(pts)
+        x0 += w + spacing_mm
+    return polys
+
+
 def update_text_spec(spec):
     """Recompute a text ShapeSpec's outlines and size after its text or font changed.
     Text on a path: the outlines and the path are moved together so the outlines
@@ -155,6 +187,9 @@ def update_text_spec(spec):
 
 def text_length(spec):
     """Length of the text (mm) along its line, at its font, size and spacing."""
+    if stroke_fonts.is_stroke(spec.font_family):
+        return stroke_fonts.line_width(spec.font_family, (spec.text or "").replace("\n", " "), spec.font_size,
+                                       spec.text_spacing)
     font = _font(spec.font_family, spec.font_size, spec.bold, spec.italic, spec.text_spacing)
     return QFontMetricsF(font).horizontalAdvance((spec.text or "").replace("\n", " ")) \
         * spec.font_size / float(REFERENCE_PX)

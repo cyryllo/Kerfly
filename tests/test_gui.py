@@ -1561,6 +1561,45 @@ def main():
     w4._dirty = False
     w4.close()
 
+    # single-line fonts built into Kerfly (Hershey, EMS): at the top of the font list; open strokes engraved
+    # once (no raster, no closed outlines), raster fill switched to outline engrave, Polish letters, text on a
+    # path, kept in projects
+    from kerfly.core import stroke_fonts as _sf, project as _proj2
+    from kerfly.gui.text_shapes import update_text_spec as _uts2
+    from kerfly.gui.font_box import FontBox as _FB
+    fams = _sf.families()
+    sw2 = make_window(grid_mm="0", follow_head="0")
+    tt = _Spec(kind="text", text="Zażółć gęślą jaźń", font_size=10, operation="fill")
+    _uts2(tt)
+    sw2._add_drawn_element(tt, "text", 10, 30)
+    te = sw2.elements[-1]
+    select(sw2, te)
+    box = next(wd for wd in sw2.tool_options.findChildren(_FB))
+    on_top = [box.itemText(i) for i in range(len(fams))] == fams
+    bar_set(sw2, "font_family", "Hershey Sans 1-stroke")
+    te = sw2.elements[-1]
+    single = te.shape.single_line and not te.shape.closed and te.shape.operation == "engrave"
+    d = te.design
+    from kerfly.core.layers import part_present as _pp
+    vector_only = not _pp(d, "raster") and not _pp(d, "cut")
+    strokes = len(te.shape.text_outlines)
+    open_lines = sum(1 for p in te.shape.text_outlines if p[0] != p[-1]) > strokes // 2
+    polish = all(ch in _sf._load("Hershey Sans 1-stroke").glyphs for ch in "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ")
+    engrave_data = _pp(d, "engrave")
+    saved2 = _proj2._shape_from_dict(_proj2._shape_to_dict(te.shape))
+    kept2 = saved2.font_family == "Hershey Sans 1-stroke" and saved2.single_line
+    from kerfly.gui.text_shapes import path_text_outlines as _pto
+    on_path = _pto("ABC", "EMS Tech", 8, False, False, [(0, 0), (50, 0), (50, 50)], 5.0)
+    path_ok = len(on_path) > 3 and all(len(p) >= 2 for p in on_path)
+    from kerfly.gui import truth as _tr2
+    shown = _tr2.check_window(sw2)
+    sw2.close()
+    check("single-line fonts: at the top of the font list, open strokes engraved once (fill becomes engrave), "
+          "Polish letters, text on a path, kept in projects, the window tells the truth",
+          len(fams) == 18 and on_top and single and vector_only and strokes > 20 and polish and engrave_data
+          and kept2 and path_ok and not shown and open_lines,
+          "(%s)" % [len(fams), on_top, single, vector_only, strokes, polish, engrave_data, kept2, path_ok, shown])
+
     # 46. text on a path: centred above a line, stays in place when edited and after moving it,
     # other side below the line, back to straight text; saved in projects
     from kerfly.gui.text_shapes import update_text_spec as _uts

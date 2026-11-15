@@ -7,6 +7,17 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## Unreleased
+
+### Added
+
+- **Single-line fonts** for fast engraving, built into Kerfly (18 Hershey and
+  EMS fonts, no Inkscape needed): at the top of the Text tool's font list.
+  Each letter is a few lines the laser runs along once, instead of an outline
+  to fill; Polish letters (ą, ę, ł, ń, ś, ź, ż) are put together from the
+  letter and its mark. Also for text on a path. A raster text switched to such
+  a font is engraved along its lines.
+
 ## 1.6.0 (2026-11-14)
 
 Laser profiles, a dark theme, all keyboard shortcuts in one window, .kerfly

@@ -511,8 +511,9 @@ class Session:
     def new_value(self, widget, attr):
         """Another valid value for a field (what a user would type or pick)."""
         if isinstance(widget, QFontComboBox):
+            first = len(getattr(widget, "single_line", []))        # a system font (single-line: own step)
             current = widget.currentIndex()
-            return widget.itemText(1 if current != 1 else 2)
+            return widget.itemText(first + 1 if current != first + 1 else first + 2)
         if isinstance(widget, QComboBox):
             current = widget.currentIndex()
             index = (current + 1) % widget.count()
@@ -633,6 +634,25 @@ def session(s):
     s.step("text: type into the options bar",
            lambda: s.type_text(truth.bar_fields(w.tool_options)["text"], "Kerfly 1.0 źdźbło"),
            check=lambda: (w.elements[-1].shape.text == "Kerfly 1.0 źdźbło", w.elements[-1].shape.text))
+    # a single-line font (built in): open strokes engraved once; then the font it had
+    from kerfly.core.layers import part_present as _present
+    font_before = w.elements[-1].shape.font_family
+    op_before = w.elements[-1].shape.operation
+    s.step("text: the single-line font Hershey Sans 1-stroke from the font list",
+           lambda: s.set_field("font_family", "Hershey Sans 1-stroke"),
+           check=lambda: (w.elements[-1].shape.single_line and not w.elements[-1].shape.closed
+                          and _present(w.elements[-1].design, "engrave") and not _present(w.elements[-1].design, "raster"),
+                          "%s, %s" % (w.elements[-1].shape.font_family, w.elements[-1].shape.operation)))
+    s.step("text: back to its system font", lambda: s.set_field("font_family", font_before),
+           check=lambda: (w.elements[-1].shape.font_family == font_before, w.elements[-1].shape.font_family))
+    if w.elements[-1].shape.operation != op_before:
+        # its layer back with the Layer list above the bed (a raster layer is offered again: closed letters)
+        from kerfly.core.layers import RASTER as _RASTER
+        from kerfly.gui.truth import OPERATION_KIND as _OK
+        back_layer = w._default_layer[_OK.get(op_before, _RASTER)]
+        s.step("text: the Layer list above the bed, back to %s" % back_layer.name,
+               lambda: s.pick(w.layer_assign_box.layout().itemAtPosition(0, 0).widget(), data=back_layer.id),
+               check=lambda: (w.elements[-1].shape.operation == op_before, w.elements[-1].shape.operation))
 
     # --- every field of the options bar, for every kind of shape -----------------------
     s.trigger(w.tool_actions["select"])

@@ -57,7 +57,7 @@ def shown_value(widget):
     if isinstance(widget, QComboBox) and not isinstance(widget, QFontComboBox):
         return widget.currentData()
     if isinstance(widget, QFontComboBox):
-        return widget.currentFont().family()
+        return widget.family() if hasattr(widget, "family") else widget.currentFont().family()
     if isinstance(widget, (QSpinBox, QDoubleSpinBox)):
         return widget.value()
     if isinstance(widget, QPlainTextEdit):
@@ -77,6 +77,9 @@ def _same(widget, shown, wanted):
         return bool(shown) == bool(wanted)
     if isinstance(widget, QFontComboBox):
         from PySide6.QtGui import QFontDatabase
+        from kerfly.core import stroke_fonts
+        if stroke_fonts.is_stroke(wanted):
+            return shown == wanted              # Kerfly's own single-line fonts are always there
         if wanted not in QFontDatabase.families() or widget.count() == 0:
             return True                         # not installed here (or no font list without a screen)
         return shown == wanted

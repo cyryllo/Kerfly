@@ -37,7 +37,10 @@ def bar_set(w, attr, value):
     bar = w.tool_options
     if isinstance(widget, QFontComboBox):
         from PySide6.QtGui import QFont
-        widget.setCurrentFont(QFont(value))
+        if hasattr(widget, "set_family"):
+            widget.set_family(value)            # also Kerfly's single-line fonts
+        else:
+            widget.setCurrentFont(QFont(value))
     elif isinstance(widget, QComboBox):
         index = widget.findData(value)
         if index < 0:

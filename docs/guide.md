@@ -188,7 +188,7 @@ before or after drawing.
 | Pen (curves) | B | Click for a corner, press and drag for a smooth curve. Click the first point to close; double-click or Enter to finish |
 | Freehand | F | Draw with the button held; end near the start to close the shape |
 | Measure | M | Drag between two points: distance, width, height and angle |
-| Text | T | Click, then type in the **Content** field; choose the font, size, bold and italic |
+| Text | T | Click, then type in the **Content** field; choose the font, size, bold and italic. At the top of the font list: **single-line fonts** built into Kerfly (Hershey, EMS), whose letters are lines the laser runs along once: fast, fine engraving, nothing to fill |
 | Text on a path | Shift+T | Type the text in the options bar, then click a line, curve or shape (see below) |
 | Fill with a pattern | Shift+F | Choose a pattern in the options bar, then click closed shapes to fill them (see below) |
 | Living hinge | Shift+H | Choose the cuts in the options bar, then click closed shapes to cut a hinge into them (see below) |

@@ -70,6 +70,31 @@ originals, and the regression tests pass unchanged.
 |---|---|---|
 | `kerfly/gui/icons/tabler/*.svg` | [Tabler Icons](https://tabler.io/icons), Copyright (c) 2020-2026 Paweł Kuna | MIT (`kerfly/gui/icons/tabler/LICENSE`) |
 | `kerfly/gui/icons/__init__.py` jog pad icons | drawn for Kerfly in the style of the K40 Whisperer icons | GPL-3.0-or-later |
+| `kerfly/gui/icons/own/*.svg` (laser) | drawn for Kerfly in the style of Tabler Icons | GPL-3.0-or-later |
+
+## Single-line fonts
+
+`kerfly/fonts/single_line/*.svg`: SVG fonts of the Inkscape extension "Hershey
+Text" (converted to SVG fonts in 2019 by Windell H. Oskay, Evil Mad Scientist
+Laboratories). The files are used unchanged; the Polish letters missing from
+them are put together by Kerfly when the text is laid out.
+
+- **Hershey fonts** (`Hershey*.svg`). The notice that must go with them:
+  - The Hershey Fonts were originally created by Dr. A. V. Hershey while
+    working at the U. S. National Bureau of Standards.
+  - The format of the Font data in this distribution was originally created
+    by James Hurt, Cognition, Inc., 900 Technology Park Drive, Billerica, MA
+    01821 (mit-eddie!ci-dandelion!hurt).
+  - The font data may be converted into any other format *except* the format
+    distributed by the U.S. NTIS where each point is described in eight bytes
+    as "xxx yyy:", where xxx and yyy are the coordinate values as ASCII
+    numbers.
+
+  Adapted from emergent.unpythonic.net/software/hershey by way of "Hershey
+  Fonts in SVG" by Marty McGuire.
+- **EMS fonts** (`EMS*.svg`), by Sheldon B. Michaels and others (each file
+  names its designer and the font it derives from): SIL Open Font License 1.1
+  (`kerfly/fonts/single_line/OFL.txt`).
 
 ## Code borrowed from MeerK40t
 

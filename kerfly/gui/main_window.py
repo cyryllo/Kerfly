@@ -861,6 +861,7 @@ class MainWindow(QMainWindow):
             had_fill = bool(self.selected.shape.fill_pattern)
             had_path = bool(self.selected.shape.text_path)
             had_hinge = bool(self.selected.shape.hinge_pattern)
+            was_closed = self.selected.shape.closed      # a single-line font: open lines, no Fill / Bridges
             if had_path and spec.text_path:
                 # the bar's copy of the path is from before the last change (every change moves
                 # the path's frame): the element's own path is the right one
@@ -868,10 +869,12 @@ class MainWindow(QMainWindow):
             self._apply_shape(self.selected, spec)
             self.tool_options.spec = self.selected.shape.copy()      # the bar edits what is on the bed now
             if had_fill != bool(spec.fill_pattern) or had_path != bool(spec.text_path) \
-                    or had_hinge != bool(spec.hinge_pattern):                              # sections appear / go
+                    or had_hinge != bool(spec.hinge_pattern) or was_closed != spec.closed:    # sections appear / go
                 QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
         elif target in self.shape_defaults:
             before = self.shape_defaults[target].operation
+            if self.shape_defaults[target].closed != spec.closed:
+                QTimer.singleShot(0, self, lambda: self._update_tool_options(force=True))
             self.shape_defaults[target] = spec
         else:
             return
@@ -1081,6 +1084,8 @@ class MainWindow(QMainWindow):
         old_w = element.size[0]
         if spec.kind == "text":
             update_text_spec(spec)
+            if spec.single_line and spec.operation in ("fill", "hatch"):
+                spec.operation = "engrave"      # a single-line font has no area to fill: its lines are engraved
         x, y = element.x, element.y
         element.shape = spec
         element.design = build_design(spec)

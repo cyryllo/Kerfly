@@ -54,6 +54,15 @@ def _check_imports(r):
         except Exception as e:
             r.add(FAIL if required else WARN, name,
                   ("not installed: %s" % e) if required else "not installed (optional: trace offset)")
+    # the single-line fonts are files of Kerfly: a package without them loses the Text tool's line fonts
+    try:
+        from kerfly.core import stroke_fonts
+        names = stroke_fonts.families()
+        lines = stroke_fonts.text_lines("Zażółć", names[0], 10.0) if names else []
+        r.add(OK if len(names) >= 18 and lines else FAIL, "Single-line fonts",
+              "%d fonts, %d strokes for a test word" % (len(names), len(lines)))
+    except Exception as e:
+        r.add(FAIL, "Single-line fonts", repr(e))
 
 
 def _check_usb(r):

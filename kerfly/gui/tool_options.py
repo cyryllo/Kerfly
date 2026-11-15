@@ -223,11 +223,13 @@ class ToolOptionsBar(QWidget):
             g.setContentsMargins(0, 0, 0, 0)
             g.setHorizontalSpacing(2)
             g.setVerticalSpacing(4)
-            font = QFontComboBox()
-            font.setCurrentFont(QFont(self.spec.font_family))
+            from kerfly.gui.font_box import FontBox
+            font = FontBox()
+            font.set_family(self.spec.font_family)
             font.setFixedWidth(chars_width(font, 16) + 28)
-            font.setToolTip(_("Font"))
-            font.currentFontChanged.connect(lambda f: self._set("font_family", f.family()))
+            font.setToolTip(_("Font. At the top of the list: single-line fonts, built into Kerfly, for fast "
+                              "engraving (the laser runs once along each letter, nothing to fill)"))
+            font.currentIndexChanged.connect(lambda _i, f=font: self._set("font_family", f.family()))
             font.setProperty("spec_attr", "font_family")
             g.addWidget(font, 0, 0, 1, 4)
             spacing = self._dspin("text_spacing", -50.0, 200.0, " mm", decimals=2)
