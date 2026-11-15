@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 16:21+0100\n"
+"POT-Creation-Date: 2026-11-15 16:35+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -688,6 +688,10 @@ msgid "Creating halftone image."
 msgstr "Création de l'image en demi-teintes."
 
 #, python-format
+msgid "Creating halftone image: %s%%"
+msgstr "Création de l'image en demi-teintes : %s%%"
+
+#, python-format
 msgid "Creating scan lines: %s%%"
 msgstr "Création des lignes de balayage : %s%%"
 
@@ -881,6 +885,9 @@ msgid ""
 msgstr ""
 "%d éléments répartis : trop larges pour des espaces, leurs centres sont "
 "donc espacés de %.2f %s."
+
+msgid "Dithering method"
+msgstr "Méthode de tramage"
 
 msgid "Do not remind about this version again (a later one is shown)"
 msgstr "Ne plus rappeler cette version (une suivante sera affichée)"
@@ -1289,6 +1296,18 @@ msgstr "Tête à l'origine"
 
 msgid "Honeycomb"
 msgstr "Nid d'abeille"
+
+msgid ""
+"How a grayscale picture becomes laser dots. Floyd-Steinberg: the classic "
+"one (default). Atkinson: more contrast, clean light areas (wood). Jarvis,"
+" Stucki, Burkes, Sierra: smoother gradients. Ordered (Bayer): an even, "
+"regular texture. Threshold: black and white only"
+msgstr ""
+"Comment une image en niveaux de gris devient des points du laser. Floyd-"
+"Steinberg : le classique (par défaut). Atkinson : plus de contraste, "
+"zones claires nettes (bois). Jarvis, Stucki, Burkes, Sierra : dégradés "
+"plus doux. Ordonné (Bayer) : une texture régulière et uniforme. Seuil : "
+"noir et blanc seulement"
 
 msgid "How many different powers or passes"
 msgstr "Combien de puissances ou de passes différentes"
@@ -2053,6 +2072,9 @@ msgstr "Opération"
 
 msgid "Order"
 msgstr "Ordre"
+
+msgid "Ordered (Bayer)"
+msgstr "Ordonné (Bayer)"
 
 msgid "Other layers"
 msgstr "Autres calques"
@@ -3313,6 +3335,9 @@ msgstr "Ce n'est pas un fichier de lasers Kerfly : %s"
 msgid "This makes %d separate shapes, which can make Kerfly slow. Continue?"
 msgstr "Cela crée %d formes séparées, ce qui peut ralentir Kerfly. Continuer ?"
 
+msgid "Threshold"
+msgstr "Seuil"
+
 msgid "Time"
 msgstr "Durée"
 
@@ -4034,4 +4059,14 @@ msgstr "gravure vectorielle"
 #~ msgctxt "toolbar"
 #~ msgid "Updates"
 #~ msgstr "Mises à jour"
+
+#~ msgid ""
+#~ "How a grayscale picture becomes laser"
+#~ " dots. Floyd-Steinberg: as K40 "
+#~ "Whisperer. Atkinson: more contrast, clean "
+#~ "light areas (wood). Jarvis, Stucki, "
+#~ "Burkes, Sierra: smoother gradients. Ordered"
+#~ " (Bayer): an even, regular texture. "
+#~ "Threshold: black and white only"
+#~ msgstr ""
 

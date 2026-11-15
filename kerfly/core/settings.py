@@ -47,6 +47,7 @@ class JobSettings:
     negate: bool = False
     halftone: bool = True
     halftone_dpi: float = 500.0       # ht_size
+    dither: str = "floyd"             # Kerfly: how the halftone dots are made (kerfly.core.dither)
     bezier_m1: float = 2.5
     bezier_m2: float = 0.5
     bezier_weight: float = 3.5

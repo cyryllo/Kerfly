@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 16:21+0100\n"
+"POT-Creation-Date: 2026-11-15 16:35+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -678,6 +678,10 @@ msgid "Creating halftone image."
 msgstr "Tworzenie obrazu półtonowego."
 
 #, python-format
+msgid "Creating halftone image: %s%%"
+msgstr "Tworzenie obrazu półtonowego: %s%%"
+
+#, python-format
 msgid "Creating scan lines: %s%%"
 msgstr "Tworzenie linii skanowania: %s%%"
 
@@ -869,6 +873,9 @@ msgid ""
 msgstr ""
 "Rozłożono elementy (%d): są za szerokie na odstępy, więc ich środki są co"
 " %.2f %s."
+
+msgid "Dithering method"
+msgstr "Metoda ditheringu"
 
 msgid "Do not remind about this version again (a later one is shown)"
 msgstr "Nie przypominaj więcej o tej wersji (o następnej przypomni)"
@@ -1271,6 +1278,17 @@ msgstr "Głowica w pozycji bazowej"
 
 msgid "Honeycomb"
 msgstr "Plaster miodu"
+
+msgid ""
+"How a grayscale picture becomes laser dots. Floyd-Steinberg: the classic "
+"one (default). Atkinson: more contrast, clean light areas (wood). Jarvis,"
+" Stucki, Burkes, Sierra: smoother gradients. Ordered (Bayer): an even, "
+"regular texture. Threshold: black and white only"
+msgstr ""
+"Jak obraz w skali szarości zamienia się w kropki lasera. Floyd-Steinberg:"
+" klasyczna (domyślna). Atkinson: większy kontrast, czyste jasne miejsca "
+"(drewno). Jarvis, Stucki, Burkes, Sierra: gładsze przejścia. "
+"Uporządkowany (Bayer): równa, regularna faktura. Próg: tylko czerń i biel"
 
 msgid "How many different powers or passes"
 msgstr "Ile różnych mocy lub przejść"
@@ -2025,6 +2043,9 @@ msgstr "Operacja"
 
 msgid "Order"
 msgstr "Kolejność"
+
+msgid "Ordered (Bayer)"
+msgstr "Uporządkowany (Bayer)"
 
 msgid "Other layers"
 msgstr "Inne warstwy"
@@ -3263,6 +3284,9 @@ msgstr "To nie jest plik laserów Kerfly: %s"
 msgid "This makes %d separate shapes, which can make Kerfly slow. Continue?"
 msgstr "Powstanie %d osobnych kształtów, co może spowolnić Kerfly. Kontynuować?"
 
+msgid "Threshold"
+msgstr "Próg"
+
 msgid "Time"
 msgstr "Czas"
 
@@ -3968,4 +3992,14 @@ msgstr "obrys"
 #~ msgctxt "toolbar"
 #~ msgid "Updates"
 #~ msgstr "Aktualizacje"
+
+#~ msgid ""
+#~ "How a grayscale picture becomes laser"
+#~ " dots. Floyd-Steinberg: as K40 "
+#~ "Whisperer. Atkinson: more contrast, clean "
+#~ "light areas (wood). Jarvis, Stucki, "
+#~ "Burkes, Sierra: smoother gradients. Ordered"
+#~ " (Bayer): an even, regular texture. "
+#~ "Threshold: black and white only"
+#~ msgstr ""
 

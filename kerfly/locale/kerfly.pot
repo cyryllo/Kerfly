@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 16:21+0100\n"
+"POT-Creation-Date: 2026-11-15 16:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -645,6 +645,10 @@ msgid "Creating halftone image."
 msgstr ""
 
 #, python-format
+msgid "Creating halftone image: %s%%"
+msgstr ""
+
+#, python-format
 msgid "Creating scan lines: %s%%"
 msgstr ""
 
@@ -827,6 +831,9 @@ msgstr ""
 msgid ""
 "Distributed %d elements: they are too wide for gaps, so their centres are"
 " %.2f %s apart."
+msgstr ""
+
+msgid "Dithering method"
 msgstr ""
 
 msgid "Do not remind about this version again (a later one is shown)"
@@ -1197,6 +1204,13 @@ msgid "Homed"
 msgstr ""
 
 msgid "Honeycomb"
+msgstr ""
+
+msgid ""
+"How a grayscale picture becomes laser dots. Floyd-Steinberg: the classic "
+"one (default). Atkinson: more contrast, clean light areas (wood). Jarvis,"
+" Stucki, Burkes, Sierra: smoother gradients. Ordered (Bayer): an even, "
+"regular texture. Threshold: black and white only"
 msgstr ""
 
 msgid "How many different powers or passes"
@@ -1886,6 +1900,9 @@ msgid "Operation"
 msgstr ""
 
 msgid "Order"
+msgstr ""
+
+msgid "Ordered (Bayer)"
 msgstr ""
 
 msgid "Other layers"
@@ -3008,6 +3025,9 @@ msgstr ""
 
 #, python-format
 msgid "This makes %d separate shapes, which can make Kerfly slow. Continue?"
+msgstr ""
+
+msgid "Threshold"
 msgstr ""
 
 msgid "Time"

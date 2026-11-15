@@ -90,8 +90,8 @@ def convert_halftoning(image, settings, progress=_no_progress):
                 pixel[x, y] = val_map[pixel[x, y]]
 
     progress("Creating Halftone Image.")
-    image = image.convert('1')
-    return image
+    from .dither import dither
+    return dither(image, getattr(settings, "dither", "floyd"), progress)   # Floyd-Steinberg: as K40 Whisperer
 
 
 def make_raster_coords(design, settings, progress=_no_progress, stop=None):

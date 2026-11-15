@@ -183,6 +183,20 @@ def main():
     check("power settings greyed out without the M3 board (power per operation, maximum power, trace power)",
           m2_off and m3_on and max_follows, "(%s)" % [m2_off, m3_on, max_follows])
 
+    # 3b3. Settings → Raster → Dithering method: the list, greyed out without halftone, a change recomputes
+    sd = _SD(dict(config.DEFAULT_VALUES, halftone="0"), None, tab=1)
+    combo = sd._widgets["dither"]
+    methods = [combo.itemData(i) for i in range(combo.count())]
+    greyed = not combo.isEnabled()
+    sd._widgets["halftone"].setChecked(True)
+    combo.setCurrentIndex(combo.findData("atkinson"))
+    chosen = combo.isEnabled() and sd.result_values()[0]["dither"] == "atkinson"
+    sd.close()
+    from kerfly.gui.settings_dialog import RASTER_KEYS as _RK
+    check("Settings → Raster → Dithering method: 8 methods, greyed out without halftone, chosen, recomputes",
+          methods[0] == "floyd" and len(methods) == 8 and greyed and chosen and "dither" in _RK,
+          "(%s)" % [methods, greyed, chosen])
+
     # 3c. after a job (K40 Whisperer's Popup Report and Run Batch File): a report window with the job
     # time (on by default, not blocking), a program run after the job with its output in the report,
     # its errors shown even with the report off; nothing after a boundary trace

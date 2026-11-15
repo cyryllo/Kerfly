@@ -37,6 +37,7 @@ TABS = [
     ]),
     (N_("Raster"), [
         ("halftone", N_("Halftone (dither) grayscale images"), "bool", None),
+        ("dither", N_("Dithering method"), "dither", None),
         ("ht_size", N_("Halftone resolution (dpi)"), "choice", ["1000", "500", "333", "250", "200", "167", "143", "125"]),
         ("negate", N_("Invert raster colors"), "bool", None),
         ("mirror", N_("Mirror design"), "bool", None),
@@ -86,11 +87,11 @@ TABS = [
 M3_BOARD = "LASER-M3"           # the only board with power control
 
 # field -> the tick it depends on
-DEPENDS = {"Trace_power": "trace_w_laser", "batch_path": "post_exec", "pre_batch_path": "pre_exec", "LaserRscale": "rotary",
+DEPENDS = {"dither": "halftone", "Trace_power": "trace_w_laser", "batch_path": "post_exec", "pre_batch_path": "pre_exec", "LaserRscale": "rotary",
            "rapid_feed": "rotary"}
 
 # settings whose change invalidates the computed raster lines / path order
-RASTER_KEYS = {"halftone", "ht_size", "negate", "mirror", "rotate", "rast_step", "bezier_M1",
+RASTER_KEYS = {"halftone", "dither", "ht_size", "negate", "mirror", "rotate", "rast_step", "bezier_M1",
                "bezier_M2", "bezier_weight", "LaserXscale", "LaserYscale", "LaserRscale", "rotary"}
 RELOAD_KEYS = {"inside_first", "reduced_mem", "use_inkscape"}
 
@@ -183,6 +184,17 @@ class SettingsDialog(QDialog):
                 w.addItem(name, code)
             index = w.findData(value)
             w.setCurrentIndex(max(0, index))
+            return w, lambda: w.currentData()
+        if kind == "dither":
+            from kerfly.core.dither import DEFAULT, METHODS
+            w = QComboBox()
+            for code, name in METHODS:
+                w.addItem(_(name), code)
+            w.setCurrentIndex(max(0, w.findData(value or DEFAULT)))
+            w.setToolTip(_("How a grayscale picture becomes laser dots. Floyd-Steinberg: the classic one (default). "
+                           "Atkinson: more contrast, clean light areas (wood). Jarvis, Stucki, Burkes, Sierra: "
+                           "smoother gradients. Ordered (Bayer): an even, regular texture. Threshold: black "
+                           "and white only"))
             return w, lambda: w.currentData()
         if kind == "theme":
             from kerfly.gui.theme import DEFAULT, THEMES

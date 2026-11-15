@@ -1345,6 +1345,37 @@ def test_home_upper_right_layout():
     return errors
 
 
+def test_dither():
+    """Settings → Raster → Dithering method: every method gives a 1-bit picture with about as much black
+    as the grey asks for; Floyd-Steinberg (the default) is exactly K40 Whisperer's (Pillow's)."""
+    from PIL import Image
+    from kerfly.core import dither
+    from kerfly.core.raster import convert_halftoning
+    failures = 0
+
+    def check(name, ok, detail=""):
+        nonlocal failures
+        print("%-5s dither: %s %s" % ("OK" if ok else "FAIL", name, "" if ok else detail))
+        failures += not ok
+    grey = Image.new("L", (120, 120), 96)               # 62 % black
+    for code in dither.CODES:
+        out = dither.dither(grey, code)
+        black = sum(1 for v in out.convert("L").getdata() if v == 0) / float(120 * 120)
+        want = 1.0 if code == "threshold" else 1 - 96 / 255.0
+        check("%s: 1-bit, %.0f %% black" % (code, black * 100), out.mode == "1" and abs(black - want) < 0.06,
+              "(mode %s, %.3f, want %.3f)" % (out.mode, black, want))
+    picture = Image.linear_gradient("L").resize((90, 70))
+    settings = JobSettings(bezier_weight=0)              # no levels curve: the dots alone are compared
+    same = convert_halftoning(picture, settings).tobytes() == picture.convert("1").tobytes()
+    other = convert_halftoning(picture, JobSettings(bezier_weight=0, dither="atkinson")).tobytes() \
+        != picture.convert("1").tobytes()
+    from kerfly.core import config as _config
+    from_values = _config.job_settings_from_values(dict(_config.DEFAULT_VALUES, dither="stucki")).dither == "stucki"
+    check("default Floyd-Steinberg is K40 Whisperer's; Atkinson differs; read from the settings",
+          same and other and settings.dither == "floyd" and from_values, "(%s)" % [same, other, from_values])
+    return failures
+
+
 def test_updates():
     """New version check: versions compared as numbers, drafts and pre-releases
     left out, a skipped version not shown again (no network: the answer is given)."""
@@ -1495,6 +1526,7 @@ def main():
     failures += test_generators()
     failures += test_cut_order()
     failures += test_pattern_fill()
+    failures += test_dither()
     failures += test_offset()
     failures += test_file_encodings()
     failures += test_job_cache()

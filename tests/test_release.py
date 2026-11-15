@@ -1174,6 +1174,38 @@ def part_view_and_laser(s):
     s.step("Settings (Ctrl+,) → Machine: Home after a job off again", lambda: s.trigger(w.act_settings, via="key"),
            change=False, undo=False, check=lambda: (w.values.get("post_home_xy") == "0", w.values.get("post_home_xy")))
 
+    # Settings → Raster → Dithering method: Atkinson, a job goes to the laser with it; back to Floyd-Steinberg
+    def dither_to(code):
+        def answer(dlg):
+            from PySide6.QtWidgets import QDialogButtonBox, QTabWidget
+            combo = next(c for c in dlg.findChildren(QComboBox) if c.property("setting_key") == "dither")
+            tabs = dlg.findChild(QTabWidget)
+            index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(combo))
+            QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+            s.settle()
+            if not combo.isEnabled():
+                raise RuntimeError("the dithering list is greyed out with halftone on")
+            s.pick(combo, data=code)
+            QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+        return answer
+    s.expect_dialog("settings: dithering Atkinson", dither_to("atkinson"))
+    s.step("Settings (Ctrl+,) → Raster → Dithering method: Atkinson", lambda: s.trigger(w.act_settings, via="key"),
+           change=False, undo=False, check=lambda: (w.job_settings().dither == "atkinson", w.values.get("dither")))
+    sent_before = {}
+
+    def start_dithered():
+        sent_before["n"] = len(s.fake.sent)
+        s.trigger(w.act_start, via="key")
+        s.wait(lambda: w.worker is None and getattr(w, "_after_job_process", None) is None)
+    s.step("Start: the job with Atkinson dots goes to the laser", start_dithered, change=False,
+           check=lambda: (len(s.fake.sent) > sent_before.get("n", 0), "nothing sent"))
+    if getattr(w, "_job_report", None) is not None:
+        w._job_report.close()
+    s.expect_dialog("settings: dithering Floyd-Steinberg", dither_to("floyd"))
+    s.step("Settings (Ctrl+,) → Raster → Dithering method: back to Floyd-Steinberg",
+           lambda: s.trigger(w.act_settings, via="key"), change=False, undo=False,
+           check=lambda: (w.job_settings().dither == "floyd", w.values.get("dither")))
+
     # after a job: the report window (on by default) and a program run after the job, its output in the report
     program_dir = tempfile.mkdtemp(prefix="kerfly_release_after_job_")
     before_marker = os.path.join(program_dir, "exhaust_on.txt")

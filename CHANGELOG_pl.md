@@ -16,6 +16,11 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 - **Dziesięć nowych wzorów wypełnienia** (razem 19): trójkąty, jodełka, łuski,
   fale prostokątne, spirala, promienie, kropki, krzyżyki, kafelki Truchet i
   krzywa Hilberta, w sekcji Wypełnienie paska opcji.
+- **Metody ditheringu** dla zdjęć i obrazów w skali szarości (Ustawienia →
+  Raster → Metoda ditheringu): Floyd-Steinberg (jak dotąd, domyślna), Atkinson
+  (większy kontrast, czyste jasne miejsca: dobra na drewno), Jarvis, Stucki,
+  Burkes i Sierra (gładsze przejścia), uporządkowany Bayer (równa faktura) i
+  próg.
 
 ## 1.6.0 (2026-11-14)
 

@@ -68,6 +68,7 @@ SETTINGS_KEYS = [
     ("update_last", TEXT),   # Kerfly only: time of the last check (seconds)
     ("trace_rect", BOOL),    # Kerfly only: trace the bounding rectangle (off: K40 Whisperer's outline)
     ("theme", TEXT),         # Kerfly only: light, dark or system (applies after a restart)
+    ("dither", TEXT),        # Kerfly only: halftone method (kerfly.core.dither; floyd = K40 Whisperer's)
     ("pre_exec", BOOL),      # Kerfly only: run a program before a job (the exhaust on, ...)
     ("pre_batch_path", QUOTED),  # Kerfly only: that program
 ]
@@ -96,7 +97,7 @@ DEFAULT_VALUES = {
     "test_time": "250", "test_power": "0.5",
     "t_timeout": "200", "n_timeouts": "30", "ink_timeout": "3",
     "designfile": "", "inkscape_path": "", "batch_path": "",
-    "pre_exec": "0", "pre_batch_path": "", "theme": "light",
+    "pre_exec": "0", "pre_batch_path": "", "theme": "light", "dither": "floyd",
     "language": "",          # "" = system language
     "grid_mm": "0",
     "snap_objects": "1",
@@ -238,6 +239,7 @@ def job_settings_from_values(values, power_per_stage=False):
                       ("negate", "negate"), ("halftone", "halftone")]:
         put(attr, key, lambda k: _flag(values[k]))
     put("trace_with_laser", "trace_w_laser", lambda k: _flag(values[k]))
+    put("dither", "dither", lambda k: values[k] or "floyd")
     for attr, key in [("max_power", "max_power"), ("x_scale", "LaserXscale"),
                       ("y_scale", "LaserYscale"), ("rotary_scale", "LaserRscale"),
                       ("rapid_feed", "rapid_feed"),

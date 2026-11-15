@@ -20,6 +20,10 @@ Version numbers:
 - **Ten more fill patterns** (19 in all): triangles, herringbone, fish scales,
   square waves, spiral, sunburst, dots, crosses, Truchet tiles and a Hilbert
   curve, in the Fill section of the options bar.
+- **Dithering methods** for photos and grayscale pictures (Settings → Raster →
+  Dithering method): Floyd-Steinberg (as before, the default), Atkinson (more
+  contrast, clean light areas: good on wood), Jarvis, Stucki, Burkes and
+  Sierra (smoother gradients), ordered Bayer (an even texture) and threshold.
 
 ## 1.6.0 (2026-11-14)
 

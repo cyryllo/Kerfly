@@ -89,6 +89,7 @@ _UPSTREAM_PATTERNS = [
     (re.compile(r"^Preprocessing Raster Data: ([\d.]+)%$"), N_("Preprocessing raster data: %s%%")),
     (re.compile(r"^Creating Scan Lines: ([\d.]+) %$"), N_("Creating scan lines: %s%%")),
     (re.compile(r"^Adjusting Image Darkness: ([\d.]+) %$"), N_("Adjusting image darkness: %s%%")),
+    (re.compile(r"^Creating halftone image: ([\d.]+) %$"), N_("Creating halftone image: %s%%")),
     (re.compile(r"^USB Timeout #(\d+)$"), N_("USB timeout #%s")),
     (re.compile(r"^Data transmission \(CRC\) error #(\d+)$"), N_("Data transmission (CRC) error #%s")),
     (re.compile(r"^The laser cutter is not responding \((\d+) attempts\)\. Press stop to stop trying!$"),
