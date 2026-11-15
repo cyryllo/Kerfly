@@ -189,9 +189,10 @@ class ElementItem(QGraphicsItem):
         return super().itemChange(change, value)
 
     def mousePressEvent(self, event):
-        from kerfly.core.groups import within
-        if not within(self.element.group, self.view.scope):     # outside the group picked in the list
-            self.view.scope = ""
+        from kerfly.core.groups import ALONE, within
+        scope = self.view.scope
+        if (scope == ALONE and not self.isSelected()) or (scope != ALONE and not within(self.element.group, scope)):
+            self.view.scope = ""                 # outside what was picked in the list: groups as a whole again
         self._press_pos = self.pos()
         self._press_screen = event.screenPos()
         self._drag_started = False
@@ -732,6 +733,12 @@ class PreviewView(QGraphicsView):
         super().mouseDoubleClickEvent(event)
 
     def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton and self.scope:
+            # (not itemAt(): a Python wrapper of a scene item made and dropped here could delete the item)
+            p = self.mapToScene(event.position().toPoint())
+            hit = any(i.sceneBoundingRect().contains(p) for i in self._items + self._handles)
+            if not hit:
+                self.scope = ""                  # a click on empty bed: groups as a whole again
         if self.tool in PICK_TOOLS and event.button() == Qt.LeftButton:
             self.signals.shape_picked.emit(self.tool, self.mapToScene(event.position().toPoint()))
             event.accept()

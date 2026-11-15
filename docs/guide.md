@@ -247,7 +247,8 @@ clicking one member selects the whole group, a second click selects that
 member alone. Groups can hold groups: in the element list a group is a row
 that opens and closes, with its elements (and its groups) inside; its tick
 takes all of it in or out of the job, and clicking its row selects that
-group alone (for example one sheet of a box). **Ungroup** (Ctrl+Shift+G)
+group alone (for example one sheet of a box), clicking an element's row that
+element alone. **Ungroup** (Ctrl+Shift+G)
 takes one level away (the groups inside stay groups), and also splits an opened
 SVG or DXF file: each of its lines becomes a shape you can edit, and its
 pictures split into their separate parts. Double-click any element to edit
@@ -352,7 +353,8 @@ remembered.
   tightly). The parts are laid out to fit the bed; those that do not fit go
   on a next sheet (**Sheet 2**, …), at the same place on its own unticked cut
   layer: cut sheet 1, change the material, tick the next sheet. In the element
-  list the box is one group with a group for each sheet. **Each part on
+  list the box is one group with a group for each sheet, and each part made
+  of several shapes (an outline and its slots) is a group of its own. **Each part on
   its own layer** puts every part on a cut layer of its own. **Dividers across
   / along** (beta, not yet checked on a laser) add inner walls, evenly spaced:
   their tabs go through slots in the walls and the bottom, crossing dividers

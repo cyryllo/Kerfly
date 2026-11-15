@@ -284,7 +284,7 @@ def take(lang):
     st._dirty = False
     st.new_project()
     dlg = GeneratorDialog(st, "finger_box", remember=False)
-    for key, value in (("width", 280), ("depth", 190), ("height", 60)):
+    for key, value in (("width", 280), ("depth", 190), ("height", 60), ("dividers_across", 1)):
         dlg.widgets[key].setValue(value)
     dlg.widgets["sliding"].setChecked(True)
     st.insert_generated(dlg.result_design())
@@ -295,6 +295,7 @@ def take(lang):
     st.preview.select_element([])
     st.tabs.setCurrentIndex(0)
     st.show()
+    lst.scrollToTop()
     lst.doItemsLayout()
     settle(10)
     st.tabs.grab().save(os.path.join(out, "groups.png"))

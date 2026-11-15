@@ -1443,11 +1443,19 @@ def main():
     w.preview.select_element([e1, e2])
     w.group_selected()
     lst.clearSelection()
-    lst.item(0).setSelected(True)                                       # a group member: the whole group
+    lst.item(0).setSelected(True)                       # a group member's own row: that element alone
+    member_alone = rows() == [0] and w.preview.selected_elements() == [e1] and w._selection() == [e1]
+    lst.clearSelection()
+    lst.group_item(e1.group).setSelected(True)          # the group's row: the whole group
     group_rows = rows() == [0, 1] and len(w.preview.selected_elements()) == 2 and \
         lst.group_item(e1.group).isSelected()
-    check("element list <-> bed selection: one, several, from the list, a group",
-          one and several and from_list and group_rows, "(%s)" % [one, several, from_list, group_rows])
+    w.preview.scope = ""                                # as after a click on the empty bed
+    w.preview.select_element(e2)                        # a click on the bed: the whole group
+    bed_group = len(w._selection()) == 2
+    check("element list <-> bed selection: one, several, from the list, a member's row alone, a group's row, "
+          "the bed takes the group",
+          one and several and from_list and member_alone and group_rows and bed_group,
+          "(%s)" % [one, several, from_list, member_alone, group_rows, bed_group])
     w.close()
 
     # 36. zoom: the wheel cannot zoom out past the whole bed; zooming in works; the bed stays in view
@@ -2422,7 +2430,7 @@ def main():
         dlg = _GD(gw, key, remember=False)
         before = _truth2.state(gw)
         els = gw.insert_generated(dlg.result_design())
-        grouped = len(els) == 1 or len({e.group for e in els}) == 1 and bool(els[0].group)
+        grouped = len(els) == 1 or len({e.group.split("/")[0] for e in els}) == 1 and bool(els[0].group)
         ok = bool(els) and grouped and not _truth2.check_window(gw)
         gw.undo()
         ok = ok and _truth2.difference(before, _truth2.state(gw)) == ""
@@ -2557,58 +2565,78 @@ def main():
     gw._dirty = False
     gw.close()
 
-    # 54c. groups in groups: a box on several sheets is one group with a group for each sheet (rows that open in
-    # the element list); a click on the bed takes the whole box, a sheet's row that sheet alone; a sheet's
-    # tick takes it out of the job; Ungroup takes one level away (the sheets stay groups), Group puts them
-    # together again; copies and saved projects keep the groups and their names
+    # 54c. groups in groups: a box on several sheets is one group with a group for each sheet, and in it a group
+    # for each part made of several shapes (an outline and its slots); rows that open in the element list; a
+    # click on the bed takes the whole box, a sheet's row that sheet alone, a part's row that part, a shape's
+    # row that shape; a sheet's tick takes it out of the job; Ungroup takes one level away (the sheets stay
+    # groups), Group puts them together again; copies and saved projects keep the groups and their names
     from kerfly.core import generators as _gen4
-    from kerfly.core.groups import paths as _gpaths
+    from kerfly.core.groups import paths as _gpaths, within as _within
     gw4 = make_window(grid_mm="0")
     box4 = _gen4.finger_box(250, 180, 60, 3, 10, 0.0, True, sliding=True, bed=(300.0, 200.0),
-                            sheet_name="Sheet %d")
+                            sheet_name="Sheet %d", names={"left": "Left side"})
     els4 = gw4.insert_generated(box4)
     lst4 = gw4.element_list
+    groups4 = [e.group for e in els4]
+
+    def sheet_of(e):
+        return "/".join(e.group.split("/")[:2])
+
+    def name_of(path):
+        return gw4.group_names.get(path.rsplit("/", 1)[-1], "")
     top4 = {e.group.split("/")[0] for e in els4}
-    sheets4 = sorted({e.group for e in els4})
+    sheets4 = sorted({sheet_of(e) for e in els4})
     n4 = box4.sheets
     tree4 = len(top4) == 1 and n4 >= 3 and len(sheets4) == n4 and \
         lst4.topLevelItemCount() == 1 and lst4.topLevelItem(0).childCount() == n4 and \
         lst4.topLevelItem(0).text().startswith("Finger-joint box") and \
         [lst4.topLevelItem(0).child(i).text().split(" (")[0] for i in range(n4)] == \
         ["Sheet %d" % (i + 1) for i in range(n4)]
-    on_layer = all((gw4.group_names[e.group.split("/")[1]] == "Sheet 1") == (not e.layers) for e in els4)
+    # the left side (an outline with slots): a group of its own, named after it, with all its shapes
+    left4 = [e for e in els4 if e.name == "Left side"]
+    parts4 = len(left4) > 1 and len({e.group for e in left4}) == 1 and len(_gpaths(left4[0].group)) == 3 and \
+        name_of(left4[0].group) == "Left side" and \
+        all(len(_gpaths(e.group)) == 2 for e in els4 if sum(x.group == e.group for x in els4) == 1 and
+            e.name.endswith("rail"))                         # a part of one shape: no group of its own
+    on_layer = all((name_of(sheet_of(e)) == "Sheet 1") == (not e.layers) for e in els4)
     gw4.preview.select_element(els4[-1])                     # a click on the bed: the whole box
     whole = len(gw4._selection()) == len(els4)
-    sheet2 = next(p for p in sheets4 if gw4.group_names[p.split("/")[1]] == "Sheet 2")
+    sheet2 = next(p for p in sheets4 if name_of(p) == "Sheet 2")
     lst4.clearSelection()
     lst4.group_item(sheet2).setSelected(True)                 # the row of sheet 2: that sheet alone
     app.processEvents()
-    alone = {id(e) for e in gw4._selection()} == {id(e) for e in els4 if e.group == sheet2}
-    sheet3 = next(p for p in sheets4 if gw4.group_names[p.split("/")[1]] == "Sheet 3")
+    alone = {id(e) for e in gw4._selection()} == {id(e) for e in els4 if _within(e.group, sheet2)}
+    lst4.clearSelection()
+    lst4.group_item(left4[0].group).setSelected(True)        # a part's row: that part
+    part_alone = {id(e) for e in gw4._selection()} == {id(e) for e in left4}
+    lst4.clearSelection()
+    lst4.item(gw4.elements.index(left4[0])).setSelected(True)  # a shape's row: that shape
+    shape_alone = gw4._selection() == [left4[0]]
+    sheet3 = next(p for p in sheets4 if name_of(p) == "Sheet 3")
     lst4.group_item(sheet3).setCheckState(Qt.Unchecked)       # sheet 3 out of the job
     app.processEvents()                                       # (the list is filled again after the click)
-    out3 = all(not e.visible for e in els4 if e.group == sheet3) and \
-        all(e.visible for e in els4 if e.group != sheet3) and \
+    out3 = all(not e.visible for e in els4 if _within(e.group, sheet3)) and \
+        all(e.visible for e in els4 if not _within(e.group, sheet3)) and \
         lst4.topLevelItem(0).checkState() == Qt.PartiallyChecked
     gw4.undo()
     gw4.preview.scope = ""
     gw4.preview.select_element(els4[0])
     gw4.ungroup_selected()                                    # one level: the sheets stay groups
-    after_ungroup = sorted(len(_gpaths(e.group)) for e in els4) == [1] * len(els4) and \
-        len({e.group for e in els4}) == n4 and lst4.topLevelItemCount() == n4
+    after_ungroup = all(len(_gpaths(e.group)) == len(_gpaths(g)) - 1 for e, g in zip(els4, groups4)) and \
+        len({e.group.split("/")[0] for e in els4}) == n4 and lst4.topLevelItemCount() == n4
     gw4.preview.select_element(list(els4))
-    gw4.group_selected()                                      # and together again: 3 groups in one
-    regrouped = len({e.group.split("/")[0] for e in els4}) == 1 and all(len(_gpaths(e.group)) == 2 for e in els4)
+    gw4.group_selected()                                      # and together again: the sheets in one group
+    regrouped = len({e.group.split("/")[0] for e in els4}) == 1 and \
+        all(len(_gpaths(e.group)) == len(_gpaths(g)) for e, g in zip(els4, groups4))
     gw4.undo()
     gw4.undo()                                                # back to the box as inserted
-    back = {e.group for e in els4} == set(sheets4)
+    back = [e.group for e in els4] == groups4
     gw4.preview.select_element(els4[0])
     gw4.copy_selected()
     gw4.paste()
     copies4 = gw4.elements[len(els4):]
-    copied = len(copies4) == len(els4) and not ({e.group for e in copies4} & set(sheets4)) and \
-        sorted(gw4.group_names[e.group.split("/")[1]] for e in copies4) == \
-        sorted(gw4.group_names[e.group.split("/")[1]] for e in els4)
+    copied = len(copies4) == len(els4) and not ({e.group for e in copies4} & set(groups4)) and \
+        [name_of(sheet_of(e)) for e in copies4] == [name_of(sheet_of(e)) for e in els4]
     path4 = tempfile.mktemp(suffix=".kerfly")
     gw4._write_project(path4)
     gw5 = make_window(grid_mm="0")
@@ -2618,10 +2646,13 @@ def main():
         gw5.element_list.topLevelItemCount() == 2 and \
         gw5.element_list.topLevelItem(0).text() == lst4.topLevelItem(0).text() and \
         not _truth.check_window(gw5) and not _truth.check_window(gw4)
-    check("groups in groups: a box on several sheets, a group for each sheet; bed click takes the box, a sheet's row "
-          "the sheet; a sheet's tick; Ungroup one level, Group again; copied and saved with their names",
-          tree4 and on_layer and whole and alone and out3 and after_ungroup and regrouped and back and copied
-          and kept, "(%s)" % [tree4, on_layer, whole, alone, out3, after_ungroup, regrouped, back, copied, kept])
+    check("groups in groups: a box on several sheets, a group for each sheet and each part of several shapes; "
+          "bed click takes the box, a sheet's / part's / shape's row that alone; a sheet's tick; Ungroup one "
+          "level, Group again; copied and saved with their names",
+          tree4 and parts4 and on_layer and whole and alone and part_alone and shape_alone and out3 and
+          after_ungroup and regrouped and back and copied and kept,
+          "(%s)" % [tree4, parts4, on_layer, whole, alone, part_alone, shape_alone, out3, after_ungroup,
+                    regrouped, back, copied, kept])
     for win in (gw4, gw5):
         win._dirty = False
         win.close()

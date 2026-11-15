@@ -251,7 +251,8 @@ się razem; klik w jeden z nich zaznacza całą grupę, drugi klik tylko ten
 element. Grupy mogą zawierać grupy: na liście elementów grupa to wiersz,
 który się rozwija i zwija, z jej elementami (i grupami) w środku; ptaszek
 przy grupie włącza ją całą do zadania albo ją wyłącza, a klik w jej wiersz
-zaznacza tylko tę grupę (na przykład jeden arkusz pudełka). **Rozgrupuj**
+zaznacza tylko tę grupę (na przykład jeden arkusz pudełka), klik w wiersz
+elementu tylko ten element. **Rozgrupuj**
 (Ctrl+Shift+G) zdejmuje jeden poziom (grupy w środku zostają grupami), a
 także dzieli otwarty plik SVG albo DXF: każda jego linia staje się kształtem
 do edycji, a obrazy dzielą się na osobne części. Dwuklik na dowolnym
@@ -359,7 +360,8 @@ jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
   nie mieszczą, trafiają na kolejny arkusz (**Arkusz 2**, …), w tym samym
   miejscu, na osobnej odhaczonej warstwie cięcia: wytnij arkusz 1, zmień
   materiał, zaznacz kolejny arkusz. Na liście elementów pudełko jest jedną
-  grupą z osobną grupą dla każdego arkusza. **Każda część na osobnej warstwie** daje
+  grupą z osobną grupą dla każdego arkusza, a każda część złożona z kilku
+  kształtów (obrys i jego szczeliny) jest osobną grupą. **Każda część na osobnej warstwie** daje
   każdej części jej własną warstwę cięcia. **Przegródki w poprzek / wzdłuż**
   (beta, jeszcze nie sprawdzone na laserze) dodają wewnętrzne ścianki
   rozłożone równo: ich wypusty wchodzą w szczeliny w ściankach i dnie, a

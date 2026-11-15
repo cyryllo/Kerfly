@@ -46,8 +46,20 @@ class ElementTree(QTreeWidget):
         self._rows = []                          # the rows of the elements, in the elements' order
         self._groups = {}                        # path -> the group's row
         self.closed = set()                      # paths of the groups shut by the user
-        self.itemCollapsed.connect(lambda item: self.closed.add(item.data(0, GROUP)))
-        self.itemExpanded.connect(lambda item: self.closed.discard(item.data(0, GROUP)))
+        self.opened = set()                      # paths of the groups opened by the user (shut at first)
+        self._filling = False
+        self.itemCollapsed.connect(self._collapsed)
+        self.itemExpanded.connect(self._expanded)
+
+    def _collapsed(self, item):
+        if not self._filling:
+            self.closed.add(item.data(0, GROUP))
+            self.opened.discard(item.data(0, GROUP))
+
+    def _expanded(self, item):
+        if not self._filling:
+            self.opened.add(item.data(0, GROUP))
+            self.closed.discard(item.data(0, GROUP))
 
     # ---- the element list's ways ---------------------------------------------
     def count(self):
@@ -80,6 +92,7 @@ class ElementTree(QTreeWidget):
     # ---- filling ------------------------------------------------------------------
     def fill(self, rows):
         """rows: [(group paths of the element, outermost first, [(path, name)]), (icon, text, tooltip, ticked)]."""
+        self._filling = True
         self.clear()
         self._rows, self._groups = [], {}
         for n, (groups, (icon, text, tip, ticked)) in enumerate(rows):
@@ -110,9 +123,14 @@ class ElementTree(QTreeWidget):
                 parent.addChild(item)
             self._rows.append(item)
         for path, node in self._groups.items():
+            name = node.text(0)
             node.setCheckState(0, self._tick_of(node))
-            node.setText(0, "%s (%d)" % (node.text(0), len(self.members(path))))
-            node.setExpanded(path not in self.closed)
+            node.setText(0, "%s (%d)" % (name, len(self.members(path))))
+            # a part (a group named as its shapes, e.g. an outline and its slots) starts shut
+            children = [node.child(i) for i in range(node.childCount())]
+            one_part = all(self.row(c) >= 0 and c.text(0).startswith(name) for c in children)
+            node.setExpanded(path in self.opened or (path not in self.closed and not one_part))
+        self._filling = False
 
     def members(self, path):
         """The numbers of the elements in a group (also in the groups inside it)."""

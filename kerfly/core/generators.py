@@ -41,7 +41,8 @@ class Item:
     on_path_of: int = -1           # a text put on the path of item number ... (after placing)
     image: object = None           # a picture to engrave as a raster (made by the window)
     dpi: float = 0.0               # its resolution
-    group: str = ""                # a group inside the design's group (e.g. "Sheet 2" of a box)
+    group: tuple = ()              # groups inside the design's group, outermost first: ((key, name), ...),
+    #                                e.g. (("sheet 2", "Sheet 2"), ("part 7", "Left side")) for a box
 
 
 @dataclass
@@ -59,15 +60,23 @@ class Generated:
     assembly: list = field(default_factory=list)
 
 
-def _sheet_groups(out, sheet_name):
-    """The parts in the order of their sheets (sheet 1 first); on one sheet they keep no sheet group (the
-    design's group is enough)."""
-    if out.sheets <= 1:
-        for item in out.items:
-            item.group = ""
-        return
-    order = {sheet_name % n: n for n in range(1, out.sheets + 1)}
-    out.items.sort(key=lambda item: order.get(item.group, 0))
+def _part_groups(sheet, sheets, sheet_name, index, label, pieces):
+    """The groups of a box part's shapes: its sheet's (when there are several sheets), and its own when it
+    is made of several shapes (an outline and its slots)."""
+    levels = []
+    if sheets > 1:
+        levels.append(("sheet %d" % sheet, sheet_name % sheet))
+    if pieces > 1:
+        levels.append(("part %d" % index, label))
+    return tuple(levels)
+
+
+def _by_sheet(out):
+    """The parts in the order of their sheets (sheet 1 first)."""
+    def sheet_of(item):
+        key = item.group[0][0] if item.group else ""
+        return int(key.split()[1]) if key.startswith("sheet ") else 0
+    out.items.sort(key=sheet_of)
 
 
 def _steps(lo, hi, n):
@@ -483,6 +492,7 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
     speed, power, passes = cut
     sheet_keys = {}
     places = _pack_parts([(p_[1], p_[2]) for p_ in parts], bed, spacing, row_w)
+    n_sheets = max(p_[0] for p_ in places) if places else 1
     seen = {}
 
     def placement(name, w, h):
@@ -541,12 +551,13 @@ def finger_box(width=100.0, depth=80.0, height=50.0, thickness=3.0, finger=10.0,
                              "v": v, "n": n, "t": t, "slides": sliding and name == "lid"})
         if turned:
             loops = [_turned(lp, h) for lp in loops]
+        groups = _part_groups(sheet, n_sheets, sheet_name, len(out.assembly), label, len(loops))
         for loop in loops:
             out.items.append(_polygon_item([(px + x, py + y) for px, py in loop], 0, 0, "cut",
                                            label, layer))  # Bottom, Front, ...
-            out.items[-1].group = sheet_name % sheet
+            out.items[-1].group = groups
     out.sheets = max(p_[0] for p_ in places) if places else 1
-    _sheet_groups(out, sheet_name)
+    _by_sheet(out)
     return out
 
 
@@ -667,8 +678,10 @@ def hinge_box(width=100.0, depth=80.0, height=50.0, radius=20.0, thickness=3.0, 
         loops = [[(px - x0_, py - y0_) for px, py in lp] for lp in loops]
         cuts = [[(px - x0_, py - y0_) for px, py in c_] for c_ in cuts] if cuts else None
         shapes.append((name, loops, cuts, max(xs_) - x0_, max(ys_) - y0_))
+    part_index = 0
     places = _pack_parts([(sh[3], sh[4]) for sh in shapes], bed, spacing_parts,
                          max(W, D) * 2 + spacing_parts + 1)
+    n_sheets = max(p_[0] for p_ in places) if places else 1
     speed, power, passes = cut
     sheet_keys = {}
     for (name, loops, cuts, w_, h_), (sheet, x, y, turned) in zip(shapes, places):
@@ -683,17 +696,19 @@ def hinge_box(width=100.0, depth=80.0, height=50.0, radius=20.0, thickness=3.0, 
             loops = [_turned(lp, h_) for lp in loops]
             cuts = [_turned(c_, h_) for c_ in cuts] if cuts else None
         label = names.get(name, name.capitalize())
+        groups = _part_groups(sheet, n_sheets, sheet_name, part_index, label, len(loops) + (1 if cuts else 0))
+        part_index += 1
         for lp in loops:
             out.items.append(_polygon_item([(px + x, py + y) for px, py in lp], 0, 0, "cut", label, layer))
-            out.items[-1].group = sheet_name % sheet
+            out.items[-1].group = groups
         if cuts:
             item = _path_item([[(px + x, py + y) for px, py in c_] for c_ in cuts], 0, 0, "cut",
                               names.get("hinge", "Hinge"))
             item.layer = layer
-            item.group = sheet_name % sheet
+            item.group = groups
             out.items.append(item)
     out.sheets = max(p_[0] for p_ in places) if places else 1
-    _sheet_groups(out, sheet_name)
+    _by_sheet(out)
     return out
 
 

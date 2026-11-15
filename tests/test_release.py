@@ -1489,15 +1489,15 @@ def part_generators(s):
     # a box too big for one sheet: in the element list one group with a group for each sheet; a sheet's row
     # selects that sheet alone, Space unticks it; a click on the bed takes the whole box, Ungroup one level
     def big_box(dlg):
-        for key, value in (("width", 280), ("depth", 190), ("height", 60)):
+        for key, value in (("width", 280), ("depth", 190), ("height", 60), ("dividers_across", 1)):
             s.type_number(dlg.widgets[key], value)
         s.settle(6, 0.05)
         from PySide6.QtWidgets import QDialogButtonBox
         QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
     lst = w.element_list
     s.expect_dialog("big finger box", big_box)
-    s.step("Generators → Finger-joint box 280 x 190 x 60 (several sheets: a group for each sheet in the "
-           "element list)", lambda: s.trigger(w.act_generators["finger_box"], via="button"), undo=False,
+    s.step("Generators → Finger-joint box 280 x 190 x 60 with a divider (several sheets: a group for each sheet "
+           "and each part with slots in the element list)", lambda: s.trigger(w.act_generators["finger_box"], via="button"), undo=False,
            check=lambda: (lst.topLevelItemCount() == 1 and lst.topLevelItem(0).childCount() >= 2,
                           "%d rows, %s" % (lst.topLevelItemCount(), [lst.topLevelItem(i).text()
                                                                     for i in range(lst.topLevelItemCount())])))
@@ -1506,6 +1506,8 @@ def part_generators(s):
         return lst.topLevelItem(0).child(n - 1)
 
     def click_row(item):
+        lst.scrollToItem(item)                   # scrolled to it first, as one would
+        s.settle()
         QTest.mouseClick(lst.viewport(), Qt.LeftButton, Qt.NoModifier, lst.visualItemRect(item).center())
         s.settle()
 
@@ -1516,17 +1518,49 @@ def part_generators(s):
            lambda: click_row(sheet_row(2)), change=False,
            check=lambda: ({id(e) for e in w._selection()} == {id(e) for e in sheet2()},
                           "%d selected, sheet 2 has %d" % (len(w._selection()), len(sheet2()))))
+    def first_shape(node):                       # the first shape's row inside a group's row
+        while lst.row(node) < 0:
+            lst.expandItem(node)
+            node = node.child(0)
+        return node
+
+    def a_part():                                # the row of a part made of several shapes (a group)
+        box = lst.topLevelItem(0)
+        for k in range(box.childCount()):
+            sheet = box.child(k)
+            for i in range(sheet.childCount()):
+                if lst.row(sheet.child(i)) < 0:
+                    lst.expandItem(sheet)
+                    return sheet.child(i)
+        return None
+    s.step("element list: click the row of a part with slots (that part is selected)",
+           lambda: (a_part(), s.settle(), click_row(a_part())), change=False,
+           check=lambda: (a_part() is not None and {id(e) for e in w._selection()} ==
+                          {id(w.elements[n]) for n in lst.members(lst.group_of(a_part()))},
+                          "%d selected, part %s" % (len(w._selection()),
+                                                   a_part().text() if a_part() is not None else None)))
+    s.step("element list: click a shape's row (that shape alone is selected)",
+           lambda: click_row(first_shape(sheet_row(1))), change=False,
+           check=lambda: (w._selection() == [w.elements[lst.row(first_shape(sheet_row(1)))]],
+                          "%d selected" % len(w._selection())))
+    s.step("element list: click the row of Sheet 2 again", lambda: click_row(sheet_row(2)), change=False,
+           check=lambda: ({id(e) for e in w._selection()} == {id(e) for e in sheet2()},
+                          "%d selected, sheet 2 has %d" % (len(w._selection()), len(sheet2()))))
     s.step("element list: Space unticks Sheet 2 (out of the job)",
            lambda: (QTest.keyClick(lst, Qt.Key_Space), s.settle()),
            check=lambda: (all(not e.visible for e in sheet2()) and sum(e.visible for e in w.elements) > 0,
                           "%s" % [e.visible for e in w.elements]))
-    s.step("click the box on the bed (the whole box is selected)",
-           lambda: s.click_bed(*s.element_at(w.elements[0])), change=False,
+    corner = tuple(v * 25.4 - 4.0 for v in config.bed_size_inches(w.values))
+    s.step("click the empty bed, then the box (the whole box is selected)",
+           lambda: (s.click_bed(*corner), s.click_bed(*s.element_at(w.elements[0]))), change=False,
            check=lambda: (len(w._selection()) == len(w.elements), "%d of %d selected"
                           % (len(w._selection()), len(w.elements))))
     s.step("Edit → Ungroup (Ctrl+Shift+G): the sheets stay groups", lambda: s.trigger(w.act_ungroup, via="key"),
-           check=lambda: (lst.topLevelItemCount() >= 2 and all(e.group and "/" not in e.group for e in w.elements),
-                          "%d rows" % lst.topLevelItemCount()))
+           check=lambda: (lst.topLevelItemCount() >= 2 and
+                          all(lst.topLevelItem(i).text().split(" (")[0] in {tr_("Sheet %d") % n for n in range(1, 20)}
+                              for i in range(lst.topLevelItemCount())),
+                          "%d rows: %s" % (lst.topLevelItemCount(), [lst.topLevelItem(i).text()
+                                                                    for i in range(lst.topLevelItemCount())])))
     s.trigger(w.act_undo)
 
 

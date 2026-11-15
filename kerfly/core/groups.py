@@ -22,10 +22,13 @@ def within(group, unit):
     return bool(unit) and (group == unit or group.startswith(unit + "/"))
 
 
+ALONE = "*"          # the scope of elements picked in the element list by their own rows: each one alone
+
+
 def unit_of(group, scope=""):
     """The group that is selected together with an element of `group`: the scope when the element is in it,
-    else the outermost group ("" for an element in no group)."""
-    if not group:
+    else the outermost group ("" for an element in no group, or picked alone)."""
+    if not group or scope == ALONE:
         return ""
     if scope and within(group, scope):
         return scope

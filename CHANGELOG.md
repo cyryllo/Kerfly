@@ -22,9 +22,11 @@ Version numbers:
   turned; the bent wall of the rounded box has its slots.
 - **Groups in groups**, shown as a tree in the element list: a group is a row
   that opens and closes, its tick takes all of it in or out of the job, and
-  clicking its row selects that group alone. A generated box on several
-  sheets is one group with a group for each sheet (**Sheet 1**, **Sheet 2**,
-  …), its parts in the order of the sheets. **Ungroup** takes one level away;
+  clicking its row selects that group alone (an element's row that element
+  alone). A generated box is one group with a group for each sheet
+  (**Sheet 1**, **Sheet 2**, …, when there are several) and for each part
+  made of several shapes (an outline and its slots), its parts in the order
+  of the sheets. **Ungroup** takes one level away;
   copies and saved projects keep the groups and their names.
 
 ### Changed

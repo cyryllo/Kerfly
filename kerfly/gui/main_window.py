@@ -2435,9 +2435,18 @@ class MainWindow(QMainWindow):
             members = lst.members(path)
             node.setSelected(bool(members) and all(n < len(self.elements) and id(self.elements[n]) in chosen
                                                    for n in members))
+        clicked = lst.currentItem()
+        if clicked is not None and clicked.isSelected() and lst.group_of(clicked):
+            current = None                           # a group's row picked: it stays the current row
         if current is not None:
-            lst.setCurrentRow(current, QItemSelectionModel.NoUpdate)
-            lst.scrollToItem(lst.item(current))
+            target = lst.item(current)               # in a shut group: its row (going to the row would open it)
+            parent = target.parent()
+            while parent is not None:
+                if not parent.isExpanded():
+                    target = parent
+                parent = parent.parent()
+            lst.setCurrentItem(target, 0, QItemSelectionModel.NoUpdate)
+            lst.scrollToItem(target)
         lst.blockSignals(False)
 
     def _list_selection_changed(self):
@@ -2449,7 +2458,13 @@ class MainWindow(QMainWindow):
         rows = {lst.row(i) for i in picked if lst.row(i) >= 0}
         for path in groups:
             rows.update(lst.members(path))
-        self.preview.scope = groups[0] if len(groups) == 1 else ""   # that group alone, not the one around it
+        from kerfly.core.groups import ALONE
+        if len(groups) == 1:
+            self.preview.scope = groups[0]           # that group alone, not the one around it
+        elif not groups and rows:
+            self.preview.scope = ALONE               # elements' own rows: those elements alone
+        else:
+            self.preview.scope = ""
         chosen = [self.elements[r] for r in sorted(rows) if 0 <= r < len(self.elements)]
         self.preview.select_element(chosen)
         self.selected = chosen[0] if len(chosen) == 1 else None
@@ -2688,15 +2703,19 @@ class MainWindow(QMainWindow):
         group = self._new_group_id() if len(design.items) > 1 else ""
         if group:
             self.group_names[group] = _(design.name)
-        sheets = {}                                      # a box's sheets: groups inside its group
+        inner = {}                                       # groups inside its group (a box's sheets, parts)
 
         def group_of(item):
-            if not group or not item.group:
-                return group
-            if item.group not in sheets:
-                sheets[item.group] = self._new_group_id()
-                self.group_names[sheets[item.group]] = item.group
-            return group + "/" + sheets[item.group]
+            path, key = group, ()
+            if not group:
+                return ""
+            for level, name in item.group:
+                key += (level,)
+                if key not in inner:
+                    inner[key] = self._new_group_id()
+                    self.group_names[inner[key]] = name
+                path += "/" + inner[key]
+            return path
         hx, hy = self.head
         made = []
         for item in design.items:
@@ -2848,10 +2867,15 @@ class MainWindow(QMainWindow):
             self.status(_("Click the opened file or the group first, then Ungroup."), error=True)
             return
         self._checkpoint()
-        units = {unit_of(e.group, self.preview.scope) for e in chosen}
-        for e in chosen:                             # one level: the groups inside stay groups
-            for u in units:
-                e.group = without(e.group, u)
+        from kerfly.core.groups import ALONE
+        if self.preview.scope == ALONE:              # elements picked alone: out of their group, one level
+            for e in chosen:
+                e.group = e.group.rsplit("/", 1)[0] if "/" in e.group else ""
+        else:
+            units = {unit_of(e.group, self.preview.scope) for e in chosen}
+            for e in chosen:                         # one level: the groups inside stay groups
+                for u in units:
+                    e.group = without(e.group, u)
         self.preview.scope = ""
         self._arranged(chosen)
 
