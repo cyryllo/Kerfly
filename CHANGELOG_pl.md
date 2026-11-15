@@ -31,12 +31,15 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   z wypustami w szczelinach ścianek i dna; krzyżujące się przegródki łączą
   nacięcia do połowy wysokości.
 - **Wysuwane wieczko** (beta, jeszcze nie sprawdzone na laserze) w pudełku z
-  wczepami: wieczko wsuwa się od przodu w rowek z dwóch listew przyklejonych
-  od środka do bocznych ścianek (ich miejsca są wygrawerowane); przód jest
-  niższy.
+  wczepami: wieczko wsuwa się od przodu w rowek między dwiema poziomymi
+  listwami na każdej bocznej ściance, trzymanymi języczkami w szczelinach
+  ścianki; przód jest niższy.
+- **Pudełka lepiej wykorzystują stół**: części są obracane, gdy to pomaga, i
+  dokładane w wolne miejsca wcześniejszych arkuszy (pudełko 250 × 180 × 60 mm:
+  3 arkusze zamiast 4).
 - **Okrągłe pudełko na zawiasie** (beta, jeszcze nie sprawdzone na laserze):
   nowy generator; zaokrąglone dno i wieko z wypustami, ścianka z dwóch pasków,
-  które gną się na rogach.
+  które gną się na rogach; bez wieka kształt u góry trzyma obrzeże.
 - Narzędzie **Wytnij fragment obrazka** (pasek po prawej, Shift+C): przeciągnij
   prostokąt albo elipsę po obrazku; fragment w środku zostaje na swoim
   miejscu, reszta znika.

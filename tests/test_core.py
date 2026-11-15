@@ -1398,8 +1398,8 @@ def test_box_dividers():
 
 def test_sliding_lid():
     """Finger box with a sliding lid (beta): a lower front with as many fingers as the side walls have
-    slots for it, the lid as wide as the inside less the play, four rails, glue marks, dividers below the
-    lower rail."""
+    slots for it, the lid as wide as the inside less the play, four level rails whose tabs have their
+    slots in the side walls (the upper ones flush with the top edge), dividers below the lower rail."""
     from kerfly.core import generators as gen
     failures = 0
 
@@ -1414,17 +1414,35 @@ def test_sliding_lid():
     def size(name):
         pts = next(i for i in g.items if i.name == name).spec.points
         return max(x for x, _ in pts) - min(x for x, _ in pts), max(y for _, y in pts) - min(y for _, y in pts)
-    Hf = H - 2 * t - (t + c)
+    groove = t + c
+    Hf = H - t - groove
     front_w, front_h = size("Front")
     lid_w, lid_h = size("Lid")
     check("front %.1f mm high (the lid slides over it), lid %.1f x %.1f mm" % (Hf, W - 2 * t - c, D - t - c),
           abs(front_h - Hf) < 0.01 and abs(lid_w - (W - 2 * t - c)) < 0.01 and abs(lid_h - (D - t - c)) < 0.01,
           "(front %s, lid %s)" % ((front_w, front_h), (lid_w, lid_h)))
-    check("four rails and the glue marks on both side walls",
-          names.count("Upper rail") == 2 and names.count("Lower rail") == 2 and names.count("Rail marks") == 2)
-    left = next(i for i in g.items if i.name == "Left").spec.points
+    rails = [i for i in g.items if i.name in ("Upper rail", "Lower rail")]
+    check("four rails, no engraved marks", len(rails) == 4 and "Rail marks" not in names
+          and not any(i.spec.operation == "engrave" for i in g.items), "(%s)" % names)
+    # rail tabs: x ranges on its wall side; side wall: top-edge notches and slots under the groove
+    rp = rails[0].spec.points
+    rail_y = max(y for _, y in rp)
+    tabs = sorted({round(x, 3) for x, y in rp if abs(y - rail_y) < 1e-6})
+    left_parts = [i for i in g.items if i.name == "Left"]
+    outer = left_parts[0]
+    lp = outer.spec.points
+    top_notch_x = sorted({round(x - min(q[0] for q in lp) - t, 3) for x, y in lp
+                          if abs(y - min(q[1] for q in lp) - t) < 1e-6})
+    slots = [i for i in left_parts[1:]]
+    lower = [i for i in slots if abs((i.top - outer.top) - (t + groove)) < 1e-6]
+    lower_x = sorted({round(i.left - outer.left - t + v, 3) for i in lower
+                      for v in (0.0, max(x for x, _ in i.spec.points))})
+    check("rail tabs have their notches (top edge) and slots (under the groove) at the same places",
+          tabs and all(any(abs(x - v) < 0.01 for v in top_notch_x) for x in tabs) and len(lower) == len(tabs) // 2
+          and all(any(abs(x - v) < 0.01 for v in lower_x) for x in tabs),
+          "(tabs %s, top %s, lower %s)" % (tabs, top_notch_x, lower_x))
+    left = left_parts[0].spec.points
     front = next(i for i in g.items if i.name == "Front").spec.points
-    # the front's fingers on its left edge vs the side wall's slots on its front edge (both from their tops)
     fx = min(x for x, _ in front)
     front_runs = sorted(round(y, 3) for x, y in front if abs(x - fx) < 1e-6)
     lx = min(x for x, _ in left)
@@ -1433,13 +1451,54 @@ def test_sliding_lid():
     check("the side walls' slots for the front match its fingers",
           inner and all(any(abs(y - v) < 0.01 for v in front_runs) for y in inner), "(%s / %s)" % (inner, front_runs))
     div_h = size("Divider across 1")[1]
-    check("dividers end below the lower rail", div_h <= H - 2 * (2 * t) - (t + c) - t + t + 0.01, "(%s)" % div_h)
+    check("dividers end below the lower rail", div_h <= H - 2 * t - groove - t + t + 0.01, "(%s)" % div_h)
     try:
         gen.finger_box(60, 60, 18, 3, 10, 0.0, True, sliding=True)
         refused = False
     except ValueError:
         refused = True
     check("a box too low for a sliding lid is refused", refused)
+    return failures
+
+
+def test_box_sheets():
+    """Box parts on the bed: no part over another, all inside the bed, as few sheets as fit (parts turned
+    and put into the room left on earlier sheets); a part on a later sheet is on that sheet's layer."""
+    from kerfly.core import generators as gen
+    failures = 0
+
+    def check(name, ok, detail=""):
+        nonlocal failures
+        print("%-5s box sheets: %s %s" % ("OK" if ok else "FAIL", name, "" if ok else detail))
+        failures += not ok
+    bed = (325.0, 220.0)
+    cases = [((120, 90, 50), dict(sliding=True, dividers_across=1), 1), ((200, 150, 80), {}, 2),
+             ((250, 180, 60), dict(sliding=True), 3), ((160, 120, 70), {}, 2)]
+    for (W, D, H), extra, most in cases:
+        g = gen.finger_box(W, D, H, 3, 10, 0.15, True, bed=bed, **extra)
+        boxes = []                         # every loop: (layer, name, bounding box); slots lie inside their part
+        for i in g.items:
+            pts = [(i.left + x, i.top + y) for x, y in i.spec.points]
+            boxes.append((i.layer or "", i.name, (min(x for x, _ in pts), min(y for _, y in pts),
+                                                  max(x for x, _ in pts), max(y for _, y in pts))))
+        inside = all(b[0] >= -0.2 and b[1] >= -0.2 and b[2] <= bed[0] and b[3] <= bed[1] for _l, _n, b in boxes)
+
+        def contains(p_, q):
+            return p_[0] <= q[0] + 1e-6 and p_[1] <= q[1] + 1e-6 and q[2] <= p_[2] + 1e-6 and q[3] <= p_[3] + 1e-6
+        overlaps = []
+        for n, (la, na, p_) in enumerate(boxes):
+            for lb, nb, q in boxes[n + 1:]:
+                if la != lb or contains(p_, q) or contains(q, p_):
+                    continue
+                if p_[0] < q[2] - 0.5 and q[0] < p_[2] - 0.5 and p_[1] < q[3] - 0.5 and q[1] < p_[3] - 0.5:
+                    overlaps.append((na, nb))
+        check("%dx%dx%d %s: %d sheets (at most %d), inside the bed, nothing over another"
+              % (W, D, H, extra or "", g.sheets, most), g.sheets <= most and inside and not overlaps,
+              "(%s)" % overlaps[:3])
+    g = gen.hinge_box(120, 90, 50, 20, 3, 10, 0.1, False, bed=bed)
+    rim = [i for i in g.items if i.name == "Rim"]
+    check("rounded box without a lid: a rim (outline and opening) holds the top", len(rim) == 2 and g.sheets == 1,
+          "(%d rim loops, %d sheets)" % (len(rim), g.sheets))
     return failures
 
 
@@ -1674,6 +1733,7 @@ def main():
     failures += test_box_dividers()
     failures += test_hinge_box()
     failures += test_sliding_lid()
+    failures += test_box_sheets()
     failures += test_offset()
     failures += test_file_encodings()
     failures += test_job_cache()

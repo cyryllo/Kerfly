@@ -211,7 +211,7 @@ the right mouse button only pans the view. K40 Whisperer had no menu there
 | ~~Path offset (kerf compensation)~~ (done: Offset tool in the drawing tools on the right, kerf column of cut layers and in the material library, concentric fill pattern; pyclipper) | `core/elements/offset_clpr.py`, `offset_mk.py` |
 | ~~Boolean operations on shapes~~ (done: union, difference, intersection, exclusion) | `tools/polybool.py`, `extra/cag.py` |
 | ~~Kerf test and material test generators~~ (done, Generators group; also finger-joint box, gear, puzzle, ruler, QR code, rubber stamp, laser test card) | `tools/kerftest.py`, `gui/materialtest.py` |
-| More generators: ~~round stamps with text around the circle~~ (done), ~~living-hinge boxes~~ (beta, 2026-11-15: rounded box), more box types (~~sliding lid~~ beta with glued rails, ~~dividers~~ beta, 2026-11-15) | `boxes.py` (not in MeerK40t) |
+| More generators: ~~round stamps with text around the circle~~ (done), ~~living-hinge boxes~~ (beta, 2026-11-15: rounded box), more box types (~~sliding lid~~ beta, rails with tabs, ~~dividers~~ beta, 2026-11-15) | `boxes.py` (not in MeerK40t) |
 
 ### Pattern fills
 

@@ -343,14 +343,17 @@ remembered.
   / along** (beta, not yet checked on a laser) add inner walls, evenly spaced:
   their tabs go through slots in the walls and the bottom, crossing dividers
   are joined by slots to half their height. **Sliding lid** (beta) slides in
-  from the front, in a groove of two rails glued inside each side wall (their
-  places are engraved on the walls, glue the engraved side inwards); the front
-  is lower, so the lid slides over it.
+  from the front, in a groove between two level rails on each side wall; the
+  rails' tabs go into slots of the wall (the upper rail's into notches of the
+  top edge, flush with it). The front is lower, so the lid slides over it. The
+  parts are laid out to use the bed well: turned where that helps, into the
+  room left on earlier sheets.
 - **Rounded box with a living hinge** (beta, not yet checked on a laser): a
   bottom and a lid with rounded corners, the wall two equal strips that bend
   round the corners with a living hinge; the tabs of the bottom and the lid
-  hold it together. Width, depth, height, corner radius, material, tab width,
-  kerf and the hinge's cut length, bridge and row spacing.
+  hold it together; without a lid a rim round the top holds the wall in shape.
+  Width, depth, height, corner radius, material, tab width, kerf and the
+  hinge's cut length, bridge and row spacing.
 - **Kerf test**: a comb cut into pieces (push them together and measure:
   kerf = (length − measured) / pieces) and a plate with slots of the
   material's thickness plus a clearance each, to find the tightest fit.

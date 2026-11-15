@@ -34,11 +34,14 @@ Version numbers:
   in the walls and the bottom; crossing dividers are joined by half-height
   slots.
 - **Sliding lid** (beta, not yet checked on a laser) for the finger-joint
-  box: the lid slides in from the front in a groove of two rails glued inside
-  each side wall (their places are engraved); the front is lower.
+  box: the lid slides in from the front in a groove between two level rails
+  on each side wall, held by tabs in slots of the wall; the front is lower.
+- **Boxes use the bed better**: parts are turned where that helps and put
+  into the room left on earlier sheets (a 250 x 180 x 60 mm box: 3 sheets
+  instead of 4).
 - **Rounded box with a living hinge** (beta, not yet checked on a laser): a
   new generator; rounded bottom and lid with tabs, the wall two strips that
-  bend round the corners.
+  bend round the corners; without a lid a rim holds the top in shape.
 - **Cut out of a picture** tool (right strip, Shift+C): drag a rectangle or an
   ellipse over a picture; the piece inside stays in its place, the rest goes.
 

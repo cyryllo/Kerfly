@@ -67,8 +67,7 @@ GENERATORS = [
 def _finger_box(v, window):
     names = {"bottom": _("Bottom"), "front": _("Front"), "back": _("Back"), "left": _("Left side"),
              "right": _("Right side"), "lid": _("Lid"), "divider across": _("Divider across"),
-             "divider along": _("Divider along"), "upper rail": _("Upper rail"), "lower rail": _("Lower rail"),
-             "rail marks": _("Rail marks")}
+             "divider along": _("Divider along"), "upper rail": _("Upper rail"), "lower rail": _("Lower rail")}
     from kerfly.core import config
     from kerfly.core.layers import CUT
     try:
@@ -84,14 +83,18 @@ def _finger_box(v, window):
 
 
 def _hinge_box(v, window):
-    names = {"bottom": _("Bottom"), "lid": _("Lid"), "wall": _("Wall"), "hinge": _("Hinge")}
+    names = {"bottom": _("Bottom"), "lid": _("Lid"), "wall": _("Wall"), "hinge": _("Hinge"), "rim": _("Rim")}
+    from kerfly.core.layers import CUT
+    layer = window._default_layer.get(CUT) if hasattr(window, "_default_layer") else None
+    cut = (layer.speed, layer.power, layer.passes) if layer is not None else (10.0, 0.5, 1)
     from kerfly.core import config
     try:
         bed = tuple(v_in * 25.4 for v_in in config.bed_size_inches(window.values))
     except (ValueError, AttributeError):
         bed = None
     return gen.hinge_box(v["width"], v["depth"], v["height"], v["radius"], v["thickness"], v["finger"], v["kerf"],
-                         v["lid"], v["cut_len"], v["gap"], v["spacing"], names=names, bed=bed)
+                         v["lid"], v["cut_len"], v["gap"], v["spacing"], names=names, bed=bed, cut=cut,
+                         sheet_name=_("Sheet %d"))
 
 
 def _kerf_test(v, window):
@@ -136,8 +139,8 @@ GENERATORS += [
           "(measure it with the kerf test)")),
       ("lid", N_("With a lid"), "bool", True, None, N_("Six parts with a lid (off: an open box of five parts)")),
       ("sliding", N_("Sliding lid (beta)"), "bool", False, None,
-       N_("The lid slides in from the front, in a groove of two rails glued inside each side wall (their places "
-          "are engraved there); the front is lower so the lid slides over it (beta: not yet checked on a laser)")),
+       N_("The lid slides in from the front, in a groove between two rails on each side wall, held by tabs in "
+          "slots of the wall; the front is lower so the lid slides over it (beta: not yet checked on a laser)")),
       ("dividers_across", N_("Dividers across (beta)"), "int", 0, (0, 20),
        N_("Inner walls parallel to the front, evenly spaced; their tabs go through slots in the walls and the "
           "bottom (beta: not yet checked on a laser)")),
@@ -161,7 +164,8 @@ GENERATORS += [
        N_("About how wide one tab of the bottom and the lid is")),
       ("kerf", N_("Kerf"), "float", 0.15, (0, 1, 2, "mm"),
        N_("Width of the laser's cut: the parts grow by half of it so the tabs fit tightly")),
-      ("lid", N_("With a lid"), "bool", True, None, N_("A lid like the bottom (off: an open box)")),
+      ("lid", N_("With a lid"), "bool", True, None,
+       N_("A lid like the bottom (off: an open box, a rim round its top holds the wall in shape)")),
       ("cut_len", N_("Hinge cut length"), "float", 16.0, (3, 200, 1, "mm"),
        N_("Length of one cut of the hinge (longer: bends more easily)")),
       ("gap", N_("Hinge bridge"), "float", 3.0, (0.5, 20, 1, "mm"), N_("Uncut material between two cuts in a row")),

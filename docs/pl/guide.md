@@ -349,14 +349,17 @@ jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
   (beta, jeszcze nie sprawdzone na laserze) dodają wewnętrzne ścianki
   rozłożone równo: ich wypusty wchodzą w szczeliny w ściankach i dnie, a
   krzyżujące się przegródki łączą nacięcia do połowy wysokości. **Wysuwane
-  wieczko** (beta) wsuwa się od przodu w rowek z dwóch listew przyklejonych od
-  środka do każdej bocznej ścianki (ich miejsca są wygrawerowane na ściankach,
-  przyklej je grawerem do środka); przód jest niższy, więc wieczko przesuwa
-  się nad nim.
+  wieczko** (beta) wsuwa się od przodu w rowek między dwiema poziomymi
+  listwami na każdej bocznej ściance; języczki listew wchodzą w szczeliny
+  ścianki (górnej listwy w wycięcia górnej krawędzi, równo z nią). Przód jest
+  niższy, więc wieczko przesuwa się nad nim. Części są układane tak, żeby
+  dobrze wykorzystać stół: obracane, gdy to pomaga, i dokładane w wolne
+  miejsca wcześniejszych arkuszy.
 - **Okrągłe pudełko na zawiasie** (beta, jeszcze nie sprawdzone na laserze):
   dno i wieko z zaokrąglonymi rogami, ścianka z dwóch jednakowych pasków,
   które gną się na rogach dzięki zawiasowi giętkiemu; całość trzymają wypusty
-  dna i wieka. Szerokość, głębokość, wysokość, promień rogów, materiał,
+  dna i wieka; bez wieka kształt ścianki u góry trzyma obrzeże. Szerokość,
+  głębokość, wysokość, promień rogów, materiał,
   szerokość wypustu, kerf oraz długość nacięcia, mostek i odstęp rzędów
   zawiasu.
 - **Test kerfu**: grzebień cięty na części (zsuń je i zmierz: kerf =
