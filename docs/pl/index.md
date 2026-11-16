@@ -210,8 +210,8 @@ Kerfly steruje prawdziwą maszyną z laserem, więc „chyba działa” to za ma
 
 <h3 id="podpisywanie">Zasady podpisywania kodu</h3>
 
-<p>Free code signing provided by <a href="https://about.signpath.io">SignPath.io</a>, certificate by <a href="https://signpath.org">SignPath Foundation</a> (darmowe podpisywanie kodu przez SignPath.io, certyfikat SignPath Foundation).</p>
-<p>Instalatory Windows są budowane z tego repozytorium przez GitHub Actions i podpisywane dopiero po zatwierdzeniu każdego wydania przez członka zespołu.</p>
+<p>Instalator dla Windows nie jest jeszcze podpisany cyfrowo, więc przy pierwszym uruchomieniu Windows SmartScreen może ostrzec (<em>Więcej informacji → Uruchom mimo to</em>). Podpisywanie pojawi się, gdy projekt będzie bardziej znany.</p>
+<p>Instalatory są budowane z tego repozytorium przez GitHub Actions, tylko z wydań zatwierdzonych przez członka zespołu.</p>
 <ul>
   <li>Autorzy i recenzenci zmian: <a href="{{ site.repo }}/graphs/contributors">członkowie projektu</a></li>
   <li>Zatwierdzający: <a href="https://github.com/cyryllo">cyryllo</a> (właściciel)</li>

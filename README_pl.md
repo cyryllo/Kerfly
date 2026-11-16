@@ -135,10 +135,11 @@ Kerfly jest darmowy i taki zostanie. Możesz pomóc mu się rozwijać:
 
 ## Zasady podpisywania kodu
 
-Free code signing provided by [SignPath.io](https://about.signpath.io),
-certificate by [SignPath Foundation](https://signpath.org). Instalatory
-Windows są budowane z tego repozytorium przez GitHub Actions i podpisywane
-dopiero po zatwierdzeniu każdego wydania przez członka zespołu. Autorzy i
+Instalator dla Windows nie jest jeszcze podpisany cyfrowo, więc przy pierwszym
+uruchomieniu Windows SmartScreen może ostrzec (Więcej informacji → Uruchom
+mimo to). Podpisywanie pojawi się, gdy projekt będzie bardziej znany.
+Instalatory są budowane z tego repozytorium przez GitHub Actions, tylko z
+wydań zatwierdzonych przez członka zespołu. Autorzy i
 recenzenci zmian: [członkowie projektu](https://github.com/cyryllo/Kerfly/graphs/contributors);
 zatwierdzający: [cyryllo](https://github.com/cyryllo) (właściciel). Prywatność:
 Kerfly raz dziennie pyta GitHuba o nową wersję (Ustawienia → Zaawansowane

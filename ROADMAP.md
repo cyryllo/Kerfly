@@ -373,6 +373,9 @@ Set aside for now (not planned; back on the list only when users need it).
 - [x] macOS: `Kerfly.app` in a `.dmg` for Apple Silicon and Intel, with libusb inside, built and
   checked on GitHub (a preview; added to the 1.1.0 release with a `macos-v1.1.0` tag).
 - [ ] macOS: confirm the USB connection with a K40 on a Mac (users with Macs report).
+- [ ] Windows: code signing, once the project is better known (SignPath Foundation turned the project
+  down as too young, 2026-11-16; apply again later; the exe version data and the SignPath artifact
+  configuration are ready; paid fallback: Certum Open Source Code Signing).
 - [ ] macOS: signing and notarization (needs a paid Apple Developer account), so it opens without
   "Open Anyway".
 - [ ] Debian `.deb` that uses the system's Python libraries (a few MB) with the

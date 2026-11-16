@@ -131,10 +131,10 @@ Kerfly is free and stays free. You can help it grow:
 
 ## Code signing policy
 
-Free code signing provided by [SignPath.io](https://about.signpath.io),
-certificate by [SignPath Foundation](https://signpath.org). The Windows
-installers are built from this repository by GitHub Actions and signed only
-after a team member approves each release. Committers and reviewers: the
+The Windows installer is not code-signed yet, so Windows SmartScreen may warn
+before the first start (More info → Run anyway). Signing will come once the
+project is better known. The installers are built from this repository by
+GitHub Actions, only from releases a team member approves. Committers and reviewers: the
 [project members](https://github.com/cyryllo/Kerfly/graphs/contributors);
 approvers: [cyryllo](https://github.com/cyryllo) (owner). Privacy: Kerfly asks
 GitHub once a day whether a new version is out (Settings → Advanced switches
