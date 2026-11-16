@@ -536,6 +536,24 @@ staje tyle poza każdą linią rastra, żeby tam, gdzie wypala, miała pełną
 prędkość). Te ustawienia są zapamiętywane w profilu lasera. Jeszcze nie
 sprawdzone na maszynie GRBL.
 
+**Laser GRBL podłączony do Kerfly (beta).** W **Ustawienia → Maszyna** wybierz
+**Maszyna: płyta GRBL, port szeregowy**, potem jej **port szeregowy** (albo
+pierwszą płytę, która odpowie; ↻ szuka ponownie po podłączeniu), prędkość
+portu (115200 na większości płyt), **róg bazowania głowicy** (lewy dolny w
+większości laserów GRBL), **prędkość przesuwu** i **pełną moc S** (`$30`).
+Zapamiętuje je profil lasera, więc K40 i laser GRBL mogą mieć każdy swoje.
+Potem działają zwykłe przyciski: **Połącz** otwiera port i czyta ustawienia
+płyty (i bazuje przez `$H`, gdy bazowanie jest włączone i zaznaczone jest
+bazowanie przy połączeniu; bez wyłączników krańcowych ustaw głowicę w rogu
+bazowania przed włączeniem płyty), **Bazuj** `$H`, **Odblokuj** `$X`,
+**strzałki** i przyciski narożników przesuwają głowicę, **Obrys** objeżdża
+projekt, **Start** przesuwa głowicę na lewy górny róg projektu, ustawia tam
+X0 Y0 (`G92`) i wysyła G-code zadania, **Pauza** wstrzymuje maszynę (`!`) i
+ją wznawia (`~`), **Stop** ją resetuje (potem Odblokuj albo Bazuj). Płyta
+powinna być w trybie lasera (`$32=1`); Kerfly mówi, gdy nie jest. Na Linuksie
+do portu szeregowego trzeba dodać swojego użytkownika do grupy `dialout`:
+`sudo usermod -aG dialout $USER`, potem wylogować się i zalogować.
+
 <a id="s8"></a>
 
 ## 8. Ustawienia

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-16 23:31+0100\n"
+"POT-Creation-Date: 2026-11-17 00:08+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -27,6 +27,18 @@ msgid "%(name)s inserted: %(n)d shapes. Drag it into place; Undo takes it away."
 msgstr ""
 "%(name)s wstawiono: %(n)d kształtów. Przeciągnij na miejsce; Cofnij usuwa"
 " całość."
+
+#, python-format
+msgid ""
+"%(version)s on %(port)s. Laser mode is off ($32=0): the head stops at "
+"every corner; switch it on with $32=1 in the machine's settings."
+msgstr ""
+"%(version)s na %(port)s. Tryb lasera jest wyłączony ($32=0): głowica "
+"zatrzymuje się w każdym narożniku; włącz go ustawieniem $32=1 w maszynie."
+
+#, python-format
+msgid "%(version)s on %(port)s: connected%(homed)s"
+msgstr "%(version)s na %(port)s: połączono%(homed)s"
 
 #, python-format
 msgid "%(w).1f × %(h).1f mm, %(n)d shapes, %(l)d layers"
@@ -208,8 +220,16 @@ msgstr "(sterownik libUSB nie jest zainstalowany)"
 msgid "(own settings)"
 msgstr "(własne ustawienia)"
 
+msgid ", homed"
+msgstr ", zbazowano"
+
 msgid "3D"
 msgstr "3D"
+
+msgid "; Kerfly takes the head to be in the home corner (Settings → Machine)"
+msgstr ""
+"; Kerfly przyjmuje, że głowica stoi w rogu bazowania (Ustawienia → "
+"Maszyna)"
 
 #, python-format
 msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
@@ -448,6 +468,9 @@ msgstr "Dno"
 
 msgid "Boundary trace as a rectangle (off: along the outline of the design)"
 msgstr "Objazd konturu jako prostokąt (wyłączone: wzdłuż obwiedni projektu)"
+
+msgid "Boundary trace done"
+msgstr "Obrys gotowy"
 
 msgid "Boundary trace gap"
 msgstr "Odstęp objazdu konturu"
@@ -1022,6 +1045,13 @@ msgstr "Pliki EGV (*.EGV *.egv)"
 msgid "EGV files (*.egv *.EGV);;All files (*)"
 msgstr "Pliki EGV (*.egv *.EGV);;Wszystkie pliki (*)"
 
+msgid ""
+"EGV files are for K40 lasers; a GRBL laser runs G-code (File → Save "
+"G-code)."
+msgstr ""
+"Pliki EGV są dla laserów K40; laser GRBL wykonuje G-code (Plik → Zapisz "
+"G-code)."
+
 msgid "Each part on its own layer"
 msgstr "Każda część na osobnej warstwie"
 
@@ -1253,6 +1283,45 @@ msgstr "G-code nie został zapisany: %s"
 msgid "G-code saved: %s (%d lines)"
 msgstr "Zapisano G-code: %s (linie: %d)"
 
+#, python-format
+msgid "GRBL alarm %(code)s: %(text)s. Unlock or home the machine."
+msgstr "Alarm GRBL %(code)s: %(text)s. Odblokuj albo zbazuj maszynę."
+
+msgid "GRBL board, serial port (beta)"
+msgstr "Płyta GRBL, port szeregowy (beta)"
+
+#, python-format
+msgid "GRBL did not answer \"%s\"."
+msgstr "GRBL nie odpowiedział na „%s”."
+
+msgid "GRBL did not finish in time."
+msgstr "GRBL nie skończył w wyznaczonym czasie."
+
+#, python-format
+msgid "GRBL error %(code)s: %(text)s"
+msgstr "Błąd GRBL %(code)s: %(text)s"
+
+msgid "GRBL is finishing the job…"
+msgstr "GRBL kończy zadanie…"
+
+msgid "GRBL is in alarm: unlock or home the machine."
+msgstr "GRBL jest w alarmie: odblokuj albo zbazuj maszynę."
+
+msgid "GRBL: corner the head homes to ($H)"
+msgstr "GRBL: róg bazowania głowicy ($H)"
+
+msgid "GRBL: full power S ($30)"
+msgstr "GRBL: pełna moc S ($30)"
+
+msgid "GRBL: jog speed (mm/min)"
+msgstr "GRBL: prędkość przesuwu (mm/min)"
+
+msgid "GRBL: serial port"
+msgstr "GRBL: port szeregowy"
+
+msgid "GRBL: serial speed (baud)"
+msgstr "GRBL: prędkość portu (bod)"
+
 msgid "Gap"
 msgstr "Odstęp"
 
@@ -1409,6 +1478,13 @@ msgstr "Bazowanie: przesuń głowicę do pozycji bazowej"
 
 msgid "Homed"
 msgstr "Głowica w pozycji bazowej"
+
+msgid ""
+"Homing is switched off on this GRBL board ($22=0). Put the head in the "
+"home corner (Settings → Machine) by hand before connecting."
+msgstr ""
+"Bazowanie jest wyłączone na tej płycie GRBL ($22=0). Przed połączeniem "
+"ustaw głowicę ręcznie w rogu bazowania (Ustawienia → Maszyna)."
 
 msgid "Honeycomb"
 msgstr "Plaster miodu"
@@ -1570,6 +1646,9 @@ msgstr "Połączono linie (%(pieces)d) w ścieżki (%(paths)d), zamknięte: %(cl
 
 msgid "Jump to the next layer"
 msgstr "Przeskocz do następnej warstwy"
+
+msgid "K40 (Lihuiyu board, USB)"
+msgstr "K40 (płyta Lihuiyu, USB)"
 
 msgid "Keep the original"
 msgstr "Zachowaj oryginał"
@@ -1811,6 +1890,9 @@ msgstr ""
 
 msgid "Loading cancelled"
 msgstr "Anulowano wczytywanie"
+
+msgid "Look for serial ports again (after plugging the laser in)"
+msgstr "Szukaj portów szeregowych ponownie (po podłączeniu lasera)"
 
 msgid "Low (7 %)"
 msgstr "Niska (7 %)"
@@ -2101,6 +2183,22 @@ msgstr "Nowy tekst"
 msgid "New text on a path"
 msgstr "Nowy tekst na ścieżce"
 
+#, python-format
+msgid "No GRBL board answered on %s."
+msgstr "Na %s nie odpowiedziała żadna płyta GRBL."
+
+msgid "No GRBL board answered."
+msgstr "Żadna płyta GRBL nie odpowiedziała."
+
+#, python-format
+msgid ""
+"No access to the serial port %s. On Linux add your user to the dialout "
+"group: sudo usermod -aG dialout $USER, then log out and in again."
+msgstr ""
+"Brak dostępu do portu szeregowego %s. Na Linuksie dodaj swojego "
+"użytkownika do grupy dialout: sudo usermod -aG dialout $USER, potem "
+"wyloguj się i zaloguj ponownie."
+
 msgid "No corner at the selected nodes: the curve passes smoothly through them"
 msgstr "Bez narożnika w zaznaczonych węzłach: krzywa przechodzi przez nie gładko"
 
@@ -2125,6 +2223,11 @@ msgstr "Nie wygenerowano danych dla lasera."
 msgid "No pattern"
 msgstr "Bez wzoru"
 
+msgid "No serial port found: is the GRBL laser plugged in and switched on?"
+msgstr ""
+"Nie znaleziono portu szeregowego: czy laser GRBL jest podłączony i "
+"włączony?"
+
 msgid "No. 123"
 msgstr "Nr 123"
 
@@ -2133,6 +2236,9 @@ msgstr "Węzeł"
 
 msgid "Node editing keys"
 msgstr "Klawisze edycji węzłów"
+
+msgid "Not available on GRBL boards."
+msgstr "Niedostępne na płytach GRBL."
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notatki (np. dostawca, soczewka, nadmuch)"
@@ -2480,6 +2586,9 @@ msgstr "Moc:"
 
 msgid "Prepare USB data before sending"
 msgstr "Przygotuj dane USB przed wysłaniem"
+
+msgid "Preparing G-code…"
+msgstr "Przygotowanie G-code…"
 
 #, python-format
 msgid "Preparing USB data: %s%%"
@@ -2958,6 +3067,10 @@ msgstr "Wysyłanie %s…"
 msgid "Sending data to laser: %s%%"
 msgstr "Wysyłanie danych do lasera: %s%%"
 
+#, python-format
+msgid "Sending to GRBL: %d %%"
+msgstr "Wysyłanie do GRBL: %d %%"
+
 msgid "Set a distance other than 0 first."
 msgstr "Najpierw ustaw odległość różną od 0."
 
@@ -3242,6 +3355,13 @@ msgstr "Zatrzymaj zadanie teraz"
 msgid "Stopped by the user."
 msgstr "Zatrzymane przez użytkownika."
 
+msgid ""
+"Stopped by user. GRBL was reset: unlock or home the machine before the "
+"next job."
+msgstr ""
+"Zatrzymane przez użytkownika. GRBL został zresetowany: przed kolejnym "
+"zadaniem odblokuj albo zbazuj maszynę."
+
 msgid "Stopping…"
 msgstr "Zatrzymywanie…"
 
@@ -3292,6 +3412,9 @@ msgstr ""
 
 msgid "Test fire"
 msgstr "Strzał testowy"
+
+msgid "Test fire is not available on GRBL boards yet."
+msgstr "Strzał testowy nie jest jeszcze dostępny na płytach GRBL."
 
 #, python-format
 msgid "Test fire: %.0f%% for %d ms"
@@ -3451,6 +3574,9 @@ msgstr "Plik nie określa rozmiaru obrazu. Ustaw jego wymiary."
 msgid "The file is not a Kerfly material library."
 msgstr "Ten plik nie jest bazą materiałów Kerfly."
 
+msgid "The first GRBL board that answers"
+msgstr "Pierwsza płyta GRBL, która odpowie"
+
 msgid "The first K40 found"
 msgstr "Pierwszy znaleziony K40"
 
@@ -3573,6 +3699,9 @@ msgstr "Program uruchomiony przed zadaniem zgłosił błąd."
 msgid "The program set to run before the job did not work:"
 msgstr "Program ustawiony na przed zadaniem nie zadziałał:"
 
+msgid "The pyserial library is missing (needed for GRBL boards)."
+msgstr "Brakuje biblioteki pyserial (potrzebnej dla płyt GRBL)."
+
 msgid ""
 "The report form is opening in your browser. Please drag the diagnostic "
 "report into its \"Diagnostic report\" field:"
@@ -3594,6 +3723,17 @@ msgid ""
 msgstr ""
 "Reguła dla portu USB lasera jest już zainstalowana. Jeśli Kerfly nadal "
 "nie może się połączyć, odłącz kabel USB lasera i podłącz go ponownie."
+
+#, python-format
+msgid "The serial port %(port)s could not be opened: %(error)s"
+msgstr "Nie udało się otworzyć portu szeregowego %(port)s: %(error)s"
+
+msgid ""
+"The serial port of the GRBL board (Linux: /dev/ttyUSB0 or /dev/ttyACM0; "
+"Windows: COM3, ...), kept in this laser's profile"
+msgstr ""
+"Port szeregowy płyty GRBL (Linux: /dev/ttyUSB0 albo /dev/ttyACM0; "
+"Windows: COM3, …), zapamiętywany w profilu tego lasera"
 
 msgid ""
 "The settings of the laser in use are changed in Settings (board, bed, "
@@ -3837,6 +3977,10 @@ msgstr "Jednostki"
 #, python-format
 msgid "Unknown USB error: %s"
 msgstr "Nieznany błąd USB: %s"
+
+#, python-format
+msgid "Unknown error: %s"
+msgstr "Nieznany błąd: %s"
 
 msgid "Unlock rail after a job"
 msgstr "Odblokuj osie po zadaniu"
@@ -4111,6 +4255,9 @@ msgstr "w użyciu"
 msgid "kerf = (%s mm - measured) / %d"
 msgstr "kerf = (%s mm - zmierzone) / %d"
 
+msgid "lower left (most GRBL lasers)"
+msgstr "lewy dolny (większość laserów GRBL)"
+
 msgid "middle"
 msgstr "połowa"
 
@@ -4131,6 +4278,9 @@ msgstr "grawer"
 
 msgid "several elements: to each other; one element: to the bed"
 msgstr "kilka elementów: względem siebie; jeden element: względem stołu"
+
+msgid "upper left"
+msgstr "lewy górny"
 
 msgid "vector cut"
 msgstr "cięcie"
@@ -4530,4 +4680,11 @@ msgstr "obrys"
 #~ "cięcia, odhaczonych: wytnij arkusz 1, "
 #~ "zmień materiał, potem zaznacz warstwę "
 #~ "kolejnego arkusza."
+
+#~ msgid ""
+#~ "Homing is switched off on this "
+#~ "GRBL board ($22=0). Move the head "
+#~ "to the material's corner by hand "
+#~ "or with the arrows."
+#~ msgstr ""
 

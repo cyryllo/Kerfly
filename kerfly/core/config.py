@@ -72,6 +72,11 @@ SETTINGS_KEYS = [
     ("usb_port", TEXT),      # Kerfly only: USB port of this machine's board ("" = the first K40 found)
     ("pre_exec", BOOL),      # Kerfly only: run a program before a job (the exhaust on, ...)
     ("pre_batch_path", QUOTED),  # Kerfly only: that program
+    ("machine", TEXT),       # Kerfly only: "k40" (Lihuiyu board over USB) or "grbl" (GRBL board, serial port)
+    ("grbl_port", TEXT),     # Kerfly only: GRBL: serial port ("" = the first board that answers)
+    ("grbl_baud", TEXT),     # Kerfly only: GRBL: serial speed
+    ("grbl_home", TEXT),     # Kerfly only: GRBL: the corner $H homes to ("lower_left" or "upper_left")
+    ("grbl_jog", TEXT),      # Kerfly only: GRBL: jog speed, mm/min
     ("gcode_origin", TEXT),  # Kerfly only: G-code for GRBL: X0 Y0 at "lower_left" of the bed or the "design"
     ("gcode_s_max", TEXT),   # Kerfly only: G-code: the S value of full power (GRBL's $30)
     ("gcode_overscan", TEXT),  # Kerfly only: G-code: raster overscan in mm
@@ -103,6 +108,7 @@ DEFAULT_VALUES = {
     "designfile": "", "inkscape_path": "", "batch_path": "",
     "pre_exec": "0", "pre_batch_path": "", "theme": "light", "dither": "floyd", "usb_port": "",
     "gcode_origin": "lower_left", "gcode_s_max": "1000", "gcode_overscan": "2",
+    "machine": "k40", "grbl_port": "", "grbl_baud": "115200", "grbl_home": "lower_left", "grbl_jog": "3000",
     "language": "",          # "" = system language
     "grid_mm": "0",
     "snap_objects": "1",

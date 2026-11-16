@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-16 23:31+0100\n"
+"POT-Creation-Date: 2026-11-17 00:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,6 +22,16 @@ msgstr ""
 
 #, python-format
 msgid "%(name)s inserted: %(n)d shapes. Drag it into place; Undo takes it away."
+msgstr ""
+
+#, python-format
+msgid ""
+"%(version)s on %(port)s. Laser mode is off ($32=0): the head stops at "
+"every corner; switch it on with $32=1 in the machine's settings."
+msgstr ""
+
+#, python-format
+msgid "%(version)s on %(port)s: connected%(homed)s"
 msgstr ""
 
 #, python-format
@@ -199,7 +209,13 @@ msgstr ""
 msgid "(own settings)"
 msgstr ""
 
+msgid ", homed"
+msgstr ""
+
 msgid "3D"
+msgstr ""
+
+msgid "; Kerfly takes the head to be in the home corner (Settings → Machine)"
 msgstr ""
 
 #, python-format
@@ -422,6 +438,9 @@ msgid "Bottom"
 msgstr ""
 
 msgid "Boundary trace as a rectangle (off: along the outline of the design)"
+msgstr ""
+
+msgid "Boundary trace done"
 msgstr ""
 
 msgid "Boundary trace gap"
@@ -966,6 +985,11 @@ msgstr ""
 msgid "EGV files (*.egv *.EGV);;All files (*)"
 msgstr ""
 
+msgid ""
+"EGV files are for K40 lasers; a GRBL laser runs G-code (File → Save "
+"G-code)."
+msgstr ""
+
 msgid "Each part on its own layer"
 msgstr ""
 
@@ -1171,6 +1195,45 @@ msgstr ""
 msgid "G-code saved: %s (%d lines)"
 msgstr ""
 
+#, python-format
+msgid "GRBL alarm %(code)s: %(text)s. Unlock or home the machine."
+msgstr ""
+
+msgid "GRBL board, serial port (beta)"
+msgstr ""
+
+#, python-format
+msgid "GRBL did not answer \"%s\"."
+msgstr ""
+
+msgid "GRBL did not finish in time."
+msgstr ""
+
+#, python-format
+msgid "GRBL error %(code)s: %(text)s"
+msgstr ""
+
+msgid "GRBL is finishing the job…"
+msgstr ""
+
+msgid "GRBL is in alarm: unlock or home the machine."
+msgstr ""
+
+msgid "GRBL: corner the head homes to ($H)"
+msgstr ""
+
+msgid "GRBL: full power S ($30)"
+msgstr ""
+
+msgid "GRBL: jog speed (mm/min)"
+msgstr ""
+
+msgid "GRBL: serial port"
+msgstr ""
+
+msgid "GRBL: serial speed (baud)"
+msgstr ""
+
 msgid "Gap"
 msgstr ""
 
@@ -1322,6 +1385,11 @@ msgstr ""
 msgid "Homed"
 msgstr ""
 
+msgid ""
+"Homing is switched off on this GRBL board ($22=0). Put the head in the "
+"home corner (Settings → Machine) by hand before connecting."
+msgstr ""
+
 msgid "Honeycomb"
 msgstr ""
 
@@ -1465,6 +1533,9 @@ msgid "Joined %(pieces)d lines into %(paths)d path(s), %(closed)d of them closed
 msgstr ""
 
 msgid "Jump to the next layer"
+msgstr ""
+
+msgid "K40 (Lihuiyu board, USB)"
 msgstr ""
 
 msgid "Keep the original"
@@ -1675,6 +1746,9 @@ msgid "Living hinge: rows of cuts that let the sheet bend across them"
 msgstr ""
 
 msgid "Loading cancelled"
+msgstr ""
+
+msgid "Look for serial ports again (after plugging the laser in)"
 msgstr ""
 
 msgid "Low (7 %)"
@@ -1944,6 +2018,19 @@ msgstr ""
 msgid "New text on a path"
 msgstr ""
 
+#, python-format
+msgid "No GRBL board answered on %s."
+msgstr ""
+
+msgid "No GRBL board answered."
+msgstr ""
+
+#, python-format
+msgid ""
+"No access to the serial port %s. On Linux add your user to the dialout "
+"group: sudo usermod -aG dialout $USER, then log out and in again."
+msgstr ""
+
 msgid "No corner at the selected nodes: the curve passes smoothly through them"
 msgstr ""
 
@@ -1966,6 +2053,9 @@ msgstr ""
 msgid "No pattern"
 msgstr ""
 
+msgid "No serial port found: is the GRBL laser plugged in and switched on?"
+msgstr ""
+
 msgid "No. 123"
 msgstr ""
 
@@ -1973,6 +2063,9 @@ msgid "Node"
 msgstr ""
 
 msgid "Node editing keys"
+msgstr ""
+
+msgid "Not available on GRBL boards."
 msgstr ""
 
 msgid "Notes (e.g. supplier, lens, air assist)"
@@ -2292,6 +2385,9 @@ msgid "Power:"
 msgstr ""
 
 msgid "Prepare USB data before sending"
+msgstr ""
+
+msgid "Preparing G-code…"
 msgstr ""
 
 #, python-format
@@ -2737,6 +2833,10 @@ msgstr ""
 msgid "Sending data to laser: %s%%"
 msgstr ""
 
+#, python-format
+msgid "Sending to GRBL: %d %%"
+msgstr ""
+
 msgid "Set a distance other than 0 first."
 msgstr ""
 
@@ -2995,6 +3095,11 @@ msgstr ""
 msgid "Stopped by the user."
 msgstr ""
 
+msgid ""
+"Stopped by user. GRBL was reset: unlock or home the machine before the "
+"next job."
+msgstr ""
+
 msgid "Stopping…"
 msgstr ""
 
@@ -3041,6 +3146,9 @@ msgid ""
 msgstr ""
 
 msgid "Test fire"
+msgstr ""
+
+msgid "Test fire is not available on GRBL boards yet."
 msgstr ""
 
 #, python-format
@@ -3175,6 +3283,9 @@ msgstr ""
 msgid "The file is not a Kerfly material library."
 msgstr ""
 
+msgid "The first GRBL board that answers"
+msgstr ""
+
 msgid "The first K40 found"
 msgstr ""
 
@@ -3279,6 +3390,9 @@ msgstr ""
 msgid "The program set to run before the job did not work:"
 msgstr ""
 
+msgid "The pyserial library is missing (needed for GRBL boards)."
+msgstr ""
+
 msgid ""
 "The report form is opening in your browser. Please drag the diagnostic "
 "report into its \"Diagnostic report\" field:"
@@ -3293,6 +3407,15 @@ msgstr ""
 msgid ""
 "The rule for the laser's USB port is already installed. If Kerfly still "
 "cannot connect, unplug the laser's USB cable and plug it in again."
+msgstr ""
+
+#, python-format
+msgid "The serial port %(port)s could not be opened: %(error)s"
+msgstr ""
+
+msgid ""
+"The serial port of the GRBL board (Linux: /dev/ttyUSB0 or /dev/ttyACM0; "
+"Windows: COM3, ...), kept in this laser's profile"
 msgstr ""
 
 msgid ""
@@ -3507,6 +3630,10 @@ msgstr ""
 
 #, python-format
 msgid "Unknown USB error: %s"
+msgstr ""
+
+#, python-format
+msgid "Unknown error: %s"
 msgstr ""
 
 msgid "Unlock rail after a job"
@@ -3760,6 +3887,9 @@ msgstr ""
 msgid "kerf = (%s mm - measured) / %d"
 msgstr ""
 
+msgid "lower left (most GRBL lasers)"
+msgstr ""
+
 msgid "middle"
 msgstr ""
 
@@ -3779,6 +3909,9 @@ msgid "raster"
 msgstr ""
 
 msgid "several elements: to each other; one element: to the bed"
+msgstr ""
+
+msgid "upper left"
 msgstr ""
 
 msgid "vector cut"

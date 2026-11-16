@@ -519,6 +519,24 @@ it) and the **raster overscan** (the head starts and stops this far beyond
 each raster line, so it is at speed where it burns). These are kept with the
 laser profile. Not yet checked on a GRBL machine.
 
+**A GRBL laser connected to Kerfly (beta).** In **Settings → Machine** choose
+**Machine: GRBL board, serial port**, then its **serial port** (or the first
+board that answers; ↻ looks again after plugging it in), its speed (115200
+on most boards), the **corner the head homes to** (lower left on most GRBL
+lasers), the **jog speed** and **full power S** (`$30`). These are kept in the
+laser profile, so a K40 and a GRBL laser can each have their own. Then the
+usual buttons work on it: **Connect** opens the port and reads the board's
+settings (and homes with `$H` when homing is on and Home when initializing
+is ticked; without limit switches put the head in the home corner before
+switching the board on), **Home** `$H`, **Unlock** `$X`, the **arrows** and
+the corner buttons jog the head, **Trace boundary** drives round the design,
+**Start** moves the head to the design's upper left corner, makes that X0 Y0
+(`G92`) and streams the job's G-code, **Pause** holds the machine (`!`) and
+resumes it (`~`), **Stop** resets it (then Unlock or Home). The board should
+be in laser mode (`$32=1`); Kerfly says so when it is not. On Linux the
+serial port needs your user in the `dialout` group:
+`sudo usermod -aG dialout $USER`, then log out and in again.
+
 <a id="s8"></a>
 
 ## 8. Settings

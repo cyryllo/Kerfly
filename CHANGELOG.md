@@ -32,6 +32,13 @@ features of the roadmap. The fixes of the 1.x releases are in it too.
   Origin at the bed's lower left corner or at the design's upper left corner,
   full power S (`$30`) and the overscan are asked and kept with the laser
   profile. Not yet checked on a GRBL machine.
+- **GRBL lasers connected to Kerfly (beta)**: Settings → Machine → Machine:
+  GRBL board, serial port (its port, speed, home corner, jog speed and full
+  power S, kept in the laser profile). Connect, Home (`$H`), Unlock (`$X`),
+  the arrows and corner buttons (jog), Trace boundary, Start (G-code streamed
+  from the design's upper left corner as X0 Y0, never overfilling the board's
+  buffer), Pause / resume (`!` / `~`) and Stop (reset) work on it. Needs the
+  pyserial library (in the packages).
 
 ## 1.8.0 (2026-11-16)
 

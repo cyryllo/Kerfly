@@ -14,8 +14,16 @@ from kerfly.i18n import LANGUAGES, N_, _
 # (key, label, kind, options). kinds: bool, float, int, choice, path
 TABS = [
     (N_("Machine"), [
+        ("machine", N_("Machine"), "pairs", [("k40", N_("K40 (Lihuiyu board, USB)")),
+                                             ("grbl", N_("GRBL board, serial port (beta)"))]),
         ("board_name", N_("Controller board"), "choice", BOARD_NAMES),
         ("usb_port", N_("USB port (beta)"), "usb_port", None),
+        ("grbl_port", N_("GRBL: serial port"), "serial_port", None),
+        ("grbl_baud", N_("GRBL: serial speed (baud)"), "choice", ["115200", "250000", "57600", "38400", "9600"]),
+        ("grbl_home", N_("GRBL: corner the head homes to ($H)"), "pairs",
+         [("lower_left", N_("lower left (most GRBL lasers)")), ("upper_left", N_("upper left"))]),
+        ("grbl_jog", N_("GRBL: jog speed (mm/min)"), "float", (100, 30000, 0, None)),
+        ("gcode_s_max", N_("GRBL: full power S ($30)"), "int", (1, 100000)),
         ("units", N_("Units"), "choice", ["mm", "in"]),
         ("LaserXsize", N_("Bed width"), "float", (1, 5000, 1, "len")),
         ("LaserYsize", N_("Bed height"), "float", (1, 5000, 1, "len")),
@@ -86,6 +94,8 @@ TABS = [
 ]
 
 M3_BOARD = "LASER-M3"           # the only board with power control
+GRBL_KEYS = ("grbl_port", "grbl_baud", "grbl_home", "grbl_jog", "gcode_s_max")    # only for a GRBL machine
+K40_KEYS = ("board_name", "usb_port", "HomeUR")                                  # only for a K40
 
 # field -> the tick it depends on
 DEPENDS = {"dither": "halftone", "Trace_power": "trace_w_laser", "batch_path": "post_exec", "pre_batch_path": "pre_exec", "LaserRscale": "rotary",
@@ -148,6 +158,7 @@ class SettingsDialog(QDialog):
         for switch in set(DEPENDS.values()) | {"show_power"}:
             self._widgets[switch].toggled.connect(self._update_enabled)
         self._widgets["board_name"].currentTextChanged.connect(self._update_enabled)
+        self._widgets["machine"].currentIndexChanged.connect(self._update_enabled)
         self._update_enabled()
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -160,8 +171,13 @@ class SettingsDialog(QDialog):
     def _update_enabled(self, *_args):
         """Fields that count only with a tick, and the power settings only with the M3 board (the other
         boards have no power control: the knob of the laser sets it): greyed out otherwise."""
-        m3 = self._widgets["board_name"].currentText() == M3_BOARD
+        grbl = self._widgets["machine"].currentData() == "grbl"
+        m3 = self._widgets["board_name"].currentText() == M3_BOARD and not grbl
         wanted = {key: self._widgets[switch].isChecked() for key, switch in DEPENDS.items()}
+        for key in GRBL_KEYS:
+            wanted[key] = grbl
+        for key in K40_KEYS:
+            wanted[key] = not grbl
         wanted["show_power"] = m3
         wanted["max_power"] = m3 and self._widgets["show_power"].isChecked()
         wanted["Trace_power"] = wanted["Trace_power"] and m3
@@ -174,6 +190,39 @@ class SettingsDialog(QDialog):
 
     def _make_field(self, key, kind, opt, len_unit, speed_unit):
         value = self.values.get(key, "")
+        if kind == "pairs":
+            w = QComboBox()
+            for code, name in opt:
+                w.addItem(_(name), code)
+            w.setCurrentIndex(max(0, w.findData(value)))
+            return w, lambda: w.currentData()
+        if kind == "serial_port":
+            from kerfly.core import grbl
+            from kerfly.gui import icons
+            box = QWidget()
+            row = QHBoxLayout(box)
+            row.setContentsMargins(0, 0, 0, 0)
+            combo = QComboBox()
+
+            def fill():
+                current = combo.currentData() if combo.count() else value
+                combo.clear()
+                combo.addItem(_("The first GRBL board that answers"), "")
+                for device, description in grbl.serial_ports():
+                    combo.addItem("%s (%s)" % (device, description) if description != device else device, device)
+                if current and combo.findData(current) < 0:
+                    combo.addItem(_("%s (not plugged in now)") % current, current)
+                combo.setCurrentIndex(max(0, combo.findData(current)))
+            fill()
+            combo.setToolTip(_("The serial port of the GRBL board (Linux: /dev/ttyUSB0 or /dev/ttyACM0; Windows: "
+                               "COM3, ...), kept in this laser's profile"))
+            again = QPushButton(icons.tabler("refresh"), "")
+            again.setToolTip(_("Look for serial ports again (after plugging the laser in)"))
+            again.clicked.connect(fill)
+            row.addWidget(combo, 1)
+            row.addWidget(again)
+            self.serial_port_box = combo
+            return box, lambda: combo.currentData() or ""
         if kind == "bool":
             w = QCheckBox()
             w.setChecked(is_true(value))

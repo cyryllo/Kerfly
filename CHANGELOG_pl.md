@@ -30,6 +30,13 @@ Zawiera też poprawki wydań 1.x.
   wysyłającego. Początek w lewym dolnym rogu stołu albo w lewym górnym rogu
   projektu, pełna moc S (`$30`) i najazd są zapamiętywane w profilu lasera.
   Jeszcze nie sprawdzone na maszynie GRBL.
+- **Lasery GRBL podłączone do Kerfly (beta)**: Ustawienia → Maszyna → Maszyna:
+  płyta GRBL, port szeregowy (port, prędkość, róg bazowania, prędkość
+  przesuwu i pełna moc S, zapamiętywane w profilu lasera). Działają na nim
+  Połącz, Bazuj (`$H`), Odblokuj (`$X`), strzałki i przyciski narożników
+  (przesuw), Obrys, Start (G-code wysyłany od lewego górnego rogu projektu
+  jako X0 Y0, bez przepełniania bufora płyty), Pauza / wznowienie (`!` / `~`)
+  i Stop (reset). Potrzebuje biblioteki pyserial (jest w paczkach).
 
 ## 1.8.0 (2026-11-16)
 

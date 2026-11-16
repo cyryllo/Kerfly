@@ -216,3 +216,42 @@ def _raster(w, design, rows, to_bed, to_xy, power, feed, overscan_mm):
             w.cut_mm(X1, Y1, power, feed)
         w.cut_mm(end[0] + step, end[1], 0, feed)
         forward = not forward
+
+
+def trace(elements, settings, values, options=None, with_laser=False, power=0.0, feed=3000.0, gap_mm=0.0):
+    """The boundary trace as G-code: the rectangle round the ticked elements (gap_mm further out), from the
+    design's upper left corner (the job's X0 Y0; options.origin "design") or on the bed; the laser off (G0)
+    or on at `power` (0..1) and `feed` mm/min."""
+    from . import config
+    options = options or GcodeOptions(origin="design")
+    bed_w, bed_h = config.bed_size_inches(values)
+    on_bed = bed_elements(elements, bed_w, getattr(settings, "home_upper_right", False))
+    if not on_bed:
+        raise ValueError("Nothing to laser: no element is ticked.")
+    g = gap_mm / 25.4
+    x0 = min(e.bounds[0] for e in on_bed) - g
+    x1 = max(e.bounds[1] for e in on_bed) + g
+    y0 = min(e.bounds[2] for e in on_bed) - g
+    y1 = max(e.bounds[3] for e in on_bed) + g
+    left, top = x0 + g, y1 - g                       # the design's upper left corner: X0 Y0 of the job
+    if options.origin == "design":
+        def to_xy(x, y):
+            return (x - left) * 25.4, (y - top) * 25.4
+    else:
+        def to_xy(x, y):
+            return x * 25.4, (bed_h + y) * 25.4
+    w = _Writer(to_xy)
+    w.comment("Kerfly: boundary trace")
+    w.lines += ["G21", "G90", "M4 S0"]
+    corners = [(x0, y1), (x1, y1), (x1, y0), (x0, y0), (x0, y1)]
+    w.rapid(*corners[0])
+    s = int(round(max(0.0, min(1.0, power)) * max(1, int(options.s_max))))
+    for c in corners[1:]:
+        if with_laser:
+            w.cut(*c, s, feed)
+        else:
+            X, Y = to_xy(*c)
+            w.lines.append("G1 X%s Y%s S0 F%s" % (_fmt(X), _fmt(Y), _fmt(feed)))
+    w.lines += ["M5 S0", "G0 X0 Y0" if options.origin == "design" else "G0 X%s Y%s" % tuple(
+        _fmt(v) for v in to_xy(left, top))]
+    return "\n".join(w.lines) + "\n"

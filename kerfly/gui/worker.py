@@ -232,3 +232,41 @@ class RasterLayersWorker(TaskWorker):
                 continue
             raster.make_raster_coords(design, layer_settings(self.settings, layer), self._progress, self.stop)
         return _("Raster prepared")
+
+
+class GrblJobWorker(TaskWorker):
+    """A job (or the boundary trace) for a GRBL laser: G-code from the design's upper left corner, where the
+    head is when it starts (G92 X0 Y0 there), streamed to the board; the head ends back there."""
+
+    def __init__(self, elements, layers, settings, values, laser, trace=False, parent=None):
+        super().__init__(laser=laser, parent=parent)
+        self.elements = list(elements)
+        self.layers = [layer.copy() for layer in layers]
+        self.settings = settings
+        self.values = dict(values)
+        self.trace = trace
+        self.operation = job.TRACE_ENG if trace else None
+
+    def task(self):
+        from kerfly.core import gcode
+        s_max = int(float(self.values.get("gcode_s_max", 1000) or 1000))
+        options = gcode.GcodeOptions(origin="design", s_max=s_max,
+                                     overscan_mm=float(self.values.get("gcode_overscan", 2) or 0))
+        if self.trace:
+            units = self.values.get("units", "mm")
+            text = gcode.trace(self.elements, self.settings, self.values, options,
+                               with_laser=self.values.get("trace_w_laser", "0") in ("1", "true", "True"),
+                               power=float(self.values.get("Trace_power", 0) or 0),
+                               feed=gcode.feed_mm_min(self.values.get("trace_speed", 50), units),
+                               gap_mm=float(self.values.get("trace_gap", 0) or 0)
+                               * (25.4 if units == "in" else 1.0))
+        else:
+            self._progress(_("Preparing G-code…"))
+            text = gcode.build(self.elements, self.layers, self.settings, self.values, options,
+                               progress=self._progress)
+        self.sending = True
+        seconds = self.laser.stream(["G92 X0 Y0"] + text.splitlines(), update_gui=self._update_gui,
+                                    stop=self.stop)
+        if self.trace:
+            return _("Boundary trace done")
+        return _("Job finished in %s") % _duration(seconds)

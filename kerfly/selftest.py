@@ -43,7 +43,7 @@ def _check_imports(r):
     for name, module, required in (("PySide6", "PySide6", True), ("lxml", "lxml.etree", True),
                                    ("Pillow", "PIL", True), ("pyusb", "usb", True),
                                    ("svgelements", "svgelements", True),
-                                   ("pyclipper", "pyclipper", False)):
+                                   ("pyserial", "serial", True), ("pyclipper", "pyclipper", False)):
         try:
             mod = __import__(module, fromlist=["_"])
             version = getattr(mod, "__version__", "") or getattr(mod, "LXML_VERSION", "") \

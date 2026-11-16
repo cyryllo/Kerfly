@@ -26,6 +26,7 @@ from kerfly.i18n import C_, N_, _, ngettext, tr_message
 from kerfly.core.config import is_true
 from kerfly.core.design import Design
 from kerfly.core.estimate import format_time
+from kerfly.core.grbl import GrblController
 from kerfly.core.laser import LaserController, LaserError, clamp_head_position, corner_offset
 from kerfly.core import materials as material_lib
 from kerfly.core import project as project_io
@@ -47,7 +48,7 @@ from kerfly.gui.layers_panel import KIND_NAMES as LAYER_KIND_NAMES
 from kerfly.core.layers import DEFAULT_COLORS as DEFAULT_LAYER_COLORS
 from kerfly.gui.layers_panel import LayersPanel
 from kerfly.gui.materials_dialog import MaterialsDialog
-from kerfly.gui.worker import EgvSendWorker, JobWorker, LayersJobWorker, RasterLayersWorker
+from kerfly.gui.worker import EgvSendWorker, GrblJobWorker, JobWorker, LayersJobWorker, RasterLayersWorker
 
 # jog pad: 3 rows as tall as the machine column beside it (4 buttons of 56 px, spacing 4)
 JOG_BUTTON = (4 * 56 + 3 * 4 - 2 * 4) // 3
@@ -108,7 +109,7 @@ class MainWindow(QMainWindow):
         self._undo = []                 # layout snapshots for undo / redo
         self._redo = []
         self.design_file = ""           # last file opened (start folder for file dialogs)
-        self.laser = LaserController()
+        self.laser = self._make_laser()
         self.head = (0.0, 0.0)          # laser head position on the bed, inches (y <= 0)
         self.worker = None
         self._paused = False
@@ -4348,7 +4349,7 @@ class MainWindow(QMainWindow):
         if changed:
             self._apply_settings(new, changed)
         released = False
-        if self.laser.connected and "usb_port" in changed and self.values.get("usb_port") \
+        if self.laser.connected and not self.is_grbl() and "usb_port" in changed and self.values.get("usb_port") \
                 and self.values.get("usb_port") != self.laser.port_key:
             # another machine on another USB port: the next Connect opens it
             self.laser.release()
@@ -4365,6 +4366,41 @@ class MainWindow(QMainWindow):
         ProfilesDialog(self).exec()
         self._refresh_profile_box()
 
+    def _make_laser(self):
+        """The controller of this machine: a K40 (USB) or a GRBL board (serial port)."""
+        if self.values.get("machine") == "grbl":
+            laser = GrblController()
+            try:
+                laser.jog_feed = float(self.values.get("grbl_jog", 3000) or 3000)
+            except ValueError:
+                pass
+            return laser
+        return LaserController()
+
+    def is_grbl(self):
+        return isinstance(self.laser, GrblController)
+
+    def _machine_changed(self, changed):
+        """Another kind of machine, or another serial port: the next Connect opens it."""
+        want_grbl = self.values.get("machine") == "grbl"
+        if want_grbl != self.is_grbl() or (want_grbl and changed & {"grbl_port", "grbl_baud"}):
+            if self.laser.connected:
+                try:
+                    self.laser.release()
+                except Exception:
+                    pass
+            self.laser = self._make_laser()
+            self._update_laser_state()
+        elif want_grbl and "grbl_jog" in changed:
+            self.laser.jog_feed = float(self.values.get("grbl_jog", 3000) or 3000)
+
+    def _home_head(self):
+        """Where the head is after homing (bed inches: x from home, y <= 0 from the top): a GRBL board may home
+        to the lower left corner."""
+        if self.is_grbl() and self.values.get("grbl_home", "lower_left") == "lower_left":
+            return (0.0, -config.bed_size_inches(self.values)[1])
+        return (0.0, 0.0)
+
     def _apply_settings(self, new, changed):
         """New settings into the window (Settings dialog, another laser)."""
         if "units" in changed:
@@ -4373,6 +4409,7 @@ class MainWindow(QMainWindow):
             new = config.convert_units(old, new["units"])
         self.values.clear()
         self.values.update(new)
+        self._machine_changed(changed)
         self._reload_spin_values()
         self._update_unit_suffixes()
         self._update_power_visibility()
@@ -4436,6 +4473,9 @@ class MainWindow(QMainWindow):
         return chosen
 
     def connect_laser(self):
+        if self.is_grbl():
+            self._connect_grbl()
+            return
         QApplication.setOverrideCursor(Qt.WaitCursor)
         self._port_chosen = False
         try:
@@ -4459,6 +4499,38 @@ class MainWindow(QMainWindow):
             self.status(_("Unknown USB error: %s") % e, error=True)
         finally:
             QApplication.restoreOverrideCursor()
+        self.refresh_preview()
+
+    def _connect_grbl(self):
+        """Connect a GRBL board (serial port); with homing on and Settings → Machine → Home when
+        initializing, it homes."""
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            home = is_true(self.values.get("init_home", "1")) and self.laser is not None
+            self.laser.connect(init_home=home, port=self.values.get("grbl_port", ""),
+                               baud=self.values.get("grbl_baud", "115200") or "115200")
+            homed = home and self.laser.settings.get("$22", "0") not in ("0", "")
+            # homed or not, the head is taken to be at the machine's home corner (a board without limit
+            # switches counts from where the head was when it was switched on: put it in that corner)
+            self.head = self._home_head()
+            diag_log.info("grbl: %s on %s, homed %s, $$ %s", self.laser.version, self.laser.port_key, homed,
+                          self.laser.settings)
+            if self.laser.settings.get("$32", "1") == "0":
+                self.status(_("%(version)s on %(port)s. Laser mode is off ($32=0): the head stops at every "
+                              "corner; switch it on with $32=1 in the machine's settings.")
+                            % {"version": self.laser.version, "port": self.laser.port_key}, error=True)
+            else:
+                self.status(_("%(version)s on %(port)s: connected%(homed)s") % {
+                    "version": self.laser.version, "port": self.laser.port_key,
+                    "homed": _(", homed") if homed else _("; Kerfly takes the head to be in the home corner "
+                                                          "(Settings → Machine)")})
+        except LaserError as e:
+            self.status(str(e), error=True)
+        except Exception as e:
+            self.status(_("Unknown error: %s") % e, error=True)
+        finally:
+            QApplication.restoreOverrideCursor()
+        self._update_laser_state()
         self.refresh_preview()
 
     def install_desktop_entry(self):
@@ -4519,7 +4591,7 @@ class MainWindow(QMainWindow):
     def home(self):
         if self.laser.connected and not self._laser_call(self.laser.home, _("Homed")):
             return
-        self.head = (0.0, 0.0)
+        self.head = self._home_head()
         if self.follow_head():
             self._design_to_head(checkpoint=False)
         self.refresh_preview()
@@ -4616,8 +4688,9 @@ class MainWindow(QMainWindow):
         x, y = self.goto_x.value(), self.goto_y.value()
         if self.laser.connected and not self._laser_call(self.laser.home, _("Homed")):
             return
-        self.head = (0.0, 0.0)
-        self.move_by(x, -y)
+        self.head = self._home_head()
+        # from home: Y down from an upper corner, up from a GRBL laser's lower left corner
+        self.move_by(x, y if self.head[1] < 0 else -y)
 
     def test_fire(self):
         if not self.laser.connected:
@@ -4650,6 +4723,10 @@ class MainWindow(QMainWindow):
 
     def send_egv_file(self):
         if self.worker is not None:
+            return
+        if self.is_grbl():
+            self.status(_("EGV files are for K40 lasers; a GRBL laser runs G-code (File → Save G-code)."),
+                        error=True)
             return
         if not self.laser.connected:
             self.status(_("Laser is not initialized."), error=True)
@@ -4720,7 +4797,12 @@ class MainWindow(QMainWindow):
                        if e.visible],
                       [(l.name, l.kind, l.speed, l.passes, round(l.power, 2)) for l in wanted
                        if l.enabled and self._layer_has_data(l)])
-        if trace:
+        if output_file is None and self.is_grbl():
+            job_layers = self.layers if kinds is None else [
+                replace(l, enabled=l.enabled and l.kind in kinds) for l in self.layers]
+            worker = GrblJobWorker(self.elements, job_layers, settings, self.values, self.laser, trace=trace,
+                                   parent=self)
+        elif trace:
             worker = JobWorker(self.design, settings, job.TRACE_ENG,
                                laser=None if output_file else self.laser,
                                output_file=output_file, send_options=send_options, parent=self,
@@ -4821,11 +4903,12 @@ class MainWindow(QMainWindow):
         self.btn_pause.setToolTip(_("Resume the job") if paused else _("Pause the laser; press again to resume"))
 
     def _job_finished(self, ok, message):
-        was_laser_job = isinstance(self.worker, (JobWorker, LayersJobWorker, EgvSendWorker)) \
+        was_laser_job = isinstance(self.worker, (JobWorker, LayersJobWorker, EgvSendWorker, GrblJobWorker)) \
             and self.worker.laser is not None
         interrupted = was_laser_job and not ok and self.worker.sending
         # a boundary trace checks where the job goes: no homing after it (the job starts there next)
-        traced = isinstance(self.worker, JobWorker) and getattr(self.worker, "operation", None) == job.TRACE_ENG
+        traced = isinstance(self.worker, (JobWorker, GrblJobWorker)) and \
+            getattr(self.worker, "operation", None) == job.TRACE_ENG
         self.worker.wait()
         self.worker = None
         self._set_paused(False)
@@ -4843,7 +4926,7 @@ class MainWindow(QMainWindow):
                 # the design stays where it is, the next Start drives the head to it
                 try:
                     self.laser.home()
-                    self.head = (0.0, 0.0)
+                    self.head = self._home_head()
                     diag_log.info("job finished: head homed (setting)")
                 except Exception as e:
                     self.status(_("The job is finished, but homing failed: %s") % e, error=True)

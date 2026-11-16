@@ -330,7 +330,9 @@ checked byte for byte.
   power from the pixel brightness, white parts skipped, overscan at the line
   ends. Usable at once with other senders (LaserGRBL, UGS). Tests: the
   generated G-code checked against expected files.
-- [ ] **Step 2: direct control over the serial port** (`pyserial`).
+- [x] **Step 2: direct control over the serial port** (`pyserial`; done 2026-11-17 on the 2.0 branch, beta
+  until checked on the user's GRBL laser: `kerfly/core/grbl.py`, Settings → Machine → Machine: GRBL; a stand-in
+  board `tests/fakes.py` FakeGrbl; machine type already in the laser profile, so step 3 is mostly done too).
   Connect and read the board settings (`$$`: bed size, `$30` maximum power,
   `$32` laser mode); home `$H`, unlock `$X`, jog with `$J=`, trace boundary,
   start; pause, resume and stop with the real-time commands `!`, `~`,

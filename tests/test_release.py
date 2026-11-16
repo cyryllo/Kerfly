@@ -56,7 +56,7 @@ from kerfly.core import config  # noqa: E402
 from kerfly.core.layers import layer_of  # noqa: E402
 from kerfly.gui import truth  # noqa: E402
 from kerfly.gui.main_window import MainWindow  # noqa: E402
-from fakes import FakeK40  # noqa: E402
+from fakes import FakeGrbl, FakeK40  # noqa: E402
 
 FIX = os.path.join(TESTS_DIR, "fixtures")
 MM = 25.4
@@ -1516,6 +1516,99 @@ def part_m3_board(s):
     s.covered_widgets.add("layer power")
 
 
+def part_grbl(s):
+    """A GRBL laser (beta), on a stand-in board on the serial port: Settings → Machine: GRBL; connect (it
+    homes to the lower left corner), jog, trace, Start (G92 at the design's corner, the G-code streamed),
+    pause and resume, stop; back to the K40."""
+    w = s.w
+    import kerfly.core.grbl as _grbl
+
+    def open_board(port, baud):
+        s.grbl = FakeGrbl()
+        return s.grbl
+    _grbl.open_serial = open_board
+    _grbl.serial_ports = lambda: [("/dev/ttyFAKE0", "GRBL stand-in")]
+    from PySide6.QtWidgets import QComboBox as _C, QPushButton
+
+    def machine_to(code):
+        def answer(dlg):
+            from PySide6.QtWidgets import QDialogButtonBox
+            box = next(c for c in dlg.findChildren(_C) if c.property("setting_key") == "machine")
+            s.pick(box, index=box.findData(code))
+            board = next(c for c in dlg.findChildren(_C) if c.property("setting_key") == "board_name")
+            port = next(c for c in dlg.findChildren(_C) if c.property("setting_key") == "grbl_baud")
+            if board.isEnabled() == (code == "grbl") or port.isEnabled() != (code == "grbl"):
+                raise RuntimeError("the K40 / GRBL fields are not greyed out to match the machine")
+            QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+        return answer
+    s.expect_dialog("settings: GRBL machine", machine_to("grbl"))
+    s.step("Settings (Ctrl+,) → Machine: GRBL board (serial port), OK", lambda: s.trigger(w.act_settings, via="key"),
+           change=False, undo=False, check=lambda: (w.is_grbl() and w.values["machine"] == "grbl",
+                                                    "machine %s" % w.values.get("machine")))
+    s.step("Laser tab", lambda: s.tab(1), change=False)
+    bed_h = config.bed_size_inches(w.values)[1]
+    s.step("connect the GRBL laser (plug button): homes to the lower left corner",
+           lambda: s.click(w.btn_connect), change=False,
+           check=lambda: (w.laser.connected and "$H" in s.grbl.lines and abs(w.head[1] + bed_h) < 1e-6,
+                          "connected %s, lines %s, head %s" % (w.laser.connected, s.grbl.lines[:3], w.head)))
+    right = next(b for b in w.findChildren(QPushButton)
+                 if b.toolTip().startswith(tr_("Move the laser head right by one step")))
+    s.step("jog right (arrow button): a GRBL jog", lambda: s.click(right), change=False,
+           check=lambda: (bool(s.grbl.jogs) and s.grbl.jogs[-1][0] > 0 and s.grbl.jogs[-1][1] == 0,
+                          "jogs %s" % s.grbl.jogs[-2:]))
+    mark = {}
+
+    def trace():
+        mark["n"] = len(s.grbl.lines)
+        s.click(w.btn_trace)
+        s.wait(lambda: w.worker is None)
+    s.step("Trace boundary (button): the rectangle round the design, laser off", trace, change=False,
+           check=lambda: ("G92 X0 Y0" in s.grbl.lines[mark["n"]:] and sum(
+               1 for l in s.grbl.lines[mark["n"]:] if l.startswith("G1") and "S0" in l) == 4,
+               "%s" % s.grbl.lines[mark["n"]:][:8]))
+
+    def start():
+        mark["n"] = len(s.grbl.lines)
+        s.trigger(w.act_start, via="key")
+        s.wait(lambda: w.worker is None, 60)
+    s.step("Start (F9): the G-code from the design's corner streamed to GRBL", start, change=False,
+           check=lambda: ("G92 X0 Y0" in s.grbl.lines[mark["n"]:] and "M4 S0" in s.grbl.lines[mark["n"]:]
+                          and not s.grbl.overflow and any(l.startswith("G1") for l in s.grbl.lines[mark["n"]:]),
+                          "%d lines, overflow %s" % (len(s.grbl.lines) - mark["n"], s.grbl.overflow)))
+
+    def pause_resume():
+        s.grbl.busy_reports = 400                  # the board works long enough to be paused
+        s.click(w.btn_start)
+        s.wait(lambda: "GRBL" in w.statusBar().currentMessage(), 20)
+        s.click(w.btn_pause)
+        s.wait(lambda: w._paused and w.btn_pause.isEnabled(), 30)
+        s.click(w.btn_pause)                       # the same button resumes
+        s.grbl.busy_reports = 0
+        s.grbl._busy = 0
+        s.grbl.state = "Idle"
+        s.wait(lambda: w.worker is None, 60)
+    s.step("Start, Pause (feed hold !), resume (~)", pause_resume, change=False,
+           check=lambda: (s.grbl.realtime[-2:] == ["!", "~"], "realtime %s" % s.grbl.realtime[-4:]))
+
+    def stop():
+        s.grbl.busy_reports = 400
+        s.click(w.btn_start)
+        s.wait(lambda: "GRBL" in w.statusBar().currentMessage(), 20)
+        s.click(w.btn_stop)
+        s.wait(lambda: w.worker is None, 30)
+        s.grbl.busy_reports = 0
+    s.step("Start, Stop (button): GRBL reset", stop, change=False,
+           check=lambda: ("reset" in s.grbl.realtime, "realtime %s" % s.grbl.realtime[-4:]))
+    s.step("Unlock (button): $X after the reset", lambda: s.click(w.btn_unlock), change=False,
+           check=lambda: (s.grbl.lines[-1] == "$X", s.grbl.lines[-2:]))
+    s.expect_dialog("settings: K40 machine", machine_to("k40"))
+    s.step("Settings (Ctrl+,) → Machine: K40 again, OK", lambda: s.trigger(w.act_settings, via="key"),
+           change=False, undo=False, check=lambda: (not w.is_grbl(), "machine %s" % w.values.get("machine")))
+    s.step("connect the K40 again", lambda: s.click(w.btn_connect), change=False,
+           check=lambda: (w.laser.connected and not w.is_grbl(), ""))
+    s.step("Design tab", lambda: s.tab(0), change=False)
+
+
 def part_generators(s):
     """Every generator: its button (toolbar) or menu entry, a number typed into its dialog,
     Insert; the design comes as one undo step."""
@@ -1929,7 +2022,7 @@ def coverage(s):
 def main():
     app = QApplication(sys.argv)
     s = Session(app)
-    for part in (session, part_edit, part_layers, part_view_and_laser, part_m3_board, part_generators,
+    for part in (session, part_edit, part_layers, part_view_and_laser, part_m3_board, part_grbl, part_generators,
                  part_files_and_help):
         try:
             part(s)

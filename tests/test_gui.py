@@ -30,7 +30,7 @@ from PySide6.QtWidgets import QApplication, QComboBox, QWidget, QFileDialog, QIn
 
 from kerfly.core import config  # noqa: E402
 from kerfly.gui.main_window import MainWindow  # noqa: E402
-from fakes import FakeK40, run_until_idle  # noqa: E402
+from fakes import FakeGrbl, FakeK40, run_until_idle  # noqa: E402
 from uidriver import bar_set, choose_layer, click_bar_button, select  # noqa: E402
 
 FIX = os.path.join(TESTS_DIR, "fixtures")
@@ -1512,6 +1512,63 @@ def main():
           gsame and gtexts["0"] == gtexts["1"] and gplaces and gdesign_ok and gpowers == [0, 500] and passes == 2
           and gsaved,
           "(%s)" % [gsame, gtexts["0"] == gtexts["1"], gplaces, gdesign_ok, gpowers, passes, gsaved])
+
+    # 28f. GRBL lasers over the serial port (beta), on a stand-in board: the stream never overfills GRBL's
+    # 128-byte buffer and waits until the moves are done; an error or an alarm of the board stops it with its
+    # meaning; a board without homing ($22=0) says so for Home; laser mode off ($32=0) is pointed out; the
+    # machine type of Settings → Machine picks the controller; a whole job: G92 at the head, then the G-code
+    import time as _gtime
+    import kerfly.core.grbl as _grbl
+    from kerfly.core.laser import LaserError as _LErr
+    gb = FakeGrbl(busy_reports=3)
+    gc = _grbl.GrblController(opener=lambda port, baud: gb)
+    gc.connect(port="/dev/ttyFAKE")
+    long = ["G1 X%d.123 Y%d.456 S500 F1200" % (i, i) for i in range(400)]
+    gc.stream(long)
+    stream_ok = not gb.overflow and gb.lines.count("G1 X399.123 Y399.456 S500 F1200") == 1 and gb.state == "Idle"
+    errors = []
+    for bad in (["G1 X1 Y1 F100", "FOO"], ["$H"]):
+        if bad == ["$H"]:
+            gb._line = lambda line, gb=gb: setattr(gb, "out", gb.out + b"ALARM:9\r\n")
+        try:
+            gc.stream(bad) if bad != ["$H"] else gc.home()
+        except _LErr as e:
+            errors.append(str(e))
+    errors_ok = len(errors) == 2 and "error 20" in errors[0] and "alarm 9" in errors[1]
+    nb = FakeGrbl(homing=False)
+    nb.settings["$32"] = "0"
+    nc = _grbl.GrblController(opener=lambda port, baud: nb)
+    nc.connect(port="/dev/ttyFAKE", init_home=True)
+    try:
+        nc.home()
+        no_home = False
+    except _LErr as e:
+        no_home = "$22=0" in str(e) and "$H" not in nb.lines
+    _ports = _grbl.serial_ports
+    _open = _grbl.open_serial
+    _grbl.serial_ports = lambda: [("/dev/ttyFAKE", "stand-in")]
+    _grbl.open_serial = lambda port, baud: nb
+    mw = make_window(grid_mm="0", machine="grbl", post_disp="0")
+    is_grbl = mw.is_grbl()
+    mw.connect_laser()
+    laser_mode = "$32=1" in mw.statusBar().currentMessage()
+    mw._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
+    mw.start_job()
+    gt0 = _gtime.time()
+    while mw.worker is not None and _gtime.time() - gt0 < 30:
+        app.processEvents()
+        _gtime.sleep(0.02)
+    job_ok = "G92 X0 Y0" in nb.lines and nb.lines.index("G92 X0 Y0") < nb.lines.index("M4 S0") and \
+        any(l.startswith("$J=") for l in nb.lines)
+    mw._apply_settings(dict(mw.values, machine="k40"), {"machine"})
+    back = not mw.is_grbl() and not mw.laser.connected
+    mw._dirty = False
+    mw.close()
+    _grbl.serial_ports, _grbl.open_serial = _ports, _open
+    check("GRBL laser (stand-in board): stream within the buffer, waits for Idle; error / alarm stop it with their "
+          "meaning; no homing and laser mode off are said; Settings picks the controller; a job: G92, G-code",
+          stream_ok and errors_ok and no_home and is_grbl and laser_mode and job_ok and back,
+          "(%s)" % [stream_ok, errors, no_home, is_grbl, laser_mode, job_ok, back])
 
     # 29. freehand: a circle drawn with the mouse becomes a closed smooth path with few nodes
     import math as _m
