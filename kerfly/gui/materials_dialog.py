@@ -31,10 +31,11 @@ def list_label(m):
 
 
 class MaterialsDialog(QDialog):
-    def __init__(self, materials, current_layers=None, units="mm", parent=None, current_extra=None):
+    def __init__(self, materials, current_layers=None, units="mm", parent=None, current_extra=None, speed_factor=1.0):
         """current_layers: {kind: OperationSettings} of the job's basic layers, and
         current_extra: [ExtraLayer] its other layers, for 'New from current layers'."""
         super().__init__(parent)
+        self.speed_factor = float(speed_factor) or 1.0           # shown = kept (mm/s) x it: mm/min for GRBL
         self.setWindowTitle(_("Material library"))
         self.materials = copy.deepcopy(materials)
         self.current_layers = current_layers or {}
@@ -83,9 +84,9 @@ class MaterialsDialog(QDialog):
             box = QGroupBox(_(KIND_TITLES[kind]))
             g = QGridLayout(box)
             speed = QDoubleSpinBox()
-            speed.setRange(0, 10000)
-            speed.setDecimals(1)
-            speed.setSuffix(" mm/s")
+            speed.setRange(0, 10000 * self.speed_factor)
+            speed.setDecimals(1 if self.speed_factor == 1 else 0)
+            speed.setSuffix(" mm/s" if self.speed_factor == 1 else " mm/min")
             passes = QSpinBox()
             passes.setRange(1, 100)
             power = QDoubleSpinBox()
@@ -163,7 +164,7 @@ class MaterialsDialog(QDialog):
         self.thickness.setValue(m.thickness_mm)
         for kind, (speed, passes, power, kerf) in self.fields.items():
             s = m.settings.get(kind) or OperationSettings()
-            speed.setValue(s.speed)
+            speed.setValue(s.speed * self.speed_factor)
             passes.setValue(s.passes)
             power.setValue(s.power * 100)
             if kerf is not None:
@@ -181,8 +182,8 @@ class MaterialsDialog(QDialog):
         m.thickness_mm = self.thickness.value()
         m.notes = self.notes.toPlainText()
         for kind, (speed, passes, power, kerf) in self.fields.items():
-            m.settings[kind] = OperationSettings(speed.value(), passes.value(), power.value() / 100.0,
-                                                 kerf.value() if kerf is not None else 0.0)
+            m.settings[kind] = OperationSettings(speed.value() / self.speed_factor, passes.value(),
+                                                 power.value() / 100.0, kerf.value() if kerf is not None else 0.0)
         item = self.list.item(row)
         item.setText(list_label(m))
 
@@ -253,10 +254,10 @@ class MaterialsDialog(QDialog):
         for row, x in enumerate(extra):
             name = QLabel("%s (%s)" % (x.name, _(KIND_TITLES[x.kind])))
             speed = QDoubleSpinBox()
-            speed.setRange(0, 10000)
-            speed.setDecimals(1)
-            speed.setSuffix(" mm/s")
-            speed.setValue(x.speed)
+            speed.setRange(0, 10000 * self.speed_factor)
+            speed.setDecimals(1 if self.speed_factor == 1 else 0)
+            speed.setSuffix(" mm/s" if self.speed_factor == 1 else " mm/min")
+            speed.setValue(x.speed * self.speed_factor)
             passes = QSpinBox()
             passes.setRange(1, 100)
             passes.setValue(x.passes)
@@ -293,7 +294,7 @@ class MaterialsDialog(QDialog):
             return
         m = self.materials[row]
         for x, (speed, passes, power, kerf) in zip(m.extra_layers or [], self.extra_rows):
-            x.speed, x.passes, x.power = speed.value(), passes.value(), power.value() / 100.0
+            x.speed, x.passes, x.power = speed.value() / self.speed_factor, passes.value(), power.value() / 100.0
             if kerf is not None:
                 x.kerf = kerf.value()
 

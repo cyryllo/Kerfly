@@ -128,6 +128,19 @@ BOARD_NAMES = ["LASER-M2", "LASER-M1", "LASER-M", "LASER-B2", "LASER-B1", "LASER
                "LASER-A", "LASER-M3"]
 
 
+def speed_factor(values):
+    """Speeds are kept in mm/s (in/min with inch units), as K40 Whisperer keeps them; a GRBL machine shows and
+    takes them in mm/min, as GRBL lasers are used (the K40 stays in mm/s)."""
+    return 60.0 if values.get("machine") == "grbl" and values.get("units", "mm") != "in" else 1.0
+
+
+def speed_unit(values):
+    """The unit speeds are shown in: mm/s (K40), mm/min (GRBL), in/min (inch units)."""
+    if values.get("units", "mm") == "in":
+        return "in/min"
+    return "mm/min" if values.get("machine") == "grbl" else "mm/s"
+
+
 def user_config_path():
     """Settings file in the user's home directory (shared with K40 Whisperer)."""
     import os

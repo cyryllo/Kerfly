@@ -207,7 +207,8 @@ shows the Polish one first, then the English one (`tools/release_notes.py`). Cha
 - A fix goes to `main` first (and is released from there), then
   `git checkout 2.0 && git merge main` brings it into 2.0 (a conflict in
   `kerfly/__init__.py` or the changelogs keeps 2.0's version and adds the
-  fix's lines). When 2.0 is released, `2.0` is merged into `main`.
+  fix's lines). When 2.0 is released, `2.0` is merged into `main` (then take
+  the development-version warning off the top of README.md and README_pl.md).
 - The website is built from `main` only, so it shows the new features once
   2.0 is out; tests run on both branches.
 - For now 2.0 test versions are published **as GitHub pre-releases with only an

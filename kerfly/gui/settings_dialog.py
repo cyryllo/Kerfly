@@ -117,7 +117,9 @@ class SettingsDialog(QDialog):
         self._labels = {}
         units = self.values.get("units", "mm")
         len_unit = units
-        speed_unit = "mm/s" if units == "mm" else "in/min"
+        from kerfly.core.config import speed_factor, speed_unit as _speed_unit
+        speed_unit = _speed_unit(self.values)
+        self.speed_factor = speed_factor(self.values)        # shown = kept x it (mm/min of a GRBL machine)
 
         tabs = QTabWidget()
         fm = self.fontMetrics()
@@ -301,17 +303,20 @@ class SettingsDialog(QDialog):
             return w, lambda: str(w.value())
         if kind == "float":
             lo, hi, decimals, unit = opt
+            f = self.speed_factor if unit == "speed" else 1.0
             w = QDoubleSpinBox()
-            w.setRange(lo, hi)
-            w.setDecimals(decimals)
+            w.setRange(lo * f, hi * f)
+            w.setDecimals(decimals if f == 1 else 0)
             if unit == "len":
                 w.setSuffix(" " + len_unit)
             elif unit == "speed":
                 w.setSuffix(" " + speed_unit)
             try:
-                w.setValue(float(value))
+                w.setValue(float(value) * f)
             except ValueError:
                 pass
+            if f != 1:
+                return w, lambda: ("%." + str(decimals + 2) + "f") % (w.value() / f)
             return w, lambda: ("%." + str(decimals) + "f") % w.value()
         if kind == "power":                     # a fraction of the maximum power, shown in per cent
             w = QDoubleSpinBox()

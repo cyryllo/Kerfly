@@ -5,8 +5,10 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 
 ## 2.0.0 (w przygotowaniu)
 
-Rozwijana na gałęzi `2.0`: lasery GRBL, nesting i inne nowe funkcje z planu.
-Zawiera też poprawki wydań 1.x.
+Oprócz K40 lasery z płytą GRBL (beta): zapis G-code dla dowolnego programu
+wysyłającego albo sterowanie laserem prosto z Kerfly przez port szeregowy, z
+prędkościami w mm/min. Układanie części na stole, łączenie luźnych linii w
+polilinie. Rozwijana na gałęzi `2.0`, z poprawkami wydań 1.x.
 
 ### Dodane
 
@@ -36,7 +38,9 @@ Zawiera też poprawki wydań 1.x.
   Połącz, Bazuj (`$H`), Odblokuj (`$X`), strzałki i przyciski narożników
   (przesuw), Obrys, Start (G-code wysyłany od lewego górnego rogu projektu
   jako X0 Y0, bez przepełniania bufora płyty), Pauza / wznowienie (`!` / `~`)
-  i Stop (reset). Potrzebuje biblioteki pyserial (jest w paczkach).
+  i Stop (reset). Potrzebuje biblioteki pyserial (jest w paczkach). Przy
+  maszynie GRBL prędkości są pokazywane i wpisywane w mm/min (warstwy, test
+  materiału, Ustawienia, biblioteka materiałów); K40 zostaje w mm/s.
 
 ## 1.8.0 (2026-11-16)
 

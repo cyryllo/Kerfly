@@ -9,8 +9,11 @@ Version numbers:
 
 ## 2.0.0 (unreleased)
 
-In development on the `2.0` branch: GRBL lasers, nesting and the other new
-features of the roadmap. The fixes of the 1.x releases are in it too.
+Lasers with a GRBL board besides the K40 (beta): G-code saved for any
+sender, or the laser run straight from Kerfly over its serial port, with
+speeds in mm/min. Parts nested on the bed, loose lines joined into
+polylines. In development on the `2.0` branch, with the fixes of the 1.x
+releases.
 
 ### Added
 
@@ -38,7 +41,9 @@ features of the roadmap. The fixes of the 1.x releases are in it too.
   the arrows and corner buttons (jog), Trace boundary, Start (G-code streamed
   from the design's upper left corner as X0 Y0, never overfilling the board's
   buffer), Pause / resume (`!` / `~`) and Stop (reset) work on it. Needs the
-  pyserial library (in the packages).
+  pyserial library (in the packages). With a GRBL machine speeds are shown
+  and typed in mm/min (layers, material test, Settings, material library);
+  the K40 stays in mm/s.
 
 ## 1.8.0 (2026-11-16)
 

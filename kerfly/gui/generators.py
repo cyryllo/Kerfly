@@ -28,7 +28,15 @@ OPERATIONS = [("engrave", N_("Engrave outline")), ("cut", N_("Cut")), ("fill", N
 
 
 def _speed_unit(window):
-    return "mm/s" if window.values.get("units", "mm") == "mm" else "in/min"
+    from kerfly.core import config
+    return config.speed_unit(window.values)
+
+
+def _speed_factor(window):
+    """Shown speed = kept speed x it (mm/min of a GRBL machine; the dialog's numbers are kept as the layers'
+    speeds are)."""
+    from kerfly.core import config
+    return config.speed_factor(getattr(window, "values", {}) or {})
 
 
 def _material_test(v, window):
@@ -37,7 +45,8 @@ def _material_test(v, window):
     legend = (_("Speed (%s) / power (%%)") % unit) if by == "power" else (_("Speed (%s) / passes") % unit)
     return gen.material_test(v["operation"], v["speed_min"], v["speed_max"], v["columns"], by,
                              v["power_min"], v["power_max"], v["passes_min"], v["passes_max"], v["rows"],
-                             v["size"], v["gap"], v["labels"], unit, legend if v["labels"] else "")
+                             v["size"], v["gap"], v["labels"], unit, legend if v["labels"] else "",
+                             label_scale=_speed_factor(window))
 
 
 # names of generated designs that are not a generator's name (the group's name in the element list)
@@ -437,7 +446,12 @@ class GeneratorDialog(QDialog):
                 w.setRange(lo, hi)
                 w.setDecimals(decimals)
                 if unit == "speed":
+                    f = _speed_factor(window)
+                    w.setRange(lo * f, hi * f)
+                    w.setDecimals(decimals if f == 1 else 0)
                     w.setSuffix(" " + speed_unit)
+                    w.setProperty("speed_factor", f)
+                    value = float(value) * f
                 elif unit:
                     w.setSuffix(" " + (len_unit if unit == "mm" else unit))
                 w.setValue(float(value))
@@ -572,7 +586,7 @@ class GeneratorDialog(QDialog):
         for name, _label, kind, _default, _opt, _tip in self.fields:
             w = self.widgets[name]
             if kind in ("float", "int"):
-                out[name] = w.value()
+                out[name] = w.value() / (w.property("speed_factor") or 1.0)
             elif kind == "choice":
                 out[name] = w.currentData()
             elif kind == "bool":

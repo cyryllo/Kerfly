@@ -31,6 +31,7 @@ from dataclasses import asdict, fields
 from PySide6.QtWidgets import (QAbstractSpinBox, QComboBox, QDoubleSpinBox, QFontComboBox, QPlainTextEdit,
                                QSpinBox, QToolButton, QWidget)
 
+from kerfly.core import config
 from kerfly.core.layers import CUT, ENGRAVE, GCODE, RASTER, layer_of, part_present
 
 MM = 25.4
@@ -295,9 +296,13 @@ def check_layers_panel(w):
         if w._layer_has_data(layer) and layer.id not in rows:
             problems.append("layers panel: %s has parts on it but no row" % layer.name)
         row = rows.get(layer.id)
-        if row and "speed" in row and abs(row["speed"].value() - layer.speed) > 0.05 + 1e-9:
-            problems.append("layers panel: %s speed shows %.1f, is %.1f" % (layer.name, row["speed"].value(),
-                                                                          layer.speed))
+        f = config.speed_factor(w.values)               # mm/min shown for a GRBL machine
+        if row and "speed" in row and abs(row["speed"].value() - layer.speed * f) > 0.05 * f + 1e-9:
+            problems.append("layers panel: %s speed shows %.1f, is %.1f (x %g)" % (
+                layer.name, row["speed"].value(), layer.speed, f))
+        if row and "speed" in row and row["speed"].suffix().strip() != config.speed_unit(w.values):
+            problems.append("layers panel: %s speed in %s, the machine's unit is %s" % (
+                layer.name, row["speed"].suffix().strip(), config.speed_unit(w.values)))
         if row and "kerf" in row and abs(row["kerf"].value() - layer.kerf) > 0.005 + 1e-9:
             problems.append("layers panel: %s kerf shows %.2f, is %.2f" % (layer.name, row["kerf"].value(),
                                                                          layer.kerf))

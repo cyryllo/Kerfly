@@ -3500,11 +3500,11 @@ class MainWindow(QMainWindow):
                    for e in self.elements)
 
     def _rebuild_layers_panel(self):
-        speed_unit = "mm/s" if self.values.get("units", "mm") == "mm" else "in/min"
         gcode_file = any(part_present(e.design, GCODE) for e in self.elements)
         self.layers_panel.rebuild(self.layers, self._layer_has_data,
                                   lambda layer: self._default_layer.get(layer.kind) is not layer,
-                                  speed_unit, self.power_per_stage(), gcode_file)
+                                  config.speed_unit(self.values), self.power_per_stage(), gcode_file,
+                                  config.speed_factor(self.values))
         self._update_times()
         self._fit_panel_width()
 
@@ -3587,7 +3587,8 @@ class MainWindow(QMainWindow):
         extra = [material_lib.ExtraLayer(l.kind, l.name, l.color, round(self._speed_to_mm_s(l.speed), 2),
                                          l.passes, l.power, l.kerf)
                  for l in self.layers if l.kind in (CUT, ENGRAVE, RASTER) and self._default_layer.get(l.kind) is not l]
-        dlg = MaterialsDialog(self.materials, current, self.values.get("units", "mm"), self, current_extra=extra)
+        dlg = MaterialsDialog(self.materials, current, self.values.get("units", "mm"), self, current_extra=extra,
+                              speed_factor=config.speed_factor(self.values))
         if not dlg.exec():
             return
         self.materials = dlg.materials

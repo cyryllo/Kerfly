@@ -4,6 +4,17 @@
 
 **Strona i instrukcja obsługi:** [cyryllo.github.io/Kerfly/pl](https://cyryllo.github.io/Kerfly/pl/) · **Pobierz:** [najnowsze wydanie](https://github.com/cyryllo/Kerfly/releases/latest) · **English:** [README.md](README.md)
 
+> [!WARNING]
+> **To jest gałąź `2.0`: wersja rozwojowa.** Wprowadza lasery GRBL (G-code,
+> sterowanie przez port szeregowy), układanie części na stole i łączenie
+> linii w polilinie, może zawierać błędy i niedokończone funkcje. Do
+> codziennej pracy używaj najnowszego stabilnego wydania 1.x
+> ([pobierz](https://github.com/cyryllo/Kerfly/releases/latest), źródła na
+> [gałęzi `main`](https://github.com/cyryllo/Kerfly/tree/main)). Wersje
+> testowe 2.0 wychodzą jako pre-release (AppImage albo uruchomienie ze źródeł
+> przez `start_kerfly.bat` / `start_kerfly.sh`); Kerfly nie proponuje ich jako
+> aktualizacji.
+
 Kerfly to darmowy program do sterowania laserami CO2 klasy K40 z płytami
 Lihuiyu (rodzina M2 Nano). Działa na Windows 10 / 11, Linuksie i macOS.
 

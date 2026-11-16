@@ -88,6 +88,7 @@ class LayersPanel(QWidget):
         v.addLayout(bottom)
         self.rows = {}
         self.speed_unit = "mm/s"
+        self.speed_factor = 1.0
         self.show_power = False
 
     # ---- materials --------------------------------------------------------
@@ -108,9 +109,11 @@ class LayersPanel(QWidget):
         self.material.setCurrentIndex(0)
 
     # ---- rows ----------------------------------------------------------------
-    def rebuild(self, layers, has_data, removable, speed_unit, show_power, gcode_file):
-        """has_data(layer) -> bool; removable(layer) -> bool."""
+    def rebuild(self, layers, has_data, removable, speed_unit, show_power, gcode_file, speed_factor=1.0):
+        """has_data(layer) -> bool; removable(layer) -> bool. speed_factor: shown speed = kept speed x it
+        (mm/min of a GRBL machine)."""
         self.speed_unit = speed_unit
+        self.speed_factor = float(speed_factor) or 1.0
         self.show_power = show_power
         while self.grid.count():
             w = self.grid.takeAt(0).widget()
@@ -165,14 +168,15 @@ class LayersPanel(QWidget):
         h.addWidget(name, 1)
         self.grid.addWidget(name_box, row, 1)
         if layer.kind != GCODE:
+            f = self.speed_factor
             speed = QDoubleSpinBox()
-            speed.setRange(0.1, 10000)
-            speed.setDecimals(1)
+            speed.setRange(0.1 * f, 10000 * f)
+            speed.setDecimals(1 if f == 1 else 0)
             speed.setSuffix(" " + self.speed_unit)
-            speed.setValue(layer.speed)
-            fit_spin(speed, 9999.9)
+            speed.setValue(layer.speed * f)
+            fit_spin(speed, 9999.9 * f)
             speed.setKeyboardTracking(False)
-            speed.valueChanged.connect(lambda v, l=layer: self._set(l, "speed", v))
+            speed.valueChanged.connect(lambda v, l=layer, f=f: self._set(l, "speed", v / f))
             self.grid.addWidget(speed, row, 2)
             widgets["speed"] = speed
         else:
@@ -255,7 +259,7 @@ class LayersPanel(QWidget):
         row = self.rows.get(layer.id)
         if row and "speed" in row:
             row["speed"].blockSignals(True)
-            row["speed"].setValue(speed)
+            row["speed"].setValue(speed * getattr(self, "speed_factor", 1.0))
             row["speed"].blockSignals(False)
 
     # ---- edits ----------------------------------------------------------------

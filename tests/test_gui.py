@@ -1570,6 +1570,41 @@ def main():
           stream_ok and errors_ok and no_home and is_grbl and laser_mode and job_ok and back,
           "(%s)" % [stream_ok, errors, no_home, is_grbl, laser_mode, job_ok, back])
 
+    # 28g. speeds in mm/min for a GRBL machine only (the K40 stays in mm/s): the layers, the material test (its
+    # fields and the speeds engraved on it), Settings and the material library show and take mm/min; what is
+    # kept stays mm/s, so the K40 jobs and the profiles do not change
+    from kerfly.gui.generators import GeneratorDialog as _SGD
+    from kerfly.gui.settings_dialog import SettingsDialog as _SSD
+    from kerfly.gui.materials_dialog import MaterialsDialog as _SMD
+    from PySide6.QtWidgets import QDoubleSpinBox as _SDS
+    shown = {}
+    for machine in ("k40", "grbl"):
+        sw = make_window(grid_mm="0", machine=machine)
+        sw._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
+        cut = next(l for l in sw.layers if l.kind == "cut")
+        spin = sw.layers_panel.rows[cut.id]["speed"]
+        f = 60.0 if machine == "grbl" else 1.0
+        layer_ok = spin.suffix().strip() == ("mm/min" if f > 1 else "mm/s") and abs(spin.value() - cut.speed * f) < 1e-6
+        spin.setValue(300.0 if f > 1 else 12.0)
+        typed_ok = abs(cut.speed - (5.0 if f > 1 else 12.0)) < 1e-9
+        gd = _SGD(sw, "material_test", remember=False)
+        des = gd.result_design()
+        mt_ok = abs(gd.widgets["speed_min"].value() - gd.values()["speed_min"] * f) < 1e-6 and \
+            des.layers[0].name.startswith("%g %s" % (des.layers[0].speed * f, "mm/min" if f > 1 else "mm/s"))
+        gd.deleteLater()
+        sd = _SSD(sw.values)
+        ts = next(c for c in sd.findChildren(_SDS) if c.property("setting_key") == "trace_speed")
+        set_ok = abs(ts.value() - float(sw.values["trace_speed"]) * f) < 1e-6 and \
+            abs(float(sd._getters["trace_speed"]()) - float(sw.values["trace_speed"])) < 1e-6
+        md = _SMD(sw.materials, {}, "mm", sw, speed_factor=config.speed_factor(sw.values))
+        mspin = [c for c in md.findChildren(_SDS) if c.suffix().strip() in ("mm/s", "mm/min")]
+        mat_ok = bool(mspin) and all(c.suffix().strip() == ("mm/min" if f > 1 else "mm/s") for c in mspin)
+        shown[machine] = [layer_ok, typed_ok, mt_ok, set_ok, mat_ok]
+        sw._dirty = False
+        sw.close()
+    check("speeds: mm/s for the K40, mm/min for a GRBL machine (layers, material test, Settings, materials); "
+          "kept in mm/s", all(all(v) for v in shown.values()), "(%s)" % shown)
+
     # 29. freehand: a circle drawn with the mouse becomes a closed smooth path with few nodes
     import math as _m
     w = make_window(grid_mm="0")

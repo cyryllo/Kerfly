@@ -524,7 +524,9 @@ laser profile. Not yet checked on a GRBL machine.
 board that answers; ↻ looks again after plugging it in), its speed (115200
 on most boards), the **corner the head homes to** (lower left on most GRBL
 lasers), the **jog speed** and **full power S** (`$30`). These are kept in the
-laser profile, so a K40 and a GRBL laser can each have their own. Then the
+laser profile, so a K40 and a GRBL laser can each have their own. With a GRBL
+machine speeds are shown and typed in **mm/min**, as GRBL lasers are used
+(the K40 stays in mm/s). Then the
 usual buttons work on it: **Connect** opens the port and reads the board's
 settings (and homes with `$H` when homing is on and Home when initializing
 is ticked; without limit switches put the head in the home corner before

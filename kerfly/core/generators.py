@@ -93,7 +93,7 @@ def _num(v):
 # ------------------------------------------------------------------ material test
 def material_test(operation="engrave", speed_min=10.0, speed_max=50.0, columns=5, rows_by="power",
                   power_min=20.0, power_max=60.0, passes_min=1, passes_max=3, rows=3, size=10.0, gap=3.0,
-                  labels=True, speed_unit="mm/s", legend=""):
+                  labels=True, speed_unit="mm/s", legend="", label_scale=1.0):
     """A grid of fields, each with its own speed (columns) and power or passes (rows),
     on a layer of its own; the values are engraved along the top and the left side.
     operation: "engrave" (outline), "cut", or "fill" (raster)."""
@@ -113,10 +113,10 @@ def material_test(operation="engrave", speed_min=10.0, speed_max=50.0, columns=5
         for c, speed in enumerate(speeds):
             key = "r%dc%d" % (r, c)
             if rows_by == "passes":
-                text = "%s %s, %d x" % (_num(speed), speed_unit, value)
+                text = "%s %s, %d x" % (_num(speed * label_scale), speed_unit, value)
                 layer = LayerSpec(key, kind, text, speed=speed, passes=value)
             else:
-                text = "%s %s, %s %%" % (_num(speed), speed_unit, _num(value))
+                text = "%s %s, %s %%" % (_num(speed * label_scale), speed_unit, _num(value))
                 layer = LayerSpec(key, kind, text, speed=speed, power=value / 100.0)
             layer.color = EXTRA_COLORS[n % len(EXTRA_COLORS)]
             out.layers.append(layer)
@@ -127,7 +127,8 @@ def material_test(operation="engrave", speed_min=10.0, speed_max=50.0, columns=5
     if labels:
         font = max(1.5, min(3.0, size * 0.25))
         for c, speed in enumerate(speeds):
-            out.items.append(Item(ShapeSpec(kind="text", text=_num(speed), font_size=font, operation="engrave"),
+            out.items.append(Item(ShapeSpec(kind="text", text=_num(speed * label_scale), font_size=font,
+                                            operation="engrave"),
                                   label_w + c * (size + gap), 0.5, name="Label"))
         for r, value in enumerate(values):
             text = ("%dx" % value) if rows_by == "passes" else ("%s%%" % _num(value))

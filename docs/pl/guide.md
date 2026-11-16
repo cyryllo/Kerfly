@@ -542,6 +542,8 @@ pierwszą płytę, która odpowie; ↻ szuka ponownie po podłączeniu), prędko
 portu (115200 na większości płyt), **róg bazowania głowicy** (lewy dolny w
 większości laserów GRBL), **prędkość przesuwu** i **pełną moc S** (`$30`).
 Zapamiętuje je profil lasera, więc K40 i laser GRBL mogą mieć każdy swoje.
+Przy maszynie GRBL prędkości są pokazywane i wpisywane w **mm/min**, jak
+zwykle w laserach GRBL (K40 zostaje w mm/s).
 Potem działają zwykłe przyciski: **Połącz** otwiera port i czyta ustawienia
 płyty (i bazuje przez `$H`, gdy bazowanie jest włączone i zaznaczone jest
 bazowanie przy połączeniu; bez wyłączników krańcowych ustaw głowicę w rogu
