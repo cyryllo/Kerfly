@@ -76,7 +76,8 @@ def version_file():
     in every build; File → Properties → Details shows them)."""
     sys.path.insert(0, ROOT)
     from kerfly import __version__
-    nums = [int(p) for p in (__version__.split(".") + ["0", "0", "0"])[:4]]
+    import re
+    nums = [int(re.match(r"\d*", p).group() or 0) for p in (__version__.split(".") + ["0", "0", "0"])[:4]]
     text = """VSVersionInfo(
   ffi=FixedFileInfo(filevers=%(t)s, prodvers=%(t)s, mask=0x3f, flags=0x0, OS=0x40004, fileType=0x1,
                     subtype=0x0, date=(0, 0)),
