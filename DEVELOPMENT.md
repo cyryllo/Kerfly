@@ -210,9 +210,13 @@ shows the Polish one first, then the English one (`tools/release_notes.py`). Cha
   fix's lines). When 2.0 is released, `2.0` is merged into `main`.
 - The website is built from `main` only, so it shows the new features once
   2.0 is out; tests run on both branches.
-- For now 2.0 test versions are published **only as an AppImage, as a GitHub
-  pre-release** (no Windows installer or macOS package yet). Kerfly's update
-  check skips pre-releases, so 1.x users are not offered them.
+- For now 2.0 test versions are published **as GitHub pre-releases with only an
+  AppImage**; on Windows (and Linux) they can also be run from the source
+  archive with `start_kerfly.bat` / `start_kerfly.sh`. No Windows installer or
+  macOS package yet. `tools/release_notes.py` puts a development-version
+  warning at the top of their release text (a version with letters after the
+  number, e.g. `2.0.0a1`). Kerfly's update check skips pre-releases, so 1.x
+  users are not offered them.
 
 ## Project layout
 

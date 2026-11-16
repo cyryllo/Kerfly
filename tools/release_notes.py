@@ -63,33 +63,48 @@ def is_preview(version):
 
 WARNING_PL = ("> [!WARNING]\n"
               "> **Wersja rozwojowa (pre-release), tylko do testów.** Może zawierać błędy i niedokończone funkcje; "
-              "do codziennej pracy z laserem używaj najnowszej wersji 1.x. Na razie tylko jako AppImage dla "
-              "Linuksa; Kerfly nie proponuje jej jako aktualizacji.")
+              "do codziennej pracy z laserem używaj najnowszej wersji 1.x. Na razie bez instalatora: AppImage dla "
+              "Linuksa albo uruchomienie ze źródeł; Kerfly nie proponuje jej jako aktualizacji.")
 WARNING_EN = ("> [!WARNING]\n"
               "> **Development version (pre-release), for testing only.** It may have bugs and unfinished "
-              "features; for everyday work with the laser use the latest 1.x release. For now only as an AppImage "
-              "for Linux; Kerfly does not offer it as an update.")
+              "features; for everyday work with the laser use the latest 1.x release. For now without an installer: "
+              "an AppImage for Linux or running from source; Kerfly does not offer it as an update.")
 
 
 def downloads_preview_pl(version):
+    guide = "https://github.com/cyryllo/Kerfly/blob/v%s/DEVELOPMENT.md#running-from-source" % version
     return "\n".join([
         "### Pobieranie",
         "",
-        "- **Linux:** `Kerfly-%s-x86_64.AppImage`: nadaj prawo uruchamiania i uruchom. Ustawienia ma wspólne z "
-        "wersją 1.x." % version])
+        "- **Linux:** `Kerfly-%s-x86_64.AppImage`: nadaj prawo uruchamiania i uruchom." % version,
+        "- **Ze źródeł** (*Source code* poniżej, rozpakuj):",
+        "  - **Windows 10 / 11:** zainstaluj Pythona 3.13 (64-bit, zaznacz *Add python.exe to PATH*) i "
+        "kliknij dwa razy **`start_kerfly.bat`**. Pierwsze uruchomienie instaluje biblioteki (potrzebny "
+        "internet, kilka minut). Sterownik USB lasera: z instalatora wersji 1.x albo przez Zadig.",
+        "  - **Linux:** `sudo apt install python3-venv`, potem **`bash start_kerfly.sh`** w rozpakowanym folderze.",
+        "",
+        "Szczegóły: [uruchamianie ze źródeł](%s). Ustawienia są wspólne z wersją 1.x." % guide])
 
 
 def downloads_preview_en(version):
+    guide = "https://github.com/cyryllo/Kerfly/blob/v%s/DEVELOPMENT.md#running-from-source" % version
     return "\n".join([
         "### Downloads",
         "",
-        "- **Linux:** `Kerfly-%s-x86_64.AppImage`: make it executable and run it. It shares its settings with "
-        "the 1.x version." % version])
+        "- **Linux:** `Kerfly-%s-x86_64.AppImage`: make it executable and run it." % version,
+        "- **From source** (*Source code* below, unpack it):",
+        "  - **Windows 10 / 11:** install Python 3.13 (64-bit, tick *Add python.exe to PATH*) and double-click "
+        "**`start_kerfly.bat`**. The first start installs the libraries (needs internet, a few minutes). The "
+        "laser's USB driver: from the 1.x installer or with Zadig.",
+        "  - **Linux:** `sudo apt install python3-venv`, then **`bash start_kerfly.sh`** in the unpacked folder.",
+        "",
+        "Details: [running from source](%s). The settings are shared with the 1.x version." % guide])
 
 
 def notes(version):
     """The release text: Polish first (CHANGELOG_pl.md), then English (CHANGELOG.md); a development version
-    gets a warning at the top and only the AppImage in its downloads. The changelogs' section of a development
+    gets a warning at the top and in its downloads only the AppImage and running from source (start_kerfly.bat /
+    start_kerfly.sh). The changelogs' section of a development
     version is that of its number (2.0.0 for 2.0.0a1)."""
     preview = is_preview(version)
     number = re.match(r"^\d+(\.\d+)*", version).group(0) if preview else version
