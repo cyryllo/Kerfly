@@ -56,21 +56,62 @@ def downloads_en(version):
         "([Polish](https://cyryllo.github.io/Kerfly/pl/guide.html))"])
 
 
+def is_preview(version):
+    """A development version (2.0.0a1, 2.0.0-beta2, ...): letters after the numbers."""
+    return bool(re.match(r"^\d+(\.\d+)*[-.]?[A-Za-z]", version))
+
+
+WARNING_PL = ("> [!WARNING]\n"
+              "> **Wersja rozwojowa (pre-release), tylko do testów.** Może zawierać błędy i niedokończone funkcje; "
+              "do codziennej pracy z laserem używaj najnowszej wersji 1.x. Na razie tylko jako AppImage dla "
+              "Linuksa; Kerfly nie proponuje jej jako aktualizacji.")
+WARNING_EN = ("> [!WARNING]\n"
+              "> **Development version (pre-release), for testing only.** It may have bugs and unfinished "
+              "features; for everyday work with the laser use the latest 1.x release. For now only as an AppImage "
+              "for Linux; Kerfly does not offer it as an update.")
+
+
+def downloads_preview_pl(version):
+    return "\n".join([
+        "### Pobieranie",
+        "",
+        "- **Linux:** `Kerfly-%s-x86_64.AppImage`: nadaj prawo uruchamiania i uruchom. Ustawienia ma wspólne z "
+        "wersją 1.x." % version])
+
+
+def downloads_preview_en(version):
+    return "\n".join([
+        "### Downloads",
+        "",
+        "- **Linux:** `Kerfly-%s-x86_64.AppImage`: make it executable and run it. It shares its settings with "
+        "the 1.x version." % version])
+
+
 def notes(version):
-    """The release text: Polish first (CHANGELOG_pl.md), then English (CHANGELOG.md)."""
+    """The release text: Polish first (CHANGELOG_pl.md), then English (CHANGELOG.md); a development version
+    gets a warning at the top and only the AppImage in its downloads. The changelogs' section of a development
+    version is that of its number (2.0.0 for 2.0.0a1)."""
+    preview = is_preview(version)
+    number = re.match(r"^\d+(\.\d+)*", version).group(0) if preview else version
     with open(os.path.join(ROOT, "CHANGELOG.md"), encoding="utf-8") as f:
-        english = section(version, f.read())
+        text = f.read()
+    english = section(version, text) or (section(number, text) if preview else "")
     if not english:
         sys.exit("CHANGELOG.md has no section for %s" % version)
     polish = ""
     pl_path = os.path.join(ROOT, "CHANGELOG_pl.md")
     if os.path.isfile(pl_path):
         with open(pl_path, encoding="utf-8") as f:
-            polish = section(version, f.read())
+            text = f.read()
+        polish = section(version, text) or (section(number, text) if preview else "")
+    dl_pl = downloads_preview_pl(version) if preview else downloads_pl(version)
+    dl_en = downloads_preview_en(version) if preview else downloads_en(version)
     parts = []
+    if preview:
+        parts += [WARNING_PL, "", WARNING_EN, ""]
     if polish:
-        parts += ["## Po polsku", "", polish, "", downloads_pl(version), "", "---", "", "## In English", ""]
-    parts += [english, "", downloads_en(version)]
+        parts += ["## Po polsku", "", polish, "", dl_pl, "", "---", "", "## In English", ""]
+    parts += [english, "", dl_en]
     return "\n".join(parts)
 
 
