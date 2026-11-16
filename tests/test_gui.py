@@ -1349,6 +1349,74 @@ def main():
     check("Join into a polyline (Ctrl+J): a triangle of lines closed, a 0.04 mm gap joined, 0.2 mm and a lone "
           "line kept, in place, one undo step (home upper left and upper right)", all(joins), "(%s)" % joins)
 
+    # 28d. Nest on the bed (Ctrl+Shift+N): the selected parts laid out inside the bed with the gap between them,
+    # nothing over another; what does not fit on more sheets (groups Sheet N, sheets 2 and on unticked); a group
+    # moves as one part (its members keep their places to each other); without turning nothing is turned; a
+    # second nesting lays the parts out again (no sheet in a sheet); one undo step; also with home upper right
+    import random as _rnd
+    import kerfly.gui.nest_dialog as _nd
+    from kerfly.core.layout import on_bed as _on_bed
+    from kerfly.gui import truth as _truth_n
+    _nd_exec = _nd.NestDialog.exec
+    _nd.NestDialog.exec = lambda self: 1                     # the dialog answered with its values
+
+    def _box(e):
+        return e.bounds[0] * 25.4, e.bounds[1] * 25.4, -e.bounds[3] * 25.4, -e.bounds[2] * 25.4
+
+    def _clash(els, gap):
+        for i in range(len(els)):
+            for j in range(i + 1, len(els)):
+                (x0, x1, y0, y1), (X0, X1, Y0, Y1) = _box(els[i]), _box(els[j])
+                if x0 < X1 + gap - 0.05 and X0 < x1 + gap - 0.05 and y0 < Y1 + gap - 0.05 and Y0 < y1 + gap - 0.05:
+                    return True
+        return False
+    nests = []
+    for home_ur, count, turn in (("0", 30, True), ("1", 12, True), ("0", 12, False)):
+        nw = make_window(grid_mm="0", HomeUR=home_ur)
+        r = _rnd.Random(3)
+        for _k in range(count):
+            x, y = r.uniform(0, 200), r.uniform(0, 120)
+            nw._preview_drawn("rectangle", QPointF(x, y), QPointF(x + r.uniform(20, 120), y + r.uniform(15, 90)),
+                              False)
+        pair = nw.elements[:2]
+        nw.preview.select_element(pair)
+        nw.group_selected()                                 # two rectangles as one part
+        rel = (round((pair[1].x - pair[0].x) * 25.4, 3), round((pair[1].y - pair[0].y) * 25.4, 3))
+        rotations = [e.rotation for e in nw.elements]
+        nw.preview.scope = ""
+        nw.preview.select_element(list(nw.elements))
+        nw.nest_defaults = {"gap": 2.0, "turn": turn}
+        undo_before = len(nw._undo)
+        nw.nest_selected()
+        bw, bh = config.bed_size_inches(nw.values)
+        sheets = {}
+        for e in nw.elements:
+            name = nw.group_names.get(e.group.split("/")[0], "") if e.group else ""
+            sheets.setdefault(name if name.startswith("Sheet ") else "Sheet 1", []).append(e)
+        ok = all(_on_bed(e, bw, bh) for e in nw.elements) and not any(_clash(v, 2.0) for v in sheets.values()) \
+            and len(nw._undo) == undo_before + 1 and not _truth_n.check_window(nw)
+        ok = ok and (round((pair[1].x - pair[0].x) * 25.4, 3), round((pair[1].y - pair[0].y) * 25.4, 3)) == rel \
+            and len({e.group.split("/")[-1] for e in pair}) == 1
+        ok = ok and all(e.visible == (n == "Sheet 1") for n, v in sheets.items() for e in v)
+        if not turn:
+            ok = ok and [e.rotation for e in nw.elements] == rotations
+        if count == 30:
+            ok = ok and len(sheets) >= 2 and all(len(e.group.split("/")) <= 2 for e in nw.elements)
+            nw.preview.select_element(list(nw.elements))
+            nw.nest_selected()                              # again: laid out again, still a sheet a level deep
+            ok = ok and all(len(e.group.split("/")) <= 2 for e in nw.elements) and \
+                len({e.group.split("/")[0] for e in nw.elements}) == len(sheets)
+            nw.undo()
+        nw.undo()
+        ok = ok and all(not e.group or "/" not in e.group for e in nw.elements) and all(e.visible for e in nw.elements)
+        nests.append(ok)
+        nw._dirty = False
+        nw.close()
+    _nd.NestDialog.exec = _nd_exec
+    check("Nest on the bed: inside the bed with the gap, nothing over another, more sheets as groups (2 and on "
+          "unticked), a group as one part, no turning when off, nested again, one undo step (both homes)",
+          all(nests), "(%s)" % nests)
+
     # 29. freehand: a circle drawn with the mouse becomes a closed smooth path with few nodes
     import math as _m
     w = make_window(grid_mm="0")

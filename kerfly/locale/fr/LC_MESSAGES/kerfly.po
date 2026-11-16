@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-16 22:46+0100\n"
+"POT-Creation-Date: 2026-11-16 23:05+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -148,6 +148,9 @@ msgstr "&Bibliothèque de matériaux…"
 
 msgid "&Mirror horizontally"
 msgstr "&Miroir horizontal"
+
+msgid "&Nest on the bed…"
+msgstr "&Imbriquer sur le plateau…"
 
 msgid "&New project"
 msgstr "&Nouveau projet"
@@ -2026,6 +2029,38 @@ msgstr "Mon laser"
 msgid "Name:"
 msgstr "Nom :"
 
+msgid "Nest"
+msgstr "Imbriquer"
+
+msgctxt "toolbar"
+msgid "Nest"
+msgstr "Imbriquer"
+
+msgid "Nest on the bed"
+msgstr "Imbriquer sur le plateau"
+
+msgid ""
+"Nest: lay the selected parts out on the laser's bed as tightly as they "
+"fit, on more sheets when needed (nothing selected: all of them)"
+msgstr ""
+"Imbriquer : dispose les pièces sélectionnées sur le plateau du laser "
+"aussi serrées que possible, sur plusieurs feuilles si besoin (rien de "
+"sélectionné : toutes)"
+
+#, python-format
+msgid ""
+"Nested %(n)d parts on %(s)d sheets; in the element list each sheet is a "
+"group, sheets 2 and on unticked: cut sheet 1, then untick it and tick the"
+" next one."
+msgstr ""
+"%(n)d pièces imbriquées sur %(s)d feuilles ; dans la liste des éléments "
+"chaque feuille est un groupe, les feuilles à partir de la 2 décochées : "
+"découpez la feuille 1, puis décochez-la et cochez la suivante."
+
+#, python-format
+msgid "Nested %d parts on the bed."
+msgstr "%d pièces imbriquées sur le plateau."
+
 msgid "New"
 msgstr "Nouveau"
 
@@ -2121,6 +2156,9 @@ msgstr "Rien à faire : chargez un dessin et sélectionnez au moins une opérati
 
 msgid "Nothing to draw."
 msgstr "Rien à dessiner."
+
+msgid "Nothing to nest: open or draw something first."
+msgstr "Rien à imbriquer : ouvrez ou dessinez d'abord quelque chose."
 
 msgid "Nothing to trace at this threshold."
 msgstr "Rien à vectoriser avec ce seuil."
@@ -2278,6 +2316,13 @@ msgstr "Déplacer la vue"
 
 msgid "Parts"
 msgstr "Pièces"
+
+msgid ""
+"Parts may be turned by 90 degrees where that fits better (off: e.g. for "
+"wood grain)"
+msgstr ""
+"Les pièces peuvent être tournées de 90 degrés là où elles tiennent mieux "
+"(désactivé : p. ex. pour le fil du bois)"
 
 msgid "Passes"
 msgstr "Passes"
@@ -3058,6 +3103,11 @@ msgstr "Espace entre les anneaux et le texte"
 msgid "Space kept free between the pattern and the outline"
 msgstr "Espace laissé libre entre le motif et le contour"
 
+msgid "Space left between the parts (the laser's kerf and some room)"
+msgstr ""
+"Espace laissé entre les pièces (la largeur de coupe du laser et un peu de"
+" marge)"
+
 #, python-format
 msgid "Speed (%s)"
 msgstr "Vitesse (%s)"
@@ -3299,6 +3349,19 @@ msgstr "Ce coin du dessin est en dehors du plateau du laser."
 
 msgid "That shape has no line to put the text on."
 msgstr "Cette forme n'a pas de ligne pour y placer le texte."
+
+#, python-format
+msgid ""
+"The %(n)d selected parts (a group as one part) are laid out on the "
+"laser's bed (%(w).0f × %(h).0f mm) as tightly as their outlines' "
+"rectangles allow. What does not fit goes on a next sheet: each sheet is a"
+" group in the element list, sheets 2 and on unticked."
+msgstr ""
+"Les %(n)d pièces sélectionnées (un groupe comme une pièce) sont disposées"
+" sur le plateau du laser (%(w).0f × %(h).0f mm) aussi serrées que le "
+"permettent les rectangles de leurs contours. Ce qui ne tient pas va sur "
+"une feuille suivante : chaque feuille est un groupe dans la liste des "
+"éléments, les feuilles à partir de la 2 décochées."
 
 msgid ""
 "The DXF file does not say which units it uses.\n"
@@ -3678,6 +3741,9 @@ msgstr "Triangles"
 
 msgid "Truchet"
 msgstr "Truchet"
+
+msgid "Turn by 90°"
+msgstr "Tourner de 90°"
 
 msgid "Type the text in the bar above first."
 msgstr "Tapez d'abord le texte ci-dessus."

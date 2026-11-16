@@ -19,6 +19,12 @@ features of the roadmap. The fixes of the 1.x releases are in it too.
   meet (closer than 0.05 mm) become one path, cut in one go, closed when the
   chain comes round (as LightBurn's Auto-Join or QCAD's Polyline from
   Segments). Closed outlines and lines that meet nothing stay as they are.
+- **Nest on the bed** (Ctrl+Shift+N; **Nest** in the Layout group of the
+  toolbar, Edit menu, right-click menu): the selected parts (a group as one
+  part) laid out on the laser's bed as tightly as their rectangles allow,
+  with a gap, turned by 90° where that fits better (can be switched off);
+  what does not fit goes on next sheets, each a group in the element list,
+  sheets 2 and on unticked. The box generators use the same packing.
 
 ## 1.8.0 (2026-11-16)
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-16 22:46+0100\n"
+"POT-Creation-Date: 2026-11-16 23:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -140,6 +140,9 @@ msgid "&Material library…"
 msgstr ""
 
 msgid "&Mirror horizontally"
+msgstr ""
+
+msgid "&Nest on the bed…"
 msgstr ""
 
 msgid "&New project"
@@ -1848,6 +1851,32 @@ msgstr ""
 msgid "Name:"
 msgstr ""
 
+msgid "Nest"
+msgstr ""
+
+msgctxt "toolbar"
+msgid "Nest"
+msgstr ""
+
+msgid "Nest on the bed"
+msgstr ""
+
+msgid ""
+"Nest: lay the selected parts out on the laser's bed as tightly as they "
+"fit, on more sheets when needed (nothing selected: all of them)"
+msgstr ""
+
+#, python-format
+msgid ""
+"Nested %(n)d parts on %(s)d sheets; in the element list each sheet is a "
+"group, sheets 2 and on unticked: cut sheet 1, then untick it and tick the"
+" next one."
+msgstr ""
+
+#, python-format
+msgid "Nested %d parts on the bed."
+msgstr ""
+
 msgid "New"
 msgstr ""
 
@@ -1938,6 +1967,9 @@ msgid "Nothing to do: load a design and select at least one operation."
 msgstr ""
 
 msgid "Nothing to draw."
+msgstr ""
+
+msgid "Nothing to nest: open or draw something first."
 msgstr ""
 
 msgid "Nothing to trace at this threshold."
@@ -2078,6 +2110,11 @@ msgid "Pan the view"
 msgstr ""
 
 msgid "Parts"
+msgstr ""
+
+msgid ""
+"Parts may be turned by 90 degrees where that fits better (off: e.g. for "
+"wood grain)"
 msgstr ""
 
 msgid "Passes"
@@ -2798,6 +2835,9 @@ msgstr ""
 msgid "Space kept free between the pattern and the outline"
 msgstr ""
 
+msgid "Space left between the parts (the laser's kerf and some room)"
+msgstr ""
+
 #, python-format
 msgid "Speed (%s)"
 msgstr ""
@@ -3009,6 +3049,14 @@ msgid "That corner of the design is outside the laser bed."
 msgstr ""
 
 msgid "That shape has no line to put the text on."
+msgstr ""
+
+#, python-format
+msgid ""
+"The %(n)d selected parts (a group as one part) are laid out on the "
+"laser's bed (%(w).0f × %(h).0f mm) as tightly as their outlines' "
+"rectangles allow. What does not fit goes on a next sheet: each sheet is a"
+" group in the element list, sheets 2 and on unticked."
 msgstr ""
 
 msgid ""
@@ -3315,6 +3363,9 @@ msgid "Triangles"
 msgstr ""
 
 msgid "Truchet"
+msgstr ""
+
+msgid "Turn by 90°"
 msgstr ""
 
 msgid "Type the text in the bar above first."

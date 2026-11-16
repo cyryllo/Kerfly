@@ -887,6 +887,33 @@ def part_edit(s):
     for _i in range(3):
         s.trigger(w.act_undo)                    # the join undone, the two lines away again
 
+    # Nest on the bed: three more rectangles, select all, the toolbar button, a gap of 3 mm typed, Nest
+    def three_rects():
+        for a, b in (((150, 20), (230, 60)), ((160, 40), (200, 120)), ((180, 30), (260, 80))):
+            s.trigger(w.tool_actions["rectangle"])
+            s.drag(a, b)
+        s.trigger(w.tool_actions["select"])
+    s.step("draw three rectangles over each other", three_rects, undo_steps=3)
+
+    def nest_answer(dlg):
+        s.type_number(dlg.gap, 3)
+        from PySide6.QtWidgets import QDialogButtonBox
+        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+
+    def nested_apart():
+        boxes = [(e.bounds[0] * MM, e.bounds[1] * MM, e.bounds[2] * MM, e.bounds[3] * MM) for e in w.elements]
+        clash = [(i, j) for i in range(len(boxes)) for j in range(i + 1, len(boxes))
+                 if boxes[i][0] < boxes[j][1] + 2.9 and boxes[j][0] < boxes[i][1] + 2.9
+                 and boxes[i][2] < boxes[j][3] + 2.9 and boxes[j][2] < boxes[i][3] + 2.9]
+        return not clash and w.nest_defaults["gap"] == 3.0, "over each other: %s, gap %s" % (clash, w.nest_defaults)
+    s.expect_dialog("nest on the bed", nest_answer)
+    s.step("Edit → Select all (Ctrl+A), Nest on the bed (toolbar button), gap 3 mm, Nest",
+           lambda: (s.trigger(w.act_select_all, via="key"), s.trigger(w.act_nest, via="button")),
+           check=nested_apart)
+    s.trigger(w.act_undo)                        # back to the shapes before the nesting
+    for _i in range(3):
+        s.trigger(w.act_undo)                    # and the three rectangles away
+
     # Offset tool (right strip): its settings in the options bar, then a click on the combined shape
     n = len(w.elements)
     base = w.elements[-1]

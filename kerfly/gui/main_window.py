@@ -200,6 +200,7 @@ class MainWindow(QMainWindow):
         self.hinge_defaults = ShapeSpec(kind="rectangle", hinge_pattern="straight")
         # the Offset tool: what a click on a shape (or "Offset selected") does
         self.offset_defaults = {"offset_distance": 2.0, "offset_join": "round", "offset_keep": True}
+        self.nest_defaults = {"gap": 2.0, "turn": True}
         self.crop_defaults = {"crop_shape": "rect"}
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
@@ -342,6 +343,9 @@ class MainWindow(QMainWindow):
                                                "bottom ones stay in place"))
         self.act_place_head = self._action(_("Place design at the &head"), self.place_at_head, "Ctrl+H",
                                            _("Move all elements so the design starts at the laser head"))
+        self.act_nest = self._action(_("&Nest on the bed…"), self.nest_selected, "Ctrl+Shift+N",
+                                     _("Nest: lay the selected parts out on the laser's bed as tightly as they "
+                                       "fit, on more sheets when needed (nothing selected: all of them)"))
         self.act_follow_head = self._action(
             _("Design &follows the head"), self.toggle_follow_head, "Ctrl+Alt+H",
             _("The design moves with the laser head: the arrows, Go to X/Y and Home move both, "
@@ -416,6 +420,7 @@ class MainWindow(QMainWindow):
                   self.act_rot_left, self.act_rot_right, self.act_mirror_h, self.act_mirror_v, None,
                   self.act_group, self.act_ungroup, None, self.act_order["up"], self.act_order["down"],
                   self.act_order["first"], self.act_order["last"], None, self.act_center, self.act_place_head,
+                  self.act_nest,
                   self.act_follow_head):
             m.addSeparator() if a is None else m.addAction(a)
         m.addAction(self.act_text_path)
@@ -549,6 +554,7 @@ class MainWindow(QMainWindow):
             ]),
             (C_("toolbar group", "Arrange"), [
                 (self.act_center, "focus-centered", C_("toolbar", "Centre")),
+                (self.act_nest, "nest", C_("toolbar", "Nest")),
                 (self.act_place_head, "current-location", C_("toolbar", "To head")),
             ]),
             (C_("toolbar group", "Align"), "grid", [
@@ -1416,6 +1422,62 @@ class MainWindow(QMainWindow):
         self._compiled = None
         self._layer_cache.clear()
         self._layout_changed()
+
+    def nest_selected(self):
+        """Nest on the bed: the selected parts (nothing selected: all; a group as one part) laid out on the
+        laser's bed by their rectangles, turned where that fits better; what does not fit goes on next sheets,
+        each a group named Sheet N, sheets 2 and on unticked (a sheet is always the bed). The sheets of an
+        earlier nesting are undone first, so their parts are laid out again. One undo step."""
+        import re
+        from kerfly.core.groups import top, without, wrap
+        from kerfly.core.nesting import nest
+        from kerfly.gui.nest_dialog import NestDialog
+        if self.worker is not None:
+            return
+        chosen = self._selection() or list(self.elements)
+        if not chosen:
+            self.status(_("Nothing to nest: open or draw something first."), error=True)
+            return
+        try:
+            bed_w, bed_h = config.bed_size_inches(self.values)
+        except ValueError as e:
+            self.status(str(e), error=True)
+            return
+        sheet_name = _("Sheet %d")
+        is_sheet = re.compile("^" + re.escape(sheet_name).replace("%d", r"\d+") + "$")
+        def outer(e):                                # the group it is nested with (not an earlier sheet)
+            g = e.group
+            if g and is_sheet.match(self.group_names.get(top(g), "")):
+                g = without(g, top(g))
+            return top(g) or id(e)
+        dlg = NestDialog(self.nest_defaults, (bed_w * 25.4, bed_h * 25.4), len({outer(e) for e in chosen}), self)
+        if not dlg.exec():
+            return
+        self.nest_defaults = dlg.values()
+        self._checkpoint()
+        for e in chosen:                             # the sheets of an earlier nesting: laid out again
+            if e.group and is_sheet.match(self.group_names.get(top(e.group), "")):
+                e.group = without(e.group, top(e.group))
+                e.visible = True
+        placed, sheets = nest(chosen, bed_w, bed_h, self.nest_defaults["gap"], self.nest_defaults["turn"])
+        if sheets > 1:
+            for n in range(1, sheets + 1):
+                gid = self._new_group_id()
+                self.group_names[gid] = sheet_name % n
+                for els, sheet in placed:
+                    if sheet == n:
+                        for e in els:
+                            e.group = wrap(e.group, "", gid)
+                            if n > 1:
+                                e.visible = False
+        self.preview.scope = ""
+        self._arranged(chosen)
+        if sheets > 1:
+            self.status(_("Nested %(n)d parts on %(s)d sheets; in the element list each sheet is a group, sheets 2 "
+                          "and on unticked: cut sheet 1, then untick it and tick the next one.")
+                        % {"n": len(placed), "s": sheets})
+        else:
+            self.status(_("Nested %d parts on the bed.") % len(placed))
 
     JOIN_GAP_MM = 0.05          # ends closer than this are joined (as LightBurn's Auto-Join)
 
@@ -3109,6 +3171,7 @@ class MainWindow(QMainWindow):
             if len(chosen) == 2:
                 menu.addAction(self.act_text_path)
             menu.addAction(self.act_center)
+            menu.addAction(self.act_nest)
             out = menu.addAction(_("Leave out of the job"))
             out.setCheckable(True)
             out.setChecked(all(not c.visible for c in chosen))

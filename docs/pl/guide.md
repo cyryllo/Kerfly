@@ -240,6 +240,16 @@ CNC każdy kawałek to hamowanie i ponowne rozpędzanie. Zamknięte obrysy i
 linie, które z niczym się nie stykają, zostają bez zmian. Otwarty plik:
 najpierw go rozgrupuj.
 
+**Ułóż na stole** (Ctrl+Shift+N, przycisk **Ułóż** w grupie Układ na pasku,
+menu Edycja, menu pod prawym przyciskiem): zaznaczone części (nic nie
+zaznaczone: wszystkie; grupa jako jedna część) są rozkładane na stole lasera
+tak ciasno, jak pozwalają prostokąty wokół ich obrysów, z zadanym
+**odstępem**, obracane o 90°, gdy tak lepiej się mieszczą (wyłącz **Obracaj
+o 90°** np. ze względu na słoje drewna). Co się nie zmieści, trafia na
+kolejny arkusz (arkusz to zawsze pole robocze lasera): każdy arkusz jest
+grupą na liście elementów, arkusze od 2. są odhaczone; wytnij arkusz 1, potem
+go odhacz i zaznacz kolejny. Ponowne układanie rozkłada części od nowa.
+
 **Odsunięcie.** Narzędzie **Odsunięcie** (Shift+O, także Edycja →
 Odsunięcie) rysuje nowy obrys w zadanej odległości wokół kształtu. Na pasku
 opcji ustaw **odległość** (dodatnia na zewnątrz, otwory się zmniejszają;
@@ -562,6 +572,7 @@ razem z działaniami myszą i polem wyszukiwania.
 | Ctrl+Shift+H / Ctrl+Shift+V, także H / V na stole | Odbij w poziomie / w pionie |
 | Ctrl+G / Ctrl+Shift+G | Grupuj / rozgrupuj |
 | Ctrl+J | Połącz w polilinię |
+| Ctrl+Shift+N | Ułóż na stole |
 | Ctrl++ / Ctrl+- / Ctrl+* / Ctrl+^ | Suma / różnica / część wspólna / wykluczenie |
 | Ctrl+E | Wyśrodkuj na stole |
 | PgUp / PgDown | Wyżej (wcześniej) / niżej (później) na liście elementów (Ctrl: na początek / na koniec) |

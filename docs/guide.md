@@ -234,6 +234,15 @@ files): on a GRBL laser or a CNC machine every piece makes the machine slow
 down and speed up again. Closed outlines and lines that meet nothing stay as
 they are. An opened file: Ungroup it first.
 
+**Nest on the bed** (Ctrl+Shift+N, **Nest** in the Layout group of the
+toolbar, Edit menu, right-click menu): the selected parts (nothing selected:
+all of them; a group as one part) are laid out on the laser's bed as tightly
+as the rectangles around their outlines allow, a set **gap** apart, turned by
+90° where that fits better (switch **Turn by 90°** off for wood grain). What
+does not fit goes on a next sheet (a sheet is always the bed): each sheet is
+a group in the element list, sheets 2 and on unticked; cut sheet 1, then
+untick it and tick the next one. Nesting again lays the parts out anew.
+
 **Offset.** The **Offset** tool (Shift+O, also Edit → Offset) draws a new
 outline a set distance around a shape. In the options bar set the
 **distance** (positive outside, holes get smaller; negative inside), round
@@ -545,6 +554,7 @@ the mouse actions and a search field.
 | Ctrl+Shift+H / Ctrl+Shift+V, also H / V on the bed | Mirror horizontally / vertically |
 | Ctrl+G / Ctrl+Shift+G | Group / ungroup |
 | Ctrl+J | Join into a polyline |
+| Ctrl+Shift+N | Nest on the bed |
 | Ctrl++ / Ctrl+- / Ctrl+* / Ctrl+^ | Union / difference / intersection / exclusion |
 | Ctrl+E | Centre on the bed |
 | PgUp / PgDown | Move up (earlier) / down (later) in the element list (Ctrl: to the start / end) |

@@ -16,6 +16,13 @@ Zawiera też poprawki wydań 1.x.
   jednym ciągiem, zamkniętą, gdy łańcuch się domyka (jak Auto-Join w
   LightBurnie albo Polyline from Segments w QCAD). Zamknięte obrysy i linie,
   które z niczym się nie stykają, zostają bez zmian.
+- **Ułóż na stole** (Ctrl+Shift+N; przycisk **Ułóż** w grupie Układ na pasku,
+  menu Edycja, menu pod prawym przyciskiem): zaznaczone części (grupa jako
+  jedna część) rozkładane na stole lasera tak ciasno, jak pozwalają ich
+  prostokąty, z odstępem, obracane o 90°, gdy tak lepiej się mieszczą (można
+  wyłączyć); co się nie zmieści, trafia na kolejne arkusze, każdy jako grupa
+  na liście elementów, arkusze od 2. odhaczone. Generatory pudełek używają
+  tego samego układania.
 
 ## 1.8.0 (2026-11-16)
 
