@@ -857,6 +857,36 @@ def part_edit(s):
         if op != "exclusion":
             s.trigger(w.act_undo)                  # back to the two shapes for the next one
 
+    # Join into a polyline: two lines drawn end to end with the Line tool, both selected, Ctrl+J and the
+    # toolbar button: one path
+    def two_lines():
+        s.trigger(w.tool_actions["line"])
+        s.drag((150, 20), (190, 20))
+        s.trigger(w.tool_actions["line"])             # (a drawing tool is used once)
+        s.drag((190, 60), (190, 20))              # ending on the first one's end (a press there would grab it)
+        s.trigger(w.tool_actions["select"])
+    s.step("draw two lines end to end (Line tool)", two_lines, undo_steps=2,
+           check=lambda: (all(e.shape is not None and e.shape.kind == "line" for e in w.elements[-2:]),
+                          "%s" % [e.name for e in w.elements[-2:]]))
+    for via in ("key", "button"):
+        if via == "button":
+            s.trigger(w.act_undo)                    # the two lines again (the step above stays done)
+
+        def join(via=via):
+            select_one(w.elements[-2])
+            pick_el(w.elements[-1], Qt.ControlModifier)
+            s.trigger(w.act_join, via=via)
+        n = len(w.elements)
+        s.step("Join into a polyline (%s)" % ("Ctrl+J" if via == "key" else "toolbar button"), join,
+               check=lambda n=n: (len(w.elements) == n - 1 and w.elements[-1].shape.kind == "path"
+                                  and len(w.elements[-1].shape.subpaths) == 1
+                                  and len(w.elements[-1].shape.subpaths[0]["nodes"]) == 3,
+                                  "%d elements (was %d), last %s; selected %s; status '%s'" % (
+                                      len(w.elements), n, w.elements[-1].shape.kind,
+                                      [e.name for e in w._selection()], w.statusBar().currentMessage())))
+    for _i in range(3):
+        s.trigger(w.act_undo)                    # the join undone, the two lines away again
+
     # Offset tool (right strip): its settings in the options bar, then a click on the combined shape
     n = len(w.elements)
     base = w.elements[-1]

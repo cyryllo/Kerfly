@@ -8,6 +8,15 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 Rozwijana na gałęzi `2.0`: lasery GRBL, nesting i inne nowe funkcje z planu.
 Zawiera też poprawki wydań 1.x.
 
+### Dodane
+
+- **Połącz w polilinię** (Ctrl+J; menu Edycja, grupa Kształty na pasku, menu
+  pod prawym przyciskiem): zaznaczone linie, łamane i otwarte ścieżki, których
+  końce się stykają (bliżej niż 0,05 mm), stają się jedną ścieżką, ciętą
+  jednym ciągiem, zamkniętą, gdy łańcuch się domyka (jak Auto-Join w
+  LightBurnie albo Polyline from Segments w QCAD). Zamknięte obrysy i linie,
+  które z niczym się nie stykają, zostają bez zmian.
+
 ## 1.8.0 (2026-11-16)
 
 Podgląd 3D pudełek z generatora, grupy w grupach (arkusze i części pudełka na

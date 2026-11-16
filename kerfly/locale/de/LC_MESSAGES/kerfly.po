@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 23:56+0100\n"
+"POT-Creation-Date: 2026-11-16 22:46+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -130,6 +130,9 @@ msgstr "Materialbibliothek &importieren…"
 
 msgid "&Initialize laser"
 msgstr "Laser &verbinden"
+
+msgid "&Join into a polyline"
+msgstr "Zu einer Polylinie &verbinden"
 
 msgid "&Keyboard shortcuts"
 msgstr "&Tastenkürzel"
@@ -1552,10 +1555,24 @@ msgstr "Auftragssimulation"
 msgid "Job time: %s"
 msgstr "Auftragsdauer: %s"
 
+msgid ""
+"Join into a polyline: the selected lines and open shapes whose ends meet "
+"become one path, cut in one go"
+msgstr ""
+"Zu einer Polylinie verbinden: die ausgewählten Linien und offenen Formen,"
+" deren Enden sich treffen, werden ein Pfad, der in einem Zug geschnitten "
+"wird"
+
 msgid "Join the selected elements into a group that is selected and moved as one"
 msgstr ""
 "Ausgewählte Elemente zu einer Gruppe verbinden, die als Ganzes ausgewählt"
 " und verschoben wird"
+
+#, python-format
+msgid "Joined %(pieces)d lines into %(paths)d path(s), %(closed)d of them closed."
+msgstr ""
+"%(pieces)d Linien zu %(paths)d Pfad(en) verbunden, davon %(closed)d "
+"geschlossen."
 
 msgid "Jump to the next layer"
 msgstr "Zur nächsten Ebene springen"
@@ -2066,6 +2083,12 @@ msgstr "Keine Ecke an den ausgewählten Knoten: die Kurve läuft glatt hindurch"
 
 msgid "No design loaded"
 msgstr "Kein Entwurf geladen"
+
+#, python-format
+msgid "No ends of the selected lines meet (closer than %s mm): nothing to join."
+msgstr ""
+"Die Enden der ausgewählten Linien treffen sich nicht (näher als %s mm): "
+"nichts zu verbinden."
 
 msgid "No hinge"
 msgstr "Kein Scharnier"
@@ -2840,6 +2863,13 @@ msgstr "Wählen Sie zuerst die zu kopierenden Elemente aus."
 
 msgid "Select the elements to move up or down first."
 msgstr "Zuerst die Elemente auswählen, die nach oben oder unten sollen."
+
+msgid ""
+"Select the lines to join: open shapes (lines, polylines, paths). An "
+"opened file: Ungroup it first."
+msgstr ""
+"Wählen Sie die zu verbindenden Linien: offene Formen (Linien, Polylinien,"
+" Pfade). Eine geöffnete Datei: zuerst Gruppierung aufheben."
 
 msgid "Select three or more elements to distribute them."
 msgstr "Wählen Sie drei oder mehr Elemente aus, um sie zu verteilen."

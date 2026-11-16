@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-15 23:56+0100\n"
+"POT-Creation-Date: 2026-11-16 22:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,6 +122,9 @@ msgid "&Import material library…"
 msgstr ""
 
 msgid "&Initialize laser"
+msgstr ""
+
+msgid "&Join into a polyline"
 msgstr ""
 
 msgid "&Keyboard shortcuts"
@@ -1425,7 +1428,16 @@ msgstr ""
 msgid "Job time: %s"
 msgstr ""
 
+msgid ""
+"Join into a polyline: the selected lines and open shapes whose ends meet "
+"become one path, cut in one go"
+msgstr ""
+
 msgid "Join the selected elements into a group that is selected and moved as one"
+msgstr ""
+
+#, python-format
+msgid "Joined %(pieces)d lines into %(paths)d path(s), %(closed)d of them closed."
 msgstr ""
 
 msgid "Jump to the next layer"
@@ -1886,6 +1898,10 @@ msgid "No corner at the selected nodes: the curve passes smoothly through them"
 msgstr ""
 
 msgid "No design loaded"
+msgstr ""
+
+#, python-format
+msgid "No ends of the selected lines meet (closer than %s mm): nothing to join."
 msgstr ""
 
 msgid "No hinge"
@@ -2598,6 +2614,11 @@ msgid "Select the elements to copy first."
 msgstr ""
 
 msgid "Select the elements to move up or down first."
+msgstr ""
+
+msgid ""
+"Select the lines to join: open shapes (lines, polylines, paths). An "
+"opened file: Ungroup it first."
 msgstr ""
 
 msgid "Select three or more elements to distribute them."

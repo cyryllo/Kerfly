@@ -1314,6 +1314,41 @@ def main():
           "(%s)" % [in_strip, out_ok, in_ok, undo_ok, holes])
     w.close()
 
+    # 28c. Join into a polyline (Ctrl+J): lines whose ends meet (closer than 0.05 mm) become one path, closed
+    # when the chain comes round; a line that meets nothing and a gap of 0.2 mm stay as they are; one undo step;
+    # the same with home in the upper right corner
+    from kerfly.gui import truth as _truth_j
+    joins = []
+    for home_ur in ("0", "1"):
+        jw = make_window(grid_mm="0", HomeUR=home_ur)
+
+        def line(a, b, jw=jw):
+            jw._preview_drawn("line", QPointF(*a), QPointF(*b), False)
+        line((20, 20), (60, 20))
+        line((60, 20), (40, 50))
+        line((40, 50), (20, 20))                     # a triangle of three lines
+        line((100, 20), (130, 20))
+        line((130.04, 20), (130, 50))                # 0.04 mm apart: joined
+        line((150, 20), (180, 20))
+        line((180.2, 20), (180, 50))                 # 0.2 mm apart: not
+        line((200, 80), (240, 90))                   # alone
+        before = [round(b, 4) for e in jw.elements[:3] for b in e.bounds]
+        jw.preview.select_element(list(jw.elements))
+        jw.act_join.trigger()
+        kinds = [(e.shape.kind, [sp["closed"] for sp in e.shape.subpaths] if e.shape.kind == "path" else None)
+                 for e in jw.elements]
+        tri = jw.elements[0]
+        same_place = [round(v, 4) for v in tri.bounds] == [min(before[0::4]), max(before[1::4]),
+                                                            min(before[2::4]), max(before[3::4])]
+        nodes = [len(sp["nodes"]) for e in jw.elements[:2] for sp in e.shape.subpaths]
+        jw.undo()
+        joins.append(kinds == [("path", [True]), ("path", [False])] + [("line", None)] * 3 and same_place
+                     and nodes == [3, 3] and len(jw.elements) == 8 and not _truth_j.check_window(jw))
+        jw._dirty = False
+        jw.close()
+    check("Join into a polyline (Ctrl+J): a triangle of lines closed, a 0.04 mm gap joined, 0.2 mm and a lone "
+          "line kept, in place, one undo step (home upper left and upper right)", all(joins), "(%s)" % joins)
+
     # 29. freehand: a circle drawn with the mouse becomes a closed smooth path with few nodes
     import math as _m
     w = make_window(grid_mm="0")

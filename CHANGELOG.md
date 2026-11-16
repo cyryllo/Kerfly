@@ -12,6 +12,14 @@ Version numbers:
 In development on the `2.0` branch: GRBL lasers, nesting and the other new
 features of the roadmap. The fixes of the 1.x releases are in it too.
 
+### Added
+
+- **Join into a polyline** (Ctrl+J; Edit menu, Shapes group of the toolbar,
+  right-click menu): the selected lines, polylines and open paths whose ends
+  meet (closer than 0.05 mm) become one path, cut in one go, closed when the
+  chain comes round (as LightBurn's Auto-Join or QCAD's Polyline from
+  Segments). Closed outlines and lines that meet nothing stay as they are.
+
 ## 1.8.0 (2026-11-16)
 
 3D preview of the generated boxes, groups in groups (a box's sheets and parts

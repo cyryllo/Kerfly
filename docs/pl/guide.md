@@ -231,6 +231,15 @@ część wspólną i wykluczenie zamkniętych kształtów (różnica: pozostałe
 zaznaczone kształty są wycinane z tego, który jest najwyżej na liście
 elementów).
 
+**Połącz w polilinię** (Ctrl+J, menu Edycja, grupa Kształty na pasku, menu
+pod prawym przyciskiem): zaznaczone linie, łamane i otwarte ścieżki, których
+końce się stykają (bliżej niż 0,05 mm), stają się jedną ścieżką, ciętą
+jednym ciągiem; łańcuch, który się domyka, jest zamknięty. Przydaje się przy
+rysunkach z luźnych kawałków (z plików DXF): na laserze GRBL albo maszynie
+CNC każdy kawałek to hamowanie i ponowne rozpędzanie. Zamknięte obrysy i
+linie, które z niczym się nie stykają, zostają bez zmian. Otwarty plik:
+najpierw go rozgrupuj.
+
 **Odsunięcie.** Narzędzie **Odsunięcie** (Shift+O, także Edycja →
 Odsunięcie) rysuje nowy obrys w zadanej odległości wokół kształtu. Na pasku
 opcji ustaw **odległość** (dodatnia na zewnątrz, otwory się zmniejszają;
@@ -552,6 +561,7 @@ razem z działaniami myszą i polem wyszukiwania.
 | Ctrl+L / Ctrl+R, także Ctrl+[ / Ctrl+] | Obróć o 90° w lewo / w prawo |
 | Ctrl+Shift+H / Ctrl+Shift+V, także H / V na stole | Odbij w poziomie / w pionie |
 | Ctrl+G / Ctrl+Shift+G | Grupuj / rozgrupuj |
+| Ctrl+J | Połącz w polilinię |
 | Ctrl++ / Ctrl+- / Ctrl+* / Ctrl+^ | Suma / różnica / część wspólna / wykluczenie |
 | Ctrl+E | Wyśrodkuj na stole |
 | PgUp / PgDown | Wyżej (wcześniej) / niżej (później) na liście elementów (Ctrl: na początek / na koniec) |

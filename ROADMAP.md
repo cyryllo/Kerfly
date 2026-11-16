@@ -198,7 +198,7 @@ the right mouse button only pans the view. K40 Whisperer had no menu there
 | ~~Node editing with Bezier handles, for drawn shapes and broken-apart SVG / DXF~~ (done) | `toolnodeedit.py`, `toolnodemove.py` |
 | ~~Cut a region out of an image~~ (done: Cut out of a picture tool, rectangle or ellipse) | `toolimagecut.py` |
 | ~~Tabs (bridges) on cut paths~~ (done: count and width per outline) | `tooltabedit.py` |
-| Join into a polyline (planned 2026-11-15; like QCAD Professional's Polyline from Segments, LightBurn's Auto-Join): the selected lines, arcs and open paths that touch end to end (within a small gap, e.g. 0.05 mm) become one path, cut in one go; most useful for GRBL / CNC, where every piece makes the machine speed up and stop | (not in MeerK40t's tool widgets) |
+| ~~Join into a polyline~~ (done 2026-11-16 on the 2.0 branch: Ctrl+J, Edit menu, Shapes group, right-click menu; planned 2026-11-15; like QCAD Professional's Polyline from Segments, LightBurn's Auto-Join): the selected lines, arcs and open paths that touch end to end (within a small gap, e.g. 0.05 mm) become one path, cut in one go; most useful for GRBL / CNC, where every piece makes the machine speed up and stop | (not in MeerK40t's tool widgets) |
 
 ## Generators and processing
 

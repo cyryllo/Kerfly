@@ -226,6 +226,14 @@ select all (Ctrl+A), duplicate (Ctrl+D), delete (Del), rotate 90°
 intersection and exclusion of closed shapes (difference: the other selected
 shapes are cut out of the one highest in the element list).
 
+**Join into a polyline** (Ctrl+J, Edit menu, Shapes group of the toolbar,
+right-click menu): the selected lines, polylines and open paths whose ends
+meet (closer than 0.05 mm) become one path, cut in one go; a chain that
+comes round is closed. Useful for drawings made of loose pieces (from DXF
+files): on a GRBL laser or a CNC machine every piece makes the machine slow
+down and speed up again. Closed outlines and lines that meet nothing stay as
+they are. An opened file: Ungroup it first.
+
 **Offset.** The **Offset** tool (Shift+O, also Edit → Offset) draws a new
 outline a set distance around a shape. In the options bar set the
 **distance** (positive outside, holes get smaller; negative inside), round
@@ -536,6 +544,7 @@ the mouse actions and a search field.
 | Ctrl+L / Ctrl+R, also Ctrl+[ / Ctrl+] | Rotate 90° left / right |
 | Ctrl+Shift+H / Ctrl+Shift+V, also H / V on the bed | Mirror horizontally / vertically |
 | Ctrl+G / Ctrl+Shift+G | Group / ungroup |
+| Ctrl+J | Join into a polyline |
 | Ctrl++ / Ctrl+- / Ctrl+* / Ctrl+^ | Union / difference / intersection / exclusion |
 | Ctrl+E | Centre on the bed |
 | PgUp / PgDown | Move up (earlier) / down (later) in the element list (Ctrl: to the start / end) |

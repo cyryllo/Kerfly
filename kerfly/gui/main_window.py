@@ -311,6 +311,9 @@ class MainWindow(QMainWindow):
                                ("exclusion", N_("Exclusion: keep where the shapes do not overlap"), "Ctrl+^")):
             self.act_boolean[code] = self._action(_(self.BOOLEAN_NAMES[code]),
                                                   lambda _c=False, k=code: self.boolean_selected(k), key, _(tip))
+        self.act_join = self._action(_("&Join into a polyline"), self.join_selected, "Ctrl+J",
+                                     _("Join into a polyline: the selected lines and open shapes whose ends meet "
+                                       "become one path, cut in one go"))
         self.act_offset = self._action(_("&Offset"), lambda: self.set_tool("offset"), None,
                                        _("Offset: a new outline around a shape (or inside it), a set distance "
                                          "away"))
@@ -419,6 +422,7 @@ class MainWindow(QMainWindow):
         sub2 = m.addMenu(_("Combine shapes"))
         for a in self.act_boolean.values():
             sub2.addAction(a)
+        m.addAction(self.act_join)
         m.addAction(self.act_offset)
         m.addAction(self.act_trace_image)
         sub = m.addMenu(_("Align and distribute"))
@@ -565,6 +569,7 @@ class MainWindow(QMainWindow):
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
                 (self.act_trace_image, "vector-spline"),
+                (self.act_join, "join-polyline"),
             ]),
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
@@ -1411,6 +1416,93 @@ class MainWindow(QMainWindow):
         self._compiled = None
         self._layer_cache.clear()
         self._layout_changed()
+
+    JOIN_GAP_MM = 0.05          # ends closer than this are joined (as LightBurn's Auto-Join)
+
+    def join_selected(self):
+        """Join into a polyline: the open lines of the selected shapes whose ends meet (closer than
+        JOIN_GAP_MM) become one path each, cut in one go (no stop at every piece on a GRBL or CNC machine);
+        a chain whose ends meet is closed. Closed outlines stay as they are. One undo step."""
+        from kerfly.core import curves
+        if self.worker is not None:
+            return
+        items = {id(i.element): i for i in self.preview._items}
+        sources = []                                 # (element, its closed subpaths, its open ones), scene mm
+        for e in self._selection():
+            item = items.get(id(e))
+            if item is None or e.shape is None:
+                continue
+            local = self._node_points(e)
+            if not local:
+                continue
+            t = item.sceneTransform()
+
+            def m(x, y, t=t):
+                return t.map(x, y)
+            scene = []
+            for sp in local:
+                nodes = []
+                for n in sp["nodes"]:
+                    x, y = m(n[0], n[1])
+                    nodes.append(curves.node(x, y, m(n[2], n[3]) if n[2] is not None else None,
+                                             m(n[4], n[5]) if n[4] is not None else None))
+                scene.append({"closed": bool(sp.get("closed")), "nodes": nodes})
+            opens = [sp for sp in scene if not sp["closed"] and len(sp["nodes"]) > 1]
+            if opens:
+                sources.append((e, [sp for sp in scene if sp["closed"]], opens))
+        if not sources:
+            self.status(_("Select the lines to join: open shapes (lines, polylines, paths). An opened file: "
+                          "Ungroup it first."), error=True)
+            return
+        joined = curves.join_segments([seg for _e, _c, opens in sources for sp in opens
+                                       for seg in curves.segments_of(sp)], self.JOIN_GAP_MM)
+
+        def ends(sp):                                # what tells a line apart: its pieces and its two ends
+            segs = curves.segments_of(sp)
+            return len(segs), frozenset((round(p[0], 3), round(p[1], 3)) for p in (segs[0][0], segs[-1][3]))
+        same = {ends(sp) for sp in joined if not sp["closed"]}       # lines that came out as they went in
+        # a shape none of whose lines met another one (nor closed) stays as it is, and so do its lines
+        untouched = [src for src in sources if all(ends(sp) in same for sp in src[2])]
+        kept_lines = {ends(sp) for _e, _c, opens in untouched for sp in opens}
+        sources = [src for src in sources if src not in untouched]
+        joined = [sp for sp in joined if sp["closed"] or ends(sp) not in kept_lines]
+        pieces = sum(len(o) for _e, _c, o in sources)
+        closed_now = sum(1 for sp in joined if sp["closed"])
+        if not sources or not joined:
+            self.status(_("No ends of the selected lines meet (closer than %s mm): nothing to join.")
+                        % self.JOIN_GAP_MM, error=True)
+            return
+        first = sources[0][0]
+        group = first.group if all(e.group == first.group for e, _c, _o in sources) else ""
+        made = []
+        for sp in joined:
+            new = Element(Design(), name=_("Path"), visible=first.visible, group=group)
+            if self._fit_path(new, [sp], ShapeSpec(kind="path", operation=first.shape.operation)):
+                new.layers = dict(first.layers)
+                made.append(new)
+        kept = []                                    # the closed outlines of a source with open lines too
+        for e, closed, _o in sources:
+            if closed:
+                rest = Element(Design(), name=e.name, visible=e.visible, group=e.group)
+                if self._fit_path(rest, closed, e.shape.copy()):
+                    rest.layers = dict(e.layers)
+                    kept.append(rest)
+        if not made:
+            self.status(_("No ends of the selected lines meet (closer than %s mm): nothing to join.")
+                        % self.JOIN_GAP_MM, error=True)
+            return
+        self._checkpoint()
+        index = min(self.elements.index(e) for e, _c, _o in sources)
+        for e, _c, _o in sources:
+            self.elements.remove(e)
+        self.elements[index:index] = made + kept
+        self.selected = made[0] if len(made) == 1 else None
+        self._compiled = None
+        self._layer_cache.clear()
+        self._layout_changed()
+        self.preview.select_element(made)
+        self.status(_("Joined %(pieces)d lines into %(paths)d path(s), %(closed)d of them closed.")
+                    % {"pieces": pieces, "paths": len(made), "closed": closed_now})
 
     def _offset_values_changed(self, values):
         self.offset_defaults = dict(values)
@@ -2998,6 +3090,7 @@ class MainWindow(QMainWindow):
                 sub = menu.addMenu(_("Combine shapes"))
                 for a in self.act_boolean.values():
                     sub.addAction(a)
+            menu.addAction(self.act_join)
             menu.addAction(self.act_offset)
             sub = menu.addMenu(_("Order"))
             for a in self.act_order.values():
