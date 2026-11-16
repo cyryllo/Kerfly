@@ -3207,9 +3207,16 @@ class MainWindow(QMainWindow):
             return
         if checkpoint:
             self._checkpoint()
+        self._shift_design(self.head[0] - ox, self.head[1] - oy)
+
+    def _shift_design(self, dx, dy):
+        """Move all elements together by (dx, dy) inches (the elements' and the head's x both run away from
+        home, also with an upper-right home)."""
+        if not (dx or dy):
+            return
         for e in self.elements:
-            e.x += self.head[0] - ox
-            e.y += self.head[1] - oy
+            e.x += dx
+            e.y += dy
         self._compiled = None
         self._layout_changed()
 
@@ -4387,12 +4394,18 @@ class MainWindow(QMainWindow):
         dy = round(dy_units * f, 3)
         if settings.home_upper_right:
             dx = -dx
-        design_w = design_h = 0.0
-        if self.follow_head() and self.elements and not settings.home_upper_right:
-            b = self.design.bounds                     # the design moves along: keep it on the bed
-            design_w, design_h = b[1] - b[0], b[3] - b[2]
-        x, y = clamp_head_position(self.head[0], self.head[1], dx, dy, bed_w, bed_h, design_w, design_h)
-        self.move_head_to(x, y)
+        if not (self.follow_head() and self.elements):
+            x, y = clamp_head_position(self.head[0], self.head[1], dx, dy, bed_w, bed_h)
+            self.move_head_to(x, y)
+            return
+        # the design moves along, the head keeping its place on it (after a corner button the head may be on
+        # another corner of the design than its origin): both stay on the bed, as in K40 Whisperer
+        b = self.design.get_bounds(settings.rotate)
+        ox, oy = self.origin
+        offset = (round(self.head[0] - ox, 3), round(self.head[1] - oy, 3))
+        nx, ny = clamp_head_position(ox, oy, dx, dy, bed_w, bed_h, b[1] - b[0], b[3] - b[2], offset)
+        if self.move_head_to(nx + offset[0], ny + offset[1], follow=False):
+            self._shift_design(nx - ox, ny - oy)
 
     def move_head_to(self, x, y, follow=True):
         """Move the laser head to a bed position (inches, y <= 0). Returns True on success.

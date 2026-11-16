@@ -144,7 +144,10 @@ design. To start the design where the head is instead:
 - **Design follows the head** (the button with the chain link, green when
   on) keeps the design at the head: the arrows, Go to X/Y and Home move the
   head and the design together, and the arrows do not push the design off
-  the bed. The corner buttons still only move the head.
+  the bed. The corner buttons still only move the head; after one, the arrows
+  move the design with the head, which keeps its place on the design (for
+  example its upper left corner, to check the design against the edge of the
+  material).
 
 The K40 does not report where its head is. Kerfly counts the moves it sends;
 after the motors were unlocked, the head was moved by hand, or a job was

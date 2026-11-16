@@ -2849,17 +2849,43 @@ def main():
     follows = w2.origin == w2.head and abs(w2.head[0] - 20 / 25.4) < 0.002 and len(w2._undo) == undo_before + 1
     w2.move_to_corner("LR")
     corner_only = w2.origin != w2.head
+
+    def head_on_design(win):
+        return (round(win.head[0] - win.origin[0], 3), round(win.head[1] - win.origin[1], 3))
+    # after a corner button the arrows move the design with the head, the head keeping its place on it
+    # (it used to jump back to the origin corner and threw the design off the bed)
+    place, x_before = head_on_design(w2), w2.elements[0].x
+    w2.jog(1, 0)
+    kept = head_on_design(w2) == place and abs(w2.elements[0].x - x_before - 10 / 25.4) < 0.002
     w2.home()
     homed = w2.origin == (0.0, 0.0) == w2.head
     w2.jog(-1, 0)                                         # already at the left edge: stays on the bed
     on_bed = w2.origin == (0.0, 0.0)
     w2.act_follow_head.trigger()
     saved = w2.values["follow_head"] == "0"
-    check("design follows the head: arrows, corners, Home, undo, setting",
-          stays and at_head and follows and corner_only and homed and on_bed and saved,
-          "(%s)" % ([stays, at_head, follows, corner_only, homed, on_bed, saved],))
+    # the same with home in the upper right corner (Marek's report): head on the upper left corner of the design,
+    # left arrow: the design goes left with the head; far left: the design stops at the bed's edge
+    w3 = make_window(follow_head="0", jog_step="10", HomeUR="1", grid_mm="0")
+    w3._preview_drawn("rectangle", QPointF(100, 40), QPointF(160, 80), False)
+    w3.act_follow_head.trigger()
+    w3.move_to_corner("UL")
+    place3, x3 = head_on_design(w3), w3.elements[0].x
+    w3.jog(-1, 0)
+    ur_kept = place3[0] > 1 and head_on_design(w3) == place3 and abs(w3.elements[0].x - x3 - 10 / 25.4) < 0.002
+    for _i in range(60):
+        w3.jog(-1, 0)
+    bw3, _bh3 = config.bed_size_inches(w3.values)
+    ur_on_bed = head_on_design(w3) == place3 and w3.head[0] <= bw3 + 1e-6 and \
+        not w3._off_bed_elements()
+    check("design follows the head: arrows, corners, Home, undo, setting; after a corner button the head keeps its "
+          "place on the design (also with home in the upper right), the design stays on the bed",
+          stays and at_head and follows and corner_only and kept and homed and on_bed and saved and ur_kept
+          and ur_on_bed,
+          "(%s)" % ([stays, at_head, follows, corner_only, kept, homed, on_bed, saved, ur_kept, ur_on_bed],))
     w2._dirty = False
     w2.close()
+    w3._dirty = False
+    w3.close()
     sys.stdout, sys.stderr = sys.__stdout__, sys.__stderr__
 
     # Let every worker thread finish: a QThread still running when the process

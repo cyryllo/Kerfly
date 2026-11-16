@@ -36,8 +36,6 @@ Version numbers:
   sheets 2 and on start unticked; untick the sheet you cut and tick the next.
   (With a sheet ticked in the list but its layer unticked, Simulate and Start
   found nothing to do.)
-### Changed
-
 - **Sliding lid (beta): a strip of the side walls stays above the upper
   rail** (at least 3 mm, or the material's thickness), so the top edge is
   stronger; the rail's tabs go into closed slots instead of notches of the
@@ -46,6 +44,16 @@ Version numbers:
   said "0 layers" for a box on the default cut layer.
 - **Kerfly.exe and the Windows installer carry their product name and
   version** (shown in the file's Properties), ready for code signing.
+
+### Fixed
+
+- **After a corner button the arrows threw the design off the bed** with
+  "Design follows the head" on: the head jumped back to the design's
+  origin corner (with home in the upper right, its upper right corner) and
+  the design was moved by the whole distance. Now the design moves with the
+  head, the head keeping its place on it (for example the design's upper
+  left corner, to check that it does not stick out of the material), and the
+  design and the head stay on the bed, as in K40 Whisperer.
 
 ## 1.7.1 (2026-11-15)
 

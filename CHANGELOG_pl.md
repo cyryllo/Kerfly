@@ -33,8 +33,6 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   elementów, arkusze od 2. są na początku odhaczone; odhacz wycięty arkusz i
   zaznacz kolejny. (Gdy arkusz był zaznaczony na liście, a jego warstwa
   odhaczona, Symulacja i Start nie miały nic do zrobienia.)
-### Zmienione
-
 - **Wysuwane wieczko (beta): nad górną listwą zostaje pas bocznej ścianki**
   (co najmniej 3 mm albo grubość materiału), więc górna krawędź jest
   mocniejsza; języczki listwy wchodzą w zamknięte szczeliny zamiast w
@@ -43,6 +41,16 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   dla pudełka na domyślnej warstwie cięcia pokazywało „warstw: 0”.
 - **Kerfly.exe i instalator dla Windows mają nazwę produktu i wersję**
   (widoczne we Właściwościach pliku), przygotowane do podpisywania kodu.
+
+### Poprawione
+
+- **Po przycisku narożnika strzałki wyrzucały projekt poza stół** przy
+  włączonym „Projekt podąża za głowicą”: głowica wracała do punktu
+  odniesienia projektu (przy bazowaniu w prawym górnym rogu do jego prawego
+  górnego rogu), a projekt przesuwał się o całą tę odległość. Teraz projekt
+  przesuwa się razem z głowicą, a głowica zostaje w tym samym miejscu
+  projektu (np. w jego lewym górnym rogu, żeby sprawdzić, czy nie wychodzi
+  poza materiał); projekt i głowica zostają na stole, jak w K40 Whisperer.
 
 ## 1.7.1 (2026-11-15)
 

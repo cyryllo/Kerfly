@@ -147,7 +147,10 @@ projektu. Jeśli wolisz, żeby projekt zaczynał się przy głowicy:
 - **Projekt podąża za głowicą** (przycisk z łańcuchem, zielony po
   włączeniu) trzyma projekt przy głowicy: strzałki, Idź do X/Y i Bazowanie
   przesuwają głowicę razem z projektem, a strzałki nie wypchną projektu poza
-  stół. Przyciski narożników nadal przesuwają tylko głowicę.
+  stół. Przyciski narożników nadal przesuwają tylko głowicę; potem strzałki
+  przesuwają projekt razem z głowicą, a głowica zostaje w tym samym miejscu
+  projektu (np. w jego lewym górnym rogu, żeby sprawdzić projekt względem
+  krawędzi materiału).
 
 K40 nie podaje, gdzie jest głowica. Kerfly liczy ruchy, które wysłał; po
 odblokowaniu osi, ręcznym przesunięciu głowicy albo zatrzymaniu zadania

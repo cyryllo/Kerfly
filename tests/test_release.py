@@ -1097,6 +1097,24 @@ def part_view_and_laser(s):
     s.step("Laser → Unfreeze laser", lambda: s.trigger(w.act_unfreeze, via="menu"), change=False)
     s.step("Home (key)", lambda: s.trigger(w.act_home, via="key"), change=False)
     s.step("Design follows the head: on", lambda: s.click(w.btn_follow_head), change=None, undo=False)
+    # after a corner button the arrows move the design and the head together, the head keeping its place on
+    # the design (it used to jump back to the design's origin corner)
+    def place_on_design():
+        return (round(w.head[0] - w.origin[0], 3), round(w.head[1] - w.origin[1], 3))
+    s.step("head to the design: LR (button), with the design following", lambda: s.click(w.corner_buttons[4]),
+           change=False)
+    corner_place = place_on_design()
+    down = next(b for b in w.findChildren(QPushButton)
+                if b.toolTip().startswith(tr_("Move the laser head down by one step")))
+    origin_before = w.origin
+    s.step("jog down (arrow button): the design goes along, the head stays on its lower right corner",
+           lambda: s.click(down), change=None, undo=False,
+           check=lambda: (place_on_design() == corner_place and corner_place != (0.0, 0.0)
+                          and w.origin[1] < origin_before[1],
+                          "head on the design %s, was %s; origin %s, was %s" % (
+                              place_on_design(), corner_place, w.origin, origin_before)))
+    s.step("head to the design: UL (button): back on the design's origin", lambda: s.click(w.corner_buttons[0]),
+           change=False, check=lambda: (place_on_design() == (0.0, 0.0), "%s" % (place_on_design(),)))
     s.step("Design follows the head: off", lambda: s.trigger(w.act_follow_head, via="menu"), change=None, undo=False)
     s.step("Edit → Place design at the head", lambda: s.trigger(w.act_place_head, via="menu"), change=None)
     s.step("Trace boundary (button)", lambda: (s.click(w.btn_trace), s.wait(lambda: w.worker is None)), change=False)
