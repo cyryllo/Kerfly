@@ -212,7 +212,7 @@ the right mouse button only pans the view. K40 Whisperer had no menu there
 | ~~Path offset (kerf compensation)~~ (done: Offset tool in the drawing tools on the right, kerf column of cut layers and in the material library, concentric fill pattern; pyclipper) | `core/elements/offset_clpr.py`, `offset_mk.py` |
 | ~~Boolean operations on shapes~~ (done: union, difference, intersection, exclusion) | `tools/polybool.py`, `extra/cag.py` |
 | ~~Kerf test and material test generators~~ (done, Generators group; also finger-joint box, gear, puzzle, ruler, QR code, rubber stamp, laser test card) | `tools/kerftest.py`, `gui/materialtest.py` |
-| Nesting (planned 2026-11-16): the selected elements laid out on the material as tightly as possible, turned where that helps, kept a gap apart, on as many sheets as needed (each sheet a group, as a box's sheets). Step 1: by their bounding rectangles (the MaxRects packing the box generators already use) for any elements. Step 2: by their real outlines (parts in each other's gaps and holes), with **sparrow** (chosen with the user 2026-11-16: state of the art, Rust, MPL-2.0, Python wrapper spyrrow on pip; to check first: the licences in the official repositories, ready wheels for Windows / Linux / macOS, and sheets of a fixed size, as sparrow packs a strip of fixed width as short as it can; a sheet is always the laser's bed, user 2026-11-16, as for the boxes); libnest2d (C++, LGPL-3.0, Cura's arrange; pip python-libnest2d) as the fallback; Deepnest (the user's suggestion; Electron app, the licence depends on the fork, deepnest-next is MIT) as a reference for the results | Deepnest, SVGnest; not in MeerK40t |
+| Nesting (planned 2026-11-16 for **version 2.0**, with GRBL): the selected elements laid out on the material as tightly as possible, turned where that helps, kept a gap apart, on as many sheets as needed (each sheet a group, as a box's sheets). Step 1: by their bounding rectangles (the MaxRects packing the box generators already use) for any elements. Step 2: by their real outlines (parts in each other's gaps and holes), with **sparrow** (chosen with the user 2026-11-16: state of the art, Rust, MPL-2.0, Python wrapper spyrrow on pip; to check first: the licences in the official repositories, ready wheels for Windows / Linux / macOS, and sheets of a fixed size, as sparrow packs a strip of fixed width as short as it can; a sheet is always the laser's bed, user 2026-11-16, as for the boxes); libnest2d (C++, LGPL-3.0, Cura's arrange; pip python-libnest2d) as the fallback; Deepnest (the user's suggestion; Electron app, the licence depends on the fork, deepnest-next is MIT) as a reference for the results | Deepnest, SVGnest; not in MeerK40t |
 | More generators: ~~round stamps with text around the circle~~ (done), ~~living-hinge boxes~~ (beta, 2026-11-15: rounded box), more box types (~~sliding lid~~ beta, rails with tabs, ~~dividers~~ beta, 2026-11-15); ~~3D preview of the boxes~~ (done, 2026-11-15: 3D tab, turn, pulled apart, lid slid out) | `boxes.py` (not in MeerK40t) |
 
 ### Pattern fills
@@ -313,7 +313,7 @@ the main test; these tests catch what is easy to miss.
   measure and compare; fix-only releases (1.x.y) need only the automatic
   tests.
 
-## Milestone: GRBL lasers (after the K40 milestone)
+## Milestone: GRBL lasers (version 2.0, with nesting; after the K40 milestone)
 
 Start only when everything on the K40 works and is confirmed on the machine
 (the K40 milestone: the remaining K40 Whisperer features above and the
