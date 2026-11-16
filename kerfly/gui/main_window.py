@@ -353,6 +353,9 @@ class MainWindow(QMainWindow):
         self.act_follow_head.setCheckable(True)
         self.act_follow_head.setChecked(is_true(self.values.get("follow_head", "0")))
         self.act_follow_head.setIcon(icons.follow_head_icon())
+        self.act_save_gcode = self._action(_("Save &G-code\u2026"), self.save_gcode, "Ctrl+Shift+K",
+                                           _("Save G-code for a laser with a GRBL board (beta): the ticked layers "
+                                             "with their speed, power and passes"))
         self.act_save_egv = self._action(_("Save &EGV file\u2026"), self.save_egv, "Ctrl+Shift+E",
                                          _("Write the selected operations to an EGV file"))
         self.act_send_egv = self._action(_("Send EGV file to laser\u2026"), self.send_egv_file, None,
@@ -410,7 +413,7 @@ class MainWindow(QMainWindow):
         mb = self.menuBar()
         m = mb.addMenu(_("&File"))
         for a in (self.act_new, self.act_open, self.act_add, self.act_reload, None, self.act_save_project,
-                  self.act_save_project_as, None, self.act_save_egv,
+                  self.act_save_project_as, None, self.act_save_egv, self.act_save_gcode,
                   self.act_send_egv, None, self.act_save_settings, None, self.act_quit):
             m.addSeparator() if a is None else m.addAction(a)
         m = mb.addMenu(_("&Edit"))
@@ -532,6 +535,7 @@ class MainWindow(QMainWindow):
                 (self.act_reload, "refresh", C_("toolbar", "Reload")),
                 (self.act_save_project, "device-floppy", C_("toolbar", "Save")),
                 (self.act_save_egv, "file-export", C_("toolbar", "Save EGV")),
+                (self.act_save_gcode, "file-gcode", C_("toolbar", "G-code")),
             ]),
             (C_("toolbar group", "Edit"), [
                 (self.act_undo, "arrow-back-up", C_("toolbar", "Undo")),
@@ -4742,6 +4746,44 @@ class MainWindow(QMainWindow):
         self.set_busy(True)
         self.status(message)
         worker.start()
+
+    def save_gcode(self):
+        """File → Save G-code: the job as G-code for a GRBL laser (kerfly.core.gcode), after its options."""
+        from kerfly.core import gcode
+        from kerfly.gui.gcode_dialog import GcodeDialog
+        if self.worker is not None:
+            return
+        if not self.elements:
+            self.status(_("Nothing to save: open or draw something first."), error=True)
+            return
+        if self._off_bed_elements():
+            self.status(_("Some elements stick out of the laser bed (drawn red): move them onto it first."),
+                        error=True)
+            return
+        dlg = GcodeDialog(self.values, self)
+        if not dlg.exec():
+            return
+        for key, value in dlg.values().items():
+            self._set_value(key, value)
+        self._store_profile()                        # the machine's G-code settings belong to its profile
+        base = os.path.splitext(self.design_file)[0] if self.design_file else os.path.expanduser("~/out")
+        name, _unused = QFileDialog.getSaveFileName(self, _("Save G-code"), base + ".nc",
+                                                    _("G-code files") + " (*.nc *.gcode *.gc *.ngc)")
+        if not name:
+            return
+        options = gcode.GcodeOptions(origin=self.values["gcode_origin"], s_max=int(self.values["gcode_s_max"]),
+                                     overscan_mm=float(self.values["gcode_overscan"]))
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            text = gcode.build(self.elements, self.layers, self.job_settings(), self.values, options, __version__)
+            with open(name, "w", encoding="utf-8") as f:
+                f.write(text)
+        except (OSError, ValueError) as e:
+            QApplication.restoreOverrideCursor()
+            self.status(_("G-code not saved: %s") % e, error=True)
+            return
+        QApplication.restoreOverrideCursor()
+        self.status(_("G-code saved: %s (%d lines)") % (name, text.count("\n")))
 
     def save_egv(self):
         base = os.path.splitext(self.design_file)[0] if self.design_file else os.path.expanduser("~/out")

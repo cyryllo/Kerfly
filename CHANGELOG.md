@@ -25,6 +25,13 @@ features of the roadmap. The fixes of the 1.x releases are in it too.
   with a gap, turned by 90° where that fits better (can be switched off);
   what does not fit goes on next sheets, each a group in the element list,
   sheets 2 and on unticked. The box generators use the same packing.
+- **G-code for GRBL lasers (beta)**: File → Save G-code… (Ctrl+Shift+K,
+  **G-code** in the File group of the toolbar) writes the ticked layers
+  (raster line by line with an overscan, engrave, cut) with their speed,
+  power and passes, in laser mode M4, for LaserGRBL, UGS or another sender.
+  Origin at the bed's lower left corner or at the design's upper left corner,
+  full power S (`$30`) and the overscan are asked and kept with the laser
+  profile. Not yet checked on a GRBL machine.
 
 ## 1.8.0 (2026-11-16)
 

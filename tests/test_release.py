@@ -1397,6 +1397,30 @@ def part_view_and_laser(s):
     s.files.append(egv)
     s.step("File → Save EGV file…", lambda: (s.trigger(w.act_save_egv, via="menu"), s.wait(lambda: w.worker is None)),
            change=False, check=lambda: (os.path.isfile(egv), "no file"))
+    # File → Save G-code (GRBL, beta): toolbar button, the origin chosen and S of full power typed, Save…
+    nc = os.path.join(tempfile.mkdtemp(), "job.nc")
+
+    def gcode_answer(dlg):
+        from PySide6.QtWidgets import QDialogButtonBox
+        s.pick(dlg.origin, index=dlg.origin.findData("design"))
+        s.type_number(dlg.s_max, 255)
+        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+
+    def gcode_ok():
+        if not os.path.isfile(nc):
+            return False, "no file"
+        with open(nc, encoding="utf-8") as f:
+            text = f.read()
+        powers = [int(word[1:]) for line in text.splitlines() if line.startswith("G1")
+                  for word in line.split() if word.startswith("S")]
+        return ("G21" in text and "M4 S0" in text and powers and max(powers) <= 255 and max(powers) > 0
+                and w.values["gcode_s_max"] == "255" and w.values["gcode_origin"] == "design",
+                "powers %s, values %s" % (sorted(set(powers))[:5], {k: w.values[k] for k in ("gcode_s_max",
+                                                                                         "gcode_origin")}))
+    s.expect_dialog("save G-code", gcode_answer)
+    s.files.append(nc)
+    s.step("File → Save G-code… (toolbar button): origin at the design, full power S 255, Save…",
+           lambda: s.trigger(w.act_save_gcode, via="button"), change=False, check=gcode_ok)
     s.files.append(egv)
     s.expect_dialog("passes", lambda d: s.click_dialog_button(d, "OK"), optional=True)
     sent = len(s.fake.sent)

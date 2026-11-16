@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-16 23:05+0100\n"
+"POT-Creation-Date: 2026-11-16 23:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1144,10 +1144,31 @@ msgstr ""
 msgid "Front"
 msgstr ""
 
+msgid "Full power S"
+msgstr ""
+
+msgid "G-code"
+msgstr ""
+
+msgctxt "toolbar"
 msgid "G-code"
 msgstr ""
 
 msgid "G-code files"
+msgstr ""
+
+msgid ""
+"G-code for lasers with a GRBL board (diode lasers, CO2 lasers with GRBL):"
+" the ticked layers in their order, each with its speed, power and passes."
+" Open the file in LaserGRBL, UGS or another G-code sender. (beta)"
+msgstr ""
+
+#, python-format
+msgid "G-code not saved: %s"
+msgstr ""
+
+#, python-format
+msgid "G-code saved: %s (%d lines)"
 msgstr ""
 
 msgid "Gap"
@@ -1972,6 +1993,9 @@ msgstr ""
 msgid "Nothing to nest: open or draw something first."
 msgstr ""
 
+msgid "Nothing to save: open or draw something first."
+msgstr ""
+
 msgid "Nothing to trace at this threshold."
 msgstr ""
 
@@ -2079,6 +2103,9 @@ msgid "Order"
 msgstr ""
 
 msgid "Ordered (Bayer)"
+msgstr ""
+
+msgid "Origin X0 Y0"
 msgstr ""
 
 msgid "Other layers"
@@ -2362,6 +2389,14 @@ msgstr ""
 msgid "Raster engrave"
 msgstr ""
 
+msgid ""
+"Raster engraving: the head starts this far before each line and stops "
+"this far after it, so it is at speed where it burns"
+msgstr ""
+
+msgid "Raster overscan"
+msgstr ""
+
 msgid "Raster prepared"
 msgstr ""
 
@@ -2575,6 +2610,9 @@ msgstr ""
 msgid "Save &EGV file…"
 msgstr ""
 
+msgid "Save &G-code…"
+msgstr ""
+
 msgid "Save &diagnostic report…"
 msgstr ""
 
@@ -2583,6 +2621,14 @@ msgid "Save EGV"
 msgstr ""
 
 msgid "Save EGV file"
+msgstr ""
+
+msgid "Save G-code"
+msgstr ""
+
+msgid ""
+"Save G-code for a laser with a GRBL board (beta): the ticked layers with "
+"their speed, power and passes"
 msgstr ""
 
 msgid "Save a report with the laser log and settings, to attach to a bug report"
@@ -2610,6 +2656,9 @@ msgid "Save the layout, layers and files in one .kerfly file"
 msgstr ""
 
 msgid "Save the selected laser to a file, for another computer"
+msgstr ""
+
+msgid "Save…"
 msgstr ""
 
 msgid "Scan line step (in)"
@@ -2821,6 +2870,11 @@ msgid "Snap to other objects"
 msgstr ""
 
 msgid "Solid border: no cuts this close to the outline"
+msgstr ""
+
+msgid ""
+"Some elements stick out of the laser bed (drawn red): move them onto it "
+"first."
 msgstr ""
 
 msgid "Space between the fields"
@@ -3064,12 +3118,20 @@ msgid ""
 "Units:"
 msgstr ""
 
+msgid ""
+"The S value of full power: the machine's $30 setting (1000 on most GRBL "
+"boards); a layer's power is that part of it"
+msgstr ""
+
 #, python-format
 msgid ""
 "The SVG file does not define its physical size.\n"
 "Pixels per inch (Inkscape 0.92+: 96, older Inkscape: 90, Illustrator: "
 "72).\n"
 "At %g px/in the design is %.1f x %.1f mm."
+msgstr ""
+
+msgid "The bed's lower left corner (X right, Y up; most GRBL lasers)"
 msgstr ""
 
 msgid "The box put together from its parts (drag to turn it)"
@@ -3094,6 +3156,9 @@ msgid "The design now moves with the laser head."
 msgstr ""
 
 msgid "The design stays in place when the laser head moves."
+msgstr ""
+
+msgid "The design's upper left corner (set the work origin there)"
 msgstr ""
 
 msgid "The edges behind other parts, dashed (as in a technical drawing)"
@@ -3532,6 +3597,12 @@ msgid "What the code holds, for example a web address"
 msgstr ""
 
 msgid "What the laser does with the fields"
+msgstr ""
+
+msgid ""
+"Where X0 Y0 of the G-code is: the corner of the bed the machine homes to,"
+" or the design's upper left corner, where you set the work origin on the "
+"machine before starting"
 msgstr ""
 
 msgid ""

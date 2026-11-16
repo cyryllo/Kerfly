@@ -72,6 +72,9 @@ SETTINGS_KEYS = [
     ("usb_port", TEXT),      # Kerfly only: USB port of this machine's board ("" = the first K40 found)
     ("pre_exec", BOOL),      # Kerfly only: run a program before a job (the exhaust on, ...)
     ("pre_batch_path", QUOTED),  # Kerfly only: that program
+    ("gcode_origin", TEXT),  # Kerfly only: G-code for GRBL: X0 Y0 at "lower_left" of the bed or the "design"
+    ("gcode_s_max", TEXT),   # Kerfly only: G-code: the S value of full power (GRBL's $30)
+    ("gcode_overscan", TEXT),  # Kerfly only: G-code: raster overscan in mm
 ]
 SETTINGS_KINDS = dict(SETTINGS_KEYS)
 
@@ -99,6 +102,7 @@ DEFAULT_VALUES = {
     "t_timeout": "200", "n_timeouts": "30", "ink_timeout": "3",
     "designfile": "", "inkscape_path": "", "batch_path": "",
     "pre_exec": "0", "pre_batch_path": "", "theme": "light", "dither": "floyd", "usb_port": "",
+    "gcode_origin": "lower_left", "gcode_s_max": "1000", "gcode_overscan": "2",
     "language": "",          # "" = system language
     "grid_mm": "0",
     "snap_objects": "1",

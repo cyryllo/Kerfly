@@ -322,7 +322,9 @@ design still becomes cut lines, engrave lines and a raster, and only the
 driver turns them into commands. The K40 path stays unchanged and is still
 checked byte for byte.
 
-- [ ] **Step 1: export G-code for GRBL** (File → Save G-code, toolbar button).
+- [x] **Step 1: export G-code for GRBL** (File → Save G-code, toolbar button; done 2026-11-16 on the 2.0
+  branch, beta until checked on a GRBL machine: `kerfly/core/gcode.py`, reference file
+  `tests/fixtures/gcode/basic.nc`).
   Vectors as `G0` / `G1` with feed rate, power as `S`, laser mode `M4`
   (power follows the speed, clean corners); raster line by line with the
   power from the pixel brightness, white parts skipped, overscan at the line

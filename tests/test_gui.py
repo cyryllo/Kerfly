@@ -1417,6 +1417,102 @@ def main():
           "unticked), a group as one part, no turning when off, nested again, one undo step (both homes)",
           all(nests), "(%s)" % nests)
 
+    # 28e. G-code for GRBL (File → Save G-code): a cut rectangle, an engraved ellipse (2 passes) and a 10 x 5 mm
+    # picture come out as the reference file (tests/fixtures/gcode/basic.nc), and where they belong: the
+    # rectangle at X 10..40, Y 190..210 from the bed's lower left corner, the picture's dark part burnt at X
+    # 32..36, Y 177..179; the same with home in the upper right; with the origin at the design the rectangle is
+    # at X 0..30, Y -20..0; the power is S of the layer's power; the options are kept in the laser profile
+    import re as _re
+    from PIL import Image as _GImage, ImageDraw as _GDraw
+    from kerfly.core import gcode as _gcode, loaders as _gloaders
+    from kerfly.core.design import Design as _GDesign
+    from kerfly.core.layout import Element as _GElement
+    gdir = tempfile.mkdtemp()
+    gpng = os.path.join(gdir, "dark.png")
+    gim = _GImage.new("L", (100, 50), 255)
+    _GDraw.Draw(gim).rectangle((20, 10, 59, 29), fill=0)              # 10 px / mm: 4 x 2 mm at (2, 1) mm
+    gim.save(gpng, dpi=(254, 254))
+
+    def gscene(home_ur):
+        gw = make_window(grid_mm="0", HomeUR=home_ur, halftone="0")
+        gw._preview_drawn("rectangle", QPointF(10, 10), QPointF(40, 30), False)
+        gw.shape_defaults["ellipse"].operation = "engrave"
+        gw._preview_drawn("ellipse", QPointF(50, 10), QPointF(70, 20), False)
+        next(l for l in gw.layers if l.kind == "engrave").passes = 2
+        d = _GDesign()
+        _gloaders.load_image(gpng, d, 254, False)
+        pic = _GElement(d, name="dark", source_file=gpng)
+        pic.y = -40 / 25.4
+        pic.x = (325 - 30 - 10) / 25.4 if home_ur == "1" else 30 / 25.4        # the same place on the bed
+        gw.elements.append(pic)
+        gw._layout_changed()
+        return gw
+
+    def gmoves(text):
+        """[(x, y, power)] of the G1 moves (the power that is on during each)."""
+        out, power = [], 0
+        for line in text.splitlines():
+            if line.startswith("G1"):
+                words = dict((w[0], w[1:]) for w in line.split()[1:])
+                power = int(words.get("S", power))
+                out.append((float(words["X"]), float(words["Y"]), power))
+        return out
+    gtexts = {}
+    for home_ur in ("0", "1"):
+        gw = gscene(home_ur)
+        gtexts[home_ur] = _gcode.build(gw.elements, gw.layers, gw.job_settings(), gw.values)
+        if home_ur == "0":
+            gdesign = _gcode.build(gw.elements, gw.layers, gw.job_settings(), gw.values,
+                                   _gcode.GcodeOptions(origin="design"))
+        gw._dirty = False
+        gw.close()
+    gref = os.path.join(FIX, "gcode", "basic.nc")
+    if os.environ.get("KERFLY_WRITE_REFERENCES"):
+        with open(gref, "w", encoding="utf-8") as f:
+            f.write(gtexts["0"])
+    with open(gref, encoding="utf-8") as f:
+        gsame = f.read() == gtexts["0"]
+    moves = gmoves(gtexts["0"])
+    rect = [(x, y) for x, y, p in moves if 9.9 < x < 40.1 and 189.9 < y < 210.1]
+    burnt = []
+    prev = None
+    for x, y, p in moves:
+        if p and prev is not None and abs(y - prev[1]) < 1e-6 and 176 < y < 180:
+            burnt += [prev, (x, y)]
+        prev = (x, y)
+    gpowers = sorted({p for _x, _y, p in moves})
+    passes = gtexts["0"].count("Vector engrave: engrave, pass")
+    bx = [p[0] for p in burnt]
+    by = [p[1] for p in burnt]
+    gplaces = rect and min(x for x, _y in rect) == 10 and max(x for x, _y in rect) == 40 and \
+        bx and abs(min(bx) - 32) < 0.15 and abs(max(bx) - 36) < 0.15 and abs(min(by) - 177) < 0.15 and \
+        abs(max(by) - 179) < 0.15
+    drect = [(x, y) for x, y, _p in gmoves(gdesign)]
+    gdesign_ok = min(x for x, _y in drect) == 0 and max(y for _x, y in drect) == 0
+    gw = make_window(grid_mm="0")
+    gw._preview_drawn("rectangle", QPointF(10, 10), QPointF(40, 30), False)
+    import kerfly.gui.gcode_dialog as _gd
+    _gd_exec, _gd_values = _gd.GcodeDialog.exec, _gd.GcodeDialog.values
+    _gd.GcodeDialog.exec = lambda self: 1
+    _gd.GcodeDialog.values = lambda self: {"gcode_origin": "design", "gcode_s_max": "255", "gcode_overscan": "3"}
+    gout = os.path.join(gdir, "out.nc")
+    _gsave = QFileDialog.getSaveFileName
+    QFileDialog.getSaveFileName = staticmethod(lambda *a, **k: (gout, ""))
+    gw.save_gcode()
+    QFileDialog.getSaveFileName = _gsave
+    _gd.GcodeDialog.exec, _gd.GcodeDialog.values = _gd_exec, _gd_values
+    from kerfly.core import profiles as _gprof
+    gsaved = os.path.isfile(gout) and gw.profiles.get(gw.profiles.current).get("gcode_s_max") == "255" and \
+        max(p for _x, _y, p in gmoves(open(gout, encoding="utf-8").read())) <= 255
+    gw._dirty = False
+    gw.close()
+    check("G-code for GRBL: the reference file; the rectangle and the picture's dark part where they are on the "
+          "bed, also with home upper right; origin at the design; S of the layer power, 2 engrave passes; "
+          "Save G-code writes the file and keeps its options in the laser profile",
+          gsame and gtexts["0"] == gtexts["1"] and gplaces and gdesign_ok and gpowers == [0, 500] and passes == 2
+          and gsaved,
+          "(%s)" % [gsame, gtexts["0"] == gtexts["1"], gplaces, gdesign_ok, gpowers, passes, gsaved])
+
     # 29. freehand: a circle drawn with the mouse becomes a closed smooth path with few nodes
     import math as _m
     w = make_window(grid_mm="0")

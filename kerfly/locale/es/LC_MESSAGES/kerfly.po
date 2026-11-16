@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-16 23:05+0100\n"
+"POT-Creation-Date: 2026-11-16 23:31+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -1240,11 +1240,36 @@ msgstr ""
 msgid "Front"
 msgstr "Frente"
 
+msgid "Full power S"
+msgstr "Potencia máxima S"
+
 msgid "G-code"
 msgstr "Código G"
 
+msgctxt "toolbar"
+msgid "G-code"
+msgstr "G-code"
+
 msgid "G-code files"
 msgstr "Archivos de código G"
+
+msgid ""
+"G-code for lasers with a GRBL board (diode lasers, CO2 lasers with GRBL):"
+" the ticked layers in their order, each with its speed, power and passes."
+" Open the file in LaserGRBL, UGS or another G-code sender. (beta)"
+msgstr ""
+"G-code para láseres con placa GRBL (láseres de diodo, láseres CO2 con "
+"GRBL): las capas marcadas en su orden, cada una con su velocidad, "
+"potencia y pasadas. Abre el archivo en LaserGRBL, UGS u otro emisor de "
+"G-code. (beta)"
+
+#, python-format
+msgid "G-code not saved: %s"
+msgstr "G-code no guardado: %s"
+
+#, python-format
+msgid "G-code saved: %s (%d lines)"
+msgstr "G-code guardado: %s (%d líneas)"
 
 msgid "Gap"
 msgstr "Separación"
@@ -2151,6 +2176,9 @@ msgstr "No hay nada que dibujar."
 msgid "Nothing to nest: open or draw something first."
 msgstr "Nada que anidar: abre o dibuja algo primero."
 
+msgid "Nothing to save: open or draw something first."
+msgstr "Nada que guardar: abre o dibuja algo primero."
+
 msgid "Nothing to trace at this threshold."
 msgstr "No hay nada que vectorizar con este umbral."
 
@@ -2274,6 +2302,9 @@ msgstr "Orden"
 
 msgid "Ordered (Bayer)"
 msgstr "Ordenado (Bayer)"
+
+msgid "Origin X0 Y0"
+msgstr "Origen X0 Y0"
 
 msgid "Other layers"
 msgstr "Otras capas"
@@ -2573,6 +2604,16 @@ msgstr "Bloque ráster"
 msgid "Raster engrave"
 msgstr "Grabado ráster"
 
+msgid ""
+"Raster engraving: the head starts this far before each line and stops "
+"this far after it, so it is at speed where it burns"
+msgstr ""
+"Grabado ráster: el cabezal arranca esta distancia antes de cada línea y "
+"se detiene esta distancia después, para ir a velocidad donde quema"
+
+msgid "Raster overscan"
+msgstr "Sobrerrecorrido ráster"
+
 msgid "Raster prepared"
 msgstr "Ráster preparado"
 
@@ -2803,6 +2844,9 @@ msgstr "Guardar"
 msgid "Save &EGV file…"
 msgstr "Guardar archivo &EGV…"
 
+msgid "Save &G-code…"
+msgstr "Guardar &G-code…"
+
 msgid "Save &diagnostic report…"
 msgstr "Guardar informe de &diagnóstico…"
 
@@ -2814,6 +2858,16 @@ msgstr ""
 
 msgid "Save EGV file"
 msgstr "Guardar archivo EGV"
+
+msgid "Save G-code"
+msgstr "Guardar G-code"
+
+msgid ""
+"Save G-code for a laser with a GRBL board (beta): the ticked layers with "
+"their speed, power and passes"
+msgstr ""
+"Guardar G-code para un láser con placa GRBL (beta): las capas marcadas "
+"con su velocidad, potencia y pasadas"
 
 msgid "Save a report with the laser log and settings, to attach to a bug report"
 msgstr ""
@@ -2845,6 +2899,9 @@ msgstr "Guardar la disposición, las capas y los archivos en un archivo .kerfly"
 
 msgid "Save the selected laser to a file, for another computer"
 msgstr "Guardar el láser seleccionado en un archivo, para otro ordenador"
+
+msgid "Save…"
+msgstr "Guardar…"
 
 msgid "Scan line step (in)"
 msgstr "Paso entre líneas (pulg.)"
@@ -3074,6 +3131,13 @@ msgstr "Ajustar a otros objetos"
 
 msgid "Solid border: no cuts this close to the outline"
 msgstr "Borde macizo: sin cortes tan cerca del contorno"
+
+msgid ""
+"Some elements stick out of the laser bed (drawn red): move them onto it "
+"first."
+msgstr ""
+"Algunos elementos sobresalen de la mesa (en rojo): muévelos primero "
+"dentro."
 
 msgid "Space between the fields"
 msgstr "Espacio entre los campos"
@@ -3354,6 +3418,13 @@ msgstr ""
 "El archivo DXF no indica qué unidades usa.\n"
 "Unidades:"
 
+msgid ""
+"The S value of full power: the machine's $30 setting (1000 on most GRBL "
+"boards); a layer's power is that part of it"
+msgstr ""
+"El valor S de potencia máxima: el ajuste $30 de la máquina (1000 en la "
+"mayoría de placas GRBL); la potencia de una capa es esa parte de él"
+
 #, python-format
 msgid ""
 "The SVG file does not define its physical size.\n"
@@ -3365,6 +3436,11 @@ msgstr ""
 "Píxeles por pulgada (Inkscape 0.92+: 96, Inkscape anterior: 90, "
 "Illustrator: 72).\n"
 "A %g px/pulg. el diseño mide %.1f x %.1f mm."
+
+msgid "The bed's lower left corner (X right, Y up; most GRBL lasers)"
+msgstr ""
+"La esquina inferior izquierda de la mesa (X a la derecha, Y arriba; la "
+"mayoría de láseres GRBL)"
 
 msgid "The box put together from its parts (drag to turn it)"
 msgstr "La caja montada con sus piezas (arrastra para girarla)"
@@ -3392,6 +3468,9 @@ msgstr "Ahora el diseño se mueve con el cabezal del láser."
 
 msgid "The design stays in place when the laser head moves."
 msgstr "El diseño se queda en su sitio cuando se mueve el cabezal."
+
+msgid "The design's upper left corner (set the work origin there)"
+msgstr "La esquina superior izquierda del diseño (fija ahí el origen de trabajo)"
 
 msgid "The edges behind other parts, dashed (as in a technical drawing)"
 msgstr ""
@@ -3896,6 +3975,15 @@ msgstr "Lo que contiene el código, por ejemplo una dirección web"
 
 msgid "What the laser does with the fields"
 msgstr "Lo que hace el láser con los campos"
+
+msgid ""
+"Where X0 Y0 of the G-code is: the corner of the bed the machine homes to,"
+" or the design's upper left corner, where you set the work origin on the "
+"machine before starting"
+msgstr ""
+"Dónde está X0 Y0 del G-code: la esquina de la mesa a la que la máquina "
+"hace home, o la esquina superior izquierda del diseño, donde fijas el "
+"origen de trabajo antes de empezar"
 
 msgid ""
 "Where the band is: its middle from the middle of the shape (minus: left /"

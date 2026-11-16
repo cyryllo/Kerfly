@@ -506,6 +506,19 @@ and time set next to the button.
 M3 power per operation); **File → Send EGV file to laser…** sends an existing
 EGV file.
 
+**G-code for GRBL lasers (beta).** **File → Save G-code…** (Ctrl+Shift+K,
+**G-code** in the File group of the toolbar) writes the job as G-code for a
+laser with a GRBL board (diode lasers, CO2 lasers with GRBL), to run with
+LaserGRBL, UGS or another sender: the ticked layers in their order (raster,
+engrave, cut), each with its speed (F, mm/min), power (S) and passes, in
+laser mode M4. Before the file name it asks for the **origin** (X0 Y0 at the
+bed's lower left corner, as most GRBL lasers home, or at the design's upper
+left corner, where you set the work origin on the machine), **full power S**
+(the machine's `$30`, 1000 on most boards; a layer's power is that part of
+it) and the **raster overscan** (the head starts and stops this far beyond
+each raster line, so it is at speed where it burns). These are kept with the
+laser profile. Not yet checked on a GRBL machine.
+
 <a id="s8"></a>
 
 ## 8. Settings
@@ -545,6 +558,7 @@ the mouse actions and a search field.
 | F5 | Reload design |
 | Ctrl+S / Ctrl+Shift+S | Save project / save project as |
 | Ctrl+Shift+E | Save EGV file |
+| Ctrl+Shift+K | Save G-code (GRBL) |
 | Ctrl+Z / Ctrl+Shift+Z | Undo / redo |
 | Ctrl+D / Del | Duplicate / delete |
 | Ctrl+C / Ctrl+X / Ctrl+V | Copy / cut / paste (at the mouse pointer when it is over the bed) |

@@ -522,6 +522,20 @@ czasem ustawionymi obok przycisku.
 przy mocy ustawianej dla każdej operacji na M3); **Plik → Wyślij plik EGV do
 lasera…** wysyła istniejący plik EGV.
 
+**G-code dla laserów GRBL (beta).** **Plik → Zapisz G-code…** (Ctrl+Shift+K,
+przycisk **G-code** w grupie Plik na pasku) zapisuje zadanie jako G-code dla
+lasera z płytą GRBL (lasery diodowe, lasery CO2 z GRBL), do uruchomienia w
+LaserGRBL, UGS albo innym programie wysyłającym: zaznaczone warstwy w ich
+kolejności (raster, grawer, cięcie), każda ze swoją prędkością (F, mm/min),
+mocą (S) i przejściami, w trybie lasera M4. Przed nazwą pliku pyta o
+**początek X0 Y0** (lewy dolny róg stołu, jak bazuje większość laserów GRBL,
+albo lewy górny róg projektu, gdzie ustawiasz na maszynie punkt zerowy
+pracy), **pełną moc S** (ustawienie `$30` maszyny, 1000 na większości płyt;
+moc warstwy to taka jej część) i **najazd przy rastrze** (głowica rusza i
+staje tyle poza każdą linią rastra, żeby tam, gdzie wypala, miała pełną
+prędkość). Te ustawienia są zapamiętywane w profilu lasera. Jeszcze nie
+sprawdzone na maszynie GRBL.
+
 <a id="s8"></a>
 
 ## 8. Ustawienia
@@ -563,6 +577,7 @@ razem z działaniami myszą i polem wyszukiwania.
 | F5 | Wczytaj projekt ponownie |
 | Ctrl+S / Ctrl+Shift+S | Zapisz projekt / zapisz projekt jako |
 | Ctrl+Shift+E | Zapisz plik EGV |
+| Ctrl+Shift+K | Zapisz G-code (GRBL) |
 | Ctrl+Z / Ctrl+Shift+Z | Cofnij / ponów |
 | Ctrl+D / Del | Duplikuj / usuń |
 | Ctrl+C / Ctrl+X / Ctrl+V | Kopiuj / wytnij / wklej (pod kursorem, gdy jest nad stołem) |
