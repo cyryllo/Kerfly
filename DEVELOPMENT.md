@@ -195,6 +195,22 @@ Every code release raises the version in `kerfly/__init__.py` and gets a
 section in CHANGELOG.md and in CHANGELOG_pl.md (Polish): the release text
 shows the Polish one first, then the English one (`tools/release_notes.py`). Changes to the documentation alone get no new version.
 
+## Branches
+
+- **`main`**: the 1.x line, always releasable. Fixes only (1.8.1, 1.8.2, …);
+  every fix release is tagged here, as before.
+- **`2.0`**: the next big version, with the new features of the
+  [roadmap](ROADMAP.md) (GRBL lasers, nesting, join into a polyline, …).
+  Its version is 2.0.0 from the start, so test builds tell themselves apart
+  from the 1.x releases (the update check of a 2.0 build offers no 1.x
+  release).
+- A fix goes to `main` first (and is released from there), then
+  `git checkout 2.0 && git merge main` brings it into 2.0 (a conflict in
+  `kerfly/__init__.py` or the changelogs keeps 2.0's version and adds the
+  fix's lines). When 2.0 is released, `2.0` is merged into `main`.
+- The website is built from `main` only, so it shows the new features once
+  2.0 is out; tests run on both branches.
+
 ## Project layout
 
 - `kerfly/core/`: the laser core, independent of the window: SVG, DXF and
