@@ -3,7 +3,11 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
-## Niewydane
+## 1.8.0 (2026-11-16)
+
+Podgląd 3D pudełek z generatora, grupy w grupach (arkusze i części pudełka na
+liście elementów), mocniejsze wysuwane wieczko; po przycisku narożnika
+strzałki zachowują miejsce głowicy na projekcie.
 
 ### Dodane
 
@@ -23,8 +27,8 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
   wiersz elementu tylko ten element). Pudełko z generatora to jedna grupa z
   osobną grupą dla każdego arkusza (**Arkusz 1**, **Arkusz 2**, …, gdy jest
   ich kilka) i dla każdej części złożonej z kilku kształtów (obrys i jego
-  szczeliny), części ułożone arkuszami po kolei. **Rozgrupuj** zdejmuje jeden poziom; kopie i zapisane projekty
-  zachowują grupy i ich nazwy.
+  szczeliny), części ułożone arkuszami po kolei. **Rozgrupuj** zdejmuje
+  jeden poziom; kopie i zapisane projekty zachowują grupy i ich nazwy.
 
 ### Zmienione
 

@@ -16,7 +16,7 @@ you or your work.
 - **New versions.** Once a day, when Kerfly starts, it asks GitHub for the
   latest Kerfly release (`api.github.com/repos/cyryllo/Kerfly/releases/latest`).
   The request carries the Kerfly version (in its User-Agent, for example
-  `Kerfly/1.7.1 (update check)`) and nothing about you, your computer or your
+  `Kerfly/1.8.0 (update check)`) and nothing about you, your computer or your
   projects. As with any web request, GitHub sees your IP address; GitHub's own
   [privacy statement](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement)
   applies. Switch it off in **Settings → Advanced → Check once a day for a new

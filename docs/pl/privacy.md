@@ -16,7 +16,7 @@ Twojej pracy.
 - **Nowe wersje.** Raz dziennie, przy uruchomieniu, Kerfly pyta GitHuba o
   najnowsze wydanie (`api.github.com/repos/cyryllo/Kerfly/releases/latest`).
   Zapytanie zawiera wersję Kerfly (w nagłówku User-Agent, np.
-  `Kerfly/1.7.1 (update check)`) i nic o Tobie, Twoim komputerze ani projektach.
+  `Kerfly/1.8.0 (update check)`) i nic o Tobie, Twoim komputerze ani projektach.
   Jak przy każdym zapytaniu w sieci, GitHub widzi Twój adres IP; obowiązuje
   [polityka prywatności GitHuba](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement).
   Można to wyłączyć w **Ustawienia → Zaawansowane → Sprawdzaj raz dziennie

@@ -7,7 +7,11 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
-## Unreleased
+## 1.8.0 (2026-11-16)
+
+3D preview of the generated boxes, groups in groups (a box's sheets and parts
+in the element list), stronger sliding lid; after a corner button the arrows
+keep the head's place on the design.
 
 ### Added
 
