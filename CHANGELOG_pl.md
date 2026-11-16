@@ -3,6 +3,11 @@
 Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 [CHANGELOG.md](CHANGELOG.md) (po angielsku).
 
+## 2.0.0 (w przygotowaniu)
+
+Rozwijana na gałęzi `2.0`: lasery GRBL, nesting i inne nowe funkcje z planu.
+Zawiera też poprawki wydań 1.x.
+
 ## 1.8.0 (2026-11-16)
 
 Podgląd 3D pudełek z generatora, grupy w grupach (arkusze i części pudełka na

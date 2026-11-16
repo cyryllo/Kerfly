@@ -7,6 +7,11 @@ Version numbers:
   10 when a new module is added);
 - the **third number** goes up for releases that only fix bugs.
 
+## 2.0.0 (unreleased)
+
+In development on the `2.0` branch: GRBL lasers, nesting and the other new
+features of the roadmap. The fixes of the 1.x releases are in it too.
+
 ## 1.8.0 (2026-11-16)
 
 3D preview of the generated boxes, groups in groups (a box's sheets and parts
