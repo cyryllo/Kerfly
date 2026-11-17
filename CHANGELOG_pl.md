@@ -9,6 +9,7 @@ Oprócz K40 lasery z płytą GRBL (beta): zapis G-code dla dowolnego programu
 wysyłającego albo sterowanie laserem prosto z Kerfly przez port szeregowy, z
 prędkościami w mm/min. Układanie części na stole, łączenie luźnych linii w
 polilinie. Rozwijana na gałęzi `2.0`, z poprawkami wydań 1.x.
+
 Nowy wygląd: przejrzystsza wstążka, pasek opcji w dwóch wierszach przez całe
 okno, płaski panel po lewej, okna z nazwaną czynnością, symulacja w osobnym
 oknie.

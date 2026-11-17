@@ -14,6 +14,7 @@ sender, or the laser run straight from Kerfly over its serial port, with
 speeds in mm/min. Parts nested on the bed, loose lines joined into
 polylines. In development on the `2.0` branch, with the fixes of the 1.x
 releases.
+
 A new look: a cleaner ribbon, the options bar in two rows across the
 window, a flat left panel, dialogs with their action named, the simulation in
 a window of its own.
