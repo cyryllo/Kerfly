@@ -65,8 +65,9 @@ a window of its own.
   buttons alone, as icons.
 - **Left panel** flat: Design (Elements with their number and size, Layers
   with the units in the table's header and **Add layer**) and Laser (Device:
-  Connect, Home, Unlock motors, Follow the head with a state dot; Head
-  movement); **Trace**, **Start**, **Pause** and **Stop** as wide as each
+  the laser in use and a state dot; Head movement: Connect, Home, Unlock
+  motors and Follow the head as square buttons beside the jog pad, as tall
+  as it); **Trace**, **Start**, **Pause** and **Stop** as wide as each
   other at the bottom of both tabs.
 - **Each laser's settings in Settings → Lasers…** (the cog by the laser list):
   the list of lasers on the left, the selected one's settings on the right

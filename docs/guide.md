@@ -141,10 +141,10 @@ restart.
 
 | Button | What it does |
 |---|---|
-| **Connect** | Connect to the laser (Ctrl+I); the dot above it turns green |
-| **Home** | Move the head to the home corner |
-| **Unlock motors** | Release the motors so the head can be moved by hand |
-| **Follow the head** | **Design follows the head** (Ctrl+Alt+H), see below |
+| Plug (left of the arrows) | **Connect** to the laser (Ctrl+I); the plug and the dot under the laser list turn green |
+| House | **Home**: move the head to the home corner |
+| Open lock | **Unlock motors**: release them so the head can be moved by hand |
+| Crosshair with a chain link | **Design follows the head** (Ctrl+Alt+H, pressed when on), see below |
 | Arrows | Move the head by one **Step** (the field under the pad). **Ctrl+arrow keys** do the same from the keyboard |
 | Dotted corners and centre | Move the head to that corner or the centre of the design, to see where it will be cut. The design does not move. Ctrl+7, Ctrl+9, Ctrl+5, Ctrl+1, Ctrl+3 |
 | Go to X / Y, **Go** | Home, then move the head to that position (distance from the home corner; Ctrl+Alt+G) |
@@ -158,7 +158,7 @@ design. To start the design where the head is instead:
 
 - **Edit → Place design at the head** (Ctrl+H, **To head** in the Arrange group of the ribbon) moves the
   design to the head once.
-- **Design follows the head** (the **Follow the head** button, highlighted
+- **Design follows the head** (the button with the chain link, pressed
   when on) keeps the design at the head: the arrows, Go to X/Y and Home move the
   head and the design together, and the arrows do not push the design off
   the bed. The corner buttons still only move the head; after one, the arrows
@@ -669,7 +669,7 @@ Common problems:
 
 | Problem | What to do |
 |---|---|
-| "Laser is not initialized" | Press **Connect** on the Laser tab (Ctrl+I). On Linux choose **Laser → Allow USB access for the laser…**; on Windows check the libusb driver |
+| "Laser is not initialized" | Press the plug button on the Laser tab (Ctrl+I). On Linux choose **Laser → Allow USB access for the laser…**; on Windows check the libusb driver |
 | The head is not where the program shows it | Press Home. This happens after Unlock rail, after moving the head by hand and after Stop |
 | An element is drawn red, Start does not work | The element sticks out of the bed: move it back |
 | SVG text is missing or not cut | Install Inkscape: it turns SVG text into paths |

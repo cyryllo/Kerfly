@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 21:00+0100\n"
+"POT-Creation-Date: 2026-11-17 21:10+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -1302,9 +1302,6 @@ msgstr "Ausgewählte Elemente links–rechts spiegeln"
 msgid "Flip the selected elements top to bottom"
 msgstr "Ausgewählte Elemente oben–unten spiegeln"
 
-msgid "Follow the head"
-msgstr "Kopf folgen"
-
 msgid "Font"
 msgstr "Schrift"
 
@@ -1555,10 +1552,6 @@ msgstr "Beim Zeichnen Umschalt halten"
 
 msgid "Hole 20 mm"
 msgstr "Loch 20 mm"
-
-msgctxt "laser button"
-msgid "Home"
-msgstr "Referenzfahrt"
 
 msgid "Home is in the upper right corner"
 msgstr "Referenzpunkt oben rechts"
@@ -4251,9 +4244,6 @@ msgstr "Unbekannter USB-Fehler: %s"
 msgid "Unknown error: %s"
 msgstr "Unbekannter Fehler: %s"
 
-msgid "Unlock motors"
-msgstr "Motoren lösen"
-
 msgid "Unlock rail after a job"
 msgstr "Achsen nach dem Auftrag freigeben"
 
@@ -5270,4 +5260,14 @@ msgstr "Version %s"
 
 #~ msgid "yes"
 #~ msgstr "ja"
+
+#~ msgid "Follow the head"
+#~ msgstr "Kopf folgen"
+
+#~ msgctxt "laser button"
+#~ msgid "Home"
+#~ msgstr "Referenzfahrt"
+
+#~ msgid "Unlock motors"
+#~ msgstr "Motoren lösen"
 

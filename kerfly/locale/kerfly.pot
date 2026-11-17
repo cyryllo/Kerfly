@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 21:00+0100\n"
+"POT-Creation-Date: 2026-11-17 21:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1204,9 +1204,6 @@ msgstr ""
 msgid "Flip the selected elements top to bottom"
 msgstr ""
 
-msgid "Follow the head"
-msgstr ""
-
 msgid "Font"
 msgstr ""
 
@@ -1438,10 +1435,6 @@ msgid "Hold Shift while drawing"
 msgstr ""
 
 msgid "Hole 20 mm"
-msgstr ""
-
-msgctxt "laser button"
-msgid "Home"
 msgstr ""
 
 msgid "Home is in the upper right corner"
@@ -3834,9 +3827,6 @@ msgstr ""
 
 #, python-format
 msgid "Unknown error: %s"
-msgstr ""
-
-msgid "Unlock motors"
 msgstr ""
 
 msgid "Unlock rail after a job"

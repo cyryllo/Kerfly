@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 21:00+0100\n"
+"POT-Creation-Date: 2026-11-17 21:10+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -1297,9 +1297,6 @@ msgstr "Reflejar los elementos seleccionados de izquierda a derecha"
 msgid "Flip the selected elements top to bottom"
 msgstr "Reflejar los elementos seleccionados de arriba abajo"
 
-msgid "Follow the head"
-msgstr "Seguir el cabezal"
-
 msgid "Font"
 msgstr "Fuente"
 
@@ -1550,10 +1547,6 @@ msgstr "Mantener Mayús al dibujar"
 
 msgid "Hole 20 mm"
 msgstr "Agujero de 20 mm"
-
-msgctxt "laser button"
-msgid "Home"
-msgstr "Origen"
 
 msgid "Home is in the upper right corner"
 msgstr "El origen está en la esquina superior derecha"
@@ -4222,9 +4215,6 @@ msgstr "Error de USB desconocido: %s"
 msgid "Unknown error: %s"
 msgstr "Error desconocido: %s"
 
-msgid "Unlock motors"
-msgstr "Liberar motores"
-
 msgid "Unlock rail after a job"
 msgstr "Desbloquear los ejes al terminar el trabajo"
 
@@ -5240,4 +5230,14 @@ msgstr "versión %s"
 
 #~ msgid "yes"
 #~ msgstr "sí"
+
+#~ msgid "Follow the head"
+#~ msgstr "Seguir el cabezal"
+
+#~ msgctxt "laser button"
+#~ msgid "Home"
+#~ msgstr "Origen"
+
+#~ msgid "Unlock motors"
+#~ msgstr "Liberar motores"
 

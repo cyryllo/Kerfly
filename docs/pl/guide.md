@@ -144,10 +144,10 @@ kabla albo restarcie.
 
 | Przycisk | Co robi |
 |---|---|
-| **Połącz** | Łączy z laserem (Ctrl+I); kropka nad przyciskiem robi się zielona |
-| **Bazuj** | Przesuwa głowicę do pozycji bazowej |
-| **Odblokuj silniki** | Zwalnia silniki, żeby przesunąć głowicę ręką |
-| **Za głowicą** | **Projekt podąża za głowicą** (Ctrl+Alt+H), opis niżej |
+| Wtyczka (po lewej od strzałek) | **Połącz** z laserem (Ctrl+I); wtyczka i kropka pod listą laserów robią się zielone |
+| Domek | **Bazuj**: przesuwa głowicę do pozycji bazowej |
+| Otwarta kłódka | **Odblokuj silniki**: zwalnia je, żeby przesunąć głowicę ręką |
+| Celownik z łańcuchem | **Projekt podąża za głowicą** (Ctrl+Alt+H, wciśnięty po włączeniu), opis niżej |
 | Strzałki | Przesuwają głowicę o jeden **Krok** (pole pod strzałkami). **Ctrl+strzałki** na klawiaturze robią to samo |
 | Kropkowane narożniki i środek | Przesuwają głowicę do tego narożnika albo środka projektu, żeby zobaczyć, gdzie będzie cięcie. Projekt się nie przesuwa. Ctrl+7, Ctrl+9, Ctrl+5, Ctrl+1, Ctrl+3 |
 | Idź do X / Y, **Idź** | Bazuje, a potem jedzie głowicą do tej pozycji (odległość od pozycji bazowej; Ctrl+Alt+G) |
@@ -161,7 +161,7 @@ projektu. Jeśli wolisz, żeby projekt zaczynał się przy głowicy:
 
 - **Edycja → Ustaw projekt przy głowicy** (Ctrl+H, **Do głowicy** w grupie Układ)
   jednorazowo przesuwa projekt do głowicy.
-- **Projekt podąża za głowicą** (przycisk **Za głowicą**, podświetlony po
+- **Projekt podąża za głowicą** (przycisk z łańcuchem, wciśnięty po
   włączeniu) trzyma projekt przy głowicy: strzałki, Idź do X/Y i Bazowanie
   przesuwają głowicę razem z projektem, a strzałki nie wypchną projektu poza
   stół. Przyciski narożników nadal przesuwają tylko głowicę; potem strzałki
@@ -688,7 +688,7 @@ Częste problemy:
 
 | Problem | Co zrobić |
 |---|---|
-| „Laser nie jest połączony” | Naciśnij **Połącz** na zakładce Laser (Ctrl+I). W Linuksie wybierz **Laser → Zezwól na dostęp do USB lasera…**, w Windows sprawdź sterownik libusb |
+| „Laser nie jest połączony” | Naciśnij przycisk z wtyczką na zakładce Laser (Ctrl+I). W Linuksie wybierz **Laser → Zezwól na dostęp do USB lasera…**, w Windows sprawdź sterownik libusb |
 | Głowica jest gdzie indziej, niż pokazuje program | Naciśnij Bazowanie. Tak bywa po odblokowaniu osi, ręcznym przesunięciu głowicy i po Stop |
 | Element jest czerwony, Start nie działa | Element wystaje poza stół: przesuń go z powrotem |
 | Brakuje tekstu z SVG albo nie jest cięty | Zainstaluj Inkscape: zamienia tekst SVG na ścieżki |

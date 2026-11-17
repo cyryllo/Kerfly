@@ -51,7 +51,8 @@ from kerfly.gui.materials_dialog import MaterialsDialog
 from kerfly.gui.worker import EgvSendWorker, GrblJobWorker, JobWorker, LayersJobWorker, RasterLayersWorker
 
 # jog pad: 3 rows as tall as the machine column beside it (4 buttons of 56 px, spacing 4)
-JOG_BUTTON = theme.HEIGHT_ACTION      # the jog pad's buttons (docs/ui-mockups/LaserTab)
+# the jog pad's buttons: its three rows as tall as the column of the four machine buttons beside it
+JOG_BUTTON = (4 * theme.HEIGHT_ACTION + 3 * theme.SPACE_S - 2 * theme.SPACE_S) // 3
 JOG_ICON = theme.ICON_LARGE
 _PERCENT_RE = re.compile(r"(\d+(?:\.\d+)?)\s*%\s*$")   # progress percentage at the end of a message
 IMAGE_PATTERNS = " ".join("*" + e for e in loaders.IMAGE_EXTENSIONS)
@@ -2091,39 +2092,34 @@ class MainWindow(QMainWindow):
         state.addWidget(self.laser_dot)
         state.addWidget(self.laser_label, 1)
         laser_layout.addLayout(state)
-        machine = QGridLayout()
-        machine.setContentsMargins(theme.SPACE_L, theme.SPACE_L, theme.SPACE_L, theme.SPACE_L)
-        machine.setSpacing(theme.SPACE_M)
-
-        def machine_button(icon, text, tip, slot, role="secondary"):
-            b = QPushButton(icons.tabler(icon), text)
-            b.setIconSize(QSize(theme.ICON, theme.ICON))
+        # the machine's buttons: square, icons only (their names and keys in the tooltips), in a column left
+        # of the jog pad (they are added there, below)
+        def machine_button(icon, tip, slot):
+            b = QPushButton(icons.tabler(icon), "")
+            b.setIconSize(QSize(theme.ICON_LARGE, theme.ICON_LARGE))
+            b.setFixedSize(theme.HEIGHT_ACTION, theme.HEIGHT_ACTION)
             b.setToolTip(tip)
             b.clicked.connect(slot)
-            widgets.DialogFooter.style_button(b, role)
-            b.setMinimumWidth(0)
             return b
-        self.btn_connect = machine_button("plug-connected", _("Connect"), _("Connect to the laser") + " (Ctrl+I)",
-                                          self.connect_laser, "primary")
-        self.btn_home = machine_button("home", C_("laser button", "Home"),
-                                       _("Home: move the head to the home corner"), self.home)
-        self.btn_unlock = machine_button("lock-open", _("Unlock motors"),
-                                         _("Unlock rail: release the motors so the head can be moved by hand"),
-                                         self.unlock)
-        # design follows the head: a toggle, its meaning in the tooltip
+        self.btn_connect = machine_button("plug-connected", _("Connect to the laser") + " (Ctrl+I)",
+                                          self.connect_laser)
+        self.btn_home = machine_button("home", _("Home: move the head to the home corner"), self.home)
+        self.btn_unlock = machine_button("lock-open", _("Unlock rail: release the motors so the head can be moved "
+                                                        "by hand"), self.unlock)
+        # design follows the head: a toggle (highlighted when on), its meaning in the tooltip
         self.btn_follow_head = QToolButton()
-        self.act_follow_head.setIconText(_("Follow the head"))
         self.btn_follow_head.setDefaultAction(self.act_follow_head)
-        self.btn_follow_head.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.btn_follow_head.setIconSize(QSize(theme.ICON, theme.ICON))
-        self.btn_follow_head.setFixedHeight(theme.HEIGHT_BUTTON)
-        self.btn_follow_head.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        widgets.set_role(self.btn_follow_head, "segment")
+        self.btn_follow_head.setToolButtonStyle(Qt.ToolButtonIconOnly)
+        self.btn_follow_head.setIconSize(QSize(theme.ICON_LARGE, theme.ICON_LARGE))
+        self.btn_follow_head.setFixedSize(theme.HEIGHT_ACTION, theme.HEIGHT_ACTION)
+        self.btn_follow_head.setAutoRaise(False)          # a button like the others beside it (pressed when on)
         self.act_follow_head.setToolTip("%s (Ctrl+Alt+H)\n%s" % (_("Design follows the head"),
                                                                     self.act_follow_head.statusTip()))
-        for n, b in enumerate((self.btn_connect, self.btn_home, self.btn_unlock, self.btn_follow_head)):
-            machine.addWidget(b, n // 2, n % 2)
-        laser_layout.addLayout(machine)
+        machine = QVBoxLayout()
+        machine.setSpacing(theme.SPACE_S)
+        for b in (self.btn_connect, self.btn_home, self.btn_unlock, self.btn_follow_head):
+            machine.addWidget(b)
+        laser_layout.addSpacing(theme.SPACE_L)
 
         # --- Head movement: where the head is, the jog pad (arrows move the head by a step; corners and
         # centre move it to that point of the design, the design stays where it is), the step, go to X / Y
@@ -2169,6 +2165,8 @@ class MainWindow(QMainWindow):
         pad = QHBoxLayout()
         pad.setContentsMargins(0, theme.SPACE_S, 0, theme.SPACE_L)
         pad.addStretch(1)
+        pad.addLayout(machine)
+        pad.addSpacing(theme.PAD_DIALOG + theme.SPACE_M)  # the machine's buttons apart from the jog pad
         pad.addLayout(grid)
         pad.addStretch(1)
         laser_layout.addLayout(pad)
@@ -4019,7 +4017,7 @@ class MainWindow(QMainWindow):
         else:
             self.laser_label.setText(_("Not connected"))
             self.btn_connect.setToolTip(_("Connect to the laser") + " (Ctrl+I)")
-        self.btn_connect.setIcon(icons.tabler("plug-connected", theme.token("action_ink")))
+        self.btn_connect.setIcon(icons.tabler("plug-connected", theme.token("ok") if connected else None))
         for dot in (self.laser_dot, getattr(self, "status_laser_dot", None)):
             if dot is not None:
                 widgets.set_dot(dot, "ok" if connected else "")

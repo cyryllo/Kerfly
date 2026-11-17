@@ -62,7 +62,8 @@ oknie.
   pokazuje same swoje przyciski, jako ikony.
 - **Panel po lewej** płaski: Projekt (Elementy z liczbą i rozmiarem, Warstwy
   z jednostkami w nagłówku tabeli i **Dodaj warstwę**) i Laser (Urządzenie:
-  Połącz, Bazuj, Odblokuj silniki, Za głowicą, z kropką stanu; Ruch głowicy);
+  laser w użyciu i kropka stanu; Ruch głowicy: Połącz, Bazuj, Odblokuj silniki
+  i Za głowicą jako kwadratowe przyciski obok krzyżaka, tej samej wysokości);
   **Obrys**, **Start**, **Pauza** i **Stop** równej szerokości na dole obu
   zakładek.
 - **Ustawienia każdego lasera w Ustawienia → Lasery…** (zębatka przy liście
