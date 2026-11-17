@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 19:47+0100\n"
+"POT-Creation-Date: 2026-11-17 20:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1769,6 +1769,10 @@ msgid ""
 "or engrave)"
 msgstr ""
 
+#, python-format
+msgid "Layer: %s"
+msgstr ""
+
 msgid "Layers"
 msgstr ""
 
@@ -2126,6 +2130,9 @@ msgstr ""
 msgid "New: not yet confirmed on a real laser. Please report how it works."
 msgstr ""
 
+msgid "Next layer"
+msgstr ""
+
 #, python-format
 msgid "No GRBL board answered on %s."
 msgstr ""
@@ -2455,6 +2462,9 @@ msgstr ""
 msgid "Place design at the &head"
 msgstr ""
 
+msgid "Play"
+msgstr ""
+
 msgid "Play / pause"
 msgstr ""
 
@@ -2642,11 +2652,6 @@ msgid "Ready-made designs from a few numbers: boxes, parts, tests"
 msgstr ""
 
 msgid "Rectangle"
-msgstr ""
-
-msgid ""
-"Red: what the laser has burnt so far (raster engraving one line every 0.2"
-" mm). Grey dashed lines: moves with the laser off."
 msgstr ""
 
 msgctxt "toolbar"
@@ -3150,6 +3155,9 @@ msgstr ""
 msgid "Spacing"
 msgstr ""
 
+msgid "Speed"
+msgstr ""
+
 #, python-format
 msgid "Speed (%s)"
 msgstr ""
@@ -3411,6 +3419,9 @@ msgid "The bed's lower left corner (X right, Y up; most GRBL lasers)"
 msgstr ""
 
 msgid "The box put together from its parts (drag to turn it)"
+msgstr ""
+
+msgid "The design changed: the simulation was worked out again"
 msgstr ""
 
 msgid "The design does not fit on the laser bed at this position."
@@ -3938,6 +3949,9 @@ msgid ""
 " up, plus: right / down)"
 msgstr ""
 
+msgid "Where the job is: drag to go there"
+msgstr ""
+
 msgid "Where the picture goes"
 msgstr ""
 
@@ -4073,6 +4087,9 @@ msgstr ""
 msgid "beta"
 msgstr ""
 
+msgid "burnt"
+msgstr ""
+
 msgid "by Scorch"
 msgstr ""
 
@@ -4129,6 +4146,9 @@ msgid "raster"
 msgstr ""
 
 msgid "several elements: to each other; one element: to the bed"
+msgstr ""
+
+msgid "to do"
 msgstr ""
 
 msgid "upper left"

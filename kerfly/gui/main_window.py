@@ -3800,6 +3800,9 @@ class MainWindow(QMainWindow):
     def _update_times(self):
         if not hasattr(self, "layers_panel"):
             return
+        sim = self._open_simulation()
+        if sim is not None:
+            sim.design_changed()                     # it refreshes after a pause (docs/ui-mockups/Simulation)
         try:
             times = layer_times(self.elements, [l for l in self.layers if l.enabled],
                                 self.job_settings(), self._layer_cache) if self.elements else {}
@@ -4061,6 +4064,7 @@ class MainWindow(QMainWindow):
         (with the speeds and powers last used), nothing to undo."""
         if self.worker is not None or not self._confirm_discard():
             return
+        self._close_simulation()
         self.elements = []
         self.group_names = {}
         self.selected = None
@@ -4159,6 +4163,7 @@ class MainWindow(QMainWindow):
     def open_project(self, path):
         if self.worker is not None or not self._confirm_discard():
             return
+        self._close_simulation()
         try:
             data, _folder = project_io.read_project(path)
         except project_io.ProjectError as e:
@@ -4313,6 +4318,8 @@ class MainWindow(QMainWindow):
             return
         if not add and not self._confirm_discard():
             return
+        if not add:
+            self._close_simulation()
         options = {}
         if os.path.splitext(filename)[1].lower() in loaders.IMAGE_EXTENSIONS:
             dpi = self._ask_image_dpi(filename)
@@ -5155,19 +5162,30 @@ class MainWindow(QMainWindow):
 
     # ------------------------------------------------------------ misc
     # ------------------------------------------------------------ simulation
+    def _open_simulation(self):
+        """The simulation window when it is open, else None."""
+        sim = getattr(self, "_simulation", None)
+        try:
+            return sim if sim is not None and sim.isVisible() else None
+        except RuntimeError:
+            return None                            # it was closed (and deleted)
+
+    def _close_simulation(self):
+        """New or Open: another design, the simulation of the old one closes."""
+        sim = self._open_simulation()
+        if sim is not None:
+            sim.close()
+
     def simulate_job(self):
         from kerfly.gui.simulation import SimulationDialog, simulation_steps
         if self.worker is not None:
             return
-        open_one = getattr(self, "_simulation", None)
-        try:
-            if open_one is not None and open_one.isVisible():
-                # one simulation at a time: a second click (or a double click) brings it to the front
-                open_one.raise_()
-                open_one.activateWindow()
-                return
-        except RuntimeError:
-            pass                                   # it was closed (and deleted)
+        open_one = self._open_simulation()
+        if open_one is not None:
+            # one simulation at a time: a second click (or a double click) brings it to the front
+            open_one.raise_()
+            open_one.activateWindow()
+            return
         try:
             steps = simulation_steps(self)
         except ValueError as e:

@@ -1441,8 +1441,23 @@ def part_view_and_laser(s):
         dlg = w._simulation
         if dlg is None or not dlg.isVisible():
             raise RuntimeError("no simulation window")
-        dlg.close()
-    s.step("View → Simulate job… (opens, close)", simulate, change=False)
+        # its own window (docs/ui-mockups/Simulation): Pause, Next layer, Play, Close with real clicks
+        s.click(dlg.play)
+        if dlg.timer.isActive():
+            raise RuntimeError("Pause did not stop the simulation")
+        before = dlg.time
+        s.click(dlg.next_layer)
+        if not dlg.time > before:
+            raise RuntimeError("Next layer did not move on (%.2f -> %.2f s)" % (before, dlg.time))
+        s.click(dlg.play)
+        if not dlg.timer.isActive():
+            raise RuntimeError("Play did not start the simulation")
+        from PySide6.QtWidgets import QDialogButtonBox
+        s.click(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Close))
+        s.settle()
+        if w._open_simulation() is not None:
+            raise RuntimeError("Close did not close the simulation")
+    s.step("View → Simulate job… (its own window: Pause, Next layer, Play, Close)", simulate, change=False)
     from kerfly.core import udev
     if udev.applies():
         s.expect_dialog("add the rule?", lambda d: s.click_dialog_button(d, QMessageBox.Yes))

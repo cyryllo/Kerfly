@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 19:47+0100\n"
+"POT-Creation-Date: 2026-11-17 20:14+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -1925,6 +1925,10 @@ msgstr ""
 "Capa de esta forma: cualquier capa del panel de la izquierda (corte, "
 "contorno o grabado)"
 
+#, python-format
+msgid "Layer: %s"
+msgstr "Capa: %s"
+
 msgid "Layers"
 msgstr "Capas"
 
@@ -2314,6 +2318,9 @@ msgstr "Nuevo texto en trazado"
 msgid "New: not yet confirmed on a real laser. Please report how it works."
 msgstr "Nuevo: aún no confirmado en un láser real. Cuéntenos cómo funciona."
 
+msgid "Next layer"
+msgstr "Siguiente capa"
+
 #, python-format
 msgid "No GRBL board answered on %s."
 msgstr "Ninguna placa GRBL respondió en %s."
@@ -2677,6 +2684,9 @@ msgstr "Piezas de arriba abajo"
 msgid "Place design at the &head"
 msgstr "Colocar el diseño en el &cabezal"
 
+msgid "Play"
+msgstr "Reproducir"
+
 msgid "Play / pause"
 msgstr "Reproducir / pausa"
 
@@ -2872,13 +2882,6 @@ msgstr "Diseños listos a partir de unos pocos números: cajas, piezas, pruebas"
 
 msgid "Rectangle"
 msgstr "Rectángulo"
-
-msgid ""
-"Red: what the laser has burnt so far (raster engraving one line every 0.2"
-" mm). Grey dashed lines: moves with the laser off."
-msgstr ""
-"Rojo: lo que el láser ya ha quemado (grabado ráster una línea cada 0,2 "
-"mm). Líneas grises discontinuas: movimientos con el láser apagado."
 
 msgctxt "toolbar"
 msgid "Redo"
@@ -3424,6 +3427,9 @@ msgstr "Espacio entre las piezas (el ancho de corte del láser y algo de margen)
 msgid "Spacing"
 msgstr "Separación"
 
+msgid "Speed"
+msgstr "Velocidad"
+
 #, python-format
 msgid "Speed (%s)"
 msgstr "Velocidad (%s)"
@@ -3734,6 +3740,9 @@ msgstr ""
 
 msgid "The box put together from its parts (drag to turn it)"
 msgstr "La caja montada con sus piezas (arrastra para girarla)"
+
+msgid "The design changed: the simulation was worked out again"
+msgstr "El diseño cambió: la simulación se volvió a calcular"
 
 msgid "The design does not fit on the laser bed at this position."
 msgstr "El diseño no cabe en el área de trabajo en esta posición."
@@ -4336,6 +4345,9 @@ msgstr ""
 "Dónde está la franja: su centro desde el centro de la forma (menos: "
 "izquierda / arriba, más: derecha / abajo)"
 
+msgid "Where the job is: drag to go there"
+msgstr "Dónde está el trabajo: arrastra para ir allí"
+
 msgid "Where the picture goes"
 msgstr "Dónde va la imagen"
 
@@ -4484,6 +4496,9 @@ msgstr "antes / después de un trabajo"
 msgid "beta"
 msgstr "beta"
 
+msgid "burnt"
+msgstr "quemado"
+
 msgid "by Scorch"
 msgstr "de Scorch"
 
@@ -4541,6 +4556,9 @@ msgstr "ráster"
 
 msgid "several elements: to each other; one element: to the bed"
 msgstr "varios elementos: entre sí; un elemento: respecto a la mesa"
+
+msgid "to do"
+msgstr "por hacer"
 
 msgid "upper left"
 msgstr "superior izquierda"
@@ -5136,4 +5154,15 @@ msgstr "sí"
 
 #~ msgid "Width:"
 #~ msgstr "Ancho:"
+
+#~ msgid ""
+#~ "Red: what the laser has burnt so"
+#~ " far (raster engraving one line every"
+#~ " 0.2 mm). Grey dashed lines: moves"
+#~ " with the laser off."
+#~ msgstr ""
+#~ "Rojo: lo que el láser ya ha "
+#~ "quemado (grabado ráster una línea cada"
+#~ " 0,2 mm). Líneas grises discontinuas: "
+#~ "movimientos con el láser apagado."
 

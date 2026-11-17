@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 19:47+0100\n"
+"POT-Creation-Date: 2026-11-17 20:14+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -1935,6 +1935,10 @@ msgstr ""
 "Ebene dieser Form: jede Ebene aus dem Bereich links (Schneiden, Kontur "
 "oder Gravur)"
 
+#, python-format
+msgid "Layer: %s"
+msgstr "Ebene: %s"
+
 msgid "Layers"
 msgstr "Ebenen"
 
@@ -2331,6 +2335,9 @@ msgstr ""
 "Neu: noch nicht an einem echten Laser bestätigt. Bitte berichten Sie, wie"
 " es funktioniert."
 
+msgid "Next layer"
+msgstr "Nächste Ebene"
+
 #, python-format
 msgid "No GRBL board answered on %s."
 msgstr "Auf %s hat keine GRBL-Platine geantwortet."
@@ -2696,6 +2703,9 @@ msgstr "Teile von oben nach unten"
 msgid "Place design at the &head"
 msgstr "Entwurf am &Laserkopf platzieren"
 
+msgid "Play"
+msgstr "Abspielen"
+
 msgid "Play / pause"
 msgstr "Abspielen / Pause"
 
@@ -2893,13 +2903,6 @@ msgstr "Fertige Entwürfe aus wenigen Zahlen: Boxen, Teile, Tests"
 
 msgid "Rectangle"
 msgstr "Rechteck"
-
-msgid ""
-"Red: what the laser has burnt so far (raster engraving one line every 0.2"
-" mm). Grey dashed lines: moves with the laser off."
-msgstr ""
-"Rot: was der Laser bisher gebrannt hat (Rastergravur eine Linie alle 0,2 "
-"mm). Grau gestrichelte Linien: Bewegungen mit ausgeschaltetem Laser."
 
 msgctxt "toolbar"
 msgid "Redo"
@@ -3443,6 +3446,9 @@ msgstr "Abstand zwischen den Teilen (die Schnittbreite des Lasers und etwas Luft
 msgid "Spacing"
 msgstr "Linienabstand"
 
+msgid "Speed"
+msgstr "Tempo"
+
 #, python-format
 msgid "Speed (%s)"
 msgstr "Geschw. (%s)"
@@ -3754,6 +3760,9 @@ msgstr ""
 
 msgid "The box put together from its parts (drag to turn it)"
 msgstr "Die Schachtel aus ihren Teilen zusammengesetzt (ziehen zum Drehen)"
+
+msgid "The design changed: the simulation was worked out again"
+msgstr "Der Entwurf hat sich geändert: die Simulation wurde neu berechnet"
 
 msgid "The design does not fit on the laser bed at this position."
 msgstr "Der Entwurf passt an dieser Position nicht auf die Arbeitsfläche."
@@ -4367,6 +4376,9 @@ msgstr ""
 "Wo das Band liegt: seine Mitte von der Mitte der Form (minus: links / "
 "oben, plus: rechts / unten)"
 
+msgid "Where the job is: drag to go there"
+msgstr "Wo der Auftrag steht: ziehen, um dorthin zu gehen"
+
 msgid "Where the picture goes"
 msgstr "Wo das Bild hinkommt"
 
@@ -4517,6 +4529,9 @@ msgstr "vor / nach einem Auftrag"
 msgid "beta"
 msgstr "beta"
 
+msgid "burnt"
+msgstr "gebrannt"
+
 msgid "by Scorch"
 msgstr "von Scorch"
 
@@ -4574,6 +4589,9 @@ msgstr "Raster"
 
 msgid "several elements: to each other; one element: to the bed"
 msgstr "mehrere Elemente: zueinander; ein Element: zum Arbeitsbett"
+
+msgid "to do"
+msgstr "noch zu tun"
 
 msgid "upper left"
 msgstr "oben links"
@@ -5165,4 +5183,15 @@ msgstr "ja"
 
 #~ msgid "Width:"
 #~ msgstr "Breite:"
+
+#~ msgid ""
+#~ "Red: what the laser has burnt so"
+#~ " far (raster engraving one line every"
+#~ " 0.2 mm). Grey dashed lines: moves"
+#~ " with the laser off."
+#~ msgstr ""
+#~ "Rot: was der Laser bisher gebrannt "
+#~ "hat (Rastergravur eine Linie alle 0,2"
+#~ " mm). Grau gestrichelte Linien: Bewegungen"
+#~ " mit ausgeschaltetem Laser."
 

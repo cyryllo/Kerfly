@@ -1725,9 +1725,32 @@ def main():
     w.simulate_job()                                    # clicked again: the same window, not a second one
     app.processEvents()
     drawn = drawn and w._simulation is dlg and len([d for d in w.findChildren(_SD) if d.isVisible()]) == 1
-    dlg.close()
+    # its own window and preview (docs/ui-mockups/Simulation): nothing drawn on the main bed view
+    own = dlg.scene is not w.preview.scene() and all(it.scene() is dlg.scene for it in dlg.items)
+    # the design changes while it is open: after a pause the job is worked out again, at the same place in
+    # time, paused, with a note; a change that is not the job's (a selection) changes nothing
+    dlg.seek(dlg.total * 0.5)
+    total_before = dlg.total
+    w.elements[0].x += 20 / 25.4
+    w._layout_changed()
+    waited = dlg.refresh_timer.isActive()
+    import time as _time
+    t_end = _time.time() + 2
+    while dlg.refresh_timer.isActive() and _time.time() < t_end:
+        app.processEvents()
+        _time.sleep(0.02)
     app.processEvents()
-    check("simulation: plays, draws the path, closes", played and drawn, "(%.1f s)" % (dlg.total if dlg else 0))
+    followed = (waited and abs(dlg.time - dlg.total * 0.5) < 0.05 * dlg.total + 1e-6 and not dlg.timer.isActive()
+                and dlg.info.text() == _("The design changed: the simulation was worked out again")
+                and abs(dlg.total - total_before) < 1e-6 + 0.5 * total_before)
+    # New: another design, the simulation closes
+    w._dirty = False
+    w.new_project()
+    app.processEvents()
+    closed = w._open_simulation() is None
+    check("simulation: plays, draws the path in its own window, follows a change of the design (paused, at "
+          "its place, a note), New closes it", played and drawn and own and followed and closed,
+          "(%.1f s, own %s, followed %s, closed %s)" % (dlg.total if dlg else 0, own, followed, closed))
     w.close()
 
     # 33. opened DXF: double-click only explains; Ungroup splits it; a part can be dragged and node-edited
