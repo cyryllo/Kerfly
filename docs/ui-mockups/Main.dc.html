@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - okno główne</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic24{width:24px;height:24px}
+.ic16{width:16px;height:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.ib:hover{background:#dfe3e8;border-color:#c4c9d0}
+.bb{min-width:52px;height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid transparent;border-radius:4px;background:transparent;padding:0 6px;font-size:11px;line-height:1}
+.bb:hover{background:#dfe3e8;border-color:#c4c9d0}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+.cap{font-size:10px;color:#5b6370;text-align:center;line-height:14px}
+.sep{width:1px;align-self:stretch;background:#c4c9d0}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #f4f5f7">
+
+<div style="height: 28px; flex: none; display: flex; align-items: center; gap: 16px; padding: 0 12px; background: #ffffff; border-bottom: 1px solid #c4c9d0; font-size: 13px">
+<span>Plik</span><span>Edycja</span><span>Laser</span><span>Widok</span><span>Ustawienia</span><span>Generatory</span><span>Pomoc</span>
+</div>
+
+<div style="height: 78px; flex: none; box-sizing: border-box; display: flex; align-items: stretch; gap: 8px; padding: 4px 8px 2px; background: #eef0f3; border-bottom: 1px solid #c4c9d0">
+
+<div style="display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; gap: 2px">
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M14 3v5h5"/></svg>Nowy</button>
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z"/></svg>Otwórz</button>
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z M13 11v6 M10 14h6"/></svg>Dodaj</button>
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l3 3v13H5z M8 4v5h7V4 M8 20v-6h8v6"/></svg>Zapisz</button>
+</div>
+<div class="cap">Plik</div>
+</div>
+<div class="sep"></div>
+
+<div style="display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; gap: 2px">
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14l-4-4 4-4 M5 10h9a5 5 0 0 1 0 10h-2"/></svg>Cofnij</button>
+<button class="bb" style="color: #7a818c"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l4-4-4-4 M19 10h-9a5 5 0 0 0 0 10h2"/></svg>Ponów</button>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0px; align-content: center">
+<button class="ib" aria-label="Wytnij"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z M6 20a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z M8 7.5L20 18 M8 16.5L20 6"/></svg></button>
+<button class="ib" aria-label="Kopiuj"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h11v11H9z M5 15V4h11"/></svg></button>
+<button class="ib" aria-label="Wklej"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v3H8z M8 5H5v15h14V5h-3"/></svg></button>
+<button class="ib" aria-label="Powiel"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h11v11H9z M5 15V4h11 M14.5 12v5 M12 14.5h5"/></svg></button>
+<button class="ib" aria-label="Usuń"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14 M9 7V4h6v3 M7 7l1 13h8l1-13"/></svg></button>
+<button class="ib" aria-label="Grupuj"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4z M13 13h7v7h-7z M4 16v4h4 M20 8V4h-4"/></svg></button>
+</div>
+</div>
+<div class="cap">Edycja</div>
+</div>
+<div class="sep"></div>
+
+<div style="display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0px; align-content: center; height: 56px">
+<button class="ib" aria-label="Wyrównaj do lewej"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16 M8 7h10v3H8z M8 14h6v3H8z"/></svg></button>
+<button class="ib" aria-label="Wyśrodkuj w poziomie"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16 M6 7h12v3H6z M8 14h8v3H8z"/></svg></button>
+<button class="ib" aria-label="Wyrównaj do prawej"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4v16 M6 7h10v3H6z M10 14h6v3h-6z"/></svg></button>
+<button class="ib" aria-label="Obróć w lewo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12a7 7 0 1 0 2-5 M5 4v4h4"/></svg></button>
+<button class="ib" aria-label="Odbij w poziomie"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18 M9 7l-5 10h5z M15 7l5 10h-5z"/></svg></button>
+<button class="ib" aria-label="Wyrównaj do góry"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16 M7 8h3v10H7z M14 8h3v6h-3z"/></svg></button>
+<button class="ib" aria-label="Wyśrodkuj w pionie"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16 M7 6h3v12H7z M14 8h3v8h-3z"/></svg></button>
+<button class="ib" aria-label="Wyrównaj do dołu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16 M7 6h3v10H7z M14 10h3v6h-3z"/></svg></button>
+<button class="ib" aria-label="Obróć w prawo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2-5 M19 4v4h-4"/></svg></button>
+<button class="ib" aria-label="Odbij w pionie"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18 M7 9l10-5v5z M7 15l10 5v-5z"/></svg></button>
+</div>
+<div class="cap">Układ</div>
+</div>
+<div class="sep"></div>
+
+<div style="display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0px; align-content: center; height: 56px">
+<button class="ib" aria-label="Połącz kształty"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h10v6h6v10H10v-6H4z"/></svg></button>
+<button class="ib" aria-label="Odejmij kształt"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h10v6h-4v4H4z M12 12h8v8h-8z"/></svg></button>
+<button class="ib" aria-label="Część wspólna"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h10v10H4z M10 10h10v10H10z"/></svg></button>
+<button class="ib" aria-label="Odsunięcie konturu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z M8 8h8v8H8z"/></svg></button>
+<button class="ib" aria-label="Zaokrąglij narożniki"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V11a7 7 0 0 1 7-7h9"/></svg></button>
+<button class="ib" aria-label="Połącz w polilinię"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18l5-10 5 7 6-9"/></svg></button>
+</div>
+<div class="cap">Kształty</div>
+</div>
+<div class="sep"></div>
+
+<div style="display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; gap: 2px">
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5 M20 9V4h-5 M4 15v5h5 M20 15v5h-5"/></svg>Dopasuj</button>
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z M10 9l5 3-5 3z"/></svg>Symulacja</button>
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z M4 12h16 M12 4v16"/></svg>Siatka</button>
+</div>
+<div class="cap">Widok</div>
+</div>
+<div class="sep"></div>
+
+<div style="display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; gap: 2px">
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M4 7.5l8 4.5 8-4.5 M12 12v9"/></svg><span style="display: flex; align-items: center; gap: 2px">Generatory<svg class="ic ic16" style="width: 10px; height: 10px" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span></button>
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4z M20 5h-5a2 2 0 0 0-2 2 M20 5v12h-5a2 2 0 0 0-2 2"/></svg>Materiały</button>
+<button class="bb"><svg class="ic ic24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10 M18 7h2 M4 17h4 M12 17h8 M16 5v4 M10 15v4"/></svg>Ustawienia</button>
+</div>
+<div class="cap">Narzędzia</div>
+</div>
+
+</div>
+
+<div style="height: 36px; flex: none; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 12px; background: #f7f8fa; white-space: nowrap">
+<span style="font-weight: 600; font-size: 12px; min-width: 96px">Zaznaczenie</span>
+<div class="sep" style="margin: 8px 0"></div>
+<label class="lbl" for="ox">X</label><input id="ox" class="fld" style="width: 84px; text-align: right" value="128,00 mm"><label class="lbl" for="oy">Y</label><input id="oy" class="fld" style="width: 84px; text-align: right" value="72,00 mm"><label class="lbl" for="ow">Szer.</label><input id="ow" class="fld" style="width: 84px; text-align: right" value="96,36 mm"><label class="lbl" for="oh">Wys.</label><input id="oh" class="fld" style="width: 84px; text-align: right" value="29,27 mm">
+<button class="ib" aria-label="Zachowaj proporcje" style="background: #dce6f2; border-color: #9db8d6; color: #1f4f82"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12h6 M10 8H8a4 4 0 0 0 0 8h2 M14 8h2a4 4 0 0 1 0 8h-2"/></svg></button>
+<div class="sep" style="margin: 8px 0"></div>
+<label class="lbl" for="orot">Obrót</label><input id="orot" class="fld" style="width: 60px; text-align: right" value="0,0°">
+<div class="sep" style="margin: 8px 0"></div>
+<label class="lbl" for="olay">Warstwa</label>
+<select id="olay" class="fld" style="width: 104px"><option>Grawer</option><option>Obrys</option><option>Cięcie</option></select>
+</div>
+<div style="height: 36px; flex: none; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 12px; background: #f7f8fa; white-space: nowrap; border-bottom: 1px solid #c4c9d0">
+<span style="font-weight: 600; font-size: 12px; min-width: 96px">Tekst</span>
+<div class="sep" style="margin: 8px 0"></div>
+<label class="lbl" for="otxt">Treść</label><input id="otxt" class="fld" style="width: 140px" value="Kerfly">
+<label class="lbl" for="ofont">Czcionka</label>
+<select id="ofont" class="fld" style="width: 132px"><option>DejaVu Sans</option></select>
+<label class="lbl" for="osize">Rozmiar</label><input id="osize" class="fld" style="width: 72px; text-align: right" value="30,0 mm">
+<button class="ib" aria-label="Pogrubienie" style="background: #dce6f2; border-color: #9db8d6; color: #1f4f82; font-weight: 600; font-size: 13px">B</button>
+<button class="ib" aria-label="Kursywa" style="font-style: italic; font-size: 13px; font-family: Georgia, serif">I</button>
+<label class="lbl" for="ospc">Odstęp liter</label><input id="ospc" class="fld" style="width: 72px; text-align: right" value="0,00 mm">
+</div>
+<div style="flex: 1 1 0; min-height: 0; display: flex">
+
+<div style="width: 348px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; background: #ffffff; border-right: 1px solid #c4c9d0">
+
+<div style="display: flex; height: 36px; flex: none; border-bottom: 1px solid #c4c9d0; padding: 0 8px; gap: 4px">
+<button style="border: 0; background: transparent; padding: 0 12px; font-size: 13px; font-weight: 600; box-shadow: inset 0 -2px 0 {{accent}}">Projekt</button>
+<button style="border: 0; background: transparent; padding: 0 12px; font-size: 13px; color: #4b5563">Laser</button>
+</div>
+
+<div style="display: flex; align-items: center; height: 36px; flex: none; padding: 0 8px 0 12px; gap: 8px">
+<span style="font-weight: 600; font-size: 12px">Elementy</span>
+<span class="lbl" style="flex: 1 1 0">5 · 243,0 × 94,3 mm</span>
+<button class="ib" aria-label="Na początek kolejności"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14 M12 20V9 M7 13l5-5 5 5"/></svg></button>
+<button class="ib" aria-label="Wcześniej"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5 M6 11l6-6 6 6"/></svg></button>
+<button class="ib" aria-label="Później"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14 M6 13l6 6 6-6"/></svg></button>
+<button class="ib" aria-label="Na koniec kolejności"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20h14 M12 4v11 M7 11l5 5 5-5"/></svg></button>
+</div>
+
+<div style="flex: 1 1 0; min-height: 0; margin: 0 12px; border: 1px solid #c4c9d0; border-radius: 4px; overflow: hidden; display: flex; flex-direction: column">
+<div style="display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 8px">
+<input type="checkbox" checked aria-label="W zadaniu: shapes.svg">
+<span style="display: flex; gap: 2px"><span style="width: 12px; height: 12px; background: #111111; border-radius: 2px"></span><span style="width: 12px; height: 12px; background: #1565c0; border-radius: 2px"></span><span style="width: 12px; height: 12px; background: #d32f2f; border-radius: 2px"></span></span>
+<span style="flex: 1 1 0">shapes.svg</span><span class="lbl">Grawer, Obrys, Cięcie</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 8px">
+<input type="checkbox" checked aria-label="W zadaniu: Prostokąt">
+<span style="width: 12px; height: 12px; background: #d32f2f; border-radius: 2px"></span>
+<span style="flex: 1 1 0">Prostokąt</span><span class="lbl">Cięcie</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 8px">
+<input type="checkbox" checked aria-label="W zadaniu: Elipsa">
+<span style="width: 12px; height: 12px; background: #1565c0; border-radius: 2px"></span>
+<span style="flex: 1 1 0">Elipsa</span><span class="lbl">Obrys</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 8px">
+<input type="checkbox" checked aria-label="W zadaniu: Wielokąt">
+<span style="width: 12px; height: 12px; background: #d32f2f; border-radius: 2px"></span>
+<span style="flex: 1 1 0">Wielokąt</span><span class="lbl">Cięcie</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 8px; background: {{accent}}; color: #ffffff">
+<input type="checkbox" checked aria-label="W zadaniu: Tekst">
+<span style="width: 12px; height: 12px; background: #111111; border-radius: 2px; outline: 1px solid #ffffff"></span>
+<span style="flex: 1 1 0">Tekst</span><span>Grawer</span>
+</div>
+</div>
+
+<div style="display: flex; align-items: center; height: 36px; flex: none; padding: 0 12px; margin-top: 4px">
+<span style="font-weight: 600; font-size: 12px">Warstwy</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 0 12px 8px">
+<label class="lbl" for="mat">Materiał</label>
+<select id="mat" class="fld" style="flex: 1 1 0; min-width: 0"><option>Sklejka 3 mm</option><option>(własne ustawienia)</option></select>
+<button class="ib" aria-label="Biblioteka materiałów" style="border-color: #b6bcc5"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4z M20 5h-5a2 2 0 0 0-2 2 M20 5v12h-5a2 2 0 0 0-2 2"/></svg></button>
+</div>
+
+<div style="display: grid; grid-template-columns: 16px 12px minmax(0, 1fr) 64px 52px 56px 52px; column-gap: 8px; row-gap: 4px; align-items: center; padding: 0 12px">
+<span></span><span></span>
+<span class="cap" style="text-align: left">Nazwa</span>
+<span class="cap" style="text-align: left">Prędkość mm/s</span>
+<span class="cap" style="text-align: left">Przejścia</span>
+<span class="cap" style="text-align: left">Kerf mm</span>
+<span class="cap" style="text-align: right">Czas</span>
+
+<input type="checkbox" checked aria-label="Warstwa Grawer w zadaniu" style="margin: 0">
+<span style="width: 12px; height: 12px; background: #111111; border-radius: 2px"></span>
+<span>Grawer</span>
+<input class="fld" style="width: 64px; text-align: right" value="100" aria-label="Prędkość warstwy Grawer">
+<input class="fld" style="width: 52px; text-align: right" value="1" aria-label="Przejścia warstwy Grawer">
+<span class="lbl" style="text-align: center">-</span>
+<span class="lbl" style="text-align: right">raster</span>
+
+<input type="checkbox" checked aria-label="Warstwa Obrys w zadaniu" style="margin: 0">
+<span style="width: 12px; height: 12px; background: #1565c0; border-radius: 2px"></span>
+<span>Obrys</span>
+<input class="fld" style="width: 64px; text-align: right" value="20" aria-label="Prędkość warstwy Obrys">
+<input class="fld" style="width: 52px; text-align: right" value="1" aria-label="Przejścia warstwy Obrys">
+<span class="lbl" style="text-align: center">-</span>
+<span style="text-align: right; font-variant-numeric: tabular-nums">13 s</span>
+
+<input type="checkbox" checked aria-label="Warstwa Cięcie w zadaniu" style="margin: 0">
+<span style="width: 12px; height: 12px; background: #d32f2f; border-radius: 2px"></span>
+<span>Cięcie</span>
+<input class="fld" style="width: 64px; text-align: right" value="10" aria-label="Prędkość warstwy Cięcie">
+<input class="fld" style="width: 52px; text-align: right" value="1" aria-label="Przejścia warstwy Cięcie">
+<input class="fld" style="width: 56px; text-align: right" value="0,00" aria-label="Kerf warstwy Cięcie">
+<span style="text-align: right; font-variant-numeric: tabular-nums">1 min 18 s</span>
+</div>
+
+<div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px 12px">
+<button style="height: 28px; display: flex; align-items: center; gap: 4px; padding: 0 8px 0 6px; border: 1px solid #b6bcc5; border-radius: 4px; background: #ffffff; font-size: 12px"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14 M5 12h14"/></svg>Dodaj warstwę</button>
+<span style="flex: 1 1 0"></span>
+<span class="lbl">Razem</span>
+<span style="font-weight: 600; font-variant-numeric: tabular-nums">1 min 31 s + raster</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 12px; border-top: 1px solid #c4c9d0; background: #f7f8fa">
+<button style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #b6bcc5; border-radius: 4px; background: #ffffff; font-size: 12px; padding: 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V4h4 M16 4h4v4 M20 16v4h-4 M8 20H4v-4"/></svg>Obrys</button>
+<button style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #256b29; border-radius: 4px; background: #2e7d32; color: #ffffff; font-size: 13px; font-weight: 600; padding: 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg>Start</button>
+<button style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #c4c9d0; border-radius: 4px; background: #eceef1; color: #5b6370; font-size: 12px; padding: 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14 M16 5v14"/></svg>Pauza</button>
+<button style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #c4c9d0; border-radius: 4px; background: #eceef1; color: #5b6370; font-size: 12px; padding: 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg>Stop</button>
+</div>
+</div>
+
+<div style="flex: 1 1 0; min-width: 0; background: #5a616b; display: flex; align-items: center; justify-content: center">
+<svg viewBox="0 0 1000 680" style="width: 1000px; height: 680px; font-family: Inter, system-ui, sans-serif" role="img" aria-label="Stół lasera z projektem: plik shapes.svg, elipsa, wielokąt i zaznaczony tekst Kerfly">
+<rect x="0" y="0" width="1000" height="680" style="fill: #eceef1"></rect>
+<circle cx="0" cy="0" r="6" style="fill: none; stroke: #e65100; stroke-width: 2"></circle>
+<path d="M-10 0h20 M0 -10v20" style="stroke: #e65100; stroke-width: 1.5"></path>
+<rect x="40" y="40" width="290" height="220" rx="8" style="fill: none; stroke: #d32f2f; stroke-width: 1.5"></rect>
+<path d="M60 90l25-28 25 28 25-28 25 28" style="fill: none; stroke: #1565c0; stroke-width: 1.5"></path>
+<rect x="200" y="72" width="96" height="62" style="fill: #111111"></rect>
+<ellipse cx="112" cy="136" rx="40" ry="20" style="fill: none; stroke: #1565c0; stroke-width: 1.5"></ellipse>
+<path d="M72 230l30-46 30 46z" style="fill: #3c3c3c"></path>
+<circle cx="248" cy="200" r="40" style="fill: #8a8a8a; stroke: #d32f2f; stroke-width: 1.5"></circle>
+<rect x="222" y="186" width="52" height="26" style="fill: none; stroke: #d32f2f; stroke-width: 1.5"></rect>
+<rect x="410" y="30" width="210" height="140" rx="12" style="fill: none; stroke: #d32f2f; stroke-width: 1.5"></rect>
+<ellipse cx="515" cy="100" rx="84" ry="50" style="fill: none; stroke: #1565c0; stroke-width: 1.5"></ellipse>
+<path d="M740 36l64 36v56l-64 36-64-36V72z" style="fill: none; stroke: #d32f2f; stroke-width: 1.5"></path>
+<text x="412" y="322" style="font-size: 104px; font-weight: 600; fill: #111111">Kerfly</text>
+<rect x="408" y="232" width="312" height="112" style="fill: none; stroke: {{accent}}; stroke-width: 1.5"></rect>
+<rect x="404" y="228" width="8" height="8" style="fill: #ffffff; stroke: {{accent}}; stroke-width: 1.5"></rect>
+<rect x="716" y="228" width="8" height="8" style="fill: #ffffff; stroke: {{accent}}; stroke-width: 1.5"></rect>
+<rect x="404" y="340" width="8" height="8" style="fill: #ffffff; stroke: {{accent}}; stroke-width: 1.5"></rect>
+<rect x="716" y="340" width="8" height="8" style="fill: #ffffff; stroke: {{accent}}; stroke-width: 1.5"></rect>
+<circle cx="564" cy="212" r="5" style="fill: #ffffff; stroke: {{accent}}; stroke-width: 1.5"></circle>
+</svg>
+</div>
+
+<div style="width: 44px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; background: #eef0f3; border-left: 1px solid #c4c9d0">
+<button class="ib" aria-label="Zaznaczanie" style="background: #dce6f2; border-color: #9db8d6; color: #1f4f82"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l12 8-6 1.5L9.5 20z"/></svg></button>
+<button class="ib" aria-label="Edycja węzłów"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7 M4 17h4v4H4z M16 3h4v4h-4z"/></svg></button>
+<div style="width: 24px; height: 1px; background: #c4c9d0; margin: 4px 0"></div>
+<button class="ib" aria-label="Prostokąt"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14v12H5z"/></svg></button>
+<button class="ib" aria-label="Elipsa"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5a8 7 0 1 0 0 14 8 7 0 0 0 0-14z"/></svg></button>
+<button class="ib" aria-label="Wielokąt"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 5v8l-8 5-8-5V8z"/></svg></button>
+<button class="ib" aria-label="Linia"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19L19 5"/></svg></button>
+<button class="ib" aria-label="Ścieżka"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c4-12 8 6 16-10"/></svg></button>
+<div style="width: 24px; height: 1px; background: #c4c9d0; margin: 4px 0"></div>
+<button class="ib" aria-label="Tekst"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8V6h12v2 M12 6v13 M9 19h6"/></svg></button>
+<button class="ib" aria-label="Tekst na ścieżce"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17c5-9 13-9 18 0 M9 9l1-3 M12 8V5 M15 9l-1-3"/></svg></button>
+<div style="width: 24px; height: 1px; background: #c4c9d0; margin: 4px 0"></div>
+<button class="ib" aria-label="Wypełnienie wzorem"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l7-7 6 6-7 7z M19 16v3"/></svg></button>
+<button class="ib" aria-label="Zawias giętki"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16 M10 4v6 M10 14v6 M14 4v16 M18 4v6 M18 14v6"/></svg></button>
+<button class="ib" aria-label="Obrysuj obraz"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z M4 15l5-5 4 4 3-3 4 4"/></svg></button>
+<div style="width: 24px; height: 1px; background: #c4c9d0; margin: 4px 0"></div>
+<button class="ib" aria-label="Pomiar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18v6H3z M7 9v3 M11 9v3 M15 9v3"/></svg></button>
+</div>
+
+</div>
+
+<div style="height: 26px; flex: none; box-sizing: border-box; display: flex; align-items: center; gap: 16px; padding: 0 12px; background: #eef0f3; border-top: 1px solid #c4c9d0; font-size: 12px">
+<span style="flex: 1 1 0">Gotowy</span>
+<span class="lbl" style="font-variant-numeric: tabular-nums">X 412,5  Y 96,0 mm</span>
+<div class="sep" style="margin: 6px 0"></div>
+<span class="lbl">Stół 300 × 200 mm</span>
+<div class="sep" style="margin: 6px 0"></div>
+<span class="lbl">Powiększenie 100%</span>
+<div class="sep" style="margin: 6px 0"></div>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #7a818c"></span><span class="lbl">Laser: nie połączono</span></span>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>

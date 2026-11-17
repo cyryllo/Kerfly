@@ -7,12 +7,12 @@ Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 from PySide6.QtCore import QPointF, QRectF, Qt, QTimer
-from PySide6.QtGui import QColor, QImage, QPainter, QPainterPath, QPen, QPixmap
-from PySide6.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QHBoxLayout,
-                               QLabel, QSlider, QSpinBox, QVBoxLayout, QWidget)
+from PySide6.QtGui import QImage, QPainter, QPainterPath, QPen, QPixmap
+from PySide6.QtWidgets import (QCheckBox, QDialog, QDoubleSpinBox, QHBoxLayout, QLabel, QSlider, QSpinBox,
+                               QVBoxLayout, QWidget)
 
 from kerfly.core import curves, trace
-from kerfly.gui import icons
+from kerfly.gui import theme, widgets
 from kerfly.i18n import _
 
 PREVIEW = 460
@@ -63,49 +63,41 @@ class TraceDialog(QDialog):
         self.corner.setValue(60)
         self.corner.setSuffix("°")
         self.corner.setToolTip(_("Corner: turns sharper than this stay corners, the rest become curves"))
-        self.count = QLabel()
-
-        def row(icon, tip, widget):
-            box = QWidget()
-            h = QHBoxLayout(box)
-            h.setContentsMargins(0, 0, 0, 0)
-            label = QLabel()
-            label.setPixmap(icons.tabler(icon).pixmap(18, 18))
-            label.setToolTip(tip)
-            h.addWidget(label)
-            h.addWidget(widget, 1)
-            return box
+        # the dialog pattern (docs/ui-mockups/Trace): the settings in two sections on the left, the preview on
+        # the right, the number of outlines in the footer with Cancel and Trace
+        footer = widgets.DialogFooter(_("Trace"))
+        footer.connect(self)
+        self.count = footer.info
         thr = QWidget()
         th = QHBoxLayout(thr)
         th.setContentsMargins(0, 0, 0, 0)
         th.addWidget(self.threshold, 1)
         th.addWidget(self.threshold_value)
-        form = QFormLayout()
-        form.addRow(_("Threshold"), row("square-minus", self.threshold.toolTip(), thr))
-        form.addRow("", self.invert)
-        form.addRow(_("Ignore specks"), row("circle-dashed", self.specks.toolTip(), self.specks))
-        form.addRow(_("Detail"), row("vector", self.detail.toolTip(), self.detail))
-        form.addRow("", self.smooth)
-        form.addRow(_("Corner"), row("angle", self.corner.toolTip(), self.corner))
-        form.addRow("", self.count)
+        self.invert.setToolTip(_("Trace the light areas of the picture instead of the dark ones"))
+        self.smooth.setToolTip(_("Curves through the outline's nodes; corners sharper than the angle below stay "
+                                 "sharp"))
+        what = widgets.Section(_("What to trace"))
+        what.add_row("square-minus", _("Threshold"), self.threshold.toolTip(), thr)
+        what.add_wide(self.invert)
+        what.add_row("circle-dashed", _("Ignore specks"), self.specks.toolTip(), self.specks)
+        shape = widgets.Section(_("Outline shape"))
+        shape.add_row("vector", _("Detail"), self.detail.toolTip(), self.detail)
+        shape.add_wide(self.smooth)
+        shape.add_row("angle", _("Corner"), self.corner.toolTip(), self.corner)
         side = QVBoxLayout()
-        side.addLayout(form)
+        side.setSpacing(theme.SPACE_L)
+        side.addWidget(what)
+        side.addWidget(shape)
         side.addStretch(1)
+        side.addWidget(widgets.hint(_("The paths are put over the picture as a new element; the picture stays "
+                                      "(delete it or leave it out of the job).")))
         top = QHBoxLayout()
+        top.setSpacing(theme.PAD_DIALOG)
+        top.addLayout(side, 1)
         top.addWidget(self.view)
-        top.addLayout(side)
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.button(QDialogButtonBox.Ok).setText(_("Trace"))
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout = QVBoxLayout(self)
-        layout.addLayout(top)
-        hint = QLabel(_("The paths are put over the picture as a new element; the picture stays (delete it or "
-                        "leave it out of the job)."))
-        hint.setWordWrap(True)
-        hint.setObjectName("node_hint")
-        layout.addWidget(hint)
-        layout.addWidget(buttons)
+        body = widgets.DialogBody()
+        body.layout().addLayout(top)
+        widgets.dialog_layout(self, body, footer)
         self.timer = QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.setInterval(150)
@@ -130,14 +122,14 @@ class TraceDialog(QDialog):
         paths = trace.trace(self.small, opts["threshold"], opts["invert"], opts["specks"] * k * k,
                             max(0.3, opts["detail"] * k), opts["smooth"], opts["corner_deg"])
         pm = QPixmap(PREVIEW, PREVIEW)
-        pm.fill(QColor("#ffffff"))
+        pm.fill(theme.canvas("preview_paper"))
         p = QPainter(pm)
         p.setRenderHint(QPainter.Antialiasing, True)
         ox, oy = (PREVIEW - self.base.width()) / 2.0, (PREVIEW - self.base.height()) / 2.0
         p.setOpacity(0.35)
         p.drawImage(QRectF(ox, oy, self.base.width(), self.base.height()), self.base)
         p.setOpacity(1.0)
-        p.setPen(QPen(QColor("#d32f2f"), 1.3))
+        p.setPen(QPen(theme.canvas("preview_line"), 1.3))
         n = 0
         for poly in curves.flatten(paths):
             path = QPainterPath(QPointF(ox + poly[0][0], oy + poly[0][1]))

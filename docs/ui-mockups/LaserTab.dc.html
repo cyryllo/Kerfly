@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - zakładka Laser</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.btn{height:32px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;font-size:12px;padding:0 8px}
+.btn:hover{background:#eef0f3}
+.jog{width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0}
+.jog:hover{background:#eef0f3}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+</style>
+</helmet>
+<div style="width: 348px; height: 620px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #ffffff; border-right: 1px solid #c4c9d0">
+
+<div style="display: flex; height: 36px; flex: none; border-bottom: 1px solid #c4c9d0; padding: 0 8px; gap: 4px">
+<button style="border: 0; background: transparent; padding: 0 12px; font-size: 13px; color: #4b5563">Projekt</button>
+<button style="border: 0; background: transparent; padding: 0 12px; font-size: 13px; font-weight: 600; box-shadow: inset 0 -2px 0 {{accent}}">Laser</button>
+</div>
+
+<div style="display: flex; align-items: center; height: 36px; flex: none; padding: 0 12px">
+<span style="font-weight: 600; font-size: 12px">Urządzenie</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 0 12px">
+<select class="fld" style="flex: 1 1 0; min-width: 0" aria-label="Profil lasera"><option>Mój laser</option></select>
+<button class="ib" aria-label="Ustawienia profilu lasera" style="border-color: #b6bcc5"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10 M18 7h2 M4 17h4 M12 17h8 M16 5v4 M10 15v4"/></svg></button>
+</div>
+<div style="display: flex; align-items: center; gap: 6px; padding: 8px 12px 0">
+<span style="width: 8px; height: 8px; border-radius: 50%; background: #7a818c"></span>
+<span class="lbl">Nie połączono</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px">
+<button class="btn" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff; font-weight: 600"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 12l5-5 5 5-5 5z M4 20l5-5 M20 4l-5 5"/></svg>Połącz</button>
+<button class="btn"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7 M6 10v10h12V10 M10 20v-6h4v6"/></svg>Bazuj</button>
+<button class="btn"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11h12v9H6z M9 11V7a3 3 0 0 1 6 0"/></svg>Odblokuj silniki</button>
+<button class="btn"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M12 3v3 M12 18v3 M3 12h3 M18 12h3"/></svg>Do początku projektu</button>
+</div>
+
+<div style="display: flex; align-items: center; height: 36px; flex: none; padding: 0 12px; border-top: 1px solid #e1e4e8">
+<span style="font-weight: 600; font-size: 12px; flex: 1 1 0">Ruch głowicy</span>
+<span class="lbl" style="font-variant-numeric: tabular-nums">X 0,0  Y 0,0 mm</span>
+</div>
+
+<div style="display: flex; justify-content: center; padding: 4px 12px 12px">
+<div style="display: grid; grid-template-columns: repeat(3, 44px); gap: 4px">
+<button class="jog" aria-label="Do lewego górnego rogu projektu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 18L7 7 M7 14V7h7 M4 4h2 M4 4v2"/></svg></button>
+<button class="jog" aria-label="W górę"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5 M6 11l6-6 6 6"/></svg></button>
+<button class="jog" aria-label="Do prawego górnego rogu projektu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18L17 7 M10 7h7v7"/></svg></button>
+<button class="jog" aria-label="W lewo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5 M11 6l-6 6 6 6"/></svg></button>
+<button class="jog" aria-label="Do środka projektu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4z M5 5l3 3 M19 5l-3 3 M5 19l3-3 M19 19l-3-3"/></svg></button>
+<button class="jog" aria-label="W prawo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14 M13 6l6 6-6 6"/></svg></button>
+<button class="jog" aria-label="Do lewego dolnego rogu projektu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L7 17 M7 10v7h7"/></svg></button>
+<button class="jog" aria-label="W dół"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14 M6 13l6 6 6-6"/></svg></button>
+<button class="jog" aria-label="Do prawego dolnego rogu projektu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l11 11 M17 10v7h-7"/></svg></button>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1fr) 64px; column-gap: 8px; row-gap: 8px; align-items: center; padding: 0 12px">
+<label class="lbl" for="step">Krok</label>
+<input id="step" class="fld" style="width: 100%" value="10,00 mm">
+<span></span><span></span>
+<span class="lbl">Idź do</span>
+<input class="fld" style="width: 100%" value="X 0,00 mm" aria-label="Idź do X">
+<input class="fld" style="width: 100%" value="Y 0,00 mm" aria-label="Idź do Y">
+<button class="btn" style="height: 28px">Idź</button>
+</div>
+
+<div style="flex: 1 1 0"></div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 12px; border-top: 1px solid #c4c9d0; background: #f7f8fa">
+<button style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #b6bcc5; border-radius: 4px; background: #ffffff; font-size: 12px; padding: 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V4h4 M16 4h4v4 M20 16v4h-4 M8 20H4v-4"/></svg>Obrys</button>
+<button style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #c4c9d0; border-radius: 4px; background: #eceef1; color: #5b6370; font-size: 13px; font-weight: 600; padding: 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg>Start</button>
+<button style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #c4c9d0; border-radius: 4px; background: #eceef1; color: #5b6370; font-size: 12px; padding: 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14 M16 5v14"/></svg>Pauza</button>
+<button style="height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #c4c9d0; border-radius: 4px; background: #eceef1; color: #5b6370; font-size: 12px; padding: 0"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg>Stop</button>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":348,"height":620}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>

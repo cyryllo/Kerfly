@@ -1,20 +1,21 @@
 """
 Options bar above the bed view: settings of the selected shape, or of the
-drawing tool in use (like LightBurn's tool options bar), laid out as ribbon
-sections with captions and separators.
+drawing tool in use (like LightBurn's tool options bar). This is its second
+row (docs/ui-mockups/OptionBars): the name of what is edited in bold, then
+groups of fields, each field with its icon, a short caption and a tooltip,
+the groups apart by thin lines. The first row (the selection's position,
+size, rotation and layer) is the window's.
 
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 from PySide6.QtCore import QSize, Qt, QTimer, Signal
-from PySide6.QtGui import QFont
-from PySide6.QtWidgets import (QSizePolicy, QComboBox, QDoubleSpinBox, QFontComboBox, QFrame, QGridLayout,
-                               QHBoxLayout, QLabel, QPlainTextEdit, QSpinBox, QToolButton,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QComboBox, QDoubleSpinBox, QFrame, QHBoxLayout, QLabel, QPlainTextEdit, QSpinBox,
+                               QToolButton, QWidget)
 
-from kerfly.gui import icons
+from kerfly.gui import icons, theme, widgets
 from kerfly.gui.sizing import chars_width
-from kerfly.i18n import N_, _
+from kerfly.i18n import C_, N_, _
 
 OPERATION_NAMES = [("cut", N_("Cut")), ("engrave", N_("Engrave outline")), ("fill", N_("Fill (raster)"))]
 KIND_NAMES = {"rectangle": N_("Rectangle"), "ellipse": N_("Ellipse"), "polygon": N_("Polygon"),
@@ -37,29 +38,56 @@ NEW_KIND_TITLES = {"rectangle": N_("New rectangle"), "ellipse": N_("New ellipse"
                    "textpath": N_("New text on a path")}
 
 
-def ribbon_section(content, caption):
-    """A ribbon section: content (widget or layout) with a small caption under it."""
-    box = QWidget()
-    v = QVBoxLayout(box)
-    v.setContentsMargins(2, 0, 2, 0)
-    v.setSpacing(2)
-    if isinstance(content, QWidget):
-        v.addWidget(content, 0, Qt.AlignTop)
-    else:
-        v.addLayout(content)
-    v.addStretch(1)
-    label = QLabel(caption)
-    label.setObjectName("ribbon_caption")
-    label.setAlignment(Qt.AlignHCenter)
-    v.addWidget(label)
-    return box
-
-
 def ribbon_separator():
+    """A thin vertical line between the ribbon's groups."""
     line = QFrame()
     line.setFrameShape(QFrame.VLine)
     line.setObjectName("ribbon_separator")
     return line
+
+
+def option_field(icon, caption, field, tip=None):
+    """A field of the options bar: its icon, its short caption and the field, all with the tooltip
+    (icon None: the caption alone, e.g. X and Y)."""
+    tip = tip or field.toolTip()
+    box = QWidget()
+    row = QHBoxLayout(box)
+    row.setContentsMargins(0, 0, 0, 0)
+    row.setSpacing(theme.SPACE_S)
+    if icon is not None:
+        row.addWidget(widgets.icon_pixmap_label(icon, tip))
+    if caption:
+        label = widgets.label(caption, "hint", wrap=False)
+        label.setToolTip(tip)
+        row.addWidget(label)
+        row.addSpacing(theme.SPACE_S)
+    row.addWidget(field)
+    if not field.toolTip():
+        field.setToolTip(tip)
+    return box
+
+
+def option_title(text):
+    """The bold name at the start of a row of the options bar (what is edited)."""
+    label = widgets.section_title(text)
+    label.setMinimumWidth(theme.OPTION_TITLE)
+    label.setMaximumWidth(2 * theme.OPTION_TITLE)
+    label.setToolTip(text)
+    return label
+
+
+def text_button(icon, text, tip, checkable=False):
+    """A small button with its icon and a short text (Keep the original, Other side, ...)."""
+    b = QToolButton()
+    b.setIcon(icons.tabler(icon) if isinstance(icon, str) else icon)
+    b.setIconSize(QSize(theme.ICON, theme.ICON))
+    b.setText(text)
+    b.setToolTip(tip)
+    b.setCheckable(checkable)
+    b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+    b.setFixedHeight(theme.HEIGHT_FIELD)
+    b.setAutoRaise(not checkable)
+    return b
 
 
 # node tool buttons: (section, [(code, label, icon, key, tooltip, needs a selected node)])
@@ -92,14 +120,16 @@ class ToolOptionsBar(QWidget):
     offset_changed = Signal(dict)       # the Offset tool's settings
     crop_changed = Signal(dict)         # the Cut out of picture tool's settings
     offset_apply = Signal()             # the Offset tool's "Offset selected" button
+    rebuilt = Signal()                  # its fields changed (the window fits the bar's width)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("tool_options")
         self.row = QHBoxLayout(self)
         self.row.setContentsMargins(0, 0, 0, 0)
-        self.row.setSpacing(4)
+        self.row.setSpacing(theme.SPACE_M)
         self.spec = None
+        self._groups = 0
         self._text_timer = QTimer(self)
         self._text_timer.setSingleShot(True)
         self._text_timer.setInterval(400)       # rebuild text outlines after typing pauses
@@ -107,7 +137,8 @@ class ToolOptionsBar(QWidget):
         self.show_hint()
 
     # ---- building -------------------------------------------------------
-    def _clear(self):
+    def _clear(self, title=None):
+        """Empty the row; title: the bold name it starts with."""
         self._text_timer.stop()
         self._node_buttons = []                  # their widgets are deleted below
         while self.row.count():
@@ -117,38 +148,52 @@ class ToolOptionsBar(QWidget):
                 w.hide()                 # gone now, not only when Qt deletes it later
                 w.setParent(None)
                 w.deleteLater()
+        self._groups = 0
+        if title:
+            self.row.addWidget(option_title(title))
+
+    def _add(self, *items):
+        """A group of fields (widgets), after a thin line."""
+        if self.row.count():
+            self.row.addWidget(widgets.separator())
+        for item in items:
+            self.row.addWidget(item)
+            item.show()          # at once: Qt shows a widget added to a shown bar only after the event loop
+        self._groups += 1
+
+    def _end(self):
+        self.row.addStretch(1)                       # keep the groups together on the left
+        self.rebuilt.emit()
 
     def show_hint(self):
-        """Nothing to edit: leave the bar empty (a hint text made the bar taller in narrow windows)."""
+        """Nothing to edit: an empty row (the bar keeps its height)."""
         self.spec = None
         self._clear()
+        self._end()
 
     def add_node_actions(self):
-        """Buttons of the node tool, in sections, with icons. Those that need a
+        """Buttons of the node tool, in groups, with icons and their key. Those that need a
         selected node are greyed out until a node is clicked."""
         self._node_buttons = []
         last = self.row.itemAt(self.row.count() - 1) if self.row.count() else None
         if last is not None and last.spacerItem() is not None:
-            self.row.takeAt(self.row.count() - 1)     # the stretch goes after the node sections
+            self.row.takeAt(self.row.count() - 1)     # the stretch goes after the node groups
+        if not self.row.count():
+            self.row.addWidget(option_title(_("Nodes")))
         for section, actions in NODE_SECTIONS:
-            box = QWidget()
-            v = QVBoxLayout(box)
-            v.setContentsMargins(0, 0, 0, 0)
-            v.setSpacing(2)
+            group = []
             for code, label, icon, key, tip, needs_node in actions:
-                b = QToolButton()
-                b.setText(_(label))
-                b.setIcon(icons.tabler(icon))
-                b.setIconSize(QSize(18, 18))
-                b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-                b.setToolTip("%s (%s)" % (_(tip), key))
-                b.setAutoRaise(True)
-                b.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+                # icons only (a row of captions was too wide); the name, key and meaning in the tooltip
+                b = text_button(icon, "%s (%s)" % (_(label), key), "%s (%s)\n%s: %s" % (_(label), key, _(section),
+                                                                                       _(tip)))
+                b.setToolButtonStyle(Qt.ToolButtonIconOnly)
+                b.setFixedSize(theme.HEIGHT_FIELD, theme.HEIGHT_FIELD)
+                widgets.set_role(b, "icon")
                 b.clicked.connect(lambda _c=False, c=code: self.node_action.emit(c))
-                v.addWidget(b)
+                group.append(b)
                 self._node_buttons.append((b, needs_node))
-            self._add(box, _(section))
-        self.row.addStretch(1)                           # keep the sections together on the left
+            self._add(*group)
+        self._end()
         self.set_node_selection(0)
 
     def set_node_selection(self, count):
@@ -162,7 +207,7 @@ class ToolOptionsBar(QWidget):
     def show_crop_tool(self, values):
         """Options of the Cut out of picture tool: the shape of the piece that stays."""
         self.spec = None
-        self._clear()
+        self._clear(_("Cut out of a picture"))
         self.crop_values = dict(values)
         shape = QComboBox()
         for code, icon, name in (("rect", "square", N_("Rectangle")), ("ellipse", "circle", N_("Ellipse"))):
@@ -171,13 +216,8 @@ class ToolOptionsBar(QWidget):
         shape.setToolTip(_("Shape of the piece that stays: drag it over a picture; the rest of the picture goes"))
         shape.currentIndexChanged.connect(lambda _i, c=shape: self._set_crop("crop_shape", c.currentData()))
         self.crop_shape_box = shape
-        box = QWidget()
-        h = QHBoxLayout(box)
-        h.setContentsMargins(0, 0, 0, 0)
-        h.addWidget(self._icon_label("picture-cut", shape.toolTip()))
-        h.addWidget(shape)
-        self._add(box, _("Cut out of a picture"))
-        self.row.addStretch(1)
+        self._add(option_field("picture-cut", _("Shape"), shape))
+        self._end()
 
     def _set_crop(self, key, value):
         self.crop_values[key] = value
@@ -186,33 +226,40 @@ class ToolOptionsBar(QWidget):
     def show_picture(self, actions):
         """A selected picture: its commands (Trace)."""
         self.spec = None
-        self._clear()
+        self._clear(_("Picture"))
         for act in actions:
             b = QToolButton()
             b.setDefaultAction(act)
-            b.setIconSize(QSize(20, 20))
+            b.setIconSize(QSize(theme.ICON, theme.ICON))
             b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            b.setFixedHeight(theme.HEIGHT_FIELD)
             b.setAutoRaise(True)
-            self._add(b, _("Picture"))
-        self.row.addStretch(1)
-
-    def _add(self, content, caption):
-        if self.row.count():
-            self.row.addWidget(ribbon_separator())
-        self.row.addWidget(ribbon_section(content, caption))
+            self._add(b)
+        self._end()
 
     def show_spec(self, spec, title):
         """Show the options of spec (a ShapeSpec); title names what is edited."""
         self.spec = spec.copy()
-        self._clear()
-
-        # what the laser does with the shape is chosen with its layer (bar above, Layer)
+        self._clear(title)
+        # what the laser does with the shape is chosen with its layer (the first row, Layer)
+        kind = self.spec.kind
+        if kind == "rectangle":
+            radius = self._dspin("corner_radius", 0.0, 1000.0, " mm")
+            radius.setToolTip(_("Corner radius: 0 for sharp corners"))
+            self._add(option_field("border-radius", _("Corner radius"), radius))
+        elif kind == "polygon":
+            sides = QSpinBox()
+            sides.setRange(3, 64)
+            sides.setValue(self.spec.sides)
+            sides.setKeyboardTracking(False)
+            sides.setToolTip(_("Number of sides of the regular polygon"))
+            sides.valueChanged.connect(lambda v: self._set("sides", v))
+            sides.setProperty("spec_attr", "sides")
+            self._add(option_field("hexagon", _("Sides"), sides))
+        elif kind == "text":
+            self._add_text_fields()
 
         if self.spec.operation == "cut" and self.spec.closed:
-            tb = QWidget()
-            tg = QGridLayout(tb)
-            tg.setContentsMargins(0, 0, 0, 0)
-            tg.setVerticalSpacing(4)
             count = QSpinBox()
             count.setRange(0, 50)
             count.setValue(int(self.spec.tabs))
@@ -223,129 +270,83 @@ class ToolOptionsBar(QWidget):
             count.setProperty("spec_attr", "tabs")
             width = self._dspin("tab_width", 0.1, 20.0, " mm", decimals=1)
             width.setToolTip(_("Width of each bridge"))
-            tg.addWidget(self._icon_label("hash", count.toolTip()), 0, 0)
-            tg.addWidget(count, 0, 1)
-            tg.addWidget(self._icon_label("arrows-horizontal", width.toolTip()), 1, 0)
-            tg.addWidget(width, 1, 1)
-            self._add(tb, _("Bridges"))
+            self._add(option_field("hash", _("Bridges"), count),
+                      option_field("arrows-horizontal", _("Bridge width"), width))
 
         if self.spec.operation in ("cut", "engrave") and self.spec.closed:
             self._add_fill_section()
             if self.spec.hinge_pattern:                  # added with the Living hinge tool
                 self._add_hinge_section()
+        self._end()
 
-
-        kind = self.spec.kind
-        if kind == "rectangle":
-            radius = self._dspin("corner_radius", 0.0, 1000.0, " mm")
-            radius.setToolTip(_("Corner radius: 0 for sharp corners"))
-            self._add(self._with_icon("border-radius", radius), _("Corner radius"))
-        elif kind == "polygon":
-            sides = QSpinBox()
-            sides.setRange(3, 64)
-            sides.setValue(self.spec.sides)
-            sides.setKeyboardTracking(False)
-            sides.setToolTip(_("Number of sides of the regular polygon"))
-            sides.valueChanged.connect(lambda v: self._set("sides", v))
-            sides.setProperty("spec_attr", "sides")
-            self._add(self._with_icon("hexagon", sides), _("Sides"))
-        elif kind == "text":
-            text = QPlainTextEdit(self.spec.text)
-            text.setPlaceholderText(_("Text"))
-            text.setToolTip(_("Text; press Enter for a new line"))
-            fm = text.fontMetrics()
-            text.setFixedSize(chars_width(text, 16), fm.lineSpacing() * 2 + 14)
-            text.setTabChangesFocus(True)
-            text.textChanged.connect(lambda: self._text_edited(text.toPlainText()))
-            text.setProperty("spec_attr", "text")
-            self._add(text, _("Content"))
-
-            font_box = QWidget()
-            g = QGridLayout(font_box)
-            g.setContentsMargins(0, 0, 0, 0)
-            g.setHorizontalSpacing(2)
-            g.setVerticalSpacing(4)
-            from kerfly.gui.font_box import FontBox
-            font = FontBox()
-            font.set_family(self.spec.font_family)
-            font.setFixedWidth(chars_width(font, 16) + 28)
-            font.setToolTip(_("Font. At the top of the list: single-line fonts, built into Kerfly, for fast "
-                              "engraving (the laser runs once along each letter, nothing to fill)"))
-            font.family_chosen.connect(lambda fam: self._set("font_family", fam)
-                                       if self.spec is not None and fam != self.spec.font_family else None)
-            font.setProperty("spec_attr", "font_family")
-            g.addWidget(font, 0, 0, 1, 4)
-            spacing = self._dspin("text_spacing", -50.0, 200.0, " mm", decimals=2)
-            spacing.setSingleStep(0.1)
-            spacing.setToolTip(_("Letter spacing: space added between the letters (0: as the font sets it)"))
-            g.addWidget(self._icon_label("letter-spacing", spacing.toolTip()), 0, 4)
-            g.addWidget(spacing, 0, 5)
-            size = self._dspin("font_size", 0.5, 500.0, " mm")
-            g.addWidget(self._icon_label("text-size", size.toolTip()), 1, 0)
-            g.addWidget(size, 1, 1)
-            for i, (attr, icon, tip) in enumerate((("bold", "bold", N_("Bold")),
-                                                   ("italic", "italic", N_("Italic")))):
-                b = QToolButton()
-                b.setIcon(icons.tabler(icon))
-                b.setIconSize(QSize(18, 18))
-                b.setCheckable(True)
-                b.setChecked(getattr(self.spec, attr))
-                b.setToolTip(_(tip))
-                b.toggled.connect(lambda on, a=attr: self._set(a, on))
-                b.setProperty("spec_attr", attr)
-                g.addWidget(b, 1, 2 + i)
-            self._add(font_box, _("Font"))
-            if self.spec.text_path:
-                pb = QWidget()
-                pg = QGridLayout(pb)
-                pg.setContentsMargins(0, 0, 0, 0)
-                pg.setHorizontalSpacing(4)
-                pg.setVerticalSpacing(4)
-                offset = self._dspin("text_path_offset", -5000.0, 5000.0, " mm")
-                offset.setSingleStep(1.0)
-                offset.setToolTip(_("Position along the path: where the text starts (you can also drag the text "
-                                    "with the mouse)"))
-                flip = QToolButton()
-                flip.setIcon(icons.tabler("flip-vertical"))
-                flip.setIconSize(QSize(18, 18))
-                flip.setCheckable(True)
-                flip.setChecked(self.spec.text_path_flip)
-                flip.setToolTip(_("Other side: the text runs the other way, on the other side of the line"))
-                flip.toggled.connect(lambda v: self._set("text_path_flip", v))
-                flip.setProperty("spec_attr", "text_path_flip")
-                straight = QToolButton()
-                straight.setText(_("Straight text"))
-                straight.setToolTip(_("Take the text off the path: back to a straight line of text"))
-                straight.clicked.connect(lambda: self._set("text_path", []))
-                distance = self._dspin("text_path_distance", -500.0, 500.0, " mm")
-                distance.setSingleStep(0.5)
-                distance.setToolTip(_("Distance from the line: space between the line and the foot of the letters "
-                                      "(minus: the letters cross the line)"))
-                pg.addWidget(self._icon_label("route", offset.toolTip()), 0, 0)
-                pg.addWidget(offset, 0, 1)
-                pg.addWidget(flip, 0, 2)
-                pg.addWidget(self._icon_label("line-height", distance.toolTip()), 1, 0)
-                pg.addWidget(distance, 1, 1)
-                pg.addWidget(straight, 1, 2)
-                self._add(pb, _("Text on path"))
-        self.row.addStretch(1)
+    def _add_text_fields(self):
+        """A text: its content, font, size, bold and italic, letter spacing; on a path its place on it."""
+        text = QPlainTextEdit(self.spec.text)
+        text.setPlaceholderText(_("Text"))
+        text.setToolTip(_("Text; press Enter for a new line"))
+        text.setFixedSize(chars_width(text, 16), theme.HEIGHT_FIELD)
+        text.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        text.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        text.setTabChangesFocus(True)
+        text.textChanged.connect(lambda: self._text_edited(text.toPlainText()))
+        text.setProperty("spec_attr", "text")
+        from kerfly.gui.font_box import FontBox
+        font = FontBox()
+        font.set_family(self.spec.font_family)
+        font.setFixedWidth(chars_width(font, 16) + 28)
+        font.setToolTip(_("Font. At the top of the list: single-line fonts, built into Kerfly, for fast "
+                          "engraving (the laser runs once along each letter, nothing to fill)"))
+        font.family_chosen.connect(lambda fam: self._set("font_family", fam)
+                                   if self.spec is not None and fam != self.spec.font_family else None)
+        font.setProperty("spec_attr", "font_family")
+        size = self._dspin("font_size", 0.5, 500.0, " mm")
+        style = []
+        for attr, icon, tip in (("bold", "bold", N_("Bold")), ("italic", "italic", N_("Italic"))):
+            b = widgets.icon_button(icon, _(tip), checkable=True)
+            b.setChecked(getattr(self.spec, attr))
+            b.toggled.connect(lambda on, a=attr: self._set(a, on))
+            b.setProperty("spec_attr", attr)
+            style.append(b)
+        spacing = self._dspin("text_spacing", -50.0, 200.0, " mm", decimals=2)
+        spacing.setSingleStep(0.1)
+        spacing.setToolTip(_("Letter spacing: space added between the letters (0: as the font sets it)"))
+        self._add(option_field("typography", _("Content"), text),
+                  option_field("text-size", _("Font"), font), option_field(None, _("Size"), size), *style,
+                  option_field("letter-spacing", _("Letter spacing"), spacing))
+        if self.spec.text_path:
+            offset = self._dspin("text_path_offset", -5000.0, 5000.0, " mm")
+            offset.setSingleStep(1.0)
+            offset.setToolTip(_("Position along the path: where the text starts (you can also drag the text "
+                                "with the mouse)"))
+            distance = self._dspin("text_path_distance", -500.0, 500.0, " mm")
+            distance.setSingleStep(0.5)
+            distance.setToolTip(_("Distance from the line: space between the line and the foot of the letters "
+                                  "(minus: the letters cross the line)"))
+            flip = text_button("flip-vertical", _("Other side"),
+                               _("Other side: the text runs the other way, on the other side of the line"),
+                               checkable=True)
+            flip.setChecked(self.spec.text_path_flip)
+            flip.toggled.connect(lambda v: self._set("text_path_flip", v))
+            flip.setProperty("spec_attr", "text_path_flip")
+            straight = text_button("slash", _("Straight text"),
+                                   _("Take the text off the path: back to a straight line of text"))
+            straight.clicked.connect(lambda: self._set("text_path", []))
+            self._add(option_field("route", _("Start"), offset), option_field("line-height", _("From line"), distance),
+                      flip, straight)
 
     def show_fill_tool(self, spec):
         """Options of the Fill tool: the pattern given to the shapes it is clicked on."""
         self.spec = spec.copy()
-        self._clear()
+        self._clear(_("Fill"))
         self._add_fill_section(tool=True)       # what to do is said in the status bar
-        self.row.addStretch(1)
+        self._end()
 
     def show_offset_tool(self, values):
         """Options of the Offset tool: how far the new outline lies from the shape,
         its corners, keep the shape or replace it; a button for the selected shapes."""
         self.spec = None
-        self._clear()
+        self._clear(_("Offset"))
         self.offset_values = dict(values)
-        g = QGridLayout()
-        g.setHorizontalSpacing(4)
-        g.setVerticalSpacing(2)
         distance = QDoubleSpinBox()
         distance.setRange(-50.0, 50.0)
         distance.setDecimals(2)
@@ -357,8 +358,6 @@ class ToolOptionsBar(QWidget):
                               "get smaller), negative inside"))
         distance.setProperty("spec_attr", "offset_distance")
         distance.valueChanged.connect(lambda v: self._set_offset("offset_distance", v))
-        g.addWidget(self._icon_label("arrows-horizontal", distance.toolTip()), 0, 0)
-        g.addWidget(distance, 0, 1)
         join = QComboBox()
         join.addItem(icons.tabler("border-radius"), _("Round"), "round")
         join.addItem(icons.tabler("square"), _("Sharp"), "miter")
@@ -366,30 +365,20 @@ class ToolOptionsBar(QWidget):
         join.setToolTip(_("Corners of the new outline: rounded, or sharp like the shape's"))
         join.setProperty("spec_attr", "offset_join")
         join.currentIndexChanged.connect(lambda _i: self._set_offset("offset_join", join.currentData()))
-        g.addWidget(self._icon_label("border-radius", join.toolTip()), 1, 0)
-        g.addWidget(join, 1, 1)
-        keep = QToolButton()
-        keep.setCheckable(True)
+        keep = text_button("copy", _("Keep the original"),
+                           _("On: the new outline is added next to the shape; off: it replaces the shape"),
+                           checkable=True)
         keep.setChecked(bool(values["offset_keep"]))
-        keep.setIcon(icons.tabler("copy"))
-        keep.setText(_("Keep the original"))
-        keep.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        keep.setToolTip(_("On: the new outline is added next to the shape; off: it replaces the shape"))
         keep.setProperty("spec_attr", "offset_keep")
         keep.toggled.connect(lambda on: self._set_offset("offset_keep", on))
-        g.addWidget(keep, 0, 2)
-        apply = QToolButton()
-        apply.setIcon(icons.tabler("box-padding"))
-        apply.setText(_("Offset selected"))
-        apply.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        apply.setToolTip(_("Draw the new outline around the shapes selected now (or click a shape on the bed)"))
+        apply = text_button("box-padding", _("Offset selected"),
+                            _("Draw the new outline around the shapes selected now (or click a shape on the bed)"))
         apply.clicked.connect(self.offset_apply.emit)
         self.offset_apply_button = apply
-        g.addWidget(apply, 1, 2)
-        box = QWidget()
-        box.setLayout(g)
-        self.row.addWidget(ribbon_section(box, _("Offset")))
-        self.row.addStretch(1)
+        self._add(option_field("arrows-horizontal", _("Distance"), distance),
+                  option_field("border-radius", _("Corners"), join), keep)
+        self._add(apply)
+        self._end()
 
     def _set_offset(self, key, value):
         self.offset_values[key] = value
@@ -398,20 +387,15 @@ class ToolOptionsBar(QWidget):
     def show_hinge_tool(self, spec):
         """Options of the Living hinge tool: the cuts given to the shapes it is clicked on."""
         self.spec = spec.copy()
-        self._clear()
+        self._clear(_("Living hinge"))
         self._add_hinge_section(tool=True)      # what to do is said in the status bar
-        self.row.addStretch(1)
+        self._end()
 
     def _add_hinge_section(self, tool=False):
         """Living hinge of a closed shape: pattern, cut length, bridge, row spacing,
-        direction, solid border."""
-        box = QWidget()
-        g = QGridLayout(box)
-        g.setContentsMargins(0, 0, 0, 0)
-        g.setHorizontalSpacing(4)
-        g.setVerticalSpacing(4)
+        direction, solid border, the band."""
         pattern = QComboBox()
-        pattern.setIconSize(QSize(22, 22))
+        pattern.setIconSize(QSize(theme.ICON, theme.ICON))
         pattern.addItem(_("No hinge"), "")
         for code, name in HINGE_NAMES:
             pattern.addItem(icons.hinge_pattern_icon(code), _(name), code)
@@ -422,40 +406,35 @@ class ToolOptionsBar(QWidget):
         (pattern.activated if tool else pattern.currentIndexChanged).connect(
             lambda _i: self._set("hinge_pattern", pattern.currentData()))
         pattern.setProperty("spec_attr", "hinge_pattern")
-        g.addWidget(pattern, 0, 0, 1, 4)
+        items = [option_field(icons.hinge_icon(), _("Living hinge"), pattern)]
         if self.spec.hinge_pattern or tool:
-            # (field, from, to, unit, icon, tooltip, row, column); two rows, like every section
-            fields = (("hinge_cut", 1.0, 500.0, " mm", "ruler-measure", N_("Length of one cut"), 0, 4),
-                      ("hinge_gap", 0.2, 50.0, " mm", "link",
-                       N_("Bridge: uncut material between two cuts in a row"), 0, 6),
-                      ("hinge_spacing", 0.2, 50.0, " mm", "line-height",
-                       N_("Distance between the rows of cuts (smaller: bends more)"), 1, 0),
-                      ("hinge_angle", -180.0, 180.0, "\u00b0", "rotate-2",
-                       N_("Direction of the cuts (90\u00b0: up and down; the sheet bends across them)"), 1, 2),
-                      ("hinge_margin", 0.0, 100.0, " mm", "circle-dashed",
-                       N_("Solid border: no cuts this close to the outline"), 1, 4),
-                      ("hinge_band", 0.0, 2000.0, " mm", "arrows-horizontal",
-                       N_("Width of the hinge band, across the cuts (0: the whole shape)"), 0, 8),
-                      ("hinge_band_offset", -2000.0, 2000.0, " mm", "focus-centered",
+            # (field, from, to, unit, icon, short caption, tooltip)
+            fields = (("hinge_cut", 1.0, 500.0, " mm", "ruler-measure", C_("hinge", "Cut"),
+                       N_("Length of one cut")),
+                      ("hinge_gap", 0.2, 50.0, " mm", "link", C_("hinge", "Bridge"),
+                       N_("Bridge: uncut material between two cuts in a row")),
+                      ("hinge_spacing", 0.2, 50.0, " mm", "line-height", _("Row gap"),
+                       N_("Distance between the rows of cuts (smaller: bends more)")),
+                      ("hinge_angle", -180.0, 180.0, "\u00b0", "rotate-2", _("Angle"),
+                       N_("Direction of the cuts (90\u00b0: up and down; the sheet bends across them)")),
+                      ("hinge_margin", 0.0, 100.0, " mm", "circle-dashed", _("Margin"),
+                       N_("Solid border: no cuts this close to the outline")),
+                      ("hinge_band", 0.0, 2000.0, " mm", "arrows-horizontal", _("Band width"),
+                       N_("Width of the hinge band, across the cuts (0: the whole shape)")),
+                      ("hinge_band_offset", -2000.0, 2000.0, " mm", "focus-centered", _("Band offset"),
                        N_("Where the band is: its middle from the middle of the shape (minus: left / up, "
-                          "plus: right / down)"), 1, 6))
-            for attr, lo, hi, unit, icon, tip, row, col in fields:
+                          "plus: right / down)")))
+            for attr, lo, hi, unit, icon, caption, tip in fields:
                 w = self._dspin(attr, lo, hi, unit)
                 w.setSingleStep(90.0 if attr == "hinge_angle" else 0.5)
                 w.setToolTip(_(tip))
-                g.addWidget(self._icon_label(icon, _(tip)), row, col)
-                g.addWidget(w, row, col + 1)
-        self._add(box, _("Living hinge"))
+                items.append(option_field(icon, caption, w))
+        self._add(*items)
 
     def _add_fill_section(self, tool=False):
         """Pattern fill of a closed shape: pattern, spacing, angle, margin, outline."""
-        box = QWidget()
-        g = QGridLayout(box)
-        g.setContentsMargins(0, 0, 0, 0)
-        g.setHorizontalSpacing(4)
-        g.setVerticalSpacing(4)
         pattern = QComboBox()
-        pattern.setIconSize(QSize(22, 22))
+        pattern.setIconSize(QSize(theme.ICON, theme.ICON))
         pattern.addItem(_("No pattern"), "")
         for code, name in PATTERN_NAMES:
             pattern.addItem(icons.pattern_icon(code), _(name), code)
@@ -466,7 +445,7 @@ class ToolOptionsBar(QWidget):
         (pattern.activated if tool else pattern.currentIndexChanged).connect(
             lambda _i: self._set("fill_pattern", pattern.currentData()))
         pattern.setProperty("spec_attr", "fill_pattern")
-        g.addWidget(pattern, 0, 0, 1, 5)
+        items = [option_field("bucket-droplet", _("Fill"), pattern)]
         if self.spec.fill_pattern or tool:
             spacing = self._dspin("fill_spacing", 0.05, 50.0, " mm", decimals=2)
             spacing.setSingleStep(0.1)
@@ -477,37 +456,14 @@ class ToolOptionsBar(QWidget):
             margin = self._dspin("fill_margin", 0.0, 20.0, " mm", decimals=1)
             margin.setSingleStep(0.5)
             margin.setToolTip(_("Space kept free between the pattern and the outline"))
-            outline = QToolButton()
-            outline.setIcon(icons.tabler("square"))
-            outline.setIconSize(QSize(18, 18))
-            outline.setCheckable(True)
+            outline = text_button("square", _("Outline"), _("Cut or engrave the outline too (off: only the pattern)"),
+                                  checkable=True)
             outline.setChecked(self.spec.fill_outline)
-            outline.setToolTip(_("Cut or engrave the outline too (off: only the pattern)"))
             outline.toggled.connect(lambda v: self._set("fill_outline", v))
             outline.setProperty("spec_attr", "fill_outline")
-            g.addWidget(outline, 0, 5)
-            for col, (icon, field) in enumerate((("line-height", spacing), ("rotate-2", angle), ("circle-dashed", margin))):
-                g.addWidget(self._icon_label(icon, field.toolTip()), 1, 2 * col)
-                g.addWidget(field, 1, 2 * col + 1)
-        self._add(box, _("Fill"))
-
-    def _with_icon(self, icon, field):
-        """A field with its icon in front (both with the field's tooltip)."""
-        box = QWidget()
-        h = QHBoxLayout(box)
-        h.setContentsMargins(0, 0, 0, 0)
-        h.setSpacing(4)
-        h.addWidget(self._icon_label(icon, field.toolTip()))
-        h.addWidget(field)
-        return box
-
-    @staticmethod
-    def _icon_label(icon, tip):
-        """A small icon in front of a field, saying what it is (with the field's tooltip)."""
-        label = QLabel()
-        label.setPixmap(icons.tabler(icon).pixmap(18, 18))
-        label.setToolTip(tip)
-        return label
+            items += [option_field("line-height", _("Spacing"), spacing), option_field("rotate-2", _("Angle"), angle),
+                      option_field("circle-dashed", _("Margin"), margin), outline]
+        self._add(*items)
 
     def _dspin(self, attr, lo, hi, suffix, decimals=1):
         w = QDoubleSpinBox()

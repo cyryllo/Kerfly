@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - lasery</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic16{width:16px;height:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.ib:hover{background:#dfe3e8;border-color:#c4c9d0}
+.btn{height:32px;min-width:88px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;font-size:12px;padding:0 12px}
+.btn:hover{background:#eef0f3}
+.sm{height:28px;min-width:0;padding:0 8px}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+.hd{font-size:12px;font-weight:600;color:#2b2f36}
+.cap{font-size:10px;color:#5b6370;line-height:14px}
+.row{display:flex;align-items:center;gap:8px;min-height:28px}
+.chk{display:flex;align-items:center;gap:8px;min-height:28px;font-size:12px}
+.chk input{margin:0}
+.beta{font-size:10px;color:#5b6370;border:1px solid #c4c9d0;border-radius:3px;padding:0 4px;line-height:14px}
+</style>
+</helmet>
+<div style="width: 700px; height: 460px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #f4f5f7; border: 1px solid #9aa1ab; border-radius: 6px; overflow: hidden">
+<div style="height: 36px; flex: none; display: flex; align-items: center; padding: 0 4px 0 12px; background: #eef0f3; border-bottom: 1px solid #c4c9d0">
+<span style="flex: 1 1 0; font-size: 13px; font-weight: 600">Lasery</span>
+<button class="ib" aria-label="Zamknij okno"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"/></svg></button>
+</div>
+<div style="flex: 1 1 0; min-height: 0; display: flex">
+<div style="width: 260px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; background: #ffffff; border-right: 1px solid #c4c9d0">
+<div style="display: flex; align-items: center; gap: 4px; height: 44px; flex: none; padding: 0 8px; border-bottom: 1px solid #e1e4e8">
+<button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14 M5 12h14"/></svg>Nowy</button>
+<button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h11v11H9z M5 15V4h11"/></svg>Powiel</button>
+<button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z"/></svg>Importuj…</button>
+</div>
+<div style="flex: 1 1 0; display: flex; flex-direction: column; padding: 4px 0">
+<div style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; background: {{accent}}; color: #ffffff"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v6H4z M12 11v4 M9 19l3-4 3 4 M6 19h12"/></svg><span style="flex: 1 1 0">Mój laser</span><span style="font-size: 10px; border: 1px solid #ffffff; border-radius: 3px; padding: 0 4px; line-height: 14px">w użyciu</span></div>
+<div style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v6H4z M12 11v4 M9 19l3-4 3 4 M6 19h12"/></svg><span style="flex: 1 1 0">K40 w hackerspace</span></div>
+<div style="display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v6H4z M12 11v4 M9 19l3-4 3 4 M6 19h12"/></svg><span style="flex: 1 1 0">K40 z osią obrotową</span></div>
+</div>
+</div>
+<div style="flex: 1 1 0; min-width: 0; box-sizing: border-box; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<div class="row"><span style="font-size: 15px; font-weight: 600; flex: 1 1 0">Mój laser</span><button class="btn sm">Zmień nazwę</button></div>
+<div style="display: grid; grid-template-columns: 120px minmax(0, 1fr); column-gap: 12px; row-gap: 8px; padding: 12px; background: #ffffff; border: 1px solid #c4c9d0; border-radius: 4px">
+<span class="lbl">Płyta sterująca</span><span>LASER-M2</span>
+<span class="lbl">Stół roboczy</span><span>300 × 200 mm</span>
+<span class="lbl">Port USB</span><span>Pierwszy znaleziony K40</span>
+<span class="lbl">Oś obrotowa</span><span>nie</span>
+<span class="lbl">Programy</span><span>po zadaniu</span>
+</div>
+<span class="lbl">Ustawienia lasera w użyciu zmienisz w oknie Ustawienia. Każdy laser pamięta własne.</span>
+<span style="flex: 1 1 0"></span>
+<div class="row">
+<button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11 M7 11l5 5 5-5 M5 20h14"/></svg>Eksportuj…</button>
+<button class="btn sm" style="color: #b3261e; border-color: #d9a3a0"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14 M9 7V4h6v3 M7 7l1 13h8l1-13"/></svg>Usuń</button>
+<span style="flex: 1 1 0"></span>
+<button class="btn sm">Otwórz ustawienia</button>
+</div>
+</div>
+</div>
+<div style="flex: none; display: flex; align-items: center; gap: 8px; padding: 12px; background: #eef0f3; border-top: 1px solid #c4c9d0">
+<span class="lbl" style="flex: 1 1 0">3 lasery</span>
+<button class="btn">Zamknij</button><button class="btn" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff; font-weight: 600">Użyj tego lasera</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":700,"height":460}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>

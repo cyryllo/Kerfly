@@ -51,11 +51,12 @@ zadanie do lasera. Instrukcja dotyczy wersji 1.4.
 
    Każda linia powinna mieć `OK`; linie `WARN` dotyczą rzeczy opcjonalnych
    albo niepodłączonego lasera.
-3. Otwórz **Ustawienia → Ustawienia… → Maszyna** i wybierz **Płytę
-   sterującą** (napis na płycie, np. LASER-M2 albo LASER-M3), **jednostki** i
-   **rozmiar stołu**.
-4. Włącz laser, podłącz kabel USB i naciśnij przycisk z **wtyczką** (Połącz z
-   laserem, Ctrl+I) na zakładce **Laser**. Domyślnie Kerfly od razu bazuje
+3. Otwórz **Ustawienia → Lasery…**, wybierz **Płytę sterującą** swojego
+   lasera (napis na płycie, np. LASER-M2 albo LASER-M3) i **rozmiar stołu**,
+   potem **Zapisz**. **Jednostki** (mm albo cale) są w **Ustawienia →
+   Ustawienia… → Widok**.
+4. Włącz laser, podłącz kabel USB i naciśnij **Połącz** (Ctrl+I) na
+   zakładce **Laser**. Domyślnie Kerfly od razu bazuje
    głowicę (przesuwa ją do lewego górnego rogu).
 
 Kerfly trzyma ustawienia w pliku `k40_whisperer.txt` w folderze domowym.
@@ -69,26 +70,39 @@ zapamiętują się od razu, bez zapisywania.
 
 ![Główne okno Kerfly](../screenshot_pl.png)
 
-- **Pasek narzędzi** (góra): polecenia pliku, edycji, układu, generatorów,
-  widoku, ustawień i pomocy w opisanych grupach.
+- **Wstążka** (góra), w podpisanych grupach: **Plik** (Nowy, Otwórz, Dodaj,
+  Zapisz; małe przyciski Wczytaj ponownie, Zapisz EGV i G-code), **Edycja**
+  (Cofnij, Ponów; schowek, duplikuj, usuń, zaznacz wszystko, grupuj, edytuj
+  węzły),
+  **Układ** (wyrównaj, rozłóż, obróć, odbij, wyśrodkuj, ułóż na stole, do
+  głowicy), **Kształty** (łączenie kształtów, polilinia), **Widok** (Dopasuj,
+  Symulacja, Siatka) i **Narzędzia** (**Generatory** z listą wszystkich
+  generatorów, Materiały, Ustawienia). Po najechaniu myszą na mały przycisk
+  widać, co robi. Zgłaszanie problemu jest w menu **Pomoc**.
 
-  ![Pasek narzędzi](../img/pl/toolbar.png)
+  ![Wstążka](../img/pl/toolbar.png)
 
-- **Pasek opcji** (pod paskiem narzędzi): pozycja, rozmiar i obrót
-  zaznaczonego elementu, jego warstwa i opcje zaznaczonego kształtu albo
-  narzędzia (np. tekst i czcionka). Gdy sekcje nie mieszczą się w oknie,
-  przewijają się w bok.
+- **Pasek opcji** (pod wstążką, przez całe okno), dwa wiersze: pierwszy
+  zawsze pokazuje **zaznaczenie**: pozycję (X, Y), rozmiar (Szer., Wys.;
+  łańcuch zachowuje proporcje), obrót i **Warstwę**; drugi opcje tego, co
+  edytujesz, z nazwą pogrubioną po lewej (np. treść tekstu, czcionkę, rozmiar
+  i odstęp liter). Każde pole ma ikonę, krótki podpis i podpowiedź. Gdy
+  wiersz nie mieści się w oknie, wiersze przewijają się w bok.
 
   ![Pasek opcji z zaznaczonym tekstem](../img/pl/options.png)
 
-- **Panel po lewej**: zakładka **Projekt** to lista elementów na stole,
-  zakładka **Laser** przesuwa głowicę. Pod zakładkami są **Warstwy** i
-  przyciski zadania (objazd konturu, start, pauza, stop).
+- **Panel po lewej**: zakładka **Projekt** ma **Elementy** (z ich liczbą i
+  rozmiarem; na czerwono, gdy projekt wystaje poza stół) i **Warstwy**;
+  zakładka **Laser** ma laser w użyciu i przesuwa głowicę. Na dole, przy obu
+  zakładkach, przyciski zadania: **Obrys**, **Start**, **Pauza** i **Stop**.
+- **Pasek stanu** (dół): komunikaty, miejsce kursora myszy na stole (od
+  pozycji bazowej, jak pola X i Y), rozmiar stołu, powiększenie (100%: cały
+  stół) i stan połączenia z laserem.
 - **Stół** (środek): stół lasera z Twoimi elementami. Pomarańczowy celownik
   to głowica lasera. Elementy wystające poza stół są rysowane na czerwono i
   zadanie nie ruszy, dopóki ich nie przesuniesz z powrotem.
-- **Narzędzia** (prawa strona), w trzech grupach: zaznaczanie (zaznaczanie,
-  edycja węzłów); rysowanie (prostokąt, elipsa, wielokąt, linia, łamana,
+- **Narzędzia** (prawa strona), w trzech grupach: zaznaczanie (edycja węzłów
+  jest w grupie Edycja na wstążce); rysowanie (prostokąt, elipsa, wielokąt, linia, łamana,
   pióro, odręcznie, tekst); operacje na kształtach (tekst na ścieżce,
   wypełnienie wzorem, zawias giętki, miarka).
 
@@ -108,16 +122,20 @@ wszystko, dopasuj widok, siatka.
 
 ![Zakładka Laser](../img/pl/laser.png)
 
-Na zakładce **Laser** po lewej są przyciski maszyny, a po prawej strzałki. Na
+Zakładka **Laser** ma **Urządzenie** (laser w użyciu, stan połączenia,
+przyciski maszyny) i **Ruch głowicy** (strzałki, krok, idź do X / Y). Na
 górze jest lista **Twoich laserów**: przy dwóch laserach (np. laptop
 przenoszony od jednego do drugiego) wybierasz ten, z którym pracujesz, i jego
 ustawienia (płyta, rozmiar stołu, pozycja bazowa, skala, moc, oś obrotowa,
-objazd konturu, programy przed zadaniem i po nim) trafiają do okna. Ustawienie
-maszyny zmienione w Ustawieniach zapisuje się w profilu lasera w użyciu.
-Zębatka obok listy (albo **Ustawienia → Lasery…**, na pasku **Lasery**)
-dodaje, duplikuje, zmienia nazwę, usuwa, eksportuje i importuje lasery. W
-danej chwili pracuje się z jednym laserem.
-**Dwa lasery podłączone do jednego komputera** (beta): Ustawienia → Maszyna →
+objazd konturu, programy przed zadaniem i po nim) trafiają do okna. Zębatka
+obok listy (albo **Ustawienia → Lasery…**) otwiera **Twoje lasery i ich
+ustawienia**: lista po lewej (Nowy, Powiel, Importuj; dwuklik zmienia nazwę),
+ustawienia zaznaczonego lasera po prawej, pod nimi Eksportuj i Usuń. Możesz tam
+zmienić każdy laser, także ten, który nie jest w użyciu: zmiany zostają przy
+przechodzeniu między laserami, **Zapisz** je zapisuje (lasera w użyciu od razu
+trafiają do okna), **Anuluj** je porzuca, **Użyj tego lasera** przełącza na
+zaznaczony. W danej chwili pracuje się z jednym laserem.
+**Dwa lasery podłączone do jednego komputera** (beta): Ustawienia → Lasery… →
 **Port USB** zapisuje port płyty każdego lasera w jego profilu (**Który to?**
 przesuwa głowicę tego lasera trochę w prawo i z powrotem). Bez zapamiętanego
 portu, gdy podłączone są dwa lasery, Kerfly pyta, z którym się połączyć, i
@@ -127,10 +145,10 @@ kabla albo restarcie.
 
 | Przycisk | Co robi |
 |---|---|
-| Wtyczka | Połącz z laserem (Ctrl+I) |
-| Domek | **Bazowanie**: przesuwa głowicę do pozycji bazowej |
-| Otwarta kłódka | **Odblokuj osie**: zwalnia silniki, żeby przesunąć głowicę ręką |
-| Celownik z łańcuchem | **Projekt podąża za głowicą** (Ctrl+Alt+H), opis niżej |
+| Wtyczka (po lewej od strzałek) | **Połącz** z laserem (Ctrl+I); wtyczka i kropka pod listą laserów robią się zielone |
+| Domek | **Bazuj**: przesuwa głowicę do pozycji bazowej |
+| Otwarta kłódka | **Odblokuj silniki**: zwalnia je, żeby przesunąć głowicę ręką |
+| Celownik z łańcuchem | **Projekt podąża za głowicą** (Ctrl+Alt+H, wciśnięty po włączeniu), opis niżej |
 | Strzałki | Przesuwają głowicę o jeden **Krok** (pole pod strzałkami). **Ctrl+strzałki** na klawiaturze robią to samo |
 | Kropkowane narożniki i środek | Przesuwają głowicę do tego narożnika albo środka projektu, żeby zobaczyć, gdzie będzie cięcie. Projekt się nie przesuwa. Ctrl+7, Ctrl+9, Ctrl+5, Ctrl+1, Ctrl+3 |
 | Idź do X / Y, **Idź** | Bazuje, a potem jedzie głowicą do tej pozycji (odległość od pozycji bazowej; Ctrl+Alt+G) |
@@ -142,9 +160,9 @@ stole, nie głowicę.
 LightBurnie czy MeerK40t): na początku zadania głowica najpierw podjeżdża do
 projektu. Jeśli wolisz, żeby projekt zaczynał się przy głowicy:
 
-- **Edycja → Ustaw projekt przy głowicy** (Ctrl+H, na pasku **Do głowicy**)
+- **Edycja → Ustaw projekt przy głowicy** (Ctrl+H, **Do głowicy** w grupie Układ)
   jednorazowo przesuwa projekt do głowicy.
-- **Projekt podąża za głowicą** (przycisk z łańcuchem, zielony po
+- **Projekt podąża za głowicą** (przycisk z łańcuchem, wciśnięty po
   włączeniu) trzyma projekt przy głowicy: strzałki, Idź do X/Y i Bazowanie
   przesuwają głowicę razem z projektem, a strzałki nie wypchną projektu poza
   stół. Przyciski narożników nadal przesuwają tylko głowicę; potem strzałki
@@ -161,7 +179,7 @@ Kerfly przypomina o tym na pasku stanu.
 
 ## 4. Otwieranie plików
 
-**Plik → Nowy projekt** (Ctrl+N, na pasku **Nowy**) zaczyna od pustego stołu i
+**Plik → Nowy projekt** (Ctrl+N, **Nowy** na wstążce) zaczyna od pustego stołu i
 domyślnych warstw (najpierw pyta o zapisanie niezapisanych zmian).
 **Plik → Otwórz projekt…** (Ctrl+O) zastępuje wszystko na stole;
 **Plik → Dodaj projekt…** (Ctrl+Shift+O) kładzie kolejny plik obok
@@ -192,8 +210,8 @@ narysowaniem i po nim.
 
 | Narzędzie | Klawisz | Jak |
 |---|---|---|
-| Zaznacz i przesuń | S | Klik zaznacza, przeciąganie przesuwa; uchwyty skalują i obracają. Ramka wokół kilku elementów albo Ctrl+klik zaznacza kilka |
-| Edytuj węzły | N | Przeciągaj węzły i okrągłe uchwyty krzywych (Ctrl: jeden uchwyt osobno). Dwuklik na boku dodaje węzeł, na węźle go usuwa. Klawisze: I wstaw, D usuń, L linia, C krzywa, O gładki, S symetryczny, Z zamknij / otwórz, B rozdziel |
+| Zaznacz i przesuń | S | Klik zaznacza, przeciąganie przesuwa; uchwyty w narożnikach skalują, uchwyty na środkach boków zmieniają samą szerokość albo samą wysokość (przeciwległy bok zostaje), okrągły obraca. Ramka wokół kilku elementów albo Ctrl+klik zaznacza kilka |
+| Edytuj węzły | N | Przeciągaj węzły i okrągłe uchwyty krzywych (Ctrl: jeden uchwyt osobno). Dwuklik na boku dodaje węzeł, na węźle go usuwa. Klawisze: I wstaw, D usuń, L linia, C krzywa, O gładki, S symetryczny, Z zamknij / otwórz, B rozdziel. Klik w puste miejsce stołu kończy edycję (powrót do zaznaczania) |
 | Prostokąt | R | Przeciągnij. Shift: kwadrat. Opcja: promień rogów |
 | Elipsa | E | Przeciągnij. Shift: koło |
 | Wielokąt | P | Przeciągnij. Opcja: liczba boków |
@@ -221,7 +239,7 @@ głowicą**; można je też ustawić w **Ustawienia → Widok**.
 (przycisk z łańcuchem zachowuje proporcje) albo użyj strzałek: 1 mm albo
 jedno oczko siatki, z Shiftem 10 razy dalej.
 
-**Układanie.** Menu **Edycja** i pasek narzędzi mają: cofnij i ponów
+**Układanie.** Menu **Edycja** i wstążka mają: cofnij i ponów
 (Ctrl+Z, Ctrl+Shift+Z), kopiuj, wytnij i wklej (Ctrl+C, Ctrl+X, Ctrl+V: wkleja
 pod kursorem, także do innego projektu; Ctrl+Alt+V wkleja w miejscu),
 zaznacz wszystko (Ctrl+A), duplikuj (Ctrl+D), usuń (Del), obrót o 90° (Ctrl+L,
@@ -231,7 +249,7 @@ część wspólną i wykluczenie zamkniętych kształtów (różnica: pozostałe
 zaznaczone kształty są wycinane z tego, który jest najwyżej na liście
 elementów).
 
-**Połącz w polilinię** (Ctrl+J, menu Edycja, grupa Kształty na pasku, menu
+**Połącz w polilinię** (Ctrl+J, menu Edycja, grupa Kształty na wstążce, menu
 pod prawym przyciskiem): zaznaczone linie, łamane i otwarte ścieżki, których
 końce się stykają (bliżej niż 0,05 mm), stają się jedną ścieżką, ciętą
 jednym ciągiem; łańcuch, który się domyka, jest zamknięty. Przydaje się przy
@@ -240,7 +258,7 @@ CNC każdy kawałek to hamowanie i ponowne rozpędzanie. Zamknięte obrysy i
 linie, które z niczym się nie stykają, zostają bez zmian. Otwarty plik:
 najpierw go rozgrupuj.
 
-**Ułóż na stole** (Ctrl+Shift+N, przycisk **Ułóż** w grupie Układ na pasku,
+**Ułóż na stole** (Ctrl+Shift+N, przycisk **Ułóż** w grupie Układ na wstążce,
 menu Edycja, menu pod prawym przyciskiem): zaznaczone części (nic nie
 zaznaczone: wszystkie; grupa jako jedna część) są rozkładane na stole lasera
 tak ciasno, jak pozwalają prostokąty wokół ich obrysów, z zadanym
@@ -291,7 +309,7 @@ kropki, krzyżyki, kafelki Truchet albo krzywa Hilberta.
 
 ![Kształty wypełnione wzorami](../img/pl/fill.png)
 
-1. Wybierz narzędzie i wzór w sekcji **Wypełnienie** na pasku opcji. Ustaw
+1. Wybierz narzędzie i wzór w polu **Wypełnienie** na pasku opcji. Ustaw
    jego rozmiar (odstęp między liniami), kąt i margines, czyli wolne miejsce
    wewnątrz obrysu.
 2. Kliknij zamknięty kształt na warstwie cięcia albo obrysu. Klikaj kolejne,
@@ -301,12 +319,12 @@ kropki, krzyżyki, kafelki Truchet albo krzywa Hilberta.
    tak samo.
 3. Obrys zostaje na swojej warstwie: kształt do cięcia dalej jest cięty, a wzór
    jest grawerowany na warstwie obrysu (dla kształtu do cięcia druga lista
-   **Warstwa** wybiera, na której). Kwadratowy przycisk obok listy wzorów
+   **Warstwa** wybiera, na której). Przycisk **Obrys** obok pól wzoru
    wyłącza obrys, wtedy graweruje się sam wzór: **Linie** albo **Krzyżowe**
    bez obrysu wypełniają obszar grawerowanymi liniami (przed wersją 0.17 była
    to osobna sekcja Kreskowanie; starsze projekty otwierają się właśnie tak).
 
-Zaznaczony kształt pokazuje tę samą sekcję **Wypełnienie** także przy
+Zaznaczony kształt pokazuje te same pola **Wypełnienia** także przy
 narzędziu zaznaczania: tam zmienisz wzór albo wybierzesz **Bez wzoru**, żeby go
 usunąć. Dziury w kształcie (np. w literach) zostają puste. Otwarty plik SVG
 albo DXF trzeba najpierw rozgrupować (Edycja → Rozgrupuj), żeby jego linie
@@ -320,11 +338,10 @@ linii tekst jest wyśrodkowany, na zamkniętym kształcie wyśrodkowany na górz
 Jeśli przy kliknięciu zaznaczony jest jakiś tekst (np. napisany narzędziem
 Tekst), to właśnie on przechodzi na kształt i nie zostaje żadna kopia.
 **Przeciągnij tekst, żeby przesunąć go wzdłuż linii**; na okręgu jedzie
-dookoła. Sekcja **Tekst na ścieżce** na pasku opcji ma **położenie na
-ścieżce** (ikona trasy), **odległość od linii** (ikona wysokości linii; poniżej
-zera litery przecinają linię), przycisk **druga strona** i **Prosty tekst**;
-pole **odstępu liter** (ikona AV) w sekcji **Czcionka** dodaje odstęp między
-literami, także w zwykłym tekście. Po najechaniu myszą na pole widać, co
+dookoła. Pasek opcji tekstu na ścieżce ma **Początek** (położenie na
+ścieżce), **Od linii** (odległość od linii; poniżej zera litery przecinają
+linię), przycisk **Druga strona** i **Prosty tekst**; pole **Odstęp liter**
+dodaje odstęp między literami, także w zwykłym tekście. Po najechaniu myszą na pole widać, co
 robi. Kształt
 zostaje; usuń go, jeśli nie ma być cięty. Istniejący tekst ustawisz na
 kształcie przez **Edycja → Umieść tekst na ścieżce** (zaznacz oba). Strzałki i
@@ -337,24 +354,24 @@ pole nacięć, dzięki którym sklejka albo MDF się wygina, np. na zaokrąglony
 rogach pudełka. Wybierz narzędzie **Zawias giętki** (Shift+H, arkusz z
 nacięciami), wybierz nacięcia na pasku opcji (proste, faliste albo zygzakiem)
 i kliknij zamknięty kształt: nacięcia zostaną wycięte w jego środku, przed
-obrysem. Pola sekcji **Zawias giętki**, każde z ikoną i opisem po najechaniu,
+obrysem. Pola zawiasu na pasku opcji, każde z ikoną, podpisem i opisem po najechaniu,
 ustawiają długość jednego nacięcia, **mostek** nieprzeciętego materiału między
 dwoma nacięciami, odstęp rzędów (mniejszy bardziej się wygina), kierunek
 nacięć (90°: góra–dół, arkusz wygina się w poprzek nich), **pełny brzeg**
 wzdłuż obrysu oraz **pas**: jego szerokość (0: cały kształt) i położenie
 środka liczone od środka kształtu (minus: w lewo / w górę, plus: w prawo / w
 dół), gdy zawias ma być tylko tam, gdzie arkusz się wygina. Zaznaczone kształty od razu dostają wybrany zawias; kształt z
-zawiasem pokazuje tę sekcję także przy narzędziu zaznaczania, gdzie **Bez
+zawiasem pokazuje te pola także przy narzędziu zaznaczania, gdzie **Bez
 zawiasu** go usuwa. Najpierw spróbuj na małym kawałku: to, jak bardzo arkusz
 się wygina, zależy od materiału.
 
 ![Zawiasy giętkie: nacięcia proste, faliste i zygzakiem](../img/pl/hinge.png)
 
 **Mostki.** Zamknięty kształt na warstwie cięcia może mieć małe nieprzecięte
-mostki, które trzymają element w arkuszu: ustaw ich liczbę i szerokość w
-sekcji **Mostki**.
+mostki, które trzymają element w arkuszu: ustaw ich liczbę (**Mostki**) i
+**Szer. mostka** na pasku opcji.
 
-**Lista elementów.** Zakładka **Projekt** pokazuje wszystkie elementy z
+**Lista elementów.** **Elementy** na zakładce **Projekt** pokazują wszystkie elementy z
 kolorami ich warstw. Klik w wiersz zaznacza element na stole (Ctrl / Shift:
 kilka); odznaczenie pola wyłącza element z zadania. Otwarty plik jest
 pokazany razem z folderem (**Klient A › projekt.svg**), więc pliki o tej samej
@@ -364,9 +381,11 @@ podpowiedzi. Zapisane projekty pamiętają, skąd pochodzi każdy plik.
 
 ![Zakładka Projekt](../img/pl/design.png)
 
-**Generatory.** Grupa **Generatory** na pasku narzędzi (i menu
-**Generatory**) tworzy gotowe projekty z kilku liczb. Każdy otwiera okno z
-ustawieniami i podglądem; Enter w polu odświeża podgląd, a **Wstaw** kładzie
+**Generatory.** Przycisk **Generatory** na wstążce (i menu **Generatory**),
+w trzech częściach (pudełka, elementy, testy i kalibracja), tworzy gotowe
+projekty z kilku liczb. Każdy otwiera okno z ustawieniami po lewej (znaczek
+**beta** przy tym, czego jeszcze nie sprawdzono na laserze) i podglądem po
+prawej, z rozmiarem i liczbą kształtów pod spodem; Enter w polu odświeża podgląd, a **Wstaw** kładzie
 projekt na stole przy głowicy jako jedną grupę (przeciągnij go na miejsce;
 jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
 
@@ -403,7 +422,7 @@ jedno **Cofnij** go usuwa). Ostatnio użyte liczby są zapamiętywane.
   szerokość wypustu, kerf oraz długość nacięcia, mostek i odstęp rzędów
   zawiasu.
 
-W obu pudełkach podgląd ma obok zakładki **Części** zakładkę **3D**: pudełko
+W obu pudełkach podgląd ma obok **Części** przełącznik **3D**: pudełko
 złożone z tych samych części, które zostaną wycięte (wczepy, szczeliny,
 listwy, przegródki). Przeciągnij, aby je obrócić, kółko myszy przybliża,
 dwuklik przywraca widok. **Rozsunięte** odsuwa części od siebie, żeby było
@@ -459,23 +478,31 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
   jego warstwę na liście **Warstwa** na pasku opcji: warstwa cięcia go
   wycina, warstwa obrysu graweruje jego obrys (i wypełnienie wzorem), warstwa
   graweru go wypełnia.
-- **Więcej warstw.** Przycisk **+** pod warstwami dodaje kolejną warstwę
+- **Więcej warstw.** **Dodaj warstwę** pod warstwami dodaje kolejną warstwę
   cięcia, obrysu albo graweru, np. drugą warstwę cięcia z inną prędkością.
   Warstwy wykonują się w kolejności: grawer, obrys, cięcie.
 - **Kerf.** Laser wypala cienką linię, więc część wycięta po obrysie wychodzi
   trochę mniejsza, a jej otwory trochę większe. Wpisz szerokość cięcia w
-  kolumnie **Kerf** warstwy cięcia (zmierz ją: **Generatory → Test kerfu**):
+  kolumnie **Kerf (mm)** warstwy cięcia (zmierz ją: **Generatory → Test kerfu**):
   obrysy są cięte o jej połowę dalej na zewnątrz, a otwory o połowę dalej do
   środka, więc części wychodzą w narysowanym rozmiarze. Otwarte linie są
   cięte tak, jak narysowane. 0 wyłącza. Biblioteka materiałów też pamięta
   kerf dla każdego materiału.
 - **Czas.** Kolumna **Czas** pokazuje czas każdej warstwy; dla graweru
-  naciśnij przycisk z kalkulatorem. **Widok → Symulacja zadania…**
-  (Ctrl+Shift+J) odtwarza ruchy głowicy na stole: to, co laser już wypalił,
-  robi się czerwone (grawerowany obrazek tylko tam, gdzie jest ciemny), a
-  ruchy z wyłączonym laserem to szare przerywane linie.
-- **Materiały.** **Ustawienia → Baza materiałów…** zapamiętuje prędkości,
-  przejścia i moce dla materiałów (np. „Sklejka 3 mm”). Wybór materiału z
+  naciśnij przycisk z kalkulatorem; suma jest pod tabelą (jednostki kolumn
+  są w ich nagłówkach). **Widok → Symulacja zadania…** (Ctrl+Shift+J,
+  **Symulacja** na wstążce) otwiera osobne okno, które odtwarza ruchy głowicy:
+  całe zadanie jest szare, to, co laser już wypalił, robi się czerwone
+  (grawerowany obrazek tylko tam, gdzie jest ciemny), a ruchy z wyłączonym
+  laserem to szare przerywane linie. Nad podglądem **Odtwórz** / **Pauza**,
+  suwak, czas, **Tempo** (na start 5×, dla długiego zadania szybciej) i **Następna warstwa**; pod nim warstwa, która jest
+  właśnie wypalana. Okno może zostać otwarte w czasie pracy: gdy projekt się
+  zmieni, po chwili przelicza zadanie i zostaje w tym samym miejscu (z
+  pauzą; mówi o tym napis). Nowy i Otwórz je zamykają.
+- **Materiały.** **Ustawienia → Baza materiałów…** (przycisk z książką obok
+  listy materiałów, **Materiały** na wstążce) zapamiętuje dla materiału (np.
+  „Sklejka 3 mm”) jego grubość, tabelę prędkości, przejść, mocy i kerfu oraz
+  notatki. Wybór materiału z
   listy **Materiał** nad warstwami ustawia wszystkie warstwy naraz.
   **Nowy z obecnych warstw** zapisuje wszystkie warstwy zadania: oprócz trzech
   podstawowych także dodatkowe (drugie cięcie, kolejny grawer…), widoczne w
@@ -493,8 +520,8 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
    głowicą projekt, z wyłączonym laserem, chyba że ustawisz inaczej w
    ustawieniach, żeby sprawdzić, gdzie będzie cięcie. Objeżdża prostokąt
    wokół projektu, zaczynając od narożnika najbliższego głowicy (Ustawienia →
-   Wektory: wyłącz „Objazd konturu jako prostokąt”, żeby jechać wzdłuż
-   obwiedni).
+   Lasery…, Objazd konturu: wyłącz „Objazd konturu jako prostokąt”, żeby
+   jechać wzdłuż obwiedni).
 4. **Start** (F9) wykonuje wszystkie zaznaczone warstwy. **Pauza** na chwilę
    zatrzymuje laser, a ten sam przycisk wznawia pracę. **Stop** (Esc)
    natychmiast kończy zadanie; potem naciśnij **Bazowanie** przed następnym
@@ -523,7 +550,7 @@ przy mocy ustawianej dla każdej operacji na M3); **Plik → Wyślij plik EGV do
 lasera…** wysyła istniejący plik EGV.
 
 **G-code dla laserów GRBL (beta).** **Plik → Zapisz G-code…** (Ctrl+Shift+K,
-przycisk **G-code** w grupie Plik na pasku) zapisuje zadanie jako G-code dla
+przycisk **G-code** w grupie Plik na wstążce) zapisuje zadanie jako G-code dla
 lasera z płytą GRBL (lasery diodowe, lasery CO2 z GRBL), do uruchomienia w
 LaserGRBL, UGS albo innym programie wysyłającym: zaznaczone warstwy w ich
 kolejności (raster, grawer, cięcie), każda ze swoją prędkością (F, mm/min),
@@ -536,7 +563,7 @@ staje tyle poza każdą linią rastra, żeby tam, gdzie wypala, miała pełną
 prędkość). Te ustawienia są zapamiętywane w profilu lasera. Jeszcze nie
 sprawdzone na maszynie GRBL.
 
-**Laser GRBL podłączony do Kerfly (beta).** W **Ustawienia → Maszyna** wybierz
+**Laser GRBL podłączony do Kerfly (beta).** W **Ustawienia → Lasery…** wybierz
 **Maszyna: płyta GRBL, port szeregowy**, potem jej **port szeregowy** (albo
 pierwszą płytę, która odpowie; ↻ szuka ponownie po podłączeniu), prędkość
 portu (115200 na większości płyt), **róg bazowania głowicy** (lewy dolny w
@@ -560,16 +587,29 @@ do portu szeregowego trzeba dodać swojego użytkownika do grupy `dialout`:
 
 ## 8. Ustawienia
 
-**Ustawienia → Ustawienia…** (Ctrl+,) mają sześć zakładek:
+**Ustawienia → Ustawienia…** (Ctrl+,, **Ustawienia** na wstążce) mają
+ustawienia programu, wspólne dla wszystkich laserów, w czterech kategoriach na
+liście po lewej; każda strona jest podzielona na sekcje. **Zapisz** zachowuje
+zmiany, **Anuluj** je porzuca.
 
-| Zakładka | Ustawienia |
+| Kategoria | Ustawienia |
 |---|---|
-| Maszyna | płyta sterująca, jednostki, rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, bazowanie głowicy po zadaniu (powrót do 0, 0 przed kolejną sztuką), odblokowanie osi i sygnał po zadaniu, raport po zadaniu (czas zadania, domyślnie włączony; małe okno, które czeka, aż wrócisz), program uruchamiany przed każdym zadaniem wysyłanym do lasera (np. żeby włączyć wyciąg; zadanie czeka, aż się skończy, najwyżej minutę, a gdy nie zadziała, pyta), program uruchamiany po każdym skończonym zadaniu (np. żeby wyłączyć wyciąg albo wysłać wiadomość; jego wynik i błędy trafiają do raportu), współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 (wyszarzone przy innych płytach: tam moc ustawia się pokrętłem lasera) |
 | Raster | półtony (dithering), ich metoda (Floyd-Steinberg, Atkinson z większym kontrastem na drewnie, Jarvis, Stucki, Burkes i Sierra z gładszymi przejściami, uporządkowany Bayer z równą fakturą, próg) i ich rozdzielczość, odwrócenie kolorów, odbicie, obrót o 90°, grawer od dołu do góry, odstęp linii skanowania, krzywa poziomów |
-| Wektory | najpierw kształty wewnętrzne, objazd konturu z włączonym laserem i jego moc (w procentach mocy maksymalnej; płyta M3), jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
-| Widok | rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok), przyciski Grawer / Obrys / Cięcie przy Start, motyw: jasny, ciemny albo jak w systemie (po ponownym uruchomieniu) |
-| Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów (wyszarzone, gdy oś obrotowa jest wyłączona) |
-| Zaawansowane | język (po ponownym uruchomieniu), sprawdzanie nowych wersji, Inkscape, mniejsze zużycie pamięci, przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |
+| Wektory | najpierw kształty wewnętrzne |
+| Widok | jednostki (mm albo cale), rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok), przyciski Grawer / Obrys / Cięcie przy Start, motyw: jasny, ciemny albo jak w systemie (po ponownym uruchomieniu) |
+| Zaawansowane | język (po ponownym uruchomieniu), sprawdzanie nowych wersji, Inkscape, mniejsze zużycie pamięci |
+
+**Ustawienia → Lasery…** mają własne ustawienia każdego lasera, w sekcjach:
+
+| Sekcja | Ustawienia |
+|---|---|
+| Sterownik | maszyna (K40 albo płyta GRBL), płyta sterująca, port USB; dla płyty GRBL jej port szeregowy, prędkość, róg bazowania, prędkość przesuwu i pełna moc S |
+| Stół roboczy, bazowanie i koniec zadania | rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, bazowanie głowicy po zadaniu (powrót do 0, 0 przed kolejną sztuką), odblokowanie osi i sygnał po zadaniu, raport po zadaniu (czas zadania, domyślnie włączony; małe okno, które czeka, aż wrócisz) |
+| Programy uruchamiane przy zadaniu | program uruchamiany przed każdym zadaniem wysyłanym do lasera (np. żeby włączyć wyciąg; zadanie czeka, aż się skończy, najwyżej minutę, a gdy nie zadziała, pyta), program uruchamiany po każdym skończonym zadaniu (np. żeby wyłączyć wyciąg albo wysłać wiadomość; jego wynik i błędy trafiają do raportu) |
+| Skala, moc | współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 (wyszarzone przy innych płytach: tam moc ustawia się pokrętłem lasera) |
+| Objazd konturu | z włączonym laserem i jego moc (w procentach mocy maksymalnej; płyta M3), jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
+| Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów (wyszarzone, gdy oś jest wyłączona) |
+| Połączenie USB | przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |
 
 Kerfly jest dostępny po angielsku, polsku, niemiecku, hiszpańsku i
 francusku.
@@ -635,12 +675,12 @@ razem z działaniami myszą i polem wyszukiwania.
 
 **Pomoc → Instrukcja obsługi** (F1) otwiera tę instrukcję.
 
-- **Pomoc → Zgłoś problem na GitHubie…** (na pasku **Zgłoś błąd**) zapisuje
+- **Pomoc → Zgłoś problem na GitHubie…** (także w **Pomoc → O programie**) zapisuje
   raport diagnostyczny i otwiera formularz zgłoszenia z wpisaną wersją,
   systemem i płytą. Przeciągnij plik raportu do pola *Diagnostic report*.
   Formularz jest po angielsku, ale możesz pisać po polsku. Potrzebne jest
   darmowe konto GitHub.
-- **Pomoc → Zapisz raport diagnostyczny…** (na pasku **Raport**) tylko
+- **Pomoc → Zapisz raport diagnostyczny…** tylko
   zapisuje raport: ustawienia, autotest i dziennik wszystkiego, co poszło do
   lasera.
 - **Pomoc → Otwórz folder dziennika** pokazuje plik `kerfly.log`.
@@ -649,7 +689,7 @@ Częste problemy:
 
 | Problem | Co zrobić |
 |---|---|
-| „Laser nie jest połączony” | Naciśnij przycisk z wtyczką (Ctrl+I). W Linuksie wybierz **Laser → Zezwól na dostęp do USB lasera…**, w Windows sprawdź sterownik libusb |
+| „Laser nie jest połączony” | Naciśnij przycisk z wtyczką na zakładce Laser (Ctrl+I). W Linuksie wybierz **Laser → Zezwól na dostęp do USB lasera…**, w Windows sprawdź sterownik libusb |
 | Głowica jest gdzie indziej, niż pokazuje program | Naciśnij Bazowanie. Tak bywa po odblokowaniu osi, ręcznym przesunięciu głowicy i po Stop |
 | Element jest czerwony, Start nie działa | Element wystaje poza stół: przesuń go z powrotem |
 | Brakuje tekstu z SVG albo nie jest cięty | Zainstaluj Inkscape: zamienia tekst SVG na ścieżki |

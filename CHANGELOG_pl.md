@@ -9,16 +9,19 @@ Oprócz K40 lasery z płytą GRBL (beta): zapis G-code dla dowolnego programu
 wysyłającego albo sterowanie laserem prosto z Kerfly przez port szeregowy, z
 prędkościami w mm/min. Układanie części na stole, łączenie luźnych linii w
 polilinie. Rozwijana na gałęzi `2.0`, z poprawkami wydań 1.x.
+Nowy wygląd: przejrzystsza wstążka, pasek opcji w dwóch wierszach przez całe
+okno, płaski panel po lewej, okna z nazwaną czynnością, symulacja w osobnym
+oknie.
 
 ### Dodane
 
-- **Połącz w polilinię** (Ctrl+J; menu Edycja, grupa Kształty na pasku, menu
+- **Połącz w polilinię** (Ctrl+J; menu Edycja, grupa Kształty na wstążce, menu
   pod prawym przyciskiem): zaznaczone linie, łamane i otwarte ścieżki, których
   końce się stykają (bliżej niż 0,05 mm), stają się jedną ścieżką, ciętą
   jednym ciągiem, zamkniętą, gdy łańcuch się domyka (jak Auto-Join w
   LightBurnie albo Polyline from Segments w QCAD). Zamknięte obrysy i linie,
   które z niczym się nie stykają, zostają bez zmian.
-- **Ułóż na stole** (Ctrl+Shift+N; przycisk **Ułóż** w grupie Układ na pasku,
+- **Ułóż na stole** (Ctrl+Shift+N; przycisk **Ułóż** w grupie Układ na wstążce,
   menu Edycja, menu pod prawym przyciskiem): zaznaczone części (grupa jako
   jedna część) rozkładane na stole lasera tak ciasno, jak pozwalają ich
   prostokąty, z odstępem, obracane o 90°, gdy tak lepiej się mieszczą (można
@@ -26,7 +29,7 @@ polilinie. Rozwijana na gałęzi `2.0`, z poprawkami wydań 1.x.
   na liście elementów, arkusze od 2. odhaczone. Generatory pudełek używają
   tego samego układania.
 - **G-code dla laserów GRBL (beta)**: Plik → Zapisz G-code… (Ctrl+Shift+K,
-  przycisk **G-code** w grupie Plik na pasku) zapisuje zaznaczone warstwy
+  przycisk **G-code** w grupie Plik na wstążce) zapisuje zaznaczone warstwy
   (raster linia po linii z najazdem, grawer, cięcie) z ich prędkością, mocą i
   przejściami, w trybie lasera M4, dla LaserGRBL, UGS albo innego programu
   wysyłającego. Początek w lewym dolnym rogu stołu albo w lewym górnym rogu
@@ -41,6 +44,50 @@ polilinie. Rozwijana na gałęzi `2.0`, z poprawkami wydań 1.x.
   i Stop (reset). Potrzebuje biblioteki pyserial (jest w paczkach). Przy
   maszynie GRBL prędkości są pokazywane i wpisywane w mm/min (warstwy, test
   materiału, Ustawienia, biblioteka materiałów); K40 zostaje w mm/s.
+- **Uchwyty boków**: środki boków zaznaczonego elementu zmieniają samą
+  szerokość albo samą wysokość, przeciwległy bok zostaje na miejscu (także dla
+  obróconego elementu; jeden krok cofania).
+- **O programie** w osobnym oknie: wersja, licencja, pochodzenie, strona
+  projektu, **Zgłoś problem** i **Sprawdź aktualizacje**.
+
+### Zmienione
+
+- **Nowy wygląd** (motyw jasny i ciemny): jeden zestaw rozmiarów, odstępów i
+  kolorów dla całego okna.
+- **Wstążka**: grupy Plik, Edycja, Układ, Kształty, Widok i Narzędzia;
+  generatory na jednej liście **Generatory** (pudełka, elementy, testy i
+  kalibracja), także w menu; Zgłoś problem i raport diagnostyczny tylko w
+  menu Pomoc, Lasery na zakładce Laser; Obrysuj obraz wśród narzędzi
+  rysowania po prawej, Edytuj węzły (N) w grupie Edycja (klik w puste miejsce
+  stołu kończy edycję i wraca do zaznaczania).
+- **Pasek opcji** przez całe okno pod wstążką, w dwóch wierszach: zawsze
+  zaznaczenie (X, Y, Szer., Wys., obrót, warstwa), potem to, co edytujesz;
+  każde pole z ikoną, krótkim podpisem i podpowiedzią; narzędzie węzłów
+  pokazuje same swoje przyciski, jako ikony.
+- **Panel po lewej** płaski: Projekt (Elementy z liczbą i rozmiarem, Warstwy
+  z jednostkami w nagłówku tabeli i **Dodaj warstwę**) i Laser (Urządzenie:
+  laser w użyciu i kropka stanu; Ruch głowicy: Połącz, Bazuj, Odblokuj silniki
+  i Za głowicą jako kwadratowe przyciski obok krzyżaka, tej samej wysokości);
+  **Obrys**, **Start**, **Pauza** i **Stop** równej szerokości na dole obu
+  zakładek.
+- **Ustawienia każdego lasera w Ustawienia → Lasery…** (zębatka przy liście
+  laserów): lista laserów po lewej, ustawienia zaznaczonego po prawej (płyta,
+  stół, bazowanie, programy przed zadaniem i po nim, skala, moc, objazd
+  konturu, oś obrotowa, USB, GRBL), także lasera, który nie jest w użyciu;
+  Zapisz zapisuje zmiany wszystkich zmienionych laserów. Ustawienia →
+  Ustawienia… mają już tylko ustawienia programu (raster, kolejność cięcia,
+  widok z jednostkami, język, aktualizacje, Inkscape).
+- **Pasek stanu**: miejsce kursora myszy, rozmiar stołu, powiększenie i stan
+  lasera.
+- **Okna**: najpierw Anuluj, potem przycisk nazwany czynnością (**Zapisz**,
+  **Wstaw obraz**, **Usuń laser**, **Zatrzymaj i zakończ**…, nigdy OK),
+  sekcje, znaczki **beta**; Ustawienia z kategoriami na liście i stronami w
+  sekcjach; baza materiałów jako tabela; nowy układ okien Lasery, Obrysuj
+  obraz, Rozmiar obrazu, Który laser? i Skróty klawiszowe.
+- **Symulacja zadania** w osobnym oknie z własnym podglądem (całe zadanie
+  szare, wypalone na czerwono): Odtwórz, czas, tempo, Następna warstwa,
+  wypalana warstwa; startuje z tempem 5× (dłuższe zadanie szybciej). Otwarta podczas zmian projektu przelicza zadanie i zostaje
+  w tym samym miejscu; Nowy i Otwórz ją zamykają.
 
 ## 1.8.0 (2026-11-16)
 

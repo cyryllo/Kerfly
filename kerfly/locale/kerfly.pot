@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 00:23+0100\n"
+"POT-Creation-Date: 2026-11-17 21:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,10 +45,22 @@ msgstr[0] ""
 msgstr[1] ""
 
 #, python-format
+msgid "%d laser"
+msgid_plural "%d lasers"
+msgstr[0] ""
+msgstr[1] ""
+
+#, python-format
 msgid ""
 "%d lasers are plugged into this computer. Which one is \"%s\"? Kerfly "
 "remembers it in this laser's settings."
 msgstr ""
+
+#, python-format
+msgid "%d material"
+msgid_plural "%d materials"
+msgstr[0] ""
+msgstr[1] ""
 
 #, python-format
 msgid "%d mm"
@@ -219,27 +231,13 @@ msgid "; Kerfly takes the head to be in the home corner (Settings → Machine)"
 msgstr ""
 
 #, python-format
-msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
-msgstr ""
-
-msgid "<b style='color:#c62828'>Not connected</b>"
-msgstr ""
-
-#, python-format
 msgid "<b>%s is available</b> (you have %s)."
 msgstr ""
 
-#, python-format
-msgid ""
-"<h3>Kerfly %s</h3><p>Laser cutter control software for K40 lasers with "
-"Lihuiyu M2 Nano boards.</p><p>Based on <a "
-"href='https://www.scorchworks.com/K40whisperer/k40whisperer.html'>K40 "
-"Whisperer</a> by Scorch.</p><p>Free software under the GNU General Public"
-" License v3 or later.<br><a "
-"href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>"
+msgid "A copy of the selected laser, to change a few settings"
 msgstr ""
 
-msgid "A copy of the selected laser, to change a few settings"
+msgid "A copy of the selected material"
 msgstr ""
 
 msgid "A dot on each side between the top and the bottom text"
@@ -271,6 +269,9 @@ msgid "A menu: on an element its commands, on the empty bed Move the head here"
 msgstr ""
 
 msgid "A new laser with Kerfly's default settings"
+msgstr ""
+
+msgid "A new material"
 msgstr ""
 
 msgid "A piece was cut out of the picture (Undo brings the whole picture back)."
@@ -324,7 +325,16 @@ msgstr ""
 msgid "Add design"
 msgstr ""
 
+msgid "Add layer"
+msgstr ""
+
 msgid "Add the lasers of a file saved with Export"
+msgstr ""
+
+msgid "Add the materials of a library file"
+msgstr ""
+
+msgid "Add the rule"
 msgstr ""
 
 #, python-format
@@ -332,10 +342,6 @@ msgid "Adjusting image darkness: %s%%"
 msgstr ""
 
 msgid "Advanced"
-msgstr ""
-
-msgctxt "toolbar group"
-msgid "Align"
 msgstr ""
 
 msgid "Align and distribute"
@@ -380,6 +386,9 @@ msgstr ""
 msgid "Already at the start of the list."
 msgstr ""
 
+msgid "Angle"
+msgstr ""
+
 msgid "Another number: the tabs point other ways"
 msgstr ""
 
@@ -405,24 +414,32 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-msgid "Bed height"
+msgid "Band offset"
 msgstr ""
 
-msgid "Bed width"
+msgid "Band width"
+msgstr ""
+
+msgid "Based on"
 msgstr ""
 
 #, python-format
-msgid "Bed: %s"
+msgid "Bed %s × %s mm"
+msgstr ""
+
+msgid "Bed height"
+msgstr ""
+
+msgid "Bed view"
+msgstr ""
+
+msgid "Bed width"
 msgstr ""
 
 msgid "Beep after a job"
 msgstr ""
 
 msgid "Bigger letters"
-msgstr ""
-
-#, python-format
-msgid "Board: %s"
 msgstr ""
 
 msgid "Bold"
@@ -435,6 +452,9 @@ msgid "Bold letters stamp more clearly"
 msgstr ""
 
 msgid "Bottom"
+msgstr ""
+
+msgid "Boundary trace"
 msgstr ""
 
 msgid "Boundary trace as a rectangle (off: along the outline of the design)"
@@ -455,10 +475,20 @@ msgstr ""
 msgid "Boundary trace with laser on"
 msgstr ""
 
+msgid "Boxes"
+msgstr ""
+
 msgid "Break apart"
 msgstr ""
 
 msgid "Bricks"
+msgstr ""
+
+msgctxt "hinge"
+msgid "Bridge"
+msgstr ""
+
+msgid "Bridge width"
 msgstr ""
 
 msgid "Bridge: uncut material between two cuts in a row"
@@ -477,10 +507,6 @@ msgstr ""
 msgid "Browse…"
 msgstr ""
 
-msgctxt "toolbar"
-msgid "Bug report"
-msgstr ""
-
 msgid ""
 "Burn the background away so the text stays raised (off: burn the text "
 "itself)"
@@ -497,13 +523,12 @@ msgid ""
 "time"
 msgstr ""
 
+msgid "Cancel"
+msgstr ""
+
 msgid "Cardboard 2 mm"
 msgstr ""
 
-msgid "Centre"
-msgstr ""
-
-msgctxt "toolbar"
 msgid "Centre"
 msgstr ""
 
@@ -517,6 +542,9 @@ msgid "Change the name of the selected laser"
 msgstr ""
 
 msgid "Check for &updates"
+msgstr ""
+
+msgid "Check for updates"
 msgstr ""
 
 msgid ""
@@ -590,8 +618,7 @@ msgstr ""
 msgid "Click the opened file or the group first, then Ungroup."
 msgstr ""
 
-msgctxt "toolbar group"
-msgid "Clipboard"
+msgid "Close"
 msgstr ""
 
 msgid "Close / open"
@@ -633,10 +660,17 @@ msgstr ""
 msgid "Connect to the laser"
 msgstr ""
 
+#, python-format
+msgid "Connected (%s)"
+msgstr ""
+
 msgid "Connected. Click to connect again (re-initialize)."
 msgstr ""
 
 msgid "Content"
+msgstr ""
+
+msgid "Controller"
 msgstr ""
 
 msgid "Controller board"
@@ -665,6 +699,9 @@ msgid "Corner radius: 0 for sharp corners"
 msgstr ""
 
 msgid "Corner: turns sharper than this stay corners, the rest become curves"
+msgstr ""
+
+msgid "Corners"
 msgstr ""
 
 msgid "Corners of the new outline: rounded, or sharp like the shape's"
@@ -732,6 +769,15 @@ msgstr ""
 msgid "Curve through the node"
 msgstr ""
 
+msgid ""
+"Curves through the outline's nodes; corners sharper than the angle below "
+"stay sharp"
+msgstr ""
+
+msgid "Cut"
+msgstr ""
+
+msgctxt "hinge"
 msgid "Cut"
 msgstr ""
 
@@ -774,6 +820,9 @@ msgstr ""
 msgid "Cut: %d element(s)."
 msgstr ""
 
+msgid "Cutting"
+msgstr ""
+
 msgid "D&eselect"
 msgstr ""
 
@@ -813,6 +862,9 @@ msgstr ""
 msgid "Delete the selected laser (the last one stays)"
 msgstr ""
 
+msgid "Delete the selected material"
+msgstr ""
+
 msgid "Delete this layer (its parts go back to the default layer)"
 msgstr ""
 
@@ -842,6 +894,9 @@ msgid ""
 " nodes, closer to the picture)"
 msgstr ""
 
+msgid "Device"
+msgstr ""
+
 #, python-format
 msgid "Diagnostic report saved: %s"
 msgstr ""
@@ -868,6 +923,9 @@ msgid "Direction of the cuts (90°: up and down; the sheet bends across them)"
 msgstr ""
 
 msgid "Direction of the pattern"
+msgstr ""
+
+msgid "Distance"
 msgstr ""
 
 #, python-format
@@ -933,6 +991,9 @@ msgid "Dividers along (beta)"
 msgstr ""
 
 msgid "Do not remind about this version again (a later one is shown)"
+msgstr ""
+
+msgid "Don't save"
 msgstr ""
 
 msgid "Done. Unplug the laser's USB cable, plug it in again, then connect."
@@ -1008,6 +1069,9 @@ msgid ""
 msgstr ""
 
 msgid "Edit the nodes of an element"
+msgstr ""
+
+msgid "Elements"
 msgstr ""
 
 msgid "Ellipse"
@@ -1165,6 +1229,9 @@ msgid ""
 "the shape. The line is smoothed into curves you can edit with Edit nodes."
 msgstr ""
 
+msgid "From line"
+msgstr ""
+
 msgid "Front"
 msgstr ""
 
@@ -1174,17 +1241,16 @@ msgstr ""
 msgid "G-code"
 msgstr ""
 
-msgctxt "toolbar"
-msgid "G-code"
+msgid "G-code files"
 msgstr ""
 
-msgid "G-code files"
+msgid "G-code for GRBL"
 msgstr ""
 
 msgid ""
 "G-code for lasers with a GRBL board (diode lasers, CO2 lasers with GRBL):"
 " the ticked layers in their order, each with its speed, power and passes."
-" Open the file in LaserGRBL, UGS or another G-code sender. (beta)"
+" Open the file in LaserGRBL, UGS or another G-code sender."
 msgstr ""
 
 #, python-format
@@ -1193,6 +1259,9 @@ msgstr ""
 
 #, python-format
 msgid "G-code saved: %s (%d lines)"
+msgstr ""
+
+msgid "GNU General Public License v3 or later"
 msgstr ""
 
 #, python-format
@@ -1253,14 +1322,14 @@ msgstr ""
 msgid "Generating laser data…"
 msgstr ""
 
-msgctxt "toolbar group"
+msgctxt "toolbar"
 msgid "Generators"
 msgstr ""
 
 msgid "Go"
 msgstr ""
 
-msgid "Go to X"
+msgid "Go to"
 msgstr ""
 
 msgctxt "toolbar"
@@ -1278,7 +1347,14 @@ msgstr ""
 msgid "Grouped %d elements. Click any of them to select the whole group."
 msgstr ""
 
+msgctxt "option bar"
+msgid "H"
+msgstr ""
+
 msgid "H horizontally, V vertically (with the bed in focus)"
+msgstr ""
+
+msgid "Halftone"
 msgstr ""
 
 msgid "Halftone (dither) grayscale images"
@@ -1287,8 +1363,7 @@ msgstr ""
 msgid "Halftone resolution (dpi)"
 msgstr ""
 
-#, python-format
-msgid "Head: X %s  Y %s %s"
+msgid "Head movement"
 msgstr ""
 
 msgid "Height"
@@ -1308,17 +1383,13 @@ msgstr ""
 msgid "Height of the letters of normal size (0: the whole text as large as fits)"
 msgstr ""
 
+msgid "Height of the picture on the bed (the proportions are kept)"
+msgstr ""
+
 msgid "Height of the puzzle"
 msgstr ""
 
 msgid "Height of the stamp (own size)"
-msgstr ""
-
-msgid "Height:"
-msgstr ""
-
-msgctxt "toolbar group"
-msgid "Help"
 msgstr ""
 
 msgid "Herringbone"
@@ -1385,6 +1456,9 @@ msgstr ""
 msgid "Homed"
 msgstr ""
 
+msgid "Homing and the end of a job"
+msgstr ""
+
 msgid ""
 "Homing is switched off on this GRBL board ($22=0). Put the head in the "
 "home corner (Settings → Machine) by hand before connecting."
@@ -1425,10 +1499,10 @@ msgstr ""
 msgid "Ignore specks: dark spots smaller than this many pixels are left out"
 msgstr ""
 
-msgid "Image size"
+msgid "Image"
 msgstr ""
 
-msgid "Image:"
+msgid "Image size"
 msgstr ""
 
 msgid "Images"
@@ -1447,6 +1521,9 @@ msgid "In use"
 msgstr ""
 
 msgid "Include this layer in the job"
+msgstr ""
+
+msgid "Inkscape"
 msgstr ""
 
 msgid "Inkscape executable"
@@ -1470,6 +1547,9 @@ msgid ""
 msgstr ""
 
 msgid "Insert"
+msgstr ""
+
+msgid "Insert picture"
 msgstr ""
 
 msgid "Inside sizes"
@@ -1544,6 +1624,9 @@ msgstr ""
 msgid "Kerf"
 msgstr ""
 
+msgid "Kerf (mm)"
+msgstr ""
+
 msgid "Kerf test"
 msgstr ""
 
@@ -1612,6 +1695,11 @@ msgstr ""
 msgid "Laser \"%s\" saved to %s"
 msgstr ""
 
+msgid ""
+"Laser cutter control software for K40 lasers with Lihuiyu M2 Nano boards:"
+" drawing, laying out and cutting in one window."
+msgstr ""
+
 msgid "Laser initialized"
 msgstr ""
 
@@ -1623,19 +1711,21 @@ msgid "Laser is not initialized."
 msgstr ""
 
 msgid ""
-"Laser power during the boundary trace, in per cent of the maximum power "
-"(Settings → Machine). Used by M3 boards with power per operation; on "
-"other boards the power knob of the laser sets it"
+"Laser power during the boundary trace, in per cent of the laser's maximum"
+" power. Used by M3 boards with power per operation; on other boards the "
+"power knob of the laser sets it"
 msgstr ""
 
 #, python-format
 msgid "Laser: %s"
 msgstr ""
 
-msgid "Lasers"
+msgid "Laser: connected"
 msgstr ""
 
-msgctxt "toolbar"
+msgid "Laser: not connected"
+msgstr ""
+
 msgid "Lasers"
 msgstr ""
 
@@ -1664,6 +1754,10 @@ msgstr ""
 msgid ""
 "Layer of this shape: any layer from the panel on the left (cut, outline "
 "or engrave)"
+msgstr ""
+
+#, python-format
+msgid "Layer: %s"
 msgstr ""
 
 msgid "Layers"
@@ -1711,6 +1805,9 @@ msgstr ""
 msgid "Levels curve weight"
 msgstr ""
 
+msgid "Licence"
+msgstr ""
+
 msgid "Lid"
 msgstr ""
 
@@ -1748,6 +1845,9 @@ msgstr ""
 msgid "Loading cancelled"
 msgstr ""
 
+msgid "Look"
+msgstr ""
+
 msgid "Look for serial ports again (after plugging the laser in)"
 msgstr ""
 
@@ -1779,9 +1879,6 @@ msgid "Make the sides at the selected nodes curves with handles you can drag"
 msgstr ""
 
 msgid "Make the sides at the selected nodes straight lines"
-msgstr ""
-
-msgid "Manage your lasers: add, duplicate, rename, delete, export, import"
 msgstr ""
 
 msgid "Margin"
@@ -1818,9 +1915,6 @@ msgstr ""
 msgid "Material thickness"
 msgstr ""
 
-msgid "Material:"
-msgstr ""
-
 #, python-format
 msgid "Material: %s"
 msgstr ""
@@ -1844,6 +1938,12 @@ msgid ""
 msgstr ""
 
 msgid "Medium (15 %)"
+msgstr ""
+
+msgid "Memory"
+msgstr ""
+
+msgid "Memory and USB"
 msgstr ""
 
 msgid "Mirror"
@@ -1943,13 +2043,9 @@ msgstr ""
 msgid "My laser"
 msgstr ""
 
-msgid "Name:"
+msgid "Name"
 msgstr ""
 
-msgid "Nest"
-msgstr ""
-
-msgctxt "toolbar"
 msgid "Nest"
 msgstr ""
 
@@ -2018,6 +2114,12 @@ msgstr ""
 msgid "New text on a path"
 msgstr ""
 
+msgid "New: not yet confirmed on a real laser. Please report how it works."
+msgstr ""
+
+msgid "Next layer"
+msgstr ""
+
 #, python-format
 msgid "No GRBL board answered on %s."
 msgstr ""
@@ -2035,6 +2137,9 @@ msgid "No corner at the selected nodes: the curve passes smoothly through them"
 msgstr ""
 
 msgid "No design loaded"
+msgstr ""
+
+msgid "No elements yet"
 msgstr ""
 
 #, python-format
@@ -2065,7 +2170,16 @@ msgstr ""
 msgid "Node editing keys"
 msgstr ""
 
+msgid "Nodes"
+msgstr ""
+
 msgid "Not available on GRBL boards."
+msgstr ""
+
+msgid "Not connected"
+msgstr ""
+
+msgid "Notes"
 msgstr ""
 
 msgid "Notes (e.g. supplier, lens, air assist)"
@@ -2160,6 +2274,11 @@ msgctxt "toolbar"
 msgid "Open"
 msgstr ""
 
+msgid ""
+"Open a design file, draw a shape with the tools on the right, or make one"
+" with a generator."
+msgstr ""
+
 msgid "Open a design to see its layers."
 msgstr ""
 
@@ -2192,6 +2311,9 @@ msgstr ""
 msgid "Operation"
 msgstr ""
 
+msgid "Options bar"
+msgstr ""
+
 msgid "Order"
 msgstr ""
 
@@ -2204,6 +2326,9 @@ msgstr ""
 msgid "Other layers"
 msgstr ""
 
+msgid "Other side"
+msgstr ""
+
 msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr ""
 
@@ -2213,7 +2338,13 @@ msgstr ""
 msgid "Outer ring"
 msgstr ""
 
+msgid "Outline"
+msgstr ""
+
 msgid "Outline only"
+msgstr ""
+
+msgid "Outline shape"
 msgstr ""
 
 msgid "Outside the laser bed!"
@@ -2252,9 +2383,6 @@ msgstr ""
 msgid "Passes to"
 msgstr ""
 
-msgid "Passes:"
-msgstr ""
-
 msgid "Paste in pla&ce"
 msgstr ""
 
@@ -2280,6 +2408,10 @@ msgid "Pattern fill"
 msgstr ""
 
 msgid "Pattern removed."
+msgstr ""
+
+msgctxt "job"
+msgid "Pause"
 msgstr ""
 
 msgid "Pause or stop the running job"
@@ -2325,6 +2457,9 @@ msgstr ""
 msgid "Place design at the &head"
 msgstr ""
 
+msgid "Play"
+msgstr ""
+
 msgid "Play / pause"
 msgstr ""
 
@@ -2360,10 +2495,10 @@ msgid ""
 "text with the mouse)"
 msgstr ""
 
-msgid "Position and size"
+msgid "Power (%)"
 msgstr ""
 
-msgid "Power"
+msgid "Power (M3 board)"
 msgstr ""
 
 msgid "Power (M3 boards)"
@@ -2379,9 +2514,6 @@ msgid "Power of the last row"
 msgstr ""
 
 msgid "Power to (%)"
-msgstr ""
-
-msgid "Power:"
 msgstr ""
 
 msgid "Prepare USB data before sending"
@@ -2407,6 +2539,9 @@ msgstr ""
 msgid "Pressure angle"
 msgstr ""
 
+msgid "Program"
+msgstr ""
+
 msgid "Program before the job"
 msgstr ""
 
@@ -2422,7 +2557,10 @@ msgstr ""
 msgid "Program to run before a job"
 msgstr ""
 
-msgid "Programs before / after a job"
+msgid "Programs run with a job"
+msgstr ""
+
+msgid "Project"
 msgstr ""
 
 #, python-format
@@ -2502,12 +2640,10 @@ msgstr ""
 msgid "Ready"
 msgstr ""
 
-msgid "Rectangle"
+msgid "Ready-made designs from a few numbers: boxes, parts, tests"
 msgstr ""
 
-msgid ""
-"Red: what the laser has burnt so far (raster engraving one line every 0.2"
-" mm). Grey dashed lines: moves with the laser off."
+msgid "Rectangle"
 msgstr ""
 
 msgctxt "toolbar"
@@ -2518,10 +2654,6 @@ msgid "Reduced memory use (500 dpi raster)"
 msgstr ""
 
 msgid "Release USB"
-msgstr ""
-
-msgctxt "toolbar"
-msgid "Reload"
 msgstr ""
 
 msgid "Reloaded"
@@ -2539,17 +2671,20 @@ msgstr ""
 msgid "Rename"
 msgstr ""
 
-msgctxt "toolbar"
-msgid "Report"
-msgstr ""
-
 msgid "Report a &problem on GitHub…"
 msgstr ""
 
 msgid "Report a problem"
 msgstr ""
 
-msgid "Resolution:"
+msgid "Resolution"
+msgstr ""
+
+msgid "Resolution: dots per inch of the picture; more dots make it smaller"
+msgstr ""
+
+msgctxt "job"
+msgid "Resume"
 msgstr ""
 
 msgid "Resume the job"
@@ -2628,6 +2763,9 @@ msgstr ""
 msgid "Rounded corners of the frame and outline"
 msgstr ""
 
+msgid "Row gap"
+msgstr ""
+
 msgid "Rows"
 msgstr ""
 
@@ -2699,6 +2837,9 @@ msgid ""
 "the laser bed. Nothing was sent."
 msgstr ""
 
+msgid "Save"
+msgstr ""
+
 msgctxt "toolbar"
 msgid "Save"
 msgstr ""
@@ -2710,10 +2851,6 @@ msgid "Save &G-code…"
 msgstr ""
 
 msgid "Save &diagnostic report…"
-msgstr ""
-
-msgctxt "toolbar"
-msgid "Save EGV"
 msgstr ""
 
 msgid "Save EGV file"
@@ -2751,13 +2888,22 @@ msgstr ""
 msgid "Save the layout, layers and files in one .kerfly file"
 msgstr ""
 
+msgid "Save the library to a file"
+msgstr ""
+
 msgid "Save the selected laser to a file, for another computer"
 msgstr ""
 
 msgid "Save…"
 msgstr ""
 
+msgid "Scale"
+msgstr ""
+
 msgid "Scan line step (in)"
+msgstr ""
+
+msgid "Scan lines and levels"
 msgstr ""
 
 msgid "See the release"
@@ -2816,6 +2962,9 @@ msgstr ""
 msgid "Selected nodes: %d. Drag them, or use the buttons above."
 msgstr ""
 
+msgid "Selection"
+msgstr ""
+
 msgid "Send EGV file"
 msgstr ""
 
@@ -2849,10 +2998,6 @@ msgid "Settings"
 msgstr ""
 
 msgctxt "toolbar"
-msgid "Settings"
-msgstr ""
-
-msgctxt "toolbar group"
 msgid "Settings"
 msgstr ""
 
@@ -2893,6 +3038,9 @@ msgid "Show a report after a job (its time; the program's output)"
 msgstr ""
 
 msgid "Show the report file"
+msgstr ""
+
+msgid "Shows only the commands whose name or keys have this text"
 msgstr ""
 
 msgid "Side"
@@ -2992,6 +3140,12 @@ msgstr ""
 msgid "Space left between the parts (the laser's kerf and some room)"
 msgstr ""
 
+msgid "Spacing"
+msgstr ""
+
+msgid "Speed"
+msgstr ""
+
 #, python-format
 msgid "Speed (%s)"
 msgstr ""
@@ -3007,6 +3161,10 @@ msgstr ""
 msgid "Speed from"
 msgstr ""
 
+#, python-format
+msgid "Speed of the %s layer"
+msgstr ""
+
 msgid "Speed of the first column"
 msgstr ""
 
@@ -3014,9 +3172,6 @@ msgid "Speed of the last column"
 msgstr ""
 
 msgid "Speed to"
-msgstr ""
-
-msgid "Speed:"
 msgstr ""
 
 msgid "Speeds are stored in mm/s and converted to in/min for the layers."
@@ -3067,6 +3222,9 @@ msgstr ""
 msgid "Start an empty project: clears the bed (asks to save changes first)"
 msgstr ""
 
+msgid "Start anyway"
+msgstr ""
+
 msgid "Start the job anyway?"
 msgstr ""
 
@@ -3083,10 +3241,13 @@ msgid ""
 "exhaust or the air pump; the job waits until it ends (at most a minute)"
 msgstr ""
 
-msgid "Step:"
+msgid "Step"
 msgstr ""
 
 msgid "Stop"
+msgstr ""
+
+msgid "Stop and quit"
 msgstr ""
 
 msgid "Stop the job now"
@@ -3155,6 +3316,9 @@ msgstr ""
 msgid "Test fire: %.0f%% for %d ms"
 msgstr ""
 
+msgid "Tests and calibration"
+msgstr ""
+
 msgid "Text"
 msgstr ""
 
@@ -3186,9 +3350,6 @@ msgid ""
 "Text on a path: click a line, curve or shape to put the selected text on "
 "it (no text selected: type a new one above first). Drag the text "
 "afterwards to slide it along the line."
-msgstr ""
-
-msgid "Text on path"
 msgstr ""
 
 msgid "Text or address"
@@ -3239,10 +3400,16 @@ msgid ""
 "At %g px/in the design is %.1f x %.1f mm."
 msgstr ""
 
+msgid "The USB ports with a K40 laser on them"
+msgstr ""
+
 msgid "The bed's lower left corner (X right, Y up; most GRBL lasers)"
 msgstr ""
 
 msgid "The box put together from its parts (drag to turn it)"
+msgstr ""
+
+msgid "The design changed: the simulation was worked out again"
 msgstr ""
 
 msgid "The design does not fit on the laser bed at this position."
@@ -3335,6 +3502,12 @@ msgstr ""
 msgid "The laser was found, but this user may not use its USB port."
 msgstr ""
 
+msgid "The lasers' settings were saved"
+msgstr ""
+
+msgid "The layer of each part of the selected element"
+msgstr ""
+
 msgid ""
 "The lid slides in from the front, in a groove between two rails on each "
 "side wall, held by tabs in slots of the wall; the front is lower so the "
@@ -3342,6 +3515,12 @@ msgid ""
 msgstr ""
 
 msgid "The lines in the middle (empty: none)"
+msgstr ""
+
+msgid "The material's name, as the list shows it"
+msgstr ""
+
+msgid "The material's thickness"
 msgstr ""
 
 msgid "The new language will be used after restarting Kerfly."
@@ -3369,6 +3548,14 @@ msgid ""
 "(delete it or leave it out of the job)."
 msgstr ""
 
+msgid "The picture's size in pixels, as in the file"
+msgstr ""
+
+msgid ""
+"The power works with an M3 board only. Measure the kerf with the Kerf "
+"test generator."
+msgstr ""
+
 #, python-format
 msgid "The program could not be started: %s"
 msgstr ""
@@ -3388,6 +3575,9 @@ msgid "The program run before the job reported an error."
 msgstr ""
 
 msgid "The program set to run before the job did not work:"
+msgstr ""
+
+msgid "The program's settings; a laser's are in Settings → Lasers…"
 msgstr ""
 
 msgid "The pyserial library is missing (needed for GRBL boards)."
@@ -3418,10 +3608,7 @@ msgid ""
 "Windows: COM3, ...), kept in this laser's profile"
 msgstr ""
 
-msgid ""
-"The settings of the laser in use are changed in Settings (board, bed, "
-"power, rotary, trace, programs before and after a job); they are kept in "
-"its profile."
+msgid "The shortcuts of the menus and tools appear here by themselves"
 msgstr ""
 
 msgid "The sizes are the inside of the box (off: the outside)"
@@ -3458,13 +3645,13 @@ msgid ""
 "nothing to spread. Use the other direction, or move one of them first."
 msgstr ""
 
+msgid "Thickness"
+msgstr ""
+
 msgid "Thickness of the sheet"
 msgstr ""
 
 msgid "Thickness of the sheet: the slots are this wide plus the clearance"
-msgstr ""
-
-msgid "Thickness:"
 msgstr ""
 
 msgid ""
@@ -3500,16 +3687,20 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
-msgctxt "toolbar"
-msgid "To head"
-msgstr ""
-
 msgid "To the &end (last)"
 msgstr ""
 
 msgid "To the &start (first)"
 msgstr ""
 
+msgctxt "toolbar group"
+msgid "Tools"
+msgstr ""
+
+msgid "Trace"
+msgstr ""
+
+msgctxt "job"
 msgid "Trace"
 msgstr ""
 
@@ -3534,6 +3725,9 @@ msgstr ""
 msgid "Trace the light areas instead"
 msgstr ""
 
+msgid "Trace the light areas of the picture instead of the dark ones"
+msgstr ""
+
 msgid ""
 "Trace: the dark areas of the selected picture become paths you can cut, "
 "outline, fill or edit node by node"
@@ -3541,10 +3735,6 @@ msgstr ""
 
 #, python-format
 msgid "Traced: %d outlines over the picture (Undo takes them away)."
-msgstr ""
-
-msgctxt "toolbar group"
-msgid "Transform"
 msgstr ""
 
 msgid "Triangles"
@@ -3563,6 +3753,9 @@ msgid "U&ngroup"
 msgstr ""
 
 msgid "USB access"
+msgstr ""
+
+msgid "USB connection"
 msgstr ""
 
 msgid "USB data ready"
@@ -3660,10 +3853,10 @@ msgstr ""
 msgid "Upper right corner"
 msgstr ""
 
-msgid "Use"
+msgid "Use Inkscape for SVG files when installed (otherwise built-in)"
 msgstr ""
 
-msgid "Use Inkscape for SVG files when installed (otherwise built-in)"
+msgid "Use this laser"
 msgstr ""
 
 msgid "Used with M3 boards (power per layer)"
@@ -3692,6 +3885,10 @@ msgstr ""
 
 msgctxt "toolbar group"
 msgid "View"
+msgstr ""
+
+msgctxt "option bar"
+msgid "W"
 msgstr ""
 
 msgid "Wait for the laser to finish"
@@ -3726,6 +3923,9 @@ msgstr ""
 msgid "What the laser does with the fields"
 msgstr ""
 
+msgid "What to trace"
+msgstr ""
+
 msgid ""
 "Where X0 Y0 of the G-code is: the corner of the bed the machine homes to,"
 " or the design's upper left corner, where you set the work origin on the "
@@ -3735,6 +3935,9 @@ msgstr ""
 msgid ""
 "Where the band is: its middle from the middle of the shape (minus: left /"
 " up, plus: right / down)"
+msgstr ""
+
+msgid "Where the job is: drag to go there"
 msgstr ""
 
 msgid "Where the picture goes"
@@ -3779,6 +3982,9 @@ msgid ""
 "tightly"
 msgstr ""
 
+msgid "Width of the picture on the bed"
+msgstr ""
+
 msgid "Width of the puzzle"
 msgstr ""
 
@@ -3797,15 +4003,15 @@ msgstr ""
 msgid "Width of the stamp (own size)"
 msgstr ""
 
-msgid "Width:"
-msgstr ""
-
 msgid "With a lid"
 msgstr ""
 
 msgid ""
 "With two lasers plugged into this computer: the USB port of this laser's "
 "board, kept in its profile (beta: not yet checked with two lasers)"
+msgstr ""
+
+msgid "Work area"
 msgstr ""
 
 msgid "Work with this laser: its settings go into the window"
@@ -3841,10 +4047,17 @@ msgstr ""
 msgid "You have the newest version (%s)."
 msgstr ""
 
-msgid "Your lasers. Double-click a name to change it"
+msgid ""
+"Your lasers and each one's settings (board, bed, homing, power, trace, "
+"rotary, USB): use one, add, duplicate, rename, delete, export, import"
 msgstr ""
 
-msgid "Your lasers: use one, add, duplicate, rename, delete, export, import"
+msgid ""
+"Your lasers and their settings (board, bed, homing, power, trace, rotary,"
+" USB)"
+msgstr ""
+
+msgid "Your lasers. Double-click a name to change it"
 msgstr ""
 
 msgid "Zigzag"
@@ -3856,7 +4069,20 @@ msgstr ""
 msgid "Zoom"
 msgstr ""
 
+#, python-format
+msgid "Zoom %d%%"
+msgstr ""
+
 msgid "a program or script (.bat, .sh)"
+msgstr ""
+
+msgid "beta"
+msgstr ""
+
+msgid "burnt"
+msgstr ""
+
+msgid "by Scorch"
 msgstr ""
 
 msgid "centre"
@@ -3911,6 +4137,9 @@ msgstr ""
 msgid "several elements: to each other; one element: to the bed"
 msgstr ""
 
+msgid "to do"
+msgstr ""
+
 msgid "upper left"
 msgstr ""
 
@@ -3918,5 +4147,9 @@ msgid "vector cut"
 msgstr ""
 
 msgid "vector engrave"
+msgstr ""
+
+#, python-format
+msgid "version %s"
 msgstr ""
 

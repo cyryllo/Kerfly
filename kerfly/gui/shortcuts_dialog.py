@@ -8,8 +8,9 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QKeySequence
 from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QHeaderView, QLineEdit, QMenu, QTreeWidget,
-                               QTreeWidgetItem, QVBoxLayout)
+                               QTreeWidgetItem)
 
+from kerfly.gui import icons, theme, widgets
 from kerfly.i18n import N_, _
 
 # what the mouse does and keys that belong to no command
@@ -96,13 +97,17 @@ class ShortcutsDialog(QDialog):
                 top.addChild(item)
             top.setExpanded(True)
         self.filter.textChanged.connect(self._filter)
-        buttons = QDialogButtonBox(QDialogButtonBox.Close)
-        buttons.rejected.connect(self.close)
-        layout = QVBoxLayout(self)
-        layout.addWidget(self.filter)
-        layout.addWidget(self.tree)
-        layout.addWidget(buttons)
-        self.resize(760, 640)
+        self.filter.setToolTip(_("Shows only the commands whose name or keys have this text"))
+        self.filter.addAction(icons.tabler("search"), QLineEdit.LeadingPosition)
+        # the dialog pattern (docs/ui-mockups/Shortcuts): the search, the list, Close with a note beside it
+        body = widgets.DialogBody()
+        body.add(self.filter)
+        body.add(self.tree, 1)
+        footer = widgets.DialogFooter(buttons=QDialogButtonBox.Close)
+        footer.info.setText(_("The shortcuts of the menus and tools appear here by themselves"))
+        footer.box.rejected.connect(self.close)
+        widgets.dialog_layout(self, body, footer)
+        self.resize(theme.DIALOG_LARGE, theme.DIALOG_LARGE - 60)
 
     def _filter(self, text):
         text = text.strip().lower()

@@ -5,10 +5,9 @@ $30) and the raster overscan, before the file name is asked.
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
-from PySide6.QtWidgets import (QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QLabel, QSpinBox,
-                               QVBoxLayout)
+from PySide6.QtWidgets import QComboBox, QDialog, QDoubleSpinBox, QSpinBox
 
-from kerfly.gui.nest_dialog import _with_icon
+from kerfly.gui import theme, widgets
 from kerfly.i18n import _
 
 
@@ -16,10 +15,9 @@ class GcodeDialog(QDialog):
     def __init__(self, values, parent=None):
         super().__init__(parent)
         self.setWindowTitle(_("Save G-code"))
-        text = QLabel(_("G-code for lasers with a GRBL board (diode lasers, CO2 lasers with GRBL): the ticked "
-                        "layers in their order, each with its speed, power and passes. Open the file in "
-                        "LaserGRBL, UGS or another G-code sender. (beta)"))
-        text.setWordWrap(True)
+        text = widgets.hint(_("G-code for lasers with a GRBL board (diode lasers, CO2 lasers with GRBL): the ticked "
+                              "layers in their order, each with its speed, power and passes. Open the file in "
+                              "LaserGRBL, UGS or another G-code sender."))
         self.origin = QComboBox()
         self.origin.addItem(_("The bed's lower left corner (X right, Y up; most GRBL lasers)"), "lower_left")
         self.origin.addItem(_("The design's upper left corner (set the work origin there)"), "design")
@@ -41,18 +39,19 @@ class GcodeDialog(QDialog):
         over_tip = _("Raster engraving: the head starts this far before each line and stops this far after it, "
                      "so it is at speed where it burns")
         self.overscan.setToolTip(over_tip)
-        form = QFormLayout()
-        form.addRow(_with_icon("current-location", _("Origin X0 Y0"), origin_tip), self.origin)
-        form.addRow(_with_icon("flame", _("Full power S"), s_tip), self.s_max)
-        form.addRow(_with_icon("arrows-horizontal", _("Raster overscan"), over_tip), self.overscan)
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.button(QDialogButtonBox.Ok).setText(_("Save…"))
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout = QVBoxLayout(self)
-        layout.addWidget(text)
-        layout.addLayout(form)
-        layout.addWidget(buttons)
+        # the dialog pattern: the explanation, one section (beta until confirmed on a GRBL laser), the footer
+        section = widgets.Section(_("G-code for GRBL"), beta=True)
+        section.add_row("current-location", _("Origin X0 Y0"), origin_tip, self.origin)
+        section.add_row("flame", _("Full power S"), s_tip, self.s_max)
+        section.add_row("arrows-horizontal", _("Raster overscan"), over_tip, self.overscan)
+        body = widgets.DialogBody()
+        body.add(text)
+        body.add(section)
+        body.layout().addStretch(1)
+        footer = widgets.DialogFooter(_("Save…"))
+        footer.connect(self)
+        widgets.dialog_layout(self, body, footer)
+        self.setMinimumWidth(theme.DIALOG_SMALL)
 
     def values(self):
         return {"gcode_origin": self.origin.currentData(), "gcode_s_max": str(self.s_max.value()),

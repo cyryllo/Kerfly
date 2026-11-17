@@ -50,9 +50,10 @@ sends the job to the laser. This guide is for version 1.4.
 
    Every line should say `OK`; `WARN` lines are optional parts or mean that
    the laser is not connected.
-3. Open **Settings → Settings… → Machine** and choose your **Controller
-   board** (printed on the board, for example LASER-M2 or LASER-M3), the
-   **units** and the **bed size**.
+3. Open **Settings → Lasers…** and choose your laser's **Controller board**
+   (printed on the board, for example LASER-M2 or LASER-M3) and its **bed
+   size**, then **Save**. The **units** (mm or inches) are in **Settings →
+   Settings… → View**.
 4. Switch the laser on, connect the USB cable and press the **plug** button
    (Connect, Ctrl+I) on the **Laser** tab. By default Kerfly then homes the
    head (moves it to the upper left corner).
@@ -68,25 +69,36 @@ saving.
 
 ![Kerfly main window](screenshot.png)
 
-- **Toolbar** (top): file, edit, arrange, generators, view, settings and help
-  commands in labelled groups.
+- **Ribbon** (top), in labelled groups: **File** (New, Open, Add, Save; small
+  buttons for Reload, Save EGV and G-code), **Edit** (Undo, Redo; the
+  clipboard, duplicate, delete, select all, group, edit nodes), **Arrange** (align,
+  distribute, turn, mirror, centre, nest, to head), **Shapes** (combine,
+  join), **View** (Fit, Simulate, Grid) and **Tools** (**Generators** with a
+  list of all generators, Materials, Settings). Hold the mouse over a small
+  button to see what it does. Reporting a problem is in the **Help** menu.
 
-  ![Toolbar](img/en/toolbar.png)
+  ![Ribbon](img/en/toolbar.png)
 
-- **Options bar** (under the toolbar): position, size and rotation of the
-  selected element, its layer, and the options of the selected shape or
-  drawing tool (for example the text and font). When its sections do not fit
-  the window, they scroll sideways.
+- **Options bar** (under the ribbon, across the window), two rows: the first
+  always shows the **selection**: its position (X, Y), size (W, H, the chain
+  keeps the proportions), rotation and **Layer**; the second the options of
+  what is edited, its name in bold on the left (for example the text, its
+  font, size and letter spacing). Every field has an icon, a short caption and
+  a tooltip. When a row does not fit the window, the rows scroll sideways.
 
   ![Options bar with a text selected](img/en/options.png)
 
-- **Left panel**: the **Design** tab lists the elements on the bed; the
-  **Laser** tab moves the head. Under the tabs are the **Layers** and the job
-  buttons (trace, start, pause, stop).
+- **Left panel**: the **Design** tab lists the **Elements** (with their number
+  and size; red when the design sticks out of the bed) and the **Layers**; the
+  **Laser** tab has the laser in use and moves the head. At the bottom, on both
+  tabs, the job's buttons: **Trace**, **Start**, **Pause** and **Stop**.
+- **Status bar** (bottom): messages, where the mouse pointer is on the bed
+  (from home, like the X and Y fields), the bed's size, the zoom (100 %: the
+  whole bed) and whether the laser is connected.
 - **Bed view** (middle): the laser bed with your elements. The orange
   crosshair is the laser head. Elements that stick out of the bed are drawn
   red, and the job cannot start until they are moved back.
-- **Tools** (right), in three groups: selecting (select, edit nodes); drawing
+- **Tools** (right), in three groups: select (Edit nodes is in the ribbon's Edit group); drawing
   (rectangle, ellipse, polygon, line, polyline, pen, freehand, text); and
   operations on shapes (text on a path, fill with a pattern, living hinge,
   measure).
@@ -106,15 +118,20 @@ select all, fit, grid.
 
 ![Laser tab](img/en/laser.png)
 
-The **Laser** tab has the machine buttons on the left and the jog pad on the
-right. At its top, the list of **your lasers**: with two lasers (for example
+The **Laser** tab has the **Device** (the laser in use, whether it is
+connected, the machine's buttons) and the **Head movement** (the jog pad, the
+step, go to X / Y). At its top, the list of **your lasers**: with two lasers (for example
 a laptop taken from one to the other), choose the one you work with, and its
 settings (board, bed size, home corner, scale, power, rotary, trace, programs
-before and after a job) go into the window. A machine setting changed in
-Settings is kept in the profile of the laser in use. The cog next to the list
-(or **Settings → Lasers…**, toolbar **Lasers**) adds, duplicates, renames,
-deletes, exports and imports lasers. One laser is used at a time.
-**Two lasers plugged into one computer** (beta): Settings → Machine → **USB
+before and after a job) go into the window. The cog next to the list (or
+**Settings → Lasers…**) opens **your lasers and their settings**: the list on
+the left (New, Duplicate, Import; double-click a name to change it), the
+selected laser's settings on the right, Export and Delete under them. Change
+any laser there, also one not in use: the changes are kept while you go from
+one laser to another, **Save** writes them (the laser in use's go into the
+window at once), **Cancel** leaves them, **Use this laser** works with the
+selected one. One laser is used at a time.
+**Two lasers plugged into one computer** (beta): Settings → Lasers… → **USB
 port** keeps the port of each laser's board in its profile (**Which one?**
 moves that laser's head a little to the right and back). Without a remembered
 port, when two are plugged in, Kerfly asks which one to connect to and
@@ -124,10 +141,10 @@ restart.
 
 | Button | What it does |
 |---|---|
-| Plug | Connect to the laser (Ctrl+I) |
+| Plug (left of the arrows) | **Connect** to the laser (Ctrl+I); the plug and the dot under the laser list turn green |
 | House | **Home**: move the head to the home corner |
-| Open lock | **Unlock rail**: release the motors so the head can be moved by hand |
-| Crosshair with a chain link | **Design follows the head** (Ctrl+Alt+H), see below |
+| Open lock | **Unlock motors**: release them so the head can be moved by hand |
+| Crosshair with a chain link | **Design follows the head** (Ctrl+Alt+H, pressed when on), see below |
 | Arrows | Move the head by one **Step** (the field under the pad). **Ctrl+arrow keys** do the same from the keyboard |
 | Dotted corners and centre | Move the head to that corner or the centre of the design, to see where it will be cut. The design does not move. Ctrl+7, Ctrl+9, Ctrl+5, Ctrl+1, Ctrl+3 |
 | Go to X / Y, **Go** | Home, then move the head to that position (distance from the home corner; Ctrl+Alt+G) |
@@ -139,10 +156,10 @@ not the head.
 LightBurn or MeerK40t): when a job starts, the head first drives to the
 design. To start the design where the head is instead:
 
-- **Edit → Place design at the head** (Ctrl+H, toolbar **To head**) moves the
+- **Edit → Place design at the head** (Ctrl+H, **To head** in the Arrange group of the ribbon) moves the
   design to the head once.
-- **Design follows the head** (the button with the chain link, green when
-  on) keeps the design at the head: the arrows, Go to X/Y and Home move the
+- **Design follows the head** (the button with the chain link, pressed
+  when on) keeps the design at the head: the arrows, Go to X/Y and Home move the
   head and the design together, and the arrows do not push the design off
   the bed. The corner buttons still only move the head; after one, the arrows
   move the design with the head, which keeps its place on the design (for
@@ -158,7 +175,7 @@ so in the status bar.
 
 ## 4. Opening files
 
-**File → New project** (Ctrl+N, toolbar **New**) starts with an empty bed
+**File → New project** (Ctrl+N, **New** on the ribbon) starts with an empty bed
 and the default layers (it asks to save unsaved changes first).
 **File → Open design…** (Ctrl+O) replaces everything on the bed;
 **File → Add design…** (Ctrl+Shift+O) puts another file next to the others.
@@ -188,8 +205,8 @@ before or after drawing.
 
 | Tool | Key | How |
 |---|---|---|
-| Select and move | S | Click to select, drag to move; handles scale and rotate. Drag a frame around several elements, or Ctrl+click |
-| Edit nodes | N | Drag nodes and the round curve handles (Ctrl: one handle alone). Double-click a side to add a node, a node to remove it. Keys: I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / open, B break |
+| Select and move | S | Click to select, drag to move; the corner handles scale, the handles in the middles of the sides stretch the width or the height alone (the opposite side stays), the round one rotates. Drag a frame around several elements, or Ctrl+click |
+| Edit nodes | N | Drag nodes and the round curve handles (Ctrl: one handle alone). Double-click a side to add a node, a node to remove it. Keys: I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / open, B break. A click on the empty bed ends it (back to Select) |
 | Rectangle | R | Drag. Shift: square. Option: corner radius |
 | Ellipse | E | Drag. Shift: circle |
 | Polygon | P | Drag. Option: number of sides |
@@ -217,7 +234,7 @@ View**.
 (the chain button keeps the proportions), or use the arrow keys: 1 mm or one
 grid step, with Shift 10 times as far.
 
-**Arranging.** The **Edit** menu and the toolbar have: undo and redo
+**Arranging.** The **Edit** menu and the ribbon have: undo and redo
 (Ctrl+Z, Ctrl+Shift+Z), copy, cut and paste (Ctrl+C, Ctrl+X, Ctrl+V: pasted at
 the mouse pointer, also into another project; Ctrl+Alt+V pastes in place),
 select all (Ctrl+A), duplicate (Ctrl+D), delete (Del), rotate 90°
@@ -226,7 +243,7 @@ select all (Ctrl+A), duplicate (Ctrl+D), delete (Del), rotate 90°
 intersection and exclusion of closed shapes (difference: the other selected
 shapes are cut out of the one highest in the element list).
 
-**Join into a polyline** (Ctrl+J, Edit menu, Shapes group of the toolbar,
+**Join into a polyline** (Ctrl+J, Edit menu, Shapes group of the ribbon,
 right-click menu): the selected lines, polylines and open paths whose ends
 meet (closer than 0.05 mm) become one path, cut in one go; a chain that
 comes round is closed. Useful for drawings made of loose pieces (from DXF
@@ -234,8 +251,8 @@ files): on a GRBL laser or a CNC machine every piece makes the machine slow
 down and speed up again. Closed outlines and lines that meet nothing stay as
 they are. An opened file: Ungroup it first.
 
-**Nest on the bed** (Ctrl+Shift+N, **Nest** in the Layout group of the
-toolbar, Edit menu, right-click menu): the selected parts (nothing selected:
+**Nest on the bed** (Ctrl+Shift+N, **Nest** in the Arrange group of the
+ribbon, Edit menu, right-click menu): the selected parts (nothing selected:
 all of them; a group as one part) are laid out on the laser's bed as tightly
 as the rectangles around their outlines allow, a set **gap** apart, turned by
 90° where that fits better (switch **Turn by 90°** off for wood grain). What
@@ -285,7 +302,7 @@ Truchet tiles or a Hilbert curve.
 
 ![Shapes filled with patterns](img/en/fill.png)
 
-1. Choose the tool and a pattern in the **Fill** section of the options bar.
+1. Choose the tool and a pattern in the **Fill** field of the options bar.
    Set its size (the distance between its lines), its angle and a margin
    kept free inside the outline.
 2. Click a closed shape on a cut or outline layer. Click more shapes to fill
@@ -295,12 +312,12 @@ Truchet tiles or a Hilbert curve.
    same way.
 3. The outline stays on its layer: a cut shape is still cut, and the pattern
    is engraved on an outline layer (for a cut shape a second **Layer** list
-   chooses which). The square button next to the pattern list leaves the
+   chooses which). The **Outline** button next to the pattern's fields leaves the
    outline out, so only the pattern is engraved: **Lines** or
    **Cross-hatch** without the outline fill an area with engraved lines (this
    was the separate Hatch section before 0.17; older projects open this way).
 
-A selected shape shows the same **Fill** section with the select tool: change
+A selected shape shows the same **Fill** fields with the select tool: change
 the pattern there, or choose **No pattern** to remove it. Holes in the shape
 (for example in letters) stay empty. An opened SVG or DXF file must be
 ungrouped first (Edit → Ungroup), so that its lines become shapes.
@@ -313,11 +330,10 @@ an open line the text is centred, on a closed shape it is centred at the top.
 If a text is selected when you click, that text is moved onto the shape (for
 example one written with the Text tool), so no copy stays behind.
 **Drag the text to slide it along the line**; on a circle it goes round. The
-**Text on path** section of the options bar has the **position along the
-path** (route icon), the **distance from the line** (line-height icon; below
-zero the letters cross the line), the **other side** button and **Straight
-text**; the **letter spacing** field (AV icon) of the **Font** section adds
-space between the letters, also for ordinary text. Hold the mouse over a
+options bar of a text on a path has its **Start** (the position along the
+path), **From line** (the distance from the line; below zero the letters cross
+the line), the **Other side** button and **Straight text**; the **Letter
+spacing** field adds space between the letters, also for ordinary text. Hold the mouse over a
 field to see what it does. The shape
 stays; delete it if it should not be cut. An existing text is put on a shape
 with **Edit → Put text on path** (select both). The arrow keys and the X/Y
@@ -329,24 +345,24 @@ fields move the text together with its path.
 cuts that lets a sheet of plywood or MDF bend, for example round the corners
 of a box. Choose the **Living hinge** tool (Shift+H, the sheet with cuts),
 choose the cuts in the options bar (straight, wavy or zigzag), then click a
-closed shape: the cuts are cut inside it, before its outline. The fields of
-the **Living hinge** section, each with an icon and a tooltip, set the length
+closed shape: the cuts are cut inside it, before its outline. The hinge's
+fields in the options bar, each with an icon, a caption and a tooltip, set the length
 of one cut, the **bridge** of uncut material between two cuts, the distance
 between the rows (smaller bends more), the direction of the cuts (90°: up and
 down, the sheet bends across them), the **solid border** kept along the
 outline, and the **band**: its width (0: the whole shape) and where its
 middle is, measured from the middle of the shape (minus: left / up, plus:
 right / down), for a hinge only where the sheet bends. Selected shapes get the hinge you choose at once; a shape with a
-hinge shows the section with the select tool too, where **No hinge** removes
+hinge shows its fields with the select tool too, where **No hinge** removes
 it. Try a small piece first: how far the sheet bends depends on the material.
 
 ![Living hinges: straight, wavy and zigzag cuts](img/en/hinge.png)
 
 **Bridges (tabs).** A closed shape on a cut layer can keep small uncut
-bridges that hold the part in the sheet: set their number and width in the
-**Bridges** section.
+bridges that hold the part in the sheet: set their number (**Bridges**) and
+**Bridge width** in the options bar.
 
-**Element list.** The **Design** tab lists all elements with the colours of
+**Element list.** The **Elements** of the **Design** tab list all elements with the colours of
 their layers. Click a row to select it on the bed (Ctrl / Shift: several);
 untick it to leave it out of the job. An opened file is listed with its
 folder (**Customer A › design.svg**), so files of the same name from different
@@ -356,9 +372,11 @@ is in its tooltip. Saved projects keep where each file came from.
 
 ![Design tab](img/en/design.png)
 
-**Generators.** The **Generators** group of the toolbar (and the
-**Generators** menu) makes ready designs from a few numbers. Each one opens a
-window with its settings and a preview; Enter in a field updates the
+**Generators.** The **Generators** button of the ribbon (and the
+**Generators** menu), in three parts (boxes, parts, tests and calibration),
+makes ready designs from a few numbers. Each one opens a window with its
+settings on the left (a **beta** mark on what is not yet confirmed on a laser)
+and a preview on the right, its size and number of shapes under it; Enter in a field updates the
 preview, **Insert** puts the design on the bed at the laser head as one
 group (drag it into place; one **Undo** takes it away). The last numbers are
 remembered.
@@ -393,13 +411,14 @@ remembered.
   Width, depth, height, corner radius, material, tab width, kerf and the
   hinge's cut length, bridge and row spacing.
 
-For both boxes the preview has a **3D** tab beside **Parts**: the box put
+For both boxes the preview has a **3D** switch beside **Parts**: the box put
 together from the very parts that will be cut (fingers, slots, rails,
 dividers). Drag to turn it, the mouse wheel zooms, a double click turns it
 back. **Pulled apart** moves the parts away from each other, to see how their
 fingers and tabs go together; **Hidden edges** shows the edges behind other
 parts dashed, as in a technical drawing; with a sliding lid, the **Slide the
-lid out** slider pulls the lid out of its groove.
+lid out** slider pulls the lid out of its groove. These switches are beside
+**Parts | 3D**, over the preview.
 
 ![The finger-joint box in 3D](img/en/box3d.png)
 - **Kerf test**: a comb cut into pieces (push them together and measure:
@@ -446,23 +465,31 @@ out of the job.
 - **The layer decides what the laser does.** Select a drawn shape and choose
   its layer in the **Layer** list of the options bar: a cut layer cuts it, an
   outline layer engraves its outline (and its pattern fill), a raster layer fills it.
-- **More layers.** The **+** button under the layers adds another cut,
+- **More layers.** **Add layer** under the layers adds another cut,
   outline or raster layer, for example a second cut layer with another speed.
   Layers run in the order raster, outline, cut.
 - **Kerf.** The laser burns away a thin line, so a part cut along its
   outline comes out a little smaller and its holes a little larger. Type the
-  width of the cut into the **Kerf** column of a cut layer (measure it with
+  width of the cut into the **Kerf (mm)** column of a cut layer (measure it with
   **Generators → Kerf test**): the outlines are cut half of it further out and
   the holes half of it further in, so the parts come out at their drawn size.
   Open lines are cut as drawn. 0 switches it off. The material library keeps
   a kerf for each material too.
 - **Time.** The **Time** column shows how long each layer takes; for raster
-  layers press the calculator button. **View → Simulate job…**
-  (Ctrl+Shift+J) plays the head's moves on the bed: what the laser has burnt
-  so far turns red (an engraved picture only where it is dark), moves with
-  the laser off are grey dashed lines.
-- **Materials.** **Settings → Material library…** stores speeds, passes and
-  powers per material (for example "Plywood 3 mm"). Choosing a material in
+  layers press the calculator button; the total is under the table (the units
+  of the columns are in their headers). **View → Simulate job…**
+  (Ctrl+Shift+J, **Simulate** on the ribbon) opens a window of its own that
+  plays the head's moves: the whole job is grey, what the laser has burnt so
+  far turns red (an engraved picture only where it is dark), moves with the
+  laser off are grey dashed lines. Over it **Play** / **Pause**, the slider,
+  the time, the **Speed** (5× at first, faster for a long job) and **Next layer**; under it the layer being
+  lasered. Keep it open while you work: when the design changes, it works the
+  job out again after a moment and stays at its place in time (paused; a note
+  says so). New and Open close it.
+- **Materials.** **Settings → Material library…** (the book button next to the
+  material list, **Materials** on the ribbon) stores, per material (for
+  example "Plywood 3 mm"), its thickness, a table of speeds, passes, powers and
+  kerf, and notes. Choosing a material in
   the **Material** list above the layers sets all layers at once.
   **New from current layers** saves every layer of the job: besides the three
   basic ones, extra layers (a second cut, another engraving…) are kept under
@@ -478,8 +505,9 @@ out of the job.
 3. **Trace boundary** (the dashed-outline button, Laser menu) drives the head
    around the design, with the laser off unless set in the settings, so you
    can check where it will be cut. It runs round the rectangle around the
-   design, starting at the corner nearest the head (Settings → Vector: switch
-   off "Boundary trace as a rectangle" to follow the outline instead).
+   design, starting at the corner nearest the head (Settings → Lasers…, Boundary
+   trace: switch off "Boundary trace as a rectangle" to follow the outline
+   instead).
 4. **Start** (F9) runs all ticked layers. **Pause** stops the laser for a
    moment and the same button resumes it. **Stop** (Esc) ends the job
    immediately; then press **Home** before the next job. These buttons stay
@@ -507,7 +535,7 @@ M3 power per operation); **File → Send EGV file to laser…** sends an existin
 EGV file.
 
 **G-code for GRBL lasers (beta).** **File → Save G-code…** (Ctrl+Shift+K,
-**G-code** in the File group of the toolbar) writes the job as G-code for a
+**G-code** in the File group of the ribbon) writes the job as G-code for a
 laser with a GRBL board (diode lasers, CO2 lasers with GRBL), to run with
 LaserGRBL, UGS or another sender: the ticked layers in their order (raster,
 engrave, cut), each with its speed (F, mm/min), power (S) and passes, in
@@ -519,7 +547,7 @@ it) and the **raster overscan** (the head starts and stops this far beyond
 each raster line, so it is at speed where it burns). These are kept with the
 laser profile. Not yet checked on a GRBL machine.
 
-**A GRBL laser connected to Kerfly (beta).** In **Settings → Machine** choose
+**A GRBL laser connected to Kerfly (beta).** In **Settings → Lasers…** choose
 **Machine: GRBL board, serial port**, then its **serial port** (or the first
 board that answers; ↻ looks again after plugging it in), its speed (115200
 on most boards), the **corner the head homes to** (lower left on most GRBL
@@ -543,16 +571,29 @@ serial port needs your user in the `dialout` group:
 
 ## 8. Settings
 
-**Settings → Settings…** (Ctrl+,) has six tabs:
+**Settings → Settings…** (Ctrl+,, **Settings** on the ribbon) has the
+program's settings, the same for every laser, in four categories in a list on
+the left; each page is in sections. **Save** keeps the changes, **Cancel**
+leaves them.
 
-| Tab | Settings |
+| Category | Settings |
 |---|---|
-| Machine | controller board, units, bed size, home in the upper right corner, home when connecting, home the head after a job (back to 0, 0, for the next piece), unlock the rail and beep after a job, a report after a job (its time, on by default; a small window that waits until you are back), a program run before every job sent to the laser (for example to switch on the exhaust; the job waits until it ends, at most a minute, and asks when it fails), a program run after every finished job (for example to switch off the exhaust or send a message; its output and errors go to the report), X/Y scale factors, M3 power per operation and maximum power (greyed out with other boards: their power is set with the knob of the laser) |
 | Raster | halftone (dither), its method (Floyd-Steinberg, Atkinson for more contrast on wood, Jarvis, Stucki, Burkes and Sierra for smoother gradients, ordered Bayer for an even texture, threshold) and its resolution, invert colours, mirror, rotate 90°, engrave bottom to top, scan line step, levels curve |
-| Vector | cut inside shapes first, boundary trace with the laser on and its power (in per cent of the maximum; M3 board), as a rectangle or along the outline, trace gap and speed |
-| View | snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu), Engrave / Outline / Cut buttons next to Start, theme: light, dark or as the system (after a restart) |
-| Rotary | rotary attachment, its scale factor and rapid speed (greyed out while the attachment is off) |
-| Advanced | language (after a restart), checking for new versions, Inkscape, reduced memory use, USB data preparation, waiting for the laser, USB timeout and retries |
+| Vector | cut inside shapes first |
+| View | units (mm or inches), snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu), Engrave / Outline / Cut buttons next to Start, theme: light, dark or as the system (after a restart) |
+| Advanced | language (after a restart), checking for new versions, Inkscape, reduced memory use |
+
+**Settings → Lasers…** has each laser's own settings, in sections:
+
+| Section | Settings |
+|---|---|
+| Controller | the machine (K40 or a GRBL board), controller board, USB port; for a GRBL board its serial port, speed, home corner, jog speed and full power S |
+| Work area, homing and the end of a job | bed size, home in the upper right corner, home when connecting, home the head after a job (back to 0, 0, for the next piece), unlock the rail and beep after a job, a report after a job (its time, on by default; a small window that waits until you are back) |
+| Programs run with a job | a program run before every job sent to the laser (for example to switch on the exhaust; the job waits until it ends, at most a minute, and asks when it fails), a program run after every finished job (for example to switch off the exhaust or send a message; its output and errors go to the report) |
+| Scale, power | X/Y scale factors, M3 power per operation and maximum power (greyed out with other boards: their power is set with the knob of the laser) |
+| Boundary trace | with the laser on and its power (in per cent of the maximum; M3 board), as a rectangle or along the outline, trace gap and speed |
+| Rotary attachment | the attachment, its scale factor and rapid speed (greyed out while it is off) |
+| USB connection | USB data preparation, waiting for the laser, USB timeout and retries |
 
 Kerfly is available in English, Polish, German, Spanish and French.
 
@@ -616,11 +657,11 @@ the mouse actions and a search field.
 
 **Help → User guide** (F1) opens this guide.
 
-- **Help → Report a problem on GitHub…** (toolbar **Bug report**) saves a
+- **Help → Report a problem on GitHub…** (also in **Help → About Kerfly**) saves a
   diagnostic report and opens the report form with your version, system and
   board filled in. Drag the report file into the form's *Diagnostic report*
   field. You can write in English or Polish. A free GitHub account is needed.
-- **Help → Save diagnostic report…** (toolbar **Report**) only saves the
+- **Help → Save diagnostic report…** only saves the
   report: settings, self-test and the log of everything sent to the laser.
 - **Help → Open the log folder** shows `kerfly.log`.
 
@@ -628,7 +669,7 @@ Common problems:
 
 | Problem | What to do |
 |---|---|
-| "Laser is not initialized" | Press the plug button (Ctrl+I). On Linux choose **Laser → Allow USB access for the laser…**; on Windows check the libusb driver |
+| "Laser is not initialized" | Press the plug button on the Laser tab (Ctrl+I). On Linux choose **Laser → Allow USB access for the laser…**; on Windows check the libusb driver |
 | The head is not where the program shows it | Press Home. This happens after Unlock rail, after moving the head by hand and after Stop |
 | An element is drawn red, Start does not work | The element sticks out of the bed: move it back |
 | SVG text is missing or not cut | Install Inkscape: it turns SVG text into paths |

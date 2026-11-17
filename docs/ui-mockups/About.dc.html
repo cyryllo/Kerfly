@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - o programie</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic16{width:16px;height:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.ib:hover{background:#dfe3e8;border-color:#c4c9d0}
+.btn{height:32px;min-width:88px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;font-size:12px;padding:0 12px}
+.btn:hover{background:#eef0f3}
+.sm{height:28px;min-width:0;padding:0 8px}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+.hd{font-size:12px;font-weight:600;color:#2b2f36}
+.cap{font-size:10px;color:#5b6370;line-height:14px}
+.row{display:flex;align-items:center;gap:8px;min-height:28px}
+.chk{display:flex;align-items:center;gap:8px;min-height:28px;font-size:12px}
+.chk input{margin:0}
+.beta{font-size:10px;color:#5b6370;border:1px solid #c4c9d0;border-radius:3px;padding:0 4px;line-height:14px}
+.key{display:inline-block;min-width:20px;height:20px;box-sizing:border-box;padding:0 6px;border:1px solid #b6bcc5;border-bottom-width:2px;border-radius:4px;background:#ffffff;font-size:11px;line-height:17px;text-align:center;font-variant-numeric:tabular-nums}
+.kr{display:grid;grid-template-columns:minmax(0,1fr) 300px;column-gap:12px;align-items:center;min-height:30px;padding:2px 12px}
+.kr:nth-child(even){background:#f7f8fa}
+</style>
+</helmet>
+<div style="width: 560px; height: 400px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #f4f5f7; border: 1px solid #9aa1ab; border-radius: 6px; overflow: hidden">
+<div style="height: 36px; flex: none; display: flex; align-items: center; padding: 0 4px 0 12px; background: #eef0f3; border-bottom: 1px solid #c4c9d0">
+<span style="flex: 1 1 0; font-size: 13px; font-weight: 600">O programie</span>
+<button class="ib" aria-label="Zamknij okno"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"/></svg></button>
+</div>
+<div id="top" style="flex: 1 1 0; min-height: 0; display: flex; gap: 20px; padding: 20px; background: #ffffff">
+<svg viewBox="0 0 256 256" style="width: 96px; height: 96px; flex: none" role="img" aria-label="Logo Kerfly">
+<rect x="8" y="8" width="240" height="240" rx="52" style="fill: #1f2630"></rect>
+<rect x="58" y="50" width="38" height="156" rx="6" style="fill: #eef1f5"></rect>
+<path d="M96 116L120 104L206 194Q210 206 196 206L170 206Z" style="fill: #eef1f5"></path>
+<path d="M206 30L214 38L118 132L100 114Z" style="fill: #ff5722"></path>
+<circle cx="110" cy="124" r="16" style="fill: #ffe082"></circle>
+</svg>
+<div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: baseline; gap: 8px">
+<span style="font-size: 22px; font-weight: 600">Kerfly</span>
+<span class="lbl" style="font-size: 13px; font-variant-numeric: tabular-nums">wersja 1.8.0</span>
+</div>
+<span style="font-size: 13px; line-height: 1.5">Program do sterowania laserami K40 z płytami Lihuiyu M2 Nano. Rysowanie, układanie i cięcie w jednym oknie.</span>
+<div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); column-gap: 12px; row-gap: 6px; padding: 12px; background: #f7f8fa; border: 1px solid #e1e4e8; border-radius: 4px">
+<span class="lbl">Licencja</span><span>GNU GPL w wersji 3 lub nowszej</span>
+<span class="lbl">Oparty na</span><span>K40 Whisperer, autor: Scorch</span>
+<span class="lbl">Aktualizacje</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #2e7d32"></span>Masz najnowszą wersję</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px">
+<a href="#top" style="display: flex; align-items: center; gap: 6px; height: 28px; font-size: 12px; text-decoration: none"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h9v9 M18 6L7 17"/></svg>Strona projektu na GitHubie</a><a href="#top" style="display: flex; align-items: center; gap: 6px; height: 28px; font-size: 12px; text-decoration: none"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h9v9 M18 6L7 17"/></svg>Instrukcja obsługi</a><a href="#top" style="display: flex; align-items: center; gap: 6px; height: 28px; font-size: 12px; text-decoration: none"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h9v9 M18 6L7 17"/></svg>Lista zmian</a><a href="#top" style="display: flex; align-items: center; gap: 6px; height: 28px; font-size: 12px; text-decoration: none"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h9v9 M18 6L7 17"/></svg>Licencje bibliotek</a>
+</div>
+</div>
+</div>
+<div style="flex: none; display: flex; align-items: center; gap: 8px; padding: 12px; background: #eef0f3; border-top: 1px solid #c4c9d0">
+<span class="lbl" style="flex: 1 1 0"></span>
+<button class="btn">Zgłoś problem</button><button class="btn">Sprawdź aktualizacje</button><button class="btn" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff; font-weight: 600">Zamknij</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":560,"height":400}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>

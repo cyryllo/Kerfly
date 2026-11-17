@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - skróty klawiszowe</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic16{width:16px;height:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.ib:hover{background:#dfe3e8;border-color:#c4c9d0}
+.btn{height:32px;min-width:88px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;font-size:12px;padding:0 12px}
+.btn:hover{background:#eef0f3}
+.sm{height:28px;min-width:0;padding:0 8px}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+.hd{font-size:12px;font-weight:600;color:#2b2f36}
+.cap{font-size:10px;color:#5b6370;line-height:14px}
+.row{display:flex;align-items:center;gap:8px;min-height:28px}
+.chk{display:flex;align-items:center;gap:8px;min-height:28px;font-size:12px}
+.chk input{margin:0}
+.beta{font-size:10px;color:#5b6370;border:1px solid #c4c9d0;border-radius:3px;padding:0 4px;line-height:14px}
+.key{display:inline-block;min-width:20px;height:20px;box-sizing:border-box;padding:0 6px;border:1px solid #b6bcc5;border-bottom-width:2px;border-radius:4px;background:#ffffff;font-size:11px;line-height:17px;text-align:center;font-variant-numeric:tabular-nums}
+.kr{display:grid;grid-template-columns:minmax(0,1fr) 300px;column-gap:12px;align-items:center;min-height:30px;padding:2px 12px}
+.kr:nth-child(even){background:#f7f8fa}
+</style>
+</helmet>
+<div style="width: 720px; height: 700px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #f4f5f7; border: 1px solid #9aa1ab; border-radius: 6px; overflow: hidden">
+<div style="height: 36px; flex: none; display: flex; align-items: center; padding: 0 4px 0 12px; background: #eef0f3; border-bottom: 1px solid #c4c9d0">
+<span style="flex: 1 1 0; font-size: 13px; font-weight: 600">Skróty klawiszowe</span>
+<button class="ib" aria-label="Zamknij okno"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"/></svg></button>
+</div>
+<div style="flex: none; padding: 12px; background: #ffffff; border-bottom: 1px solid #c4c9d0">
+<input class="fld" style="width: 100%" placeholder="Szukaj polecenia albo klawisza" aria-label="Szukaj polecenia albo klawisza">
+</div>
+<div style="flex: none; display: grid; grid-template-columns: minmax(0, 1fr) 300px; column-gap: 12px; padding: 6px 12px; background: #f7f8fa; border-bottom: 1px solid #e1e4e8">
+<span class="cap">Polecenie</span><span class="cap">Klawisze lub mysz</span>
+</div>
+<div style="flex: 1 1 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; background: #ffffff">
+<div style="display: flex; flex-direction: column"><span class="hd" style="padding: 10px 12px 4px">Plik</span><div class="kr"><span>Nowy</span><span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center"><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">Ctrl</span><span class="lbl">+</span><span class="key">N</span></span></span></div><div class="kr"><span>Otwórz</span><span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center"><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">Ctrl</span><span class="lbl">+</span><span class="key">O</span></span></span></div><div class="kr"><span>Zapisz</span><span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center"><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">Ctrl</span><span class="lbl">+</span><span class="key">S</span></span></span></div></div>
+<div style="display: flex; flex-direction: column"><span class="hd" style="padding: 10px 12px 4px">Edycja</span><div class="kr"><span>Cofnij</span><span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center"><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">Ctrl</span><span class="lbl">+</span><span class="key">Z</span></span></span></div><div class="kr"><span>Ponów</span><span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center"><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">Ctrl</span><span class="lbl">+</span><span class="key">Shift</span><span class="lbl">+</span><span class="key">Z</span></span></span></div><div class="kr"><span>Wklej w miejscu</span><span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center"><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">Ctrl</span><span class="lbl">+</span><span class="key">Alt</span><span class="lbl">+</span><span class="key">V</span></span></span></div><div class="kr"><span>Obróć w lewo</span><span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center"><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">Ctrl</span><span class="lbl">+</span><span class="key">L</span></span><span class="lbl">lub</span><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">Ctrl</span><span class="lbl">+</span><span class="key">[</span></span></span></div><div class="kr"><span>Obróć w prawo</span><span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center"><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">Ctrl</span><span class="lbl">+</span><span class="key">R</span></span><span class="lbl">lub</span><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">Ctrl</span><span class="lbl">+</span><span class="key">]</span></span></span></div><div class="kr"><span>Odbij w poziomie</span><span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center"><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">H</span></span></span></div><div class="kr"><span>Odbij w pionie</span><span style="display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center"><span style="display: inline-flex; gap: 3px; align-items: center"><span class="key">V</span></span></span></div></div>
+<div style="display: flex; flex-direction: column"><span class="hd" style="padding: 10px 12px 4px">Mysz i pozostałe klawisze</span><div class="kr"><span>Zaznacz kilka elementów</span><span class="lbl">Przeciągnij ramkę albo Ctrl+klik</span></div><div class="kr"><span>Kwadrat, koło, linie co 45°</span><span class="lbl">Trzymaj Shift podczas rysowania</span></div><div class="kr"><span>Wyłącz przyciąganie na chwilę</span><span class="lbl">Trzymaj Alt</span></div><div class="kr"><span>Edytuj węzły elementu</span><span class="lbl">Kliknij dwukrotnie</span></div><div class="kr"><span>Powiększenie</span><span class="lbl">Kółko myszy</span></div><div class="kr"><span>Przesuń widok</span><span class="lbl">Przeciągnij środkowym lub prawym przyciskiem</span></div></div>
+</div>
+<div style="flex: none; display: flex; align-items: center; gap: 8px; padding: 12px; background: #eef0f3; border-top: 1px solid #c4c9d0">
+<span class="lbl" style="flex: 1 1 0">Skróty z menu i narzędzi pojawiają się tu same</span>
+<button class="btn">Zamknij</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":720,"height":700}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>

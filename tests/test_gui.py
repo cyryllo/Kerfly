@@ -92,6 +92,11 @@ def main():
     app = QApplication([])
     # "save changes first?" when replacing a design: discard in tests
     QMessageBox.question = staticmethod(lambda *a, **k: QMessageBox.Discard)
+    # the window's questions (kerfly.gui.widgets.ask, with named buttons) answered like QMessageBox.question,
+    # which the checks below replace with their answers
+    from kerfly.gui import widgets as _widgets
+    _widgets.ask = lambda parent, title, text, buttons=QMessageBox.Yes | QMessageBox.No, default=QMessageBox.NoButton, \
+        **_k: QMessageBox.question(parent, title, text, buttons, default)
     manifest = json.load(open(os.path.join(BASE, "manifest.json")))["cases"]
     failures = 0
 
@@ -157,8 +162,8 @@ def main():
     w.start_job(trace=True)
     run_until_idle(app, w)
     powers = [p for p, _d in fake.sent]
-    from kerfly.gui.settings_dialog import SettingsDialog as _SD
-    sd = _SD(dict(w.values, trace_w_laser="0"), w, tab=2)
+    from kerfly.gui.settings_dialog import SettingsDialog as _SD, SettingsForm as _LF
+    sd = _LF(dict(w.values, trace_w_laser="0"), machine=True, window=w)          # a laser's settings (Lasers)
     field = sd._widgets["Trace_power"]
     greyed = not field.isEnabled()
     sd._widgets["trace_w_laser"].setChecked(True)
@@ -171,7 +176,7 @@ def main():
     sd.close()
 
     # 3b2. power settings only with the M3 board (the others have no power control: the knob sets it)
-    sd = _SD(dict(config.DEFAULT_VALUES, board_name="LASER-M2", trace_w_laser="1", show_power="1"), None, tab=0)
+    sd = _LF(dict(config.DEFAULT_VALUES, board_name="LASER-M2", trace_w_laser="1", show_power="1"), machine=True)
     wd = sd._widgets
     m2_off = not wd["show_power"].isEnabled() and not wd["max_power"].isEnabled() \
         and not wd["Trace_power"].isEnabled()
@@ -236,8 +241,7 @@ def main():
     with_error = _job_then(w)
     w.values.update(post_exec="0", post_disp="0")
     quiet = _job_then(w) if with_error is None else None
-    from kerfly.gui.settings_dialog import SettingsDialog as _SD2
-    sd = _SD2(dict(w.values, rotary="0", post_exec="0"), w)
+    sd = _LF(dict(w.values, rotary="0", post_exec="0"), machine=True, window=w)
     greyed = not sd._widgets["LaserRscale"].isEnabled() and not sd._widgets["batch_path"].isEnabled()
     sd._widgets["rotary"].setChecked(True)
     sd._widgets["post_exec"].setChecked(True)
@@ -330,7 +334,9 @@ def main():
     from PySide6.QtWidgets import QToolBar as _TB
     toolbar = w.findChild(_TB, "main_toolbar")
     on_toolbar = {b.defaultAction() for b in toolbar.findChildren(QToolButton)}
-    no_updates_button = w.act_check_updates not in on_toolbar and w.act_generators["gear"] in on_toolbar
+    # the generators in the list under the ribbon's Generators button (docs/ui-mockups/GeneratorsMenu)
+    no_updates_button = (w.act_check_updates not in on_toolbar and w.generators_button.menu() is w.generators_menu
+                         and w.act_generators["gear"] in w.generators_menu.actions())
     w.resize(400, 300)
     app.processEvents()
     screen = QApplication.primaryScreen().availableGeometry()
@@ -392,14 +398,35 @@ def main():
     pw.profile_box.activated.emit(pw.profile_box.currentIndex())
     switched = pw.values["board_name"] == "LASER-M3" and float(pw.values["LaserXsize"]) == 500 \
         and pw.values["rotary"] == "1" and pw.power_per_stage() and pw.profiles.current == "Workshop M3"
+    # a laser's settings in Settings → Lasers…, the program's in Settings → Settings…
     from kerfly.gui.settings_dialog import SettingsDialog as _SD4
+    ld = _PD(pw)
+    ld.form._widgets["LaserYsize"].setValue(300)
+    ld._save_and_close()
     real_exec = _SD4.exec
-    _SD4.exec = lambda self: (self._widgets["LaserYsize"].setValue(300), self._widgets["grid_mm"].setValue(5),
-                              1)[2]
+    _SD4.exec = lambda self: (self._widgets["grid_mm"].setValue(5), 1)[1]
     pw.edit_settings()
     _SD4.exec = real_exec
     saved = _pc.load()
-    machine_kept = float(saved.get("Workshop M3")["LaserYsize"]) == 300 and "grid_mm" not in saved.get("Workshop M3")
+    machine_kept = (float(saved.get("Workshop M3")["LaserYsize"]) == 300 and "grid_mm" not in saved.get("Workshop M3")
+                    and float(pw.values["LaserYsize"]) == 300 and float(pw.values["grid_mm"]) == 5)
+    # another laser changed without using it: kept while going to another one in the list, written on Save
+    # into its profile only (the window keeps the laser in use); Cancel leaves the changes
+    ld = _PD(pw)
+    ld.list.setCurrentRow(pw.profiles.names().index(first))
+    gap_now = float(pw.values["trace_gap"])
+    ld.form._widgets["trace_gap"].setValue(7)
+    ld.list.setCurrentRow(pw.profiles.names().index("Workshop M3"))
+    ld.list.setCurrentRow(pw.profiles.names().index(first))
+    still = abs(ld.form._widgets["trace_gap"].value() - 7) < 1e-6
+    ld._save_and_close()
+    other_saved = abs(float(_pc.load().get(first)["trace_gap"]) - 7) < 1e-6 and \
+        abs(float(pw.values["trace_gap"]) - gap_now) < 1e-6 and pw.profiles.current == "Workshop M3"
+    ld = _PD(pw)
+    ld.form._widgets["LaserXsize"].setValue(222)
+    ld.reject()
+    cancelled = float(pw.values["LaserXsize"]) == 500 and abs(float(_pc.load().get("Workshop M3")["LaserXsize"]) - 500) < 1e-6
+    machine_kept = machine_kept and still and other_saved and cancelled
     pw.switch_profile(first)
     back = pw.values["board_name"] == "LASER-M2" and float(pw.values["LaserXsize"]) == 325
     pw.worker = object()
@@ -598,8 +625,8 @@ def main():
     uw.profiles.add("Second K40", dict(_pc.from_values(uw.values), usb_port="1-3"))
     uw.switch_profile("Second K40")
     released = not uw.laser.connected
-    from kerfly.gui.settings_dialog import SettingsDialog as _SD5
-    sd = _SD5(dict(uw.values), uw)
+    from kerfly.gui.settings_dialog import SettingsForm as _LF5
+    sd = _LF5(dict(uw.values), machine=True, window=uw)
     listed = [sd.usb_port_box.itemData(i) for i in range(sd.usb_port_box.count())]
     sd.close()
     _nl.K40_CLASS, _up.list_lasers = real_board, real_list
@@ -1145,7 +1172,8 @@ def main():
                 and abs(after[0].y() - before[0].y() + 5) < 1e-6
                 and all(abs(a.x() - b.x()) < 1e-6 and abs(a.y() - b.y()) < 1e-6 for a, b in zip(after[1:], before[1:])))
     mid = (after[1] + after[2]) / 2.0
-    inserted = ed.insert_at(mid) and len(view.node_scene_points()) == 5 and w.tool_options.spec.kind == "path"
+    # (the node tool's bar shows the node buttons alone: the shape itself is now a path)
+    inserted = ed.insert_at(mid) and len(view.node_scene_points()) == 5 and rect.shape.kind == "path"
     ed.select({(0, 1)})
     curved = ed.action("curve") and any(n[4] is not None for n in rect.shape.subpaths[0]["nodes"])
     ed.select({(0, 1)})
@@ -1348,6 +1376,105 @@ def main():
         jw.close()
     check("Join into a polyline (Ctrl+J): a triangle of lines closed, a 0.04 mm gap joined, 0.2 mm and a lone "
           "line kept, in place, one undo step (home upper left and upper right)", all(joins), "(%s)" % joins)
+
+    # 28c2. The dialog pattern (kerfly/gui/widgets.py): a body, a footer with Cancel first and the action named
+    # for what it does (never "OK", role primary, the theme's height), a beta badge by a new section; the
+    # style puts every dialog's buttons in that order and without icons (also a message box)
+    from PySide6.QtWidgets import QDialogButtonBox as _DBB, QLabel as _QL, QMessageBox as _QMB, QStyle as _QS
+    from kerfly.gui import theme as _th
+    from kerfly.gui.gcode_dialog import GcodeDialog as _GD
+    from kerfly.gui.nest_dialog import NestDialog as _ND
+    pattern = []
+    for dlg, action in ((_ND({}, (300, 200), 2), _("Nest")), (_GD({}), _("Save…"))):
+        dlg.show()
+        app.processEvents()
+        box = dlg.findChild(_DBB)
+        ok_b, cancel_b = box.button(_DBB.Ok), box.button(_DBB.Cancel)
+        badges = [lb for lb in dlg.findChildren(_QL) if lb.property("role") == "beta"]
+        pattern.append((ok_b.text() == action and ok_b.property("role") == "primary" and ok_b.isDefault()
+                        and ok_b.height() == _th.HEIGHT_BUTTON and cancel_b.mapTo(dlg, cancel_b.rect().topLeft()).x()
+                        < ok_b.mapTo(dlg, ok_b.rect().topLeft()).x() and ok_b.icon().isNull(),
+                        len(badges)))
+        dlg.close()
+    mb = _QMB(_QMB.Question, "?", "?", _QMB.Yes | _QMB.No)
+    mb.show()
+    app.processEvents()
+    mb_order = mb.button(_QMB.No).x() < mb.button(_QMB.Yes).x()
+    mb.close()
+    check("dialog pattern: Cancel first, the named action (role primary, default, 32 px, no icon) last; beta "
+          "badge in the G-code dialog only; a message box's buttons in the same order",
+          [p[0] for p in pattern] == [True, True] and [p[1] for p in pattern] == [0, 1] and mb_order
+          and app.style().styleHint(_QS.SH_DialogButtonBox_ButtonsHaveIcons) == 0,
+          "(%s, message box %s)" % (pattern, mb_order))
+
+    # 28c3. side handles: the middles of a selected shape's sides stretch it along one axis only, the opposite
+    # side staying where it is; one undo step each
+    from PySide6.QtGui import QMouseEvent as _QME
+    from PySide6.QtCore import QEvent as _QEv
+    hw = make_window(grid_mm="0")
+    hw.resize(1200, 800)
+    hw.show()
+    app.processEvents()
+    hw._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)        # 40 x 30 mm
+    rect_e = hw.elements[-1]
+    hw.preview.select_element([rect_e])
+    app.processEvents()
+
+    def side_drag(kind, pick, dx_mm, dy_mm):
+        handle = pick([h for h in hw.preview._handles if h.kind == kind])
+        vp = hw.preview.viewport()
+        a = hw.preview.mapFromScene(handle.scenePos())
+        b = hw.preview.mapFromScene(handle.scenePos() + QPointF(dx_mm, dy_mm))
+        QTest.mousePress(vp, Qt.LeftButton, Qt.NoModifier, a)
+        for i in range(1, 9):
+            p = a + (b - a) * i / 8
+            QApplication.sendEvent(vp, _QME(_QEv.MouseMove, QPointF(p), QPointF(vp.mapToGlobal(p)), Qt.NoButton,
+                                            Qt.LeftButton, Qt.NoModifier))
+            app.processEvents()
+        QTest.mouseRelease(vp, Qt.LeftButton, Qt.NoModifier, b)
+        app.processEvents()
+    kinds = sorted(h.kind for h in hw.preview._handles)
+    left0, top0 = rect_e.bounds[0], rect_e.bounds[3]
+    side_drag("side_x", lambda hs: max(hs, key=lambda h: h.scenePos().x()), 10, 0)
+    w1, h1 = (round(v * 25.4, 1) for v in rect_e.size)
+    # (the mouse moves by whole pixels: within 0.3 mm)
+    stretched_x = abs(w1 - 50.0) < 0.3 and h1 == 30.0 and abs(rect_e.bounds[0] - left0) < 0.002
+    side_drag("side_y", lambda hs: max(hs, key=lambda h: h.scenePos().y()), 0, 5)
+    w2, h2 = (round(v * 25.4, 1) for v in rect_e.size)
+    stretched_y = w2 == w1 and abs(h2 - 35.0) < 0.3 and abs(rect_e.bounds[3] - top0) < 0.002
+    hw.undo()
+    undone = tuple(round(v * 25.4, 1) for v in hw.elements[-1].size) == (w1, h1)
+    hw._dirty = False
+    hw.close()
+    check("side handles: four (with the corners and the rotation one), the right one stretches the width "
+          "alone, the bottom one the height alone, the opposite side stays; one undo step",
+          kinds.count("side_x") == 2 and kinds.count("side_y") == 2 and stretched_x and stretched_y and undone,
+          "(%s)" % [kinds, (w1, h1), (w2, h2), undone])
+
+    # 28c4. the node tool ends with a click on the empty bed (back to Select; like any click there it
+    # deselects); a click on the shape keeps it
+    nw = make_window(grid_mm="0")
+    nw.resize(1200, 800)
+    nw.show()
+    app.processEvents()
+    nw._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
+    ne = nw.elements[-1]
+    nw.preview.select_element([ne])
+    nw.tool_actions["nodes"].trigger()
+    app.processEvents()
+    nvp = nw.preview.viewport()
+    QTest.mouseClick(nvp, Qt.LeftButton, Qt.NoModifier, nw.preview.mapFromScene(QPointF(40, 35)))
+    app.processEvents()
+    kept_on_shape = nw.preview.tool == "nodes"
+    QTest.qWait(QApplication.doubleClickInterval() + 100)          # two clicks, not a double click
+    bed_w, bed_h = (v * 25.4 for v in config.bed_size_inches(nw.values))
+    QTest.mouseClick(nvp, Qt.LeftButton, Qt.NoModifier, nw.preview.mapFromScene(QPointF(bed_w - 10, bed_h - 10)))
+    app.processEvents()
+    left_nodes = nw.preview.tool == "select" and nw.tool_actions["select"].isChecked()
+    nw._dirty = False
+    nw.close()
+    check("node tool: a click on the shape keeps it, a click on the empty bed goes back to Select",
+          kept_on_shape and left_nodes, "(%s)" % [kept_on_shape, left_nodes])
 
     # 28d. Nest on the bed (Ctrl+Shift+N): the selected parts laid out inside the bed with the gap between them,
     # nothing over another; what does not fit on more sheets (groups Sheet N, sheets 2 and on unticked); a group
@@ -1574,7 +1701,7 @@ def main():
     # fields and the speeds engraved on it), Settings and the material library show and take mm/min; what is
     # kept stays mm/s, so the K40 jobs and the profiles do not change
     from kerfly.gui.generators import GeneratorDialog as _SGD
-    from kerfly.gui.settings_dialog import SettingsDialog as _SSD
+    from kerfly.gui.settings_dialog import SettingsForm as _SLF
     from kerfly.gui.materials_dialog import MaterialsDialog as _SMD
     from PySide6.QtWidgets import QDoubleSpinBox as _SDS
     shown = {}
@@ -1584,7 +1711,8 @@ def main():
         cut = next(l for l in sw.layers if l.kind == "cut")
         spin = sw.layers_panel.rows[cut.id]["speed"]
         f = 60.0 if machine == "grbl" else 1.0
-        layer_ok = spin.suffix().strip() == ("mm/min" if f > 1 else "mm/s") and abs(spin.value() - cut.speed * f) < 1e-6
+        layer_ok = ("(%s)" % ("mm/min" if f > 1 else "mm/s") in sw.layers_panel.speed_header.text()
+                    and abs(spin.value() - cut.speed * f) < 1e-6)
         spin.setValue(300.0 if f > 1 else 12.0)
         typed_ok = abs(cut.speed - (5.0 if f > 1 else 12.0)) < 1e-9
         gd = _SGD(sw, "material_test", remember=False)
@@ -1592,13 +1720,12 @@ def main():
         mt_ok = abs(gd.widgets["speed_min"].value() - gd.values()["speed_min"] * f) < 1e-6 and \
             des.layers[0].name.startswith("%g %s" % (des.layers[0].speed * f, "mm/min" if f > 1 else "mm/s"))
         gd.deleteLater()
-        sd = _SSD(sw.values)
+        sd = _SLF(sw.values, machine=True, window=sw)                       # the laser's settings
         ts = next(c for c in sd.findChildren(_SDS) if c.property("setting_key") == "trace_speed")
         set_ok = abs(ts.value() - float(sw.values["trace_speed"]) * f) < 1e-6 and \
             abs(float(sd._getters["trace_speed"]()) - float(sw.values["trace_speed"])) < 1e-6
         md = _SMD(sw.materials, {}, "mm", sw, speed_factor=config.speed_factor(sw.values))
-        mspin = [c for c in md.findChildren(_SDS) if c.suffix().strip() in ("mm/s", "mm/min")]
-        mat_ok = bool(mspin) and all(c.suffix().strip() == ("mm/min" if f > 1 else "mm/s") for c in mspin)
+        mat_ok = "(%s)" % ("mm/min" if f > 1 else "mm/s") in md.speed_header.text()      # the table's header
         shown[machine] = [layer_ok, typed_ok, mt_ok, set_ok, mat_ok]
         sw._dirty = False
         sw.close()
@@ -1678,7 +1805,7 @@ def main():
     w.simulate_job()
     dlg = getattr(w, "_simulation", None)
     played = dlg is not None and dlg.total > 0 and dlg.timer.isActive()
-    auto_speed = dlg.speed.currentData() >= 1
+    auto_speed = dlg.speed.currentData() >= 5                 # 5x at least (a long job faster)
     dlg.skip_layer()
     skipped = dlg.time > 0
     dlg.seek(dlg.total)
@@ -1687,9 +1814,34 @@ def main():
     w.simulate_job()                                    # clicked again: the same window, not a second one
     app.processEvents()
     drawn = drawn and w._simulation is dlg and len([d for d in w.findChildren(_SD) if d.isVisible()]) == 1
-    dlg.close()
+    # its own window and preview (docs/ui-mockups/Simulation): nothing drawn on the main bed view
+    own = dlg.scene is not w.preview.scene() and all(it.scene() is dlg.scene for it in dlg.items)
+    # the design changes while it is open: after a pause the job is worked out again, at the same place in
+    # time, paused, with a note; a change that is not the job's (a selection) changes nothing
+    if dlg.timer.isActive():
+        dlg.toggle()                                    # paused (at 5x it would run on while the test waits)
+    dlg.seek(dlg.total * 0.5)
+    total_before = dlg.total
+    w.elements[0].x += 20 / 25.4
+    w._layout_changed()
+    waited = dlg.refresh_timer.isActive()
+    import time as _time
+    t_end = _time.time() + 2
+    while dlg.refresh_timer.isActive() and _time.time() < t_end:
+        app.processEvents()
+        _time.sleep(0.02)
     app.processEvents()
-    check("simulation: plays, draws the path, closes", played and drawn, "(%.1f s)" % (dlg.total if dlg else 0))
+    followed = (waited and abs(dlg.time - dlg.total * 0.5) < 0.05 * dlg.total + 1e-6 and not dlg.timer.isActive()
+                and dlg.info.text() == _("The design changed: the simulation was worked out again")
+                and abs(dlg.total - total_before) < 1e-6 + 0.5 * total_before)
+    # New: another design, the simulation closes
+    w._dirty = False
+    w.new_project()
+    app.processEvents()
+    closed = w._open_simulation() is None
+    check("simulation: plays, draws the path in its own window, follows a change of the design (paused, at "
+          "its place, a note), New closes it", played and drawn and own and followed and closed,
+          "(%.1f s, own %s, followed %s, closed %s)" % (dlg.total if dlg else 0, own, followed, closed))
     w.close()
 
     # 33. opened DXF: double-click only explains; Ungroup splits it; a part can be dragged and node-edited
@@ -1969,10 +2121,10 @@ def main():
     check("report a problem: report saved, laser form opened with version and board",
           os.path.exists(report) and "issues/new?template=laser_problem.yml" in url
           and "version=" + __import__("kerfly").__version__ in url and "board=" in url, "(%s)" % url[:90])
-    check("report a problem: in the Help menu and the toolbar",
+    check("report a problem: in the Help menu, not on the ribbon (docs/ui-mockups/Main)",
           w.act_report_problem in [a for m in w.menuBar().actions() for a in m.menu().actions()]
-          and any(getattr(b, "defaultAction", lambda: None)() is w.act_report_problem
-                  for b in w.findChildren(QToolButton)))
+          and not any(getattr(b, "defaultAction", lambda: None)() is w.act_report_problem
+                      for b in w.findChildren(QToolButton)))
 
     # 44. Fill tool: click a closed shape to fill it with a pattern (one undo step), the outline
     # stays a cut; the options bar shows the patterns; an opened file must be ungrouped first
@@ -2029,10 +2181,10 @@ def main():
     undone = w4.elements == [a, c, d, b]
     on_bar = any(getattr(t, "defaultAction", lambda: None)() is w4.act_order["up"]
                  for t in w4.findChildren(QToolButton))
-    beside_list = any(b.defaultAction() is w4.act_order["up"] and w4.element_list_box.isAncestorOf(b)
+    beside_list = any(b.defaultAction() is w4.act_order["up"] and w4.element_header.isAncestorOf(b)
                       for b in w4.findChildren(QToolButton))
     on_bar = on_bar and beside_list
-    check("element order: down, to the end, already at the end, to the start, undo, buttons beside the list",
+    check("element order: down, to the end, already at the end, to the start, undo, buttons in the list's header",
           step and last and already and first and already_top and undone and on_bar,
           "(%s)" % ([step, last, already, first, already_top, undone, on_bar],))
     w4._dirty = False

@@ -98,7 +98,7 @@ def take(lang):
     w.tabs.setCurrentIndex(1)
     settle(5)
     w.tabs.grab().save(os.path.join(out, "laser.png"))
-    strip = [t for t in w.findChildren(QToolBar) if t.objectName() != "main_toolbar"][0]
+    strip = w.findChild(QToolBar, "tool_strip")
     strip.grab().save(os.path.join(out, "tools.png"))
     w.tabs.setCurrentIndex(0)
     # safety: an element sticking out of the bed is red, Start and Trace are locked
@@ -116,15 +116,10 @@ def take(lang):
     sim.timer.stop()
     sim.seek(sim.total * 0.55)
     settle(5)
-    picture = w.grab()
-    from PySide6.QtGui import QPainter as _QPainter
-    panel = sim.grab()
-    p = _QPainter(picture)
-    corner = w.preview.mapTo(w, QPoint(w.preview.width() - panel.width() - 16, w.preview.height() - panel.height() - 16))
-    p.drawPixmap(corner, panel)
-    p.end()
-    corner = w.preview.mapTo(w, QPoint(0, 0))
-    picture.copy(QRect(corner, w.preview.size())).save(os.path.join(out, "site-simulation.png"))
+    # its own window (docs/ui-mockups/Simulation)
+    sim.resize(1100, 640)
+    settle(5)
+    sim.grab().save(os.path.join(out, "site-simulation.png"))
     sim.close()
     w._dirty = False
     w.close()

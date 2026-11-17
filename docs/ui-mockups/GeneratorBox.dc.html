@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - generator pudełka</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic16{width:16px;height:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.ib:hover{background:#dfe3e8;border-color:#c4c9d0}
+.btn{height:32px;min-width:88px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;font-size:12px;padding:0 12px}
+.btn:hover{background:#eef0f3}
+.sm{height:28px;min-width:0;padding:0 8px}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+.hd{font-size:12px;font-weight:600;color:#2b2f36}
+.cap{font-size:10px;color:#5b6370;line-height:14px}
+.row{display:flex;align-items:center;gap:8px;min-height:28px}
+.chk{display:flex;align-items:center;gap:8px;min-height:28px;font-size:12px}
+.chk input{margin:0}
+.beta{font-size:10px;color:#5b6370;border:1px solid #c4c9d0;border-radius:3px;padding:0 4px;line-height:14px}
+</style>
+</helmet>
+<div style="width: 960px; height: 640px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #f4f5f7; border: 1px solid #9aa1ab; border-radius: 6px; overflow: hidden">
+<div style="height: 36px; flex: none; display: flex; align-items: center; padding: 0 4px 0 12px; background: #eef0f3; border-bottom: 1px solid #c4c9d0">
+<span style="flex: 1 1 0; font-size: 13px; font-weight: 600">Generator: Pudełko na wczepy</span>
+<button class="ib" aria-label="Zamknij okno"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"/></svg></button>
+</div>
+<div style="flex: 1 1 0; min-height: 0; display: flex">
+<div style="width: 300px; flex: none; box-sizing: border-box; padding: 12px; display: flex; flex-direction: column; gap: 12px; background: #ffffff; border-right: 1px solid #c4c9d0">
+<span class="lbl">Dno, cztery ścianki i wieko łączone wczepami.</span>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="hd">Wymiary</span>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 6px; align-items: center">
+<label class="lbl" for="gw">Szerokość</label><input id="gw" class="fld" style="width: 96px; text-align: right" value="100,0 mm">
+<label class="lbl" for="gd">Głębokość</label><input id="gd" class="fld" style="width: 96px; text-align: right" value="80,0 mm">
+<label class="lbl" for="gh">Wysokość</label><input id="gh" class="fld" style="width: 96px; text-align: right" value="50,0 mm">
+<label class="chk" for="gin" style="grid-column: 1 / -1"><input id="gin" type="checkbox">Podane wymiary są wewnętrzne</label>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="hd">Materiał i wczepy</span>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 6px; align-items: center">
+<label class="lbl" for="gt">Grubość materiału</label><input id="gt" class="fld" style="width: 96px; text-align: right" value="3,00 mm">
+<label class="lbl" for="gf">Szerokość wczepu</label><input id="gf" class="fld" style="width: 96px; text-align: right" value="10,0 mm">
+<label class="lbl" for="gk">Kerf</label><input id="gk" class="fld" style="width: 96px; text-align: right" value="0,15 mm">
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="hd">Wieko i przegródki</span>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 6px; align-items: center">
+<label class="chk" for="gl" style="grid-column: 1 / -1"><input id="gl" type="checkbox" checked>Z wiekiem</label>
+<label class="chk" for="gs" style="grid-column: 1 / -1"><input id="gs" type="checkbox" checked>Wysuwane wieczko <span class="beta">beta</span></label>
+<label class="lbl" for="gda">Przegródki w poprzek <span class="beta">beta</span></label><input id="gda" class="fld" style="width: 96px; text-align: right" value="1">
+<label class="lbl" for="gdl">Przegródki wzdłuż <span class="beta">beta</span></label><input id="gdl" class="fld" style="width: 96px; text-align: right" value="0">
+<label class="chk" for="gel" style="grid-column: 1 / -1"><input id="gel" type="checkbox">Każda część na osobnej warstwie</label>
+</div>
+</div>
+</div>
+<div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column">
+<div style="height: 44px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 12px; border-bottom: 1px solid #c4c9d0; background: #f7f8fa">
+<div style="display: flex; border: 1px solid #b6bcc5; border-radius: 4px; overflow: hidden">
+<button style="height: 26px; padding: 0 12px; border: 0; background: #ffffff; font-size: 12px">Części</button>
+<button style="height: 26px; padding: 0 12px; border: 0; border-left: 1px solid #b6bcc5; background: #dce6f2; color: #1f4f82; font-size: 12px; font-weight: 600">3D</button>
+</div>
+<div style="width: 1px; align-self: stretch; margin: 8px 0; background: #c4c9d0"></div>
+<label class="chk" for="pex"><input id="pex" type="checkbox">Rozsunięte</label>
+<label class="chk" for="phe"><input id="phe" type="checkbox" checked>Ukryte krawędzie</label>
+<span style="flex: 1 1 0"></span>
+<label class="lbl" for="pls">Wysuń wieczko</label>
+<input id="pls" type="range" min="0" max="100" value="45" style="width: 140px">
+</div>
+<div style="flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; background: #eceef1">
+<svg viewBox="0 0 520 360" style="width: 520px; height: 360px" role="img" aria-label="Podgląd 3D pudełka z wysuniętym wieczkiem">
+<path d="M120 150l180-60 140 50v130l-180 60-140-50z" style="fill: #c9a678; stroke: #5d4630; stroke-width: 1.5"></path>
+<path d="M120 150l140 50 180-60 M260 200v130" style="fill: none; stroke: #5d4630; stroke-width: 1.5"></path>
+<path d="M60 172l180-60 150 54-180 60z" style="fill: #dcc09a; stroke: #5d4630; stroke-width: 1.5"></path>
+<path d="M150 230h14v12h14v-12h14 M300 262h14v-12h14v12h14 M360 242h14v-12h14v12h14" style="fill: none; stroke: #5d4630; stroke-width: 1.2"></path>
+<path d="M300 90v70 M300 160l-180 60 M300 160l140 50" style="fill: none; stroke: #5d4630; stroke-width: 1; stroke-dasharray: 5 4"></path>
+</svg>
+</div>
+</div>
+</div>
+<div style="flex: none; display: flex; align-items: center; gap: 8px; padding: 12px; background: #eef0f3; border-top: 1px solid #c4c9d0">
+<span class="lbl" style="flex: 1 1 0">229,1 × 217,1 mm · 29 kształtów · 1 warstwa</span>
+<button class="btn">Anuluj</button><button class="btn" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff; font-weight: 600">Wstaw</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":960,"height":640}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>

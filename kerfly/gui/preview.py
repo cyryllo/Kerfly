@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (QGraphicsEllipseItem, QGraphicsItem, QGraphicsLin
 
 from kerfly.core import snap as snapping
 from kerfly.core.config import bed_size_inches, is_true
+from kerfly.gui import theme
 from kerfly.i18n import N_, _
 
 SNAP_PIXELS = 10                     # snap distance on screen
@@ -32,19 +33,9 @@ MAX_PREVIEW_PIXELS = 3000   # longest side of a raster preview image
 # tools that work on a shape clicked in the bed view (they draw nothing)
 PICK_TOOLS = ("fill", "textpath", "hinge", "offset")
 
-COLORS = {
-    "bed": QColor("#e9ebee"),
-    "bed_border": QColor("#b8bec7"),
-    "background": QColor("#5b616b"),
-    "engrave": QColor("#1565c0"),
-    "cut": QColor("#d32f2f"),
-    "gcode": QColor("#6a1b9a"),
-    "outline": QColor("#9aa1ab"),
-    "selection": QColor("#1e88e5"),
-    "head": QColor("#f57c00"),
-    "off_bed": QColor("#d32f2f"),
-    "snap": QColor("#e040fb"),
-}
+# the colours drawn on the bed (theme.CANVAS: the same in both themes)
+COLORS = {key: theme.canvas(key) for key in ("bed", "bed_border", "background", "engrave", "cut", "gcode",
+                                             "outline", "selection", "head", "off_bed", "snap", "handle")}
 
 
 def _cosmetic_pen(color, width=1.0, style=Qt.SolidLine):
@@ -66,6 +57,7 @@ class ViewSignals(QObject):
     selected = Signal(object)                   # element or None
     moved = Signal(object, float, float)        # element, dx, dy (inches, machine x, y up)
     scaled = Signal(object, float)              # element, factor (about its centre)
+    stretched = Signal(object, str, float, float, float)  # element, "x" / "y" (its own), factor, centre moved (scene mm)
     rotated = Signal(object, float)             # element, degrees counter-clockwise
     nudged = Signal(object, float, float)       # element, dx, dy in mm (screen right / up)
     drawn = Signal(str, QPointF, QPointF, bool)  # tool, start, end (scene mm), shift held
@@ -78,22 +70,28 @@ class ViewSignals(QObject):
     shape_picked = Signal(str, QPointF)          # fill / text-on-path / hinge tool clicked here (scene mm)
     context_menu = Signal(QPointF, QPoint)        # right click without moving: scene mm, screen position
     hovered = Signal(object)                      # the element under the mouse pointer, or None
+    pointer = Signal(float, float)                # the mouse pointer over the view (scene mm), for the status bar
+    zoomed = Signal()                             # the view was zoomed or fitted
+    leave_nodes = Signal()                        # the node tool: a click on the empty bed (back to Select)
 
 
-def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
-    """QTransform from ElementItem local coordinates to scene coordinates."""
+def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0, stretch=(1.0, 1.0),
+                      shift=(0.0, 0.0)):
+    """QTransform from ElementItem local coordinates to scene coordinates; stretch: more scale along the
+    element's own x and y (a side handle), shift: its centre moved (scene mm)."""
     w, h = element.size
     W, H = w * MM, h * MM
     cx = element.x * MM + W / 2.0
     if home_ur:
         cx = bed_w_mm - cx
     cy = -element.y * MM + H / 2.0
+    cx, cy = cx + shift[0], cy + shift[1]
     xmin, xmax, ymin, ymax = element.design.bounds
     w0, h0 = (xmax - xmin) * MM, (ymax - ymin) * MM
     t = QTransform()
     t.translate(cx, cy)
     t.rotate(-(element.rotation + extra_rotation))
-    t.scale(element.scale_x * scale, element.scale_y * scale)
+    t.scale(element.scale_x * scale * stretch[0], element.scale_y * scale * stretch[1])
     t.translate(-w0 / 2.0, -h0 / 2.0)
     return t
 
@@ -228,7 +226,9 @@ class ElementItem(QGraphicsItem):
 
 
 class Handle(QGraphicsRectItem):
-    """Scale handle (corner) or rotation handle, constant size on screen."""
+    """Scale handle (corner, about the centre), side handle (the middle of a side: "side_x" / "side_y" stretch
+    the element along its own x or y only, the opposite side stays) or rotation handle; constant size on
+    screen."""
 
     def __init__(self, kind, view, target):
         super().__init__(-5, -5, 10, 10)
@@ -238,8 +238,9 @@ class Handle(QGraphicsRectItem):
         self.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
         self.setZValue(20)
         self.setPen(_cosmetic_pen(COLORS["selection"], 1.5))
-        self.setBrush(QBrush(QColor("white")))
-        self.setCursor(Qt.CrossCursor if kind == "rotate" else Qt.SizeFDiagCursor)
+        self.setBrush(QBrush(COLORS["handle"]))
+        self.setCursor({"rotate": Qt.CrossCursor, "side_x": Qt.SizeHorCursor,
+                        "side_y": Qt.SizeVerCursor}.get(kind, Qt.SizeFDiagCursor))
         self._start = None
         self._value = None
 
@@ -258,6 +259,7 @@ class Handle(QGraphicsRectItem):
     def mousePressEvent(self, event):
         self._start = event.scenePos()
         self._centre_at_start = self._centre()
+        self._from_centre = self.scenePos() - self._centre_at_start      # a side handle: centre -> its side
         self._value = None
         event.accept()
 
@@ -274,6 +276,19 @@ class Handle(QGraphicsRectItem):
                 delta = round(delta / 15.0) * 15.0
             self._value = delta
             t = element_transform(e, self.view.home_ur, self.view.bed_w_mm, extra_rotation=delta)
+        elif self.kind in ("side_x", "side_y"):
+            # along the line from the centre to this side: the opposite side stays where it is
+            v = self._from_centre
+            length = math.hypot(v.x(), v.y())
+            if length <= 1e-9:
+                return
+            opposite = c - v
+            along = ((p.x() - opposite.x()) * v.x() + (p.y() - opposite.y()) * v.y()) / length
+            f = max(0.01, along / (2.0 * length))
+            shift = (v.x() * (f - 1.0), v.y() * (f - 1.0))
+            self._value = (f, shift)
+            stretch = (f, 1.0) if self.kind == "side_x" else (1.0, f)
+            t = element_transform(e, self.view.home_ur, self.view.bed_w_mm, stretch=stretch, shift=shift)
         else:
             d0 = math.hypot(p0.x() - c.x(), p0.y() - c.y())
             d = math.hypot(p.x() - c.x(), p.y() - c.y())
@@ -291,6 +306,9 @@ class Handle(QGraphicsRectItem):
             return
         if self.kind == "rotate":
             self.view.signals.rotated.emit(self.target.element, self._value)
+        elif self.kind in ("side_x", "side_y"):
+            f, (dx, dy) = self._value
+            self.view.signals.stretched.emit(self.target.element, self.kind[-1], f, dx, dy)
         else:
             self.view.signals.scaled.emit(self.target.element, self._value)
 
@@ -357,6 +375,7 @@ class PreviewView(QGraphicsView):
             moved = self.mapFromScene(before) - pos
             self.horizontalScrollBar().setValue(self.horizontalScrollBar().value() + moved.x())
             self.verticalScrollBar().setValue(self.verticalScrollBar().value() + moved.y())
+            self.signals.zoomed.emit()
             self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
             self._place_handles()
 
@@ -768,6 +787,9 @@ class PreviewView(QGraphicsView):
             event.accept()
             return
         if self.tool == "nodes" and event.button() == Qt.LeftButton:
+            # a click on the empty bed (released where pressed) ends the node editing
+            pos = event.position().toPoint()
+            self._empty_node_press = None if self._hits_something(pos) else pos
             super().mousePressEvent(event)          # select a shape, or grab one of its nodes
             return
         if self.tool == "polyline" and event.button() == Qt.LeftButton:
@@ -814,6 +836,8 @@ class PreviewView(QGraphicsView):
 
     def mouseMoveEvent(self, event):
         self._report_hover(event.position().toPoint())
+        at = self.mapToScene(event.position().toPoint())
+        self.signals.pointer.emit(at.x(), at.y())
         if self.tool not in ("select", "nodes") + PICK_TOOLS and self._draw_start is None and not self._poly_points \
                 and not self._pen and self._freehand is None and self._measure_start is None \
                 and not event.buttons():
@@ -863,7 +887,28 @@ class PreviewView(QGraphicsView):
             return
         super().mouseMoveEvent(event)
 
+    def _hits_something(self, pos):
+        """A view point on an element (its box), a node, a curve handle or a handle. (Geometry, not itemAt():
+        a Python wrapper of a scene item made and dropped here could delete the item.)"""
+        p = self.mapToScene(pos)
+        if any(i.sceneBoundingRect().contains(p) for i in self._items):
+            return True
+        marks = list(self.node_editor._marks.values()) + list(self.node_editor._handles) + list(self._handles)
+        for m in marks:
+            q = self.mapFromScene(m.scenePos())
+            if abs(q.x() - pos.x()) <= 8 and abs(q.y() - pos.y()) <= 8:
+                return True
+        return False
+
     def mouseReleaseEvent(self, event):
+        start = getattr(self, "_empty_node_press", None)
+        if self.tool == "nodes" and event.button() == Qt.LeftButton and start is not None:
+            self._empty_node_press = None
+            super().mouseReleaseEvent(event)
+            end = event.position().toPoint()
+            if abs(end.x() - start.x()) + abs(end.y() - start.y()) < 4:      # a click, not a rubber band
+                self.signals.leave_nodes.emit()
+            return
         if self.tool == "measure" and event.button() == Qt.LeftButton and self._measure_start is not None:
             end = self.snap_point(self.mapToScene(event.position().toPoint()))
             self.hide_snap_marker()
@@ -991,6 +1036,7 @@ class PreviewView(QGraphicsView):
         self.resetTransform()
         self.fitInView(rect, Qt.KeepAspectRatio)
         self._place_handles()
+        self.signals.zoomed.emit()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -1030,6 +1076,17 @@ class PreviewView(QGraphicsView):
         for corner in (r.topLeft(), r.topRight(), r.bottomLeft(), r.bottomRight()):
             h = Handle("scale", self, item)
             h.setPos(item.mapToScene(corner))
+            self.scene().addItem(h)
+            self._handles.append(h)
+        # the middles of the sides: width or height alone (not across a line's missing height or width)
+        sides = []
+        if r.height() > 1e-6:
+            sides += [("side_y", QPointF(r.center().x(), r.top())), ("side_y", QPointF(r.center().x(), r.bottom()))]
+        if r.width() > 1e-6:
+            sides += [("side_x", QPointF(r.left(), r.center().y())), ("side_x", QPointF(r.right(), r.center().y()))]
+        for kind, point in sides:
+            h = Handle(kind, self, item)
+            h.setPos(item.mapToScene(point))
             self.scene().addItem(h)
             self._handles.append(h)
         top = item.mapToScene(QPointF(r.center().x(), r.top()))
@@ -1132,8 +1189,8 @@ class PreviewView(QGraphicsView):
         if grid_mm > 0:
             # draw at least every 5 mm so a fine grid does not turn into a grey area
             step = grid_mm * max(1, int(math.ceil(5.0 / grid_mm)))
-            minor = _cosmetic_pen(QColor("#d3d7dd"), 1)
-            major = _cosmetic_pen(QColor("#bfc5cd"), 1)
+            minor = _cosmetic_pen(theme.canvas("grid_minor"), 1)
+            major = _cosmetic_pen(theme.canvas("grid_major"), 1)
             n = 0
             x = 0.0
             while x <= bed_w * MM + 1e-6:

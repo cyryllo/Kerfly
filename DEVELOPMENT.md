@@ -155,6 +155,24 @@ user guide:
 xvfb-run -a -s "-screen 0 1920x1200x24" .venv/bin/python tools/make_screenshots.py
 ```
 
+## The window's look
+
+The look follows the mockups in `docs/ui-mockups/` (Design canvas files: the
+main window, the options bar, the Laser tab, every dialog).
+
+- `kerfly/gui/theme.py` holds every size (icons 16/20/24, spacing 4/8/12,
+  heights 28/32/36/44, rounding), the colours of the light and the dark theme
+  and the colours drawn on the bed (`CANVAS`). No other file names a colour
+  or a size of its own.
+- `kerfly/gui/widgets.py` has the building blocks: a caption or a field with
+  its icon, an icon button, hints, a beta badge, and the dialog pattern:
+  `DialogBody`, `Section` (a title, rows of an icon caption and a field),
+  `PreviewBar`, `Segmented`, `DialogFooter` (Cancel first, then the action
+  named for what it does, never OK) and `ask()` for questions with named
+  buttons.
+- Every field has an icon and a tooltip; a new or moved control gets its steps
+  in `tests/test_release.py`.
+
 ## Translations
 
 Kerfly is in English, Polish, German, Spanish and French. The German, Spanish

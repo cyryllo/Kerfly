@@ -5,14 +5,14 @@ power (M3 boards) and estimated time; material choice above the list.
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
-from PySide6.QtCore import QSize, Signal
+from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (QCheckBox, QColorDialog, QComboBox, QDoubleSpinBox, QGridLayout,
                                QHBoxLayout, QLabel, QLineEdit, QMenu, QPushButton, QSpinBox,
                                QToolButton, QVBoxLayout, QWidget)
 
 from kerfly.core.layers import CUT, ENGRAVE, GCODE, RASTER
-from kerfly.gui import icons
+from kerfly.gui import icons, theme, widgets
 from kerfly.gui.sizing import fit_spin
 from kerfly.i18n import N_, _
 
@@ -27,13 +27,14 @@ def _num_text(v):
 class ColorButton(QToolButton):
     def __init__(self, color, parent=None):
         super().__init__(parent)
-        self.setFixedSize(18, 18)
+        self.setFixedSize(theme.ICON_SMALL + 2, theme.ICON_SMALL + 2)
+        widgets.set_role(self, "swatch")
         self.set_color(color)
         self.setToolTip(_("Layer colour; click to change"))
 
     def set_color(self, color):
         self.color = color
-        self.setStyleSheet("QToolButton { background: %s; border: 1px solid #555; border-radius: 3px; }" % color)
+        self.setStyleSheet("QToolButton { background: %s; }" % color)      # the layer's colour (its frame: theme)
 
 
 class LayersPanel(QWidget):
@@ -50,34 +51,41 @@ class LayersPanel(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        # (docs/ui-mockups/Main, Layers): the material, a table of the layers with the units in its header,
+        # then "+ Add layer" and the job's total time
         v = QVBoxLayout(self)
         v.setContentsMargins(0, 0, 0, 0)
-        v.setSpacing(4)
+        v.setSpacing(theme.SPACE_M)
         top = QHBoxLayout()
-        top.addWidget(QLabel(_("Material:")))
+        top.setSpacing(theme.SPACE_M)
         self.material = QComboBox()
         self.material.setToolTip(_("Choose a material to set the speed, passes and power of all layers"))
         self.material.activated.connect(self._material_activated)
+        self.material.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
+        self.material.setMinimumContentsLength(10)
+        top.addWidget(widgets.icon_pixmap_label("book", self.material.toolTip()))
+        caption = widgets.hint(_("Material"), wrap=False)
+        caption.setToolTip(self.material.toolTip())
+        top.addWidget(caption)
         top.addWidget(self.material, 1)
-        manage = QToolButton()
-        manage.setIcon(icons.tabler("book"))
-        manage.setIconSize(QSize(18, 18))
-        manage.setToolTip(_("Material library: add, edit and delete materials"))
+        manage = widgets.icon_button("book", _("Material library: add, edit and delete materials"))
         manage.clicked.connect(self.manage_materials.emit)
         top.addWidget(manage)
         v.addLayout(top)
         self.grid_box = QWidget()
         self.grid = QGridLayout(self.grid_box)
         self.grid.setContentsMargins(0, 0, 0, 0)
-        self.grid.setHorizontalSpacing(4)
-        self.grid.setVerticalSpacing(3)
+        self.grid.setHorizontalSpacing(theme.SPACE_S)
+        self.grid.setVerticalSpacing(theme.SPACE_S)
+        self.grid.setColumnStretch(1, 1)
         v.addWidget(self.grid_box)
         bottom = QHBoxLayout()
-        self.total_label = QLabel()
-        bottom.addWidget(self.total_label, 1)
         self.add_button = QToolButton()
         self.add_button.setIcon(icons.tabler("plus"))
-        self.add_button.setIconSize(QSize(18, 18))
+        self.add_button.setIconSize(QSize(theme.ICON_SMALL, theme.ICON_SMALL))
+        self.add_button.setText(_("Add layer"))
+        self.add_button.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.add_button.setFixedHeight(theme.HEIGHT_FIELD)
         self.add_button.setToolTip(_("Add a layer"))
         self.add_button.setPopupMode(QToolButton.InstantPopup)
         menu = QMenu(self.add_button)
@@ -85,6 +93,9 @@ class LayersPanel(QWidget):
             menu.addAction(_(KIND_NAMES[kind]), lambda k=kind: self.add_layer.emit(k))
         self.add_button.setMenu(menu)
         bottom.addWidget(self.add_button)
+        bottom.addStretch(1)
+        self.total_label = QLabel()
+        bottom.addWidget(self.total_label)
         v.addLayout(bottom)
         self.rows = {}
         self.speed_unit = "mm/s"
@@ -121,11 +132,15 @@ class LayersPanel(QWidget):
                 w.hide()
                 w.setParent(None)
                 w.deleteLater()
-        headers = ["", "", _("Speed (%s)") % speed_unit, _("Passes"), _("Power") if show_power else "", _("Kerf"),
-                   _("Time"), ""]
+        # the units are in the header, so the fields are narrow (the panel is about PANEL_WIDTH wide)
+        headers = ["", _("Name"), _("Speed (%s)") % speed_unit, _("Passes"), _("Power (%)") if show_power else "",
+                   _("Kerf (mm)"), _("Time"), ""]
+        self.headers = {}
         for col, text in enumerate(headers):
             if text:
-                self.grid.addWidget(QLabel(text), 0, col)
+                self.headers[col] = widgets.label(text, "caption", wrap=True)
+                self.grid.addWidget(self.headers[col], 0, col)
+        self.speed_header = self.headers[2]
         self.rows = {}
         row = 1
         for layer in layers:
@@ -139,8 +154,9 @@ class LayersPanel(QWidget):
             self._add_row(row, layer, data, removable(layer))
             row += 1
         if row == 1:
-            hint = QLabel(_("Open a design to see its layers."))
-            hint.setStyleSheet("color:#757575;")
+            for header in self.headers.values():         # no layers: the hint alone, no empty columns
+                header.hide()
+            hint = widgets.hint(_("Open a design to see its layers."), wrap=False)
             self.grid.addWidget(hint, 1, 0, 1, 8)
         self.add_button.setEnabled(not gcode_file)
 
@@ -154,7 +170,7 @@ class LayersPanel(QWidget):
         name_box = QWidget()
         h = QHBoxLayout(name_box)
         h.setContentsMargins(0, 0, 0, 0)
-        h.setSpacing(4)
+        h.setSpacing(theme.SPACE_S)
         color = ColorButton(layer.color)
         color.clicked.connect(lambda _c=False, l=layer, b=color: self._pick_color(l, b))
         h.addWidget(color)
@@ -162,7 +178,7 @@ class LayersPanel(QWidget):
         name.setFrame(False)
         name.setObjectName("layer_name")
         fm = name.fontMetrics()
-        name.setMinimumWidth(max(fm.horizontalAdvance(layer.name), fm.horizontalAdvance(_("Raster engrave"))) + 12)
+        name.setMinimumWidth(fm.horizontalAdvance("Raster") + theme.SPACE_M)
         name.setToolTip(_("Layer name; click to rename"))
         name.editingFinished.connect(lambda l=layer, e=name: self._rename(l, e.text()))
         h.addWidget(name, 1)
@@ -172,7 +188,6 @@ class LayersPanel(QWidget):
             speed = QDoubleSpinBox()
             speed.setRange(0.1 * f, 10000 * f)
             speed.setDecimals(1 if f == 1 else 0)
-            speed.setSuffix(" " + self.speed_unit)
             speed.setValue(layer.speed * f)
             fit_spin(speed, 9999.9 * f)
             speed.setKeyboardTracking(False)
@@ -192,12 +207,12 @@ class LayersPanel(QWidget):
             power = QDoubleSpinBox()
             power.setRange(0, 100)
             power.setDecimals(0)
-            power.setSuffix(" %")
             power.setValue(layer.power * 100.0)
             fit_spin(power, 100)
             power.setKeyboardTracking(False)
             power.valueChanged.connect(lambda v, l=layer: self._set(l, "power", v / 100.0))
             self.grid.addWidget(power, row, 4)
+            widgets["power"] = power
         time_cell = QWidget()
         th = QHBoxLayout(time_cell)
         th.setContentsMargins(0, 0, 0, 0)
@@ -208,21 +223,20 @@ class LayersPanel(QWidget):
         if layer.kind == RASTER:
             calc = QPushButton()
             calc.setIcon(icons.tabler("calculator"))
-            calc.setIconSize(QSize(18, 18))
-            calc.setFixedSize(28, 28)
+            calc.setIconSize(QSize(theme.ICON_SMALL, theme.ICON_SMALL))
+            calc.setFixedSize(theme.HEIGHT_FIELD, theme.HEIGHT_FIELD)
             calc.setToolTip(_("Calculate raster time: prepare the raster now to estimate its engraving time"))
             calc.clicked.connect(self.calc_raster.emit)
             calc.hide()
             th.addWidget(calc)
         th.addStretch(1)
-        time_cell.setMinimumWidth(max(60, time_label.fontMetrics().horizontalAdvance("0:00:00") + 10))
+        time_cell.setMinimumWidth(time_label.fontMetrics().horizontalAdvance("0:00:00") + theme.SPACE_M)
         if layer.kind == CUT:
             # kerf compensation: the width of the cut; outlines move out by half of it
             kerf = QDoubleSpinBox()
             kerf.setRange(0, 2)
             kerf.setDecimals(2)
             kerf.setSingleStep(0.05)
-            kerf.setSuffix(" mm")
             kerf.setValue(layer.kerf)
             fit_spin(kerf, 1.99)
             kerf.setKeyboardTracking(False)
@@ -235,8 +249,8 @@ class LayersPanel(QWidget):
         self.grid.addWidget(time_cell, row, 6)
         if removable:
             rm = QToolButton()
-            rm.setIcon(icons.tabler("trash", "#c62828"))
-            rm.setIconSize(QSize(16, 16))
+            rm.setIcon(icons.tabler("trash", theme.token("error")))
+            rm.setIconSize(QSize(theme.ICON_SMALL, theme.ICON_SMALL))
             rm.setAutoRaise(True)
             rm.setToolTip(_("Delete this layer (its parts go back to the default layer)"))
             rm.clicked.connect(lambda _c=False, l=layer: self.remove_layer.emit(l))
