@@ -14,22 +14,25 @@ sender, or the laser run straight from Kerfly over its serial port, with
 speeds in mm/min. Parts nested on the bed, loose lines joined into
 polylines. In development on the `2.0` branch, with the fixes of the 1.x
 releases.
+A new look: a cleaner ribbon, the options bar in two rows across the
+window, a flat left panel, dialogs with their action named, the simulation in
+a window of its own.
 
 ### Added
 
-- **Join into a polyline** (Ctrl+J; Edit menu, Shapes group of the toolbar,
+- **Join into a polyline** (Ctrl+J; Edit menu, Shapes group of the ribbon,
   right-click menu): the selected lines, polylines and open paths whose ends
   meet (closer than 0.05 mm) become one path, cut in one go, closed when the
   chain comes round (as LightBurn's Auto-Join or QCAD's Polyline from
   Segments). Closed outlines and lines that meet nothing stay as they are.
-- **Nest on the bed** (Ctrl+Shift+N; **Nest** in the Layout group of the
-  toolbar, Edit menu, right-click menu): the selected parts (a group as one
+- **Nest on the bed** (Ctrl+Shift+N; **Nest** in the Arrange group of the
+  ribbon, Edit menu, right-click menu): the selected parts (a group as one
   part) laid out on the laser's bed as tightly as their rectangles allow,
   with a gap, turned by 90° where that fits better (can be switched off);
   what does not fit goes on next sheets, each a group in the element list,
   sheets 2 and on unticked. The box generators use the same packing.
 - **G-code for GRBL lasers (beta)**: File → Save G-code… (Ctrl+Shift+K,
-  **G-code** in the File group of the toolbar) writes the ticked layers
+  **G-code** in the File group of the ribbon) writes the ticked layers
   (raster line by line with an overscan, engrave, cut) with their speed,
   power and passes, in laser mode M4, for LaserGRBL, UGS or another sender.
   Origin at the bed's lower left corner or at the design's upper left corner,
@@ -44,6 +47,38 @@ releases.
   pyserial library (in the packages). With a GRBL machine speeds are shown
   and typed in mm/min (layers, material test, Settings, material library);
   the K40 stays in mm/s.
+- **About Kerfly** in a window of its own: version, licence, origin, the
+  project's page, **Report a problem** and **Check for updates**.
+
+### Changed
+
+- **New look** (light and dark theme): one set of sizes, spacing and colours
+  for the whole window.
+- **Ribbon**: groups File, Edit, Arrange, Shapes, View and Tools; the
+  generators in one **Generators** list (boxes, parts, tests and
+  calibration), also in the menu; Report a problem and the diagnostic report
+  only in the Help menu, Lasers in the Laser tab; Trace picture in the drawing
+  tools on the right.
+- **Options bar** across the window under the ribbon, two rows: the
+  selection (X, Y, W, H, rotation, layer) always, then what is edited, every
+  field with an icon, a short caption and a tooltip; the node tool shows its
+  buttons alone, as icons.
+- **Left panel** flat: Design (Elements with their number and size, Layers
+  with the units in the table's header and **Add layer**) and Laser (Device:
+  Connect, Home, Unlock motors, Follow the head with a state dot; Head
+  movement); **Trace**, **Start**, **Pause** and **Stop** as wide as each
+  other at the bottom of both tabs.
+- **Status bar**: where the mouse pointer is, the bed's size, the zoom and
+  the laser's state.
+- **Dialogs**: Cancel first, then the action named for what it does
+  (**Save**, **Insert picture**, **Delete laser**, **Stop and quit**…, never
+  OK), sections, **beta** badges; Settings with its categories in a list and
+  each page in sections; the material library as a table; Lasers, Trace
+  picture, Image size, Which laser? and Keyboard shortcuts laid out anew.
+- **Job simulation** in a window of its own with its own preview (the whole
+  job grey, what is burnt red): Play, the time, the speed, Next layer, the
+  layer being lasered. Left open while the design changes, it works the job
+  out again and stays at its place in time; New and Open close it.
 
 ## 1.8.0 (2026-11-16)
 
