@@ -183,7 +183,12 @@ class ToolOptionsBar(QWidget):
         for section, actions in NODE_SECTIONS:
             group = []
             for code, label, icon, key, tip, needs_node in actions:
-                b = text_button(icon, "%s (%s)" % (_(label), key), "%s: %s (%s)" % (_(section), _(tip), key))
+                # icons only (a row of captions was too wide); the name, key and meaning in the tooltip
+                b = text_button(icon, "%s (%s)" % (_(label), key), "%s (%s)\n%s: %s" % (_(label), key, _(section),
+                                                                                       _(tip)))
+                b.setToolButtonStyle(Qt.ToolButtonIconOnly)
+                b.setFixedSize(theme.HEIGHT_FIELD, theme.HEIGHT_FIELD)
+                widgets.set_role(b, "icon")
                 b.clicked.connect(lambda _c=False, c=code: self.node_action.emit(c))
                 group.append(b)
                 self._node_buttons.append((b, needs_node))
