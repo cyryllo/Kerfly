@@ -25,6 +25,8 @@ cat > "$WORK/inside.sh" <<'INSIDE'
 # inside ubuntu:22.04
 set -eux
 export DEBIAN_FRONTEND=noninteractive
+# Launchpad (the deadsnakes PPA) often answers 503 for a while: try each download again instead of failing
+echo 'Acquire::Retries "10";' > /etc/apt/apt.conf.d/80-retries
 apt-get update
 apt-get install -y --no-install-recommends software-properties-common gpg-agent curl ca-certificates \
     binutils file libegl1 libgl1 libxkbcommon0 libxkbcommon-x11-0 libfontconfig1 libdbus-1-3 libusb-1.0-0 \
