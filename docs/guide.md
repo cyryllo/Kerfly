@@ -71,7 +71,7 @@ saving.
 
 - **Ribbon** (top), in labelled groups: **File** (New, Open, Add, Save; small
   buttons for Reload, Save EGV and G-code), **Edit** (Undo, Redo; the
-  clipboard, duplicate, delete, select all, group), **Arrange** (align,
+  clipboard, duplicate, delete, select all, group, edit nodes), **Arrange** (align,
   distribute, turn, mirror, centre, nest, to head), **Shapes** (combine,
   join), **View** (Fit, Simulate, Grid) and **Tools** (**Generators** with a
   list of all generators, Materials, Settings). Hold the mouse over a small
@@ -98,7 +98,7 @@ saving.
 - **Bed view** (middle): the laser bed with your elements. The orange
   crosshair is the laser head. Elements that stick out of the bed are drawn
   red, and the job cannot start until they are moved back.
-- **Tools** (right), in three groups: selecting (select, edit nodes); drawing
+- **Tools** (right), in three groups: select (Edit nodes is in the ribbon's Edit group); drawing
   (rectangle, ellipse, polygon, line, polyline, pen, freehand, text); and
   operations on shapes (text on a path, fill with a pattern, living hinge,
   measure).
@@ -206,7 +206,7 @@ before or after drawing.
 | Tool | Key | How |
 |---|---|---|
 | Select and move | S | Click to select, drag to move; the corner handles scale, the handles in the middles of the sides stretch the width or the height alone (the opposite side stays), the round one rotates. Drag a frame around several elements, or Ctrl+click |
-| Edit nodes | N | Drag nodes and the round curve handles (Ctrl: one handle alone). Double-click a side to add a node, a node to remove it. Keys: I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / open, B break |
+| Edit nodes | N | Drag nodes and the round curve handles (Ctrl: one handle alone). Double-click a side to add a node, a node to remove it. Keys: I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / open, B break. A click on the empty bed ends it (back to Select) |
 | Rectangle | R | Drag. Shift: square. Option: corner radius |
 | Ellipse | E | Drag. Shift: circle |
 | Polygon | P | Drag. Option: number of sides |
@@ -482,7 +482,7 @@ out of the job.
   plays the head's moves: the whole job is grey, what the laser has burnt so
   far turns red (an engraved picture only where it is dark), moves with the
   laser off are grey dashed lines. Over it **Play** / **Pause**, the slider,
-  the time, the **Speed** and **Next layer**; under it the layer being
+  the time, the **Speed** (5× at first, faster for a long job) and **Next layer**; under it the layer being
   lasered. Keep it open while you work: when the design changes, it works the
   job out again after a moment and stays at its place in time (paused; a note
   says so). New and Open close it.

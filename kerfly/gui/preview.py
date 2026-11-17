@@ -72,6 +72,7 @@ class ViewSignals(QObject):
     hovered = Signal(object)                      # the element under the mouse pointer, or None
     pointer = Signal(float, float)                # the mouse pointer over the view (scene mm), for the status bar
     zoomed = Signal()                             # the view was zoomed or fitted
+    leave_nodes = Signal()                        # the node tool: a click on the empty bed (back to Select)
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0, stretch=(1.0, 1.0),
@@ -786,6 +787,9 @@ class PreviewView(QGraphicsView):
             event.accept()
             return
         if self.tool == "nodes" and event.button() == Qt.LeftButton:
+            # a click on the empty bed (released where pressed) ends the node editing
+            pos = event.position().toPoint()
+            self._empty_node_press = None if self._hits_something(pos) else pos
             super().mousePressEvent(event)          # select a shape, or grab one of its nodes
             return
         if self.tool == "polyline" and event.button() == Qt.LeftButton:
@@ -883,7 +887,28 @@ class PreviewView(QGraphicsView):
             return
         super().mouseMoveEvent(event)
 
+    def _hits_something(self, pos):
+        """A view point on an element (its box), a node, a curve handle or a handle. (Geometry, not itemAt():
+        a Python wrapper of a scene item made and dropped here could delete the item.)"""
+        p = self.mapToScene(pos)
+        if any(i.sceneBoundingRect().contains(p) for i in self._items):
+            return True
+        marks = list(self.node_editor._marks.values()) + list(self.node_editor._handles) + list(self._handles)
+        for m in marks:
+            q = self.mapFromScene(m.scenePos())
+            if abs(q.x() - pos.x()) <= 8 and abs(q.y() - pos.y()) <= 8:
+                return True
+        return False
+
     def mouseReleaseEvent(self, event):
+        start = getattr(self, "_empty_node_press", None)
+        if self.tool == "nodes" and event.button() == Qt.LeftButton and start is not None:
+            self._empty_node_press = None
+            super().mouseReleaseEvent(event)
+            end = event.position().toPoint()
+            if abs(end.x() - start.x()) + abs(end.y() - start.y()) < 4:      # a click, not a rubber band
+                self.signals.leave_nodes.emit()
+            return
         if self.tool == "measure" and event.button() == Qt.LeftButton and self._measure_start is not None:
             end = self.snap_point(self.mapToScene(event.position().toPoint()))
             self.hide_snap_marker()

@@ -1451,6 +1451,31 @@ def main():
           kinds.count("side_x") == 2 and kinds.count("side_y") == 2 and stretched_x and stretched_y and undone,
           "(%s)" % [kinds, (w1, h1), (w2, h2), undone])
 
+    # 28c4. the node tool ends with a click on the empty bed (back to Select; like any click there it
+    # deselects); a click on the shape keeps it
+    nw = make_window(grid_mm="0")
+    nw.resize(1200, 800)
+    nw.show()
+    app.processEvents()
+    nw._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
+    ne = nw.elements[-1]
+    nw.preview.select_element([ne])
+    nw.tool_actions["nodes"].trigger()
+    app.processEvents()
+    nvp = nw.preview.viewport()
+    QTest.mouseClick(nvp, Qt.LeftButton, Qt.NoModifier, nw.preview.mapFromScene(QPointF(40, 35)))
+    app.processEvents()
+    kept_on_shape = nw.preview.tool == "nodes"
+    QTest.qWait(QApplication.doubleClickInterval() + 100)          # two clicks, not a double click
+    bed_w, bed_h = (v * 25.4 for v in config.bed_size_inches(nw.values))
+    QTest.mouseClick(nvp, Qt.LeftButton, Qt.NoModifier, nw.preview.mapFromScene(QPointF(bed_w - 10, bed_h - 10)))
+    app.processEvents()
+    left_nodes = nw.preview.tool == "select" and nw.tool_actions["select"].isChecked()
+    nw._dirty = False
+    nw.close()
+    check("node tool: a click on the shape keeps it, a click on the empty bed goes back to Select",
+          kept_on_shape and left_nodes, "(%s)" % [kept_on_shape, left_nodes])
+
     # 28d. Nest on the bed (Ctrl+Shift+N): the selected parts laid out inside the bed with the gap between them,
     # nothing over another; what does not fit on more sheets (groups Sheet N, sheets 2 and on unticked); a group
     # moves as one part (its members keep their places to each other); without turning nothing is turned; a
@@ -1780,7 +1805,7 @@ def main():
     w.simulate_job()
     dlg = getattr(w, "_simulation", None)
     played = dlg is not None and dlg.total > 0 and dlg.timer.isActive()
-    auto_speed = dlg.speed.currentData() >= 1
+    auto_speed = dlg.speed.currentData() >= 5                 # 5x at least (a long job faster)
     dlg.skip_layer()
     skipped = dlg.time > 0
     dlg.seek(dlg.total)
@@ -1793,6 +1818,8 @@ def main():
     own = dlg.scene is not w.preview.scene() and all(it.scene() is dlg.scene for it in dlg.items)
     # the design changes while it is open: after a pause the job is worked out again, at the same place in
     # time, paused, with a note; a change that is not the job's (a selection) changes nothing
+    if dlg.timer.isActive():
+        dlg.toggle()                                    # paused (at 5x it would run on while the test waits)
     dlg.seek(dlg.total * 0.5)
     total_before = dlg.total
     w.elements[0].x += 20 / 25.4

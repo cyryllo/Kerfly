@@ -61,7 +61,8 @@ a window of its own.
   generators in one **Generators** list (boxes, parts, tests and
   calibration), also in the menu; Report a problem and the diagnostic report
   only in the Help menu, Lasers in the Laser tab; Trace picture in the drawing
-  tools on the right.
+  tools on the right, Edit nodes (N) in the Edit group (a click on the empty
+  bed ends it, back to Select).
 - **Options bar** across the window under the ribbon, two rows: the
   selection (X, Y, W, H, rotation, layer) always, then what is edited, every
   field with an icon, a short caption and a tooltip; the node tool shows its
@@ -88,7 +89,7 @@ a window of its own.
   picture, Image size, Which laser? and Keyboard shortcuts laid out anew.
 - **Job simulation** in a window of its own with its own preview (the whole
   job grey, what is burnt red): Play, the time, the speed, Next layer, the
-  layer being lasered. Left open while the design changes, it works the job
+  layer being lasered; it starts at 5× (faster for a long job). Left open while the design changes, it works the job
   out again and stays at its place in time; New and Open close it.
 
 ## 1.8.0 (2026-11-16)

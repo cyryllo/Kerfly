@@ -1039,7 +1039,13 @@ def part_edit(s):
                           if b.text() == "%s (%s)" % (tr(text), key))      # its key in the caption
             s.click(button)
         s.step("nodes: %s" % label, node_button, change=None)
-    s.trigger(w.tool_actions["select"])
+    # a click on the empty bed ends the node editing: back to Select
+    empty = tuple(v * 25.4 - 4.0 for v in config.bed_size_inches(w.values))
+    s.step("nodes: click the empty bed (back to Select)", lambda: s.click_bed(*empty), change=False,
+           check=lambda: (w.preview.tool == "select" and w.tool_actions["select"].isChecked(),
+                          "tool %s" % w.preview.tool))
+    if w.preview.tool != "select":
+        s.trigger(w.tool_actions["select"])
 
 
 def part_layers(s):

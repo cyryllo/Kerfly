@@ -218,6 +218,8 @@ class MainWindow(QMainWindow):
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
         self.preview.signals.stretched.connect(self._preview_stretched)
+        # the node tool ends with a click on the empty bed: back to Select
+        self.preview.signals.leave_nodes.connect(lambda: self.tool_actions["select"].trigger())
         self.preview.signals.rotated.connect(self._preview_rotated)
         self.preview.signals.nudged.connect(self._preview_nudged)
         self._build_actions()
@@ -669,6 +671,8 @@ class MainWindow(QMainWindow):
                     action.setIcon(icons.tabler(icon) if isinstance(icon, str) else icon)
                     grid.addWidget(widgets.icon_button(action=action), n // per_row, n % per_row)
                 row.addLayout(grid)
+                if i == 1:                                  # Edit: Edit nodes joins it (_build_tool_strip)
+                    self._edit_grid = (grid, len(small) // per_row, len(small) % per_row)
             v.addLayout(row)
             v.addStretch(1)
             caption = QLabel(title)
@@ -721,9 +725,12 @@ class MainWindow(QMainWindow):
             act.triggered.connect(lambda _c=False, k=key: self.set_tool(k))
             self.tool_group.addAction(act)
             self.preview.addAction(act)
-            strip.addAction(act)
+            if key != "nodes":                     # Edit nodes is on the ribbon, in the Edit group
+                strip.addAction(act)
             self.tool_actions[key] = act
         self.tool_actions["select"].setChecked(True)
+        grid, row, col = self._edit_grid
+        grid.addWidget(widgets.icon_button(action=self.tool_actions["nodes"]), row, col)
         # Trace image (a command, not a tool) with the tools that work on a picture or a shape
         strip.insertAction(self.tool_actions["measure"], self.act_trace_image)
         strip.insertSeparator(self.tool_actions["measure"])

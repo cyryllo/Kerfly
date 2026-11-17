@@ -22,7 +22,8 @@ from kerfly.gui import icons, theme, widgets
 from kerfly.i18n import C_, _
 
 SPEEDS = (1, 2, 5, 10, 20, 50, 100, 200, 500, 1000)
-WATCH_SECONDS = 30.0             # the automatic speed plays the whole job in about this time
+WATCH_SECONDS = 30.0             # a long job plays faster: the whole of it in about this time
+DEFAULT_SPEED = 5                # the speed it starts at (at least)
 REFRESH_MS = 300                 # a changed design is worked out again after this pause
 NOTE_MS = 4000                   # how long "the design changed" stays in the footer
 # red where the laser is on (whatever the layer), grey for moves with the laser off; a raster
@@ -145,8 +146,8 @@ class SimulationDialog(QDialog):
         self.note_timer.timeout.connect(self._show_layer)
         self._note = ""
         self.set_steps(steps)
-        # automatic speed: the whole job in about half a minute
-        wanted = self.total / WATCH_SECONDS if self.total else 1
+        # 5x, or faster for a long job (the whole of it in about half a minute)
+        wanted = max(DEFAULT_SPEED, self.total / WATCH_SECONDS if self.total else 1)
         self.speed.setCurrentIndex(min(range(len(SPEEDS)), key=lambda i: abs(SPEEDS[i] - wanted)))
         self.seek(0.0)
 

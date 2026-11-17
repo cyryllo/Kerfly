@@ -58,7 +58,8 @@ oknie.
   generatory na jednej liście **Generatory** (pudełka, elementy, testy i
   kalibracja), także w menu; Zgłoś problem i raport diagnostyczny tylko w
   menu Pomoc, Lasery na zakładce Laser; Obrysuj obraz wśród narzędzi
-  rysowania po prawej.
+  rysowania po prawej, Edytuj węzły (N) w grupie Edycja (klik w puste miejsce
+  stołu kończy edycję i wraca do zaznaczania).
 - **Pasek opcji** przez całe okno pod wstążką, w dwóch wierszach: zawsze
   zaznaczenie (X, Y, Szer., Wys., obrót, warstwa), potem to, co edytujesz;
   każde pole z ikoną, krótkim podpisem i podpowiedzią; narzędzie węzłów
@@ -85,7 +86,7 @@ oknie.
   obraz, Rozmiar obrazu, Który laser? i Skróty klawiszowe.
 - **Symulacja zadania** w osobnym oknie z własnym podglądem (całe zadanie
   szare, wypalone na czerwono): Odtwórz, czas, tempo, Następna warstwa,
-  wypalana warstwa. Otwarta podczas zmian projektu przelicza zadanie i zostaje
+  wypalana warstwa; startuje z tempem 5× (dłuższe zadanie szybciej). Otwarta podczas zmian projektu przelicza zadanie i zostaje
   w tym samym miejscu; Nowy i Otwórz ją zamykają.
 
 ## 1.8.0 (2026-11-16)

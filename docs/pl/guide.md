@@ -72,7 +72,8 @@ zapamiętują się od razu, bez zapisywania.
 
 - **Wstążka** (góra), w podpisanych grupach: **Plik** (Nowy, Otwórz, Dodaj,
   Zapisz; małe przyciski Wczytaj ponownie, Zapisz EGV i G-code), **Edycja**
-  (Cofnij, Ponów; schowek, duplikuj, usuń, zaznacz wszystko, grupuj),
+  (Cofnij, Ponów; schowek, duplikuj, usuń, zaznacz wszystko, grupuj, edytuj
+  węzły),
   **Układ** (wyrównaj, rozłóż, obróć, odbij, wyśrodkuj, ułóż na stole, do
   głowicy), **Kształty** (łączenie kształtów, polilinia), **Widok** (Dopasuj,
   Symulacja, Siatka) i **Narzędzia** (**Generatory** z listą wszystkich
@@ -100,8 +101,8 @@ zapamiętują się od razu, bez zapisywania.
 - **Stół** (środek): stół lasera z Twoimi elementami. Pomarańczowy celownik
   to głowica lasera. Elementy wystające poza stół są rysowane na czerwono i
   zadanie nie ruszy, dopóki ich nie przesuniesz z powrotem.
-- **Narzędzia** (prawa strona), w trzech grupach: zaznaczanie (zaznaczanie,
-  edycja węzłów); rysowanie (prostokąt, elipsa, wielokąt, linia, łamana,
+- **Narzędzia** (prawa strona), w trzech grupach: zaznaczanie (edycja węzłów
+  jest w grupie Edycja na wstążce); rysowanie (prostokąt, elipsa, wielokąt, linia, łamana,
   pióro, odręcznie, tekst); operacje na kształtach (tekst na ścieżce,
   wypełnienie wzorem, zawias giętki, miarka).
 
@@ -210,7 +211,7 @@ narysowaniem i po nim.
 | Narzędzie | Klawisz | Jak |
 |---|---|---|
 | Zaznacz i przesuń | S | Klik zaznacza, przeciąganie przesuwa; uchwyty w narożnikach skalują, uchwyty na środkach boków zmieniają samą szerokość albo samą wysokość (przeciwległy bok zostaje), okrągły obraca. Ramka wokół kilku elementów albo Ctrl+klik zaznacza kilka |
-| Edytuj węzły | N | Przeciągaj węzły i okrągłe uchwyty krzywych (Ctrl: jeden uchwyt osobno). Dwuklik na boku dodaje węzeł, na węźle go usuwa. Klawisze: I wstaw, D usuń, L linia, C krzywa, O gładki, S symetryczny, Z zamknij / otwórz, B rozdziel |
+| Edytuj węzły | N | Przeciągaj węzły i okrągłe uchwyty krzywych (Ctrl: jeden uchwyt osobno). Dwuklik na boku dodaje węzeł, na węźle go usuwa. Klawisze: I wstaw, D usuń, L linia, C krzywa, O gładki, S symetryczny, Z zamknij / otwórz, B rozdziel. Klik w puste miejsce stołu kończy edycję (powrót do zaznaczania) |
 | Prostokąt | R | Przeciągnij. Shift: kwadrat. Opcja: promień rogów |
 | Elipsa | E | Przeciągnij. Shift: koło |
 | Wielokąt | P | Przeciągnij. Opcja: liczba boków |
@@ -494,7 +495,7 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
   całe zadanie jest szare, to, co laser już wypalił, robi się czerwone
   (grawerowany obrazek tylko tam, gdzie jest ciemny), a ruchy z wyłączonym
   laserem to szare przerywane linie. Nad podglądem **Odtwórz** / **Pauza**,
-  suwak, czas, **Tempo** i **Następna warstwa**; pod nim warstwa, która jest
+  suwak, czas, **Tempo** (na start 5×, dla długiego zadania szybciej) i **Następna warstwa**; pod nim warstwa, która jest
   właśnie wypalana. Okno może zostać otwarte w czasie pracy: gdy projekt się
   zmieni, po chwili przelicza zadanie i zostaje w tym samym miejscu (z
   pauzą; mówi o tym napis). Nowy i Otwórz je zamykają.
