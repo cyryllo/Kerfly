@@ -330,7 +330,9 @@ def main():
     from PySide6.QtWidgets import QToolBar as _TB
     toolbar = w.findChild(_TB, "main_toolbar")
     on_toolbar = {b.defaultAction() for b in toolbar.findChildren(QToolButton)}
-    no_updates_button = w.act_check_updates not in on_toolbar and w.act_generators["gear"] in on_toolbar
+    # the generators in the list under the ribbon's Generators button (docs/ui-mockups/GeneratorsMenu)
+    no_updates_button = (w.act_check_updates not in on_toolbar and w.generators_button.menu() is w.generators_menu
+                         and w.act_generators["gear"] in w.generators_menu.actions())
     w.resize(400, 300)
     app.processEvents()
     screen = QApplication.primaryScreen().availableGeometry()
@@ -1145,7 +1147,8 @@ def main():
                 and abs(after[0].y() - before[0].y() + 5) < 1e-6
                 and all(abs(a.x() - b.x()) < 1e-6 and abs(a.y() - b.y()) < 1e-6 for a, b in zip(after[1:], before[1:])))
     mid = (after[1] + after[2]) / 2.0
-    inserted = ed.insert_at(mid) and len(view.node_scene_points()) == 5 and w.tool_options.spec.kind == "path"
+    # (the node tool's bar shows the node buttons alone: the shape itself is now a path)
+    inserted = ed.insert_at(mid) and len(view.node_scene_points()) == 5 and rect.shape.kind == "path"
     ed.select({(0, 1)})
     curved = ed.action("curve") and any(n[4] is not None for n in rect.shape.subpaths[0]["nodes"])
     ed.select({(0, 1)})
@@ -1614,7 +1617,8 @@ def main():
         cut = next(l for l in sw.layers if l.kind == "cut")
         spin = sw.layers_panel.rows[cut.id]["speed"]
         f = 60.0 if machine == "grbl" else 1.0
-        layer_ok = spin.suffix().strip() == ("mm/min" if f > 1 else "mm/s") and abs(spin.value() - cut.speed * f) < 1e-6
+        layer_ok = ("(%s)" % ("mm/min" if f > 1 else "mm/s") in sw.layers_panel.speed_header.text()
+                    and abs(spin.value() - cut.speed * f) < 1e-6)
         spin.setValue(300.0 if f > 1 else 12.0)
         typed_ok = abs(cut.speed - (5.0 if f > 1 else 12.0)) < 1e-9
         gd = _SGD(sw, "material_test", remember=False)
@@ -1999,10 +2003,10 @@ def main():
     check("report a problem: report saved, laser form opened with version and board",
           os.path.exists(report) and "issues/new?template=laser_problem.yml" in url
           and "version=" + __import__("kerfly").__version__ in url and "board=" in url, "(%s)" % url[:90])
-    check("report a problem: in the Help menu and the toolbar",
+    check("report a problem: in the Help menu, not on the ribbon (docs/ui-mockups/Main)",
           w.act_report_problem in [a for m in w.menuBar().actions() for a in m.menu().actions()]
-          and any(getattr(b, "defaultAction", lambda: None)() is w.act_report_problem
-                  for b in w.findChildren(QToolButton)))
+          and not any(getattr(b, "defaultAction", lambda: None)() is w.act_report_problem
+                      for b in w.findChildren(QToolButton)))
 
     # 44. Fill tool: click a closed shape to fill it with a pattern (one undo step), the outline
     # stays a cut; the options bar shows the patterns; an opened file must be ungrouped first
@@ -2059,10 +2063,10 @@ def main():
     undone = w4.elements == [a, c, d, b]
     on_bar = any(getattr(t, "defaultAction", lambda: None)() is w4.act_order["up"]
                  for t in w4.findChildren(QToolButton))
-    beside_list = any(b.defaultAction() is w4.act_order["up"] and w4.element_list_box.isAncestorOf(b)
+    beside_list = any(b.defaultAction() is w4.act_order["up"] and w4.element_header.isAncestorOf(b)
                       for b in w4.findChildren(QToolButton))
     on_bar = on_bar and beside_list
-    check("element order: down, to the end, already at the end, to the start, undo, buttons beside the list",
+    check("element order: down, to the end, already at the end, to the start, undo, buttons in the list's header",
           step and last and already and first and already_top and undone and on_bar,
           "(%s)" % ([step, last, already, first, already_top, undone, on_bar],))
     w4._dirty = False

@@ -32,6 +32,8 @@ from kerfly.i18n import _
 def set_role(widget, role):
     """Give a widget a role of the style sheet (hint, error, caption, section, beta, warning, icon, …)
     and let the style sheet look at it again."""
+    if widget.property("role") == role:
+        return widget
     widget.setProperty("role", role)
     style = widget.style()
     style.unpolish(widget)
@@ -123,6 +125,22 @@ def beta_badge(tip=None):
     w.setToolTip(tip or _("New: not yet confirmed on a real laser. Please report how it works."))
     w.setAlignment(Qt.AlignCenter)
     return set_role(w, "beta")
+
+
+def status_dot(state=""):
+    """A small round dot saying a state: "" grey (not connected), "ok" green, "busy" orange."""
+    dot = QLabel()
+    dot.setFixedSize(theme.SPACE_M, theme.SPACE_M)
+    set_role(dot, "dot")
+    set_dot(dot, state)
+    return dot
+
+
+def set_dot(dot, state):
+    if dot.property("state") != state:
+        dot.setProperty("state", state)
+        dot.style().unpolish(dot)
+        dot.style().polish(dot)
 
 
 def separator(vertical=True):

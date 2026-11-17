@@ -98,7 +98,7 @@ def take(lang):
     w.tabs.setCurrentIndex(1)
     settle(5)
     w.tabs.grab().save(os.path.join(out, "laser.png"))
-    strip = [t for t in w.findChildren(QToolBar) if t.objectName() != "main_toolbar"][0]
+    strip = w.findChild(QToolBar, "tool_strip")
     strip.grab().save(os.path.join(out, "tools.png"))
     w.tabs.setCurrentIndex(0)
     # safety: an element sticking out of the bed is red, Start and Trace are locked

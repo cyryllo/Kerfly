@@ -119,8 +119,8 @@ def expected_bar(w):
     if tool == "offset":
         values = dict(w.offset_defaults)
         return values, set(values)
-    if tool == "crop":
-        return None, set()                       # its own bar: the shape of the piece (no shape settings)
+    if tool in ("crop", "nodes"):
+        return None, set()                       # their own bar: the piece's shape, or the node buttons alone
     e = w.selected
     if tool == "textpath":
         if e is not None and e.shape is not None and e.shape.kind == "text":
@@ -300,9 +300,11 @@ def check_layers_panel(w):
         if row and "speed" in row and abs(row["speed"].value() - layer.speed * f) > 0.05 * f + 1e-9:
             problems.append("layers panel: %s speed shows %.1f, is %.1f (x %g)" % (
                 layer.name, row["speed"].value(), layer.speed, f))
-        if row and "speed" in row and row["speed"].suffix().strip() != config.speed_unit(w.values):
-            problems.append("layers panel: %s speed in %s, the machine's unit is %s" % (
-                layer.name, row["speed"].suffix().strip(), config.speed_unit(w.values)))
+        # the unit is in the column's header (the fields are narrow)
+        header = w.layers_panel.speed_header.text()
+        if row and "speed" in row and "(%s)" % config.speed_unit(w.values) not in header:
+            problems.append("layers panel: %s speed under the header %r, the machine's unit is %s" % (
+                layer.name, header, config.speed_unit(w.values)))
         if row and "kerf" in row and abs(row["kerf"].value() - layer.kerf) > 0.005 + 1e-9:
             problems.append("layers panel: %s kerf shows %.2f, is %.2f" % (layer.name, row["kerf"].value(),
                                                                          layer.kerf))

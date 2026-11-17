@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 18:38+0100\n"
+"POT-Creation-Date: 2026-11-17 19:24+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -231,13 +231,6 @@ msgstr ""
 "Máquina)"
 
 #, python-format
-msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
-msgstr "<b style='color:#2e7d32'>Conectado</b> (%s)"
-
-msgid "<b style='color:#c62828'>Not connected</b>"
-msgstr "<b style='color:#c62828'>No conectado</b>"
-
-#, python-format
 msgid "<b>%s is available</b> (you have %s)."
 msgstr "<b>%s está disponible</b> (tiene %s)."
 
@@ -352,6 +345,9 @@ msgstr "Añadir otro archivo al área de trabajo"
 msgid "Add design"
 msgstr "Añadir diseño"
 
+msgid "Add layer"
+msgstr "Añadir capa"
+
 msgid "Add the lasers of a file saved with Export"
 msgstr "Añadir los láseres de un archivo guardado con Exportar"
 
@@ -361,10 +357,6 @@ msgstr "Ajustando el oscurecimiento de la imagen: %s%%"
 
 msgid "Advanced"
 msgstr "Avanzado"
-
-msgctxt "toolbar group"
-msgid "Align"
-msgstr "Alinear"
 
 msgid "Align and distribute"
 msgstr "Alinear y distribuir"
@@ -408,6 +400,9 @@ msgstr "Ya está al final de la lista."
 msgid "Already at the start of the list."
 msgstr "Ya está al principio de la lista."
 
+msgid "Angle"
+msgstr "Ángulo"
+
 msgid "Another number: the tabs point other ways"
 msgstr "Otro número: las lengüetas apuntan en otras direcciones"
 
@@ -434,6 +429,16 @@ msgstr "Agujero del eje"
 
 msgid "Back"
 msgstr "Trasera"
+
+msgid "Band offset"
+msgstr "Desplazamiento"
+
+msgid "Band width"
+msgstr "Ancho de banda"
+
+#, python-format
+msgid "Bed %s × %s mm"
+msgstr "Mesa %s × %s mm"
 
 msgid "Bed height"
 msgstr "Alto del área de trabajo"
@@ -487,11 +492,21 @@ msgstr "Velocidad del recorrido del contorno"
 msgid "Boundary trace with laser on"
 msgstr "Recorrer el contorno con el láser encendido"
 
+msgid "Boxes"
+msgstr "Cajas"
+
 msgid "Break apart"
 msgstr "Separar en formas"
 
 msgid "Bricks"
 msgstr "Ladrillos"
+
+msgctxt "hinge"
+msgid "Bridge"
+msgstr "Puente"
+
+msgid "Bridge width"
+msgstr "Ancho de puente"
 
 msgid "Bridge: uncut material between two cuts in a row"
 msgstr "Puente: material sin cortar entre dos cortes de una fila"
@@ -510,10 +525,6 @@ msgstr "Separado en %d formas (agrupadas; usa Desagrupar para separarlas)."
 
 msgid "Browse…"
 msgstr "Examinar…"
-
-msgctxt "toolbar"
-msgid "Bug report"
-msgstr "Informar error"
 
 msgid ""
 "Burn the background away so the text stays raised (off: burn the text "
@@ -540,10 +551,6 @@ msgstr "Cartón 2 mm"
 
 msgid "Centre"
 msgstr "Centro"
-
-msgctxt "toolbar"
-msgid "Centre"
-msgstr "Centrar"
 
 msgid "Centre the lines"
 msgstr "Centrar las líneas"
@@ -640,10 +647,6 @@ msgstr ""
 "Primero haz clic en el archivo abierto o en el grupo y luego en "
 "Desagrupar."
 
-msgctxt "toolbar group"
-msgid "Clipboard"
-msgstr "Portapapeles"
-
 msgid "Close / open"
 msgstr "Cerrar / abrir"
 
@@ -683,6 +686,10 @@ msgstr "Conectar"
 msgid "Connect to the laser"
 msgstr "Conectar con el láser"
 
+#, python-format
+msgid "Connected (%s)"
+msgstr "Conectado (%s)"
+
 msgid "Connected. Click to connect again (re-initialize)."
 msgstr "Conectado. Haga clic para volver a conectar."
 
@@ -718,6 +725,9 @@ msgid "Corner: turns sharper than this stay corners, the rest become curves"
 msgstr ""
 "Esquina: los giros más cerrados que este quedan como esquinas, el resto "
 "se vuelve curva"
+
+msgid "Corners"
+msgstr "Esquinas"
 
 msgid "Corners of the new outline: rounded, or sharp like the shape's"
 msgstr "Esquinas del nuevo contorno: redondeadas, o vivas como las de la forma"
@@ -786,6 +796,10 @@ msgstr "Curva"
 msgid "Curve through the node"
 msgstr "Curva por el nodo"
 
+msgid "Cut"
+msgstr "Corte"
+
+msgctxt "hinge"
 msgid "Cut"
 msgstr "Corte"
 
@@ -901,6 +915,9 @@ msgstr ""
 "Detalle: cuánto puede alejarse el contorno de los bordes de los píxeles "
 "(menos: más nodos, más fiel a la imagen)"
 
+msgid "Device"
+msgstr "Dispositivo"
+
 #, python-format
 msgid "Diagnostic report saved: %s"
 msgstr "Informe de diagnóstico guardado: %s"
@@ -930,6 +947,9 @@ msgstr ""
 
 msgid "Direction of the pattern"
 msgstr "Dirección del patrón"
+
+msgid "Distance"
+msgstr "Distancia"
 
 #, python-format
 msgid ""
@@ -1091,6 +1111,9 @@ msgstr ""
 msgid "Edit the nodes of an element"
 msgstr "Editar los nodos de un elemento"
 
+msgid "Elements"
+msgstr "Elementos"
+
 msgid "Ellipse"
 msgstr "Elipse"
 
@@ -1237,6 +1260,9 @@ msgstr "Reflejar los elementos seleccionados de izquierda a derecha"
 msgid "Flip the selected elements top to bottom"
 msgstr "Reflejar los elementos seleccionados de arriba abajo"
 
+msgid "Follow the head"
+msgstr "Seguir el cabezal"
+
 msgid "Font"
 msgstr "Fuente"
 
@@ -1268,6 +1294,9 @@ msgstr ""
 "inicio para cerrar la forma. La línea se suaviza en curvas que puedes "
 "editar con Editar nodos."
 
+msgid "From line"
+msgstr "Desde la línea"
+
 msgid "Front"
 msgstr "Frente"
 
@@ -1276,10 +1305,6 @@ msgstr "Potencia máxima S"
 
 msgid "G-code"
 msgstr "Código G"
-
-msgctxt "toolbar"
-msgid "G-code"
-msgstr "G-code"
 
 msgid "G-code files"
 msgstr "Archivos de código G"
@@ -1363,15 +1388,15 @@ msgstr "Generando datos del láser: %s%%"
 msgid "Generating laser data…"
 msgstr "Generando datos del láser…"
 
-msgctxt "toolbar group"
+msgctxt "toolbar"
 msgid "Generators"
 msgstr "Generadores"
 
 msgid "Go"
 msgstr "Ir"
 
-msgid "Go to X"
-msgstr "Ir a X"
+msgid "Go to"
+msgstr "Ir a"
 
 msgctxt "toolbar"
 msgid "Grid"
@@ -1390,6 +1415,10 @@ msgstr ""
 "%d elementos agrupados. Haz clic en cualquiera para seleccionar todo el "
 "grupo."
 
+msgctxt "option bar"
+msgid "H"
+msgstr "Al."
+
 msgid "H horizontally, V vertically (with the bed in focus)"
 msgstr "H en horizontal, V en vertical (con la mesa activa)"
 
@@ -1399,9 +1428,8 @@ msgstr "Semitonos (tramado) para imágenes en escala de grises"
 msgid "Halftone resolution (dpi)"
 msgstr "Resolución de semitonos (ppp)"
 
-#, python-format
-msgid "Head: X %s  Y %s %s"
-msgstr "Cabezal: X %s  Y %s %s"
+msgid "Head movement"
+msgstr "Movimiento del cabezal"
 
 msgid "Height"
 msgstr "Alto"
@@ -1432,10 +1460,6 @@ msgstr "Altura del sello (tamaño propio)"
 
 msgid "Height:"
 msgstr "Alto:"
-
-msgctxt "toolbar group"
-msgid "Help"
-msgstr "Ayuda"
 
 msgid "Herringbone"
 msgstr "Espiga"
@@ -1483,6 +1507,10 @@ msgstr "Mantener Mayús al dibujar"
 
 msgid "Hole 20 mm"
 msgstr "Agujero de 20 mm"
+
+msgctxt "laser button"
+msgid "Home"
+msgstr "Origen"
 
 msgid "Home is in the upper right corner"
 msgstr "El origen está en la esquina superior derecha"
@@ -1685,6 +1713,9 @@ msgstr "Conservar el original"
 msgid "Kerf"
 msgstr "Kerf"
 
+msgid "Kerf (mm)"
+msgstr "Kerf (mm)"
+
 msgid "Kerf test"
 msgstr "Prueba de kerf"
 
@@ -1791,10 +1822,12 @@ msgstr ""
 msgid "Laser: %s"
 msgstr "Láser: %s"
 
-msgid "Lasers"
-msgstr "Láseres"
+msgid "Laser: connected"
+msgstr "Láser: conectado"
 
-msgctxt "toolbar"
+msgid "Laser: not connected"
+msgstr "Láser: no conectado"
+
 msgid "Lasers"
 msgstr "Láseres"
 
@@ -1992,9 +2025,6 @@ msgstr ""
 msgid "Material thickness"
 msgstr "Espesor del material"
 
-msgid "Material:"
-msgstr "Material:"
-
 #, python-format
 msgid "Material: %s"
 msgstr "Material: %s"
@@ -2131,13 +2161,12 @@ msgstr "Mover la selección"
 msgid "My laser"
 msgstr "Mi láser"
 
+msgid "Name"
+msgstr "Nombre"
+
 msgid "Name:"
 msgstr "Nombre:"
 
-msgid "Nest"
-msgstr "Anidar"
-
-msgctxt "toolbar"
 msgid "Nest"
 msgstr "Anidar"
 
@@ -2268,8 +2297,14 @@ msgstr "Nodo"
 msgid "Node editing keys"
 msgstr "Teclas de edición de nodos"
 
+msgid "Nodes"
+msgstr "Nodos"
+
 msgid "Not available on GRBL boards."
 msgstr "No disponible en placas GRBL."
+
+msgid "Not connected"
+msgstr "No conectado"
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notas (p. ej. proveedor, lente, asistencia de aire)"
@@ -2410,6 +2445,9 @@ msgstr "Abriendo %s"
 msgid "Operation"
 msgstr "Operación"
 
+msgid "Options bar"
+msgstr "Barra de opciones"
+
 msgid "Order"
 msgstr "Orden"
 
@@ -2422,6 +2460,9 @@ msgstr "Origen X0 Y0"
 msgid "Other layers"
 msgstr "Otras capas"
 
+msgid "Other side"
+msgstr "Otro lado"
+
 msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr "Otro lado: el texto va en sentido contrario, al otro lado de la línea"
 
@@ -2430,6 +2471,9 @@ msgstr "Memoria insuficiente."
 
 msgid "Outer ring"
 msgstr "Anillo exterior"
+
+msgid "Outline"
+msgstr "Contorno"
 
 msgid "Outline only"
 msgstr "Solo contorno"
@@ -2505,6 +2549,10 @@ msgstr "Relleno de patrón"
 
 msgid "Pattern removed."
 msgstr "Patrón eliminado."
+
+msgctxt "job"
+msgid "Pause"
+msgstr "Pausa"
 
 msgid "Pause or stop the running job"
 msgstr "Pausar o detener el trabajo en curso"
@@ -2595,11 +2643,8 @@ msgstr ""
 "Posición en el trazado: dónde empieza el texto (también se puede "
 "arrastrar el texto con el ratón)"
 
-msgid "Position and size"
-msgstr "Posición y tamaño"
-
-msgid "Power"
-msgstr "Potencia"
+msgid "Power (%)"
+msgstr "Potencia (%)"
 
 msgid "Power (M3 boards)"
 msgstr "Potencia (placas M3)"
@@ -2739,6 +2784,9 @@ msgstr "Texto ráster"
 msgid "Ready"
 msgstr "Listo"
 
+msgid "Ready-made designs from a few numbers: boxes, parts, tests"
+msgstr "Diseños listos a partir de unos pocos números: cajas, piezas, pruebas"
+
 msgid "Rectangle"
 msgstr "Rectángulo"
 
@@ -2759,10 +2807,6 @@ msgstr "Menor uso de memoria (ráster de 500 ppp)"
 msgid "Release USB"
 msgstr "Liberar USB"
 
-msgctxt "toolbar"
-msgid "Reload"
-msgstr "Recargar"
-
 msgid "Reloaded"
 msgstr "Recargado"
 
@@ -2778,10 +2822,6 @@ msgstr "Quitar esta capa del material"
 msgid "Rename"
 msgstr "Renombrar"
 
-msgctxt "toolbar"
-msgid "Report"
-msgstr "Informe"
-
 msgid "Report a &problem on GitHub…"
 msgstr "Informar de un &problema en GitHub…"
 
@@ -2790,6 +2830,10 @@ msgstr "Informar de un problema"
 
 msgid "Resolution:"
 msgstr "Resolución:"
+
+msgctxt "job"
+msgid "Resume"
+msgstr "Reanudar"
 
 msgid "Resume the job"
 msgstr "Reanudar el trabajo"
@@ -2873,6 +2917,9 @@ msgstr "Caja redondeada con bisagra flexible (beta)"
 
 msgid "Rounded corners of the frame and outline"
 msgstr "Esquinas redondeadas del marco y del contorno"
+
+msgid "Row gap"
+msgstr "Separación de filas"
 
 msgid "Rows"
 msgstr "Filas"
@@ -2965,12 +3012,6 @@ msgstr "Guardar &G-code…"
 
 msgid "Save &diagnostic report…"
 msgstr "Guardar informe de &diagnóstico…"
-
-msgctxt "toolbar"
-msgid "Save EGV"
-msgstr ""
-"Guardar\n"
-"EGV"
 
 msgid "Save EGV file"
 msgstr "Guardar archivo EGV"
@@ -3083,6 +3124,9 @@ msgstr "Selecciona dos o más formas con contornos cerrados."
 msgid "Selected nodes: %d. Drag them, or use the buttons above."
 msgstr "Nodos seleccionados: %d. Arrástralos o usa los botones de arriba."
 
+msgid "Selection"
+msgstr "Selección"
+
 msgid "Send EGV file"
 msgstr "Enviar archivo EGV"
 
@@ -3118,10 +3162,6 @@ msgid "Settings"
 msgstr "Configuración"
 
 msgctxt "toolbar"
-msgid "Settings"
-msgstr "Ajustes"
-
-msgctxt "toolbar group"
 msgid "Settings"
 msgstr "Ajustes"
 
@@ -3274,6 +3314,9 @@ msgstr "Espacio libre entre el patrón y el contorno"
 msgid "Space left between the parts (the laser's kerf and some room)"
 msgstr "Espacio entre las piezas (el ancho de corte del láser y algo de margen)"
 
+msgid "Spacing"
+msgstr "Separación"
+
 #, python-format
 msgid "Speed (%s)"
 msgstr "Velocidad (%s)"
@@ -3380,8 +3423,8 @@ msgstr ""
 "encender el extractor o la bomba de aire; el trabajo espera a que termine"
 " (como mucho un minuto)"
 
-msgid "Step:"
-msgstr "Paso:"
+msgid "Step"
+msgstr "Paso"
 
 msgid "Stop"
 msgstr "Detener"
@@ -3458,6 +3501,9 @@ msgstr "El disparo de prueba aún no está disponible en placas GRBL."
 msgid "Test fire: %.0f%% for %d ms"
 msgstr "Disparo de prueba: %.0f%% durante %d ms"
 
+msgid "Tests and calibration"
+msgstr "Pruebas y calibración"
+
 msgid "Text"
 msgstr "Texto"
 
@@ -3496,9 +3542,6 @@ msgstr ""
 "ella el texto seleccionado (sin texto seleccionado: escriba antes uno "
 "nuevo arriba). Después arrastre el texto para moverlo a lo largo de la "
 "línea."
-
-msgid "Text on path"
-msgstr "Texto en trazado"
 
 msgid "Text or address"
 msgstr "Texto o dirección"
@@ -3681,6 +3724,9 @@ msgstr "El láser dejó de responder al terminar el trabajo."
 
 msgid "The laser was found, but this user may not use its USB port."
 msgstr "Se encontró el láser, pero este usuario no puede usar su puerto USB."
+
+msgid "The layer of each part of the selected element"
+msgstr "La capa de cada parte del elemento seleccionado"
 
 msgid ""
 "The lid slides in from the front, in a groove between two rails on each "
@@ -3890,20 +3936,22 @@ msgstr "Umbral: se vectorizan los píxeles más oscuros que este"
 msgid "Time"
 msgstr "Tiempo"
 
-msgctxt "toolbar"
-msgid "To head"
-msgstr ""
-"Al\n"
-"cabezal"
-
 msgid "To the &end (last)"
 msgstr "Al &final (últimos)"
 
 msgid "To the &start (first)"
 msgstr "Al &principio (primeros)"
 
+msgctxt "toolbar group"
+msgid "Tools"
+msgstr "Herramientas"
+
 msgid "Trace"
 msgstr "Vectorizar"
+
+msgctxt "job"
+msgid "Trace"
+msgstr "Contorno"
 
 msgid "Trace &picture…"
 msgstr "&Vectorizar imagen…"
@@ -3939,10 +3987,6 @@ msgstr ""
 #, python-format
 msgid "Traced: %d outlines over the picture (Undo takes them away)."
 msgstr "Vectorizado: %d contornos sobre la imagen (Deshacer los quita)."
-
-msgctxt "toolbar group"
-msgid "Transform"
-msgstr "Transformar"
 
 msgid "Triangles"
 msgstr "Triángulos"
@@ -4035,6 +4079,9 @@ msgstr "Error de USB desconocido: %s"
 msgid "Unknown error: %s"
 msgstr "Error desconocido: %s"
 
+msgid "Unlock motors"
+msgstr "Liberar motores"
+
 msgid "Unlock rail after a job"
 msgstr "Desbloquear los ejes al terminar el trabajo"
 
@@ -4092,6 +4139,10 @@ msgstr "Vista"
 msgctxt "toolbar group"
 msgid "View"
 msgstr "Vista"
+
+msgctxt "option bar"
+msgid "W"
+msgstr "An."
 
 msgid "Wait for the laser to finish"
 msgstr "Esperar a que el láser termine"
@@ -4274,6 +4325,10 @@ msgstr "Cortes en zigzag"
 
 msgid "Zoom"
 msgstr "Zoom"
+
+#, python-format
+msgid "Zoom %d%%"
+msgstr "Zoom %d%%"
 
 msgid "a program or script (.bat, .sh)"
 msgstr "un programa o script (.bat, .sh)"
@@ -4771,4 +4826,95 @@ msgstr "grabado vectorial"
 #~ "potencia y pasadas. Abre el archivo "
 #~ "en LaserGRBL, UGS u otro emisor de"
 #~ " G-code. (beta)"
+
+#~ msgid "<b style='color:#2e7d32'>Connected</b> (%s)"
+#~ msgstr "<b style='color:#2e7d32'>Conectado</b> (%s)"
+
+#~ msgid "<b style='color:#c62828'>Not connected</b>"
+#~ msgstr "<b style='color:#c62828'>No conectado</b>"
+
+#~ msgctxt "toolbar group"
+#~ msgid "Align"
+#~ msgstr "Alinear"
+
+#~ msgctxt "toolbar"
+#~ msgid "Bug report"
+#~ msgstr "Informar error"
+
+#~ msgctxt "toolbar"
+#~ msgid "Centre"
+#~ msgstr "Centrar"
+
+#~ msgctxt "toolbar group"
+#~ msgid "Clipboard"
+#~ msgstr "Portapapeles"
+
+#~ msgctxt "toolbar"
+#~ msgid "G-code"
+#~ msgstr "G-code"
+
+#~ msgctxt "toolbar group"
+#~ msgid "Generators"
+#~ msgstr "Generadores"
+
+#~ msgid "Go to X"
+#~ msgstr "Ir a X"
+
+#~ msgid "Head: X %s  Y %s %s"
+#~ msgstr "Cabezal: X %s  Y %s %s"
+
+#~ msgctxt "toolbar group"
+#~ msgid "Help"
+#~ msgstr "Ayuda"
+
+#~ msgctxt "toolbar"
+#~ msgid "Lasers"
+#~ msgstr "Láseres"
+
+#~ msgid "Material:"
+#~ msgstr "Material:"
+
+#~ msgctxt "toolbar"
+#~ msgid "Nest"
+#~ msgstr "Anidar"
+
+#~ msgid "Position and size"
+#~ msgstr "Posición y tamaño"
+
+#~ msgid "Power"
+#~ msgstr "Potencia"
+
+#~ msgctxt "toolbar"
+#~ msgid "Reload"
+#~ msgstr "Recargar"
+
+#~ msgctxt "toolbar"
+#~ msgid "Report"
+#~ msgstr "Informe"
+
+#~ msgctxt "toolbar"
+#~ msgid "Save EGV"
+#~ msgstr ""
+#~ "Guardar\n"
+#~ "EGV"
+
+#~ msgctxt "toolbar group"
+#~ msgid "Settings"
+#~ msgstr "Ajustes"
+
+#~ msgid "Step:"
+#~ msgstr "Paso:"
+
+#~ msgid "Text on path"
+#~ msgstr "Texto en trazado"
+
+#~ msgctxt "toolbar"
+#~ msgid "To head"
+#~ msgstr ""
+#~ "Al\n"
+#~ "cabezal"
+
+#~ msgctxt "toolbar group"
+#~ msgid "Transform"
+#~ msgstr "Transformar"
 

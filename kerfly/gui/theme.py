@@ -37,6 +37,9 @@ HEIGHT_FIELD = 28        # fields, small icon buttons, list rows
 HEIGHT_BUTTON = 32       # text buttons of a dialog's footer
 HEIGHT_ACTION = 44       # the job's buttons (Trace, Start, Pause, Stop), a dialog's preview bar
 HEIGHT_OPTION_ROW = 36   # one row of the options bar
+RIBBON_BUTTON = 56       # a big ribbon button (an icon over its label)
+OPTION_TITLE = 96        # the bold name at the start of a row of the options bar
+PANEL_WIDTH = 348        # the left panel (Design and Laser tabs)
 RADIUS = 4               # rounded corners of buttons, fields and frames
 BUTTON_MIN_WIDTH = 88    # a dialog's footer buttons
 DIALOG_SMALL = 440       # the width of a small dialog (a question, a few fields)
@@ -60,7 +63,7 @@ TOKENS = {
         "update_bg": "#e3f2fd", "update_border": "#90caf9",
         # the job's buttons
         "start": "#2e7d32", "start_border": "#256b29", "stop": "#c62828", "stop_border": "#a32020",
-        "action_ink": "#ffffff", "start_off": "#9e9e9e", "stop_off": "#bdbdbd",
+        "action_ink": "#ffffff", "start_off": "#9e9e9e", "stop_off": "#bdbdbd", "off_bg": "#eceef1",
         "swatch_border": "#555555",
     },
     "dark": {
@@ -75,7 +78,7 @@ TOKENS = {
         "warn_bg": "#3d3220", "warn_ink": "#ffd27a", "warn_border": "#7a6230", "fire": "#ff8a3d",
         "update_bg": "#1d3a5c", "update_border": "#2f6aa8",
         "start": "#2e7d32", "start_border": "#1f5a23", "stop": "#c62828", "stop_border": "#8e1c1c",
-        "action_ink": "#ffffff", "start_off": "#4a4f56", "stop_off": "#4a4f56",
+        "action_ink": "#ffffff", "start_off": "#4a4f56", "stop_off": "#4a4f56", "off_bg": "#383d44",
         "swatch_border": "#9aa1ab",
     },
 }
@@ -95,23 +98,41 @@ CANVAS = {
 }
 
 STYLE = Template("""
-QPushButton#start { background:$start; color:$action_ink; font-weight:bold; border-radius:${radius}px; }
-QPushButton#start:disabled { background:$start_off; }
-QPushButton#stop { background:$stop; color:$action_ink; font-weight:bold; border-radius:${radius}px; }
-QPushButton#stop:disabled { background:$stop_off; }
-QPushButton#start, QPushButton#stop { font-size: 14px; }
+QPushButton#start { background:$start; color:$action_ink; font-weight:600; border: 1px solid $start_border;
+                    border-radius:${radius}px; }
+QPushButton#stop { background:$stop; color:$action_ink; font-weight:600; border: 1px solid $stop_border;
+                   border-radius:${radius}px; }
+QPushButton#trace, QPushButton#pause { background: $panel; border: 1px solid $field_border;
+                                       border-radius:${radius}px; }
+QPushButton#trace:hover, QPushButton#pause:hover { background: $top_bar; }
+QPushButton#start:disabled, QPushButton#stop:disabled, QPushButton#pause:disabled, QPushButton#trace:disabled {
+    background: $off_bg; color: $caption; border: 1px solid $separator; }
+QPushButton#start { font-size: 13px; }
+
+/* the left panel (docs/ui-mockups/Main, LaserTab): flat, white, tabs underlined, the job's bar at the bottom */
+QWidget#left_panel { background: $panel; }
+QTabWidget#panel_tabs::pane { border: 0px; border-top: 1px solid $separator; }
+QTabWidget#panel_tabs QTabBar::tab { background: transparent; border: 0px; padding: 8px 12px; color: $hint;
+                                     font-size: 13px; }
+QTabWidget#panel_tabs QTabBar::tab:selected { color: $ink; font-weight: 600; border-bottom: 2px solid $accent; }
+QFrame#run_footer { background: $bar_light; border-top: 1px solid $separator; }
+QLabel[role="dot"] { background: $disabled; border-radius: 4px; }
+QLabel[role="dot"][state="ok"] { background: $ok; }
+QLabel[role="dot"][state="busy"] { background: $fire; }
 QPushButton#jog { font-size:22px; font-weight:bold; }
 QPushButton#corner { font-size:17px; }
 QGroupBox { font-weight:bold; }
 QToolBar#main_toolbar { spacing: 0px; padding: 1px; }
-QToolBar#main_toolbar QToolButton { padding: 2px 0px; font-size: 11px; min-width: 34px; }
+QToolBar#main_toolbar QToolButton { padding: 2px 4px; font-size: 11px; min-width: 52px; }
+QToolBar#main_toolbar QToolButton[role="icon"] { min-width: 0px; padding: 0px; }
 QLineEdit#layer_name { background: transparent; }
 QLineEdit#layer_name:focus { background: palette(base); }
 QToolBar#tool_strip { padding: 2px 4px 2px 2px; spacing: 2px; }
 QLabel#bed_warning { color: $error; font-weight: bold; padding: 2px 0; }
 QFrame#update_bar { background: $update_bg; border-bottom: 1px solid $update_border; }
 QLabel#node_hint { color: $hint; }
-QWidget#top_bar { background: $top_bar; border-bottom: 1px solid $top_border; }
+QWidget#top_bar { background: $bar_light; border-bottom: 1px solid $top_border; }
+QToolBar#options_toolbar { padding: 0px; spacing: 0px; border: 0px; }
 QScrollArea#top_bar_scroll, QScrollArea#top_bar_scroll > QWidget > QWidget { background: transparent; }
 QLabel#tool_options_title { font-weight: bold; }
 QLabel#ribbon_caption { color: $caption; font-size: 10px; padding-bottom: 1px; }

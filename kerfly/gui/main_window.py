@@ -14,8 +14,8 @@ from PySide6.QtCore import QLocale
 from PySide6.QtGui import QAction, QColor, QIcon, QKeySequence, QPixmap
 from PySide6.QtGui import QActionGroup
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QDockWidget, QDoubleSpinBox, QFileDialog,
-                               QGridLayout, QGroupBox, QHBoxLayout, QInputDialog, QLabel,
-                               QMainWindow, QMessageBox, QProgressBar,
+                               QGridLayout, QHBoxLayout, QInputDialog, QLabel,
+                               QMainWindow, QMenu, QMessageBox, QProgressBar,
                                QPushButton, QScrollArea, QSpinBox, QTabWidget, QToolBar, QToolButton,
                                QVBoxLayout, QWidget, QFrame, QSizePolicy)
 
@@ -36,11 +36,11 @@ from kerfly.core.diag import log as diag_log
 from kerfly.core.layout import (Element, align, compile_layout, distribute, mirror, mirror_about, on_bed,
                                 rotate_about, selection_bounds, units)
 from kerfly.core.shapes import ShapeSpec, build_design, outlines
-from kerfly.gui import icons, theme
+from kerfly.gui import icons, theme, widgets
 from kerfly.gui.image_dialog import ImageSizeDialog
 from kerfly.gui.svg_render import render_svg
 from kerfly.gui.text_shapes import update_text_spec
-from kerfly.gui.tool_options import (KIND_NAMES, NEW_KIND_TITLES, ToolOptionsBar, ribbon_section,
+from kerfly.gui.tool_options import (KIND_NAMES, NEW_KIND_TITLES, ToolOptionsBar, option_field, option_title,
                                     ribbon_separator)
 from kerfly.gui.preview import PreviewView
 from kerfly.gui.settings_dialog import RASTER_KEYS, RELOAD_KEYS, SettingsDialog
@@ -51,8 +51,8 @@ from kerfly.gui.materials_dialog import MaterialsDialog
 from kerfly.gui.worker import EgvSendWorker, GrblJobWorker, JobWorker, LayersJobWorker, RasterLayersWorker
 
 # jog pad: 3 rows as tall as the machine column beside it (4 buttons of 56 px, spacing 4)
-JOG_BUTTON = (4 * 56 + 3 * 4 - 2 * 4) // 3
-JOG_ICON = 44
+JOG_BUTTON = theme.HEIGHT_ACTION      # the jog pad's buttons (docs/ui-mockups/LaserTab)
+JOG_ICON = theme.ICON_LARGE
 _PERCENT_RE = re.compile(r"(\d+(?:\.\d+)?)\s*%\s*$")   # progress percentage at the end of a message
 IMAGE_PATTERNS = " ".join("*" + e for e in loaders.IMAGE_EXTENSIONS)
 
@@ -138,12 +138,13 @@ class MainWindow(QMainWindow):
         central_layout = QVBoxLayout(central)
         central_layout.setContentsMargins(0, 0, 0, 0)
         central_layout.setSpacing(0)
-        # bar above the bed view: position/size/rotation of the selection, then shape options
+        # the options bar (docs/ui-mockups/OptionBars): two rows of HEIGHT_OPTION_ROW across the window under
+        # the ribbon; the first is always the selection (position, size, rotation, layer: _build_panel), the
+        # second what is edited (the tool_options bar). On a narrow screen the rows scroll sideways together
+        # instead of making the window wider than the screen.
         self.top_bar = QWidget()
         self.top_bar.setObjectName("top_bar")
         self.top_bar.setAttribute(Qt.WA_StyledBackground, True)
-        # the sections scroll sideways when they do not fit, instead of making the window wider
-        # than the screen (a text with all its sections needs about 1700 px)
         bar_scroll = QScrollArea()
         bar_scroll.setObjectName("top_bar_scroll")
         bar_scroll.setFrameShape(QFrame.NoFrame)
@@ -151,28 +152,39 @@ class MainWindow(QMainWindow):
         bar_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         bar_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         inner = QWidget()
-        self.top_bar_layout = QHBoxLayout(inner)
-        self.top_bar_layout.setContentsMargins(6, 5, 6, 5)
-        self.top_bar_layout.setSpacing(6)
-        self.top_bar_layout.addWidget(self.tool_options, 1)
+        rows = QVBoxLayout(inner)
+        rows.setContentsMargins(0, 0, 0, 0)
+        rows.setSpacing(0)
+        self.selection_row = QWidget()
+        self.tools_row = QWidget()
+        for row in (self.selection_row, self.tools_row):
+            row.setFixedHeight(theme.HEIGHT_OPTION_ROW)
+            h = QHBoxLayout(row)
+            h.setContentsMargins(theme.SPACE_L, 0, theme.SPACE_L, 0)
+            h.setSpacing(theme.SPACE_M)
+            rows.addWidget(row)
+        self.tools_row.layout().addWidget(self.tool_options, 1)
         bar_scroll.setWidget(inner)
         outer = QHBoxLayout(self.top_bar)
-        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setContentsMargins(0, 0, 0, 1)            # the bottom line of the bar
         outer.addWidget(bar_scroll)
         self.top_bar_scroll = bar_scroll
-        # fixed height: two rows of fields plus the section captions, whatever is shown,
-        # and room for the sideways scroll bar
-        probe, cap = QDoubleSpinBox(), QLabel("X")
-        cap.setObjectName("ribbon_caption")
-        scroll_h = bar_scroll.horizontalScrollBar().sizeHint().height()
-        self.top_bar.setFixedHeight(2 * probe.sizeHint().height() + cap.sizeHint().height() + 4 + 2 + 10 + 4
-                                    + scroll_h)
+        # as tall as the two rows, and the sideways scroll bar only while it is shown
+        scroll_bar = bar_scroll.horizontalScrollBar()
+
+        def fit_height(_lo=0, hi=0):
+            try:
+                extra = scroll_bar.sizeHint().height() if hi > 0 else 0
+                self.top_bar.setFixedHeight(2 * theme.HEIGHT_OPTION_ROW + 1 + extra)
+            except RuntimeError:
+                pass                                 # the window is being closed
+        scroll_bar.rangeChanged.connect(fit_height)
+        fit_height(0, 0)
         # "a new version is available" (hidden until a check finds one)
         from kerfly.gui.update_check import UpdateBar
         self.update_bar = UpdateBar()
         self.update_bar.skip.connect(self._skip_update)
         central_layout.addWidget(self.update_bar)
-        central_layout.addWidget(self.top_bar)
         central_layout.addWidget(self.preview, 1)
         self.setCentralWidget(central)
         self.shape_defaults = {kind: ShapeSpec(kind=kind, operation="fill" if kind == "text" else "cut",
@@ -207,9 +219,20 @@ class MainWindow(QMainWindow):
         self.preview.signals.rotated.connect(self._preview_rotated)
         self.preview.signals.nudged.connect(self._preview_nudged)
         self._build_actions()
+        # the options bar across the window, under the ribbon (over the left panel too)
+        self.addToolBarBreak(Qt.TopToolBarArea)
+        options = QToolBar(_("Options bar"))
+        options.setObjectName("options_toolbar")
+        options.setMovable(False)
+        options.setFloatable(False)
+        self.top_bar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        options.addWidget(self.top_bar)
+        self.addToolBar(Qt.TopToolBarArea, options)
+        self.options_toolbar = options
         self._build_tool_strip()
         self._build_panel()
         self._build_status()
+        QTimer.singleShot(0, self._fit_panel_width)    # again once shown: the style sheet's fonts and padding
         self._update_power_visibility()
         self._update_laser_state()
         self.refresh_preview(fit=True)
@@ -483,8 +506,18 @@ class MainWindow(QMainWindow):
                     diag_log.warning("applications menu entry not updated: %s", e)
         # after Laser and Settings, as asked by a user: the daily work comes first
         m = mb.addMenu(_("&Generators"))
-        for act in self.act_generators.values():
-            m.addAction(act)
+        m.setToolTip(_("Ready-made designs from a few numbers: boxes, parts, tests"))
+        for section, keys in ((N_("Boxes"), ("finger_box", "hinge_box")),
+                              (N_("Parts"), ("gear", "puzzle", "ruler", "qr", "stamp", "round_stamp")),
+                              (N_("Tests and calibration"), ("material_test", "kerf_test", "test_card"))):
+            m.addSection(_(section))
+            for key in keys:
+                m.addAction(self.act_generators[key])
+        listed = {a for a in m.actions()}
+        for act in self.act_generators.values():           # a generator in no section yet: at the end
+            if act not in listed:
+                m.addAction(act)
+        self.generators_menu = m
         m = mb.addMenu(_("&Help"))
         m.addAction(self.act_guide)
         m.addAction(self.act_shortcuts)
@@ -526,21 +559,25 @@ class MainWindow(QMainWindow):
         self.act_start.setIcon(icons.tabler("player-play", theme.token("start")))
         self.act_stop.setIcon(icons.tabler("player-stop", theme.token("stop")))
 
+        # the ribbon (docs/ui-mockups/Main): groups of big buttons (an icon over a short label) and grids
+        # of small icon buttons in two rows, a caption under each group. Machine control (connect, home,
+        # start, stop, ...) is in the left panel; Help (report a problem, the report) in its menu only.
+        # (title, [(action, icon, label)] big buttons, [(action, icon)] small buttons)
         groups = [
             (C_("toolbar group", "File"), [
                 (self.act_new, "file", C_("toolbar", "New")),
                 (self.act_open, "folder-open", C_("toolbar", "Open")),
                 (self.act_add, "file-plus", C_("toolbar", "Add")),
-                (self.act_reload, "refresh", C_("toolbar", "Reload")),
                 (self.act_save_project, "device-floppy", C_("toolbar", "Save")),
-                (self.act_save_egv, "file-export", C_("toolbar", "Save EGV")),
-                (self.act_save_gcode, "file-gcode", C_("toolbar", "G-code")),
+            ], [
+                (self.act_reload, "refresh"),
+                (self.act_save_egv, "file-export"),
+                (self.act_save_gcode, "file-gcode"),
             ]),
             (C_("toolbar group", "Edit"), [
                 (self.act_undo, "arrow-back-up", C_("toolbar", "Undo")),
                 (self.act_redo, "arrow-forward-up", C_("toolbar", "Redo")),
-            ]),
-            (C_("toolbar group", "Clipboard"), "grid", [
+            ], [
                 (self.act_cut, "scissors"),
                 (self.act_copy, "copy"),
                 (self.act_paste, "clipboard"),
@@ -548,116 +585,88 @@ class MainWindow(QMainWindow):
                 (self.act_duplicate, "copy-plus"),
                 (self.act_delete, "trash"),
                 (self.act_select_all, "select-all"),
+                (self.act_group, "squares-selected"),
+                (self.act_ungroup, "squares"),
             ]),
-            (C_("toolbar group", "Transform"), "grid", [
-                (self.act_rot_left, "rotate-2"),
-                (self.act_rot_right, "rotate-clockwise-2"),
-                (self.act_mirror_h, "flip-horizontal"),
-                (self.act_mirror_v, "flip-vertical"),
-            ]),
-            (C_("toolbar group", "Arrange"), [
-                (self.act_center, "focus-centered", C_("toolbar", "Centre")),
-                (self.act_nest, "nest", C_("toolbar", "Nest")),
-                (self.act_place_head, "current-location", C_("toolbar", "To head")),
-            ]),
-            (C_("toolbar group", "Align"), "grid", [
+            (C_("toolbar group", "Arrange"), [], [
                 (self.act_align["left"], "layout-align-left"),
                 (self.act_align["hcenter"], "layout-align-center"),
                 (self.act_align["right"], "layout-align-right"),
                 (self.act_distribute_h, "layout-distribute-vertical"),
+                (self.act_rot_left, "rotate-2"),
+                (self.act_mirror_h, "flip-horizontal"),
+                (self.act_center, "focus-centered"),
+                (self.act_nest, "nest"),
                 (self.act_align["top"], "layout-align-top"),
                 (self.act_align["vcenter"], "layout-align-middle"),
                 (self.act_align["bottom"], "layout-align-bottom"),
                 (self.act_distribute_v, "layout-distribute-horizontal"),
+                (self.act_rot_right, "rotate-clockwise-2"),
+                (self.act_mirror_v, "flip-vertical"),
+                (self.act_place_head, "current-location"),
             ]),
-            (C_("toolbar group", "Shapes"), "grid", [
-                (self.act_group, "squares-selected"),
+            (C_("toolbar group", "Shapes"), [], [
                 (self.act_boolean["union"], "layers-union"),
                 (self.act_boolean["difference"], "layers-subtract"),
-                (self.act_ungroup, "squares"),
+                (self.act_join, "join-polyline"),
                 (self.act_boolean["intersection"], "layers-intersect-2"),
                 (self.act_boolean["exclusion"], "layers-difference"),
-                (self.act_trace_image, "vector-spline"),
-                (self.act_join, "join-polyline"),
             ]),
             (C_("toolbar group", "View"), [
                 (self.act_fit, "zoom-scan", C_("toolbar", "Fit")),
                 (self.act_simulate, "movie", C_("toolbar", "Simulate")),
                 (self.act_snap, "grid-dots", C_("toolbar", "Grid")),
-            ]),
-            (C_("toolbar group", "Settings"), [
-                (self.act_profiles, "laser", C_("toolbar", "Lasers")),
+            ], []),
+            (C_("toolbar group", "Tools"), [
+                (self.generators_menu, "box", C_("toolbar", "Generators")),
                 (self.act_materials, "book", C_("toolbar", "Materials")),
                 (self.act_settings, "settings", C_("toolbar", "Settings")),
-            ]),
-            (C_("toolbar group", "Generators"), "grid",
-             [(act, act.icon()) for act in self.act_generators.values()]),
-            (C_("toolbar group", "Help"), [
-                (self.act_report_problem, "bug", C_("toolbar", "Bug report")),
-                (self.act_report, "file-report", C_("toolbar", "Report")),
-            ]),
+            ], []),
         ]
         tb = QToolBar(_("Main toolbar"))
         tb.setObjectName("main_toolbar")
         tb.setMovable(False)
         self._ribbon_groups = []
-        for i, group_def in enumerate(groups):
-            title, entries = group_def[0], group_def[-1]
-            if len(group_def) == 3:                  # small icon-only buttons in two rows
-                if i:
-                    line = QFrame()
-                    line.setFrameShape(QFrame.VLine)
-                    line.setObjectName("ribbon_separator")
-                    tb.addWidget(line)
-                group = QWidget()
-                v = QVBoxLayout(group)
-                v.setContentsMargins(1, 2, 1, 0)
-                v.setSpacing(0)
-                grid = QGridLayout()
-                grid.setSpacing(0)
-                per_row = (len(entries) + 1) // 2
-                for n, (action, icon) in enumerate(entries):
-                    action.setIcon(icons.tabler(icon) if isinstance(icon, str) else icon)
-                    button = QToolButton()
-                    button.setDefaultAction(action)
-                    button.setToolButtonStyle(Qt.ToolButtonIconOnly)
-                    button.setIconSize(QSize(20, 20))
-                    button.setAutoRaise(True)
-                    button.setFixedSize(28, 28)
-                    grid.addWidget(button, n // per_row, n % per_row)
-                v.addLayout(grid)
-                v.addStretch(1)
-                caption = QLabel(title)
-                caption.setObjectName("ribbon_caption")
-                caption.setAlignment(Qt.AlignHCenter)
-                v.addWidget(caption)
-                self._ribbon_groups.append(group)
-                tb.addWidget(group)
-                continue
+        for i, (title, big, small) in enumerate(groups):
             if i:
-                line = QFrame()
-                line.setFrameShape(QFrame.VLine)
-                line.setObjectName("ribbon_separator")
-                tb.addWidget(line)
+                tb.addWidget(ribbon_separator())
             group = QWidget()
             v = QVBoxLayout(group)
-            v.setContentsMargins(1, 2, 1, 0)
+            v.setContentsMargins(theme.SPACE_S, theme.SPACE_S, theme.SPACE_S, 0)
             v.setSpacing(0)
             row = QHBoxLayout()
-            row.setSpacing(0)
-            for action, icon, short in entries:
-                action.setIcon(icons.tabler(icon))
-                action.setIconText(short)
-                if not action.toolTip() or action.toolTip() == action.iconText():
-                    action.setToolTip(action.text().replace("&", ""))
+            row.setSpacing(2)
+            for what, icon, short in big:
                 button = QToolButton()
-                button.setDefaultAction(action)
+                if isinstance(what, QMenu):              # a list under the button (Generators)
+                    button.setMenu(what)
+                    button.setPopupMode(QToolButton.InstantPopup)
+                    button.setIcon(icons.tabler(icon))
+                    button.setText(short)
+                    button.setToolTip(what.toolTip())
+                    button.setObjectName("generators_button")
+                    self.generators_button = button
+                else:
+                    what.setIcon(icons.tabler(icon))
+                    what.setIconText(short)
+                    if not what.toolTip() or what.toolTip() == what.iconText():
+                        what.setToolTip(what.text().replace("&", ""))
+                    button.setDefaultAction(what)
                 button.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-                button.setIconSize(QSize(24, 24))
+                button.setIconSize(QSize(theme.ICON_LARGE, theme.ICON_LARGE))
                 button.setAutoRaise(True)
-                button.setFixedHeight(62)        # same height for one- and two-line labels
+                button.setFixedHeight(theme.RIBBON_BUTTON)
                 row.addWidget(button, 0, Qt.AlignTop)
+            if small:
+                grid = QGridLayout()
+                grid.setSpacing(0)
+                per_row = (len(small) + 1) // 2           # two rows of small buttons, as tall as a big one
+                for n, (action, icon) in enumerate(small):
+                    action.setIcon(icons.tabler(icon) if isinstance(icon, str) else icon)
+                    grid.addWidget(widgets.icon_button(action=action), n // per_row, n % per_row)
+                row.addLayout(grid)
             v.addLayout(row)
+            v.addStretch(1)
             caption = QLabel(title)
             caption.setObjectName("ribbon_caption")
             caption.setAlignment(Qt.AlignHCenter)
@@ -711,6 +720,9 @@ class MainWindow(QMainWindow):
             strip.addAction(act)
             self.tool_actions[key] = act
         self.tool_actions["select"].setChecked(True)
+        # Trace image (a command, not a tool) with the tools that work on a picture or a shape
+        strip.insertAction(self.tool_actions["measure"], self.act_trace_image)
+        strip.insertSeparator(self.tool_actions["measure"])
         self.addToolBar(Qt.RightToolBarArea, strip)
         # Inkscape's H and V mirror the selection (only with the bed view in focus, like the tool letters)
         self.mirror_keys = []
@@ -765,14 +777,10 @@ class MainWindow(QMainWindow):
         self._update_tool_options()
 
     def _update_tool_options(self, force=False):
-        if self.preview.tool == "nodes":                 # node buttons, after the shape's own options
+        if self.preview.tool == "nodes":                 # the node buttons alone (docs/ui-mockups/OptionBars)
             e = self.selected
-            if e is not None and e.shape is not None:
-                self._options_target, self._options_element = "selected", e
-                self.tool_options.show_spec(e.shape, e.name)
-            else:
-                self._options_target, self._options_element = None, None
-                self.tool_options.show_hint()
+            self._options_target, self._options_element = ("nodes", e) if e is not None else (None, None)
+            self.tool_options.show_hint()
             self.tool_options.add_node_actions()
             ed = self.preview.node_editor
             self.tool_options.set_node_selection(len(ed.selected) if ed.path is not None else 0)
@@ -1854,16 +1862,6 @@ class MainWindow(QMainWindow):
         self.set_tool("select")
         self._layout_changed()
 
-    def _icon_button(self, icon, tooltip, slot, size=46, icon_size=26):
-        """Square button with only an icon (the meaning is in the tooltip)."""
-        b = QPushButton()
-        b.setIcon(icons.tabler(icon) if isinstance(icon, str) else icon)
-        b.setIconSize(QSize(icon_size, icon_size))
-        b.setFixedSize(size, size)
-        b.setToolTip(tooltip)
-        b.clicked.connect(slot)
-        return b
-
     def _update_lock_icon(self, locked):
         self.sel_lock.setIcon(icons.tabler("link" if locked else "link-off"))
         self.sel_lock.setToolTip(_("Proportions are kept") if locked
@@ -1893,28 +1891,61 @@ class MainWindow(QMainWindow):
             fit_spin(w, samples[kind])
         return w
 
+    def _panel_header(self, title, *extra):
+        """A section's header in the left panel: its bold title, then other widgets (HEIGHT_OPTION_ROW)."""
+        box = QWidget()
+        box.setFixedHeight(theme.HEIGHT_OPTION_ROW)
+        h = QHBoxLayout(box)
+        h.setContentsMargins(theme.SPACE_L, 0, theme.SPACE_M, 0)
+        h.setSpacing(theme.SPACE_M)
+        h.addWidget(widgets.section_title(title))
+        for w in extra:
+            h.addWidget(w)
+        if not extra:
+            h.addStretch(1)
+        return box
+
     def _build_panel(self):
+        # the left panel (docs/ui-mockups/Main and LaserTab): flat, two tabs, Design (elements, layers) and
+        # Laser (the device, moving the head); the job's buttons in a bar at its bottom, under both tabs
         panel = QWidget()
+        panel.setObjectName("left_panel")
+        panel.setAttribute(Qt.WA_StyledBackground, True)
         layout = QVBoxLayout(panel)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         self.tabs = QTabWidget()
+        self.tabs.setObjectName("panel_tabs")
+        self.tabs.setDocumentMode(True)
         design_page, laser_page = QWidget(), QWidget()
         design_layout = QVBoxLayout(design_page)
         laser_layout = QVBoxLayout(laser_page)
         for lay in (design_layout, laser_layout):
-            lay.setContentsMargins(4, 6, 4, 4)
+            lay.setContentsMargins(0, 0, 0, theme.SPACE_L)
+            lay.setSpacing(0)
         self.tabs.addTab(design_page, _("Design"))
         self.tabs.addTab(laser_page, _("Laser"))
-        layout.addWidget(self.tabs)
+        layout.addWidget(self.tabs, 1)
 
-        # --- design info and element list
-        box = QGroupBox()
-        v = QVBoxLayout(box)
-        self.design_label = QLabel(_("No design loaded"))
-        self.design_label.setWordWrap(True)
-        v.addWidget(self.design_label, 0, Qt.AlignTop)
+        # --- Elements: the count and size of the design, the job order buttons, the list
+        self.design_label = widgets.hint(_("No design loaded"), wrap=False)
+        self.design_label.setMinimumWidth(0)
+        order_buttons = []
+        for how, icon in (("first", "arrow-bar-to-up"), ("up", "arrow-up"), ("down", "arrow-down"),
+                          ("last", "arrow-bar-to-down")):
+            act = self.act_order[how]
+            act.setIcon(icons.tabler(icon))
+            b = widgets.icon_button(action=act)
+            b.setToolTip("%s (%s)\n%s" % (act.text().replace("&", ""), act.shortcut().toString(),
+                                          act.statusTip()))
+            order_buttons.append(b)
+        self.element_header = self._panel_header(_("Elements"), self.design_label, *order_buttons)
+        design_layout.addWidget(self.element_header)
+        self.design_label.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
+        self.design_label.parentWidget().layout().setStretchFactor(self.design_label, 1)
         from kerfly.gui.element_tree import ElementTree
         self.element_list = ElementTree()
-        # fills the free height of the Design tab (as tall as the Laser tab)
+        # fills the free height of the Design tab
         self.element_list.setMinimumHeight(self.element_list.fontMetrics().lineSpacing() * 4 + 8)
         self.element_list.setToolTip(_("Untick an element to leave it out of the job"))
         self.element_list.itemChanged.connect(self._element_item_changed)
@@ -1928,43 +1959,24 @@ class MainWindow(QMainWindow):
                                                     if 0 <= self.element_list.row(item) < len(self.elements)
                                                     else None))
         self.element_list.viewport().installEventFilter(self)
-        # the list is the order of the job: its order buttons right beside it
         self.element_list_box = QWidget()
         lb = QHBoxLayout(self.element_list_box)
-        lb.setContentsMargins(0, 0, 0, 0)
-        lb.setSpacing(4)
+        lb.setContentsMargins(theme.SPACE_L, 0, theme.SPACE_L, 0)
         lb.addWidget(self.element_list, 1)
-        order_col = QVBoxLayout()
-        order_col.setSpacing(2)
-        for how, icon in (("first", "arrow-bar-to-up"), ("up", "arrow-up"), ("down", "arrow-down"),
-                          ("last", "arrow-bar-to-down")):
-            act = self.act_order[how]
-            act.setIcon(icons.tabler(icon))
-            b = QToolButton()
-            b.setDefaultAction(act)
-            b.setIconSize(QSize(18, 18))
-            b.setAutoRaise(True)
-            b.setToolTip("%s (%s)\n%s" % (act.text().replace("&", ""), act.shortcut().toString(),
-                                          act.statusTip()))
-            order_col.addWidget(b)
-        order_col.addStretch(1)
-        lb.addLayout(order_col)
-        v.addWidget(self.element_list_box, 1)
-        design_layout.addWidget(box, 1)
+        design_layout.addWidget(self.element_list_box, 1)
 
-        # --- selected element: position, size, rotation (ribbon sections above the bed view)
+        # --- the options bar's first row, always the same: the selection's position and size, rotation, layer
         self.selection_box = QWidget()
         sb = QHBoxLayout(self.selection_box)
         sb.setContentsMargins(0, 0, 0, 0)
-        sb.setSpacing(4)
-        pos = QGridLayout()
-        pos.setHorizontalSpacing(4)
-        pos.setVerticalSpacing(4)
+        sb.setSpacing(theme.SPACE_M)
+        sb.addWidget(option_title(_("Selection")))
+        sb.addWidget(widgets.separator())
         self.sel_fields = {}
-        for key, label, row, col, tip in (("x", N_("X"), 0, 0, N_("Distance right from home")),
-                                          ("y", N_("Y"), 0, 2, N_("Distance down from home")),
-                                          ("w", "\u2194", 1, 0, N_("Width")),
-                                          ("h", "\u2195", 1, 2, N_("Height"))):
+        for key, icon, label, tip in (("x", None, N_("X"), N_("Distance right from home")),
+                                      ("y", None, N_("Y"), N_("Distance down from home")),
+                                      ("w", "arrows-horizontal", None, N_("Width")),
+                                      ("h", "line-height", None, N_("Height"))):
             spin = QDoubleSpinBox()
             spin.setRange(-10000.0 if key in "xy" else 0.0, 10000.0)     # 0: the height of a level line
             spin.setDecimals(2)
@@ -1972,22 +1984,15 @@ class MainWindow(QMainWindow):
             spin.setKeyboardTracking(False)          # apply on Enter / focus out, not per digit
             spin.setToolTip(_(tip))
             spin.valueChanged.connect(lambda _v, k=key: self._selection_field_changed(k))
-            lbl = QLabel(_(label) if label in ("X", "Y") else label)
-            lbl.setToolTip(_(tip))
-            pos.addWidget(lbl, row, col)
-            pos.addWidget(spin, row, col + 1)
+            caption = _(label) if label else (C_("option bar", "W") if key == "w" else C_("option bar", "H"))
+            sb.addWidget(option_field(icon, caption, spin))
             self.sel_fields[key] = spin
-        self.sel_lock = QToolButton()
-        self.sel_lock.setCheckable(True)
+        self.sel_lock = widgets.icon_button(checkable=True)
         self.sel_lock.setChecked(True)
-        self.sel_lock.setIconSize(QSize(18, 18))
         self.sel_lock.toggled.connect(self._update_lock_icon)
         self._update_lock_icon(True)
-        pos.addWidget(self.sel_lock, 1, 4)
-        sb.addWidget(ribbon_section(pos, _("Position and size")))
-        sb.addWidget(ribbon_separator())
-        rot = QVBoxLayout()
-        rot.setSpacing(4)
+        sb.addWidget(self.sel_lock)
+        sb.addWidget(widgets.separator())
         self.sel_rotation = QDoubleSpinBox()
         self.sel_rotation.setRange(-360.0, 360.0)
         self.sel_rotation.setDecimals(1)
@@ -1997,89 +2002,102 @@ class MainWindow(QMainWindow):
         self.sel_rotation.setToolTip(_("Rotation, counter-clockwise. You can also drag the round handle "
                                        "above the element (hold Shift for 15\u00b0 steps)."))
         self.sel_rotation.valueChanged.connect(lambda _v: self._selection_field_changed("rotation"))
-        angle_row = QHBoxLayout()
-        angle_row.setSpacing(4)
-        angle_icon = QLabel()
-        angle_icon.setPixmap(icons.tabler("angle").pixmap(18, 18))
-        angle_icon.setToolTip(self.sel_rotation.toolTip())
-        angle_row.addWidget(angle_icon)
-        angle_row.addWidget(self.sel_rotation)
-        rot.addLayout(angle_row)
-        buttons = QHBoxLayout()
-        buttons.setSpacing(2)
-        buttons.addWidget(self._icon_button("rotate-2", _("Rotate 90\u00b0 counter-clockwise"),
-                                            lambda: self.rotate_selected(90), 30, 18))
-        buttons.addWidget(self._icon_button("rotate-clockwise-2", _("Rotate 90\u00b0 clockwise"),
-                                            lambda: self.rotate_selected(-90), 30, 18))
-        buttons.addStretch(1)
-        rot.addLayout(buttons)
-        sb.addWidget(ribbon_section(rot, _("Rotation")))
+        sb.addWidget(option_field("angle", _("Rotation"), self.sel_rotation))
+        for icon, tip, angle in (("rotate-2", _("Rotate 90\u00b0 counter-clockwise"), 90),
+                                 ("rotate-clockwise-2", _("Rotate 90\u00b0 clockwise"), -90)):
+            b = widgets.icon_button(icon, tip)
+            b.clicked.connect(lambda _c=False, a=angle: self.rotate_selected(a))
+            sb.addWidget(b)
+        # the layer of each part of the selected element (one list per part, in a row)
         self.layer_assign_box = QWidget()
         la = QGridLayout(self.layer_assign_box)
         la.setContentsMargins(0, 0, 0, 0)
-        la.setSpacing(4)
+        la.setHorizontalSpacing(theme.SPACE_S)
         self.layer_assign_section = QWidget()
         ls = QHBoxLayout(self.layer_assign_section)
         ls.setContentsMargins(0, 0, 0, 0)
-        ls.setSpacing(4)
-        ls.addWidget(ribbon_separator())
-        ls.addWidget(ribbon_section(self.layer_assign_box, _("Layer")))
+        ls.setSpacing(theme.SPACE_M)
+        ls.addWidget(widgets.separator())
+        ls.addWidget(option_field("stack-2", _("Layer"), self.layer_assign_box,
+                                  _("The layer of each part of the selected element")))
         self.layer_assign_section.hide()
         sb.addWidget(self.layer_assign_section)
-        self.top_bar_layout.insertWidget(0, self.selection_box)
-        self.top_bar_layout.insertWidget(1, ribbon_separator())
+        sb.addStretch(1)
+        self.selection_row.layout().addWidget(self.selection_box, 1)
 
-        # --- laser
-        box = QGroupBox()
-        v = QVBoxLayout(box)
-        # the laser in use (one at a time): its profile sets the board, bed, power, ...
+        # --- Laser tab, Device: the laser in use (one at a time: its profile sets the board, bed, power, ...),
+        # whether it is connected, the machine's buttons
+        laser_layout.addWidget(self._panel_header(_("Device")))
         profile_row = QHBoxLayout()
-        profile_icon = QLabel()
-        profile_icon.setPixmap(icons.tabler("laser").pixmap(22, 22))
-        profile_icon.setToolTip(_("The laser in use"))
-        profile_row.addWidget(profile_icon)
+        profile_row.setContentsMargins(theme.SPACE_L, 0, theme.SPACE_L, 0)
+        profile_row.setSpacing(theme.SPACE_M)
         self.profile_box = QComboBox()
         self.profile_box.setToolTip(_("The laser in use: choosing another one puts its settings (board, bed, "
                                       "power, rotary, ...) into the window"))
         self.profile_box.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
         self.profile_box.setMinimumContentsLength(14)
         self.profile_box.activated.connect(lambda _i: self.switch_profile(self.profile_box.currentText()))
+        profile_row.addWidget(widgets.icon_pixmap_label("laser", _("The laser in use")))
         profile_row.addWidget(self.profile_box, 1)
-        manage = QToolButton()
-        manage.setDefaultAction(self.act_profiles)
+        manage = widgets.icon_button(action=self.act_profiles)
         manage.setIcon(icons.tabler("settings"))
         manage.setToolTip(_("Manage your lasers: add, duplicate, rename, delete, export, import"))
-        manage.setAutoRaise(True)
         self.btn_profiles = manage
         profile_row.addWidget(manage)
-        v.addLayout(profile_row)
+        laser_layout.addLayout(profile_row)
         self._refresh_profile_box()
-        self.laser_label = QLabel()
-        v.addWidget(self.laser_label)
-        # machine buttons, in a column beside the jog pad
-        machine = QVBoxLayout()
-        machine.setSpacing(4)
-        self.btn_connect = self._icon_button("plug-connected", _("Connect to the laser") + " (Ctrl+I)",
-                                             self.connect_laser, 56, 28)
-        self.btn_home = self._icon_button("home", _("Home: move the head to the home corner"),
-                                          self.home, 56, 28)
-        self.btn_unlock = self._icon_button("lock-open", _("Unlock rail: release the motors so the head "
-                                                           "can be moved by hand"), self.unlock, 56, 28)
-        # design follows the head: square toggle under the lock, its meaning in the tooltip
+        state = QHBoxLayout()
+        state.setContentsMargins(theme.SPACE_L, theme.SPACE_M, theme.SPACE_L, 0)
+        state.setSpacing(theme.SPACE_M)
+        self.laser_dot = widgets.status_dot()
+        self.laser_label = widgets.hint("", wrap=False)
+        state.addWidget(self.laser_dot)
+        state.addWidget(self.laser_label, 1)
+        laser_layout.addLayout(state)
+        machine = QGridLayout()
+        machine.setContentsMargins(theme.SPACE_L, theme.SPACE_L, theme.SPACE_L, theme.SPACE_L)
+        machine.setSpacing(theme.SPACE_M)
+
+        def machine_button(icon, text, tip, slot, role="secondary"):
+            b = QPushButton(icons.tabler(icon), text)
+            b.setIconSize(QSize(theme.ICON, theme.ICON))
+            b.setToolTip(tip)
+            b.clicked.connect(slot)
+            widgets.DialogFooter.style_button(b, role)
+            b.setMinimumWidth(0)
+            return b
+        self.btn_connect = machine_button("plug-connected", _("Connect"), _("Connect to the laser") + " (Ctrl+I)",
+                                          self.connect_laser, "primary")
+        self.btn_home = machine_button("home", C_("laser button", "Home"),
+                                       _("Home: move the head to the home corner"), self.home)
+        self.btn_unlock = machine_button("lock-open", _("Unlock motors"),
+                                         _("Unlock rail: release the motors so the head can be moved by hand"),
+                                         self.unlock)
+        # design follows the head: a toggle, its meaning in the tooltip
         self.btn_follow_head = QToolButton()
+        self.act_follow_head.setIconText(_("Follow the head"))
         self.btn_follow_head.setDefaultAction(self.act_follow_head)
-        self.btn_follow_head.setIconSize(QSize(28, 28))
-        self.btn_follow_head.setFixedSize(56, 56)
+        self.btn_follow_head.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.btn_follow_head.setIconSize(QSize(theme.ICON, theme.ICON))
+        self.btn_follow_head.setFixedHeight(theme.HEIGHT_BUTTON)
+        self.btn_follow_head.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        widgets.set_role(self.btn_follow_head, "segment")
         self.act_follow_head.setToolTip("%s (Ctrl+Alt+H)\n%s" % (_("Design follows the head"),
                                                                     self.act_follow_head.statusTip()))
-        for b in (self.btn_connect, self.btn_home, self.btn_unlock, self.btn_follow_head):
-            machine.addWidget(b)
-        machine.addStretch(1)
+        for n, b in enumerate((self.btn_connect, self.btn_home, self.btn_unlock, self.btn_follow_head)):
+            machine.addWidget(b, n // 2, n % 2)
+        laser_layout.addLayout(machine)
 
-        # jog pad: arrows move the design origin; corners/centre move the head
-        # to that point of the design (the design stays where it is)
+        # --- Head movement: where the head is, the jog pad (arrows move the head by a step; corners and
+        # centre move it to that point of the design, the design stays where it is), the step, go to X / Y
+        self.head_label = widgets.hint("", wrap=False)
+        self.head_label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        header = self._panel_header(_("Head movement"), self.head_label)
+        header.layout().setStretchFactor(self.head_label, 1)
+        laser_layout.addWidget(widgets.separator(vertical=False))
+        laser_layout.addWidget(header)
         grid = QGridLayout()
-        grid.setSpacing(4)
+        grid.setSpacing(theme.SPACE_S)
         arrows = {(0, 1): ("up", 0, 1, "Ctrl+Up", N_("Move the laser head up by one step")),
                   (-1, 0): ("left", 1, 0, "Ctrl+Left", N_("Move the laser head left by one step")),
                   (1, 0): ("right", 1, 2, "Ctrl+Right", N_("Move the laser head right by one step")),
@@ -2112,35 +2130,31 @@ class MainWindow(QMainWindow):
             grid.addWidget(b, r, c)
             self.corner_buttons.append(b)
         pad = QHBoxLayout()
+        pad.setContentsMargins(0, theme.SPACE_S, 0, theme.SPACE_L)
         pad.addStretch(1)
-        pad.addLayout(machine)
-        pad.addSpacing(22)                 # keep machine buttons apart from the jog pad
         pad.addLayout(grid)
         pad.addStretch(1)
-        v.addLayout(pad)
+        laser_layout.addLayout(pad)
 
+        moves = QGridLayout()
+        moves.setContentsMargins(theme.SPACE_L, 0, theme.SPACE_L, 0)
+        moves.setHorizontalSpacing(theme.SPACE_M)
+        moves.setVerticalSpacing(theme.SPACE_M)
         self.jog_step = self._spin("jog_step", "len", 0.01, 1000, 2)
         self.jog_step.setToolTip(_("Distance moved by one arrow click"))
         fit_spin(self.jog_step, 999.99)
-        row = QHBoxLayout()
-        row.addStretch(1)
-        row.addWidget(QLabel(_("Step:")))
-        row.addWidget(self.jog_step)
-        row.addStretch(1)
-        v.addLayout(row)
-        self.head_label = QLabel()
-        self.head_label.setAlignment(Qt.AlignHCenter)
-        v.addWidget(self.head_label)
-
+        moves.addWidget(widgets.caption("arrows-horizontal", _("Step"), self.jog_step.toolTip()), 0, 0)
+        moves.addWidget(self.jog_step, 0, 1, 1, 2)
         # go to an absolute position (from home)
-        row = QHBoxLayout()
-        row.addWidget(QLabel(_("Go to X")))
         self.goto_x = QDoubleSpinBox()
         self.goto_y = QDoubleSpinBox()
         for w, key, sign in ((self.goto_x, "gotoX", 1.0), (self.goto_y, "gotoY", -1.0)):
             w.setRange(0.0, 10000.0)
             w.setDecimals(2)
-            fit_spin(w, 9999.99)
+            w.setPrefix("X " if w is self.goto_x else "Y ")      # (docs/ui-mockups/LaserTab)
+            w.setButtonSymbols(QDoubleSpinBox.NoButtons)       # typed in; they share the row's width
+            w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            w.setMinimumWidth(theme.BUTTON_MIN_WIDTH)
             self._unit_widgets.append((w, "len", key, sign))
         try:
             self.goto_x.setValue(float(self.values.get("gotoX") or 0))
@@ -2150,24 +2164,29 @@ class MainWindow(QMainWindow):
         self.goto_x.valueChanged.connect(lambda v: self._set_value("gotoX", _num_text(v)))
         # gotoY is stored like K40 Whisperer (up is positive); shown as distance down
         self.goto_y.valueChanged.connect(lambda v: self._set_value("gotoY", _num_text(-v)))
+        self.goto_x.setToolTip(_("Distance right from home"))
         self.goto_y.setToolTip(_("Distance down from home"))
-        row.addWidget(self.goto_x)
-        row.addSpacing(6)
-        row.addWidget(QLabel(_("Y")))
-        row.addWidget(self.goto_y)
         self.btn_goto = QPushButton(_("Go"))
         self.btn_goto.setIcon(icons.tabler("arrow-right"))
         self.btn_goto.setToolTip(_("Home the head, then move to X/Y (%s)")
                                 % self.act_goto.shortcut().toString(QKeySequence.NativeText))
         self.btn_goto.clicked.connect(self.goto_position)
-        row.addWidget(self.btn_goto)
-        row.addStretch(1)
-        v.addLayout(row)
+        widgets.DialogFooter.style_button(self.btn_goto, "secondary")
+        self.btn_goto.setMinimumWidth(0)
+        self.btn_goto.setFixedHeight(theme.HEIGHT_FIELD)
+        moves.addWidget(widgets.caption("current-location", _("Go to"), self.btn_goto.toolTip()), 1, 0)
+        moves.addWidget(self.goto_x, 1, 1)
+        moves.addWidget(self.goto_y, 1, 2)
+        moves.addWidget(self.btn_goto, 1, 3)
+        moves.setColumnStretch(1, 1)
+        moves.setColumnStretch(2, 1)
+        laser_layout.addLayout(moves)
 
         # test fire (M3 boards)
         self.test_fire_row = QWidget()
         row = QHBoxLayout(self.test_fire_row)
-        row.setContentsMargins(0, 0, 0, 0)
+        row.setContentsMargins(theme.SPACE_L, theme.SPACE_L, theme.SPACE_L, 0)
+        row.setSpacing(theme.SPACE_M)
         self.btn_test_fire = QPushButton(_("Test fire"))
         self.btn_test_fire.setIcon(icons.tabler("flame", theme.token("fire")))
         self.btn_test_fire.setToolTip(_("Fire the laser briefly (M3 boards)"))
@@ -2179,13 +2198,11 @@ class MainWindow(QMainWindow):
         fit_spin(t, 1000)
         row.addWidget(t)
         row.addStretch(1)
-        v.addWidget(self.test_fire_row)
-        laser_layout.addWidget(box)
+        laser_layout.addWidget(self.test_fire_row)
         laser_layout.addStretch(1)
 
-        # --- layers
-        box = QGroupBox(_("Layers"))
-        bl = QVBoxLayout(box)
+        # --- Design tab, Layers: the material, the layers' table, add a layer, the total time
+        design_layout.addWidget(self._panel_header(_("Layers")))
         self.layers_panel = LayersPanel()
         self.layers_panel.changed.connect(self._layer_changed)
         self.layers_panel.structure_changed.connect(self._layers_structure_changed)
@@ -2196,59 +2213,20 @@ class MainWindow(QMainWindow):
         self.layers_panel.calc_raster.connect(self.calculate_raster_time)
         self.layers_panel.set_materials([m.name for m in self.materials])
         self.btn_calc_time = self.layers_panel.add_button       # disabled while busy, like before
-        bl.addWidget(self.layers_panel)
-        layout.addWidget(box)
-
-        # --- run: one compact row
-        self.bed_warning = QLabel()
-        self.bed_warning.setObjectName("bed_warning")
-        self.bed_warning.setWordWrap(True)
-        self.bed_warning.hide()
-        run = QWidget()
-        row = QHBoxLayout(run)
-        row.setContentsMargins(0, 4, 0, 0)
-        row.setSpacing(6)
-        self.btn_trace = QPushButton()
-        self.btn_trace.setIcon(icons.trace_icon())
-        self.btn_trace.setIconSize(QSize(26, 26))
-        self.btn_trace.setFixedSize(46, 46)
-        self.btn_trace.setToolTip(_("Trace boundary: move the head around the outline of the design "
-                                    "(laser off unless set in Settings), to check where it will be cut"))
-        self.btn_trace.clicked.connect(lambda: self.start_job(trace=True))
-        row.addWidget(self.btn_trace)
-        self.btn_start = QPushButton(_("Start"))
-        self.btn_start.setObjectName("start")
-        self.btn_start.setFixedHeight(46)
-        self.btn_start.setIcon(icons.tabler("player-play", theme.token("action_ink")))
-        self.btn_start.setIconSize(QSize(22, 22))
-        self.btn_start.setToolTip(_("Start the selected operations") + " (F9)")
-        self.btn_start.clicked.connect(lambda: self.start_job())
-        row.addWidget(self.btn_start, 1)
-        self.btn_pause = QPushButton()
-        self.btn_pause.setObjectName("pause")
-        self.btn_pause.setIcon(icons.tabler("player-pause"))
-        self.btn_pause.setIconSize(QSize(24, 24))
-        self.btn_pause.setFixedSize(46, 46)
-        self.btn_pause.setToolTip(_("Pause the laser; press again to resume"))
-        self.btn_pause.setEnabled(False)
-        self.btn_pause.clicked.connect(self.pause_job)
-        row.addWidget(self.btn_pause)
-        self.btn_stop = QPushButton(_("Stop"))
-        self.btn_stop.setObjectName("stop")
-        self.btn_stop.setFixedHeight(46)
-        self.btn_stop.setIcon(icons.tabler("player-stop", theme.token("action_ink")))
-        self.btn_stop.setIconSize(QSize(22, 22))
-        self.btn_stop.setToolTip(_("Stop the job now") + " (Esc)")
-        self.btn_stop.setEnabled(False)
-        self.btn_stop.clicked.connect(self.stop_job)
-        row.addWidget(self.btn_stop, 1)          # Start and Stop share the width equally
-        layout.addStretch(1)
+        layers_box = QWidget()
+        lv = QVBoxLayout(layers_box)
+        lv.setContentsMargins(theme.SPACE_L, 0, theme.SPACE_L, 0)
+        lv.addWidget(self.layers_panel)
+        design_layout.addWidget(layers_box)
 
         scroll = QScrollArea()
         scroll.setWidget(panel)
         scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        # only up and down: the panel is as wide as its content needs (about PANEL_WIDTH)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.panel_scroll = scroll
-        # Start, Pause and Stop stay at the bottom, outside the scrolling part: on a small screen
+        # Trace, Start, Pause and Stop stay at the bottom, outside the scrolling part: on a small screen
         # (1366 x 768) the panel scrolls, and reaching Start with the wheel changed the speed fields
         # the wheel passed over (a user's report 2026-11-12)
         body = QWidget()
@@ -2256,18 +2234,21 @@ class MainWindow(QMainWindow):
         body_layout.setContentsMargins(0, 0, 0, 0)
         body_layout.setSpacing(0)
         body_layout.addWidget(scroll, 1)
-        footer = QWidget()
+        footer = QFrame()
         footer.setObjectName("run_footer")
         footer_layout = QVBoxLayout(footer)
-        margins = layout.contentsMargins()
-        footer_layout.setContentsMargins(margins.left(), 2, margins.right(), margins.bottom())
-        footer_layout.setSpacing(2)
+        footer_layout.setContentsMargins(theme.SPACE_L, theme.SPACE_L, theme.SPACE_L, theme.SPACE_L)
+        footer_layout.setSpacing(theme.SPACE_M)
+        self.bed_warning = QLabel()
+        self.bed_warning.setObjectName("bed_warning")
+        self.bed_warning.setWordWrap(True)
+        self.bed_warning.hide()
         footer_layout.addWidget(self.bed_warning)
         # Engrave / Outline / Cut only (switched on in Settings → View): small, above Start, always visible
         self.kind_row = QWidget()
         kind_layout = QHBoxLayout(self.kind_row)
-        kind_layout.setContentsMargins(0, 2, 0, 0)
-        kind_layout.setSpacing(4)
+        kind_layout.setContentsMargins(0, 0, 0, 0)
+        kind_layout.setSpacing(theme.SPACE_S)
         self.kind_buttons = {}
         for kind, act in self.act_run_kind.items():
             # a push button: its colour square and text are centred, not stuck to the left edge
@@ -2280,20 +2261,58 @@ class MainWindow(QMainWindow):
                 _b.setToolTip(_a.toolTip())
             act.changed.connect(follow)
             follow()
-            b.setFixedHeight(28)
+            b.setFixedHeight(theme.HEIGHT_FIELD)
             b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
             kind_layout.addWidget(b)
             self.kind_buttons[kind] = b
         self.kind_row.setVisible(is_true(self.values.get("kind_buttons", "0")))
         footer_layout.addWidget(self.kind_row)
-        footer_layout.addWidget(run)
+        # the job's four buttons, as wide as each other (docs/ui-mockups/Main)
+        run = QGridLayout()
+        run.setSpacing(theme.SPACE_M)
+
+        def job_button(name, icon, text, tip, slot):
+            b = QPushButton(icon, text)
+            b.setObjectName(name)
+            b.setIconSize(QSize(theme.ICON, theme.ICON))
+            b.setFixedHeight(theme.HEIGHT_ACTION)
+            b.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            b.setMinimumWidth(0)
+            b.setToolTip(tip)
+            b.clicked.connect(slot)
+            return b
+        self.btn_trace = job_button("trace", icons.trace_icon(), C_("job", "Trace"),
+                                    _("Trace boundary: move the head around the outline of the design "
+                                      "(laser off unless set in Settings), to check where it will be cut"),
+                                    lambda: self.start_job(trace=True))
+        def on_colour(name):
+            """White on the green / red button, grey while it is off (the button is grey then)."""
+            icon = QIcon()
+            for mode, ink in ((QIcon.Normal, "action_ink"), (QIcon.Disabled, "caption")):
+                icon.addPixmap(icons.tabler(name, theme.token(ink)).pixmap(2 * theme.ICON, 2 * theme.ICON), mode)
+            return icon
+        self.btn_start = job_button("start", on_colour("player-play"), _("Start"),
+                                    _("Start the selected operations") + " (F9)", lambda: self.start_job())
+        self.btn_pause = job_button("pause", icons.tabler("player-pause"), C_("job", "Pause"),
+                                    _("Pause the laser; press again to resume"), self.pause_job)
+        self.btn_pause.setEnabled(False)
+        self.btn_stop = job_button("stop", on_colour("player-stop"), _("Stop"),
+                                   _("Stop the job now") + " (Esc)", self.stop_job)
+        self.btn_stop.setEnabled(False)
+        for n, b in enumerate((self.btn_trace, self.btn_start, self.btn_pause, self.btn_stop)):
+            run.addWidget(b, 0, n)
+            run.setColumnStretch(n, 1)
+        footer_layout.addLayout(run)
         body_layout.addWidget(footer)
         self.run_footer = footer
         dock = QDockWidget(_("Job"), self)
         dock.setObjectName("job_dock")
         dock.setFeatures(QDockWidget.NoDockWidgetFeatures)
+        dock.setTitleBarWidget(QWidget())             # no title bar: the tabs say what it is
         dock.setWidget(body)
         self.addDockWidget(Qt.LeftDockWidgetArea, dock)
+        self.resizeDocks([dock], [theme.PANEL_WIDTH], Qt.Horizontal)       # as narrow as its content allows
+        self.job_dock = dock
         for key in ("x", "y", "w", "h"):
             self._unit_widgets.append((self.sel_fields[key], "len", None, 1.0))
         self._update_unit_suffixes()
@@ -2319,7 +2338,42 @@ class MainWindow(QMainWindow):
         self.busy_indicator.setFixedWidth(4 * self.fontMetrics().height())
         self.busy_indicator.hide()
         self.statusBar().addPermanentWidget(self.busy_indicator)
+        # (docs/ui-mockups/Main) where the pointer is, the bed's size, the zoom, the laser's state
+        self.status_pointer = widgets.hint("", wrap=False)
+        self.status_bed = widgets.hint("", wrap=False)
+        self.status_zoom = widgets.hint("", wrap=False)
+        self.status_laser_dot = widgets.status_dot()
+        self.status_laser = widgets.hint("", wrap=False)
+        laser = QWidget()
+        h = QHBoxLayout(laser)
+        h.setContentsMargins(0, 0, 0, 0)
+        h.setSpacing(theme.SPACE_S + 2)
+        h.addWidget(self.status_laser_dot)
+        h.addWidget(self.status_laser)
+        for n, w in enumerate((self.status_pointer, self.status_bed, self.status_zoom, laser)):
+            if n:
+                self.statusBar().addPermanentWidget(widgets.separator())
+            self.statusBar().addPermanentWidget(w)
+        self.preview.signals.pointer.connect(self._show_pointer)
+        self.preview.signals.zoomed.connect(self._show_view_state)
+        self._show_view_state()
         self.statusBar().showMessage(_("Ready"))
+
+    def _show_pointer(self, x_mm, y_mm):
+        """The pointer's place on the bed in the status bar, from home like the X and Y fields."""
+        if is_true(self.values.get("HomeUR", "0")):          # (cheap: this runs on every mouse move)
+            x_mm = config.bed_size_inches(self.values)[0] * 25.4 - x_mm
+        scale = 1.0 if self.values.get("units") == "mm" else 1 / 25.4
+        self.status_pointer.setText("X %s  Y %s %s" % (_num(x_mm * scale), _num(y_mm * scale),
+                                                       self.values.get("units")))
+
+    def _show_view_state(self):
+        """The bed's size and the zoom (100 %: the whole bed fitted in the view) in the status bar."""
+        bed_w, bed_h = config.bed_size_inches(self.values)
+        self.status_bed.setText(_("Bed %s \u00d7 %s mm") % (_num(bed_w * 25.4, 0), _num(bed_h * 25.4, 0)))
+        fitted = self.preview._fit_scale()
+        if fitted:
+            self.status_zoom.setText(_("Zoom %d%%") % round(100.0 * self.preview.transform().m11() / fitted))
 
     # ------------------------------------------------------------ state
     # ------------------------------------------------------------ elements
@@ -3659,7 +3713,7 @@ class MainWindow(QMainWindow):
             combo.setFixedWidth(chars_width(combo, 14) + 48)
             combo.setToolTip(_(LAYER_KIND_NAMES[kind]))
             combo.currentIndexChanged.connect(lambda _i, c=combo, k=kind: self._assign_layer(k, c.currentData()))
-            grid.addWidget(combo, row % 2, row // 2)
+            grid.addWidget(combo, 0, row)
 
     def _shape_layer_choice(self, e, grid):
         """A drawn shape: one list with every layer of the panel on the left. A
@@ -3692,7 +3746,7 @@ class MainWindow(QMainWindow):
             fill.setFixedWidth(chars_width(fill, 14) + 48)
             fill.setToolTip(_("Layer of the fill pattern (outline engraving)"))
             fill.currentIndexChanged.connect(lambda _i, c=fill: self._assign_layer(ENGRAVE, c.currentData()))
-            grid.addWidget(fill, 1, 0)
+            grid.addWidget(fill, 0, 1)
 
     def _assign_shape_layer(self, layer_id):
         """Put the selected drawn shape on a layer, changing its operation when
@@ -3891,6 +3945,16 @@ class MainWindow(QMainWindow):
         for w, kind, _key, _sign in self._unit_widgets:
             w.setSuffix(" " + (units if kind == "len" else speed))
             refit_spin(w)
+        self._fit_panel_width()
+
+    def _fit_panel_width(self):
+        """The left panel as wide as its content needs (about PANEL_WIDTH), never scrolling sideways."""
+        scroll = getattr(self, "panel_scroll", None)
+        if scroll is not None:
+            for i in range(self.tabs.count()):
+                self.tabs.widget(i).ensurePolished()     # a hidden tab gets its style only when shown
+            scroll.setMinimumWidth(max(theme.PANEL_WIDTH, scroll.widget().minimumSizeHint().width()
+                                       + scroll.verticalScrollBar().sizeHint().width()))
 
     def _reload_spin_values(self):
         """Re-read unit-dependent fields after the units changed."""
@@ -3905,21 +3969,23 @@ class MainWindow(QMainWindow):
             w.blockSignals(False)
 
     def _update_laser_state(self):
-        if self.laser.connected:
-            # the colour follows the theme; the translated text keeps the light theme's colour
-            self.laser_label.setText(_("<b style='color:#2e7d32'>Connected</b> (%s)")
-                                     .replace("#2e7d32", theme.token("ok")) % self.values.get("board_name"))
-            self.btn_connect.setIcon(icons.tabler("plug-connected", theme.token("ok")))
+        # the state: a dot (green: connected) and its words, in the Laser tab and in the status bar
+        connected = bool(self.laser.connected)
+        if connected:
+            self.laser_label.setText(_("Connected (%s)") % self.values.get("board_name"))
             self.btn_connect.setToolTip(_("Connected. Click to connect again (re-initialize)."))
         else:
-            self.laser_label.setText(_("<b style='color:#c62828'>Not connected</b>")
-                                     .replace("#c62828", theme.token("error")))
-            self.btn_connect.setIcon(icons.tabler("plug-connected"))
+            self.laser_label.setText(_("Not connected"))
             self.btn_connect.setToolTip(_("Connect to the laser") + " (Ctrl+I)")
+        self.btn_connect.setIcon(icons.tabler("plug-connected", theme.token("action_ink")))
+        for dot in (self.laser_dot, getattr(self, "status_laser_dot", None)):
+            if dot is not None:
+                widgets.set_dot(dot, "ok" if connected else "")
+        if getattr(self, "status_laser", None) is not None:
+            self.status_laser.setText(_("Laser: connected") if connected else _("Laser: not connected"))
         x, y = self.head
         scale = 25.4 if self.values.get("units") == "mm" else 1.0
-        self.head_label.setText(_("Head: X %s  Y %s %s") % (_num(x * scale), _num(-y * scale),
-                                                            self.values.get("units")))
+        self.head_label.setText("X %s  Y %s %s" % (_num(x * scale), _num(-y * scale), self.values.get("units")))
 
     def set_busy(self, busy):
         for w in [self.btn_start, self.btn_trace, self.btn_connect, self.btn_home, self.btn_unlock,
@@ -3986,6 +4052,8 @@ class MainWindow(QMainWindow):
         self._update_tool_options()
         self._update_times()
         self._update_bed_check()
+        if hasattr(self, "status_bed"):
+            self._show_view_state()                  # the bed's size may have changed (settings, a profile)
 
     # ------------------------------------------------------------ design files
     def new_project(self):
@@ -4277,6 +4345,8 @@ class MainWindow(QMainWindow):
     def _update_design_label(self):
         if not self.elements:
             self.design_label.setText(_("No design loaded"))
+            self.design_label.setToolTip("")
+            widgets.set_role(self.design_label, "hint")
             return
         parts = []
         has = self._design_has()
@@ -4288,14 +4358,18 @@ class MainWindow(QMainWindow):
         xmax = max(e.bounds[1] for e in self.elements)
         ymin = min(e.bounds[2] for e in self.elements)
         ymax = max(e.bounds[3] for e in self.elements)
+        # one line in the Elements header: how many, how large; what they hold in its tooltip; red when the
+        # design does not fit on the bed
         title = self.elements[0].name if len(self.elements) == 1 else \
             ngettext("%d element", "%d elements", len(self.elements)) % len(self.elements)
-        text = "<b>%s</b><br>%s<br>%s" % (
-            title, _("%s \u00d7 %s mm") % (_num((xmax - xmin) * 25.4), _num((ymax - ymin) * 25.4)),
-            ", ".join(parts) or _("empty"))
-        if not self._layout_fits_bed():
-            text += "<br><b style='color:%s'>%s</b>" % (theme.token("error"), _("Outside the laser bed!"))
+        size = _("%s \u00d7 %s mm") % (_num((xmax - xmin) * 25.4), _num((ymax - ymin) * 25.4))
+        fits = self._layout_fits_bed()
+        text = "%d \u00b7 %s" % (len(self.elements), size)
+        if not fits:
+            text += " \u00b7 " + _("Outside the laser bed!")
         self.design_label.setText(text)
+        self.design_label.setToolTip("%s\n%s\n%s" % (title, size, ", ".join(parts) or _("empty")))
+        widgets.set_role(self.design_label, "hint" if fits else "error")
 
     # ------------------------------------------------------------ settings
     def edit_settings(self):
@@ -4903,6 +4977,7 @@ class MainWindow(QMainWindow):
         self.btn_pause.setEnabled(self.worker is not None and self.worker.laser is not None)
         self.btn_pause.setIcon(icons.tabler("player-play" if paused else "player-pause",
                                             theme.token("ok") if paused else None))
+        self.btn_pause.setText(C_("job", "Resume") if paused else C_("job", "Pause"))
         self.btn_pause.setToolTip(_("Resume the job") if paused else _("Pause the laser; press again to resume"))
 
     def _job_finished(self, ok, message):

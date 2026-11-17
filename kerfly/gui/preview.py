@@ -69,6 +69,8 @@ class ViewSignals(QObject):
     shape_picked = Signal(str, QPointF)          # fill / text-on-path / hinge tool clicked here (scene mm)
     context_menu = Signal(QPointF, QPoint)        # right click without moving: scene mm, screen position
     hovered = Signal(object)                      # the element under the mouse pointer, or None
+    pointer = Signal(float, float)                # the mouse pointer over the view (scene mm), for the status bar
+    zoomed = Signal()                             # the view was zoomed or fitted
 
 
 def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
@@ -348,6 +350,7 @@ class PreviewView(QGraphicsView):
             moved = self.mapFromScene(before) - pos
             self.horizontalScrollBar().setValue(self.horizontalScrollBar().value() + moved.x())
             self.verticalScrollBar().setValue(self.verticalScrollBar().value() + moved.y())
+            self.signals.zoomed.emit()
             self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
             self._place_handles()
 
@@ -805,6 +808,8 @@ class PreviewView(QGraphicsView):
 
     def mouseMoveEvent(self, event):
         self._report_hover(event.position().toPoint())
+        at = self.mapToScene(event.position().toPoint())
+        self.signals.pointer.emit(at.x(), at.y())
         if self.tool not in ("select", "nodes") + PICK_TOOLS and self._draw_start is None and not self._poly_points \
                 and not self._pen and self._freehand is None and self._measure_start is None \
                 and not event.buttons():
@@ -982,6 +987,7 @@ class PreviewView(QGraphicsView):
         self.resetTransform()
         self.fitInView(rect, Qt.KeepAspectRatio)
         self._place_handles()
+        self.signals.zoomed.emit()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

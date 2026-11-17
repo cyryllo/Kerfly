@@ -208,6 +208,9 @@ class Session:
         to_px = (lambda p: p) if widget is not self.vp else (lambda p: self.pos(*p))
         path = [to_px(a)] + [to_px(p) for p in (points or [])] + [to_px(b)]
         QTest.mouseMove(widget, path[0])
+        # on X11 QTest moves the real pointer and the server sends that move back a moment later, with no
+        # button held: let it arrive before the press, or it lands in the drag and stops it
+        self.settle(4, 0.02)
         QTest.mousePress(widget, Qt.LeftButton, mods, path[0])
         for p0, p1 in zip(path, path[1:]):
             for i in range(1, steps + 1):
@@ -220,6 +223,7 @@ class Session:
     def click_bed(self, x, y, mods=Qt.NoModifier, double=False):
         p = self.pos(x, y)
         QTest.mouseMove(self.vp, p)
+        self.settle(4, 0.02)                     # the pointer's move back from X11 first (see drag)
         if double:
             QTest.mouseDClick(self.vp, Qt.LeftButton, mods, p)
         else:
@@ -240,6 +244,7 @@ class Session:
     def right_click_bed(self, x, y):
         p = self.pos(x, y)
         QTest.mouseMove(self.vp, p)
+        self.settle(4, 0.02)                     # the pointer's move back from X11 first (see drag)
         QTest.mouseClick(self.vp, Qt.RightButton, Qt.NoModifier, p)
         self.settle()
 
@@ -985,8 +990,9 @@ def part_edit(s):
                 s.click_bed(points[0].x(), points[0].y())   # select a node
             from kerfly.i18n import _ as tr
             from kerfly.gui.tool_options import NODE_SECTIONS
-            text = next(lbl for _sec, acts in NODE_SECTIONS for c, lbl, *_r in acts if c == code)
-            button = next(b for b in w.tool_options.findChildren(QToolButton) if b.text() == tr(text))
+            text, key = next((lbl, k) for _sec, acts in NODE_SECTIONS for c, lbl, _i, k, *_r in acts if c == code)
+            button = next(b for b in w.tool_options.findChildren(QToolButton)
+                          if b.text() == "%s (%s)" % (tr(text), key))      # its key in the caption
             s.click(button)
         s.step("nodes: %s" % label, node_button, change=None)
     s.trigger(w.tool_actions["select"])
@@ -1510,7 +1516,7 @@ def part_m3_board(s):
     s.step("jog step: type 2", lambda: s.type_number(w.jog_step, 2.0), change=False)
     s.step("Design tab", lambda: s.tab(0), change=False)
     panel = w.layers_panel
-    power = [r for r in panel.grid_box.findChildren(_D) if r.suffix().strip() == "%"]
+    power = [row["power"] for row in panel.rows.values() if "power" in row]
     s.step("layers: type a power (M3)", lambda: s.type_number(power[0], 35), undo=False,
            check=lambda: (any(abs(l.power - 0.35) < 1e-6 for l in w.layers), [l.power for l in w.layers]))
     s.covered_widgets.add("layer power")
@@ -1909,7 +1915,7 @@ def part_files_and_help(s):
         s.click(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Close))
     from PySide6.QtWidgets import QDialogButtonBox
     s.expect_dialog("lasers: New, name, Use", add_and_use)
-    s.step("Lasers (toolbar) → New, type a name, Use: its settings in the window", lambda: s.trigger(w.act_profiles),
+    s.step("Lasers (Laser tab) → New, type a name, Use: its settings in the window", lambda: s.trigger(w.act_profiles),
            change=False, undo=False,
            check=lambda: (w.profiles.current == "Laptop laser" and w.values.get("board_name") == "LASER-M2"
                           and w.profile_box.currentText() == "Laptop laser",
