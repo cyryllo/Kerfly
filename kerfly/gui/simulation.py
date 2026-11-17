@@ -6,21 +6,21 @@ Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 from PySide6.QtCore import QPointF, Qt, QTimer
-from PySide6.QtGui import QColor, QPainterPath, QPen
+from PySide6.QtGui import QPainterPath, QPen
 from PySide6.QtWidgets import (QComboBox, QDialog, QGraphicsEllipseItem, QGraphicsItem, QHBoxLayout, QLabel,
                                QPushButton, QSlider, QVBoxLayout)
 
 from kerfly.core.simulate import RASTER_ROW_MM, timeline, total_seconds
-from kerfly.gui import icons
+from kerfly.gui import icons, theme, widgets
 from kerfly.i18n import _
 
 SPEEDS = (1, 2, 5, 10, 20, 50, 100, 200, 500, 1000)
 WATCH_SECONDS = 30.0             # the automatic speed plays the whole job in about this time
 # red where the laser is on (whatever the layer), grey for moves with the laser off; a raster
 # row is drawn only over its dark parts and one row wide, so what is engraved turns red
-BURN = QColor("#e53935")
+BURN = theme.canvas("burn")
 COLORS = {"raster": BURN, "engrave": BURN, "cut": BURN, "gcode": BURN,
-          "move": QColor("#9e9e9e")}
+          "move": theme.canvas("move")}
 
 
 def _pen(color, width=1.6, style=Qt.SolidLine):
@@ -79,10 +79,8 @@ class SimulationDialog(QDialog):
         v = QVBoxLayout(self)
         v.addLayout(row)
         v.addWidget(self.label)
-        hint = QLabel(_("Red: what the laser has burnt so far (raster engraving one line every 0.2 mm). "
-                        "Grey dashed lines: moves with the laser off."))
-        hint.setWordWrap(True)
-        hint.setStyleSheet("color:#6b7280;")
+        hint = widgets.hint(_("Red: what the laser has burnt so far (raster engraving one line every 0.2 mm). "
+                              "Grey dashed lines: moves with the laser off."))
         v.addWidget(hint)
         self.resize(460, self.sizeHint().height())
 
@@ -185,7 +183,7 @@ class SimulationDialog(QDialog):
             head = self._scene_point(self.steps[0].x0, self.steps[0].y0)
         if head is not None:
             dot = QGraphicsEllipseItem(-6, -6, 12, 12)
-            dot.setPen(_pen(QColor("#f57c00"), 2))
+            dot.setPen(_pen(theme.canvas("head"), 2))
             dot.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
             dot.setPos(head)
             dot.setZValue(61)

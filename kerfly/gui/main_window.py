@@ -150,8 +150,6 @@ class MainWindow(QMainWindow):
         bar_scroll.setWidgetResizable(True)
         bar_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         bar_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        bar_scroll.setStyleSheet("QScrollArea#top_bar_scroll, QScrollArea#top_bar_scroll > QWidget > QWidget "
-                                 "{ background: transparent; }")
         inner = QWidget()
         self.top_bar_layout = QHBoxLayout(inner)
         self.top_bar_layout.setContentsMargins(6, 5, 6, 5)
@@ -525,8 +523,8 @@ class MainWindow(QMainWindow):
         for a in (self.act_trace, self.act_start) + tuple(self.act_run_kind.values()) + (self.act_stop,):
             self.laser_menu.addAction(a)
         self.act_trace.setIcon(icons.trace_icon())
-        self.act_start.setIcon(icons.tabler("player-play", "#2e7d32"))
-        self.act_stop.setIcon(icons.tabler("player-stop", "#c62828"))
+        self.act_start.setIcon(icons.tabler("player-play", theme.token("start")))
+        self.act_stop.setIcon(icons.tabler("player-stop", theme.token("stop")))
 
         groups = [
             (C_("toolbar group", "File"), [
@@ -2171,7 +2169,7 @@ class MainWindow(QMainWindow):
         row = QHBoxLayout(self.test_fire_row)
         row.setContentsMargins(0, 0, 0, 0)
         self.btn_test_fire = QPushButton(_("Test fire"))
-        self.btn_test_fire.setIcon(icons.tabler("flame", "#e65100"))
+        self.btn_test_fire.setIcon(icons.tabler("flame", theme.token("fire")))
         self.btn_test_fire.setToolTip(_("Fire the laser briefly (M3 boards)"))
         self.btn_test_fire.clicked.connect(self.test_fire)
         row.addWidget(self.btn_test_fire)
@@ -2221,7 +2219,7 @@ class MainWindow(QMainWindow):
         self.btn_start = QPushButton(_("Start"))
         self.btn_start.setObjectName("start")
         self.btn_start.setFixedHeight(46)
-        self.btn_start.setIcon(icons.tabler("player-play", "#ffffff"))
+        self.btn_start.setIcon(icons.tabler("player-play", theme.token("action_ink")))
         self.btn_start.setIconSize(QSize(22, 22))
         self.btn_start.setToolTip(_("Start the selected operations") + " (F9)")
         self.btn_start.clicked.connect(lambda: self.start_job())
@@ -2238,7 +2236,7 @@ class MainWindow(QMainWindow):
         self.btn_stop = QPushButton(_("Stop"))
         self.btn_stop.setObjectName("stop")
         self.btn_stop.setFixedHeight(46)
-        self.btn_stop.setIcon(icons.tabler("player-stop", "#ffffff"))
+        self.btn_stop.setIcon(icons.tabler("player-stop", theme.token("action_ink")))
         self.btn_stop.setIconSize(QSize(22, 22))
         self.btn_stop.setToolTip(_("Stop the job now") + " (Esc)")
         self.btn_stop.setEnabled(False)
@@ -3961,8 +3959,12 @@ class MainWindow(QMainWindow):
             elif not message.endswith("%") and "%: " not in message:
                 diag_log.info("status: %s", message)     # progress percentages are left out
                 self._last_logged_status = message
-        self.statusBar().setStyleSheet("color:%s;" % theme.token("error") if error else "")
-        self.statusBar().showMessage(tr_message(message))
+        bar = self.statusBar()
+        if bool(bar.property("error")) != bool(error):     # red text for an error (theme.py's style sheet)
+            bar.setProperty("error", bool(error))
+            bar.style().unpolish(bar)
+            bar.style().polish(bar)
+        bar.showMessage(tr_message(message))
 
     def refresh_preview(self, fit=False):
         try:
@@ -4900,7 +4902,7 @@ class MainWindow(QMainWindow):
         self._paused = paused
         self.btn_pause.setEnabled(self.worker is not None and self.worker.laser is not None)
         self.btn_pause.setIcon(icons.tabler("player-play" if paused else "player-pause",
-                                            "#2e7d32" if paused else None))
+                                            theme.token("ok") if paused else None))
         self.btn_pause.setToolTip(_("Resume the job") if paused else _("Pause the laser; press again to resume"))
 
     def _job_finished(self, ok, message):

@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QFileDialog, QGridLayo
 
 from kerfly.core import config
 from kerfly.core import profiles as profiles_core
-from kerfly.gui import icons
+from kerfly.gui import icons, theme
 from kerfly.i18n import _
 
 
@@ -47,7 +47,7 @@ class ProfilesDialog(QDialog):
                  self._export),
                 ("import", _("Import…"), "folder-open", _("Add the lasers of a file saved with Export"),
                  self._import))):
-            b = QPushButton(icons.tabler(icon, "#c62828" if key == "delete" else None), text)
+            b = QPushButton(icons.tabler(icon, theme.token("danger") if key == "delete" else None), text)
             b.setToolTip(tip)
             b.clicked.connect(slot)
             self.buttons[key] = b

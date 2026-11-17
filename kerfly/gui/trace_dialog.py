@@ -7,12 +7,12 @@ Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 from PySide6.QtCore import QPointF, QRectF, Qt, QTimer
-from PySide6.QtGui import QColor, QImage, QPainter, QPainterPath, QPen, QPixmap
+from PySide6.QtGui import QImage, QPainter, QPainterPath, QPen, QPixmap
 from PySide6.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QHBoxLayout,
                                QLabel, QSlider, QSpinBox, QVBoxLayout, QWidget)
 
 from kerfly.core import curves, trace
-from kerfly.gui import icons
+from kerfly.gui import theme, widgets
 from kerfly.i18n import _
 
 PREVIEW = 460
@@ -66,15 +66,7 @@ class TraceDialog(QDialog):
         self.count = QLabel()
 
         def row(icon, tip, widget):
-            box = QWidget()
-            h = QHBoxLayout(box)
-            h.setContentsMargins(0, 0, 0, 0)
-            label = QLabel()
-            label.setPixmap(icons.tabler(icon).pixmap(18, 18))
-            label.setToolTip(tip)
-            h.addWidget(label)
-            h.addWidget(widget, 1)
-            return box
+            return widgets.with_icon(icon, widget, tip)
         thr = QWidget()
         th = QHBoxLayout(thr)
         th.setContentsMargins(0, 0, 0, 0)
@@ -130,14 +122,14 @@ class TraceDialog(QDialog):
         paths = trace.trace(self.small, opts["threshold"], opts["invert"], opts["specks"] * k * k,
                             max(0.3, opts["detail"] * k), opts["smooth"], opts["corner_deg"])
         pm = QPixmap(PREVIEW, PREVIEW)
-        pm.fill(QColor("#ffffff"))
+        pm.fill(theme.canvas("preview_paper"))
         p = QPainter(pm)
         p.setRenderHint(QPainter.Antialiasing, True)
         ox, oy = (PREVIEW - self.base.width()) / 2.0, (PREVIEW - self.base.height()) / 2.0
         p.setOpacity(0.35)
         p.drawImage(QRectF(ox, oy, self.base.width(), self.base.height()), self.base)
         p.setOpacity(1.0)
-        p.setPen(QPen(QColor("#d32f2f"), 1.3))
+        p.setPen(QPen(theme.canvas("preview_line"), 1.3))
         n = 0
         for poly in curves.flatten(paths):
             path = QPainterPath(QPointF(ox + poly[0][0], oy + poly[0][1]))

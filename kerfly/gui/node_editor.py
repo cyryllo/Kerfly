@@ -20,17 +20,19 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 import math
 
 from PySide6.QtCore import QPointF, Qt
-from PySide6.QtGui import QBrush, QColor, QPainterPath, QPen
+from PySide6.QtGui import QBrush, QPainterPath, QPen
 from PySide6.QtWidgets import QGraphicsEllipseItem, QGraphicsItem, QGraphicsRectItem
 
 from kerfly.core import curves
 from kerfly.core import snap as snapping
+from kerfly.gui import theme
 
 ACTIONS = ("insert", "delete", "line", "curve", "smooth", "symmetric", "close", "break")
 KEYS = {Qt.Key_I: "insert", Qt.Key_D: "delete", Qt.Key_Delete: "delete", Qt.Key_Backspace: "delete",
         Qt.Key_L: "line", Qt.Key_C: "curve", Qt.Key_O: "smooth", Qt.Key_S: "symmetric",
         Qt.Key_Z: "close", Qt.Key_B: "break"}
-BLUE = QColor("#1e88e5")
+BLUE = theme.canvas("selection")
+WHITE = theme.canvas("handle")
 
 
 def _pen(color, width=1.5, style=Qt.SolidLine):
@@ -93,7 +95,7 @@ class HandleMark(_Grip, QGraphicsEllipseItem):
         self.setZValue(47)
         self.setCursor(Qt.CrossCursor)
         self.setPen(_pen(BLUE))
-        self.setBrush(QBrush(QColor("white")))
+        self.setBrush(QBrush(WHITE))
 
     def mousePressEvent(self, event):
         if not self._press(event):
@@ -190,7 +192,7 @@ class NodeEditor:
     def _style_marks(self):
         self.view.signals.node_selection.emit(len(self.selected) if self.path is not None else 0)
         for key, mark in self._marks.items():
-            mark.setBrush(QBrush(BLUE if key in self.selected else QColor("white")))
+            mark.setBrush(QBrush(BLUE if key in self.selected else WHITE))
 
     def _draw_handles(self):
         scene = self.view.scene()

@@ -12,7 +12,7 @@ from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton
 
 from kerfly.core import updates
-from kerfly.gui import icons
+from kerfly.gui import theme, widgets
 from kerfly.i18n import _
 
 
@@ -42,11 +42,9 @@ class UpdateBar(QFrame):
         self.setObjectName("update_bar")
         self.release = None
         row = QHBoxLayout(self)
-        row.setContentsMargins(8, 4, 8, 4)
-        row.setSpacing(8)
-        icon = QLabel()
-        icon.setPixmap(icons.tabler("cloud-download").pixmap(18, 18))
-        row.addWidget(icon)
+        row.setContentsMargins(theme.SPACE_M, theme.SPACE_S, theme.SPACE_M, theme.SPACE_S)
+        row.setSpacing(theme.SPACE_M)
+        row.addWidget(widgets.icon_pixmap_label("cloud-download"))
         self.text = QLabel()
         row.addWidget(self.text, 1)
         self.open_button = QPushButton(_("See the release"))

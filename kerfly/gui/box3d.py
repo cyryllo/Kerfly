@@ -27,7 +27,9 @@ from PySide6.QtCore import QLineF, QPointF, Qt
 from PySide6.QtGui import QColor, QImage, QPainter, QPainterPath, QPen, QPolygonF
 from PySide6.QtWidgets import QWidget
 
-WOOD = [QColor("#d9b98c"), QColor("#cfa977"), QColor("#e3c79d"), QColor("#c99f6c")]
+from kerfly.gui import theme
+
+WOOD = [QColor(c) for c in theme.CANVAS["wood"]]
 LIGHT = (-0.4, -0.77, 0.5)                      # in view coordinates: from the upper left, towards the viewer
 EPS = 1e-3                                      # mm: on a plane
 SHARP = math.cos(math.radians(20))              # a bend of a part's outline sharper than this has an edge
@@ -511,7 +513,7 @@ class Box3DView(QWidget):
     def paintEvent(self, _event):
         p = QPainter(self)
         p.setRenderHint(QPainter.Antialiasing, True)
-        p.fillRect(self.rect(), QColor("#eef0f3"))
+        p.fillRect(self.rect(), theme.canvas("box3d_bg"))
         self.render(p, self.width(), self.height())
         p.end()
 

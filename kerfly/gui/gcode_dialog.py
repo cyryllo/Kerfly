@@ -8,7 +8,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 from PySide6.QtWidgets import (QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QLabel, QSpinBox,
                                QVBoxLayout)
 
-from kerfly.gui.nest_dialog import _with_icon
+from kerfly.gui.widgets import caption
 from kerfly.i18n import _
 
 
@@ -42,9 +42,9 @@ class GcodeDialog(QDialog):
                      "so it is at speed where it burns")
         self.overscan.setToolTip(over_tip)
         form = QFormLayout()
-        form.addRow(_with_icon("current-location", _("Origin X0 Y0"), origin_tip), self.origin)
-        form.addRow(_with_icon("flame", _("Full power S"), s_tip), self.s_max)
-        form.addRow(_with_icon("arrows-horizontal", _("Raster overscan"), over_tip), self.overscan)
+        form.addRow(caption("current-location", _("Origin X0 Y0"), origin_tip), self.origin)
+        form.addRow(caption("flame", _("Full power S"), s_tip), self.s_max)
+        form.addRow(caption("arrows-horizontal", _("Raster overscan"), over_tip), self.overscan)
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttons.button(QDialogButtonBox.Ok).setText(_("Save…"))
         buttons.accepted.connect(self.accept)

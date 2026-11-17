@@ -7,6 +7,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QLabel,
                                QVBoxLayout)
 
+from kerfly.gui import widgets
 from kerfly.i18n import _
 
 DEFAULT_DPI = 96.0
@@ -39,13 +40,9 @@ class ImageSizeDialog(QDialog):
         form.addRow(_("Resolution:"), self.dpi)
         form.addRow(_("Width:"), self.width)
         form.addRow(_("Height:"), self.height)
-        note = QLabel(_("Dark pixels are engraved, light and transparent pixels are not."))
-        note.setWordWrap(True)
-        note.setStyleSheet("color:#616161;")
+        note = widgets.hint(_("Dark pixels are engraved, light and transparent pixels are not."))
         if not dpi:
-            hint = QLabel(_("The file does not say how large the image is. Set its size."))
-            hint.setWordWrap(True)
-            hint.setStyleSheet("color:#c62828;")
+            hint = widgets.error(_("The file does not say how large the image is. Set its size."))
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)

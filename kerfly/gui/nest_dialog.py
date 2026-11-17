@@ -5,26 +5,10 @@ turned by 90 degrees. A sheet is always the laser's bed.
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
-from PySide6.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QHBoxLayout,
-                               QLabel, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QLabel, QVBoxLayout
 
-from kerfly.gui import icons
+from kerfly.gui.widgets import caption
 from kerfly.i18n import _
-
-
-def _with_icon(icon, text, tip):
-    """A form caption with its icon, both with the tooltip."""
-    box = QWidget()
-    row = QHBoxLayout(box)
-    row.setContentsMargins(0, 0, 0, 0)
-    pic = QLabel()
-    pic.setPixmap(icons.tabler(icon).pixmap(18, 18))
-    label = QLabel(text)
-    for w in (box, pic, label):
-        w.setToolTip(tip)
-    row.addWidget(pic)
-    row.addWidget(label, 1)
-    return box
 
 
 class NestDialog(QDialog):
@@ -49,8 +33,8 @@ class NestDialog(QDialog):
         turn_tip = _("Parts may be turned by 90 degrees where that fits better (off: e.g. for wood grain)")
         self.turn.setToolTip(turn_tip)
         form = QFormLayout()
-        form.addRow(_with_icon("box-padding", _("Gap"), gap_tip), self.gap)
-        form.addRow(_with_icon("rotate-clockwise-2", _("Turn by 90°"), turn_tip), self.turn)
+        form.addRow(caption("box-padding", _("Gap"), gap_tip), self.gap)
+        form.addRow(caption("rotate-clockwise-2", _("Turn by 90°"), turn_tip), self.turn)
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttons.button(QDialogButtonBox.Ok).setText(_("Nest"))
         buttons.accepted.connect(self.accept)

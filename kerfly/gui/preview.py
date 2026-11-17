@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (QGraphicsEllipseItem, QGraphicsItem, QGraphicsLin
 
 from kerfly.core import snap as snapping
 from kerfly.core.config import bed_size_inches, is_true
+from kerfly.gui import theme
 from kerfly.i18n import N_, _
 
 SNAP_PIXELS = 10                     # snap distance on screen
@@ -32,19 +33,9 @@ MAX_PREVIEW_PIXELS = 3000   # longest side of a raster preview image
 # tools that work on a shape clicked in the bed view (they draw nothing)
 PICK_TOOLS = ("fill", "textpath", "hinge", "offset")
 
-COLORS = {
-    "bed": QColor("#e9ebee"),
-    "bed_border": QColor("#b8bec7"),
-    "background": QColor("#5b616b"),
-    "engrave": QColor("#1565c0"),
-    "cut": QColor("#d32f2f"),
-    "gcode": QColor("#6a1b9a"),
-    "outline": QColor("#9aa1ab"),
-    "selection": QColor("#1e88e5"),
-    "head": QColor("#f57c00"),
-    "off_bed": QColor("#d32f2f"),
-    "snap": QColor("#e040fb"),
-}
+# the colours drawn on the bed (theme.CANVAS: the same in both themes)
+COLORS = {key: theme.canvas(key) for key in ("bed", "bed_border", "background", "engrave", "cut", "gcode",
+                                             "outline", "selection", "head", "off_bed", "snap", "handle")}
 
 
 def _cosmetic_pen(color, width=1.0, style=Qt.SolidLine):
@@ -238,7 +229,7 @@ class Handle(QGraphicsRectItem):
         self.setFlag(QGraphicsItem.ItemIgnoresTransformations, True)
         self.setZValue(20)
         self.setPen(_cosmetic_pen(COLORS["selection"], 1.5))
-        self.setBrush(QBrush(QColor("white")))
+        self.setBrush(QBrush(COLORS["handle"]))
         self.setCursor(Qt.CrossCursor if kind == "rotate" else Qt.SizeFDiagCursor)
         self._start = None
         self._value = None
@@ -1132,8 +1123,8 @@ class PreviewView(QGraphicsView):
         if grid_mm > 0:
             # draw at least every 5 mm so a fine grid does not turn into a grey area
             step = grid_mm * max(1, int(math.ceil(5.0 / grid_mm)))
-            minor = _cosmetic_pen(QColor("#d3d7dd"), 1)
-            major = _cosmetic_pen(QColor("#bfc5cd"), 1)
+            minor = _cosmetic_pen(theme.canvas("grid_minor"), 1)
+            major = _cosmetic_pen(theme.canvas("grid_major"), 1)
             n = 0
             x = 0.0
             while x <= bed_w * MM + 1e-6:

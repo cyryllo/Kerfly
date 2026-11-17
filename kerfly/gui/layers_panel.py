@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QCheckBox, QColorDialog, QComboBox, QDoubleSpinBo
                                QToolButton, QVBoxLayout, QWidget)
 
 from kerfly.core.layers import CUT, ENGRAVE, GCODE, RASTER
-from kerfly.gui import icons
+from kerfly.gui import icons, theme, widgets
 from kerfly.gui.sizing import fit_spin
 from kerfly.i18n import N_, _
 
@@ -27,13 +27,14 @@ def _num_text(v):
 class ColorButton(QToolButton):
     def __init__(self, color, parent=None):
         super().__init__(parent)
-        self.setFixedSize(18, 18)
+        self.setFixedSize(theme.ICON_SMALL + 2, theme.ICON_SMALL + 2)
+        widgets.set_role(self, "swatch")
         self.set_color(color)
         self.setToolTip(_("Layer colour; click to change"))
 
     def set_color(self, color):
         self.color = color
-        self.setStyleSheet("QToolButton { background: %s; border: 1px solid #555; border-radius: 3px; }" % color)
+        self.setStyleSheet("QToolButton { background: %s; }" % color)      # the layer's colour (its frame: theme)
 
 
 class LayersPanel(QWidget):
@@ -139,8 +140,7 @@ class LayersPanel(QWidget):
             self._add_row(row, layer, data, removable(layer))
             row += 1
         if row == 1:
-            hint = QLabel(_("Open a design to see its layers."))
-            hint.setStyleSheet("color:#757575;")
+            hint = widgets.hint(_("Open a design to see its layers."), wrap=False)
             self.grid.addWidget(hint, 1, 0, 1, 8)
         self.add_button.setEnabled(not gcode_file)
 
@@ -235,7 +235,7 @@ class LayersPanel(QWidget):
         self.grid.addWidget(time_cell, row, 6)
         if removable:
             rm = QToolButton()
-            rm.setIcon(icons.tabler("trash", "#c62828"))
+            rm.setIcon(icons.tabler("trash", theme.token("error")))
             rm.setIconSize(QSize(16, 16))
             rm.setAutoRaise(True)
             rm.setToolTip(_("Delete this layer (its parts go back to the default layer)"))

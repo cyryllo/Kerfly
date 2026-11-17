@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDialogButtonBox, 
 from kerfly.core import generators as gen
 from kerfly.core.layers import DEFAULT_COLORS
 from kerfly.core.shapes import outlines
+from kerfly.gui import theme
 from kerfly.i18n import N_, _
 
 OPERATIONS = [("engrave", N_("Engrave outline")), ("cut", N_("Cut")), ("fill", N_("Fill (raster)"))]
@@ -514,7 +515,7 @@ class GeneratorDialog(QDialog):
         self.view = QGraphicsView(self.scene)
         self.view.setRenderHint(QPainter.Antialiasing, True)
         self.view.setMinimumSize(420, 320)
-        self.view.setBackgroundBrush(QBrush(QColor("#e9ebef")))
+        self.view.setBackgroundBrush(QBrush(theme.canvas("preview_bg")))
         self.summary = QLabel()
         self.summary.setWordWrap(True)
         # boxes: a 3D tab with the parts put together

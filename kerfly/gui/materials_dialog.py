@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QDoubleSpinBox, QFormL
                                QPushButton, QSpinBox, QVBoxLayout, QWidget)
 
 from kerfly.core.materials import KINDS, Material, OperationSettings
+from kerfly.gui import widgets
 from kerfly.gui.sizing import fit_spin
 from kerfly.gui.layers_panel import CUT, ENGRAVE, KIND_NAMES, RASTER
 from kerfly.i18n import N_, _
@@ -128,8 +129,7 @@ class MaterialsDialog(QDialog):
         self.notes.textChanged.connect(self._store)
         form.addWidget(self.notes)
         if units == "in":
-            hint = QLabel(_("Speeds are stored in mm/s and converted to in/min for the layers."))
-            hint.setStyleSheet("color:#6b7280;")
+            hint = widgets.hint(_("Speeds are stored in mm/s and converted to in/min for the layers."), wrap=False)
             form.addWidget(hint)
 
         buttons = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)

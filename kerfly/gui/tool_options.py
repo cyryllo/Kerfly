@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QSizePolicy, QComboBox, QDoubleSpinBox, QFontComb
                                QHBoxLayout, QLabel, QPlainTextEdit, QSpinBox, QToolButton,
                                QVBoxLayout, QWidget)
 
-from kerfly.gui import icons
+from kerfly.gui import icons, widgets
 from kerfly.gui.sizing import chars_width
 from kerfly.i18n import N_, _
 
@@ -493,21 +493,12 @@ class ToolOptionsBar(QWidget):
 
     def _with_icon(self, icon, field):
         """A field with its icon in front (both with the field's tooltip)."""
-        box = QWidget()
-        h = QHBoxLayout(box)
-        h.setContentsMargins(0, 0, 0, 0)
-        h.setSpacing(4)
-        h.addWidget(self._icon_label(icon, field.toolTip()))
-        h.addWidget(field)
-        return box
+        return widgets.with_icon(icon, field)
 
     @staticmethod
     def _icon_label(icon, tip):
         """A small icon in front of a field, saying what it is (with the field's tooltip)."""
-        label = QLabel()
-        label.setPixmap(icons.tabler(icon).pixmap(18, 18))
-        label.setToolTip(tip)
-        return label
+        return widgets.icon_pixmap_label(icon, tip)
 
     def _dspin(self, attr, lo, hi, suffix, decimals=1):
         w = QDoubleSpinBox()

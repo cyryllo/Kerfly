@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 00:23+0100\n"
+"POT-Creation-Date: 2026-11-17 18:30+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -2218,6 +2218,11 @@ msgstr "Nouveau texte"
 msgid "New text on a path"
 msgstr "Nouveau texte sur chemin"
 
+msgid "New: not yet confirmed on a real laser. Please report how it works."
+msgstr ""
+"Nouveau : pas encore confirmé sur un vrai laser. Dites-nous comment cela "
+"fonctionne."
+
 #, python-format
 msgid "No GRBL board answered on %s."
 msgstr "Aucune carte GRBL n'a répondu sur %s."
@@ -4298,6 +4303,9 @@ msgstr "Zoom"
 
 msgid "a program or script (.bat, .sh)"
 msgstr "un programme ou script (.bat, .sh)"
+
+msgid "beta"
+msgstr "bêta"
 
 msgid "centre"
 msgstr "centre"
