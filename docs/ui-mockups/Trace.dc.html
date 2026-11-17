@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - obrysuj obraz</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic16{width:16px;height:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.ib:hover{background:#dfe3e8;border-color:#c4c9d0}
+.btn{height:32px;min-width:88px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;font-size:12px;padding:0 12px}
+.btn:hover{background:#eef0f3}
+.sm{height:28px;min-width:0;padding:0 8px}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+.hd{font-size:12px;font-weight:600;color:#2b2f36}
+.cap{font-size:10px;color:#5b6370;line-height:14px}
+.row{display:flex;align-items:center;gap:8px;min-height:28px}
+.chk{display:flex;align-items:center;gap:8px;min-height:28px;font-size:12px}
+.chk input{margin:0}
+.beta{font-size:10px;color:#5b6370;border:1px solid #c4c9d0;border-radius:3px;padding:0 4px;line-height:14px}
+.seg{display:flex;border:1px solid #b6bcc5;border-radius:4px;overflow:hidden}
+.seg button{height:26px;padding:0 10px;border:0;background:#ffffff;font-size:12px;display:flex;align-items:center}
+.seg button+button{border-left:1px solid #b6bcc5}
+.bar{height:36px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 12px;background:#f7f8fa;border:1px solid #c4c9d0;white-space:nowrap}
+.vs{width:1px;align-self:stretch;margin:8px 0;background:#c4c9d0}
+</style>
+</helmet>
+<div style="width: 860px; height: 540px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #f4f5f7; border: 1px solid #9aa1ab; border-radius: 6px; overflow: hidden">
+<div style="height: 36px; flex: none; display: flex; align-items: center; padding: 0 4px 0 12px; background: #eef0f3; border-bottom: 1px solid #c4c9d0">
+<span style="flex: 1 1 0; font-size: 13px; font-weight: 600">Obrysuj obraz</span>
+<button class="ib" aria-label="Zamknij okno"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"/></svg></button>
+</div>
+<div style="flex: 1 1 0; min-height: 0; display: flex">
+<div style="width: 300px; box-sizing: border-box; padding: 12px; display: flex; flex-direction: column; gap: 12px; background: #ffffff; border-right: 1px solid #c4c9d0; flex: none">
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="hd">Co obrysować</span><div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 6px; align-items: center">
+<label class="lbl" for="tthr">Próg jasności</label><input id="tthr" class="fld" style="width: 96px; text-align: right" value="128">
+<input type="range" min="0" max="255" value="128" style="grid-column: 1 / -1" aria-label="Próg jasności, suwak">
+<label class="chk" for="tinv" style="grid-column: 1 / -1"><input id="tinv" type="checkbox">Obrysuj jasne obszary zamiast ciemnych</label>
+<label class="lbl" for="tspk">Pomiń plamki mniejsze niż</label><input id="tspk" class="fld" style="width: 96px; text-align: right" value="8 px">
+</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><span class="hd">Kształt konturu</span><div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 6px; align-items: center">
+<label class="lbl" for="tdet">Dokładność</label><input id="tdet" class="fld" style="width: 96px; text-align: right" value="1,0 px">
+<label class="chk" for="tsm" style="grid-column: 1 / -1"><input id="tsm" type="checkbox" checked>Wygładzaj krzywe (ostre narożniki zostają)</label>
+<label class="lbl" for="tcor">Narożnik ostrzejszy niż</label><input id="tcor" class="fld" style="width: 96px; text-align: right" value="60°">
+</div></div>
+<span style="flex: 1 1 0"></span>
+<span class="lbl" style="line-height: 1.5">Kontury trafią nad obraz jako nowy element. Obraz zostaje na swoim miejscu.</span>
+</div>
+<div style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column">
+<div style="flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; background: #eceef1">
+<svg viewBox="0 0 440 380" style="width: 440px; height: 380px" role="img" aria-label="Podgląd obrazu z niebieskimi konturami obrysu">
+<rect x="0" y="0" width="440" height="380" style="fill: #ffffff; stroke: #c4c9d0"></rect>
+<path d="M90 300l130-220 130 220z" style="fill: #3c3c3c"></path>
+<circle cx="330" cy="100" r="46" style="fill: #6a6a6a"></circle>
+<path d="M90 300l130-220 130 220z" style="fill: none; stroke: #1565c0; stroke-width: 2"></path>
+<circle cx="330" cy="100" r="46" style="fill: none; stroke: #1565c0; stroke-width: 2"></circle>
+</svg>
+</div>
+</div>
+</div>
+<div style="flex: none; display: flex; align-items: center; gap: 8px; padding: 12px; background: #eef0f3; border-top: 1px solid #c4c9d0">
+<span class="lbl" style="flex: 1 1 0">2 kontury</span>
+<button class="btn">Anuluj</button><button class="btn" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff; font-weight: 600">Obrysuj</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":860,"height":540}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>

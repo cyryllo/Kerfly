@@ -1,0 +1,147 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "LaserTab.dc.html": {
+      "h": 620,
+      "title": "Lewy panel - zakładka Laser",
+      "w": 348,
+      "x": 1520,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "h": 921,
+      "title": "Okno główne - zakładka Projekt",
+      "w": 1473,
+      "x": 0,
+      "y": 0
+    },
+    "GeneratorsMenu.dc.html": {
+      "x": 0,
+      "y": 1060,
+      "w": 280,
+      "h": 478,
+      "title": "Lista pod przyciskiem Generatory"
+    },
+    "GeneratorBox.dc.html": {
+      "x": 360,
+      "y": 1060,
+      "w": 960,
+      "h": 640,
+      "title": "Okno generatora - pudełko na wczepy"
+    },
+    "Settings.dc.html": {
+      "x": 1400,
+      "y": 1060,
+      "w": 840,
+      "h": 680,
+      "title": "Okno Ustawienia - Maszyna"
+    },
+    "Profiles.dc.html": {
+      "x": 0,
+      "y": 1860,
+      "w": 700,
+      "h": 460,
+      "title": "Okno Lasery (profile urządzeń)"
+    },
+    "Materials.dc.html": {
+      "x": 780,
+      "y": 1860,
+      "w": 840,
+      "h": 580,
+      "title": "Okno Biblioteka materiałów"
+    },
+    "Shortcuts.dc.html": {
+      "x": 0,
+      "y": 2560,
+      "w": 720,
+      "h": 700,
+      "title": "Okno Skróty klawiszowe"
+    },
+    "About.dc.html": {
+      "x": 800,
+      "y": 2560,
+      "w": 560,
+      "h": 400,
+      "title": "Okno O programie"
+    },
+    "Simulation.dc.html": {
+      "x": 0,
+      "y": 3380,
+      "w": 900,
+      "h": 600,
+      "title": "Okno Symulacja zadania"
+    },
+    "Trace.dc.html": {
+      "x": 980,
+      "y": 3380,
+      "w": 860,
+      "h": 540,
+      "title": "Okno Obrysuj obraz"
+    },
+    "Stamp.dc.html": {
+      "x": 0,
+      "y": 4100,
+      "w": 1040,
+      "h": 700,
+      "title": "Okno generatora - pieczątka"
+    },
+    "ImageSize.dc.html": {
+      "x": 1120,
+      "y": 4100,
+      "w": 420,
+      "h": 330,
+      "title": "Okno Rozmiar obrazu"
+    },
+    "WhichLaser.dc.html": {
+      "x": 1620,
+      "y": 4100,
+      "w": 480,
+      "h": 300,
+      "title": "Okno Który laser?"
+    },
+    "Message.dc.html": {
+      "x": 1620,
+      "y": 4520,
+      "w": 440,
+      "h": 190,
+      "title": "Wzór komunikatu z pytaniem"
+    },
+    "OptionBars.dc.html": {
+      "x": 0,
+      "y": 4920,
+      "w": 1440,
+      "h": 470,
+      "title": "Paski opcji dla różnych elementów"
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-11-17T13:45:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {},
+  "order": [
+    "Main.dc.html",
+    "LaserTab.dc.html",
+    "GeneratorsMenu.dc.html",
+    "GeneratorBox.dc.html",
+    "Settings.dc.html",
+    "Profiles.dc.html",
+    "Materials.dc.html",
+    "Shortcuts.dc.html",
+    "About.dc.html",
+    "Simulation.dc.html",
+    "Trace.dc.html",
+    "Stamp.dc.html",
+    "ImageSize.dc.html",
+    "WhichLaser.dc.html",
+    "Message.dc.html",
+    "OptionBars.dc.html"
+  ],
+  "pages": [],
+  "title": "Kerfly - propozycja interfejsu"
+}

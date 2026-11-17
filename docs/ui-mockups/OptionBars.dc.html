@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - paski opcji</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic16{width:16px;height:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.ib:hover{background:#dfe3e8;border-color:#c4c9d0}
+.btn{height:32px;min-width:88px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;font-size:12px;padding:0 12px}
+.btn:hover{background:#eef0f3}
+.sm{height:28px;min-width:0;padding:0 8px}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+.hd{font-size:12px;font-weight:600;color:#2b2f36}
+.cap{font-size:10px;color:#5b6370;line-height:14px}
+.row{display:flex;align-items:center;gap:8px;min-height:28px}
+.chk{display:flex;align-items:center;gap:8px;min-height:28px;font-size:12px}
+.chk input{margin:0}
+.beta{font-size:10px;color:#5b6370;border:1px solid #c4c9d0;border-radius:3px;padding:0 4px;line-height:14px}
+.seg{display:flex;border:1px solid #b6bcc5;border-radius:4px;overflow:hidden}
+.seg button{height:26px;padding:0 10px;border:0;background:#ffffff;font-size:12px;display:flex;align-items:center}
+.seg button+button{border-left:1px solid #b6bcc5}
+.bar{height:36px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 12px;background:#f7f8fa;border:1px solid #c4c9d0;white-space:nowrap}
+.vs{width:1px;align-self:stretch;margin:8px 0;background:#c4c9d0}
+</style>
+</helmet>
+<div style="width: 1440px; height: 470px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #ffffff">
+<div style="padding: 16px 16px 20px; display: flex; flex-direction: column">
+<span style="font-size: 13px; font-weight: 600">Pasek opcji: stały wiersz zaznaczenia i jeden wiersz zależny od elementu</span>
+<span class="cap" style="padding: 12px 0 4px">Wiersz 1 - zawsze taki sam, dla każdego zaznaczonego elementu</span>
+<div class="bar" style="border-bottom: 0">
+<span class="hd" style="min-width: 96px">Zaznaczenie</span><div class="vs"></div>
+<label class="lbl" for="bx">X</label><input id="bx" class="fld" style="width: 84px; text-align: right" value="128,00 mm"><label class="lbl" for="by">Y</label><input id="by" class="fld" style="width: 84px; text-align: right" value="72,00 mm"><label class="lbl" for="bw">Szer.</label><input id="bw" class="fld" style="width: 84px; text-align: right" value="96,36 mm"><label class="lbl" for="bh">Wys.</label><input id="bh" class="fld" style="width: 84px; text-align: right" value="29,27 mm">
+<button class="ib" aria-label="Zachowaj proporcje" style="background: #dce6f2; border-color: #9db8d6; color: #1f4f82"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12h6 M10 8H8a4 4 0 0 0 0 8h2 M14 8h2a4 4 0 0 1 0 8h-2"/></svg></button>
+<div class="vs"></div>
+<label class="lbl" for="br">Obrót</label><input id="br" class="fld" style="width: 60px; text-align: right" value="0,0°">
+<div class="vs"></div>
+<label class="lbl" for="bl">Warstwa</label><select id="bl" class="fld" style="width: 104px"><option>Grawer</option></select>
+</div>
+<span class="cap" style="padding: 12px 0 4px">Wiersz 2 - Prostokąt</span>
+<div class="bar"><span class="hd" style="min-width: 96px">Prostokąt</span><div class="vs"></div><label class="lbl" for="r1">Promień narożników</label><input id="r1" class="fld" style="width: 72px; text-align: right" value="0,0 mm"><div class="vs"></div><label class="lbl" for="r2">Mostki</label><input id="r2" class="fld" style="width: 60px; text-align: right" value="brak"><label class="lbl" for="r3">Szerokość mostka</label><input id="r3" class="fld" style="width: 72px; text-align: right" value="0,5 mm"></div>
+<span class="cap" style="padding: 12px 0 4px">Wiersz 2 - Wypełnienie wzorem</span>
+<div class="bar"><span class="hd" style="min-width: 96px">Wypełnienie</span><div class="vs"></div><label class="lbl" for="f1">Wzór</label><select id="f1" class="fld" style="width: 140px"><option>Plaster miodu</option></select><label class="lbl" for="f2">Odstęp linii</label><input id="f2" class="fld" style="width: 72px; text-align: right" value="3,0 mm"><label class="lbl" for="f3">Kąt</label><input id="f3" class="fld" style="width: 56px; text-align: right" value="0°"><label class="lbl" for="f4">Margines</label><input id="f4" class="fld" style="width: 72px; text-align: right" value="1,0 mm"><div class="vs"></div><label class="chk" for="f5"><input id="f5" type="checkbox" checked>Zostaw obrys</label></div>
+<span class="cap" style="padding: 12px 0 4px">Wiersz 2 - Zawias giętki (osiem pól z podpisami mieści się w jednym wierszu)</span>
+<div class="bar"><span class="hd" style="min-width: 96px">Zawias giętki</span><div class="vs"></div><label class="lbl" for="h1">Wzór</label><select id="h1" class="fld" style="width: 150px"><option>Nacięcia zygzakiem</option></select><label class="lbl" for="h2">Cięcie</label><input id="h2" class="fld" style="width: 68px; text-align: right" value="20,0 mm"><label class="lbl" for="h3">Mostek</label><input id="h3" class="fld" style="width: 64px; text-align: right" value="3,0 mm"><label class="lbl" for="h4">Odstęp rzędów</label><input id="h4" class="fld" style="width: 64px; text-align: right" value="1,5 mm"><label class="lbl" for="h5">Kąt</label><input id="h5" class="fld" style="width: 52px; text-align: right" value="90°"><label class="lbl" for="h6">Margines</label><input id="h6" class="fld" style="width: 64px; text-align: right" value="4,0 mm"><div class="vs"></div><label class="lbl" for="h7">Szer. pasa</label><input id="h7" class="fld" style="width: 64px; text-align: right" value="cały"><label class="lbl" for="h8">Przesunięcie</label><input id="h8" class="fld" style="width: 64px; text-align: right" value="0,0 mm"></div>
+<span class="cap" style="padding: 12px 0 4px">Wiersz 2 - Tekst na ścieżce</span>
+<div class="bar"><span class="hd" style="min-width: 96px">Tekst na ścieżce</span><div class="vs"></div><label class="lbl" for="p1">Treść</label><input id="p1" class="fld" style="width: 120px; text-align: right" value="KERFLY TEST"><label class="lbl" for="p2">Czcionka</label><select id="p2" class="fld" style="width: 124px"><option>DejaVu Sans</option></select><label class="lbl" for="p3">Rozmiar</label><input id="p3" class="fld" style="width: 64px; text-align: right" value="8,0 mm"><div class="vs"></div><label class="lbl" for="p4">Początek</label><input id="p4" class="fld" style="width: 64px; text-align: right" value="0,0 mm"><label class="lbl" for="p5">Od linii</label><input id="p5" class="fld" style="width: 64px; text-align: right" value="0,5 mm"><button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15c4-8 12-8 16 0 M12 5v5 M9 8l3 3 3-3"/></svg>Druga strona</button><button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16 M8 8v8 M16 8v8"/></svg>Wyprostuj</button></div>
+<span class="cap" style="padding: 12px 0 4px">Wiersz 2 - Edycja węzłów (podpisane przyciski, litera skrótu w nawiasie)</span>
+<div class="bar"><span class="hd" style="min-width: 96px">Węzły</span><div class="vs"></div><button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v14H5z M12 8v8 M8 12h8"/></svg>Dodaj (I)</button><button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v14H5z M8 12h8"/></svg>Usuń (D)</button><div class="vs"></div><button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19L19 5"/></svg>Prosty (L)</button><button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c4-12 8 6 16-10"/></svg>Krzywa (C)</button><div class="vs"></div><button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12c3-8 6-8 9 0s6 8 9 0"/></svg>Gładki (O)</button><button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16 M8 8l-4 4 4 4 M16 8l4 4-4 4"/></svg>Symetryczny (S)</button><div class="vs"></div><button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 8 8"/></svg>Zamknij / otwórz (Z)</button><button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z M6 20a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z M8 7.5L20 18 M8 16.5L20 6"/></svg>Rozetnij (B)</button></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":1440,"height":470}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>

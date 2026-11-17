@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - symulacja zadania</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic16{width:16px;height:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.ib:hover{background:#dfe3e8;border-color:#c4c9d0}
+.btn{height:32px;min-width:88px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;font-size:12px;padding:0 12px}
+.btn:hover{background:#eef0f3}
+.sm{height:28px;min-width:0;padding:0 8px}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+.hd{font-size:12px;font-weight:600;color:#2b2f36}
+.cap{font-size:10px;color:#5b6370;line-height:14px}
+.row{display:flex;align-items:center;gap:8px;min-height:28px}
+.chk{display:flex;align-items:center;gap:8px;min-height:28px;font-size:12px}
+.chk input{margin:0}
+.beta{font-size:10px;color:#5b6370;border:1px solid #c4c9d0;border-radius:3px;padding:0 4px;line-height:14px}
+.seg{display:flex;border:1px solid #b6bcc5;border-radius:4px;overflow:hidden}
+.seg button{height:26px;padding:0 10px;border:0;background:#ffffff;font-size:12px;display:flex;align-items:center}
+.seg button+button{border-left:1px solid #b6bcc5}
+.bar{height:36px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 12px;background:#f7f8fa;border:1px solid #c4c9d0;white-space:nowrap}
+.vs{width:1px;align-self:stretch;margin:8px 0;background:#c4c9d0}
+</style>
+</helmet>
+<div style="width: 900px; height: 600px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #f4f5f7; border: 1px solid #9aa1ab; border-radius: 6px; overflow: hidden">
+<div style="height: 36px; flex: none; display: flex; align-items: center; padding: 0 4px 0 12px; background: #eef0f3; border-bottom: 1px solid #c4c9d0">
+<span style="flex: 1 1 0; font-size: 13px; font-weight: 600">Symulacja zadania</span>
+<button class="ib" aria-label="Zamknij okno"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"/></svg></button>
+</div>
+<div style="height: 44px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 12px; border-bottom: 1px solid #c4c9d0; background: #f7f8fa">
+<button class="btn sm" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff; font-weight: 600"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg>Odtwórz</button>
+<input type="range" min="0" max="100" value="46" style="flex: 1 1 0" aria-label="Postęp symulacji">
+<span style="font-variant-numeric: tabular-nums">0:42 z 1:31</span>
+<div class="vs"></div>
+<label class="lbl" for="sspd">Tempo</label>
+<select id="sspd" class="fld" style="width: 72px"><option>10×</option><option>1×</option></select>
+<button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5l9 7-9 7z M18 5v14"/></svg>Następna warstwa</button>
+</div>
+<div style="flex: 1 1 0; min-height: 0; display: flex; align-items: center; justify-content: center; background: #eceef1">
+<svg viewBox="0 0 820 440" style="width: 820px; height: 440px" role="img" aria-label="Podgląd symulacji: wypalone ścieżki na czerwono, pozostałe na szaro">
+<rect x="0" y="0" width="820" height="440" style="fill: #ffffff; stroke: #c4c9d0"></rect>
+<rect x="60" y="60" width="280" height="200" rx="8" style="fill: none; stroke: #9aa1ab; stroke-width: 1.5"></rect>
+<path d="M60 160V68a8 8 0 0 1 8-8h264a8 8 0 0 1 8 8v120" style="fill: none; stroke: #d32f2f; stroke-width: 2.5"></path>
+<ellipse cx="520" cy="150" rx="110" ry="64" style="fill: none; stroke: #d32f2f; stroke-width: 2.5"></ellipse>
+<path d="M680 300l60 34v60l-60 34-60-34v-60z" style="fill: none; stroke: #9aa1ab; stroke-width: 1.5"></path>
+<rect x="110" y="310" width="300" height="70" style="fill: #f3c9c9"></rect>
+<rect x="110" y="310" width="300" height="34" style="fill: #d32f2f"></rect>
+<circle cx="340" cy="188" r="7" style="fill: #ffffff; stroke: #e65100; stroke-width: 2.5"></circle>
+<path d="M340 174v-12 M340 202v12 M326 188h-12 M354 188h12" style="stroke: #e65100; stroke-width: 2"></path>
+</svg>
+</div>
+<div style="flex: none; display: flex; align-items: center; gap: 8px; padding: 12px; background: #eef0f3; border-top: 1px solid #c4c9d0">
+<span class="lbl" style="flex: 1 1 0"><span style="display: inline-flex; align-items: center; gap: 12px"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 16px; height: 3px; background: #d32f2f"></span>wypalone</span><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 16px; height: 2px; background: #9aa1ab"></span>do zrobienia</span><span>Warstwa: Cięcie</span></span></span>
+<button class="btn">Zamknij</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":900,"height":600}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>

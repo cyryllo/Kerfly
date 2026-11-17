@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - biblioteka materiałów</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic16{width:16px;height:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.ib:hover{background:#dfe3e8;border-color:#c4c9d0}
+.btn{height:32px;min-width:88px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;font-size:12px;padding:0 12px}
+.btn:hover{background:#eef0f3}
+.sm{height:28px;min-width:0;padding:0 8px}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+.hd{font-size:12px;font-weight:600;color:#2b2f36}
+.cap{font-size:10px;color:#5b6370;line-height:14px}
+.row{display:flex;align-items:center;gap:8px;min-height:28px}
+.chk{display:flex;align-items:center;gap:8px;min-height:28px;font-size:12px}
+.chk input{margin:0}
+.beta{font-size:10px;color:#5b6370;border:1px solid #c4c9d0;border-radius:3px;padding:0 4px;line-height:14px}
+</style>
+</helmet>
+<div style="width: 840px; height: 580px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #f4f5f7; border: 1px solid #9aa1ab; border-radius: 6px; overflow: hidden">
+<div style="height: 36px; flex: none; display: flex; align-items: center; padding: 0 4px 0 12px; background: #eef0f3; border-bottom: 1px solid #c4c9d0">
+<span style="flex: 1 1 0; font-size: 13px; font-weight: 600">Biblioteka materiałów</span>
+<button class="ib" aria-label="Zamknij okno"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"/></svg></button>
+</div>
+<div style="flex: 1 1 0; min-height: 0; display: flex">
+<div style="width: 260px; flex: none; box-sizing: border-box; display: flex; flex-direction: column; background: #ffffff; border-right: 1px solid #c4c9d0">
+<div style="display: flex; align-items: center; gap: 4px; height: 44px; flex: none; padding: 0 8px; border-bottom: 1px solid #e1e4e8">
+<button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14 M5 12h14"/></svg>Nowy</button>
+<button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h11v11H9z M5 15V4h11"/></svg>Powiel</button>
+<button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z"/></svg>Importuj…</button>
+</div>
+<div style="flex: 1 1 0; display: flex; flex-direction: column; padding: 4px 0">
+<div style="display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; background: {{accent}}; color: #ffffff"><span style="flex: 1 1 0">Sklejka</span><span>3 mm</span></div><div style="display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px;"><span style="flex: 1 1 0">Sklejka</span><span class="lbl">4 mm</span></div><div style="display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px;"><span style="flex: 1 1 0">Pleksi</span><span class="lbl">3 mm</span></div><div style="display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px;"><span style="flex: 1 1 0">MDF</span><span class="lbl">3 mm</span></div><div style="display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px;"><span style="flex: 1 1 0">Tektura</span><span class="lbl">1,5 mm</span></div><div style="display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px;"><span style="flex: 1 1 0">Filc</span><span class="lbl">2 mm</span></div>
+</div>
+<div style="padding: 8px; border-top: 1px solid #e1e4e8"><button class="btn sm" style="width: 100%">Nowy z bieżących warstw</button></div>
+</div>
+<div style="flex: 1 1 0; min-width: 0; box-sizing: border-box; padding: 16px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 112px; column-gap: 12px; row-gap: 4px">
+<label class="cap" for="mn">Nazwa</label><label class="cap" for="mt">Grubość</label>
+<input id="mn" class="fld" style="width: 100%" value="Sklejka"><input id="mt" class="fld" style="width: 100%; text-align: right" value="3,00 mm">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span class="hd">Warstwy</span>
+<div style="display: grid; grid-template-columns: 12px minmax(0, 1fr) 88px 72px 72px 72px; column-gap: 8px; row-gap: 4px; align-items: center; padding: 12px; background: #ffffff; border: 1px solid #c4c9d0; border-radius: 4px">
+<span></span><span class="cap">Nazwa</span><span class="cap">Prędkość mm/s</span><span class="cap">Przejścia</span><span class="cap">Moc %</span><span class="cap">Kerf mm</span>
+<span style="width: 12px; height: 12px; background: #111111; border-radius: 2px"></span><span>Grawer</span>
+<input class="fld" style="width: 100%; text-align: right" value="100" aria-label="Prędkość: Grawer">
+<input class="fld" style="width: 100%; text-align: right" value="1" aria-label="Przejścia: Grawer">
+<input class="fld" style="width: 100%; text-align: right" value="20" aria-label="Moc: Grawer">
+<span class="lbl" style="text-align: center">-</span>
+<span style="width: 12px; height: 12px; background: #1565c0; border-radius: 2px"></span><span>Obrys</span>
+<input class="fld" style="width: 100%; text-align: right" value="20" aria-label="Prędkość: Obrys">
+<input class="fld" style="width: 100%; text-align: right" value="1" aria-label="Przejścia: Obrys">
+<input class="fld" style="width: 100%; text-align: right" value="25" aria-label="Moc: Obrys">
+<span class="lbl" style="text-align: center">-</span>
+<span style="width: 12px; height: 12px; background: #d32f2f; border-radius: 2px"></span><span>Cięcie</span>
+<input class="fld" style="width: 100%; text-align: right" value="10" aria-label="Prędkość: Cięcie">
+<input class="fld" style="width: 100%; text-align: right" value="1" aria-label="Przejścia: Cięcie">
+<input class="fld" style="width: 100%; text-align: right" value="70" aria-label="Moc: Cięcie">
+<input class="fld" style="width: 100%; text-align: right" value="0,15" aria-label="Kerf: Cięcie">
+</div>
+<span class="lbl">Moc działa tylko z płytą M3. Kerf zmierzysz generatorem Test kerfu.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 0; min-height: 0">
+<label class="hd" for="mnote">Notatki</label>
+<textarea id="mnote" class="fld" style="flex: 1 1 0; height: auto; padding: 8px; resize: none" placeholder="np. dostawca, soczewka, nadmuch"></textarea>
+</div>
+<div class="row">
+<button class="btn sm"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11 M7 11l5 5 5-5 M5 20h14"/></svg>Eksportuj…</button>
+<button class="btn sm" style="color: #b3261e; border-color: #d9a3a0"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14 M9 7V4h6v3 M7 7l1 13h8l1-13"/></svg>Usuń</button>
+</div>
+</div>
+</div>
+<div style="flex: none; display: flex; align-items: center; gap: 8px; padding: 12px; background: #eef0f3; border-top: 1px solid #c4c9d0">
+<span class="lbl" style="flex: 1 1 0">6 materiałów</span>
+<button class="btn">Anuluj</button><button class="btn" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff; font-weight: 600">Zapisz</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":840,"height":580}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>

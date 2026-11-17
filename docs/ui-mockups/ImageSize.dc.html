@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kerfly - rozmiar obrazu</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:#2f6aa8}a:hover{color:#1f4f82}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic16{width:16px;height:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+.ib{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:4px;background:transparent;padding:0}
+.ib:hover{background:#dfe3e8;border-color:#c4c9d0}
+.btn{height:32px;min-width:88px;display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;font-size:12px;padding:0 12px}
+.btn:hover{background:#eef0f3}
+.sm{height:28px;min-width:0;padding:0 8px}
+.fld{height:28px;box-sizing:border-box;border:1px solid #b6bcc5;border-radius:4px;background:#ffffff;padding:0 8px;font:inherit;font-size:12px;color:#2b2f36;font-variant-numeric:tabular-nums}
+.lbl{font-size:12px;color:#4b5563}
+.hd{font-size:12px;font-weight:600;color:#2b2f36}
+.cap{font-size:10px;color:#5b6370;line-height:14px}
+.row{display:flex;align-items:center;gap:8px;min-height:28px}
+.chk{display:flex;align-items:center;gap:8px;min-height:28px;font-size:12px}
+.chk input{margin:0}
+.beta{font-size:10px;color:#5b6370;border:1px solid #c4c9d0;border-radius:3px;padding:0 4px;line-height:14px}
+.seg{display:flex;border:1px solid #b6bcc5;border-radius:4px;overflow:hidden}
+.seg button{height:26px;padding:0 10px;border:0;background:#ffffff;font-size:12px;display:flex;align-items:center}
+.seg button+button{border-left:1px solid #b6bcc5}
+.bar{height:36px;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:0 12px;background:#f7f8fa;border:1px solid #c4c9d0;white-space:nowrap}
+.vs{width:1px;align-self:stretch;margin:8px 0;background:#c4c9d0}
+</style>
+</helmet>
+<div style="width: 420px; height: 330px; box-sizing: border-box; display: flex; flex-direction: column; font-family: Inter, system-ui, sans-serif; font-size: 12px; color: #2b2f36; background: #f4f5f7; border: 1px solid #9aa1ab; border-radius: 6px; overflow: hidden">
+<div style="height: 36px; flex: none; display: flex; align-items: center; padding: 0 4px 0 12px; background: #eef0f3; border-bottom: 1px solid #c4c9d0">
+<span style="flex: 1 1 0; font-size: 13px; font-weight: 600">Rozmiar obrazu</span>
+<button class="ib" aria-label="Zamknij okno"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12 M18 6L6 18"/></svg></button>
+</div>
+<div style="flex: 1 1 0; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #ffffff">
+<div style="display: flex; align-items: flex-start; gap: 8px; padding: 8px 12px; background: #fff4e0; border: 1px solid #e0b266; border-radius: 4px; color: #5c3d00; line-height: 1.5"><svg class="ic ic16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3z M12 10v4 M12 17v.5"/></svg><span>Plik nie podaje, jak duży jest obraz. Ustaw jego rozmiar.</span></div>
+<div style="display: grid; grid-template-columns: 120px auto; column-gap: 12px; row-gap: 6px; align-items: center; justify-content: start">
+<span class="lbl">Obraz</span><span>1200 × 800 pikseli</span>
+<label class="lbl" for="idpi">Rozdzielczość</label><input id="idpi" class="fld" style="width: 96px; text-align: right" value="300 dpi">
+<label class="lbl" for="iw">Szerokość</label><input id="iw" class="fld" style="width: 96px; text-align: right" value="101,6 mm">
+<label class="lbl" for="ih">Wysokość</label><input id="ih" class="fld" style="width: 96px; text-align: right" value="67,7 mm">
+</div>
+<span class="lbl">Ciemne piksele są grawerowane, jasne i przezroczyste nie.</span>
+</div>
+<div style="flex: none; display: flex; align-items: center; gap: 8px; padding: 12px; background: #eef0f3; border-top: 1px solid #c4c9d0">
+<span class="lbl" style="flex: 1 1 0"></span>
+<button class="btn">Anuluj</button><button class="btn" style="background: {{accent}}; border-color: {{accent}}; color: #ffffff; font-weight: 600">Wstaw obraz</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#2f6aa8","options":["#2f6aa8","#00695c","#b3541e"]},"$preview":{"width":420,"height":330}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#2f6aa8' };
+}
+}
+</script>
+</body>
+</html>
