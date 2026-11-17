@@ -1421,6 +1421,7 @@ def main():
     app.processEvents()
 
     def side_drag(kind, pick, dx_mm, dy_mm):
+        QTest.qWait(QApplication.doubleClickInterval() + 100)      # a press, not the second half of a double click
         handle = pick([h for h in hw.preview._handles if h.kind == kind])
         vp = hw.preview.viewport()
         a = hw.preview.mapFromScene(handle.scenePos())
