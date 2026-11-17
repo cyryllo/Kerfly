@@ -44,6 +44,9 @@ oknie.
   i Stop (reset). Potrzebuje biblioteki pyserial (jest w paczkach). Przy
   maszynie GRBL prędkości są pokazywane i wpisywane w mm/min (warstwy, test
   materiału, Ustawienia, biblioteka materiałów); K40 zostaje w mm/s.
+- **Uchwyty boków**: środki boków zaznaczonego elementu zmieniają samą
+  szerokość albo samą wysokość, przeciwległy bok zostaje na miejscu (także dla
+  obróconego elementu; jeden krok cofania).
 - **O programie** w osobnym oknie: wersja, licencja, pochodzenie, strona
   projektu, **Zgłoś problem** i **Sprawdź aktualizacje**.
 

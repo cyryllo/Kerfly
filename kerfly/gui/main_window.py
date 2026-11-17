@@ -217,6 +217,7 @@ class MainWindow(QMainWindow):
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
         self.preview.signals.scaled.connect(self._preview_scaled)
+        self.preview.signals.stretched.connect(self._preview_stretched)
         self.preview.signals.rotated.connect(self._preview_rotated)
         self.preview.signals.nudged.connect(self._preview_nudged)
         self._build_actions()
@@ -2854,6 +2855,20 @@ class MainWindow(QMainWindow):
         element.scale_x *= factor
         element.scale_y *= factor
         element.set_centre(cx, cy)
+        self._keep_on_bed(element)
+        self._layout_changed()
+
+    def _preview_stretched(self, element, axis, factor, dx_mm, dy_mm):
+        """A side handle was dragged: the element stretched along its own x or y, its centre moved by
+        (dx_mm, dy_mm) on the bed view so the opposite side stays where it was."""
+        self._checkpoint()
+        cx, cy = element.centre
+        if axis == "x":
+            element.scale_x *= factor
+        else:
+            element.scale_y *= factor
+        dx = dx_mm / 25.4 * (-1 if self.job_settings().home_upper_right else 1)
+        element.set_centre(cx + dx, cy - dy_mm / 25.4)
         self._keep_on_bed(element)
         self._layout_changed()
 

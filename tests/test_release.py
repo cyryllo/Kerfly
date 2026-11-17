@@ -710,6 +710,31 @@ def session(s):
     x, y = s.element_at(rect)
     s.step("drag the rectangle 15 mm right", lambda: s.drag((x, y), (x + 15, y)),
            check=lambda: (abs(s.element_at(rect)[0] - (x + 15)) < 0.6, "moved to %.2f" % s.element_at(rect)[0]))
+    # the side handles: the width alone (right side), the height alone (bottom side), the opposite side stays
+    def side_handle(kind, far):
+        hs = [h for h in w.preview._handles if h.kind == kind and h.isVisible()]
+        if not hs:
+            raise RuntimeError("no %s handle" % kind)
+        h = max(hs, key=lambda h: h.scenePos().x() if kind == "side_x" else h.scenePos().y())
+        return h.scenePos().x(), h.scenePos().y()
+    size0 = {}
+
+    def stretch(kind, dx, dy):
+        size0["wh"] = tuple(round(v * MM, 1) for v in rect.size)
+        size0["lt"] = (rect.bounds[0], rect.bounds[3])
+        x0, y0 = side_handle(kind, True)
+        s.drag((x0, y0), (x0 + dx, y0 + dy))
+
+    def stretched(dw, dh):
+        wh = tuple(round(v * MM, 1) for v in rect.size)
+        want = (round(size0["wh"][0] + dw, 1), round(size0["wh"][1] + dh, 1))
+        stays = abs(rect.bounds[0] - size0["lt"][0]) < 0.004 and abs(rect.bounds[3] - size0["lt"][1]) < 0.004
+        return (abs(wh[0] - want[0]) < 0.6 and abs(wh[1] - want[1]) < 0.6 and stays,
+                "size %s, want %s, left/top kept %s" % (wh, want, stays))
+    s.step("drag the right side handle 10 mm right: the width alone", lambda: stretch("side_x", 10, 0),
+           check=lambda: stretched(10, 0))
+    s.step("drag the bottom side handle 6 mm down: the height alone", lambda: stretch("side_y", 0, 6),
+           check=lambda: stretched(0, 6))
     s.step("arrow key: 1 mm right", lambda: s.key(Qt.Key_Right))
     s.step("Shift+arrow: 10 mm down", lambda: s.key(Qt.Key_Down, Qt.ShiftModifier))
 

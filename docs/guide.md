@@ -205,7 +205,7 @@ before or after drawing.
 
 | Tool | Key | How |
 |---|---|---|
-| Select and move | S | Click to select, drag to move; handles scale and rotate. Drag a frame around several elements, or Ctrl+click |
+| Select and move | S | Click to select, drag to move; the corner handles scale, the handles in the middles of the sides stretch the width or the height alone (the opposite side stays), the round one rotates. Drag a frame around several elements, or Ctrl+click |
 | Edit nodes | N | Drag nodes and the round curve handles (Ctrl: one handle alone). Double-click a side to add a node, a node to remove it. Keys: I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / open, B break |
 | Rectangle | R | Drag. Shift: square. Option: corner radius |
 | Ellipse | E | Drag. Shift: circle |

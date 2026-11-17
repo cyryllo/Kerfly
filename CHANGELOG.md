@@ -47,6 +47,9 @@ a window of its own.
   pyserial library (in the packages). With a GRBL machine speeds are shown
   and typed in mm/min (layers, material test, Settings, material library);
   the K40 stays in mm/s.
+- **Side handles**: the middles of a selected element's sides stretch its
+  width or height alone, the opposite side staying where it is (also for a
+  turned element; one undo step).
 - **About Kerfly** in a window of its own: version, licence, origin, the
   project's page, **Report a problem** and **Check for updates**.
 

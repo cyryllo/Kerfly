@@ -1407,6 +1407,50 @@ def main():
           and app.style().styleHint(_QS.SH_DialogButtonBox_ButtonsHaveIcons) == 0,
           "(%s, message box %s)" % (pattern, mb_order))
 
+    # 28c3. side handles: the middles of a selected shape's sides stretch it along one axis only, the opposite
+    # side staying where it is; one undo step each
+    from PySide6.QtGui import QMouseEvent as _QME
+    from PySide6.QtCore import QEvent as _QEv
+    hw = make_window(grid_mm="0")
+    hw.resize(1200, 800)
+    hw.show()
+    app.processEvents()
+    hw._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)        # 40 x 30 mm
+    rect_e = hw.elements[-1]
+    hw.preview.select_element([rect_e])
+    app.processEvents()
+
+    def side_drag(kind, pick, dx_mm, dy_mm):
+        handle = pick([h for h in hw.preview._handles if h.kind == kind])
+        vp = hw.preview.viewport()
+        a = hw.preview.mapFromScene(handle.scenePos())
+        b = hw.preview.mapFromScene(handle.scenePos() + QPointF(dx_mm, dy_mm))
+        QTest.mousePress(vp, Qt.LeftButton, Qt.NoModifier, a)
+        for i in range(1, 9):
+            p = a + (b - a) * i / 8
+            QApplication.sendEvent(vp, _QME(_QEv.MouseMove, QPointF(p), QPointF(vp.mapToGlobal(p)), Qt.NoButton,
+                                            Qt.LeftButton, Qt.NoModifier))
+            app.processEvents()
+        QTest.mouseRelease(vp, Qt.LeftButton, Qt.NoModifier, b)
+        app.processEvents()
+    kinds = sorted(h.kind for h in hw.preview._handles)
+    left0, top0 = rect_e.bounds[0], rect_e.bounds[3]
+    side_drag("side_x", lambda hs: max(hs, key=lambda h: h.scenePos().x()), 10, 0)
+    w1, h1 = (round(v * 25.4, 1) for v in rect_e.size)
+    # (the mouse moves by whole pixels: within 0.3 mm)
+    stretched_x = abs(w1 - 50.0) < 0.3 and h1 == 30.0 and abs(rect_e.bounds[0] - left0) < 0.002
+    side_drag("side_y", lambda hs: max(hs, key=lambda h: h.scenePos().y()), 0, 5)
+    w2, h2 = (round(v * 25.4, 1) for v in rect_e.size)
+    stretched_y = w2 == w1 and abs(h2 - 35.0) < 0.3 and abs(rect_e.bounds[3] - top0) < 0.002
+    hw.undo()
+    undone = tuple(round(v * 25.4, 1) for v in hw.elements[-1].size) == (w1, h1)
+    hw._dirty = False
+    hw.close()
+    check("side handles: four (with the corners and the rotation one), the right one stretches the width "
+          "alone, the bottom one the height alone, the opposite side stays; one undo step",
+          kinds.count("side_x") == 2 and kinds.count("side_y") == 2 and stretched_x and stretched_y and undone,
+          "(%s)" % [kinds, (w1, h1), (w2, h2), undone])
+
     # 28d. Nest on the bed (Ctrl+Shift+N): the selected parts laid out inside the bed with the gap between them,
     # nothing over another; what does not fit on more sheets (groups Sheet N, sheets 2 and on unticked); a group
     # moves as one part (its members keep their places to each other); without turning nothing is turned; a

@@ -57,6 +57,7 @@ class ViewSignals(QObject):
     selected = Signal(object)                   # element or None
     moved = Signal(object, float, float)        # element, dx, dy (inches, machine x, y up)
     scaled = Signal(object, float)              # element, factor (about its centre)
+    stretched = Signal(object, str, float, float, float)  # element, "x" / "y" (its own), factor, centre moved (scene mm)
     rotated = Signal(object, float)             # element, degrees counter-clockwise
     nudged = Signal(object, float, float)       # element, dx, dy in mm (screen right / up)
     drawn = Signal(str, QPointF, QPointF, bool)  # tool, start, end (scene mm), shift held
@@ -73,20 +74,23 @@ class ViewSignals(QObject):
     zoomed = Signal()                             # the view was zoomed or fitted
 
 
-def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0):
-    """QTransform from ElementItem local coordinates to scene coordinates."""
+def element_transform(element, home_ur, bed_w_mm, scale=1.0, extra_rotation=0.0, stretch=(1.0, 1.0),
+                      shift=(0.0, 0.0)):
+    """QTransform from ElementItem local coordinates to scene coordinates; stretch: more scale along the
+    element's own x and y (a side handle), shift: its centre moved (scene mm)."""
     w, h = element.size
     W, H = w * MM, h * MM
     cx = element.x * MM + W / 2.0
     if home_ur:
         cx = bed_w_mm - cx
     cy = -element.y * MM + H / 2.0
+    cx, cy = cx + shift[0], cy + shift[1]
     xmin, xmax, ymin, ymax = element.design.bounds
     w0, h0 = (xmax - xmin) * MM, (ymax - ymin) * MM
     t = QTransform()
     t.translate(cx, cy)
     t.rotate(-(element.rotation + extra_rotation))
-    t.scale(element.scale_x * scale, element.scale_y * scale)
+    t.scale(element.scale_x * scale * stretch[0], element.scale_y * scale * stretch[1])
     t.translate(-w0 / 2.0, -h0 / 2.0)
     return t
 
@@ -221,7 +225,9 @@ class ElementItem(QGraphicsItem):
 
 
 class Handle(QGraphicsRectItem):
-    """Scale handle (corner) or rotation handle, constant size on screen."""
+    """Scale handle (corner, about the centre), side handle (the middle of a side: "side_x" / "side_y" stretch
+    the element along its own x or y only, the opposite side stays) or rotation handle; constant size on
+    screen."""
 
     def __init__(self, kind, view, target):
         super().__init__(-5, -5, 10, 10)
@@ -232,7 +238,8 @@ class Handle(QGraphicsRectItem):
         self.setZValue(20)
         self.setPen(_cosmetic_pen(COLORS["selection"], 1.5))
         self.setBrush(QBrush(COLORS["handle"]))
-        self.setCursor(Qt.CrossCursor if kind == "rotate" else Qt.SizeFDiagCursor)
+        self.setCursor({"rotate": Qt.CrossCursor, "side_x": Qt.SizeHorCursor,
+                        "side_y": Qt.SizeVerCursor}.get(kind, Qt.SizeFDiagCursor))
         self._start = None
         self._value = None
 
@@ -251,6 +258,7 @@ class Handle(QGraphicsRectItem):
     def mousePressEvent(self, event):
         self._start = event.scenePos()
         self._centre_at_start = self._centre()
+        self._from_centre = self.scenePos() - self._centre_at_start      # a side handle: centre -> its side
         self._value = None
         event.accept()
 
@@ -267,6 +275,19 @@ class Handle(QGraphicsRectItem):
                 delta = round(delta / 15.0) * 15.0
             self._value = delta
             t = element_transform(e, self.view.home_ur, self.view.bed_w_mm, extra_rotation=delta)
+        elif self.kind in ("side_x", "side_y"):
+            # along the line from the centre to this side: the opposite side stays where it is
+            v = self._from_centre
+            length = math.hypot(v.x(), v.y())
+            if length <= 1e-9:
+                return
+            opposite = c - v
+            along = ((p.x() - opposite.x()) * v.x() + (p.y() - opposite.y()) * v.y()) / length
+            f = max(0.01, along / (2.0 * length))
+            shift = (v.x() * (f - 1.0), v.y() * (f - 1.0))
+            self._value = (f, shift)
+            stretch = (f, 1.0) if self.kind == "side_x" else (1.0, f)
+            t = element_transform(e, self.view.home_ur, self.view.bed_w_mm, stretch=stretch, shift=shift)
         else:
             d0 = math.hypot(p0.x() - c.x(), p0.y() - c.y())
             d = math.hypot(p.x() - c.x(), p.y() - c.y())
@@ -284,6 +305,9 @@ class Handle(QGraphicsRectItem):
             return
         if self.kind == "rotate":
             self.view.signals.rotated.emit(self.target.element, self._value)
+        elif self.kind in ("side_x", "side_y"):
+            f, (dx, dy) = self._value
+            self.view.signals.stretched.emit(self.target.element, self.kind[-1], f, dx, dy)
         else:
             self.view.signals.scaled.emit(self.target.element, self._value)
 
@@ -1027,6 +1051,17 @@ class PreviewView(QGraphicsView):
         for corner in (r.topLeft(), r.topRight(), r.bottomLeft(), r.bottomRight()):
             h = Handle("scale", self, item)
             h.setPos(item.mapToScene(corner))
+            self.scene().addItem(h)
+            self._handles.append(h)
+        # the middles of the sides: width or height alone (not across a line's missing height or width)
+        sides = []
+        if r.height() > 1e-6:
+            sides += [("side_y", QPointF(r.center().x(), r.top())), ("side_y", QPointF(r.center().x(), r.bottom()))]
+        if r.width() > 1e-6:
+            sides += [("side_x", QPointF(r.left(), r.center().y())), ("side_x", QPointF(r.right(), r.center().y()))]
+        for kind, point in sides:
+            h = Handle(kind, self, item)
+            h.setPos(item.mapToScene(point))
             self.scene().addItem(h)
             self._handles.append(h)
         top = item.mapToScene(QPointF(r.center().x(), r.top()))

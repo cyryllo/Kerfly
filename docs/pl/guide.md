@@ -209,7 +209,7 @@ narysowaniem i po nim.
 
 | Narzędzie | Klawisz | Jak |
 |---|---|---|
-| Zaznacz i przesuń | S | Klik zaznacza, przeciąganie przesuwa; uchwyty skalują i obracają. Ramka wokół kilku elementów albo Ctrl+klik zaznacza kilka |
+| Zaznacz i przesuń | S | Klik zaznacza, przeciąganie przesuwa; uchwyty w narożnikach skalują, uchwyty na środkach boków zmieniają samą szerokość albo samą wysokość (przeciwległy bok zostaje), okrągły obraca. Ramka wokół kilku elementów albo Ctrl+klik zaznacza kilka |
 | Edytuj węzły | N | Przeciągaj węzły i okrągłe uchwyty krzywych (Ctrl: jeden uchwyt osobno). Dwuklik na boku dodaje węzeł, na węźle go usuwa. Klawisze: I wstaw, D usuń, L linia, C krzywa, O gładki, S symetryczny, Z zamknij / otwórz, B rozdziel |
 | Prostokąt | R | Przeciągnij. Shift: kwadrat. Opcja: promień rogów |
 | Elipsa | E | Przeciągnij. Shift: koło |
