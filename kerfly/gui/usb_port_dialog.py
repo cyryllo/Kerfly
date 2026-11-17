@@ -5,10 +5,9 @@ head of the laser selected in the list a little to the right and back.
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
-from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QLabel, QListWidget, QMessageBox, QPushButton,
-                               QVBoxLayout)
+from PySide6.QtWidgets import QDialog, QListWidget, QListWidgetItem, QMessageBox, QPushButton
 
-from kerfly.gui import icons
+from kerfly.gui import icons, theme, widgets
 from kerfly.i18n import _
 
 
@@ -25,26 +24,29 @@ class ChooseLaserDialog(QDialog):
         super().__init__(parent)
         self.ports = ports
         self.setWindowTitle(_("Which laser?"))
-        text = QLabel(_("%d lasers are plugged into this computer. Which one is \"%s\"? Kerfly remembers it "
-                        "in this laser's settings.") % (len(ports), profile_name))
+        # the dialog pattern (docs/ui-mockups/WhichLaser): the question, the ports, Which one? on the footer's
+        # left, Cancel and Connect
+        text = widgets.label(_("%d lasers are plugged into this computer. Which one is \"%s\"? Kerfly remembers "
+                               "it in this laser's settings.") % (len(ports), profile_name), "section")
         text.setWordWrap(True)
         self.list = QListWidget()
         for p in ports:
-            self.list.addItem(p.label)
+            self.list.addItem(QListWidgetItem(icons.tabler("plug-connected"), p.label))
         self.list.setCurrentRow(0)
+        self.list.setToolTip(_("The USB ports with a K40 laser on them"))
         which = QPushButton(icons.tabler("arrows-horizontal"), _("Which one?"))
         which.setToolTip(_("The head of the laser selected above moves a little to the right and back"))
         which.clicked.connect(lambda: identify(self, controller, self.chosen()))
         self.which = which
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.button(QDialogButtonBox.Ok).setText(_("Connect"))
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout = QVBoxLayout(self)
-        layout.addWidget(text)
-        layout.addWidget(self.list)
-        layout.addWidget(which)
-        layout.addWidget(buttons)
+        body = widgets.DialogBody()
+        body.add(text)
+        body.add(self.list, 1)
+        footer = widgets.DialogFooter(_("Connect"))
+        footer.layout().insertWidget(0, which)
+        widgets.DialogFooter.style_button(which, "secondary")
+        footer.connect(self)
+        widgets.dialog_layout(self, body, footer)
+        self.setMinimumWidth(theme.DIALOG_SMALL)
 
     def chosen(self):
         return self.ports[max(0, self.list.currentRow())]

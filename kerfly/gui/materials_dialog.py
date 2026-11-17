@@ -7,15 +7,14 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import copy
 
-from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QGridLayout,
-                               QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListWidget, QPlainTextEdit,
-                               QPushButton, QSpinBox, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QDoubleSpinBox, QHBoxLayout, QLabel, QLineEdit,
+                               QListWidget, QPlainTextEdit, QPushButton, QSpinBox, QVBoxLayout, QWidget)
 
 from kerfly.core.materials import KINDS, Material, OperationSettings
-from kerfly.gui import widgets
+from kerfly.gui import icons, theme, widgets
 from kerfly.gui.sizing import fit_spin
 from kerfly.gui.layers_panel import CUT, ENGRAVE, KIND_NAMES, RASTER
-from kerfly.i18n import N_, _
+from kerfly.i18n import N_, _, ngettext
 
 KIND_TITLES = {"cut": KIND_NAMES[CUT], "engrave": KIND_NAMES[ENGRAVE], "raster": KIND_NAMES[RASTER]}
 
@@ -43,23 +42,30 @@ class MaterialsDialog(QDialog):
         self.current_extra = list(current_extra or [])
         self._loading = False
 
+        # the dialog pattern (docs/ui-mockups/Materials): the list with New, Duplicate, Import above it and New
+        # from current layers under it; the material's name, thickness, a table of its layers (the units in the
+        # header), notes, Export and Delete; the footer with the number of materials, Cancel and Save
         self.list = QListWidget()
-        self.list.setMinimumWidth(190)
+        self.list.setMinimumWidth(theme.OPTION_TITLE * 2)
         self.list.currentRowChanged.connect(self._show)
+
+        def button(text, icon, tip, slot):
+            b = QPushButton(icons.tabler(icon, theme.token("danger") if icon == "trash" else None), _(text))
+            b.setToolTip(tip)
+            b.setFixedHeight(theme.HEIGHT_FIELD)
+            b.clicked.connect(slot)
+            return b
         left = QVBoxLayout()
-        left.addWidget(self.list, 1)
+        left.setSpacing(theme.SPACE_M)
         row = QHBoxLayout()
-        for text, slot in ((N_("New"), self._new), (N_("Duplicate"), self._duplicate), (N_("Delete"), self._delete)):
-            b = QPushButton(_(text))
-            b.clicked.connect(slot)
-            row.addWidget(b)
+        row.setSpacing(theme.SPACE_S)
+        row.addWidget(button(N_("New"), "plus", _("A new material"), self._new))
+        row.addWidget(button(N_("Duplicate"), "copy", _("A copy of the selected material"), self._duplicate))
+        row.addWidget(button(N_("Import\u2026"), "folder-open", _("Add the materials of a library file"),
+                             self._import))
+        row.addStretch(1)
         left.addLayout(row)
-        io_row = QHBoxLayout()
-        for text, slot in ((N_("Import\u2026"), self._import), (N_("Export\u2026"), self._export)):
-            b = QPushButton(_(text))
-            b.clicked.connect(slot)
-            io_row.addWidget(b)
-        left.addLayout(io_row)
+        left.addWidget(self.list, 1)
         save_current = QPushButton(_("New from current layers"))
         save_current.setToolTip(_("Create a material from the speed, passes and power of the current layers"))
         save_current.clicked.connect(self._from_current)
@@ -68,79 +74,97 @@ class MaterialsDialog(QDialog):
 
         self.editor = QWidget()
         form = QVBoxLayout(self.editor)
-        top = QFormLayout()
+        form.setContentsMargins(0, 0, 0, 0)
+        form.setSpacing(theme.SPACE_L)
+        top = widgets.Section()
         self.name = QLineEdit()
         self.name.textEdited.connect(self._store)
-        top.addRow(_("Name:"), self.name)
+        top.add_row("typography", _("Name"), _("The material's name, as the list shows it"), self.name)
         self.thickness = QDoubleSpinBox()
         self.thickness.setRange(0, 1000)
         self.thickness.setDecimals(1)
         self.thickness.setSuffix(" mm")
         fit_spin(self.thickness, 999.9)
         self.thickness.valueChanged.connect(self._store)
-        top.addRow(_("Thickness:"), self.thickness)
-        form.addLayout(top)
+        top.add_row("line-height", _("Thickness"), _("The material's thickness"), self.thickness)
+        form.addWidget(top)
+        unit = "mm/s" if self.speed_factor == 1 else "mm/min"
+        layers = widgets.Section(_("Layers"))
+        g = layers.grid
+        g.setHorizontalSpacing(theme.SPACE_M)
+        g.setColumnStretch(0, 1)
+        self.speed_header = widgets.label(_("Speed (%s)") % unit, "caption", wrap=True)
+        for col, w in enumerate((widgets.label(_("Name"), "caption"), self.speed_header,
+                                 widgets.label(_("Passes"), "caption"), widgets.label(_("Power (%)"), "caption"),
+                                 widgets.label(_("Kerf (mm)"), "caption"))):
+            g.addWidget(w, 0, col)
         self.fields = {}
-        for kind in KINDS:
-            box = QGroupBox(_(KIND_TITLES[kind]))
-            g = QGridLayout(box)
+        for r, kind in enumerate(KINDS, start=1):
             speed = QDoubleSpinBox()
             speed.setRange(0, 10000 * self.speed_factor)
             speed.setDecimals(1 if self.speed_factor == 1 else 0)
-            speed.setSuffix(" mm/s" if self.speed_factor == 1 else " mm/min")
+            speed.setToolTip(_("Speed of the %s layer") % _(KIND_TITLES[kind]).lower())
             passes = QSpinBox()
             passes.setRange(1, 100)
             power = QDoubleSpinBox()
             power.setRange(0, 100)
             power.setDecimals(0)
-            power.setSuffix(" %")
             power.setToolTip(_("Used with M3 boards (power per layer)"))
             for w in (speed, passes, power):
                 w.valueChanged.connect(self._store)
-            g.addWidget(QLabel(_("Speed:")), 0, 0)
-            g.addWidget(speed, 0, 1)
-            g.addWidget(QLabel(_("Passes:")), 0, 2)
-            g.addWidget(passes, 0, 3)
-            g.addWidget(QLabel(_("Power:")), 0, 4)
-            g.addWidget(power, 0, 5)
+            g.addWidget(QLabel(_(KIND_TITLES[kind])), r, 0)
+            g.addWidget(speed, r, 1)
+            g.addWidget(passes, r, 2)
+            g.addWidget(power, r, 3)
             kerf = None
             if kind == "cut":
                 kerf = QDoubleSpinBox()
                 kerf.setRange(0, 2)
                 kerf.setDecimals(2)
                 kerf.setSingleStep(0.05)
-                kerf.setSuffix(" mm")
                 kerf.setToolTip(_("Width of the cut in this material (measure it with Generators → Kerf test): "
                                   "the cut layer moves the outlines out by half of it"))
                 kerf.valueChanged.connect(self._store)
-                g.addWidget(QLabel(_("Kerf:")), 1, 0)
-                g.addWidget(kerf, 1, 1)
+                g.addWidget(kerf, r, 4)
+            else:
+                g.addWidget(widgets.hint("-", wrap=False), r, 4)
             self.fields[kind] = (speed, passes, power, kerf)
-            form.addWidget(box)
+        layers.add_wide(widgets.hint(_("The power works with an M3 board only. Measure the kerf with the Kerf test "
+                                       "generator.")))
+        form.addWidget(layers)
         # the material's other layers (a second cut layer, slower, ...): kept by their names
-        self.extra_box = QGroupBox(_("Other layers"))
+        self.extra_box = widgets.Section(_("Other layers"))
         self.extra_box.setToolTip(_("The job's layers besides the three basic ones, kept with the material: "
                                     "applying it sets the layer of the same name, or adds it"))
-        self.extra_grid = QGridLayout(self.extra_box)
+        self.extra_grid = self.extra_box.grid
         form.addWidget(self.extra_box)
         self.notes = QPlainTextEdit()
-        self.notes.setFixedHeight(54)
+        self.notes.setFixedHeight(3 * theme.HEIGHT_FIELD)
         self.notes.setPlaceholderText(_("Notes (e.g. supplier, lens, air assist)"))
         self.notes.textChanged.connect(self._store)
-        form.addWidget(self.notes)
+        notes = widgets.Section(_("Notes"))
+        notes.add_wide(self.notes)
+        form.addWidget(notes)
         if units == "in":
-            hint = widgets.hint(_("Speeds are stored in mm/s and converted to in/min for the layers."), wrap=False)
-            form.addWidget(hint)
+            form.addWidget(widgets.hint(_("Speeds are stored in mm/s and converted to in/min for the layers.")))
+        form.addStretch(1)
+        row = QHBoxLayout()
+        row.addWidget(button(N_("Export\u2026"), "file-export", _("Save the library to a file"), self._export))
+        row.addWidget(button(N_("Delete"), "trash", _("Delete the selected material"), self._delete))
+        row.addStretch(1)
+        form.addLayout(row)
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
         main = QHBoxLayout()
+        main.setSpacing(theme.PAD_DIALOG)
         main.addLayout(left)
         main.addWidget(self.editor, 1)
-        outer = QVBoxLayout(self)
-        outer.addLayout(main)
-        outer.addWidget(buttons)
+        body = widgets.DialogBody()
+        body.layout().addLayout(main, 1)
+        footer = widgets.DialogFooter(buttons=QDialogButtonBox.Save | QDialogButtonBox.Cancel)
+        footer.connect(self)
+        self.count = footer.info
+        widgets.dialog_layout(self, body, footer)
+        self.resize(theme.DIALOG_LARGE + 80, theme.DIALOG_LARGE - 160)
         self._refresh_list(0)
 
     # ---- list ---------------------------------------------------------------
@@ -150,6 +174,8 @@ class MaterialsDialog(QDialog):
         for m in self.materials:
             self.list.addItem(list_label(m))
         self.list.blockSignals(False)
+        n = len(self.materials)
+        self.count.setText(ngettext("%d material", "%d materials", n) % n)
         if self.materials:
             self.list.setCurrentRow(max(0, min(select, len(self.materials) - 1)))
         self._show(self.list.currentRow())
@@ -256,7 +282,6 @@ class MaterialsDialog(QDialog):
             speed = QDoubleSpinBox()
             speed.setRange(0, 10000 * self.speed_factor)
             speed.setDecimals(1 if self.speed_factor == 1 else 0)
-            speed.setSuffix(" mm/s" if self.speed_factor == 1 else " mm/min")
             speed.setValue(x.speed * self.speed_factor)
             passes = QSpinBox()
             passes.setRange(1, 100)
@@ -264,7 +289,6 @@ class MaterialsDialog(QDialog):
             power = QDoubleSpinBox()
             power.setRange(0, 100)
             power.setDecimals(0)
-            power.setSuffix(" %")
             power.setValue(x.power * 100)
             kerf = None
             widgets = [name, speed, passes, power]
@@ -273,7 +297,6 @@ class MaterialsDialog(QDialog):
                 kerf.setRange(0, 2)
                 kerf.setDecimals(2)
                 kerf.setSingleStep(0.05)
-                kerf.setSuffix(" mm")
                 kerf.setValue(x.kerf)
                 kerf.setToolTip(_("Kerf:"))
                 widgets.append(kerf)

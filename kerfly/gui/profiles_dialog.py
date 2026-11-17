@@ -9,13 +9,13 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 import os
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QFileDialog, QGridLayout, QHBoxLayout, QLabel,
+from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QFileDialog, QHBoxLayout, QLabel,
                                QListWidget, QListWidgetItem, QMessageBox, QPushButton, QVBoxLayout)
 
 from kerfly.core import config
 from kerfly.core import profiles as profiles_core
-from kerfly.gui import icons, theme
-from kerfly.i18n import _
+from kerfly.gui import icons, theme, widgets
+from kerfly.i18n import _, ngettext
 
 
 class ProfilesDialog(QDialog):
@@ -29,14 +29,14 @@ class ProfilesDialog(QDialog):
         self.list.currentRowChanged.connect(self._show)
         self.list.itemChanged.connect(self._renamed)
         self.list.itemDoubleClicked.connect(lambda item: self.list.editItem(item))
+        self.title = widgets.section_title("")
         self.summary = QLabel()
         self.summary.setWordWrap(True)
         self.summary.setTextFormat(Qt.RichText)
         self.summary.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.buttons = {}
-        grid = QGridLayout()
-        for n, (key, text, icon, tip, slot) in enumerate((
-                ("use", _("Use"), "player-play", _("Work with this laser: its settings go into the window"),
+        for key, text, icon, tip, slot in (
+                ("use", _("Use this laser"), "player-play", _("Work with this laser: its settings go into the window"),
                  self._use),
                 ("new", _("New"), "plus", _("A new laser with Kerfly's default settings"), self._new),
                 ("duplicate", _("Duplicate"), "copy", _("A copy of the selected laser, to change a few settings"),
@@ -46,28 +46,54 @@ class ProfilesDialog(QDialog):
                 ("export", _("Export…"), "file-export", _("Save the selected laser to a file, for another computer"),
                  self._export),
                 ("import", _("Import…"), "folder-open", _("Add the lasers of a file saved with Export"),
-                 self._import))):
+                 self._import)):
             b = QPushButton(icons.tabler(icon, theme.token("danger") if key == "delete" else None), text)
             b.setToolTip(tip)
             b.clicked.connect(slot)
+            if key != "use":
+                b.setFixedHeight(theme.HEIGHT_FIELD)
             self.buttons[key] = b
-            grid.addWidget(b, n, 0)
-        grid.setRowStretch(7, 1)
+        # the dialog pattern (docs/ui-mockups/Profiles): the list with New, Duplicate, Import above it on the
+        # left; the selected laser on the right (its name, Rename, what it has, Export and Delete); the footer
+        # with the number of lasers, Close and Use this laser
+        left = QVBoxLayout()
+        left.setSpacing(theme.SPACE_M)
+        row = QHBoxLayout()
+        row.setSpacing(theme.SPACE_S)
+        for key in ("new", "duplicate", "import"):
+            row.addWidget(self.buttons[key])
+        row.addStretch(1)
+        left.addLayout(row)
+        left.addWidget(self.list, 1)
+        right = QVBoxLayout()
+        right.setSpacing(theme.SPACE_M)
+        row = QHBoxLayout()
+        row.addWidget(self.title, 1)
+        row.addWidget(self.buttons["rename"])
+        right.addLayout(row)
+        right.addWidget(self.summary)
+        right.addWidget(widgets.hint(_("The settings of the laser in use are changed in Settings (board, bed, power, "
+                                       "rotary, trace, programs before and after a job); they are kept in its "
+                                       "profile.")))
+        right.addStretch(1)
+        row = QHBoxLayout()
+        row.addWidget(self.buttons["export"])
+        row.addWidget(self.buttons["delete"])
+        row.addStretch(1)
+        right.addLayout(row)
         top = QHBoxLayout()
-        top.addWidget(self.list, 2)
-        top.addLayout(grid)
-        layout = QVBoxLayout(self)
-        layout.addLayout(top)
-        layout.addWidget(self.summary)
-        hint = QLabel(_("The settings of the laser in use are changed in Settings (board, bed, power, rotary, "
-                        "trace, programs before and after a job); they are kept in its profile."))
-        hint.setWordWrap(True)
-        hint.setObjectName("node_hint")
-        layout.addWidget(hint)
-        close = QDialogButtonBox(QDialogButtonBox.Close)
-        close.rejected.connect(self.reject)
-        layout.addWidget(close)
-        self.resize(620, 420)
+        top.setSpacing(theme.PAD_DIALOG)
+        top.addLayout(left, 1)
+        top.addLayout(right, 1)
+        body = widgets.DialogBody()
+        body.layout().addLayout(top, 1)
+        footer = widgets.DialogFooter(buttons=QDialogButtonBox.Close)
+        footer.box.rejected.connect(self.reject)
+        widgets.DialogFooter.style_button(self.buttons["use"], "primary")
+        footer.layout().addWidget(self.buttons["use"])          # the action, last (after Close)
+        self.count = footer.info
+        widgets.dialog_layout(self, body, footer)
+        self.resize(theme.DIALOG_LARGE, theme.DIALOG_SMALL + 20)
         self._fill(self.profiles.current)
 
     # ---------------------------------------------------------------- list
@@ -97,6 +123,7 @@ class ProfilesDialog(QDialog):
         name = self.selected()
         if name is None:
             self.summary.setText("")
+            self.title.setText("")
             return
         s = self.profiles.get(name)
         units = self.window.values.get("units", "mm")
@@ -105,13 +132,16 @@ class ProfilesDialog(QDialog):
             size = "%.2f × %.2f in" % (width / 25.4, height / 25.4)
         else:
             size = "%.0f × %.0f mm" % (width, height)
-        parts = ["<b>%s</b>%s" % (name, " (%s)" % _("in use") if name == self.profiles.current else ""),
-                 _("Board: %s") % s.get("board_name", "?"), _("Bed: %s") % size]
-        if config.is_true(s.get("rotary", "0")):
-            parts.append(_("Rotary attachment"))
+        self.title.setText(name + (" (%s)" % _("in use") if name == self.profiles.current else ""))
+        rows = [(_("Board"), s.get("board_name", "?")), (_("Bed"), size),
+                (_("Rotary attachment"), _("yes") if config.is_true(s.get("rotary", "0")) else _("no"))]
         if config.is_true(s.get("pre_exec", "0")) or config.is_true(s.get("post_exec", "0")):
-            parts.append(_("Programs before / after a job"))
-        self.summary.setText("<br>".join(parts))
+            rows.append((_("Programs"), _("before / after a job")))
+        hint = theme.token("hint")
+        self.summary.setText("<table cellspacing='4'>%s</table>" % "".join(
+            "<tr><td style='color:%s; padding-right:12px'>%s</td><td>%s</td></tr>" % (hint, k, v) for k, v in rows))
+        n = len(self.profiles.items)
+        self.count.setText(ngettext("%d laser", "%d lasers", n) % n)
         self.buttons["use"].setEnabled(name != self.profiles.current)
         self.buttons["delete"].setEnabled(len(self.profiles.items) > 1)
 
@@ -160,8 +190,9 @@ class ProfilesDialog(QDialog):
         name = self.selected()
         if name is None or len(self.profiles.items) <= 1:
             return
-        if QMessageBox.question(self, _("Delete laser"), _("Delete the laser \"%s\" and its settings?") % name,
-                                QMessageBox.Yes | QMessageBox.No, QMessageBox.No) != QMessageBox.Yes:
+        if widgets.ask(self, _("Delete laser"), _("Delete the laser \"%s\" and its settings?") % name,
+                       QMessageBox.Yes | QMessageBox.No, QMessageBox.No, names={QMessageBox.Yes: _("Delete laser")},
+                       danger=True) != QMessageBox.Yes:
             return
         was_current = name == self.profiles.current
         self.profiles.remove(name)

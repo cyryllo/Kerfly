@@ -15,14 +15,14 @@ import os
 
 from PySide6.QtCore import QPointF, QRectF, Qt, QTimer
 from PySide6.QtGui import QBrush, QColor, QPainter, QPainterPath, QPen
-from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFileDialog,
-                               QFontComboBox, QFormLayout, QGraphicsScene, QGraphicsView, QHBoxLayout, QLabel,
-                               QLineEdit, QPlainTextEdit, QSpinBox, QToolButton, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDoubleSpinBox, QFileDialog, QFontComboBox, QFrame,
+                               QGraphicsScene, QGraphicsView, QHBoxLayout, QLineEdit, QPlainTextEdit, QScrollArea,
+                               QSpinBox, QToolButton, QVBoxLayout, QWidget)
 
 from kerfly.core import generators as gen
 from kerfly.core.layers import DEFAULT_COLORS
 from kerfly.core.shapes import outlines
-from kerfly.gui import theme
+from kerfly.gui import icons, theme, widgets
 from kerfly.i18n import N_, _
 
 OPERATIONS = [("engrave", N_("Engrave outline")), ("cut", N_("Cut")), ("fill", N_("Fill (raster)"))]
@@ -436,7 +436,9 @@ class GeneratorDialog(QDialog):
         self.setWindowTitle(_(title))
         values = load_values(key, self.fields, window) if remember else defaults(self.fields, window)
         self.widgets = {}
-        form = QFormLayout()
+        fields_box = widgets.Section()
+        fields_box.grid.setColumnStretch(0, 0)
+        fields_box.grid.setColumnStretch(1, 1)
         speed_unit = _speed_unit(window)
         len_unit = "mm"
         for name, label, kind, _default, opt, ftip in self.fields:
@@ -507,74 +509,92 @@ class GeneratorDialog(QDialog):
                 w.textChanged.connect(self._changed)
             w.setToolTip(_(ftip))
             w.setProperty("generator_field", name)
-            lbl = QLabel(_(label))
+            # a field not yet confirmed on a laser: its "(beta)" as a badge by the caption
+            text = _(label)
+            beta = text.rstrip().endswith(("(beta)", "(bêta)"))
+            if beta:
+                text = text.rstrip()[:text.rstrip().rindex("(")].rstrip()
+            lbl = widgets.hint(text, wrap=False)
             lbl.setToolTip(_(ftip))
-            form.addRow(lbl, w)
+            r = fields_box.grid.rowCount()
+            fields_box.grid.addWidget(widgets.beta_caption(lbl) if beta else lbl, r, 0)
+            fields_box.grid.addWidget(w, r, 1)
             self.widgets[name] = w
         self.scene = QGraphicsScene(self)
         self.view = QGraphicsView(self.scene)
         self.view.setRenderHint(QPainter.Antialiasing, True)
         self.view.setMinimumSize(420, 320)
         self.view.setBackgroundBrush(QBrush(theme.canvas("preview_bg")))
-        self.summary = QLabel()
-        self.summary.setWordWrap(True)
-        # boxes: a 3D tab with the parts put together
+        # boxes: a 3D view with the parts put together
         from PySide6.QtWidgets import QSlider, QTabWidget
-        from kerfly.gui import icons
         from kerfly.gui.box3d import Box3DView
         self.box3d = Box3DView()
-        box3d_page = QWidget()
-        b3 = QVBoxLayout(box3d_page)
-        b3.setContentsMargins(0, 0, 0, 0)
-        b3.addWidget(self.box3d, 1)
-        controls = QHBoxLayout()
+        # the preview bar (docs/ui-mockups/GeneratorBox): Parts | 3D, then the 3D view's switches
         self.exploded = QCheckBox(_("Pulled apart"))
         self.exploded.setIcon(icons.tabler("box-padding"))
         self.exploded.setToolTip(_("The parts moved apart, to see how their fingers and tabs go together"))
         self.exploded.toggled.connect(lambda on: self.box3d.set_exploded(25.0 if on else 0.0))
-        controls.addWidget(self.exploded)
         self.hidden_edges = QCheckBox(_("Hidden edges"))
         self.hidden_edges.setChecked(True)
         self.hidden_edges.setIcon(icons.tabler("circle-dashed"))
         self.hidden_edges.setToolTip(_("The edges behind other parts, dashed (as in a technical drawing)"))
         self.hidden_edges.toggled.connect(self.box3d.set_hidden_edges)
-        controls.addWidget(self.hidden_edges)
-        self.lid_icon = QLabel()
-        self.lid_icon.setPixmap(icons.tabler("arrows-horizontal").pixmap(16, 16))
-        self.lid_icon.setToolTip(_("Slide the sliding lid out of its groove"))
-        self.lid_label = QLabel(_("Slide the lid out"))
+        self.lid_icon = widgets.icon_pixmap_label("arrows-horizontal", _("Slide the sliding lid out of its groove"))
+        self.lid_label = widgets.hint(_("Slide the lid out"), wrap=False)
         self.lid_label.setToolTip(_("Slide the sliding lid out of its groove"))
         self.lid_slider = QSlider(Qt.Horizontal)
         self.lid_slider.setRange(0, 100)
+        self.lid_slider.setFixedWidth(theme.OPTION_TITLE + theme.PAD_DIALOG * 3)
         self.lid_slider.setToolTip(_("Slide the sliding lid out of its groove"))
         self.lid_slider.valueChanged.connect(self._lid_moved)
-        controls.addWidget(self.lid_icon)
-        controls.addWidget(self.lid_label)
-        controls.addWidget(self.lid_slider, 1)
-        b3.addLayout(controls)
+        self.controls3d = QWidget()
+        controls = QHBoxLayout(self.controls3d)
+        controls.setContentsMargins(theme.SPACE_L, 0, theme.SPACE_L, 0)
+        controls.setSpacing(theme.SPACE_L)
+        controls.addWidget(widgets.separator())
+        for w in (self.exploded, self.hidden_edges):
+            controls.addWidget(w)
+        controls.addStretch(1)
+        for w in (self.lid_icon, self.lid_label, self.lid_slider):
+            controls.addWidget(w)
         self.preview_tabs = QTabWidget()
+        self.preview_tabs.setObjectName("preview_tabs")
+        self.preview_tabs.setDocumentMode(True)
         self.preview_tabs.addTab(self.view, _("Parts"))
-        self.preview_tabs.addTab(box3d_page, _("3D"))
+        self.preview_tabs.addTab(self.box3d, _("3D"))
         self.preview_tabs.setTabToolTip(1, _("The box put together from its parts (drag to turn it)"))
-        right = QVBoxLayout()
-        right.addWidget(self.preview_tabs, 1)
-        right.addWidget(self.summary)
+        self.preview_tabs.setCornerWidget(self.controls3d, Qt.TopRightCorner)
+        self.preview_tabs.currentChanged.connect(lambda i: self.controls3d.setVisible(i == 1))
+        self.controls3d.setVisible(False)
+        # the settings on the left (scrolling up and down when there are many), the preview on the right
+        info = widgets.hint(_(tip))
+        left = QWidget()
+        lv = QVBoxLayout(left)
+        lv.setContentsMargins(0, 0, theme.SPACE_L, 0)
+        lv.setSpacing(theme.SPACE_L)
+        lv.addWidget(info)
+        lv.addWidget(fields_box)
+        lv.addStretch(1)
+        scroll = QScrollArea()
+        scroll.setWidget(left)
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setMinimumWidth(left.sizeHint().width() + scroll.verticalScrollBar().sizeHint().width())
         top = QHBoxLayout()
-        top.addLayout(form)
-        top.addLayout(right, 1)
-        info = QLabel(_(tip))
-        info.setWordWrap(True)
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.button(QDialogButtonBox.Ok).setText(_(ACCEPT_TEXT.get(key, INSERT_TEXT)))
-        for b in buttons.buttons():                    # Enter in a field updates the preview, it does not insert
+        top.setSpacing(theme.PAD_DIALOG)
+        top.addWidget(scroll)
+        top.addWidget(self.preview_tabs, 1)
+        body = widgets.DialogBody()
+        body.layout().addLayout(top, 1)
+        footer = widgets.DialogFooter(_(ACCEPT_TEXT.get(key, INSERT_TEXT)))
+        footer.connect(self)
+        self.summary = footer.info
+        self.summary.setWordWrap(True)
+        widgets.dialog_layout(self, body, footer)
+        for b in footer.box.buttons():                 # Enter in a field updates the preview, it does not insert
             b.setAutoDefault(False)
             b.setDefault(False)
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout = QVBoxLayout(self)
-        layout.addWidget(info)
-        layout.addLayout(top, 1)
-        layout.addWidget(buttons)
         self._timer = QTimer(self)
         self._timer.setSingleShot(True)
         self._timer.setInterval(150)
@@ -699,6 +719,20 @@ class GeneratorDialog(QDialog):
                                   "other. In the element list each sheet is a group, sheets 2 and on unticked: cut "
                                   "sheet 1, change the material, then untick sheet 1 and tick the next one.") % sheets
             self.summary.setText(text)
+
+    def _fit_preview(self):
+        """The preview fits the view again (it was fitted before the dialog had its size)."""
+        rect = self.scene.sceneRect()
+        if not rect.isEmpty():
+            self.view.fitInView(rect, Qt.KeepAspectRatio)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._fit_preview()
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        QTimer.singleShot(0, self, self._fit_preview)
 
     def keyPressEvent(self, event):
         """Enter in a field takes the number and updates the preview; it does not insert

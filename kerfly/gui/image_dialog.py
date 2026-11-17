@@ -4,10 +4,9 @@ Dialog asking for the physical size of a bitmap image.
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
-from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QLabel,
-                               QVBoxLayout)
+from PySide6.QtWidgets import QDialog, QDoubleSpinBox, QLabel
 
-from kerfly.gui import widgets
+from kerfly.gui import theme, widgets
 from kerfly.i18n import _
 
 DEFAULT_DPI = 96.0
@@ -35,24 +34,26 @@ class ImageSizeDialog(QDialog):
             w.setDecimals(2 if units == "mm" else 3)
             w.setSuffix(" " + units)
 
-        form = QFormLayout()
-        form.addRow(_("Image:"), QLabel(_("%d × %d pixels") % (width_px, height_px)))
-        form.addRow(_("Resolution:"), self.dpi)
-        form.addRow(_("Width:"), self.width)
-        form.addRow(_("Height:"), self.height)
-        note = widgets.hint(_("Dark pixels are engraved, light and transparent pixels are not."))
+        # the dialog pattern (docs/ui-mockups/ImageSize): the fields, the note, Cancel and Insert picture
+        self.dpi.setToolTip(_("Resolution: dots per inch of the picture; more dots make it smaller"))
+        self.width.setToolTip(_("Width of the picture on the bed"))
+        self.height.setToolTip(_("Height of the picture on the bed (the proportions are kept)"))
+        section = widgets.Section()
+        section.add_row("photo", _("Image"), _("The picture's size in pixels, as in the file"),
+                        QLabel(_("%d × %d pixels") % (width_px, height_px)))
+        section.add_row("grid-dots", _("Resolution"), self.dpi.toolTip(), self.dpi)
+        section.add_row("arrows-horizontal", _("Width"), self.width.toolTip(), self.width)
+        section.add_row("line-height", _("Height"), self.height.toolTip(), self.height)
+        body = widgets.DialogBody()
         if not dpi:
-            hint = widgets.error(_("The file does not say how large the image is. Set its size."))
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-
-        layout = QVBoxLayout(self)
-        if not dpi:
-            layout.addWidget(hint)
-        layout.addLayout(form)
-        layout.addWidget(note)
-        layout.addWidget(buttons)
+            body.add(widgets.error(_("The file does not say how large the image is. Set its size.")))
+        body.add(section)
+        body.add(widgets.hint(_("Dark pixels are engraved, light and transparent pixels are not.")))
+        body.layout().addStretch(1)
+        footer = widgets.DialogFooter(_("Insert picture"))
+        footer.connect(self)
+        widgets.dialog_layout(self, body, footer)
+        self.setMinimumWidth(theme.DIALOG_SMALL)
 
         self.dpi.valueChanged.connect(self._dpi_changed)
         self.width.valueChanged.connect(lambda v: self._size_changed(v, self.width_px))

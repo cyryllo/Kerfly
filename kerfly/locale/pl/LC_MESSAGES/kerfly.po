@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 19:24+0100\n"
+"POT-Creation-Date: 2026-11-17 19:47+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -52,12 +52,26 @@ msgstr[1] "%d elementy"
 msgstr[2] "%d elementów"
 
 #, python-format
+msgid "%d laser"
+msgid_plural "%d lasers"
+msgstr[0] "%d laser"
+msgstr[1] "%d lasery"
+msgstr[2] "%d laserów"
+
+#, python-format
 msgid ""
 "%d lasers are plugged into this computer. Which one is \"%s\"? Kerfly "
 "remembers it in this laser's settings."
 msgstr ""
 "Do tego komputera są podłączone lasery: %d. Który z nich to „%s”? Kerfly "
 "zapamięta to w ustawieniach tego lasera."
+
+#, python-format
+msgid "%d material"
+msgid_plural "%d materials"
+msgstr[0] "%d materiał"
+msgstr[1] "%d materiały"
+msgstr[2] "%d materiałów"
 
 #, python-format
 msgid "%d mm"
@@ -235,24 +249,11 @@ msgstr ""
 msgid "<b>%s is available</b> (you have %s)."
 msgstr "<b>Dostępna jest wersja %s</b> (masz %s)."
 
-#, python-format
-msgid ""
-"<h3>Kerfly %s</h3><p>Laser cutter control software for K40 lasers with "
-"Lihuiyu M2 Nano boards.</p><p>Based on <a "
-"href='https://www.scorchworks.com/K40whisperer/k40whisperer.html'>K40 "
-"Whisperer</a> by Scorch.</p><p>Free software under the GNU General Public"
-" License v3 or later.<br><a "
-"href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>"
-msgstr ""
-"<h3>Kerfly %s</h3><p>Program do sterowania laserami K40 z płytami Lihuiyu"
-" M2 Nano.</p><p>Oparty na <a "
-"href='https://www.scorchworks.com/K40whisperer/k40whisperer.html'>K40 "
-"Whisperer</a> autorstwa Scorcha.</p><p>Wolne oprogramowanie na licencji "
-"GNU General Public License w wersji 3 lub późniejszej.<br><a "
-"href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>"
-
 msgid "A copy of the selected laser, to change a few settings"
 msgstr "Kopia zaznaczonego lasera, żeby zmienić kilka ustawień"
+
+msgid "A copy of the selected material"
+msgstr "Kopia zaznaczonego materiału"
 
 msgid "A dot on each side between the top and the bottom text"
 msgstr "Kropka z każdej strony między tekstem górnym a dolnym"
@@ -288,6 +289,9 @@ msgstr "Menu: na elemencie jego polecenia, na pustym stole Przesuń tu głowicę
 
 msgid "A new laser with Kerfly's default settings"
 msgstr "Nowy laser z domyślnymi ustawieniami Kerfly"
+
+msgid "A new material"
+msgstr "Nowy materiał"
 
 msgid "A piece was cut out of the picture (Undo brings the whole picture back)."
 msgstr "Wycięto fragment obrazka (Cofnij przywraca cały obrazek)."
@@ -349,6 +353,12 @@ msgstr "Dodaj warstwę"
 
 msgid "Add the lasers of a file saved with Export"
 msgstr "Dodaj lasery z pliku zapisanego przez Eksportuj"
+
+msgid "Add the materials of a library file"
+msgstr "Dodaj materiały z pliku biblioteki"
+
+msgid "Add the rule"
+msgstr "Dodaj regułę"
 
 #, python-format
 msgid "Adjusting image darkness: %s%%"
@@ -435,6 +445,12 @@ msgstr "Przesunięcie"
 msgid "Band width"
 msgstr "Szer. pasa"
 
+msgid "Based on"
+msgstr "Oparty na"
+
+msgid "Bed"
+msgstr "Stół roboczy"
+
 #, python-format
 msgid "Bed %s × %s mm"
 msgstr "Stół %s × %s mm"
@@ -442,12 +458,11 @@ msgstr "Stół %s × %s mm"
 msgid "Bed height"
 msgstr "Wysokość stołu"
 
+msgid "Bed view"
+msgstr "Widok stołu"
+
 msgid "Bed width"
 msgstr "Szerokość stołu"
-
-#, python-format
-msgid "Bed: %s"
-msgstr "Stół: %s"
 
 msgid "Beep after a job"
 msgstr "Sygnał dźwiękowy po zadaniu"
@@ -455,9 +470,8 @@ msgstr "Sygnał dźwiękowy po zadaniu"
 msgid "Bigger letters"
 msgstr "Większe litery"
 
-#, python-format
-msgid "Board: %s"
-msgstr "Płyta: %s"
+msgid "Board"
+msgstr "Płyta sterująca"
 
 msgid "Bold"
 msgstr "Pogrubienie"
@@ -470,6 +484,9 @@ msgstr "Pogrubione litery odbijają się wyraźniej"
 
 msgid "Bottom"
 msgstr "Dno"
+
+msgid "Boundary trace"
+msgstr "Obrys granic"
 
 msgid "Boundary trace as a rectangle (off: along the outline of the design)"
 msgstr "Objazd konturu jako prostokąt (wyłączone: wzdłuż obwiedni projektu)"
@@ -541,6 +558,9 @@ msgstr ""
 "Oblicz czas rastra: przygotuj raster teraz, aby oszacować czas "
 "grawerowania"
 
+msgid "Cancel"
+msgstr "Anuluj"
+
 msgid "Cardboard 2 mm"
 msgstr "Tektura 2 mm"
 
@@ -558,6 +578,9 @@ msgstr "Zmień nazwę zaznaczonego lasera"
 
 msgid "Check for &updates"
 msgstr "Sprawdź &aktualizacje"
+
+msgid "Check for updates"
+msgstr "Sprawdź aktualizacje"
 
 msgid ""
 "Check once a day for a new version (asks GitHub; nothing about you is "
@@ -638,6 +661,9 @@ msgstr ""
 msgid "Click the opened file or the group first, then Ungroup."
 msgstr "Najpierw kliknij otwarty plik albo grupę, potem Rozgrupuj."
 
+msgid "Close"
+msgstr "Zamknij"
+
 msgid "Close / open"
 msgstr "Zamknij / otwórz"
 
@@ -686,6 +712,9 @@ msgstr "Połączono. Kliknij, aby połączyć ponownie."
 
 msgid "Content"
 msgstr "Treść"
+
+msgid "Controller"
+msgstr "Sterownik"
 
 msgid "Controller board"
 msgstr "Płyta sterująca"
@@ -785,6 +814,13 @@ msgstr "Krzywa"
 msgid "Curve through the node"
 msgstr "Krzywa przez węzeł"
 
+msgid ""
+"Curves through the outline's nodes; corners sharper than the angle below "
+"stay sharp"
+msgstr ""
+"Krzywe przez węzły konturu; narożniki ostrzejsze niż kąt poniżej zostają "
+"ostre"
+
 msgid "Cut"
 msgstr "Cięcie"
 
@@ -834,6 +870,9 @@ msgstr "Wytnij pieczątkę z arkusza"
 msgid "Cut: %d element(s)."
 msgstr "Wycięto elementów: %d."
 
+msgid "Cutting"
+msgstr "Cięcie"
+
 msgid "D&eselect"
 msgstr "&Odznacz"
 
@@ -872,6 +911,9 @@ msgstr "Usunąć laser „%s” i jego ustawienia?"
 
 msgid "Delete the selected laser (the last one stays)"
 msgstr "Usuń zaznaczony laser (ostatni zostaje)"
+
+msgid "Delete the selected material"
+msgstr "Usuń zaznaczony materiał"
 
 msgid "Delete this layer (its parts go back to the default layer)"
 msgstr "Usuń tę warstwę (jej części wrócą do warstwy domyślnej)"
@@ -1010,6 +1052,9 @@ msgstr "Przegródki wzdłuż (beta)"
 
 msgid "Do not remind about this version again (a later one is shown)"
 msgstr "Nie przypominaj więcej o tej wersji (o następnej przypomni)"
+
+msgid "Don't save"
+msgstr "Nie zapisuj"
 
 msgid "Done. Unplug the laser's USB cable, plug it in again, then connect."
 msgstr ""
@@ -1311,6 +1356,9 @@ msgstr "G-code nie został zapisany: %s"
 msgid "G-code saved: %s (%d lines)"
 msgstr "Zapisano G-code: %s (linie: %d)"
 
+msgid "GNU General Public License v3 or later"
+msgstr "GNU GPL w wersji 3 lub nowszej"
+
 #, python-format
 msgid "GRBL alarm %(code)s: %(text)s. Unlock or home the machine."
 msgstr "Alarm GRBL %(code)s: %(text)s. Odblokuj albo zbazuj maszynę."
@@ -1403,6 +1451,9 @@ msgstr "Wys."
 msgid "H horizontally, V vertically (with the bed in focus)"
 msgstr "H w poziomie, V w pionie (gdy aktywny jest stół)"
 
+msgid "Halftone"
+msgstr "Półtony"
+
 msgid "Halftone (dither) grayscale images"
 msgstr "Półtony (dithering) dla obrazów w odcieniach szarości"
 
@@ -1431,14 +1482,14 @@ msgstr ""
 "Wysokość liter normalnej wielkości (0: cały tekst tak duży, jak się "
 "zmieści)"
 
+msgid "Height of the picture on the bed (the proportions are kept)"
+msgstr "Wysokość obrazu na stole (proporcje zostają)"
+
 msgid "Height of the puzzle"
 msgstr "Wysokość puzzli"
 
 msgid "Height of the stamp (own size)"
 msgstr "Wysokość pieczątki (własny rozmiar)"
-
-msgid "Height:"
-msgstr "Wysokość:"
 
 msgid "Herringbone"
 msgstr "Jodełka"
@@ -1510,6 +1561,9 @@ msgstr "Bazowanie: przesuń głowicę do pozycji bazowej"
 msgid "Homed"
 msgstr "Głowica w pozycji bazowej"
 
+msgid "Homing and the end of a job"
+msgstr "Bazowanie i koniec zadania"
+
 msgid ""
 "Homing is switched off on this GRBL board ($22=0). Put the head in the "
 "home corner (Settings → Machine) by hand before connecting."
@@ -1560,11 +1614,11 @@ msgstr "Pomiń drobinki"
 msgid "Ignore specks: dark spots smaller than this many pixels are left out"
 msgstr "Pomiń drobinki: ciemne plamki mniejsze niż tyle pikseli są pomijane"
 
+msgid "Image"
+msgstr "Obraz"
+
 msgid "Image size"
 msgstr "Rozmiar obrazu"
-
-msgid "Image:"
-msgstr "Obraz:"
 
 msgid "Images"
 msgstr "Obrazy"
@@ -1583,6 +1637,9 @@ msgstr "W użyciu"
 
 msgid "Include this layer in the job"
 msgstr "Uwzględnij tę warstwę w zadaniu"
+
+msgid "Inkscape"
+msgstr "Inkscape"
 
 msgid "Inkscape executable"
 msgstr "Program Inkscape"
@@ -1612,6 +1669,9 @@ msgstr ""
 
 msgid "Insert"
 msgstr "Wstaw"
+
+msgid "Insert picture"
+msgstr "Wstaw obraz"
 
 msgid "Inside sizes"
 msgstr "Wymiary wewnętrzne"
@@ -1773,6 +1833,13 @@ msgstr "Laser"
 msgid "Laser \"%s\" saved to %s"
 msgstr "Laser „%s” zapisano w %s"
 
+msgid ""
+"Laser cutter control software for K40 lasers with Lihuiyu M2 Nano boards:"
+" drawing, laying out and cutting in one window."
+msgstr ""
+"Program do sterowania laserami K40 z płytami Lihuiyu M2 Nano: rysowanie, "
+"układanie i cięcie w jednym oknie."
+
 msgid "Laser initialized"
 msgstr "Połączono z laserem"
 
@@ -1881,6 +1948,9 @@ msgstr "Nachylenie krzywej poziomów, jasny koniec"
 msgid "Levels curve weight"
 msgstr "Waga krzywej poziomów"
 
+msgid "Licence"
+msgstr "Licencja"
+
 msgid "Lid"
 msgstr "Wieko"
 
@@ -1926,6 +1996,9 @@ msgstr ""
 
 msgid "Loading cancelled"
 msgstr "Anulowano wczytywanie"
+
+msgid "Look"
+msgstr "Wygląd"
 
 msgid "Look for serial ports again (after plugging the laser in)"
 msgstr "Szukaj portów szeregowych ponownie (po podłączeniu lasera)"
@@ -2033,6 +2106,9 @@ msgstr ""
 msgid "Medium (15 %)"
 msgstr "Średnia (15 %)"
 
+msgid "Memory and USB"
+msgstr "Pamięć i USB"
+
 msgid "Mirror"
 msgstr "Odbij"
 
@@ -2138,9 +2214,6 @@ msgstr "Mój laser"
 
 msgid "Name"
 msgstr "Nazwa"
-
-msgid "Name:"
-msgstr "Nazwa:"
 
 msgid "Nest"
 msgstr "Ułóż"
@@ -2280,6 +2353,9 @@ msgstr "Niedostępne na płytach GRBL."
 
 msgid "Not connected"
 msgstr "Nie połączono"
+
+msgid "Notes"
+msgstr "Notatki"
 
 msgid "Notes (e.g. supplier, lens, air assist)"
 msgstr "Notatki (np. dostawca, soczewka, nadmuch)"
@@ -2451,6 +2527,9 @@ msgstr "Obrys"
 msgid "Outline only"
 msgstr "Tylko obrys"
 
+msgid "Outline shape"
+msgstr "Kształt konturu"
+
 msgid "Outside the laser bed!"
 msgstr "Poza stołem lasera!"
 
@@ -2488,9 +2567,6 @@ msgstr "Przejścia ostatniego rzędu"
 
 msgid "Passes to"
 msgstr "Przejścia do"
-
-msgid "Passes:"
-msgstr "Przejścia:"
 
 msgid "Paste in pla&ce"
 msgstr "Wklej w &miejscu"
@@ -2617,6 +2693,9 @@ msgstr ""
 msgid "Power (%)"
 msgstr "Moc (%)"
 
+msgid "Power (M3 board)"
+msgstr "Moc (płyta M3)"
+
 msgid "Power (M3 boards)"
 msgstr "Moc (płyty M3)"
 
@@ -2631,9 +2710,6 @@ msgstr "Moc ostatniego rzędu"
 
 msgid "Power to (%)"
 msgstr "Moc do (%)"
-
-msgid "Power:"
-msgstr "Moc:"
 
 msgid "Prepare USB data before sending"
 msgstr "Przygotuj dane USB przed wysłaniem"
@@ -2658,6 +2734,9 @@ msgstr "Wstępne przetwarzanie rastra: %s%%"
 msgid "Pressure angle"
 msgstr "Kąt przyporu"
 
+msgid "Program"
+msgstr "Program"
+
 msgid "Program before the job"
 msgstr "Program przed zadaniem"
 
@@ -2673,8 +2752,14 @@ msgstr "Program uruchamiany po zadaniu"
 msgid "Program to run before a job"
 msgstr "Program uruchamiany przed zadaniem"
 
-msgid "Programs before / after a job"
-msgstr "Programy przed / po zadaniu"
+msgid "Programs"
+msgstr "Programy"
+
+msgid "Programs run with a job"
+msgstr "Programy uruchamiane przy zadaniu"
+
+msgid "Project"
+msgstr "Projekt"
 
 #, python-format
 msgid "Project opened: %s"
@@ -2799,8 +2884,11 @@ msgstr "Zgłoś &problem na GitHubie…"
 msgid "Report a problem"
 msgstr "Zgłoś problem"
 
-msgid "Resolution:"
-msgstr "Rozdzielczość:"
+msgid "Resolution"
+msgstr "Rozdzielczość"
+
+msgid "Resolution: dots per inch of the picture; more dots make it smaller"
+msgstr "Rozdzielczość: punkty na cal obrazu; więcej punktów zmniejsza go"
 
 msgctxt "job"
 msgid "Resume"
@@ -2971,6 +3059,9 @@ msgstr ""
 "Kontrola bezpieczeństwa: zadanie przesunęłoby głowicę %.1f mm za prawą "
 "krawędź stołu lasera. Nic nie zostało wysłane."
 
+msgid "Save"
+msgstr "Zapisz"
+
 msgctxt "toolbar"
 msgid "Save"
 msgstr "Zapisz"
@@ -3025,14 +3116,23 @@ msgstr ""
 msgid "Save the layout, layers and files in one .kerfly file"
 msgstr "Zapisz układ, warstwy i pliki w jednym pliku .kerfly"
 
+msgid "Save the library to a file"
+msgstr "Zapisz bibliotekę do pliku"
+
 msgid "Save the selected laser to a file, for another computer"
 msgstr "Zapisz zaznaczony laser do pliku, np. na inny komputer"
 
 msgid "Save…"
 msgstr "Zapisz…"
 
+msgid "Scale"
+msgstr "Skala"
+
 msgid "Scan line step (in)"
 msgstr "Odstęp linii skanowania (cale)"
+
+msgid "Scan lines and levels"
+msgstr "Linie skanowania i poziomy"
 
 msgid "See the release"
 msgstr "Zobacz wydanie"
@@ -3146,6 +3246,10 @@ msgid "Settings changed; the laser \"%s\" keeps them"
 msgstr "Ustawienia zmienione; laser „%s” je zapamiętał"
 
 #, python-format
+msgid "Settings of the laser: %s"
+msgstr "Ustawienia lasera: %s"
+
+#, python-format
 msgid "Settings saved to %s"
 msgstr "Zapisano ustawienia w %s"
 
@@ -3178,6 +3282,9 @@ msgstr "Pokaż raport po zadaniu (czas zadania; wynik programu)"
 
 msgid "Show the report file"
 msgstr "Pokaż plik raportu"
+
+msgid "Shows only the commands whose name or keys have this text"
+msgstr "Pokazuje tylko polecenia, których nazwa albo klawisze mają ten tekst"
 
 msgid "Side"
 msgstr "Odcinek"
@@ -3303,6 +3410,10 @@ msgstr "Prędkość (%s) / moc (%%)"
 msgid "Speed from"
 msgstr "Prędkość od"
 
+#, python-format
+msgid "Speed of the %s layer"
+msgstr "Prędkość warstwy: %s"
+
 msgid "Speed of the first column"
 msgstr "Prędkość pierwszej kolumny"
 
@@ -3311,9 +3422,6 @@ msgstr "Prędkość ostatniej kolumny"
 
 msgid "Speed to"
 msgstr "Prędkość do"
-
-msgid "Speed:"
-msgstr "Prędkość:"
 
 msgid "Speeds are stored in mm/s and converted to in/min for the layers."
 msgstr "Prędkości są zapisane w mm/s i przeliczane na in/min dla warstw."
@@ -3369,6 +3477,9 @@ msgstr "Start"
 msgid "Start an empty project: clears the bed (asks to save changes first)"
 msgstr "Zacznij pusty projekt: czyści stół (najpierw pyta o zapisanie zmian)"
 
+msgid "Start anyway"
+msgstr "Uruchom mimo to"
+
 msgid "Start the job anyway?"
 msgstr "Mimo to rozpocząć zadanie?"
 
@@ -3395,6 +3506,9 @@ msgstr "Krok"
 
 msgid "Stop"
 msgstr "Stop"
+
+msgid "Stop and quit"
+msgstr "Zatrzymaj i zakończ"
 
 msgid "Stop the job now"
 msgstr "Zatrzymaj zadanie teraz"
@@ -3570,6 +3684,9 @@ msgstr ""
 "72).\n"
 "Przy %g px/cal projekt ma %.1f x %.1f mm."
 
+msgid "The USB ports with a K40 laser on them"
+msgstr "Porty USB z podłączonym laserem K40"
+
 msgid "The bed's lower left corner (X right, Y up; most GRBL lasers)"
 msgstr "Lewy dolny róg stołu (X w prawo, Y w górę; większość laserów GRBL)"
 
@@ -3695,6 +3812,12 @@ msgstr ""
 msgid "The lines in the middle (empty: none)"
 msgstr "Wiersze w środku (puste: brak)"
 
+msgid "The material's name, as the list shows it"
+msgstr "Nazwa materiału, tak jak pokazuje ją lista"
+
+msgid "The material's thickness"
+msgstr "Grubość materiału"
+
 msgid "The new language will be used after restarting Kerfly."
 msgstr "Nowy język zostanie użyty po ponownym uruchomieniu Kerfly."
 
@@ -3727,6 +3850,14 @@ msgid ""
 msgstr ""
 "Ścieżki trafiają na obrazek jako nowy element; obrazek zostaje (usuń go "
 "albo wyłącz z zadania)."
+
+msgid "The picture's size in pixels, as in the file"
+msgstr "Rozmiar obrazu w pikselach, jak w pliku"
+
+msgid ""
+"The power works with an M3 board only. Measure the kerf with the Kerf "
+"test generator."
+msgstr "Moc działa tylko z płytą M3. Kerf zmierzysz generatorem Test kerfu."
 
 #, python-format
 msgid "The program could not be started: %s"
@@ -3794,6 +3925,9 @@ msgstr ""
 " obrotowa, objazd konturu, programy przed zadaniem i po nim); zapisują "
 "się w jego profilu."
 
+msgid "The shortcuts of the menus and tools appear here by themselves"
+msgstr "Skróty z menu i narzędzi pojawiają się tu same"
+
 msgid "The sizes are the inside of the box (off: the outside)"
 msgstr "Wymiary są wnętrzem pudełka (wyłączone: zewnętrzne)"
 
@@ -3837,14 +3971,14 @@ msgstr ""
 "Te elementy mają środki w jednej linii w tym kierunku, więc nie ma czego "
 "rozkładać. Użyj drugiego kierunku albo najpierw przesuń jeden z nich."
 
+msgid "Thickness"
+msgstr "Grubość"
+
 msgid "Thickness of the sheet"
 msgstr "Grubość arkusza"
 
 msgid "Thickness of the sheet: the slots are this wide plus the clearance"
 msgstr "Grubość arkusza: szczeliny mają tyle szerokości plus luz"
-
-msgid "Thickness:"
-msgstr "Grubość:"
 
 msgid ""
 "This SVG file has text that should be cut or engraved as lines. Convert "
@@ -3927,6 +4061,9 @@ msgstr "Wektoryzuj obrazek"
 
 msgid "Trace the light areas instead"
 msgstr "Wektoryzuj jasne miejsca zamiast ciemnych"
+
+msgid "Trace the light areas of the picture instead of the dark ones"
+msgstr "Obrysuj jasne obszary obrazu zamiast ciemnych"
 
 msgid ""
 "Trace: the dark areas of the selected picture become paths you can cut, "
@@ -4057,13 +4194,13 @@ msgstr "Górna listwa"
 msgid "Upper right corner"
 msgstr "Prawy górny róg"
 
-msgid "Use"
-msgstr "Użyj"
-
 msgid "Use Inkscape for SVG files when installed (otherwise built-in)"
 msgstr ""
 "Używaj Inkscape do plików SVG, jeśli jest zainstalowany (inaczej "
 "wbudowany)"
+
+msgid "Use this laser"
+msgstr "Użyj tego lasera"
 
 msgid "Used with M3 boards (power per layer)"
 msgstr "Używane z płytami M3 (moc dla każdej warstwy)"
@@ -4131,6 +4268,9 @@ msgstr "Co zawiera kod, na przykład adres strony"
 msgid "What the laser does with the fields"
 msgstr "Co laser robi z polami"
 
+msgid "What to trace"
+msgstr "Co obrysować"
+
 msgid ""
 "Where X0 Y0 of the G-code is: the corner of the bed the machine homes to,"
 " or the design's upper left corner, where you set the work origin on the "
@@ -4195,6 +4335,9 @@ msgstr ""
 "Szerokość cięcia lasera: części rosną o jej połowę, żeby wypusty pasowały"
 " ciasno"
 
+msgid "Width of the picture on the bed"
+msgstr "Szerokość obrazu na stole"
+
 msgid "Width of the puzzle"
 msgstr "Szerokość puzzli"
 
@@ -4213,9 +4356,6 @@ msgstr "Szerokość linijki"
 msgid "Width of the stamp (own size)"
 msgstr "Szerokość pieczątki (własny rozmiar)"
 
-msgid "Width:"
-msgstr "Szerokość:"
-
 msgid "With a lid"
 msgstr "Z wiekiem"
 
@@ -4226,6 +4366,9 @@ msgstr ""
 "Przy dwóch laserach podłączonych do tego komputera: port USB płyty tego "
 "lasera, zapisany w jego profilu (beta: jeszcze nie sprawdzone z dwoma "
 "laserami)"
+
+msgid "Work area"
+msgstr "Stół roboczy"
 
 msgid "Work with this laser: its settings go into the window"
 msgstr "Pracuj z tym laserem: jego ustawienia trafiają do okna"
@@ -4286,8 +4429,14 @@ msgstr "Powiększenie %d%%"
 msgid "a program or script (.bat, .sh)"
 msgstr "program albo skrypt (.bat, .sh)"
 
+msgid "before / after a job"
+msgstr "przed / po zadaniu"
+
 msgid "beta"
 msgstr "beta"
+
+msgid "by Scorch"
+msgstr "autor: Scorch"
 
 msgid "centre"
 msgstr "środek"
@@ -4323,6 +4472,9 @@ msgstr "lewy dolny (większość laserów GRBL)"
 msgid "middle"
 msgstr "połowa"
 
+msgid "no"
+msgstr "nie"
+
 msgid "none"
 msgstr "brak"
 
@@ -4349,6 +4501,13 @@ msgstr "cięcie"
 
 msgid "vector engrave"
 msgstr "obrys"
+
+#, python-format
+msgid "version %s"
+msgstr "wersja %s"
+
+msgid "yes"
+msgstr "tak"
 
 #~ msgid ""
 #~ "Choose a drawing tool on the "
@@ -4859,4 +5018,63 @@ msgstr "obrys"
 #~ msgctxt "toolbar group"
 #~ msgid "Transform"
 #~ msgstr "Przekształć"
+
+#~ msgid ""
+#~ "<h3>Kerfly %s</h3><p>Laser cutter control "
+#~ "software for K40 lasers with Lihuiyu "
+#~ "M2 Nano boards.</p><p>Based on <a "
+#~ "href='https://www.scorchworks.com/K40whisperer/k40whisperer.html'>K40"
+#~ " Whisperer</a> by Scorch.</p><p>Free software "
+#~ "under the GNU General Public License "
+#~ "v3 or later.<br><a "
+#~ "href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>"
+#~ msgstr ""
+#~ "<h3>Kerfly %s</h3><p>Program do sterowania "
+#~ "laserami K40 z płytami Lihuiyu M2 "
+#~ "Nano.</p><p>Oparty na <a "
+#~ "href='https://www.scorchworks.com/K40whisperer/k40whisperer.html'>K40"
+#~ " Whisperer</a> autorstwa Scorcha.</p><p>Wolne "
+#~ "oprogramowanie na licencji GNU General "
+#~ "Public License w wersji 3 lub "
+#~ "późniejszej.<br><a "
+#~ "href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>"
+
+#~ msgid "Bed: %s"
+#~ msgstr "Stół: %s"
+
+#~ msgid "Board: %s"
+#~ msgstr "Płyta: %s"
+
+#~ msgid "Height:"
+#~ msgstr "Wysokość:"
+
+#~ msgid "Image:"
+#~ msgstr "Obraz:"
+
+#~ msgid "Name:"
+#~ msgstr "Nazwa:"
+
+#~ msgid "Passes:"
+#~ msgstr "Przejścia:"
+
+#~ msgid "Power:"
+#~ msgstr "Moc:"
+
+#~ msgid "Programs before / after a job"
+#~ msgstr "Programy przed / po zadaniu"
+
+#~ msgid "Resolution:"
+#~ msgstr "Rozdzielczość:"
+
+#~ msgid "Speed:"
+#~ msgstr "Prędkość:"
+
+#~ msgid "Thickness:"
+#~ msgstr "Grubość:"
+
+#~ msgid "Use"
+#~ msgstr "Użyj"
+
+#~ msgid "Width:"
+#~ msgstr "Szerokość:"
 

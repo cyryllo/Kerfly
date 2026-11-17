@@ -8,8 +8,8 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 from PySide6.QtCore import QPointF, QRectF, Qt, QTimer
 from PySide6.QtGui import QImage, QPainter, QPainterPath, QPen, QPixmap
-from PySide6.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QHBoxLayout,
-                               QLabel, QSlider, QSpinBox, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QCheckBox, QDialog, QDoubleSpinBox, QHBoxLayout, QLabel, QSlider, QSpinBox,
+                               QVBoxLayout, QWidget)
 
 from kerfly.core import curves, trace
 from kerfly.gui import theme, widgets
@@ -63,41 +63,41 @@ class TraceDialog(QDialog):
         self.corner.setValue(60)
         self.corner.setSuffix("°")
         self.corner.setToolTip(_("Corner: turns sharper than this stay corners, the rest become curves"))
-        self.count = QLabel()
-
-        def row(icon, tip, widget):
-            return widgets.with_icon(icon, widget, tip)
+        # the dialog pattern (docs/ui-mockups/Trace): the settings in two sections on the left, the preview on
+        # the right, the number of outlines in the footer with Cancel and Trace
+        footer = widgets.DialogFooter(_("Trace"))
+        footer.connect(self)
+        self.count = footer.info
         thr = QWidget()
         th = QHBoxLayout(thr)
         th.setContentsMargins(0, 0, 0, 0)
         th.addWidget(self.threshold, 1)
         th.addWidget(self.threshold_value)
-        form = QFormLayout()
-        form.addRow(_("Threshold"), row("square-minus", self.threshold.toolTip(), thr))
-        form.addRow("", self.invert)
-        form.addRow(_("Ignore specks"), row("circle-dashed", self.specks.toolTip(), self.specks))
-        form.addRow(_("Detail"), row("vector", self.detail.toolTip(), self.detail))
-        form.addRow("", self.smooth)
-        form.addRow(_("Corner"), row("angle", self.corner.toolTip(), self.corner))
-        form.addRow("", self.count)
+        self.invert.setToolTip(_("Trace the light areas of the picture instead of the dark ones"))
+        self.smooth.setToolTip(_("Curves through the outline's nodes; corners sharper than the angle below stay "
+                                 "sharp"))
+        what = widgets.Section(_("What to trace"))
+        what.add_row("square-minus", _("Threshold"), self.threshold.toolTip(), thr)
+        what.add_wide(self.invert)
+        what.add_row("circle-dashed", _("Ignore specks"), self.specks.toolTip(), self.specks)
+        shape = widgets.Section(_("Outline shape"))
+        shape.add_row("vector", _("Detail"), self.detail.toolTip(), self.detail)
+        shape.add_wide(self.smooth)
+        shape.add_row("angle", _("Corner"), self.corner.toolTip(), self.corner)
         side = QVBoxLayout()
-        side.addLayout(form)
+        side.setSpacing(theme.SPACE_L)
+        side.addWidget(what)
+        side.addWidget(shape)
         side.addStretch(1)
+        side.addWidget(widgets.hint(_("The paths are put over the picture as a new element; the picture stays "
+                                      "(delete it or leave it out of the job).")))
         top = QHBoxLayout()
+        top.setSpacing(theme.PAD_DIALOG)
+        top.addLayout(side, 1)
         top.addWidget(self.view)
-        top.addLayout(side)
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.button(QDialogButtonBox.Ok).setText(_("Trace"))
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout = QVBoxLayout(self)
-        layout.addLayout(top)
-        hint = QLabel(_("The paths are put over the picture as a new element; the picture stays (delete it or "
-                        "leave it out of the job)."))
-        hint.setWordWrap(True)
-        hint.setObjectName("node_hint")
-        layout.addWidget(hint)
-        layout.addWidget(buttons)
+        body = widgets.DialogBody()
+        body.layout().addLayout(top)
+        widgets.dialog_layout(self, body, footer)
         self.timer = QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.setInterval(150)

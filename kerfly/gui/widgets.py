@@ -290,6 +290,11 @@ class DialogFooter(QFrame):
         self.box = QDialogButtonBox(buttons)
         row.addWidget(self.box)
         self.primary = next((self.box.button(b) for b in self.PRIMARY if self.box.button(b) is not None), None)
+        # Qt's own words for its buttons are not translated here: ours
+        for which, text in ((QDialogButtonBox.Cancel, _("Cancel")), (QDialogButtonBox.Close, _("Close")),
+                            (QDialogButtonBox.Save, _("Save"))):
+            if self.box.button(which) is not None:
+                self.box.button(which).setText(text)
         for b in self.box.buttons():
             self.style_button(b, "secondary")
         if self.primary is not None:
@@ -328,3 +333,24 @@ def dialog_layout(dialog, body, footer, preview_bar=None):
     if footer.primary is not None:
         footer.primary.setDefault(True)          # Enter: the action (only once the button is in the dialog)
     return v
+
+
+def ask(parent, title, text, buttons=None, default=None, names=None, primary=None, danger=False):
+    """A question (docs/ui-mockups/Message): its buttons named for what they do ("Delete laser", "Stop and
+    quit"; No is "Cancel"), the action last in the primary colour (red for a deletion). The same arguments
+    and answer (the standard button clicked) as QMessageBox.question, so the tests answer both alike."""
+    from PySide6.QtWidgets import QMessageBox
+    buttons = buttons if buttons is not None else QMessageBox.Yes | QMessageBox.No
+    box = QMessageBox(QMessageBox.Question, title, text, buttons, parent)
+    if default is not None:
+        box.setDefaultButton(default)
+    for button, name in [(QMessageBox.No, _("Cancel"))] + list((names or {}).items()):
+        b = box.button(button)
+        if b is not None:
+            b.setText(name)
+    primary = primary if primary is not None else QMessageBox.Yes
+    if box.button(primary) is not None:
+        DialogFooter.style_button(box.button(primary), "danger" if danger else "primary")
+    box.exec()
+    clicked = box.clickedButton()
+    return box.standardButton(clicked) if clicked is not None else QMessageBox.NoButton

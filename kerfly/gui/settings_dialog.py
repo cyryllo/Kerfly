@@ -4,11 +4,13 @@ Settings dialog, built from a declarative list of fields.
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
-from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox,
-                               QFileDialog, QGridLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
-                               QSpinBox, QTabWidget, QVBoxLayout, QWidget)
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDoubleSpinBox, QFileDialog, QFrame,
+                               QHBoxLayout, QLineEdit, QListWidget, QListWidgetItem, QPushButton,
+                               QScrollArea, QSpinBox, QStackedWidget, QVBoxLayout, QWidget)
 
 from kerfly.core.config import BOARD_NAMES, is_true
+from kerfly.gui import icons, theme, widgets
 from kerfly.i18n import LANGUAGES, N_, _
 
 # (key, label, kind, options). kinds: bool, float, int, choice, path
@@ -93,6 +95,20 @@ TABS = [
     ]),
 ]
 
+# the pages' sections (docs/ui-mockups/Settings): the field a section starts with -> its title
+SECTIONS = {
+    "machine": N_("Controller"), "units": N_("Work area"), "init_home": N_("Homing and the end of a job"),
+    "pre_exec": N_("Programs run with a job"), "LaserXscale": N_("Scale"), "show_power": N_("Power (M3 board)"),
+    "halftone": N_("Halftone"), "negate": N_("Picture"), "rast_step": N_("Scan lines and levels"),
+    "inside_first": N_("Cutting"), "trace_w_laser": N_("Boundary trace"),
+    "grid_mm": N_("Bed view"), "theme": N_("Look"),
+    "rotary": N_("Rotary attachment"),
+    "language": N_("Program"), "use_inkscape": N_("Inkscape"), "reduced_mem": N_("Memory and USB"),
+}
+# the pages' icons in the category list
+PAGE_ICONS = {"Machine": "laser", "Raster": "grid-dots", "Vector": "vector", "View": "zoom-scan",
+              "Rotary": "rotate-clockwise-2", "Advanced": "settings-2"}
+
 M3_BOARD = "LASER-M3"           # the only board with power control
 GRBL_KEYS = ("grbl_port", "grbl_baud", "grbl_home", "grbl_jog", "gcode_s_max")    # only for a GRBL machine
 K40_KEYS = ("board_name", "usb_port", "HomeUR")                                  # only for a K40
@@ -121,33 +137,60 @@ class SettingsDialog(QDialog):
         speed_unit = _speed_unit(self.values)
         self.speed_factor = speed_factor(self.values)        # shown = kept x it (mm/min of a GRBL machine)
 
-        tabs = QTabWidget()
+        # (docs/ui-mockups/Settings) the categories in a list on the left, their page on the right in sections,
+        # each page scrolling up and down on its own
+        self.categories = QListWidget()
+        self.categories.setObjectName("settings_categories")
+        self.categories.setFixedWidth(2 * theme.OPTION_TITLE - theme.SPACE_L)
+        self.categories.setIconSize(QSize(theme.ICON, theme.ICON))
+        self.pages = QStackedWidget()
         fm = self.fontMetrics()
-        # one label column width for every tab, so fields line up when switching tabs
+        # one label column width for every page, so fields line up when switching pages
         label_width = max(fm.horizontalAdvance(_(label)) for _t, fields in TABS
-                          for _k, label, kind, _o in fields if kind != "bool") + 12
+                          for _k, label, kind, _o in fields if kind != "bool") + theme.SPACE_L
         for title, fields in TABS:
             page = QWidget()
-            grid = QGridLayout(page)
-            grid.setColumnMinimumWidth(0, label_width)
-            grid.setColumnStretch(2, 1)
-            grid.setHorizontalSpacing(8)
-            for row, (key, label, kind, opt) in enumerate(fields):
+            v = QVBoxLayout(page)
+            v.setContentsMargins(0, 0, theme.SPACE_L, 0)
+            v.setSpacing(theme.PAD_DIALOG)
+            section = None
+            row = 0
+            for key, label, kind, opt in fields:
+                if section is None or key in SECTIONS:
+                    section = widgets.Section(_(SECTIONS[key]) if key in SECTIONS else None)
+                    section.grid.setColumnStretch(0, 0)
+                    section.grid.setColumnMinimumWidth(0, label_width)
+                    section.grid.setColumnStretch(2, 1)
+                    v.addWidget(section)
+                    row = 0
+                grid = section.grid
                 widget, getter = self._make_field(key, kind, opt, len_unit, speed_unit)
                 widget.setProperty("setting_key", key)      # which setting it is (tests find it by this)
                 if kind == "bool":
                     widget.setText(_(label))          # the text sits right next to the box
                     grid.addWidget(widget, row, 0, 1, 3)
                 else:
-                    self._labels[key] = QLabel(_(label))
+                    self._labels[key] = widgets.hint(_(label), wrap=False)
                     grid.addWidget(self._labels[key], row, 0)
                     span = 2 if kind == "path" else 1
                     grid.addWidget(widget, row, 1, 1, span)
                 self._getters[key] = getter
                 self._widgets[key] = widget
-            grid.setRowStretch(len(fields), 1)
-            tabs.addTab(page, _(title))
-        tabs.setCurrentIndex(tab)
+                row += 1
+            v.addStretch(1)
+            scroll = QScrollArea()
+            scroll.setWidget(page)
+            scroll.setWidgetResizable(True)
+            scroll.setFrameShape(QFrame.NoFrame)
+            scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+            self.pages.addWidget(scroll)
+            self.categories.addItem(QListWidgetItem(icons.tabler(PAGE_ICONS.get(title, "settings")), _(title)))
+        self.categories.currentRowChanged.connect(self.pages.setCurrentIndex)
+        self.categories.setCurrentRow(tab)
+        # as wide as the widest page (they scroll only up and down)
+        self.pages.setMinimumWidth(max(self.pages.widget(i).widget().minimumSizeHint().width()
+                                       for i in range(self.pages.count()))
+                                   + self.pages.widget(0).verticalScrollBar().sizeHint().width())
         self._widgets["Trace_power"].setToolTip(_("Laser power during the boundary trace, in per cent of the maximum power "
                                  "(Settings → Machine). Used by M3 boards with power per operation; on other "
                                  "boards the power knob of the laser sets it"))
@@ -163,12 +206,26 @@ class SettingsDialog(QDialog):
         self._widgets["machine"].currentIndexChanged.connect(self._update_enabled)
         self._update_enabled()
 
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout = QVBoxLayout(self)
-        layout.addWidget(tabs)
-        layout.addWidget(buttons)
+        top = QHBoxLayout()
+        top.setSpacing(theme.PAD_DIALOG)
+        top.addWidget(self.categories)
+        top.addWidget(self.pages, 1)
+        body = widgets.DialogBody()
+        body.layout().addLayout(top, 1)
+        footer = widgets.DialogFooter(_("Save"))
+        profiles = getattr(parent, "profiles", None)
+        if profiles is not None:
+            footer.info.setText(_("Settings of the laser: %s") % profiles.current)
+        footer.connect(self)
+        widgets.dialog_layout(self, body, footer)
+        self.resize(theme.DIALOG_LARGE + 80, theme.DIALOG_LARGE - 80)
+
+    def page_of(self, widget):
+        """The number of the page (category) a field is on."""
+        return next(i for i in range(self.pages.count()) if self.pages.widget(i).isAncestorOf(widget))
+
+    def show_page(self, index):
+        self.categories.setCurrentRow(index)
 
     def _update_enabled(self, *_args):
         """Fields that count only with a tick, and the power settings only with the M3 board (the other

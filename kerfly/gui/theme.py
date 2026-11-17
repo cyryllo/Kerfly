@@ -43,6 +43,7 @@ PANEL_WIDTH = 348        # the left panel (Design and Laser tabs)
 RADIUS = 4               # rounded corners of buttons, fields and frames
 BUTTON_MIN_WIDTH = 88    # a dialog's footer buttons
 DIALOG_SMALL = 440       # the width of a small dialog (a question, a few fields)
+DIALOG_LARGE = 760       # the width of a large dialog (lists, settings, a preview)
 
 TOKENS = {
     "light": {
@@ -143,6 +144,8 @@ QStatusBar[error="true"] { color: $error; }
 /* the dialog pattern (kerfly/gui/widgets.py): a body, a footer with Cancel and the named action,
    sections, a preview bar */
 QFrame#dialog_body { background: $panel; }
+QFrame#dialog_body QScrollArea, QFrame#dialog_body QWidget#qt_scrollarea_viewport,
+QFrame#dialog_body QWidget#qt_scrollarea_viewport > QWidget { background: transparent; }
 QFrame#dialog_footer { background: $top_bar; border-top: 1px solid $separator; }
 QFrame#preview_bar { background: $bar_light; border-bottom: 1px solid $separator; }
 QPushButton[role="primary"], QPushButton[role="danger"], QPushButton[role="secondary"] {
@@ -155,6 +158,10 @@ QPushButton[role="danger"] { background: $danger; border: 1px solid $danger; col
 QPushButton[role="primary"]:disabled, QPushButton[role="danger"]:disabled {
     background: $start_off; border-color: $start_off; }
 QToolButton[role="segment"] { background: $panel; border: 1px solid $field_border; padding: 0px 10px; }
+QTabWidget#preview_tabs::pane { border: 1px solid $separator; }
+QTabWidget#preview_tabs QTabBar::tab { background: $panel; border: 1px solid $field_border; padding: 4px 12px;
+                                       margin: 6px 0px; }
+QTabWidget#preview_tabs QTabBar::tab:selected { background: $on_bg; color: $on_ink; font-weight: 600; }
 QToolButton[role="segment"]:checked { background: $on_bg; color: $on_ink; font-weight: 600; }
 
 /* roles (kerfly/gui/widgets.py) */

@@ -1784,10 +1784,10 @@ class MainWindow(QMainWindow):
         loops = [(e, self._curve_paths(e) or [(k, from_polylines([pts], [c]), True)
                                              for k, pts, c in vector_loops(e.design)]) for e in chosen]
         total = sum(len(l) for _e, l in loops)
-        if total > 300 and QMessageBox.question(
+        if total > 300 and widgets.ask(
                 self, _("Break apart"),
                 _("This makes %d separate shapes, which can make Kerfly slow. Continue?") % total,
-                QMessageBox.Yes | QMessageBox.No) != QMessageBox.Yes:
+                QMessageBox.Yes | QMessageBox.No, names={QMessageBox.Yes: _("Break apart")}) != QMessageBox.Yes:
             return
         self._checkpoint()
         made = []
@@ -4118,9 +4118,10 @@ class MainWindow(QMainWindow):
         """Ask to save unsaved changes. Returns False if the user cancels."""
         if not self._dirty or not self.elements:
             return True
-        answer = QMessageBox.question(
+        answer = widgets.ask(
             self, _("Unsaved changes"), _("Save the changes to the project first?"),
-            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Save)
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Save,
+            names={QMessageBox.Discard: _("Don't save")}, primary=QMessageBox.Save)
         if answer == QMessageBox.Cancel:
             return False
         if answer == QMessageBox.Save:
@@ -4633,11 +4634,11 @@ class MainWindow(QMainWindow):
                                       "cannot connect, unplug the laser's USB cable and plug it in again."))
             return
         text = _("The laser was found, but this user may not use its USB port.") + "\n\n" if after_error else ""
-        answer = QMessageBox.question(
+        answer = widgets.ask(
             self, _("USB access"),
             text + _("Kerfly can add a rule to the system so that the laser's USB port can be used without "
                      "root. The system asks for the administrator password once. Add the rule now?"),
-            QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes, names={QMessageBox.Yes: _("Add the rule")})
         if answer != QMessageBox.Yes:
             return
         ok, why = udev.install()
@@ -5091,10 +5092,11 @@ class MainWindow(QMainWindow):
                 start()
                 return
             self.status(_("The program run before the job reported an error."), error=True)
-            answer = QMessageBox.question(
+            answer = widgets.ask(
                 self, _("Program before the job"),
                 _("The program set to run before the job did not work:") + "\n\n" + err + "\n\n" +
-                _("Start the job anyway?"), QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                _("Start the job anyway?"), QMessageBox.Yes | QMessageBox.No, QMessageBox.No,
+                names={QMessageBox.Yes: _("Start anyway")})
             if answer == QMessageBox.Yes:
                 start()
         timer.timeout.connect(too_long)
@@ -5444,22 +5446,16 @@ class MainWindow(QMainWindow):
         QDesktopServices.openUrl(QUrl.fromLocalFile(folder))
 
     def about(self):
-        QMessageBox.about(
-            self, _("About Kerfly"),
-            _("<h3>Kerfly %s</h3>"
-            "<p>Laser cutter control software for K40 lasers with Lihuiyu M2 Nano boards.</p>"
-            "<p>Based on <a href='https://www.scorchworks.com/K40whisperer/k40whisperer.html'>"
-            "K40 Whisperer</a> by Scorch.</p>"
-            "<p>Free software under the GNU General Public License v3 or later.<br>"
-            "<a href='https://github.com/cyryllo/Kerfly'>github.com/cyryllo/Kerfly</a></p>") % __version__)
+        from kerfly.gui.about_dialog import AboutDialog
+        AboutDialog(self).exec()
 
     def closeEvent(self, event):
         if self.worker is None and not self._confirm_discard():
             event.ignore()
             return
         if self.worker is not None:
-            if QMessageBox.question(self, _("Job running"),
-                                    _("A job is running. Stop it and quit?")) != QMessageBox.Yes:
+            if widgets.ask(self, _("Job running"), _("A job is running. Stop it and quit?"),
+                           names={QMessageBox.Yes: _("Stop and quit")}, danger=True) != QMessageBox.Yes:
                 event.ignore()
                 return
             self.worker.stop[0] = True

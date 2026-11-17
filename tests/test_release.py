@@ -248,6 +248,16 @@ class Session:
         QTest.mouseClick(self.vp, Qt.RightButton, Qt.NoModifier, p)
         self.settle()
 
+    def settings_page(self, dlg, title=None, widget=None):
+        """Show a page of Settings by clicking its category in the list on the left (by its title, or the
+        page a field is on)."""
+        lst = dlg.categories
+        index = dlg.page_of(widget) if widget is not None else next(
+            i for i in range(lst.count()) if lst.item(i).text() == title)
+        lst.scrollToItem(lst.item(index))
+        QTest.mouseClick(lst.viewport(), Qt.LeftButton, Qt.NoModifier, lst.visualItemRect(lst.item(index)).center())
+        self.settle()
+
     def menu_pick(self, menu, *texts):
         """Click an entry of an open menu, through its submenus (by their texts)."""
         for n, text in enumerate(texts):
@@ -1185,10 +1195,8 @@ def part_view_and_laser(s):
            change=False)
     # Engrave / Outline / Cut only: switched on in Settings → View, then each kind on its own
     def kind_buttons_on(dlg):
-        from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QTabWidget
-        tabs = dlg.findChild(QTabWidget)
-        index = next(i for i in range(tabs.count()) if tabs.tabText(i).replace("&", "") == tr_("View"))
-        QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+        from PySide6.QtWidgets import QCheckBox, QDialogButtonBox
+        s.settings_page(dlg, title=tr_("View"))
         s.settle()
         box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == "kind_buttons")
         if not box.isChecked():
@@ -1234,11 +1242,9 @@ def part_view_and_laser(s):
     # Home the head after a job (Settings → Machine): the next piece starts from 0, 0
     def setting_box(key, on):
         def answer(dlg):
-            from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QTabWidget
+            from PySide6.QtWidgets import QCheckBox, QDialogButtonBox
             box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == key)
-            tabs = dlg.findChild(QTabWidget)
-            index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(box))
-            QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+            s.settings_page(dlg, widget=box)
             s.settle()
             if box.isChecked() != on:
                 s.tick(box)
@@ -1263,11 +1269,9 @@ def part_view_and_laser(s):
     # Settings → Raster → Dithering method: Atkinson, a job goes to the laser with it; back to Floyd-Steinberg
     def dither_to(code):
         def answer(dlg):
-            from PySide6.QtWidgets import QDialogButtonBox, QTabWidget
+            from PySide6.QtWidgets import QDialogButtonBox
             combo = next(c for c in dlg.findChildren(QComboBox) if c.property("setting_key") == "dither")
-            tabs = dlg.findChild(QTabWidget)
-            index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(combo))
-            QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+            s.settings_page(dlg, widget=combo)
             s.settle()
             if not combo.isEnabled():
                 raise RuntimeError("the dithering list is greyed out with halftone on")
@@ -1307,11 +1311,9 @@ def part_view_and_laser(s):
         open(before, "w").write('#!/bin/sh\necho on > "%s"\n' % before_marker)
 
     def program_on(dlg):
-        from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QLineEdit, QTabWidget
+        from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QLineEdit
         box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == "post_exec")
-        tabs = dlg.findChild(QTabWidget)
-        index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(box))
-        QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+        s.settings_page(dlg, widget=box)
         s.settle()
         for tick_key, path_key, path in (("pre_exec", "pre_batch_path", before), ("post_exec", "batch_path", program)):
             box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == tick_key)
@@ -1350,11 +1352,9 @@ def part_view_and_laser(s):
            check=lambda: (report_text() is None, "still open"))
 
     def program_off(dlg):
-        from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QTabWidget
+        from PySide6.QtWidgets import QCheckBox, QDialogButtonBox
         box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == "post_exec")
-        tabs = dlg.findChild(QTabWidget)
-        index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(box))
-        QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+        s.settings_page(dlg, widget=box)
         s.settle()
         for key in ("pre_exec", "post_exec"):
             box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == key)
@@ -1461,7 +1461,7 @@ def part_m3_board(s):
     def choose_m3(dlg):
         board = next(c for c in dlg.findChildren(QComboBox) if c.findText("LASER-M3") >= 0)
         s.pick(board, index=board.findText("LASER-M3"))
-        s.click_dialog_button(dlg, tr_("OK") if tr_("OK") != "OK" else "OK")
+        s.click_dialog_button(dlg, tr_("Save"))                 # Settings' action (the dialog pattern)
     s.expect_dialog("settings: board", choose_m3)
     s.step("Settings…: choose the LASER-M3 board, OK", lambda: s.trigger(w.act_settings, via="menu"),
            change=False, undo=False, check=lambda: (w.power_per_stage(), "no power per layer"))
@@ -1478,12 +1478,10 @@ def part_m3_board(s):
     # boundary trace with the laser on, with its own power (Settings → Vector), sent to the M3 board
     def trace_laser(on, percent=None):
         def answer(dlg):
-            from PySide6.QtWidgets import QCheckBox, QDialogButtonBox, QTabWidget
+            from PySide6.QtWidgets import QCheckBox, QDialogButtonBox
             box = next(c for c in dlg.findChildren(QCheckBox) if c.property("setting_key") == "trace_w_laser")
             field = next(c for c in dlg.findChildren(_D) if c.property("setting_key") == "Trace_power")
-            tabs = dlg.findChild(QTabWidget)
-            index = next(i for i in range(tabs.count()) if tabs.widget(i).isAncestorOf(box))
-            QTest.mouseClick(tabs.tabBar(), Qt.LeftButton, Qt.NoModifier, tabs.tabBar().tabRect(index).center())
+            s.settings_page(dlg, widget=box)
             s.settle()
             if box.isChecked() != on:
                 s.tick(box)
@@ -1976,7 +1974,12 @@ def part_files_and_help(s):
     s.step("update bar: Skip this version", lambda: s.click(w.update_bar.skip_button), change=False,
            check=lambda: (not w.update_bar.isVisible() and w.values.get("update_skip") == "99.0",
                           w.values.get("update_skip")))
-    s.expect_dialog("about", lambda d: d.accept())
+    def about_answer(d):
+        # its own window (docs/ui-mockups/About): Report a problem and Check for updates beside Close
+        if not (d.report_button.isVisible() and d.updates_button.isVisible()):
+            raise RuntimeError("About: no Report a problem / Check for updates buttons")
+        d.accept()
+    s.expect_dialog("about", about_answer)
     s.step("Help → About Kerfly", lambda: s.trigger(w.act_about, via="menu"), change=False)
     s.expect_dialog("unsaved changes", lambda d: s.click_dialog_button(d, QMessageBox.Discard))
     s.step("File → Quit", lambda: s.trigger(w.act_quit, via="menu"), change=None, undo=False,

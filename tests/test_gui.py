@@ -92,6 +92,11 @@ def main():
     app = QApplication([])
     # "save changes first?" when replacing a design: discard in tests
     QMessageBox.question = staticmethod(lambda *a, **k: QMessageBox.Discard)
+    # the window's questions (kerfly.gui.widgets.ask, with named buttons) answered like QMessageBox.question,
+    # which the checks below replace with their answers
+    from kerfly.gui import widgets as _widgets
+    _widgets.ask = lambda parent, title, text, buttons=QMessageBox.Yes | QMessageBox.No, default=QMessageBox.NoButton, \
+        **_k: QMessageBox.question(parent, title, text, buttons, default)
     manifest = json.load(open(os.path.join(BASE, "manifest.json")))["cases"]
     failures = 0
 
@@ -1631,8 +1636,7 @@ def main():
         set_ok = abs(ts.value() - float(sw.values["trace_speed"]) * f) < 1e-6 and \
             abs(float(sd._getters["trace_speed"]()) - float(sw.values["trace_speed"])) < 1e-6
         md = _SMD(sw.materials, {}, "mm", sw, speed_factor=config.speed_factor(sw.values))
-        mspin = [c for c in md.findChildren(_SDS) if c.suffix().strip() in ("mm/s", "mm/min")]
-        mat_ok = bool(mspin) and all(c.suffix().strip() == ("mm/min" if f > 1 else "mm/s") for c in mspin)
+        mat_ok = "(%s)" % ("mm/min" if f > 1 else "mm/s") in md.speed_header.text()      # the table's header
         shown[machine] = [layer_ok, typed_ok, mt_ok, set_ok, mat_ok]
         sw._dirty = False
         sw.close()
