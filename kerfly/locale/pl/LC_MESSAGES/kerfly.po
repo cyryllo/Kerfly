@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 20:14+0100\n"
+"POT-Creation-Date: 2026-11-17 20:38+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -2320,6 +2320,9 @@ msgstr "Bez narożnika w zaznaczonych węzłach: krzywa przechodzi przez nie gł
 msgid "No design loaded"
 msgstr "Nie wczytano projektu"
 
+msgid "No elements yet"
+msgstr "Brak elementów"
+
 #, python-format
 msgid "No ends of the selected lines meet (closer than %s mm): nothing to join."
 msgstr ""
@@ -2468,6 +2471,13 @@ msgstr "Moc ustawia tylko płyta M3; na innych płytach robi to pokrętło mocy 
 msgctxt "toolbar"
 msgid "Open"
 msgstr "Otwórz"
+
+msgid ""
+"Open a design file, draw a shape with the tools on the right, or make one"
+" with a generator."
+msgstr ""
+"Otwórz plik z projektem, narysuj kształt narzędziami po prawej albo zrób "
+"go generatorem."
 
 msgid "Open a design to see its layers."
 msgstr "Otwórz projekt, aby zobaczyć jego warstwy."

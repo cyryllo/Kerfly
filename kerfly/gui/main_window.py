@@ -1964,6 +1964,41 @@ class MainWindow(QMainWindow):
         lb.setContentsMargins(theme.SPACE_L, 0, theme.SPACE_L, 0)
         lb.addWidget(self.element_list, 1)
         design_layout.addWidget(self.element_list_box, 1)
+        # nothing on the bed yet: what to do, in the list's place (instead of an empty panel)
+        self.empty_state = QWidget()
+        ev = QVBoxLayout(self.empty_state)
+        ev.setContentsMargins(theme.PAD_DIALOG, 2 * theme.PAD_DIALOG, theme.PAD_DIALOG, theme.PAD_DIALOG)
+        ev.setSpacing(theme.SPACE_M)
+        picture = widgets.icon_pixmap_label("file-plus", size=2 * theme.ICON_LARGE)
+        picture.setAlignment(Qt.AlignHCenter)
+        ev.addWidget(picture)
+        title = widgets.section_title(_("No elements yet"))
+        title.setAlignment(Qt.AlignHCenter)
+        ev.addWidget(title)
+        hint = widgets.hint(_("Open a design file, draw a shape with the tools on the right, or make one with a "
+                              "generator."))
+        hint.setAlignment(Qt.AlignHCenter)
+        ev.addWidget(hint)
+        row = QHBoxLayout()
+        row.setSpacing(theme.SPACE_M)
+        row.addStretch(1)
+        open_button = QToolButton()
+        open_button.setDefaultAction(self.act_open)
+        generators_button = QToolButton()
+        generators_button.setMenu(self.generators_menu)
+        generators_button.setPopupMode(QToolButton.InstantPopup)
+        generators_button.setIcon(icons.tabler("box"))
+        generators_button.setText(C_("toolbar", "Generators"))
+        generators_button.setToolTip(self.generators_menu.toolTip())
+        for b in (open_button, generators_button):
+            b.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            b.setIconSize(QSize(theme.ICON, theme.ICON))
+            b.setFixedHeight(theme.HEIGHT_BUTTON)
+            row.addWidget(b)
+        row.addStretch(1)
+        ev.addLayout(row)
+        ev.addStretch(1)
+        design_layout.addWidget(self.empty_state, 1)
 
         # --- the options bar's first row, always the same: the selection's position and size, rotation, layer
         self.selection_box = QWidget()
@@ -2611,6 +2646,7 @@ class MainWindow(QMainWindow):
         lst.blockSignals(False)
         self._sync_list_selection()
         self.element_list_box.setVisible(bool(self.elements))      # also for a single element
+        self.empty_state.setVisible(not self.elements)
 
     def _layer_swatch(self, colors):
         """Icon with a small square in each layer colour (like LightBurn's list)."""

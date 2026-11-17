@@ -154,6 +154,8 @@ class LayersPanel(QWidget):
             self._add_row(row, layer, data, removable(layer))
             row += 1
         if row == 1:
+            for header in self.headers.values():         # no layers: the hint alone, no empty columns
+                header.hide()
             hint = widgets.hint(_("Open a design to see its layers."), wrap=False)
             self.grid.addWidget(hint, 1, 0, 1, 8)
         self.add_button.setEnabled(not gcode_file)
