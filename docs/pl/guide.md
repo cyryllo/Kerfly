@@ -51,9 +51,10 @@ zadanie do lasera. Instrukcja dotyczy wersji 1.4.
 
    Każda linia powinna mieć `OK`; linie `WARN` dotyczą rzeczy opcjonalnych
    albo niepodłączonego lasera.
-3. Otwórz **Ustawienia → Ustawienia… → Maszyna** i wybierz **Płytę
-   sterującą** (napis na płycie, np. LASER-M2 albo LASER-M3), **jednostki** i
-   **rozmiar stołu**.
+3. Otwórz **Ustawienia → Lasery…**, wybierz **Płytę sterującą** swojego
+   lasera (napis na płycie, np. LASER-M2 albo LASER-M3) i **rozmiar stołu**,
+   potem **Zapisz**. **Jednostki** (mm albo cale) są w **Ustawienia →
+   Ustawienia… → Widok**.
 4. Włącz laser, podłącz kabel USB i naciśnij **Połącz** (Ctrl+I) na
    zakładce **Laser**. Domyślnie Kerfly od razu bazuje
    głowicę (przesuwa ją do lewego górnego rogu).
@@ -125,12 +126,15 @@ przyciski maszyny) i **Ruch głowicy** (strzałki, krok, idź do X / Y). Na
 górze jest lista **Twoich laserów**: przy dwóch laserach (np. laptop
 przenoszony od jednego do drugiego) wybierasz ten, z którym pracujesz, i jego
 ustawienia (płyta, rozmiar stołu, pozycja bazowa, skala, moc, oś obrotowa,
-objazd konturu, programy przed zadaniem i po nim) trafiają do okna. Ustawienie
-maszyny zmienione w Ustawieniach zapisuje się w profilu lasera w użyciu.
-Zębatka obok listy (albo **Ustawienia → Lasery…**)
-dodaje, duplikuje, zmienia nazwę, usuwa, eksportuje i importuje lasery. W
-danej chwili pracuje się z jednym laserem.
-**Dwa lasery podłączone do jednego komputera** (beta): Ustawienia → Maszyna →
+objazd konturu, programy przed zadaniem i po nim) trafiają do okna. Zębatka
+obok listy (albo **Ustawienia → Lasery…**) otwiera **Twoje lasery i ich
+ustawienia**: lista po lewej (Nowy, Powiel, Importuj; dwuklik zmienia nazwę),
+ustawienia zaznaczonego lasera po prawej, pod nimi Eksportuj i Usuń. Możesz tam
+zmienić każdy laser, także ten, który nie jest w użyciu: zmiany zostają przy
+przechodzeniu między laserami, **Zapisz** je zapisuje (lasera w użyciu od razu
+trafiają do okna), **Anuluj** je porzuca, **Użyj tego lasera** przełącza na
+zaznaczony. W danej chwili pracuje się z jednym laserem.
+**Dwa lasery podłączone do jednego komputera** (beta): Ustawienia → Lasery… →
 **Port USB** zapisuje port płyty każdego lasera w jego profilu (**Który to?**
 przesuwa głowicę tego lasera trochę w prawo i z powrotem). Bez zapamiętanego
 portu, gdy podłączone są dwa lasery, Kerfly pyta, z którym się połączyć, i
@@ -515,8 +519,8 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
    głowicą projekt, z wyłączonym laserem, chyba że ustawisz inaczej w
    ustawieniach, żeby sprawdzić, gdzie będzie cięcie. Objeżdża prostokąt
    wokół projektu, zaczynając od narożnika najbliższego głowicy (Ustawienia →
-   Wektory: wyłącz „Objazd konturu jako prostokąt”, żeby jechać wzdłuż
-   obwiedni).
+   Lasery…, Objazd konturu: wyłącz „Objazd konturu jako prostokąt”, żeby
+   jechać wzdłuż obwiedni).
 4. **Start** (F9) wykonuje wszystkie zaznaczone warstwy. **Pauza** na chwilę
    zatrzymuje laser, a ten sam przycisk wznawia pracę. **Stop** (Esc)
    natychmiast kończy zadanie; potem naciśnij **Bazowanie** przed następnym
@@ -558,7 +562,7 @@ staje tyle poza każdą linią rastra, żeby tam, gdzie wypala, miała pełną
 prędkość). Te ustawienia są zapamiętywane w profilu lasera. Jeszcze nie
 sprawdzone na maszynie GRBL.
 
-**Laser GRBL podłączony do Kerfly (beta).** W **Ustawienia → Maszyna** wybierz
+**Laser GRBL podłączony do Kerfly (beta).** W **Ustawienia → Lasery…** wybierz
 **Maszyna: płyta GRBL, port szeregowy**, potem jej **port szeregowy** (albo
 pierwszą płytę, która odpowie; ↻ szuka ponownie po podłączeniu), prędkość
 portu (115200 na większości płyt), **róg bazowania głowicy** (lewy dolny w
@@ -582,19 +586,29 @@ do portu szeregowego trzeba dodać swojego użytkownika do grupy `dialout`:
 
 ## 8. Ustawienia
 
-**Ustawienia → Ustawienia…** (Ctrl+,, **Ustawienia** na wstążce) mają sześć
-kategorii na liście po lewej; każda strona jest podzielona na sekcje.
-**Zapisz** zachowuje zmiany (ustawienia maszyny w profilu lasera w użyciu,
-którego nazwa jest na dole), **Anuluj** je porzuca.
+**Ustawienia → Ustawienia…** (Ctrl+,, **Ustawienia** na wstążce) mają
+ustawienia programu, wspólne dla wszystkich laserów, w czterech kategoriach na
+liście po lewej; każda strona jest podzielona na sekcje. **Zapisz** zachowuje
+zmiany, **Anuluj** je porzuca.
 
 | Kategoria | Ustawienia |
 |---|---|
-| Maszyna | płyta sterująca, jednostki, rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, bazowanie głowicy po zadaniu (powrót do 0, 0 przed kolejną sztuką), odblokowanie osi i sygnał po zadaniu, raport po zadaniu (czas zadania, domyślnie włączony; małe okno, które czeka, aż wrócisz), program uruchamiany przed każdym zadaniem wysyłanym do lasera (np. żeby włączyć wyciąg; zadanie czeka, aż się skończy, najwyżej minutę, a gdy nie zadziała, pyta), program uruchamiany po każdym skończonym zadaniu (np. żeby wyłączyć wyciąg albo wysłać wiadomość; jego wynik i błędy trafiają do raportu), współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 (wyszarzone przy innych płytach: tam moc ustawia się pokrętłem lasera) |
 | Raster | półtony (dithering), ich metoda (Floyd-Steinberg, Atkinson z większym kontrastem na drewnie, Jarvis, Stucki, Burkes i Sierra z gładszymi przejściami, uporządkowany Bayer z równą fakturą, próg) i ich rozdzielczość, odwrócenie kolorów, odbicie, obrót o 90°, grawer od dołu do góry, odstęp linii skanowania, krzywa poziomów |
-| Wektory | najpierw kształty wewnętrzne, objazd konturu z włączonym laserem i jego moc (w procentach mocy maksymalnej; płyta M3), jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
-| Widok | rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok), przyciski Grawer / Obrys / Cięcie przy Start, motyw: jasny, ciemny albo jak w systemie (po ponownym uruchomieniu) |
-| Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów (wyszarzone, gdy oś obrotowa jest wyłączona) |
-| Zaawansowane | język (po ponownym uruchomieniu), sprawdzanie nowych wersji, Inkscape, mniejsze zużycie pamięci, przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |
+| Wektory | najpierw kształty wewnętrzne |
+| Widok | jednostki (mm albo cale), rozmiar siatki przyciągania (0: wyłączona), przyciąganie do innych obiektów, projekt podąża za głowicą lasera (te trzy Kerfly zapamiętuje też sam, gdy zmienisz je w menu Widok), przyciski Grawer / Obrys / Cięcie przy Start, motyw: jasny, ciemny albo jak w systemie (po ponownym uruchomieniu) |
+| Zaawansowane | język (po ponownym uruchomieniu), sprawdzanie nowych wersji, Inkscape, mniejsze zużycie pamięci |
+
+**Ustawienia → Lasery…** mają własne ustawienia każdego lasera, w sekcjach:
+
+| Sekcja | Ustawienia |
+|---|---|
+| Sterownik | maszyna (K40 albo płyta GRBL), płyta sterująca, port USB; dla płyty GRBL jej port szeregowy, prędkość, róg bazowania, prędkość przesuwu i pełna moc S |
+| Stół roboczy, bazowanie i koniec zadania | rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, bazowanie głowicy po zadaniu (powrót do 0, 0 przed kolejną sztuką), odblokowanie osi i sygnał po zadaniu, raport po zadaniu (czas zadania, domyślnie włączony; małe okno, które czeka, aż wrócisz) |
+| Programy uruchamiane przy zadaniu | program uruchamiany przed każdym zadaniem wysyłanym do lasera (np. żeby włączyć wyciąg; zadanie czeka, aż się skończy, najwyżej minutę, a gdy nie zadziała, pyta), program uruchamiany po każdym skończonym zadaniu (np. żeby wyłączyć wyciąg albo wysłać wiadomość; jego wynik i błędy trafiają do raportu) |
+| Skala, moc | współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 (wyszarzone przy innych płytach: tam moc ustawia się pokrętłem lasera) |
+| Objazd konturu | z włączonym laserem i jego moc (w procentach mocy maksymalnej; płyta M3), jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
+| Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów (wyszarzone, gdy oś jest wyłączona) |
+| Połączenie USB | przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |
 
 Kerfly jest dostępny po angielsku, polsku, niemiecku, hiszpańsku i
 francusku.

@@ -50,9 +50,10 @@ sends the job to the laser. This guide is for version 1.4.
 
    Every line should say `OK`; `WARN` lines are optional parts or mean that
    the laser is not connected.
-3. Open **Settings → Settings… → Machine** and choose your **Controller
-   board** (printed on the board, for example LASER-M2 or LASER-M3), the
-   **units** and the **bed size**.
+3. Open **Settings → Lasers…** and choose your laser's **Controller board**
+   (printed on the board, for example LASER-M2 or LASER-M3) and its **bed
+   size**, then **Save**. The **units** (mm or inches) are in **Settings →
+   Settings… → View**.
 4. Switch the laser on, connect the USB cable and press the **plug** button
    (Connect, Ctrl+I) on the **Laser** tab. By default Kerfly then homes the
    head (moves it to the upper left corner).
@@ -122,11 +123,15 @@ connected, the machine's buttons) and the **Head movement** (the jog pad, the
 step, go to X / Y). At its top, the list of **your lasers**: with two lasers (for example
 a laptop taken from one to the other), choose the one you work with, and its
 settings (board, bed size, home corner, scale, power, rotary, trace, programs
-before and after a job) go into the window. A machine setting changed in
-Settings is kept in the profile of the laser in use. The cog next to the list
-(or **Settings → Lasers…**) adds, duplicates, renames,
-deletes, exports and imports lasers. One laser is used at a time.
-**Two lasers plugged into one computer** (beta): Settings → Machine → **USB
+before and after a job) go into the window. The cog next to the list (or
+**Settings → Lasers…**) opens **your lasers and their settings**: the list on
+the left (New, Duplicate, Import; double-click a name to change it), the
+selected laser's settings on the right, Export and Delete under them. Change
+any laser there, also one not in use: the changes are kept while you go from
+one laser to another, **Save** writes them (the laser in use's go into the
+window at once), **Cancel** leaves them, **Use this laser** works with the
+selected one. One laser is used at a time.
+**Two lasers plugged into one computer** (beta): Settings → Lasers… → **USB
 port** keeps the port of each laser's board in its profile (**Which one?**
 moves that laser's head a little to the right and back). Without a remembered
 port, when two are plugged in, Kerfly asks which one to connect to and
@@ -500,8 +505,9 @@ out of the job.
 3. **Trace boundary** (the dashed-outline button, Laser menu) drives the head
    around the design, with the laser off unless set in the settings, so you
    can check where it will be cut. It runs round the rectangle around the
-   design, starting at the corner nearest the head (Settings → Vector: switch
-   off "Boundary trace as a rectangle" to follow the outline instead).
+   design, starting at the corner nearest the head (Settings → Lasers…, Boundary
+   trace: switch off "Boundary trace as a rectangle" to follow the outline
+   instead).
 4. **Start** (F9) runs all ticked layers. **Pause** stops the laser for a
    moment and the same button resumes it. **Stop** (Esc) ends the job
    immediately; then press **Home** before the next job. These buttons stay
@@ -541,7 +547,7 @@ it) and the **raster overscan** (the head starts and stops this far beyond
 each raster line, so it is at speed where it burns). These are kept with the
 laser profile. Not yet checked on a GRBL machine.
 
-**A GRBL laser connected to Kerfly (beta).** In **Settings → Machine** choose
+**A GRBL laser connected to Kerfly (beta).** In **Settings → Lasers…** choose
 **Machine: GRBL board, serial port**, then its **serial port** (or the first
 board that answers; ↻ looks again after plugging it in), its speed (115200
 on most boards), the **corner the head homes to** (lower left on most GRBL
@@ -565,19 +571,29 @@ serial port needs your user in the `dialout` group:
 
 ## 8. Settings
 
-**Settings → Settings…** (Ctrl+,, **Settings** on the ribbon) has six
-categories in a list on the left; each page is in sections. **Save** keeps the
-changes (the machine's ones in the profile of the laser in use, named at the
-bottom), **Cancel** leaves them.
+**Settings → Settings…** (Ctrl+,, **Settings** on the ribbon) has the
+program's settings, the same for every laser, in four categories in a list on
+the left; each page is in sections. **Save** keeps the changes, **Cancel**
+leaves them.
 
 | Category | Settings |
 |---|---|
-| Machine | controller board, units, bed size, home in the upper right corner, home when connecting, home the head after a job (back to 0, 0, for the next piece), unlock the rail and beep after a job, a report after a job (its time, on by default; a small window that waits until you are back), a program run before every job sent to the laser (for example to switch on the exhaust; the job waits until it ends, at most a minute, and asks when it fails), a program run after every finished job (for example to switch off the exhaust or send a message; its output and errors go to the report), X/Y scale factors, M3 power per operation and maximum power (greyed out with other boards: their power is set with the knob of the laser) |
 | Raster | halftone (dither), its method (Floyd-Steinberg, Atkinson for more contrast on wood, Jarvis, Stucki, Burkes and Sierra for smoother gradients, ordered Bayer for an even texture, threshold) and its resolution, invert colours, mirror, rotate 90°, engrave bottom to top, scan line step, levels curve |
-| Vector | cut inside shapes first, boundary trace with the laser on and its power (in per cent of the maximum; M3 board), as a rectangle or along the outline, trace gap and speed |
-| View | snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu), Engrave / Outline / Cut buttons next to Start, theme: light, dark or as the system (after a restart) |
-| Rotary | rotary attachment, its scale factor and rapid speed (greyed out while the attachment is off) |
-| Advanced | language (after a restart), checking for new versions, Inkscape, reduced memory use, USB data preparation, waiting for the laser, USB timeout and retries |
+| Vector | cut inside shapes first |
+| View | units (mm or inches), snap grid size (0: off), snap to other objects, the design follows the laser head (these three are also remembered by themselves when changed in the View menu), Engrave / Outline / Cut buttons next to Start, theme: light, dark or as the system (after a restart) |
+| Advanced | language (after a restart), checking for new versions, Inkscape, reduced memory use |
+
+**Settings → Lasers…** has each laser's own settings, in sections:
+
+| Section | Settings |
+|---|---|
+| Controller | the machine (K40 or a GRBL board), controller board, USB port; for a GRBL board its serial port, speed, home corner, jog speed and full power S |
+| Work area, homing and the end of a job | bed size, home in the upper right corner, home when connecting, home the head after a job (back to 0, 0, for the next piece), unlock the rail and beep after a job, a report after a job (its time, on by default; a small window that waits until you are back) |
+| Programs run with a job | a program run before every job sent to the laser (for example to switch on the exhaust; the job waits until it ends, at most a minute, and asks when it fails), a program run after every finished job (for example to switch off the exhaust or send a message; its output and errors go to the report) |
+| Scale, power | X/Y scale factors, M3 power per operation and maximum power (greyed out with other boards: their power is set with the knob of the laser) |
+| Boundary trace | with the laser on and its power (in per cent of the maximum; M3 board), as a rectangle or along the outline, trace gap and speed |
+| Rotary attachment | the attachment, its scale factor and rapid speed (greyed out while it is off) |
+| USB connection | USB data preparation, waiting for the laser, USB timeout and retries |
 
 Kerfly is available in English, Polish, German, Spanish and French.
 

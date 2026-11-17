@@ -132,7 +132,7 @@ class LayersPanel(QWidget):
                 w.hide()
                 w.setParent(None)
                 w.deleteLater()
-        # the units are in the header, so the fields are narrow (the panel is PANEL_WIDTH wide)
+        # the units are in the header, so the fields are narrow (the panel is about PANEL_WIDTH wide)
         headers = ["", _("Name"), _("Speed (%s)") % speed_unit, _("Passes"), _("Power (%)") if show_power else "",
                    _("Kerf (mm)"), _("Time"), ""]
         self.headers = {}

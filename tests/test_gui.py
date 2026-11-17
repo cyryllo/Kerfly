@@ -162,8 +162,8 @@ def main():
     w.start_job(trace=True)
     run_until_idle(app, w)
     powers = [p for p, _d in fake.sent]
-    from kerfly.gui.settings_dialog import SettingsDialog as _SD
-    sd = _SD(dict(w.values, trace_w_laser="0"), w, tab=2)
+    from kerfly.gui.settings_dialog import SettingsDialog as _SD, SettingsForm as _LF
+    sd = _LF(dict(w.values, trace_w_laser="0"), machine=True, window=w)          # a laser's settings (Lasers)
     field = sd._widgets["Trace_power"]
     greyed = not field.isEnabled()
     sd._widgets["trace_w_laser"].setChecked(True)
@@ -176,7 +176,7 @@ def main():
     sd.close()
 
     # 3b2. power settings only with the M3 board (the others have no power control: the knob sets it)
-    sd = _SD(dict(config.DEFAULT_VALUES, board_name="LASER-M2", trace_w_laser="1", show_power="1"), None, tab=0)
+    sd = _LF(dict(config.DEFAULT_VALUES, board_name="LASER-M2", trace_w_laser="1", show_power="1"), machine=True)
     wd = sd._widgets
     m2_off = not wd["show_power"].isEnabled() and not wd["max_power"].isEnabled() \
         and not wd["Trace_power"].isEnabled()
@@ -241,8 +241,7 @@ def main():
     with_error = _job_then(w)
     w.values.update(post_exec="0", post_disp="0")
     quiet = _job_then(w) if with_error is None else None
-    from kerfly.gui.settings_dialog import SettingsDialog as _SD2
-    sd = _SD2(dict(w.values, rotary="0", post_exec="0"), w)
+    sd = _LF(dict(w.values, rotary="0", post_exec="0"), machine=True, window=w)
     greyed = not sd._widgets["LaserRscale"].isEnabled() and not sd._widgets["batch_path"].isEnabled()
     sd._widgets["rotary"].setChecked(True)
     sd._widgets["post_exec"].setChecked(True)
@@ -399,14 +398,35 @@ def main():
     pw.profile_box.activated.emit(pw.profile_box.currentIndex())
     switched = pw.values["board_name"] == "LASER-M3" and float(pw.values["LaserXsize"]) == 500 \
         and pw.values["rotary"] == "1" and pw.power_per_stage() and pw.profiles.current == "Workshop M3"
+    # a laser's settings in Settings → Lasers…, the program's in Settings → Settings…
     from kerfly.gui.settings_dialog import SettingsDialog as _SD4
+    ld = _PD(pw)
+    ld.form._widgets["LaserYsize"].setValue(300)
+    ld._save_and_close()
     real_exec = _SD4.exec
-    _SD4.exec = lambda self: (self._widgets["LaserYsize"].setValue(300), self._widgets["grid_mm"].setValue(5),
-                              1)[2]
+    _SD4.exec = lambda self: (self._widgets["grid_mm"].setValue(5), 1)[1]
     pw.edit_settings()
     _SD4.exec = real_exec
     saved = _pc.load()
-    machine_kept = float(saved.get("Workshop M3")["LaserYsize"]) == 300 and "grid_mm" not in saved.get("Workshop M3")
+    machine_kept = (float(saved.get("Workshop M3")["LaserYsize"]) == 300 and "grid_mm" not in saved.get("Workshop M3")
+                    and float(pw.values["LaserYsize"]) == 300 and float(pw.values["grid_mm"]) == 5)
+    # another laser changed without using it: kept while going to another one in the list, written on Save
+    # into its profile only (the window keeps the laser in use); Cancel leaves the changes
+    ld = _PD(pw)
+    ld.list.setCurrentRow(pw.profiles.names().index(first))
+    gap_now = float(pw.values["trace_gap"])
+    ld.form._widgets["trace_gap"].setValue(7)
+    ld.list.setCurrentRow(pw.profiles.names().index("Workshop M3"))
+    ld.list.setCurrentRow(pw.profiles.names().index(first))
+    still = abs(ld.form._widgets["trace_gap"].value() - 7) < 1e-6
+    ld._save_and_close()
+    other_saved = abs(float(_pc.load().get(first)["trace_gap"]) - 7) < 1e-6 and \
+        abs(float(pw.values["trace_gap"]) - gap_now) < 1e-6 and pw.profiles.current == "Workshop M3"
+    ld = _PD(pw)
+    ld.form._widgets["LaserXsize"].setValue(222)
+    ld.reject()
+    cancelled = float(pw.values["LaserXsize"]) == 500 and abs(float(_pc.load().get("Workshop M3")["LaserXsize"]) - 500) < 1e-6
+    machine_kept = machine_kept and still and other_saved and cancelled
     pw.switch_profile(first)
     back = pw.values["board_name"] == "LASER-M2" and float(pw.values["LaserXsize"]) == 325
     pw.worker = object()
@@ -605,8 +625,8 @@ def main():
     uw.profiles.add("Second K40", dict(_pc.from_values(uw.values), usb_port="1-3"))
     uw.switch_profile("Second K40")
     released = not uw.laser.connected
-    from kerfly.gui.settings_dialog import SettingsDialog as _SD5
-    sd = _SD5(dict(uw.values), uw)
+    from kerfly.gui.settings_dialog import SettingsForm as _LF5
+    sd = _LF5(dict(uw.values), machine=True, window=uw)
     listed = [sd.usb_port_box.itemData(i) for i in range(sd.usb_port_box.count())]
     sd.close()
     _nl.K40_CLASS, _up.list_lasers = real_board, real_list
@@ -1612,7 +1632,7 @@ def main():
     # fields and the speeds engraved on it), Settings and the material library show and take mm/min; what is
     # kept stays mm/s, so the K40 jobs and the profiles do not change
     from kerfly.gui.generators import GeneratorDialog as _SGD
-    from kerfly.gui.settings_dialog import SettingsDialog as _SSD
+    from kerfly.gui.settings_dialog import SettingsForm as _SLF
     from kerfly.gui.materials_dialog import MaterialsDialog as _SMD
     from PySide6.QtWidgets import QDoubleSpinBox as _SDS
     shown = {}
@@ -1631,7 +1651,7 @@ def main():
         mt_ok = abs(gd.widgets["speed_min"].value() - gd.values()["speed_min"] * f) < 1e-6 and \
             des.layers[0].name.startswith("%g %s" % (des.layers[0].speed * f, "mm/min" if f > 1 else "mm/s"))
         gd.deleteLater()
-        sd = _SSD(sw.values)
+        sd = _SLF(sw.values, machine=True, window=sw)                       # the laser's settings
         ts = next(c for c in sd.findChildren(_SDS) if c.property("setting_key") == "trace_speed")
         set_ok = abs(ts.value() - float(sw.values["trace_speed"]) * f) < 1e-6 and \
             abs(float(sd._getters["trace_speed"]()) - float(sw.values["trace_speed"])) < 1e-6

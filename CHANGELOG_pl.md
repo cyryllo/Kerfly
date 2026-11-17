@@ -65,6 +65,13 @@ oknie.
   Połącz, Bazuj, Odblokuj silniki, Za głowicą, z kropką stanu; Ruch głowicy);
   **Obrys**, **Start**, **Pauza** i **Stop** równej szerokości na dole obu
   zakładek.
+- **Ustawienia każdego lasera w Ustawienia → Lasery…** (zębatka przy liście
+  laserów): lista laserów po lewej, ustawienia zaznaczonego po prawej (płyta,
+  stół, bazowanie, programy przed zadaniem i po nim, skala, moc, objazd
+  konturu, oś obrotowa, USB, GRBL), także lasera, który nie jest w użyciu;
+  Zapisz zapisuje zmiany wszystkich zmienionych laserów. Ustawienia →
+  Ustawienia… mają już tylko ustawienia programu (raster, kolejność cięcia,
+  widok z jednostkami, język, aktualizacje, Inkscape).
 - **Pasek stanu**: miejsce kursora myszy, rozmiar stołu, powiększenie i stan
   lasera.
 - **Okna**: najpierw Anuluj, potem przycisk nazwany czynnością (**Zapisz**,

@@ -94,7 +94,8 @@ mean that the laser is not connected.
 
 Keep a hand on the laser's power switch.
 
-1. **Settings → Machine**: set your board, bed size and units.
+1. **Settings → Lasers…**: set your laser's board and bed size, **Save**; the units are in
+   Settings → Settings… → View.
 2. **Laser** tab → **Connect** (plug icon). The head homes to the upper-left
    corner.
 3. Jog the head with the arrows and check the directions.

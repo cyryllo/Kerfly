@@ -411,7 +411,9 @@ class MainWindow(QMainWindow):
         self.act_fit = self._action(_("&Fit to window"), lambda: self.preview.fit_all(), "Ctrl+0")
         self.act_settings = self._action(_("&Settings\u2026"), self.edit_settings, "Ctrl+,")
         self.act_profiles = self._action(_("&Lasers\u2026"), self.manage_profiles, None,
-                                         _("Your lasers: use one, add, duplicate, rename, delete, export, import"))
+                                         _("Your lasers and each one's settings (board, bed, homing, power, "
+                                           "trace, rotary, USB): use one, add, duplicate, rename, delete, export, "
+                                           "import"))
         self.act_materials = self._action(_("&Material library\u2026"), lambda: self.edit_materials())
         self.act_export_materials = self._action(_("&Export material library\u2026"), self.export_materials)
         self.act_import_materials = self._action(_("&Import material library\u2026"), self.import_materials)
@@ -2076,7 +2078,7 @@ class MainWindow(QMainWindow):
         profile_row.addWidget(self.profile_box, 1)
         manage = widgets.icon_button(action=self.act_profiles)
         manage.setIcon(icons.tabler("settings"))
-        manage.setToolTip(_("Manage your lasers: add, duplicate, rename, delete, export, import"))
+        manage.setToolTip(_("Your lasers and their settings (board, bed, homing, power, trace, rotary, USB)"))
         self.btn_profiles = manage
         profile_row.addWidget(manage)
         laser_layout.addLayout(profile_row)
@@ -2258,7 +2260,7 @@ class MainWindow(QMainWindow):
         scroll.setWidget(panel)
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.NoFrame)
-        # only up and down: the panel is as wide as its content needs (about PANEL_WIDTH)
+        # only up and down: the panel is as wide as its content needs (PANEL_ROOM more than that, at least PANEL_WIDTH)
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.panel_scroll = scroll
         # Trace, Start, Pause and Stop stay at the bottom, outside the scrolling part: on a small screen
@@ -2346,7 +2348,7 @@ class MainWindow(QMainWindow):
         dock.setTitleBarWidget(QWidget())             # no title bar: the tabs say what it is
         dock.setWidget(body)
         self.addDockWidget(Qt.LeftDockWidgetArea, dock)
-        self.resizeDocks([dock], [theme.PANEL_WIDTH], Qt.Horizontal)       # as narrow as its content allows
+        self.resizeDocks([dock], [theme.PANEL_WIDTH], Qt.Horizontal)       # then _fit_panel_width: its content and PANEL_ROOM
         self.job_dock = dock
         for key in ("x", "y", "w", "h"):
             self._unit_widgets.append((self.sel_fields[key], "len", None, 1.0))
@@ -3987,13 +3989,14 @@ class MainWindow(QMainWindow):
         self._fit_panel_width()
 
     def _fit_panel_width(self):
-        """The left panel as wide as its content needs (about PANEL_WIDTH), never scrolling sideways."""
+        """The left panel a little wider than its content needs (at least PANEL_WIDTH), never scrolling
+        sideways."""
         scroll = getattr(self, "panel_scroll", None)
         if scroll is not None:
             for i in range(self.tabs.count()):
                 self.tabs.widget(i).ensurePolished()     # a hidden tab gets its style only when shown
             scroll.setMinimumWidth(max(theme.PANEL_WIDTH, scroll.widget().minimumSizeHint().width()
-                                       + scroll.verticalScrollBar().sizeHint().width()))
+                                       + scroll.verticalScrollBar().sizeHint().width() + theme.PANEL_ROOM))
 
     def _reload_spin_values(self):
         """Re-read unit-dependent fields after the units changed."""

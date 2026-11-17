@@ -123,11 +123,41 @@ RASTER_KEYS = {"halftone", "dither", "ht_size", "negate", "mirror", "rotate", "r
 RELOAD_KEYS = {"inside_first", "reduced_mem", "use_inkscape"}
 
 
-class SettingsDialog(QDialog):
-    def __init__(self, values, parent=None, tab=0):
+def _is_machine(key):
+    from kerfly.core.profiles import MACHINE_KEYS
+    return key in MACHINE_KEYS
+
+
+def form_pages(machine):
+    """[(title, [fields])] of the program's settings (machine False: one page per category, the units with
+    the view), or of a laser's (machine True: one page, its fields in TABS' order)."""
+    if machine:
+        return [(N_("Laser"), [f for _t, fields in TABS for f in fields if _is_machine(f[0])])]
+    pages = []
+    units = [f for _t, fields in TABS for f in fields if f[0] == "units"]
+    for title, fields in TABS:
+        mine = [f for f in fields if not _is_machine(f[0]) and f[0] != "units"]
+        if title == "View":
+            mine = units + mine
+        if mine:
+            pages.append((title, mine))
+    return pages
+
+
+# a section's title where the two forms differ from SECTIONS (the program's units, a laser's work area, ...)
+PROGRAM_SECTIONS = {"units": N_("Units"), "reduced_mem": N_("Memory")}
+MACHINE_SECTIONS = {"LaserXsize": N_("Work area"), "pre_pr_crc": N_("USB connection")}
+
+
+class SettingsForm(QWidget):
+    """The fields of the program's settings (in categories) or of a laser's (one scrolling page), built from
+    TABS: their values in and out (result_values), the fields that count only with a tick greyed out."""
+
+    def __init__(self, values, machine=False, window=None, tab=0, parent=None):
         super().__init__(parent)
-        self.setWindowTitle(_("Settings"))
         self.values = dict(values)
+        self.window_ = window
+        self.machine = machine
         self._getters = {}
         self._widgets = {}
         self._labels = {}
@@ -136,9 +166,10 @@ class SettingsDialog(QDialog):
         from kerfly.core.config import speed_factor, speed_unit as _speed_unit
         speed_unit = _speed_unit(self.values)
         self.speed_factor = speed_factor(self.values)        # shown = kept x it (mm/min of a GRBL machine)
-
+        sections = dict(SECTIONS, **(MACHINE_SECTIONS if machine else PROGRAM_SECTIONS))
+        pages = form_pages(machine)
         # (docs/ui-mockups/Settings) the categories in a list on the left, their page on the right in sections,
-        # each page scrolling up and down on its own
+        # each page scrolling up and down on its own; a laser's settings: one page
         self.categories = QListWidget()
         self.categories.setObjectName("settings_categories")
         self.categories.setFixedWidth(2 * theme.OPTION_TITLE - theme.SPACE_L)
@@ -146,9 +177,9 @@ class SettingsDialog(QDialog):
         self.pages = QStackedWidget()
         fm = self.fontMetrics()
         # one label column width for every page, so fields line up when switching pages
-        label_width = max(fm.horizontalAdvance(_(label)) for _t, fields in TABS
+        label_width = max(fm.horizontalAdvance(_(label)) for _t, fields in pages
                           for _k, label, kind, _o in fields if kind != "bool") + theme.SPACE_L
-        for title, fields in TABS:
+        for title, fields in pages:
             page = QWidget()
             v = QVBoxLayout(page)
             v.setContentsMargins(0, 0, theme.SPACE_L, 0)
@@ -156,8 +187,8 @@ class SettingsDialog(QDialog):
             section = None
             row = 0
             for key, label, kind, opt in fields:
-                if section is None or key in SECTIONS:
-                    section = widgets.Section(_(SECTIONS[key]) if key in SECTIONS else None)
+                if section is None or key in sections:
+                    section = widgets.Section(_(sections[key]) if key in sections else None)
                     section.grid.setColumnStretch(0, 0)
                     section.grid.setColumnMinimumWidth(0, label_width)
                     section.grid.setColumnStretch(2, 1)
@@ -186,39 +217,38 @@ class SettingsDialog(QDialog):
             self.pages.addWidget(scroll)
             self.categories.addItem(QListWidgetItem(icons.tabler(PAGE_ICONS.get(title, "settings")), _(title)))
         self.categories.currentRowChanged.connect(self.pages.setCurrentIndex)
-        self.categories.setCurrentRow(tab)
+        self.categories.setCurrentRow(min(tab, self.pages.count() - 1))
         # as wide as the widest page (they scroll only up and down)
         self.pages.setMinimumWidth(max(self.pages.widget(i).widget().minimumSizeHint().width()
                                        for i in range(self.pages.count()))
                                    + self.pages.widget(0).verticalScrollBar().sizeHint().width())
-        self._widgets["Trace_power"].setToolTip(_("Laser power during the boundary trace, in per cent of the maximum power "
-                                 "(Settings → Machine). Used by M3 boards with power per operation; on other "
-                                 "boards the power knob of the laser sets it"))
-        self._widgets["batch_path"].setToolTip(_("Started after every finished job, for example to switch off "
-                                                 "the exhaust or send a message; its output goes to the report"))
-        self._widgets["pre_batch_path"].setToolTip(_("Started before every job sent to the laser, for example "
-                                                     "to switch on the exhaust or the air pump; the job waits "
-                                                     "until it ends (at most a minute)"))
+        row = QHBoxLayout(self)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(theme.PAD_DIALOG)
+        if not machine:
+            row.addWidget(self.categories)
+        else:
+            self.categories.hide()
+        row.addWidget(self.pages, 1)
+        tips = {"Trace_power": _("Laser power during the boundary trace, in per cent of the laser's maximum "
+                                 "power. Used by M3 boards with power per operation; on other boards the power "
+                                 "knob of the laser sets it"),
+                "batch_path": _("Started after every finished job, for example to switch off "
+                                "the exhaust or send a message; its output goes to the report"),
+                "pre_batch_path": _("Started before every job sent to the laser, for example "
+                                    "to switch on the exhaust or the air pump; the job waits "
+                                    "until it ends (at most a minute)")}
+        for key, tip in tips.items():
+            if key in self._widgets:
+                self._widgets[key].setToolTip(tip)
         # fields that count only with a tick: greyed out without it (as in K40 Whisperer)
         for switch in set(DEPENDS.values()) | {"show_power"}:
-            self._widgets[switch].toggled.connect(self._update_enabled)
-        self._widgets["board_name"].currentTextChanged.connect(self._update_enabled)
-        self._widgets["machine"].currentIndexChanged.connect(self._update_enabled)
+            if switch in self._widgets:
+                self._widgets[switch].toggled.connect(self._update_enabled)
+        if "board_name" in self._widgets:
+            self._widgets["board_name"].currentTextChanged.connect(self._update_enabled)
+            self._widgets["machine"].currentIndexChanged.connect(self._update_enabled)
         self._update_enabled()
-
-        top = QHBoxLayout()
-        top.setSpacing(theme.PAD_DIALOG)
-        top.addWidget(self.categories)
-        top.addWidget(self.pages, 1)
-        body = widgets.DialogBody()
-        body.layout().addLayout(top, 1)
-        footer = widgets.DialogFooter(_("Save"))
-        profiles = getattr(parent, "profiles", None)
-        if profiles is not None:
-            footer.info.setText(_("Settings of the laser: %s") % profiles.current)
-        footer.connect(self)
-        widgets.dialog_layout(self, body, footer)
-        self.resize(theme.DIALOG_LARGE + 80, theme.DIALOG_LARGE - 80)
 
     def page_of(self, widget):
         """The number of the page (category) a field is on."""
@@ -230,22 +260,28 @@ class SettingsDialog(QDialog):
     def _update_enabled(self, *_args):
         """Fields that count only with a tick, and the power settings only with the M3 board (the other
         boards have no power control: the knob of the laser sets it): greyed out otherwise."""
-        grbl = self._widgets["machine"].currentData() == "grbl"
-        m3 = self._widgets["board_name"].currentText() == M3_BOARD and not grbl
-        wanted = {key: self._widgets[switch].isChecked() for key, switch in DEPENDS.items()}
-        for key in GRBL_KEYS:
-            wanted[key] = grbl
-        for key in K40_KEYS:
-            wanted[key] = not grbl
-        wanted["show_power"] = m3
-        wanted["max_power"] = m3 and self._widgets["show_power"].isChecked()
-        wanted["Trace_power"] = wanted["Trace_power"] and m3
+        wanted = {key: self._widgets[switch].isChecked() for key, switch in DEPENDS.items()
+                  if key in self._widgets and switch in self._widgets}
+        if "machine" in self._widgets:                    # a laser's settings
+            grbl = self._widgets["machine"].currentData() == "grbl"
+            m3 = self._widgets["board_name"].currentText() == M3_BOARD and not grbl
+            for key in GRBL_KEYS:
+                wanted[key] = grbl
+            for key in K40_KEYS:
+                wanted[key] = not grbl
+            wanted["show_power"] = m3
+            wanted["max_power"] = m3 and self._widgets["show_power"].isChecked()
+            wanted["Trace_power"] = wanted["Trace_power"] and m3
+        else:
+            m3 = True
         for key, on in wanted.items():
             for part in [self._widgets[key]] + ([self._labels[key]] if key in self._labels else []):
                 part.setEnabled(on)
-        tip = "" if m3 else _("Only the M3 board sets the power; on other boards the power knob of the laser does")
-        for key in ("show_power", "max_power"):
-            self._widgets[key].setToolTip(tip)
+        if "show_power" in self._widgets:
+            tip = "" if m3 else _("Only the M3 board sets the power; on other boards the power knob of the laser "
+                                  "does")
+            for key in ("show_power", "max_power"):
+                self._widgets[key].setToolTip(tip)
 
     def _make_field(self, key, kind, opt, len_unit, speed_unit):
         value = self.values.get(key, "")
@@ -312,7 +348,7 @@ class SettingsDialog(QDialog):
                                "kept in its profile (beta: not yet checked with two lasers)"))
             which = QPushButton(icons.tabler("arrows-horizontal"), _("Which one?"))
             which.setToolTip(_("The head of the laser on the chosen port moves a little to the right and back"))
-            parent = self.parent()
+            parent = self.window_
 
             def identify():
                 port = usbports.find(ports, combo.currentData())
@@ -421,3 +457,26 @@ class SettingsDialog(QDialog):
                 new[key] = val
                 changed.add(key)
         return new, changed
+
+
+class SettingsDialog(QDialog):
+    """Settings → Settings…: the program's settings (a laser's are in Settings → Lasers…)."""
+
+    def __init__(self, values, parent=None, tab=0):
+        super().__init__(parent)
+        self.setWindowTitle(_("Settings"))
+        self.form = SettingsForm(values, machine=False, window=parent, tab=tab)
+        body = widgets.DialogBody()
+        body.add(self.form, 1)
+        footer = widgets.DialogFooter(_("Save"))
+        footer.info.setText(_("The program's settings; a laser's are in Settings → Lasers…"))
+        footer.connect(self)
+        widgets.dialog_layout(self, body, footer)
+        self.resize(theme.DIALOG_LARGE + 80, theme.DIALOG_LARGE - 160)
+
+    def __getattr__(self, name):
+        # the form's fields and ways (values, _widgets, page_of, result_values, ...), as the dialog's own
+        form = self.__dict__.get("form")
+        if form is None:
+            raise AttributeError(name)
+        return getattr(form, name)

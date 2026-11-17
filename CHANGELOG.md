@@ -68,6 +68,13 @@ a window of its own.
   Connect, Home, Unlock motors, Follow the head with a state dot; Head
   movement); **Trace**, **Start**, **Pause** and **Stop** as wide as each
   other at the bottom of both tabs.
+- **Each laser's settings in Settings → Lasers…** (the cog by the laser list):
+  the list of lasers on the left, the selected one's settings on the right
+  (board, bed, homing, programs before and after a job, scale, power, boundary
+  trace, rotary, USB, GRBL), also for a laser not in use; Save writes the
+  changes of every laser changed. Settings → Settings… keeps only the
+  program's own (raster, cutting order, view with the units, language,
+  updates, Inkscape).
 - **Status bar**: where the mouse pointer is, the bed's size, the zoom and
   the laser's state.
 - **Dialogs**: Cancel first, then the action named for what it does

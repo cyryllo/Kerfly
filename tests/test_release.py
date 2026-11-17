@@ -251,7 +251,16 @@ class Session:
     def settings_page(self, dlg, title=None, widget=None):
         """Show a page of Settings by clicking its category in the list on the left (by its title, or the
         page a field is on)."""
-        lst = dlg.categories
+        lst = getattr(dlg, "categories", None)
+        if lst is None or not lst.isVisible():           # Settings → Lasers…: one page, scrolled to the field
+            from PySide6.QtWidgets import QScrollArea
+            area = widget.parentWidget()
+            while area is not None and not isinstance(area, QScrollArea):
+                area = area.parentWidget()
+            if area is not None:
+                area.ensureWidgetVisible(widget)
+            self.settle()
+            return
         index = dlg.page_of(widget) if widget is not None else next(
             i for i in range(lst.count()) if lst.item(i).text() == title)
         lst.scrollToItem(lst.item(index))
@@ -1251,7 +1260,7 @@ def part_view_and_laser(s):
             QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
         return answer
     s.expect_dialog("settings: home after a job", setting_box("post_home_xy", True))
-    s.step("Settings → Machine: Home the head after a job", lambda: s.trigger(w.act_settings, via="menu"),
+    s.step("Settings → Lasers… (the laser's settings): Home the head after a job", lambda: s.trigger(w.act_profiles, via="menu"),
            change=False, undo=False, check=lambda: (w.values.get("post_home_xy") == "1", w.values.get("post_home_xy")))
     mark_home = {}
 
@@ -1263,7 +1272,7 @@ def part_view_and_laser(s):
            check=lambda: ("home_position" in s.fake.calls[mark_home.get("calls", 0):] and w.head == (0.0, 0.0),
                           "calls %s, head %s" % (s.fake.calls[mark_home.get("calls", 0):][-4:], w.head)))
     s.expect_dialog("settings: no home after a job", setting_box("post_home_xy", False))
-    s.step("Settings (Ctrl+,) → Machine: Home after a job off again", lambda: s.trigger(w.act_settings, via="key"),
+    s.step("Settings → Lasers… (the laser's settings): Home after a job off again", lambda: s.trigger(w.act_profiles, via="menu"),
            change=False, undo=False, check=lambda: (w.values.get("post_home_xy") == "0", w.values.get("post_home_xy")))
 
     # Settings → Raster → Dithering method: Atkinson, a job goes to the laser with it; back to Floyd-Steinberg
@@ -1328,8 +1337,8 @@ def part_view_and_laser(s):
             QTest.keyClicks(field, path)
         QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
     s.expect_dialog("settings: run a program after a job", program_on)
-    s.step("Settings (Ctrl+,) → Machine: Run a program before and after a job, their paths typed",
-           lambda: s.trigger(w.act_settings, via="key"), change=False, undo=False,
+    s.step("Settings → Lasers… (the laser's settings): Run a program before and after a job, their paths typed",
+           lambda: s.trigger(w.act_profiles, via="menu"), change=False, undo=False,
            check=lambda: (w.values.get("post_exec") == "1" and w.values.get("batch_path") == program
                           and w.values.get("pre_exec") == "1" and w.values.get("pre_batch_path") == before,
                           "%s" % [w.values.get(k) for k in ("pre_exec", "pre_batch_path", "post_exec", "batch_path")]))
@@ -1362,8 +1371,8 @@ def part_view_and_laser(s):
                 s.tick(box)
         QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
     s.expect_dialog("settings: no program after a job", program_off)
-    s.step("Settings (Ctrl+,) → Machine: Run a program before and after a job off again",
-           lambda: s.trigger(w.act_settings, via="key"), change=False, undo=False,
+    s.step("Settings → Lasers… (the laser's settings): Run a program before and after a job off again",
+           lambda: s.trigger(w.act_profiles, via="menu"), change=False, undo=False,
            check=lambda: (w.values.get("post_exec") == "0" and w.values.get("pre_exec") == "0",
                           "%s, %s" % (w.values.get("pre_exec"), w.values.get("post_exec"))))
 
@@ -1478,7 +1487,7 @@ def part_m3_board(s):
         s.pick(board, index=board.findText("LASER-M3"))
         s.click_dialog_button(dlg, tr_("Save"))                 # Settings' action (the dialog pattern)
     s.expect_dialog("settings: board", choose_m3)
-    s.step("Settings…: choose the LASER-M3 board, OK", lambda: s.trigger(w.act_settings, via="menu"),
+    s.step("Settings → Lasers…: choose the LASER-M3 board, OK", lambda: s.trigger(w.act_profiles, via="menu"),
            change=False, undo=False, check=lambda: (w.power_per_stage(), "no power per layer"))
     s.step("Laser tab", lambda: s.tab(1), change=False)
     s.step("connect again", lambda: s.click(w.btn_connect), change=False, check=lambda: (w.laser.connected, ""))
@@ -1507,8 +1516,8 @@ def part_m3_board(s):
             QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
         return answer
     s.expect_dialog("settings: trace with the laser on, 25 %", trace_laser(True, 25))
-    s.step("Settings → Vector: Boundary trace with laser on, its power 25 %",
-           lambda: s.trigger(w.act_settings, via="menu"), change=False, undo=False,
+    s.step("Settings → Lasers…: Boundary trace with laser on, its power 25 %",
+           lambda: s.trigger(w.act_profiles, via="menu"), change=False, undo=False,
            check=lambda: (w.values.get("trace_w_laser") == "1" and float(w.values.get("Trace_power")) == 0.25,
                           "%s, %s" % (w.values.get("trace_w_laser"), w.values.get("Trace_power"))))
     mark_trace = {}
@@ -1524,7 +1533,7 @@ def part_m3_board(s):
                "powers %s, want %s" % ([p for p, _d in s.fake.sent[mark_trace.get("sent", 0):]], want_power())))
     s.expect_dialog("settings: trace without the laser", trace_laser(False))
     s.step("Settings (Ctrl+,) → Vector: Boundary trace with laser on, off again",
-           lambda: s.trigger(w.act_settings, via="key"), change=False, undo=False,
+           lambda: s.trigger(w.act_profiles, via="menu"), change=False, undo=False,
            check=lambda: (w.values.get("trace_w_laser") == "0", w.values.get("trace_w_laser")))
     s.step("jog step: type 2", lambda: s.type_number(w.jog_step, 2.0), change=False)
     s.step("Design tab", lambda: s.tab(0), change=False)
@@ -1561,7 +1570,7 @@ def part_grbl(s):
             QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
         return answer
     s.expect_dialog("settings: GRBL machine", machine_to("grbl"))
-    s.step("Settings (Ctrl+,) → Machine: GRBL board (serial port), OK", lambda: s.trigger(w.act_settings, via="key"),
+    s.step("Settings → Lasers… (the laser's settings): GRBL board (serial port), OK", lambda: s.trigger(w.act_profiles, via="menu"),
            change=False, undo=False, check=lambda: (w.is_grbl() and w.values["machine"] == "grbl",
                                                     "machine %s" % w.values.get("machine")))
     s.step("Laser tab", lambda: s.tab(1), change=False)
@@ -1621,7 +1630,7 @@ def part_grbl(s):
     s.step("Unlock (button): $X after the reset", lambda: s.click(w.btn_unlock), change=False,
            check=lambda: (s.grbl.lines[-1] == "$X", s.grbl.lines[-2:]))
     s.expect_dialog("settings: K40 machine", machine_to("k40"))
-    s.step("Settings (Ctrl+,) → Machine: K40 again, OK", lambda: s.trigger(w.act_settings, via="key"),
+    s.step("Settings → Lasers… (the laser's settings): K40 again, OK", lambda: s.trigger(w.act_profiles, via="menu"),
            change=False, undo=False, check=lambda: (not w.is_grbl(), "machine %s" % w.values.get("machine")))
     s.step("connect the K40 again", lambda: s.click(w.btn_connect), change=False,
            check=lambda: (w.laser.connected and not w.is_grbl(), ""))
@@ -1925,10 +1934,12 @@ def part_files_and_help(s):
         QTest.keyClick(editor, Qt.Key_Return)
         s.settle()
         s.click(dlg.buttons["use"])
-        s.click(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Close))
+        s.click(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Cancel))
     from PySide6.QtWidgets import QDialogButtonBox
+
     s.expect_dialog("lasers: New, name, Use", add_and_use)
-    s.step("Lasers (Laser tab) → New, type a name, Use: its settings in the window", lambda: s.trigger(w.act_profiles),
+    s.step("Lasers (Laser tab) → New, type a name, Use: its settings in the window",
+           lambda: s.trigger(w.act_profiles),
            change=False, undo=False,
            check=lambda: (w.profiles.current == "Laptop laser" and w.values.get("board_name") == "LASER-M2"
                           and w.profile_box.currentText() == "Laptop laser",
@@ -1952,7 +1963,7 @@ def part_files_and_help(s):
                 QTimer.singleShot(100, yes)
         QTimer.singleShot(100, yes)
         s.click(dlg.buttons["delete"])
-        s.click(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Close))
+        s.click(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Cancel))     # (a deletion is at once)
     s.expect_dialog("lasers: Delete", delete_laptop)
     s.step("Laser tab: manage lasers → Delete the new one", lambda: s.click(w.btn_profiles), change=False,
            undo=False, check=lambda: ("Laptop laser" not in w.profiles.names() and w.profiles.current == first_laser,

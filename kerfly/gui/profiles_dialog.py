@@ -1,7 +1,14 @@
 """
-Settings → Lasers…: the laser profiles (one per machine): use one, add, duplicate,
-rename (double click or the button), delete, export and import. The settings of
-the laser in use are changed in Settings as before; they go into its profile.
+Settings → Lasers… (the cog by the laser list of the Laser tab): your lasers
+and each one's settings, in one window. The list on the left (New,
+Duplicate, Import above it; double-click a name to change it), the selected
+laser's settings on the right (board, bed, homing, programs before and after
+a job, scale, power, boundary trace, rotary, USB; for a GRBL machine its
+serial port), Export and Delete under them. Changes of several lasers are
+kept while you go from one to another; Save writes them all (the laser in use
+into the window at once), Cancel leaves them. Use this laser makes the
+selected one the laser in use. The program's own settings (raster, view,
+language, ...) are in Settings → Settings….
 
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
@@ -9,12 +16,13 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 import os
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QFileDialog, QHBoxLayout, QLabel,
-                               QListWidget, QListWidgetItem, QMessageBox, QPushButton, QVBoxLayout)
+from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QFileDialog, QHBoxLayout, QListWidget, QListWidgetItem,
+                               QMessageBox, QPushButton, QVBoxLayout)
 
 from kerfly.core import config
 from kerfly.core import profiles as profiles_core
 from kerfly.gui import icons, theme, widgets
+from kerfly.gui.settings_dialog import SettingsForm
 from kerfly.i18n import _, ngettext
 
 
@@ -24,16 +32,15 @@ class ProfilesDialog(QDialog):
         self.window = window
         self.profiles = window.profiles
         self.setWindowTitle(_("Lasers"))
+        self.edits = {}                  # laser name -> its changed settings (window values), not yet saved
+        self.form = None                 # the selected laser's settings
+        self._form_name = None
         self.list = QListWidget()
         self.list.setToolTip(_("Your lasers. Double-click a name to change it"))
         self.list.currentRowChanged.connect(self._show)
         self.list.itemChanged.connect(self._renamed)
         self.list.itemDoubleClicked.connect(lambda item: self.list.editItem(item))
         self.title = widgets.section_title("")
-        self.summary = QLabel()
-        self.summary.setWordWrap(True)
-        self.summary.setTextFormat(Qt.RichText)
-        self.summary.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.buttons = {}
         for key, text, icon, tip, slot in (
                 ("use", _("Use this laser"), "player-play", _("Work with this laser: its settings go into the window"),
@@ -50,12 +57,11 @@ class ProfilesDialog(QDialog):
             b = QPushButton(icons.tabler(icon, theme.token("danger") if key == "delete" else None), text)
             b.setToolTip(tip)
             b.clicked.connect(slot)
-            if key != "use":
-                b.setFixedHeight(theme.HEIGHT_FIELD)
+            b.setFixedHeight(theme.HEIGHT_FIELD)
             self.buttons[key] = b
-        # the dialog pattern (docs/ui-mockups/Profiles): the list with New, Duplicate, Import above it on the
-        # left; the selected laser on the right (its name, Rename, what it has, Export and Delete); the footer
-        # with the number of lasers, Close and Use this laser
+        # (docs/ui-mockups/Profiles) the list with New, Duplicate, Import above it on the left; the selected
+        # laser on the right: its name, Rename, its settings, Export and Delete; the footer with the number of
+        # lasers, Use this laser, Cancel and Save
         left = QVBoxLayout()
         left.setSpacing(theme.SPACE_M)
         row = QHBoxLayout()
@@ -71,11 +77,8 @@ class ProfilesDialog(QDialog):
         row.addWidget(self.title, 1)
         row.addWidget(self.buttons["rename"])
         right.addLayout(row)
-        right.addWidget(self.summary)
-        right.addWidget(widgets.hint(_("The settings of the laser in use are changed in Settings (board, bed, power, "
-                                       "rotary, trace, programs before and after a job); they are kept in its "
-                                       "profile.")))
-        right.addStretch(1)
+        self.form_box = QVBoxLayout()
+        right.addLayout(self.form_box, 1)
         row = QHBoxLayout()
         row.addWidget(self.buttons["export"])
         row.addWidget(self.buttons["delete"])
@@ -83,21 +86,23 @@ class ProfilesDialog(QDialog):
         right.addLayout(row)
         top = QHBoxLayout()
         top.setSpacing(theme.PAD_DIALOG)
-        top.addLayout(left, 1)
-        top.addLayout(right, 1)
+        top.addLayout(left, 2)
+        top.addLayout(right, 5)
         body = widgets.DialogBody()
         body.layout().addLayout(top, 1)
-        footer = widgets.DialogFooter(buttons=QDialogButtonBox.Close)
+        footer = widgets.DialogFooter(_("Save"))
+        footer.box.accepted.connect(self._save_and_close)
         footer.box.rejected.connect(self.reject)
-        widgets.DialogFooter.style_button(self.buttons["use"], "primary")
-        footer.layout().addWidget(self.buttons["use"])          # the action, last (after Close)
+        widgets.DialogFooter.style_button(self.buttons["use"], "secondary")
+        footer.layout().insertWidget(1, self.buttons["use"])
         self.count = footer.info
         widgets.dialog_layout(self, body, footer)
-        self.resize(theme.DIALOG_LARGE, theme.DIALOG_SMALL + 20)
+        self.resize(theme.DIALOG_LARGE + 240, theme.DIALOG_LARGE - 60)
         self._fill(self.profiles.current)
 
     # ---------------------------------------------------------------- list
     def _fill(self, select):
+        self._stash()
         self.list.blockSignals(True)
         self.list.clear()
         for name in self.profiles.names():
@@ -113,37 +118,77 @@ class ProfilesDialog(QDialog):
         names = self.profiles.names()
         self.list.setCurrentRow(names.index(select) if select in names else 0)
         self.list.blockSignals(False)
+        self._form_name = None
         self._show()
 
     def selected(self):
         item = self.list.currentItem()
         return item.data(Qt.UserRole) if item is not None else None
 
+    # ---------------------------------------------------------------- the selected laser's settings
+    def _values_of(self, name):
+        """The settings of a laser as the window's values (its units): changed ones, the window's for the laser
+        in use, else its profile's."""
+        if name in self.edits:
+            return dict(self.edits[name])
+        if name == self.profiles.current:
+            return dict(self.window.values)
+        return profiles_core.to_values(dict(self.window.values), self.profiles.get(name))
+
+    def _stash(self):
+        """Keep the changes in the form of the laser shown (until Save or Cancel)."""
+        if self.form is None or self._form_name not in self.profiles.names():
+            return
+        new, changed = self.form.result_values()
+        if changed:
+            self.edits[self._form_name] = new
+
     def _show(self, *_args):
         name = self.selected()
-        if name is None:
-            self.summary.setText("")
-            self.title.setText("")
+        if name == self._form_name and self.form is not None:
             return
-        s = self.profiles.get(name)
-        units = self.window.values.get("units", "mm")
-        width, height = float(s.get("LaserXsize", 0) or 0), float(s.get("LaserYsize", 0) or 0)
-        if units == "in":
-            size = "%.2f × %.2f in" % (width / 25.4, height / 25.4)
-        else:
-            size = "%.0f × %.0f mm" % (width, height)
-        self.title.setText(name + (" (%s)" % _("in use") if name == self.profiles.current else ""))
-        rows = [(_("Board"), s.get("board_name", "?")), (_("Bed"), size),
-                (_("Rotary attachment"), _("yes") if config.is_true(s.get("rotary", "0")) else _("no"))]
-        if config.is_true(s.get("pre_exec", "0")) or config.is_true(s.get("post_exec", "0")):
-            rows.append((_("Programs"), _("before / after a job")))
-        hint = theme.token("hint")
-        self.summary.setText("<table cellspacing='4'>%s</table>" % "".join(
-            "<tr><td style='color:%s; padding-right:12px'>%s</td><td>%s</td></tr>" % (hint, k, v) for k, v in rows))
+        self._stash()
+        if self.form is not None:
+            self.form_box.removeWidget(self.form)
+            self.form.hide()
+            self.form.deleteLater()
+            self.form = None
+        self._form_name = name
         n = len(self.profiles.items)
         self.count.setText(ngettext("%d laser", "%d lasers", n) % n)
+        if name is None:
+            self.title.setText("")
+            return
+        self.title.setText(name + (" (%s)" % _("in use") if name == self.profiles.current else ""))
+        self.form = SettingsForm(self._values_of(name), machine=True, window=self.window)
+        self.form_box.addWidget(self.form)
         self.buttons["use"].setEnabled(name != self.profiles.current)
         self.buttons["delete"].setEnabled(len(self.profiles.items) > 1)
+
+    def _save_edits(self):
+        """Write the changed settings of every laser; the laser in use's go into the window."""
+        self._stash()
+        for name, new in list(self.edits.items()):
+            if name not in self.profiles.names():
+                continue
+            if name == self.profiles.current:
+                changed = {k for k in new if str(new[k]) != str(self.window.values.get(k, ""))}
+                if changed:
+                    self.window._apply_settings(new, changed)
+                    self.window._store_profile()
+            else:
+                self.profiles.set(name, profiles_core.from_values(new))
+        self.edits.clear()
+        try:
+            profiles_core.save(self.profiles)
+        except OSError as e:
+            self.window.status(_("Could not save the lasers: %s") % e, error=True)
+        self._form_name = None
+
+    def _save_and_close(self):
+        self._save_edits()
+        self.window.status(_("The lasers' settings were saved"))
+        self.accept()
 
     def _changed(self, select):
         profiles_core.save(self.profiles)
@@ -153,7 +198,10 @@ class ProfilesDialog(QDialog):
     # ---------------------------------------------------------------- buttons
     def _use(self):
         name = self.selected()
-        if name and self.window.switch_profile(name):
+        if not name:
+            return
+        self._save_edits()                       # its settings as changed here
+        if self.window.switch_profile(name):
             self._fill(name)
 
     def _new(self):
@@ -178,8 +226,13 @@ class ProfilesDialog(QDialog):
         old, new = item.data(Qt.UserRole), item.text().strip()
         if new == old:
             return
+        self._stash()
         try:
             self.profiles.rename(old, new)
+            if old in self.edits:
+                self.edits[new] = self.edits.pop(old)
+            if self._form_name == old:
+                self._form_name = new
         except ValueError:
             self.window.status(_("A laser of this name is already there, or the name is empty."), error=True)
             self._fill(old)
@@ -195,6 +248,7 @@ class ProfilesDialog(QDialog):
                        danger=True) != QMessageBox.Yes:
             return
         was_current = name == self.profiles.current
+        self.edits.pop(name, None)
         self.profiles.remove(name)
         if was_current:
             # the next one goes into the window

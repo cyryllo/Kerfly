@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 20:38+0100\n"
+"POT-Creation-Date: 2026-11-17 21:00+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -447,9 +447,6 @@ msgstr "Ancho de banda"
 msgid "Based on"
 msgstr "Basado en"
 
-msgid "Bed"
-msgstr "Mesa de trabajo"
-
 #, python-format
 msgid "Bed %s × %s mm"
 msgstr "Mesa %s × %s mm"
@@ -468,9 +465,6 @@ msgstr "Pitido al terminar el trabajo"
 
 msgid "Bigger letters"
 msgstr "Letras más grandes"
-
-msgid "Board"
-msgstr "Placa de control"
 
 msgid "Bold"
 msgstr "Negrita"
@@ -1875,13 +1869,13 @@ msgid "Laser is not initialized."
 msgstr "El láser no está conectado."
 
 msgid ""
-"Laser power during the boundary trace, in per cent of the maximum power "
-"(Settings → Machine). Used by M3 boards with power per operation; on "
-"other boards the power knob of the laser sets it"
+"Laser power during the boundary trace, in per cent of the laser's maximum"
+" power. Used by M3 boards with power per operation; on other boards the "
+"power knob of the laser sets it"
 msgstr ""
-"Potencia del láser durante el recorrido del contorno, en porcentaje de la"
-" potencia máxima (Ajustes → Máquina). La usan las placas M3 con potencia "
-"por operación; en otras placas la fija el mando de potencia del láser"
+"Potencia del láser durante el contorno, en porcentaje de la potencia "
+"máxima del láser. La usan las placas M3 con potencia por operación; en "
+"otras placas la fija el mando de potencia del láser"
 
 #, python-format
 msgid "Laser: %s"
@@ -2059,11 +2053,6 @@ msgstr "Convertir los lados de los nodos seleccionados en curvas con tiradores"
 msgid "Make the sides at the selected nodes straight lines"
 msgstr "Convertir en rectas los lados de los nodos seleccionados"
 
-msgid "Manage your lasers: add, duplicate, rename, delete, export, import"
-msgstr ""
-"Gestionar sus láseres: añadir, duplicar, renombrar, borrar, exportar, "
-"importar"
-
 msgid "Margin"
 msgstr "Margen"
 
@@ -2128,6 +2117,9 @@ msgstr ""
 
 msgid "Medium (15 %)"
 msgstr "Media (15 %)"
+
+msgid "Memory"
+msgstr "Memoria"
 
 msgid "Memory and USB"
 msgstr "Memoria y USB"
@@ -2799,9 +2791,6 @@ msgstr "Programa tras un trabajo"
 msgid "Program to run before a job"
 msgstr "Programa antes de un trabajo"
 
-msgid "Programs"
-msgstr "Programas"
-
 msgid "Programs run with a job"
 msgstr "Programas que se ejecutan con un trabajo"
 
@@ -3286,10 +3275,6 @@ msgstr ""
 #, python-format
 msgid "Settings changed; the laser \"%s\" keeps them"
 msgstr "Ajustes cambiados; el láser «%s» los conserva"
-
-#, python-format
-msgid "Settings of the laser: %s"
-msgstr "Ajustes del láser: %s"
 
 #, python-format
 msgid "Settings saved to %s"
@@ -3861,6 +3846,9 @@ msgstr "El láser dejó de responder al terminar el trabajo."
 msgid "The laser was found, but this user may not use its USB port."
 msgstr "Se encontró el láser, pero este usuario no puede usar su puerto USB."
 
+msgid "The lasers' settings were saved"
+msgstr "Se guardaron los ajustes de los láseres"
+
 msgid "The layer of each part of the selected element"
 msgstr "La capa de cada parte del elemento seleccionado"
 
@@ -3946,6 +3934,9 @@ msgstr "El programa ejecutado antes del trabajo informó de un error."
 msgid "The program set to run before the job did not work:"
 msgstr "El programa ajustado para antes del trabajo no funcionó:"
 
+msgid "The program's settings; a laser's are in Settings → Lasers…"
+msgstr "Ajustes del programa; los de un láser están en Ajustes → Láseres…"
+
 msgid "The pyserial library is missing (needed for GRBL boards)."
 msgstr "Falta la biblioteca pyserial (necesaria para placas GRBL)."
 
@@ -3982,15 +3973,6 @@ msgid ""
 msgstr ""
 "El puerto serie de la placa GRBL (Linux: /dev/ttyUSB0 o /dev/ttyACM0; "
 "Windows: COM3, …), guardado en el perfil de este láser"
-
-msgid ""
-"The settings of the laser in use are changed in Settings (board, bed, "
-"power, rotary, trace, programs before and after a job); they are kept in "
-"its profile."
-msgstr ""
-"Los ajustes del láser en uso se cambian en Ajustes (placa, mesa, "
-"potencia, eje rotativo, recorrido, programas antes y después de un "
-"trabajo); se guardan en su perfil."
 
 msgid "The shortcuts of the menus and tools appear here by themselves"
 msgstr "Los atajos de los menús y herramientas aparecen aquí solos"
@@ -4163,6 +4145,9 @@ msgstr "Desa&grupar"
 
 msgid "USB access"
 msgstr "Acceso USB"
+
+msgid "USB connection"
+msgstr "Conexión USB"
 
 msgid "USB data ready"
 msgstr "Datos USB listos"
@@ -4478,11 +4463,23 @@ msgstr "NOMBRE DE SU EMPRESA"
 msgid "You have the newest version (%s)."
 msgstr "Tiene la versión más reciente (%s)."
 
+msgid ""
+"Your lasers and each one's settings (board, bed, homing, power, trace, "
+"rotary, USB): use one, add, duplicate, rename, delete, export, import"
+msgstr ""
+"Tus láseres y los ajustes de cada uno (placa, mesa, origen, potencia, "
+"contorno, eje rotatorio, USB): usar, añadir, duplicar, renombrar, "
+"eliminar, exportar, importar"
+
+msgid ""
+"Your lasers and their settings (board, bed, homing, power, trace, rotary,"
+" USB)"
+msgstr ""
+"Tus láseres y sus ajustes (placa, mesa, origen, potencia, contorno, eje "
+"rotatorio, USB)"
+
 msgid "Your lasers. Double-click a name to change it"
 msgstr "Sus láseres. Doble clic en un nombre para cambiarlo"
-
-msgid "Your lasers: use one, add, duplicate, rename, delete, export, import"
-msgstr "Sus láseres: usar, añadir, duplicar, renombrar, borrar, exportar, importar"
 
 msgid "Zigzag"
 msgstr "Zigzag"
@@ -4499,9 +4496,6 @@ msgstr "Zoom %d%%"
 
 msgid "a program or script (.bat, .sh)"
 msgstr "un programa o script (.bat, .sh)"
-
-msgid "before / after a job"
-msgstr "antes / después de un trabajo"
 
 msgid "beta"
 msgstr "beta"
@@ -4546,9 +4540,6 @@ msgstr "inferior izquierda (la mayoría de láseres GRBL)"
 msgid "middle"
 msgstr "punto medio"
 
-msgid "no"
-msgstr "no"
-
 msgid "none"
 msgstr "ninguno"
 
@@ -4582,9 +4573,6 @@ msgstr "grabado vectorial"
 #, python-format
 msgid "version %s"
 msgstr "versión %s"
-
-msgid "yes"
-msgstr "sí"
 
 #~ msgid ""
 #~ "Choose a drawing tool on the "
@@ -5175,4 +5163,81 @@ msgstr "sí"
 #~ "quemado (grabado ráster una línea cada"
 #~ " 0,2 mm). Líneas grises discontinuas: "
 #~ "movimientos con el láser apagado."
+
+#~ msgid "Bed"
+#~ msgstr "Mesa de trabajo"
+
+#~ msgid "Board"
+#~ msgstr "Placa de control"
+
+#~ msgid ""
+#~ "Laser power during the boundary trace,"
+#~ " in per cent of the maximum "
+#~ "power (Settings → Machine). Used by "
+#~ "M3 boards with power per operation; "
+#~ "on other boards the power knob of"
+#~ " the laser sets it"
+#~ msgstr ""
+#~ "Potencia del láser durante el recorrido"
+#~ " del contorno, en porcentaje de la"
+#~ " potencia máxima (Ajustes → Máquina). "
+#~ "La usan las placas M3 con potencia"
+#~ " por operación; en otras placas la"
+#~ " fija el mando de potencia del "
+#~ "láser"
+
+#~ msgid "Laser settings…"
+#~ msgstr "Ajustes del láser…"
+
+#~ msgid "Manage your lasers: add, duplicate, rename, delete, export, import"
+#~ msgstr ""
+#~ "Gestionar sus láseres: añadir, duplicar, "
+#~ "renombrar, borrar, exportar, importar"
+
+#~ msgid "Programs"
+#~ msgstr "Programas"
+
+#~ msgid "Settings of the laser: %s"
+#~ msgstr "Ajustes del láser: %s"
+
+#~ msgid ""
+#~ "The selected laser's settings (board, "
+#~ "bed, power, rotary, trace, programs "
+#~ "before and after a job): opens "
+#~ "Settings, after switching to this laser"
+#~ " if another one is in use"
+#~ msgstr ""
+#~ "Los ajustes del láser seleccionado "
+#~ "(placa, mesa, potencia, eje rotatorio, "
+#~ "contorno, programas antes y después de"
+#~ " un trabajo): abre Ajustes, tras "
+#~ "cambiar a este láser si se usa "
+#~ "otro"
+
+#~ msgid ""
+#~ "The settings of the laser in use"
+#~ " are changed in Settings (board, bed,"
+#~ " power, rotary, trace, programs before "
+#~ "and after a job); they are kept"
+#~ " in its profile."
+#~ msgstr ""
+#~ "Los ajustes del láser en uso se"
+#~ " cambian en Ajustes (placa, mesa, "
+#~ "potencia, eje rotativo, recorrido, programas"
+#~ " antes y después de un trabajo); "
+#~ "se guardan en su perfil."
+
+#~ msgid "Your lasers: use one, add, duplicate, rename, delete, export, import"
+#~ msgstr ""
+#~ "Sus láseres: usar, añadir, duplicar, "
+#~ "renombrar, borrar, exportar, importar"
+
+#~ msgid "before / after a job"
+#~ msgstr "antes / después de un trabajo"
+
+#~ msgid "no"
+#~ msgstr "no"
+
+#~ msgid "yes"
+#~ msgstr "sí"
 

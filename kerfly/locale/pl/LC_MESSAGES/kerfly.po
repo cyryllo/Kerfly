@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 20:38+0100\n"
+"POT-Creation-Date: 2026-11-17 21:00+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -448,9 +448,6 @@ msgstr "Szer. pasa"
 msgid "Based on"
 msgstr "Oparty na"
 
-msgid "Bed"
-msgstr "Stół roboczy"
-
 #, python-format
 msgid "Bed %s × %s mm"
 msgstr "Stół %s × %s mm"
@@ -469,9 +466,6 @@ msgstr "Sygnał dźwiękowy po zadaniu"
 
 msgid "Bigger letters"
 msgstr "Większe litery"
-
-msgid "Board"
-msgstr "Płyta sterująca"
 
 msgid "Bold"
 msgstr "Pogrubienie"
@@ -1851,13 +1845,13 @@ msgid "Laser is not initialized."
 msgstr "Laser nie jest połączony."
 
 msgid ""
-"Laser power during the boundary trace, in per cent of the maximum power "
-"(Settings → Machine). Used by M3 boards with power per operation; on "
-"other boards the power knob of the laser sets it"
+"Laser power during the boundary trace, in per cent of the laser's maximum"
+" power. Used by M3 boards with power per operation; on other boards the "
+"power knob of the laser sets it"
 msgstr ""
-"Moc lasera podczas objazdu konturu, w procentach mocy maksymalnej "
-"(Ustawienia → Maszyna). Działa na płytach M3 z mocą dla każdej operacji; "
-"na innych płytach moc ustawia pokrętło lasera"
+"Moc lasera podczas objazdu konturu, w procentach mocy maksymalnej lasera."
+" Używana przez płyty M3 z mocą dla każdej operacji; na innych płytach moc"
+" ustawia pokrętło lasera"
 
 #, python-format
 msgid "Laser: %s"
@@ -2039,11 +2033,6 @@ msgstr ""
 msgid "Make the sides at the selected nodes straight lines"
 msgstr "Zamień boki przy zaznaczonych węzłach na proste"
 
-msgid "Manage your lasers: add, duplicate, rename, delete, export, import"
-msgstr ""
-"Zarządzaj laserami: dodaj, duplikuj, zmień nazwę, usuń, eksportuj, "
-"importuj"
-
 msgid "Margin"
 msgstr "Margines"
 
@@ -2109,6 +2098,9 @@ msgstr ""
 
 msgid "Medium (15 %)"
 msgstr "Średnia (15 %)"
+
+msgid "Memory"
+msgstr "Pamięć"
 
 msgid "Memory and USB"
 msgstr "Pamięć i USB"
@@ -2772,9 +2764,6 @@ msgstr "Program uruchamiany po zadaniu"
 msgid "Program to run before a job"
 msgstr "Program uruchamiany przed zadaniem"
 
-msgid "Programs"
-msgstr "Programy"
-
 msgid "Programs run with a job"
 msgstr "Programy uruchamiane przy zadaniu"
 
@@ -3257,10 +3246,6 @@ msgstr ""
 #, python-format
 msgid "Settings changed; the laser \"%s\" keeps them"
 msgstr "Ustawienia zmienione; laser „%s” je zapamiętał"
-
-#, python-format
-msgid "Settings of the laser: %s"
-msgstr "Ustawienia lasera: %s"
 
 #, python-format
 msgid "Settings saved to %s"
@@ -3815,6 +3800,9 @@ msgstr ""
 "Laser został znaleziony, ale ten użytkownik nie ma dostępu do jego portu "
 "USB."
 
+msgid "The lasers' settings were saved"
+msgstr "Ustawienia laserów zapisane"
+
 msgid "The layer of each part of the selected element"
 msgstr "Warstwa każdej części zaznaczonego elementu"
 
@@ -3899,6 +3887,9 @@ msgstr "Program uruchomiony przed zadaniem zgłosił błąd."
 msgid "The program set to run before the job did not work:"
 msgstr "Program ustawiony na przed zadaniem nie zadziałał:"
 
+msgid "The program's settings; a laser's are in Settings → Lasers…"
+msgstr "Ustawienia programu; ustawienia lasera są w Ustawienia → Lasery…"
+
 msgid "The pyserial library is missing (needed for GRBL boards)."
 msgstr "Brakuje biblioteki pyserial (potrzebnej dla płyt GRBL)."
 
@@ -3934,15 +3925,6 @@ msgid ""
 msgstr ""
 "Port szeregowy płyty GRBL (Linux: /dev/ttyUSB0 albo /dev/ttyACM0; "
 "Windows: COM3, …), zapamiętywany w profilu tego lasera"
-
-msgid ""
-"The settings of the laser in use are changed in Settings (board, bed, "
-"power, rotary, trace, programs before and after a job); they are kept in "
-"its profile."
-msgstr ""
-"Ustawienia lasera w użyciu zmieniasz w Ustawieniach (płyta, stół, moc, oś"
-" obrotowa, objazd konturu, programy przed zadaniem i po nim); zapisują "
-"się w jego profilu."
 
 msgid "The shortcuts of the menus and tools appear here by themselves"
 msgstr "Skróty z menu i narzędzi pojawiają się tu same"
@@ -4112,6 +4094,9 @@ msgstr "Roz&grupuj"
 
 msgid "USB access"
 msgstr "Dostęp do USB"
+
+msgid "USB connection"
+msgstr "Połączenie USB"
 
 msgid "USB data ready"
 msgstr "Dane USB gotowe"
@@ -4427,13 +4412,23 @@ msgstr "NAZWA TWOJEJ FIRMY"
 msgid "You have the newest version (%s)."
 msgstr "Masz najnowszą wersję (%s)."
 
+msgid ""
+"Your lasers and each one's settings (board, bed, homing, power, trace, "
+"rotary, USB): use one, add, duplicate, rename, delete, export, import"
+msgstr ""
+"Twoje lasery i ustawienia każdego z nich (płyta, stół, bazowanie, moc, "
+"objazd konturu, oś obrotowa, USB): użyj, dodaj, duplikuj, zmień nazwę, "
+"usuń, eksportuj, importuj"
+
+msgid ""
+"Your lasers and their settings (board, bed, homing, power, trace, rotary,"
+" USB)"
+msgstr ""
+"Twoje lasery i ich ustawienia (płyta, stół, bazowanie, moc, objazd "
+"konturu, oś obrotowa, USB)"
+
 msgid "Your lasers. Double-click a name to change it"
 msgstr "Twoje lasery. Kliknij dwukrotnie nazwę, aby ją zmienić"
-
-msgid "Your lasers: use one, add, duplicate, rename, delete, export, import"
-msgstr ""
-"Twoje lasery: użyj, dodaj, duplikuj, zmień nazwę, usuń, eksportuj, "
-"importuj"
 
 msgid "Zigzag"
 msgstr "Zygzak"
@@ -4450,9 +4445,6 @@ msgstr "Powiększenie %d%%"
 
 msgid "a program or script (.bat, .sh)"
 msgstr "program albo skrypt (.bat, .sh)"
-
-msgid "before / after a job"
-msgstr "przed / po zadaniu"
 
 msgid "beta"
 msgstr "beta"
@@ -4497,9 +4489,6 @@ msgstr "lewy dolny (większość laserów GRBL)"
 msgid "middle"
 msgstr "połowa"
 
-msgid "no"
-msgstr "nie"
-
 msgid "none"
 msgstr "brak"
 
@@ -4533,9 +4522,6 @@ msgstr "obrys"
 #, python-format
 msgid "version %s"
 msgstr "wersja %s"
-
-msgid "yes"
-msgstr "tak"
 
 #~ msgid ""
 #~ "Choose a drawing tool on the "
@@ -5116,4 +5102,79 @@ msgstr "tak"
 #~ "(grawer rastrowy jedna linia co 0,2 "
 #~ "mm). Szare przerywane linie: ruchy z "
 #~ "wyłączonym laserem."
+
+#~ msgid "Bed"
+#~ msgstr "Stół roboczy"
+
+#~ msgid "Board"
+#~ msgstr "Płyta sterująca"
+
+#~ msgid ""
+#~ "Laser power during the boundary trace,"
+#~ " in per cent of the maximum "
+#~ "power (Settings → Machine). Used by "
+#~ "M3 boards with power per operation; "
+#~ "on other boards the power knob of"
+#~ " the laser sets it"
+#~ msgstr ""
+#~ "Moc lasera podczas objazdu konturu, w"
+#~ " procentach mocy maksymalnej (Ustawienia →"
+#~ " Maszyna). Działa na płytach M3 z "
+#~ "mocą dla każdej operacji; na innych "
+#~ "płytach moc ustawia pokrętło lasera"
+
+#~ msgid "Laser settings…"
+#~ msgstr "Ustawienia lasera…"
+
+#~ msgid "Manage your lasers: add, duplicate, rename, delete, export, import"
+#~ msgstr ""
+#~ "Zarządzaj laserami: dodaj, duplikuj, zmień "
+#~ "nazwę, usuń, eksportuj, importuj"
+
+#~ msgid "Programs"
+#~ msgstr "Programy"
+
+#~ msgid "Settings of the laser: %s"
+#~ msgstr "Ustawienia lasera: %s"
+
+#~ msgid ""
+#~ "The selected laser's settings (board, "
+#~ "bed, power, rotary, trace, programs "
+#~ "before and after a job): opens "
+#~ "Settings, after switching to this laser"
+#~ " if another one is in use"
+#~ msgstr ""
+#~ "Ustawienia zaznaczonego lasera (płyta, stół,"
+#~ " moc, oś obrotowa, objazd konturu, "
+#~ "programy przed zadaniem i po nim): "
+#~ "otwiera Ustawienia, a gdy w użyciu "
+#~ "jest inny laser, najpierw przełącza na"
+#~ " ten"
+
+#~ msgid ""
+#~ "The settings of the laser in use"
+#~ " are changed in Settings (board, bed,"
+#~ " power, rotary, trace, programs before "
+#~ "and after a job); they are kept"
+#~ " in its profile."
+#~ msgstr ""
+#~ "Ustawienia lasera w użyciu zmieniasz w"
+#~ " Ustawieniach (płyta, stół, moc, oś "
+#~ "obrotowa, objazd konturu, programy przed "
+#~ "zadaniem i po nim); zapisują się w"
+#~ " jego profilu."
+
+#~ msgid "Your lasers: use one, add, duplicate, rename, delete, export, import"
+#~ msgstr ""
+#~ "Twoje lasery: użyj, dodaj, duplikuj, "
+#~ "zmień nazwę, usuń, eksportuj, importuj"
+
+#~ msgid "before / after a job"
+#~ msgstr "przed / po zadaniu"
+
+#~ msgid "no"
+#~ msgstr "nie"
+
+#~ msgid "yes"
+#~ msgstr "tak"
 
