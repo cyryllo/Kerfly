@@ -560,6 +560,7 @@ class GeneratorDialog(QDialog):
         self.preview_tabs = QTabWidget()
         self.preview_tabs.setObjectName("preview_tabs")
         self.preview_tabs.setDocumentMode(True)
+        self.preview_tabs.tabBar().setDrawBase(False)      # no line over the switch (it is not a tab row)
         self.preview_tabs.addTab(self.view, _("Parts"))
         self.preview_tabs.addTab(self.box3d, _("3D"))
         self.preview_tabs.setTabToolTip(1, _("The box put together from its parts (drag to turn it)"))
