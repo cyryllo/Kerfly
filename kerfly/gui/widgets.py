@@ -3,14 +3,27 @@ Small building blocks shared by the window and the dialogs, so each of them
 looks and behaves the same everywhere: a field's caption with its icon, an
 icon button, a hint, a section title, a "beta" badge, a separator.
 
+The dialog pattern (every dialog is built of these):
+
+- DialogBody: the light area with the content (PAD_DIALOG inside);
+- Section: a bold title over a form of captions (icon, text, tooltip) on the
+  left and fields on the right; a feature not yet confirmed on a laser gets a
+  "beta" badge by its caption;
+- PreviewBar: the 44 px bar over a preview, with its view switches;
+- DialogFooter: an information on the left, then Cancel and the action named
+  for what it does ("Nest", "Save", "Delete laser"; never "OK") on the right;
+  the buttons stay those of a QDialogButtonBox (keyboard, tests);
+- dialog_layout(): puts them together without margins.
+
 Their look comes from theme.py: sizes from its constants, colours from the
 style sheet through the widget's "role" property (no colour is set here).
 
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QToolButton, QWidget
+from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtWidgets import (QButtonGroup, QDialogButtonBox, QFrame, QGridLayout, QHBoxLayout, QLabel,
+                               QToolButton, QVBoxLayout, QWidget)
 
 from kerfly.gui import icons, theme
 from kerfly.i18n import _
@@ -118,3 +131,182 @@ def separator(vertical=True):
     line.setFrameShape(QFrame.VLine if vertical else QFrame.HLine)
     line.setFrameShadow(QFrame.Plain)
     return set_role(line, "divider")
+
+
+def beta_caption(widget):
+    """A caption (or a check box) with the beta badge after it."""
+    box = QWidget()
+    row = QHBoxLayout(box)
+    row.setContentsMargins(0, 0, 0, 0)
+    row.setSpacing(theme.SPACE_M)
+    row.addWidget(widget)
+    row.addWidget(beta_badge())
+    row.addStretch(1)
+    return box
+
+
+# ---- the dialog pattern -----------------------------------------------------------------------------
+
+class DialogBody(QFrame):
+    """The light area of a dialog with its content; .layout() is a QVBoxLayout."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setObjectName("dialog_body")
+        v = QVBoxLayout(self)
+        v.setContentsMargins(theme.PAD_DIALOG, theme.PAD_DIALOG, theme.PAD_DIALOG, theme.PAD_DIALOG)
+        v.setSpacing(theme.SPACE_L)
+
+    def add(self, widget, stretch=0):
+        self.layout().addWidget(widget, stretch)
+        return widget
+
+
+class Section(QWidget):
+    """A section of a form: a bold title, then rows of a caption (left) and a field (right)."""
+
+    def __init__(self, title=None, beta=False, parent=None):
+        """beta: the badge by the title (the whole section is new)."""
+        super().__init__(parent)
+        v = QVBoxLayout(self)
+        v.setContentsMargins(0, 0, 0, 0)
+        v.setSpacing(theme.SPACE_ROW)
+        self.title = None
+        if title:
+            self.title = section_title(title)
+            v.addWidget(beta_caption(self.title) if beta else self.title)
+        self.grid = QGridLayout()
+        self.grid.setHorizontalSpacing(theme.SPACE_L)
+        self.grid.setVerticalSpacing(theme.SPACE_ROW)
+        self.grid.setColumnStretch(0, 1)
+        v.addLayout(self.grid)
+
+    def add_row(self, icon, text, tip, field, beta=False):
+        """A field with its caption (icon, text, both with the tooltip)."""
+        cap = caption(icon, text, tip)
+        if beta:
+            cap.layout().insertWidget(2, beta_badge())
+        if not field.toolTip():
+            field.setToolTip(tip)
+        r = self.grid.rowCount()
+        self.grid.addWidget(cap, r, 0)
+        self.grid.addWidget(field, r, 1)
+        return field
+
+    def add_wide(self, widget, beta=False):
+        """A widget across both columns (a check box with its own text, a hint)."""
+        self.grid.addWidget(beta_caption(widget) if beta else widget, self.grid.rowCount(), 0, 1, 2)
+        return widget
+
+
+class PreviewBar(QFrame):
+    """The bar over a preview (HEIGHT_ACTION): view switches on the left, more on the right after a stretch."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setObjectName("preview_bar")
+        self.setFixedHeight(theme.HEIGHT_ACTION)
+        row = QHBoxLayout(self)
+        row.setContentsMargins(theme.SPACE_L, 0, theme.SPACE_L, 0)
+        row.setSpacing(theme.SPACE_L)
+
+    def add(self, widget):
+        self.layout().addWidget(widget)
+        return widget
+
+    def add_separator(self):
+        self.layout().addWidget(separator())
+
+    def add_stretch(self):
+        self.layout().addStretch(1)
+
+
+class Segmented(QWidget):
+    """Buttons of which one is on (Parts | 3D); toggled(key) when another is chosen."""
+    toggled = Signal(str)
+
+    def __init__(self, options, current=None, parent=None):
+        """options: [(key, text, tooltip)]."""
+        super().__init__(parent)
+        row = QHBoxLayout(self)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(0)
+        self.group = QButtonGroup(self)
+        self.buttons = {}
+        for key, text, tip in options:
+            b = QToolButton()
+            b.setText(text)
+            b.setToolTip(tip)
+            b.setCheckable(True)
+            b.setFixedHeight(theme.HEIGHT_FIELD - 2)
+            set_role(b, "segment")
+            self.group.addButton(b)
+            self.buttons[key] = b
+            row.addWidget(b)
+            b.toggled.connect(lambda on, k=key: on and self.toggled.emit(k))
+        self.set_current(current or options[0][0])
+
+    def current(self):
+        return next(k for k, b in self.buttons.items() if b.isChecked())
+
+    def set_current(self, key):
+        self.buttons[key].setChecked(True)
+
+
+class DialogFooter(QFrame):
+    """The footer of a dialog: an information on the left (.info), then the buttons of a QDialogButtonBox
+    (.box) in the style's order, Cancel first and the named action last."""
+
+    PRIMARY = (QDialogButtonBox.Ok, QDialogButtonBox.Save, QDialogButtonBox.Apply, QDialogButtonBox.Yes,
+               QDialogButtonBox.Open)
+
+    def __init__(self, action=None, buttons=QDialogButtonBox.Ok | QDialogButtonBox.Cancel, danger=False,
+                 parent=None):
+        super().__init__(parent)
+        self.setObjectName("dialog_footer")
+        row = QHBoxLayout(self)
+        row.setContentsMargins(theme.SPACE_L, theme.SPACE_L, theme.SPACE_L, theme.SPACE_L)
+        row.setSpacing(theme.SPACE_M)
+        self.info = label("", "hint", wrap=False)
+        row.addWidget(self.info, 1)
+        self.box = QDialogButtonBox(buttons)
+        row.addWidget(self.box)
+        self.primary = next((self.box.button(b) for b in self.PRIMARY if self.box.button(b) is not None), None)
+        for b in self.box.buttons():
+            self.style_button(b, "secondary")
+        if self.primary is not None:
+            if action:
+                self.primary.setText(action)
+            self.style_button(self.primary, "danger" if danger else "primary")
+
+    @staticmethod
+    def style_button(button, role):
+        button.setMinimumWidth(theme.BUTTON_MIN_WIDTH)
+        button.setFixedHeight(theme.HEIGHT_BUTTON)
+        set_role(button, role)
+
+    def add_button(self, text, role=QDialogButtonBox.ActionRole, tip=""):
+        """One more button (e.g. "Defaults"); the style puts it by its role."""
+        b = self.box.addButton(text, role)
+        if tip:
+            b.setToolTip(tip)
+        self.style_button(b, "secondary")
+        return b
+
+    def connect(self, dialog):
+        self.box.accepted.connect(dialog.accept)
+        self.box.rejected.connect(dialog.reject)
+
+
+def dialog_layout(dialog, body, footer, preview_bar=None):
+    """A dialog's layout: [preview bar,] body, footer, edge to edge."""
+    v = QVBoxLayout(dialog)
+    v.setContentsMargins(0, 0, 0, 0)
+    v.setSpacing(0)
+    if preview_bar is not None:
+        v.addWidget(preview_bar)
+    v.addWidget(body, 1)
+    v.addWidget(footer)
+    if footer.primary is not None:
+        footer.primary.setDefault(True)          # Enter: the action (only once the button is in the dialog)
+    return v

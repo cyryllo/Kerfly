@@ -31,11 +31,15 @@ ICON_LARGE = 24          # big ribbon buttons, the drawing tools strip
 SPACE_S = 4              # between the parts of one control (icon and its caption)
 SPACE_M = 8              # between controls in a row
 SPACE_L = 12             # around a panel or a dialog's sections
+SPACE_ROW = 6            # between the rows of a form
+PAD_DIALOG = 16          # inside a dialog's body
 HEIGHT_FIELD = 28        # fields, small icon buttons, list rows
 HEIGHT_BUTTON = 32       # text buttons of a dialog's footer
 HEIGHT_ACTION = 44       # the job's buttons (Trace, Start, Pause, Stop), a dialog's preview bar
 HEIGHT_OPTION_ROW = 36   # one row of the options bar
 RADIUS = 4               # rounded corners of buttons, fields and frames
+BUTTON_MIN_WIDTH = 88    # a dialog's footer buttons
+DIALOG_SMALL = 440       # the width of a small dialog (a question, a few fields)
 
 TOKENS = {
     "light": {
@@ -46,6 +50,8 @@ TOKENS = {
         # text and icons
         "ink": "#2b2f36", "arrow": "#202124", "hint": "#4b5563", "caption": "#5b6370", "disabled": "#7a818c",
         "accent": "#2f6aa8", "accent_dark": "#1f4f82",
+        # the named action of a dialog (white text on it)
+        "primary": "#2f6aa8", "primary_hover": "#1f4f82",
         # a button that is on (a tool, the aspect lock)
         "on_bg": "#dce6f2", "on_border": "#9db8d6", "on_ink": "#1f4f82",
         # states
@@ -58,11 +64,12 @@ TOKENS = {
         "swatch_border": "#555555",
     },
     "dark": {
-        "window": "#30343a", "panel": "#24272b", "top_bar": "#2b2f35", "bar_light": "#2b2f34",
+        "window": "#30343a", "panel": "#2b2f34", "top_bar": "#2b2f35", "bar_light": "#2b2f34",
         "top_border": "#1b1e22", "separator": "#4a505a", "field_border": "#5a606a", "divider": "#3a3f46",
         "hover": "#3a3f46",
         "ink": "#d9dce1", "arrow": "#e3e6ea", "hint": "#b4bac3", "caption": "#9aa1ab", "disabled": "#7a8089",
         "accent": "#5a9bd8", "accent_dark": "#2f6aa8",
+        "primary": "#2f6aa8", "primary_hover": "#3a7cc0",
         "on_bg": "#22405f", "on_border": "#2f6aa8", "on_ink": "#cfe2f7",
         "ok": "#66bb6a", "error": "#ef5350", "danger": "#ef5350", "danger_border": "#7a3a38",
         "warn_bg": "#3d3220", "warn_ink": "#ffd27a", "warn_border": "#7a6230", "fire": "#ff8a3d",
@@ -111,6 +118,23 @@ QLabel#ribbon_caption { color: $caption; font-size: 10px; padding-bottom: 1px; }
 QFrame#ribbon_separator { color: $separator; margin: 4px 0px; }
 QGroupBox QLabel, QGroupBox QCheckBox { font-weight:normal; }
 QStatusBar[error="true"] { color: $error; }
+
+/* the dialog pattern (kerfly/gui/widgets.py): a body, a footer with Cancel and the named action,
+   sections, a preview bar */
+QFrame#dialog_body { background: $panel; }
+QFrame#dialog_footer { background: $top_bar; border-top: 1px solid $separator; }
+QFrame#preview_bar { background: $bar_light; border-bottom: 1px solid $separator; }
+QPushButton[role="primary"], QPushButton[role="danger"], QPushButton[role="secondary"] {
+    border-radius: ${radius}px; padding: 0px 12px; }
+QPushButton[role="secondary"] { background: $panel; border: 1px solid $field_border; }
+QPushButton[role="secondary"]:hover { background: $top_bar; }
+QPushButton[role="primary"] { background: $primary; border: 1px solid $primary; color: $action_ink; font-weight: 600; }
+QPushButton[role="primary"]:hover { background: $primary_hover; border-color: $primary_hover; }
+QPushButton[role="danger"] { background: $danger; border: 1px solid $danger; color: $action_ink; font-weight: 600; }
+QPushButton[role="primary"]:disabled, QPushButton[role="danger"]:disabled {
+    background: $start_off; border-color: $start_off; }
+QToolButton[role="segment"] { background: $panel; border: 1px solid $field_border; padding: 0px 10px; }
+QToolButton[role="segment"]:checked { background: $on_bg; color: $on_ink; font-weight: 600; }
 
 /* roles (kerfly/gui/widgets.py) */
 QLabel[role="hint"] { color: $hint; }
@@ -167,6 +191,22 @@ def style_sheet(resolved=None):
     return STYLE.substitute(TOKENS[resolved or _current], radius=RADIUS)
 
 
+def make_style():
+    """Fusion, with the dialogs' buttons in one order on every system: Cancel first, then the named action
+    on the right (GNOME's order), and no icons on them (the mockups show none)."""
+    from PySide6.QtWidgets import QDialogButtonBox, QProxyStyle, QStyle, QStyleFactory
+
+    class KerflyStyle(QProxyStyle):
+        def styleHint(self, hint, option=None, widget=None, data=None):
+            if hint == QStyle.SH_DialogButtonLayout:
+                return QDialogButtonBox.GnomeLayout.value
+            if hint == QStyle.SH_DialogButtonBox_ButtonsHaveIcons:
+                return 0
+            return super().styleHint(hint, option, widget, data)
+
+    return KerflyStyle(QStyleFactory.create("Fusion"))
+
+
 def light_palette(app):
     """Fusion's light palette with the window's own surfaces and the accent colour."""
     from PySide6.QtGui import QColor, QPalette
@@ -208,7 +248,7 @@ def apply(app, name):
     global _current
     from kerfly.gui import icons
     _current = resolve(name)
-    app.setStyle("Fusion")
+    app.setStyle(make_style())
     if _current == "dark":
         app.setPalette(dark_palette())
     else:

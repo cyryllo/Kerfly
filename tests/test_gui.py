@@ -1349,6 +1349,36 @@ def main():
     check("Join into a polyline (Ctrl+J): a triangle of lines closed, a 0.04 mm gap joined, 0.2 mm and a lone "
           "line kept, in place, one undo step (home upper left and upper right)", all(joins), "(%s)" % joins)
 
+    # 28c2. The dialog pattern (kerfly/gui/widgets.py): a body, a footer with Cancel first and the action named
+    # for what it does (never "OK", role primary, the theme's height), a beta badge by a new section; the
+    # style puts every dialog's buttons in that order and without icons (also a message box)
+    from PySide6.QtWidgets import QDialogButtonBox as _DBB, QLabel as _QL, QMessageBox as _QMB, QStyle as _QS
+    from kerfly.gui import theme as _th
+    from kerfly.gui.gcode_dialog import GcodeDialog as _GD
+    from kerfly.gui.nest_dialog import NestDialog as _ND
+    pattern = []
+    for dlg, action in ((_ND({}, (300, 200), 2), _("Nest")), (_GD({}), _("Save…"))):
+        dlg.show()
+        app.processEvents()
+        box = dlg.findChild(_DBB)
+        ok_b, cancel_b = box.button(_DBB.Ok), box.button(_DBB.Cancel)
+        badges = [lb for lb in dlg.findChildren(_QL) if lb.property("role") == "beta"]
+        pattern.append((ok_b.text() == action and ok_b.property("role") == "primary" and ok_b.isDefault()
+                        and ok_b.height() == _th.HEIGHT_BUTTON and cancel_b.mapTo(dlg, cancel_b.rect().topLeft()).x()
+                        < ok_b.mapTo(dlg, ok_b.rect().topLeft()).x() and ok_b.icon().isNull(),
+                        len(badges)))
+        dlg.close()
+    mb = _QMB(_QMB.Question, "?", "?", _QMB.Yes | _QMB.No)
+    mb.show()
+    app.processEvents()
+    mb_order = mb.button(_QMB.No).x() < mb.button(_QMB.Yes).x()
+    mb.close()
+    check("dialog pattern: Cancel first, the named action (role primary, default, 32 px, no icon) last; beta "
+          "badge in the G-code dialog only; a message box's buttons in the same order",
+          [p[0] for p in pattern] == [True, True] and [p[1] for p in pattern] == [0, 1] and mb_order
+          and app.style().styleHint(_QS.SH_DialogButtonBox_ButtonsHaveIcons) == 0,
+          "(%s, message box %s)" % (pattern, mb_order))
+
     # 28d. Nest on the bed (Ctrl+Shift+N): the selected parts laid out inside the bed with the gap between them,
     # nothing over another; what does not fit on more sheets (groups Sheet N, sheets 2 and on unticked); a group
     # moves as one part (its members keep their places to each other); without turning nothing is turned; a
