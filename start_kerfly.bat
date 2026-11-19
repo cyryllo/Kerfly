@@ -4,7 +4,8 @@ rem the .venv folder and installs the libraries (needs internet, a few minutes).
 cd /d "%~dp0"
 if not exist ".venv\Scripts\python.exe" (
     echo Creating the Python environment in .venv ...
-    py -3 -m venv .venv 2>nul || python -m venv .venv
+    rem Python 3.13 when it is there (the libraries have ready packages for it), else the newest one
+    py -3.13 -m venv .venv 2>nul || py -3 -m venv .venv 2>nul || python -m venv .venv
     if not exist ".venv\Scripts\python.exe" (
         echo.
         echo Python was not found. Install Python 3 from https://www.python.org/downloads/

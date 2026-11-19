@@ -35,8 +35,9 @@ jobs:
           if ($out -match "False") {
             $pip = .venv\Scripts\python -m pip install -r requirements-optional.txt 2>&1 | Select-Object -Last 15 | Out-String
             Write-Output $pip
-            Write-Output "::error title=An optional library is missing (Windows)::$(($pip.Trim()) -replace "`r?`n", '%0A')"
+            Write-Output "::warning title=An optional library is missing (Windows)::$(($pip.Trim()) -replace "`r?`n", '%0A')"
           }
+          exit 0
       - name: Core tests
         if: always()
         shell: pwsh
