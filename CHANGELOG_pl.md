@@ -39,7 +39,7 @@ oknie.
   wysyłającego. Początek w lewym dolnym rogu stołu albo w lewym górnym rogu
   projektu, pełna moc S (`$30`) i najazd są zapamiętywane w profilu lasera.
   Przetestowane na laserze GRBL.
-- **Lasery GRBL podłączone do Kerfly**: Ustawienia → Maszyna → Maszyna:
+- **Lasery GRBL podłączone do Kerfly**: Ustawienia → Lasery… → Maszyna:
   płyta GRBL, port szeregowy (port, prędkość, róg bazowania, prędkość
   przesuwu i pełna moc S, zapamiętywane w profilu lasera). Działają na nim
   Połącz, Bazuj (`$H`), Odblokuj (`$X`), strzałki i przyciski narożników
@@ -96,7 +96,7 @@ oknie.
   **Do głowicy** i **Projekt podąża za głowicą** przysuwają do głowicy ten sam
   róg projektu (wcześniej zawsze lewy górny, więc przy bazie na dole projekt
   lądował pod stołem). Górne rogi K40 wysyłają te same dane co dotąd.
-- **Nadmuch powietrza dla lasera GRBL** (Ustawienia → Lasery → Sterownik):
+- **Nadmuch powietrza dla lasera GRBL** (Ustawienia → Lasery… → Sterownik):
   `M8` na początku zadania, `M9` na końcu (także w Zapisz G-code); domyślnie
   wyłączony, G-code jak dotąd.
 - **Ustawienia lasera pokazują tylko to, co ma jego maszyna**: laser GRBL nie

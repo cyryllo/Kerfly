@@ -43,7 +43,7 @@ a window of its own.
   Origin at the bed's lower left corner or at the design's upper left corner,
   full power S (`$30`) and the overscan are asked and kept with the laser
   profile. Tested on a GRBL laser.
-- **GRBL lasers connected to Kerfly**: Settings → Machine → Machine:
+- **GRBL lasers connected to Kerfly**: Settings → Lasers… → Machine:
   GRBL board, serial port (its port, speed, home corner, jog speed and full
   power S, kept in the laser profile). Connect, Home (`$H`), Unlock (`$X`),
   the arrows and corner buttons (jog), Trace boundary, Start (G-code streamed
