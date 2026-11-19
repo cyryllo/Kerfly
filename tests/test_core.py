@@ -1884,6 +1884,17 @@ def test_release_notes():
     links = set(_re.findall(r"/blob/([^/]+)/", rn.downloads_preview_pl("2.0.0b2") + rn.downloads_preview_en(
         "2.0.0b2") + rn.downloads_pl("1.8.0") + rn.downloads_en("1.8.0")))
     check("download links point at the tags", links == {"2.0b2", "v1.8.0"}, str(links))
+    # a beta's text is its own (what changed since the previous beta), Polish first, with the warning and the
+    # AppImage; a stable version's comes from the changelogs
+    beta = rn.notes("2.0.0b3")
+    pl_at, en_at = beta.find("Zmiany od Beta 2"), beta.find("Changes since Beta 2")
+    check("a beta's own notes, Polish then English, the warning, the AppImage, links to its tag",
+          beta.startswith("> [!WARNING]") and 0 < pl_at < en_at and "Kerfly-2.0.0b3-x86_64.AppImage" in beta
+          and "### Dodane\n\n- **Połącz w polilinię**" not in beta and "/blob/2.0b3/" in beta
+          and "/blob/v2.0" not in beta)
+    stable = rn.notes("1.8.0")
+    check("a stable version's notes from the changelogs", "[!WARNING]" not in stable and "## Po polsku" in stable
+          and "windows-setup.exe" in stable)
     return errors
 
 

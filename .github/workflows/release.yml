@@ -2,14 +2,16 @@
 # test them with --self-test and --release-test, and on a version tag (vX.Y.Z)
 # publish them as a GitHub release with the notes of that version from
 # CHANGELOG.md. A tag macos-vX.Y.Z builds only the macOS disk images and adds
-# them to the existing release vX.Y.Z.
+# them to the existing release vX.Y.Z. A beta's tag (2.0b3: no "v", it starts
+# with a digit) builds only the AppImage and publishes it as a pre-release with
+# the beta's own notes (packaging/release-notes/, tools/release_notes.py).
 # To try the packages without a release: Actions -> packages -> Run workflow,
 # on any branch (the files are kept as workflow artifacts).
 name: packages
 
 on:
   push:
-    tags: ["v*", "macos-v*"]
+    tags: ["v*", "macos-v*", "[0-9]*"]
   workflow_dispatch:
 
 permissions:
@@ -27,7 +29,8 @@ env:
 
 jobs:
   windows:
-    if: ${{ !startsWith(github.ref, 'refs/tags/macos-') }}
+    # not for macos-vX.Y.Z, nor for a beta (only the AppImage for now)
+    if: ${{ !startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/tags/v') }}
     runs-on: windows-latest
     timeout-minutes: 40
     steps:
@@ -137,6 +140,8 @@ jobs:
             arch: arm64
           - runner: macos-15-intel      # older Macs with an Intel processor
             arch: x86_64
+    # not for a beta (only the AppImage for now)
+    if: ${{ !startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/macos-v') }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 40
     steps:
@@ -225,4 +230,30 @@ jobs:
         with:
           name: ${{ steps.notes.outputs.title }}
           body_path: notes.md
+          files: packages/*
+
+  # a beta's tag (2.0b3): the AppImage as a pre-release, with the beta's own notes (what changed since the
+  # previous beta, packaging/release-notes/<version>.md and .pl.md) and the development-version warning
+  prerelease:
+    if: ${{ startsWith(github.ref, 'refs/tags/') && !startsWith(github.ref, 'refs/tags/v') && !startsWith(github.ref, 'refs/tags/macos-') }}
+    needs: [linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v8
+        with:
+          name: linux
+          path: packages
+      - name: Notes of the beta
+        id: notes
+        run: |
+          python3 tools/release_notes.py current > notes.md
+          echo "title=Kerfly $(python3 -c 'import kerfly; print(kerfly.__version__)')" >> "$GITHUB_OUTPUT"
+      - uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ steps.notes.outputs.title }}
+          body_path: notes.md
+          prerelease: true
           files: packages/*

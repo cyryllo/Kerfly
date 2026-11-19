@@ -199,6 +199,16 @@ version tag (`vX.Y.Z`) publishes them as a GitHub release with notes from
 [CHANGELOG.md](CHANGELOG.md) (`tools/release_notes.py`). To try the packages
 without a release: Actions → packages → Run workflow.
 
+**Betas of the 2.0 line** are tagged without "v" and without the last ".0"
+(`2.0b3` for version 2.0.0b3 in `kerfly/__init__.py`). Such a tag builds only
+the AppImage (with its `--self-test` and `--release-test`) and publishes it as a
+GitHub **pre-release**: the development-version warning, then the beta's own
+text, Polish first: `packaging/release-notes/<version>.pl.md` and
+`<version>.md`, only what changed since the previous beta, ending with a link to
+the full changelog. Write both files before tagging; check the text with
+`python tools/release_notes.py current`. The update check of 1.x ignores
+pre-releases.
+
 **When GitHub cannot build the AppImage** (its Ubuntu runners could not reach
 Ubuntu's package servers on 2026-11-11), build it on your computer:
 `packaging/linux/build-appimage-docker.sh v1.3.2` builds that version from a

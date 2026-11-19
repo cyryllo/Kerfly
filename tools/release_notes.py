@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """
-Print the CHANGELOG.md section of a version, for the GitHub release page:
+Print the release text of a version, for the GitHub release page:
 
     python tools/release_notes.py 0.18.0 > notes.md
+    python tools/release_notes.py current > notes.md     (the version of this code, e.g. 2.0.0b3)
+
+A stable version: its CHANGELOG.md / CHANGELOG_pl.md sections. A beta: its own
+text in packaging/release-notes/ (what changed since the previous beta).
 
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
@@ -117,21 +121,32 @@ def downloads_preview_en(version):
         "Details: [running from source](%s). The settings are shared with the 1.x version." % guide])
 
 
+def own_notes(version, language=""):
+    """The text written for one development version (only what changed since the previous beta), in
+    packaging/release-notes/<version>.pl.md (Polish) and <version>.md (English); "" when there is none."""
+    path = os.path.join(ROOT, "packaging", "release-notes", version + ("." + language if language else "") + ".md")
+    if not os.path.isfile(path):
+        return ""
+    with open(path, encoding="utf-8") as f:
+        return f.read().strip()
+
+
 def notes(version):
     """The release text: Polish first (CHANGELOG_pl.md), then English (CHANGELOG.md); a development version
     gets a warning at the top and in its downloads only the AppImage and running from source (start_kerfly.bat /
-    start_kerfly.sh). The changelogs' section of a development
-    version is that of its number (2.0.0 for 2.0.0a1)."""
+    start_kerfly.sh). A development version's text is its own (own_notes: what changed since the previous beta)
+    or else the changelogs' section of its number (2.0.0 for 2.0.0a1)."""
     preview = is_preview(version)
     number = re.match(r"^\d+(\.\d+)*", version).group(0) if preview else version
     with open(os.path.join(ROOT, "CHANGELOG.md"), encoding="utf-8") as f:
         text = f.read()
-    english = section(version, text) or (section(number, text) if preview else "")
+    english = (own_notes(version) if preview else "") or section(version, text) or \
+        (section(number, text) if preview else "")
     if not english:
         sys.exit("CHANGELOG.md has no section for %s" % version)
-    polish = ""
+    polish = own_notes(version, "pl") if preview else ""
     pl_path = os.path.join(ROOT, "CHANGELOG_pl.md")
-    if os.path.isfile(pl_path):
+    if not polish and os.path.isfile(pl_path):
         with open(pl_path, encoding="utf-8") as f:
             text = f.read()
         polish = section(version, text) or (section(number, text) if preview else "")
@@ -147,7 +162,12 @@ def notes(version):
 
 
 def main():
-    print(notes(sys.argv[1].lstrip("v")))
+    """The version as given (v1.8.0, 2.0.0b3) or, for the version of the code here, "current"."""
+    version = sys.argv[1].lstrip("v")
+    if version == "current":
+        sys.path.insert(0, ROOT)
+        from kerfly import __version__ as version
+    print(notes(version))
 
 
 if __name__ == "__main__":
