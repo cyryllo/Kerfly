@@ -121,6 +121,15 @@ def downloads_preview_en(version):
         "Details: [running from source](%s). The settings are shared with the 1.x version." % guide])
 
 
+def title(version):
+    """The release's title: "Kerfly 1.8.0", "Kerfly 2.0.0 Beta 3" (2.0.0b3), "Kerfly 2.0.0 Alpha 1"."""
+    m = re.match(r"^(\d+(?:\.\d+)*)[-.]?(a|alpha|b|beta|rc)(\d+)$", version)
+    if not m:
+        return "Kerfly " + version
+    kind = {"a": "Alpha", "alpha": "Alpha", "b": "Beta", "beta": "Beta", "rc": "RC"}[m.group(2)]
+    return "Kerfly %s %s %s" % (m.group(1), kind, m.group(3))
+
+
 def own_notes(version, language=""):
     """The text written for one development version (only what changed since the previous beta), in
     packaging/release-notes/<version>.pl.md (Polish) and <version>.md (English); "" when there is none."""
@@ -167,6 +176,9 @@ def main():
     if version == "current":
         sys.path.insert(0, ROOT)
         from kerfly import __version__ as version
+    if "--title" in sys.argv[2:]:                   # only the release's title
+        print(title(version))
+        return
     print(notes(version))
 
 

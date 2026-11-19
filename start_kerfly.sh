@@ -29,8 +29,12 @@ fi
 # those added in an update; tried once for each change of the list: Kerfly works without them
 if ! cmp -s requirements-optional.txt .venv/kerfly-requirements-optional.txt; then
     echo "Installing the optional libraries ..."
-    .venv/bin/python -m pip install -r requirements-optional.txt || \
-        echo "Some optional libraries were not installed; Kerfly works without them (fewer functions)."
+    # one by one: a library that cannot be installed here does not keep the others out
+    while read -r lib; do
+        [ -n "$lib" ] || continue
+        .venv/bin/python -m pip install "$lib" || \
+            echo "The optional library $lib was not installed; Kerfly works without it (fewer functions)."
+    done < requirements-optional.txt
     cp requirements-optional.txt .venv/kerfly-requirements-optional.txt
 fi
 exec .venv/bin/python kerfly.py "$@"

@@ -1892,6 +1892,8 @@ def test_release_notes():
           beta.startswith("> [!WARNING]") and 0 < pl_at < en_at and "Kerfly-2.0.0b3-x86_64.AppImage" in beta
           and "### Dodane\n\n- **Połącz w polilinię**" not in beta and "/blob/2.0b3/" in beta
           and "/blob/v2.0" not in beta)
+    check("titles: Kerfly 2.0.0 Beta 3, Kerfly 1.8.0", rn.title("2.0.0b3") == "Kerfly 2.0.0 Beta 3"
+          and rn.title("2.0.0a1") == "Kerfly 2.0.0 Alpha 1" and rn.title("1.8.0") == "Kerfly 1.8.0")
     stable = rn.notes("1.8.0")
     check("a stable version's notes from the changelogs", "[!WARNING]" not in stable and "## Po polsku" in stable
           and "windows-setup.exe" in stable)

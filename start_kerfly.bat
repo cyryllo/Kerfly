@@ -34,7 +34,10 @@ rem those added in an update; tried once for each change of the list: Kerfly wor
 fc /b requirements-optional.txt ".venv\kerfly-requirements-optional.txt" >nul 2>nul
 if errorlevel 1 (
     echo Installing the optional libraries ...
-    ".venv\Scripts\python.exe" -m pip install -r requirements-optional.txt || echo Some optional libraries were not installed; Kerfly works without them, with fewer functions.
+    rem one by one: a library that cannot be installed here does not keep the others out
+    for /f "usebackq delims=" %%L in ("requirements-optional.txt") do (
+        ".venv\Scripts\python.exe" -m pip install %%L || echo The optional library %%L was not installed; Kerfly works without it, with fewer functions.
+    )
     copy /y requirements-optional.txt ".venv\kerfly-requirements-optional.txt" >nul
 )
 ".venv\Scripts\python.exe" kerfly.py %*

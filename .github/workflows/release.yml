@@ -250,7 +250,7 @@ jobs:
         id: notes
         run: |
           python3 tools/release_notes.py current > notes.md
-          echo "title=Kerfly $(python3 -c 'import kerfly; print(kerfly.__version__)')" >> "$GITHUB_OUTPUT"
+          echo "title=$(python3 tools/release_notes.py current --title)" >> "$GITHUB_OUTPUT"
       - uses: softprops/action-gh-release@v3
         with:
           name: ${{ steps.notes.outputs.title }}
