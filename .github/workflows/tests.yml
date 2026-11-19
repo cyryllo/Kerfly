@@ -11,6 +11,10 @@ jobs:
   windows:
     runs-on: windows-latest
     timeout-minutes: 45
+    env:
+      # the tests' output (Polish letters, arrows) written to a file in UTF-8: Python 3.13 on Windows would use
+      # cp1252 there and stop at the first "Ł" (3.15 uses UTF-8 by itself)
+      PYTHONUTF8: "1"
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
