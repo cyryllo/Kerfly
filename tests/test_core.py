@@ -1853,6 +1853,31 @@ def test_nest_outlines():
     return errors
 
 
+def test_release_notes():
+    """tools/release_notes.py: links to a version's files point at its real tag (v1.8.0; a development version
+    without "v" and without the last ".0": 2.0b2)."""
+    import importlib.util
+    import re as _re
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s release notes: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+    spec = importlib.util.spec_from_file_location("release_notes",
+                                                  os.path.join(ROOT_DIR, "tools", "release_notes.py"))
+    rn = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(rn)
+    tags = {v: rn.tag_of(v) for v in ("1.8.0", "2.0.0", "2.0.0a1", "2.0.0b2", "2.1.0b1", "2.0.1b1")}
+    check("tags of stable and development versions", tags == {"1.8.0": "v1.8.0", "2.0.0": "v2.0.0",
+                                                              "2.0.0a1": "2.0a1", "2.0.0b2": "2.0b2",
+                                                              "2.1.0b1": "2.1b1", "2.0.1b1": "2.0.1b1"}, str(tags))
+    links = set(_re.findall(r"/blob/([^/]+)/", rn.downloads_preview_pl("2.0.0b2") + rn.downloads_preview_en(
+        "2.0.0b2") + rn.downloads_pl("1.8.0") + rn.downloads_en("1.8.0")))
+    check("download links point at the tags", links == {"2.0b2", "v1.8.0"}, str(links))
+    return errors
+
+
 def main():
     with open(MANIFEST) as f:
         baseline = json.load(f)["cases"]
@@ -1903,6 +1928,7 @@ def main():
     failures += test_home_upper_right_layout()
     failures += test_updates()
     failures += test_nest_outlines()
+    failures += test_release_notes()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

@@ -20,6 +20,20 @@ def section(version, text):
     return m.group(1).strip() if m else ""
 
 
+def tag_of(version):
+    """The git tag of a version, for links to its files: a stable one is "v1.8.0"; a development version is
+    tagged without "v" and without a last ".0" ("2.0b2" for 2.0.0b2), so the release workflow does not run
+    for it."""
+    if not is_preview(version):
+        return "v" + version
+    m = re.match(r"^(\d+(?:\.\d+)*)[-.]?(.*)$", version)
+    number, suffix = m.group(1), m.group(2)
+    parts = number.split(".")
+    if len(parts) == 3 and parts[2] == "0":
+        number = ".".join(parts[:2])
+    return number + suffix
+
+
 def downloads_pl(version):
     return "\n".join([
         "### Pobieranie",
@@ -29,11 +43,12 @@ def downloads_pl(version):
         % version,
         "- **Linux:** `Kerfly-%s-x86_64.AppImage`: nadaj prawo uruchamiania i uruchom. Raz zezwól na dostęp do "
         "portu USB lasera (Laser → Zezwól na dostęp do USB lasera…), zobacz "
-        "[INSTALL_pl.md](https://github.com/cyryllo/Kerfly/blob/v%s/INSTALL_pl.md#linux-appimage)." % (version, version),
+        "[INSTALL_pl.md](https://github.com/cyryllo/Kerfly/blob/%s/INSTALL_pl.md#linux-appimage)."
+        % (version, tag_of(version)),
         "- **macOS 11 lub nowszy:** `Kerfly-%s-macos-arm64.dmg` (Apple Silicon, M1 i nowsze) albo "
         "`Kerfly-%s-macos-x86_64.dmg` (Intel): otwórz i przeciągnij Kerfly do Programów. Bez podpisu Apple: za "
-        "pierwszym razem zobacz [INSTALL_pl.md](https://github.com/cyryllo/Kerfly/blob/v%s/INSTALL_pl.md#macos). "
-        "Wersja próbna, jeszcze nie sprawdzona z laserem." % (version, version, version),
+        "pierwszym razem zobacz [INSTALL_pl.md](https://github.com/cyryllo/Kerfly/blob/%s/INSTALL_pl.md#macos). "
+        "Wersja próbna, jeszcze nie sprawdzona z laserem." % (version, version, tag_of(version)),
         "",
         "Instrukcja obsługi: https://cyryllo.github.io/Kerfly/pl/guide.html"])
 
@@ -46,11 +61,12 @@ def downloads_en(version):
         "USB driver). Windows may warn about an unknown publisher: choose *More info → Run anyway*." % version,
         "- **Linux:** `Kerfly-%s-x86_64.AppImage`: make it executable and run it. Allow the laser's USB port "
         "once (Laser → Allow USB access for the laser…), see "
-        "[INSTALL.md](https://github.com/cyryllo/Kerfly/blob/v%s/INSTALL.md#linux-the-appimage)." % (version, version),
+        "[INSTALL.md](https://github.com/cyryllo/Kerfly/blob/%s/INSTALL.md#linux-the-appimage)."
+        % (version, tag_of(version)),
         "- **macOS 11 or newer:** `Kerfly-%s-macos-arm64.dmg` (Apple Silicon, M1 and later) or "
         "`Kerfly-%s-macos-x86_64.dmg` (Intel): open it and drag Kerfly to Applications. Not signed by Apple: "
-        "the first time see [INSTALL.md](https://github.com/cyryllo/Kerfly/blob/v%s/INSTALL.md#macos). A preview, "
-        "not yet tested with a laser." % (version, version, version),
+        "the first time see [INSTALL.md](https://github.com/cyryllo/Kerfly/blob/%s/INSTALL.md#macos). A preview, "
+        "not yet tested with a laser." % (version, version, tag_of(version)),
         "",
         "User guide: https://cyryllo.github.io/Kerfly/guide.html "
         "([Polish](https://cyryllo.github.io/Kerfly/pl/guide.html))"])
@@ -72,7 +88,7 @@ WARNING_EN = ("> [!WARNING]\n"
 
 
 def downloads_preview_pl(version):
-    guide = "https://github.com/cyryllo/Kerfly/blob/v%s/DEVELOPMENT.md#running-from-source" % version
+    guide = "https://github.com/cyryllo/Kerfly/blob/%s/DEVELOPMENT.md#running-from-source" % tag_of(version)
     return "\n".join([
         "### Pobieranie",
         "",
@@ -87,7 +103,7 @@ def downloads_preview_pl(version):
 
 
 def downloads_preview_en(version):
-    guide = "https://github.com/cyryllo/Kerfly/blob/v%s/DEVELOPMENT.md#running-from-source" % version
+    guide = "https://github.com/cyryllo/Kerfly/blob/%s/DEVELOPMENT.md#running-from-source" % tag_of(version)
     return "\n".join([
         "### Downloads",
         "",
