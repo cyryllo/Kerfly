@@ -307,7 +307,6 @@ def plan_outlines(rings, bed_mm, turn=True, seconds=10, progress=None, stop=None
     lower left corner); None for a ring that is None. A part that fits in no way goes on a sheet of its own at
     the corner, as it is. progress(sheet) before each sheet's search; stop() true before a sheet: None (nothing
     planned)."""
-    import spyrrow
     bw, bh = (float(v) for v in bed_mm)
     angles = [0.0, 90.0, 180.0, 270.0] if turn else [0.0]
     result = [None] * len(rings)
@@ -328,16 +327,8 @@ def plan_outlines(rings, bed_mm, turn=True, seconds=10, progress=None, stop=None
         sheet += 1
         if progress is not None:
             progress(sheet)
-        items = [spyrrow.Item(str(n), [(x - c[0], y - c[1]) for x, y in rings[i]], 1, angles)
-                 for n, (i, c) in enumerate(fitting)]
-        config = spyrrow.StripPackingConfig(early_termination=True, total_computation_time=max(1, int(seconds)),
-                                            seed=1)
-        try:
-            solution = spyrrow.StripPackingInstance("kerfly", bh, items).solve(config)
-        except BaseException as e:                              # (a panic of the library is no Exception)
-            if isinstance(e, (KeyboardInterrupt, SystemExit)):
-                raise
-            raise RuntimeError("sparrow: %s" % e) from None
+        shapes = {n: [(x - c[0], y - c[1]) for x, y in rings[i]] for n, (i, c) in enumerate(fitting)}
+        solution = _solve(shapes, angles, bh, seconds)
         placed = {}
         for p in solution.placed_items:
             n = int(p.id)
@@ -352,12 +343,46 @@ def plan_outlines(rings, bed_mm, turn=True, seconds=10, progress=None, stop=None
             r = placed[n][0]
             _w, _h, x0, y0 = _turned_size([(x - c[0], y - c[1]) for x, y in rings[i]], r)
             placed[n], here = (r, (-x0, -y0), 0.0), [n]
+        # sparrow only made the strip short (the parts near the left edge), spreading them up and down the bed:
+        # packed again across, they go together into the upper left corner
+        packed = _compact({n: shapes[n] for n in here}, angles, max(placed[n][2] for n in here), bw, bh, seconds)
         for n in here:
             i, c = fitting[n]
-            r, t, _right = placed[n]
+            r, t = packed[n] if packed else placed[n][:2]
             result[i] = (sheet, float(r), c, (float(t[0]), float(t[1])))
         fitting = [f for n, f in enumerate(fitting) if n not in set(here)]
     return result
+
+
+def _solve(shapes, angles, height, seconds):
+    """sparrow on {n: ring centred on (0, 0)} in a strip of the height: its solution (raises RuntimeError)."""
+    import spyrrow
+    items = [spyrrow.Item(str(n), ring, 1, angles) for n, ring in shapes.items()]
+    config = spyrrow.StripPackingConfig(early_termination=True, total_computation_time=max(1, int(seconds)), seed=1)
+    try:
+        return spyrrow.StripPackingInstance("kerfly", height, items).solve(config)
+    except BaseException as e:                                  # (a panic of the library is no Exception)
+        if isinstance(e, (KeyboardInterrupt, SystemExit)):
+            raise
+        raise RuntimeError("sparrow: %s" % e) from None
+
+
+def _compact(shapes, angles, width, bw, bh, seconds):
+    """The parts of a sheet (packed in `width` from the left edge) packed again the other way: the strip turned
+    by 90 degrees (as wide as they took, its length down from the top edge), so they also take as little height
+    as they can, from the top. {n: (degrees, (tx, ty))} as the first packing gives it, or None (kept as they
+    were: the library failed or did no better)."""
+    height = min(bw, width / FIT + 0.2)
+    turned = {n: [(-y, x) for x, y in ring] for n, ring in shapes.items()}     # turned by 90 degrees
+    try:
+        solution = _solve(turned, angles, height, max(1, int(seconds) // 2))
+    except RuntimeError:
+        return None
+    if solution.width > bh + 1e-6 or len(solution.placed_items) != len(shapes):
+        return None
+    # back: a point (x', y') of the turned strip (x' down from the top edge, y' from the left) is (y', bh - x');
+    # the turns add up, so the part is turned by the same degrees
+    return {int(p.id): (p.rotation, (p.translation[1], bh - p.translation[0])) for p in solution.placed_items}
 
 
 def nest_outlines(elements, bed_w, bed_h, gap_mm=2.0, turn=True, seconds=10, progress=None, stop=None):

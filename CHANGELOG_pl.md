@@ -121,6 +121,9 @@ oknie.
 
 ### Poprawione
 
+- **Ułóż na stole po obrysach** rozrzucał części wzdłuż lewej krawędzi stołu
+  (2.0.0b2): części arkusza są teraz układane drugi raz w poprzek, razem w
+  jego lewym górnym rogu.
 - **Uruchamianie ze źródeł** (`start_kerfly.sh`, `start_kerfly.bat`):
   dodatkowe biblioteki dodane w aktualizacji też są instalowane przy
   następnym starcie (kto uruchamiał 2.0.0b1 ze źródeł, nie miał spyrrow i

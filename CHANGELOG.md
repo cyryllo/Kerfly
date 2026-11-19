@@ -124,6 +124,9 @@ a window of its own.
 
 ### Fixed
 
+- **Nest on the bed by outlines** spread the parts down the bed's left edge
+  (2.0.0b2): a sheet's parts are now packed again across, together into its
+  upper left corner.
 - **Running from source** (`start_kerfly.sh`, `start_kerfly.bat`): optional
   libraries added in an update are installed at the next start too (with
   2.0.0b1 from source, spyrrow was missing and Nest by outlines greyed out).

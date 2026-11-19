@@ -107,7 +107,9 @@ def plan_with_progress(parent, elements, bed_w, bed_h, gap, turn, seconds):
     after the sheet being searched). Returns (parts, plan) or None (cancelled), raises RuntimeError on an
     error."""
     worker = NestWorker(elements, bed_w, bed_h, gap, turn, seconds, parent)
-    box = QProgressDialog(_("Looking for a tight layout…"), _("Cancel"), 0, int(seconds) * 10, parent)
+    # each sheet: the search time, then half of it more to pack the sheet's parts into its upper left corner
+    tenths = (int(seconds) + max(1, int(seconds) // 2)) * 10
+    box = QProgressDialog(_("Looking for a tight layout…"), _("Cancel"), 0, tenths, parent)
     box.setWindowTitle(_("Nest on the bed"))
     box.setMinimumDuration(0)
     box.setAutoClose(False)

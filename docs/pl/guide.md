@@ -269,7 +269,8 @@ układa prostokąty wokół części (szybko); **Obrysy** (beta) układa ich
 prawdziwe obrysy, więc części trafiają we wnęki innych i w wycięte w nich
 otwory (otwór robią tylko linie cięcia: grawer wewnątrz części należy do
 niej), biblioteką sparrow; szuka ciaśniejszego układu przez zadany **czas
-szukania** (dla każdego arkusza; okienko pokazuje postęp, Anuluj zostawia
+szukania** (dla każdego arkusza, potem jeszcze połowę tego, żeby dosunąć
+części arkusza razem do jego lewego górnego rogu; okienko pokazuje postęp, Anuluj zostawia
 wszystko jak było). Co się nie zmieści, trafia na
 kolejny arkusz (arkusz to zawsze pole robocze lasera): każdy arkusz jest
 grupą na liście elementów, arkusze od 2. są odhaczone; wytnij arkusz 1, potem

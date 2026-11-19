@@ -261,7 +261,9 @@ the parts (fast); **Outlines** (beta) packs their real outlines, so parts go
 into each other's gaps and into the holes cut in them (only cut lines make a
 hole: an engraving inside a part stays the part's), with the sparrow
 library; it searches for a tighter layout for the **search time** you set
-(for each sheet; a window shows it, Cancel leaves everything as it was). What
+(for each sheet, then half of it more to pack the sheet's parts together into
+its upper left corner; a window shows it, Cancel leaves everything as it
+was). What
 does not fit goes on a next sheet (a sheet is always the bed): each sheet is
 a group in the element list, sheets 2 and on unticked; cut sheet 1, then
 untick it and tick the next one. Nesting again lays the parts out anew.

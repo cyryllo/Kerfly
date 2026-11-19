@@ -1848,6 +1848,15 @@ def test_nest_outlines():
     big = [shape("rectangle", 300, 50, 0, 0), shape("rectangle", 20, 20, 10, 80)]
     placed, sheets = nesting.nest_outlines(big, bw, bh, 2.0, True, seconds=2)
     check("a part larger than the bed on a sheet of its own", sheets == 2 and placed[0][1] != placed[1][1])
+    # a few parts on a big bed: together in the upper left corner, not spread down the bed's left edge
+    few = [shape("rectangle", 70, 80, 100, 50), shape("polygon", 50, 60, 200, 30), shape("ellipse", 70, 80, 150, 150)]
+    nesting.nest_outlines(few, 500 / 25.4, 400 / 25.4, 2.0, True, seconds=2)
+    x0, x1, y0, y1 = (min(e.bounds[0] for e in few), max(e.bounds[1] for e in few),
+                      min(e.bounds[2] for e in few), max(e.bounds[3] for e in few))
+    used = (x1 - x0) * (y1 - y0) * 25.4 ** 2
+    own = sum((e.bounds[1] - e.bounds[0]) * (e.bounds[3] - e.bounds[2]) for e in few) * 25.4 ** 2
+    check("a few parts packed together in the upper left corner", used < 1.5 * own and abs(x0) * 25.4 < 3
+          and abs(y1) * 25.4 < 3, "(%.0f mm² for %.0f mm² of parts)" % (used, own))
     stopped = nesting.nest_outlines(make(), bw, bh, 2.0, True, seconds=2, stop=lambda: True)
     check("stopped: nothing planned", stopped is None)
     return errors
