@@ -102,41 +102,6 @@ below point to files in MeerK40t at commit `d511944e0` (September 2026).
   silent updates: Kerfly runs a machine, a new version must never arrive in
   the middle of the work.
 
-## Optional: engrave each design separately (raster layers)
-
-Asked for by a user (2026-11-12; see also issue #2). Planned as an optional
-function, for later.
-
-**The problem.** On one raster layer all the pictures on the bed are joined
-into one image. The head engraves it row by row, and every row runs from the
-first dark point to the last one, across the empty gaps between the designs.
-With designs side by side (names on several products in a row) most of the
-time goes on driving over the gaps: two 50 × 50 mm pictures 90 mm apart take
-31.8 min on one layer, 17.0 min when each is engraved on its own.
-
-**What works today.** Put each design on its own raster layer (Layers panel:
-**+** → Raster engrave, then the Layer list above the bed): layers run one
-after another in the same job, so it is fast, but with many designs it means
-many layers to make and keep track of.
-
-**The planned option (B).** A tick box at a raster layer: **"Each design
-separately"**. With it on, the designs on that layer are engraved one after
-another, each in its own area (all with this layer's speed, power and
-passes), as if each had its own layer, but without making layers. Still one
-job, one Start.
-
-- Which designs are "one": each element on the bed (a group counts as one).
-- Order: as in the element list (the same order as the other layers).
-- The time in the Layers panel, the simulation and the job all follow it.
-- Off by default: with the designs touching or overlapping it gives nothing.
-- Release-test step: two pictures with a gap on a layer with the option, the
-  laser data and the time compared with two separate layers (must be equal).
-
-**Considered and left out for now (A):** putting every newly added design on a
-new raster layer by itself (reusing an empty one). Gives the same time, and
-also separate speeds per design, but the Layers panel fills up with layers;
-only if users need different settings per design.
-
 ## Run one kind of work: Engrave, Outline, Cut buttons
 
 Asked for by a user (2026-11-10), as K40 Whisperer's three buttons (Raster
@@ -213,7 +178,7 @@ the right mouse button only pans the view. K40 Whisperer had no menu there
 | ~~Boolean operations on shapes~~ (done: union, difference, intersection, exclusion) | `tools/polybool.py`, `extra/cag.py` |
 | ~~Kerf test and material test generators~~ (done, Generators group; also finger-joint box, gear, puzzle, ruler, QR code, rubber stamp, laser test card) | `tools/kerftest.py`, `gui/materialtest.py` |
 | Nesting (planned 2026-11-16 for **version 2.0**, with GRBL): the selected elements laid out on the material as tightly as possible, turned where that helps, kept a gap apart, on as many sheets as needed (each sheet a group, as a box's sheets). ~~Step 1: by their bounding rectangles (the MaxRects packing the box generators already use) for any elements~~ (done 2026-11-16 on the 2.0 branch: Edit → Nest on the bed…, Ctrl+Shift+N, Nest in the Layout group; gap, turning; `kerfly/core/nesting.py`). Step 2: by their real outlines (parts in each other's gaps and holes), with **sparrow** (chosen with the user 2026-11-16: state of the art, Rust, MPL-2.0, Python wrapper spyrrow on pip; to check first: the licences in the official repositories, ready wheels for Windows / Linux / macOS, and sheets of a fixed size, as sparrow packs a strip of fixed width as short as it can; a sheet is always the laser's bed, user 2026-11-16, as for the boxes); libnest2d (C++, LGPL-3.0, Cura's arrange; pip python-libnest2d) as the fallback; Deepnest (the user's suggestion; Electron app, the licence depends on the fork, deepnest-next is MIT) as a reference for the results | Deepnest, SVGnest; not in MeerK40t |
-| More generators: ~~round stamps with text around the circle~~ (done), ~~living-hinge boxes~~ (beta, 2026-11-15: rounded box), more box types (~~sliding lid~~ beta, rails with tabs, ~~dividers~~ beta, 2026-11-15); ~~3D preview of the boxes~~ (done, 2026-11-15: 3D tab, turn, pulled apart, lid slid out) | `boxes.py` (not in MeerK40t) |
+| More generators: ~~round stamps with text around the circle~~ (done), ~~living-hinge boxes~~ (beta, 2026-11-15: rounded box), more box types (~~sliding lid~~ beta, ~~dividers~~ beta, 2026-11-15; rails with tabs: see Maybe some day); ~~3D preview of the boxes~~ (done, 2026-11-15: 3D tab, turn, pulled apart, lid slid out) | `boxes.py` (not in MeerK40t) |
 
 ### Pattern fills
 
@@ -228,7 +193,7 @@ pattern, clipped to its outline; holes stay empty.
 - [ ] Step 2: ~~more patterns~~ (done 2026-11-15: triangles, herringbone, fish scales,
   square waves, spiral, sunburst, dots, crosses, Truchet, Hilbert curve; 19 in all),
   ~~concentric rings following the outline~~ (done, with the path offset of kerf
-  compensation), custom tile, line width of the motif.
+  compensation); a custom tile and the motif's line width: see Maybe some day.
 
 - **The outline stays.** It keeps its own layer (cut or outline), and the fill
   is a separate part on a vector engrave layer, with its own speed and power.
@@ -364,6 +329,50 @@ Set aside for now (not planned; back on the list only when users need it).
 - More living-hinge patterns, chosen from a list in the hinge options (set
   aside 2026-11-13; MeerK40t: `tools/livinghinges.py`,
   `tools/living_hinge_optimizer.py`).
+- More box types, e.g. a sliding lid on rails held by tabs (Generators →
+  Boxes; set aside 2026-11-19).
+- The generators' fields in named sections (Dimensions, Material and fingers,
+  Lid and dividers), as in the mockup `docs/ui-mockups/GeneratorBox` (set
+  aside 2026-11-19).
+- Pattern fills: a **custom tile** (any drawn shape or SVG repeated in a grid,
+  rows optionally offset; chosen in the Fill field of the options bar) and
+  the **motif's line width** (a new field there) (set aside 2026-11-19).
+
+### Engrave each design separately (raster layers)
+
+Set aside 2026-11-19 ("może kiedyś").
+
+Asked for by a user (2026-11-12; see also issue #2).
+
+**The problem.** On one raster layer all the pictures on the bed are joined
+into one image. The head engraves it row by row, and every row runs from the
+first dark point to the last one, across the empty gaps between the designs.
+With designs side by side (names on several products in a row) most of the
+time goes on driving over the gaps: two 50 × 50 mm pictures 90 mm apart take
+31.8 min on one layer, 17.0 min when each is engraved on its own.
+
+**What works today.** Put each design on its own raster layer (Layers panel:
+**+** → Raster engrave, then the Layer list above the bed): layers run one
+after another in the same job, so it is fast, but with many designs it means
+many layers to make and keep track of.
+
+**The planned option (B).** A tick box at a raster layer: **"Each design
+separately"**. With it on, the designs on that layer are engraved one after
+another, each in its own area (all with this layer's speed, power and
+passes), as if each had its own layer, but without making layers. Still one
+job, one Start.
+
+- Which designs are "one": each element on the bed (a group counts as one).
+- Order: as in the element list (the same order as the other layers).
+- The time in the Layers panel, the simulation and the job all follow it.
+- Off by default: with the designs touching or overlapping it gives nothing.
+- Release-test step: two pictures with a gap on a layer with the option, the
+  laser data and the time compared with two separate layers (must be equal).
+
+**Considered and left out for now (A):** putting every newly added design on a
+new raster layer by itself (reusing an empty one). Gives the same time, and
+also separate speeds per design, but the Layers panel fills up with layers;
+only if users need different settings per design.
 
 ## Packaging
 
