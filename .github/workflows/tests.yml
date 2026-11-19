@@ -25,10 +25,30 @@ jobs:
       - name: Test tools
         shell: cmd
         run: .venv\Scripts\python -m pip install -r requirements-dev.txt
+      - name: Optional libraries (pyclipper, spyrrow) present
+        if: always()
+        shell: pwsh
+        run: |
+          $out = .venv\Scripts\python -c "import importlib.util as u, sys; print(sys.version.split()[0], {m: u.find_spec(m) is not None for m in ('pyclipper', 'spyrrow')})" 2>&1 | Out-String
+          Write-Output $out
+          Write-Output "::notice title=Python and optional libraries (Windows)::$($out.Trim())"
+          if ($out -match "False") {
+            $pip = .venv\Scripts\python -m pip install -r requirements-optional.txt 2>&1 | Select-Object -Last 15 | Out-String
+            Write-Output $pip
+            Write-Output "::error title=An optional library is missing (Windows)::$(($pip.Trim()) -replace "`r?`n", '%0A')"
+          }
       - name: Core tests
         if: always()
-        shell: cmd
-        run: .venv\Scripts\python tests\test_core.py
+        shell: pwsh
+        run: |
+          .venv\Scripts\python tests\test_core.py *> core.log
+          $rc = $LASTEXITCODE
+          Get-Content core.log
+          if ($rc -ne 0) {
+            $fails = (Select-String -Path core.log -Pattern "^(FAIL|ERROR|Traceback)|Error:" | ForEach-Object { $_.Line }) -join '%0A'
+            Write-Output "::error title=test_core failures (exit $rc)::$fails"
+          }
+          exit $rc
       - name: GUI tests
         if: always()
         shell: pwsh
