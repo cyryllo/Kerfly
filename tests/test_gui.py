@@ -1401,9 +1401,9 @@ def main():
     app.processEvents()
     mb_order = mb.button(_QMB.No).x() < mb.button(_QMB.Yes).x()
     mb.close()
-    check("dialog pattern: Cancel first, the named action (role primary, default, 32 px, no icon) last; beta "
-          "badge in the G-code dialog only; a message box's buttons in the same order",
-          [p[0] for p in pattern] == [True, True] and [p[1] for p in pattern] == [0, 1] and mb_order
+    check("dialog pattern: Cancel first, the named action (role primary, default, 32 px, no icon) last; no beta "
+          "badge (GRBL confirmed on a laser); a message box's buttons in the same order",
+          [p[0] for p in pattern] == [True, True] and [p[1] for p in pattern] == [0, 0] and mb_order
           and app.style().styleHint(_QS.SH_DialogButtonBox_ButtonsHaveIcons) == 0,
           "(%s, message box %s)" % (pattern, mb_order))
 
@@ -1641,7 +1641,7 @@ def main():
           and gsaved,
           "(%s)" % [gsame, gtexts["0"] == gtexts["1"], gplaces, gdesign_ok, gpowers, passes, gsaved])
 
-    # 28f. GRBL lasers over the serial port (beta), on a stand-in board: the stream never overfills GRBL's
+    # 28f. GRBL lasers over the serial port, on a stand-in board: the stream never overfills GRBL's
     # 128-byte buffer and waits until the moves are done; an error or an alarm of the board stops it with its
     # meaning; a board without homing ($22=0) says so for Home; laser mode off ($32=0) is pointed out; the
     # machine type of Settings → Machine picks the controller; a whole job: G92 at the head, then the G-code

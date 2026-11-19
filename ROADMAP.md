@@ -323,15 +323,15 @@ driver turns them into commands. The K40 path stays unchanged and is still
 checked byte for byte.
 
 - [x] **Step 1: export G-code for GRBL** (File → Save G-code, toolbar button; done 2026-11-16 on the 2.0
-  branch, beta until checked on a GRBL machine: `kerfly/core/gcode.py`, reference file
+  branch, confirmed on a GRBL laser 2026-11-19: `kerfly/core/gcode.py`, reference file
   `tests/fixtures/gcode/basic.nc`).
   Vectors as `G0` / `G1` with feed rate, power as `S`, laser mode `M4`
   (power follows the speed, clean corners); raster line by line with the
   power from the pixel brightness, white parts skipped, overscan at the line
   ends. Usable at once with other senders (LaserGRBL, UGS). Tests: the
   generated G-code checked against expected files.
-- [x] **Step 2: direct control over the serial port** (`pyserial`; done 2026-11-17 on the 2.0 branch, beta
-  until checked on the user's GRBL laser: `kerfly/core/grbl.py`, Settings → Machine → Machine: GRBL; a stand-in
+- [x] **Step 2: direct control over the serial port** (`pyserial`; done 2026-11-17 on the 2.0 branch,
+  confirmed on the user's GRBL laser 2026-11-19: `kerfly/core/grbl.py`, Settings → Machine → Machine: GRBL; a stand-in
   board `tests/fakes.py` FakeGrbl; machine type already in the laser profile, so step 3 is mostly done too).
   Connect and read the board settings (`$$`: bed size, `$30` maximum power,
   `$32` laser mode); home `$H`, unlock `$X`, jog with `$J=`, trace boundary,
@@ -345,8 +345,8 @@ checked byte for byte.
   programs before / after a job per laser, one in use at a time). For GRBL a profile
   gets its machine type, K40 (Lihuiyu) or GRBL, with its own power range, speeds and
   options (air assist `M8`); the window shows only what the chosen machine can do.
-- [ ] **Step 4: test on a real GRBL machine** (diode laser or a K40 with a
-  GRBL board). Windows: the boards usually use a CH340 USB chip; its driver
+- [x] **Step 4: test on a real GRBL machine** (done 2026-11-19: tested on the user's LED (diode) laser with a
+  GRBL board: engraves and cuts well). Windows: the boards usually use a CH340 USB chip; its driver
   goes into the installation guide.
 
 ## Maybe some day

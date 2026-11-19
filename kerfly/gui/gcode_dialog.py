@@ -39,8 +39,8 @@ class GcodeDialog(QDialog):
         over_tip = _("Raster engraving: the head starts this far before each line and stops this far after it, "
                      "so it is at speed where it burns")
         self.overscan.setToolTip(over_tip)
-        # the dialog pattern: the explanation, one section (beta until confirmed on a GRBL laser), the footer
-        section = widgets.Section(_("G-code for GRBL"), beta=True)
+        # the dialog pattern: the explanation, one section, the footer (confirmed on a GRBL laser 2026-11-19)
+        section = widgets.Section(_("G-code for GRBL"))
         section.add_row("current-location", _("Origin X0 Y0"), origin_tip, self.origin)
         section.add_row("flame", _("Full power S"), s_tip, self.s_max)
         section.add_row("arrows-horizontal", _("Raster overscan"), over_tip, self.overscan)

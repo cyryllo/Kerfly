@@ -1,5 +1,5 @@
 """
-GRBL lasers over the serial port (beta): connect, home ($H), unlock ($X),
+GRBL lasers over the serial port: connect, home ($H), unlock ($X),
 jog ($J=), stream G-code, pause (!) / resume (~), stop (soft reset).
 
 The controller has the methods of the K40 one (kerfly.core.laser.

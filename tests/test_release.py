@@ -1443,7 +1443,7 @@ def part_view_and_laser(s):
     s.files.append(egv)
     s.step("File → Save EGV file…", lambda: (s.trigger(w.act_save_egv, via="menu"), s.wait(lambda: w.worker is None)),
            change=False, check=lambda: (os.path.isfile(egv), "no file"))
-    # File → Save G-code (GRBL, beta): toolbar button, the origin chosen and S of full power typed, Save…
+    # File → Save G-code (GRBL): toolbar button, the origin chosen and S of full power typed, Save…
     nc = os.path.join(tempfile.mkdtemp(), "job.nc")
 
     def gcode_answer(dlg):
@@ -1576,7 +1576,7 @@ def part_m3_board(s):
 
 
 def part_grbl(s):
-    """A GRBL laser (beta), on a stand-in board on the serial port: Settings → Machine: GRBL; connect (it
+    """A GRBL laser, on a stand-in board on the serial port: Settings → Machine: GRBL; connect (it
     homes to the lower left corner), jog, trace, Start (G92 at the design's corner, the G-code streamed),
     pause and resume, stop; back to the K40."""
     w = s.w

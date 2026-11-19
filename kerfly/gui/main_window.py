@@ -380,7 +380,7 @@ class MainWindow(QMainWindow):
         self.act_follow_head.setChecked(is_true(self.values.get("follow_head", "0")))
         self.act_follow_head.setIcon(icons.follow_head_icon())
         self.act_save_gcode = self._action(_("Save &G-code\u2026"), self.save_gcode, "Ctrl+Shift+K",
-                                           _("Save G-code for a laser with a GRBL board (beta): the ticked layers "
+                                           _("Save G-code for a laser with a GRBL board: the ticked layers "
                                              "with their speed, power and passes"))
         self.act_save_egv = self._action(_("Save &EGV file\u2026"), self.save_egv, "Ctrl+Shift+E",
                                          _("Write the selected operations to an EGV file"))

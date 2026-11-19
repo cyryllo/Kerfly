@@ -9,7 +9,7 @@ Version numbers:
 
 ## 2.0.0 (unreleased)
 
-Lasers with a GRBL board besides the K40 (beta): G-code saved for any
+Lasers with a GRBL board besides the K40: G-code saved for any
 sender, or the laser run straight from Kerfly over its serial port, with
 speeds in mm/min. Parts nested on the bed, loose lines joined into
 polylines. In development on the `2.0` branch, with the fixes of the 1.x
@@ -32,14 +32,14 @@ a window of its own.
   with a gap, turned by 90° where that fits better (can be switched off);
   what does not fit goes on next sheets, each a group in the element list,
   sheets 2 and on unticked. The box generators use the same packing.
-- **G-code for GRBL lasers (beta)**: File → Save G-code… (Ctrl+Shift+K,
+- **G-code for GRBL lasers**: File → Save G-code… (Ctrl+Shift+K,
   **G-code** in the File group of the ribbon) writes the ticked layers
   (raster line by line with an overscan, engrave, cut) with their speed,
   power and passes, in laser mode M4, for LaserGRBL, UGS or another sender.
   Origin at the bed's lower left corner or at the design's upper left corner,
   full power S (`$30`) and the overscan are asked and kept with the laser
-  profile. Not yet checked on a GRBL machine.
-- **GRBL lasers connected to Kerfly (beta)**: Settings → Machine → Machine:
+  profile. Tested on a GRBL laser.
+- **GRBL lasers connected to Kerfly**: Settings → Machine → Machine:
   GRBL board, serial port (its port, speed, home corner, jog speed and full
   power S, kept in the laser profile). Connect, Home (`$H`), Unlock (`$X`),
   the arrows and corner buttons (jog), Trace boundary, Start (G-code streamed

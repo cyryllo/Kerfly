@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-17 21:10+0100\n"
+"POT-Creation-Date: 2026-11-19 19:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1268,7 +1268,7 @@ msgstr ""
 msgid "GRBL alarm %(code)s: %(text)s. Unlock or home the machine."
 msgstr ""
 
-msgid "GRBL board, serial port (beta)"
+msgid "GRBL board, serial port"
 msgstr ""
 
 #, python-format
@@ -2860,8 +2860,8 @@ msgid "Save G-code"
 msgstr ""
 
 msgid ""
-"Save G-code for a laser with a GRBL board (beta): the ticked layers with "
-"their speed, power and passes"
+"Save G-code for a laser with a GRBL board: the ticked layers with their "
+"speed, power and passes"
 msgstr ""
 
 msgid "Save a report with the laser log and settings, to attach to a bug report"

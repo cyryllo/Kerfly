@@ -17,7 +17,7 @@ from kerfly.i18n import LANGUAGES, N_, _
 TABS = [
     (N_("Machine"), [
         ("machine", N_("Machine"), "pairs", [("k40", N_("K40 (Lihuiyu board, USB)")),
-                                             ("grbl", N_("GRBL board, serial port (beta)"))]),
+                                             ("grbl", N_("GRBL board, serial port"))]),
         ("board_name", N_("Controller board"), "choice", BOARD_NAMES),
         ("usb_port", N_("USB port (beta)"), "usb_port", None),
         ("grbl_port", N_("GRBL: serial port"), "serial_port", None),

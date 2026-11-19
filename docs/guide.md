@@ -534,7 +534,7 @@ and time set next to the button.
 M3 power per operation); **File → Send EGV file to laser…** sends an existing
 EGV file.
 
-**G-code for GRBL lasers (beta).** **File → Save G-code…** (Ctrl+Shift+K,
+**G-code for GRBL lasers.** **File → Save G-code…** (Ctrl+Shift+K,
 **G-code** in the File group of the ribbon) writes the job as G-code for a
 laser with a GRBL board (diode lasers, CO2 lasers with GRBL), to run with
 LaserGRBL, UGS or another sender: the ticked layers in their order (raster,
@@ -545,9 +545,9 @@ left corner, where you set the work origin on the machine), **full power S**
 (the machine's `$30`, 1000 on most boards; a layer's power is that part of
 it) and the **raster overscan** (the head starts and stops this far beyond
 each raster line, so it is at speed where it burns). These are kept with the
-laser profile. Not yet checked on a GRBL machine.
+laser profile.
 
-**A GRBL laser connected to Kerfly (beta).** In **Settings → Lasers…** choose
+**A GRBL laser connected to Kerfly.** In **Settings → Lasers…** choose
 **Machine: GRBL board, serial port**, then its **serial port** (or the first
 board that answers; ↻ looks again after plugging it in), its speed (115200
 on most boards), the **corner the head homes to** (lower left on most GRBL

@@ -549,7 +549,7 @@ czasem ustawionymi obok przycisku.
 przy mocy ustawianej dla każdej operacji na M3); **Plik → Wyślij plik EGV do
 lasera…** wysyła istniejący plik EGV.
 
-**G-code dla laserów GRBL (beta).** **Plik → Zapisz G-code…** (Ctrl+Shift+K,
+**G-code dla laserów GRBL.** **Plik → Zapisz G-code…** (Ctrl+Shift+K,
 przycisk **G-code** w grupie Plik na wstążce) zapisuje zadanie jako G-code dla
 lasera z płytą GRBL (lasery diodowe, lasery CO2 z GRBL), do uruchomienia w
 LaserGRBL, UGS albo innym programie wysyłającym: zaznaczone warstwy w ich
@@ -563,7 +563,7 @@ staje tyle poza każdą linią rastra, żeby tam, gdzie wypala, miała pełną
 prędkość). Te ustawienia są zapamiętywane w profilu lasera. Jeszcze nie
 sprawdzone na maszynie GRBL.
 
-**Laser GRBL podłączony do Kerfly (beta).** W **Ustawienia → Lasery…** wybierz
+**Laser GRBL podłączony do Kerfly.** W **Ustawienia → Lasery…** wybierz
 **Maszyna: płyta GRBL, port szeregowy**, potem jej **port szeregowy** (albo
 pierwszą płytę, która odpowie; ↻ szuka ponownie po podłączeniu), prędkość
 portu (115200 na większości płyt), **róg bazowania głowicy** (lewy dolny w

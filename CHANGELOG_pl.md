@@ -5,7 +5,7 @@ Polska wersja opisów wydań, od 1.4.0. Pełna historia jest w
 
 ## 2.0.0 (w przygotowaniu)
 
-Oprócz K40 lasery z płytą GRBL (beta): zapis G-code dla dowolnego programu
+Oprócz K40 lasery z płytą GRBL: zapis G-code dla dowolnego programu
 wysyłającego albo sterowanie laserem prosto z Kerfly przez port szeregowy, z
 prędkościami w mm/min. Układanie części na stole, łączenie luźnych linii w
 polilinie. Rozwijana na gałęzi `2.0`, z poprawkami wydań 1.x.
@@ -29,14 +29,14 @@ oknie.
   wyłączyć); co się nie zmieści, trafia na kolejne arkusze, każdy jako grupa
   na liście elementów, arkusze od 2. odhaczone. Generatory pudełek używają
   tego samego układania.
-- **G-code dla laserów GRBL (beta)**: Plik → Zapisz G-code… (Ctrl+Shift+K,
+- **G-code dla laserów GRBL**: Plik → Zapisz G-code… (Ctrl+Shift+K,
   przycisk **G-code** w grupie Plik na wstążce) zapisuje zaznaczone warstwy
   (raster linia po linii z najazdem, grawer, cięcie) z ich prędkością, mocą i
   przejściami, w trybie lasera M4, dla LaserGRBL, UGS albo innego programu
   wysyłającego. Początek w lewym dolnym rogu stołu albo w lewym górnym rogu
   projektu, pełna moc S (`$30`) i najazd są zapamiętywane w profilu lasera.
-  Jeszcze nie sprawdzone na maszynie GRBL.
-- **Lasery GRBL podłączone do Kerfly (beta)**: Ustawienia → Maszyna → Maszyna:
+  Przetestowane na laserze GRBL.
+- **Lasery GRBL podłączone do Kerfly**: Ustawienia → Maszyna → Maszyna:
   płyta GRBL, port szeregowy (port, prędkość, róg bazowania, prędkość
   przesuwu i pełna moc S, zapamiętywane w profilu lasera). Działają na nim
   Połącz, Bazuj (`$H`), Odblokuj (`$X`), strzałki i przyciski narożników
