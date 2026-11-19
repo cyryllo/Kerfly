@@ -77,6 +77,10 @@ SETTINGS_KEYS = [
     ("grbl_baud", TEXT),     # Kerfly only: GRBL: serial speed
     ("grbl_home", TEXT),     # Kerfly only: GRBL: the corner $H homes to ("lower_left" or "upper_left")
     ("grbl_jog", TEXT),      # Kerfly only: GRBL: jog speed, mm/min
+    ("grbl_home_speed", TEXT),  # Kerfly only: GRBL: homing speed ($25), mm/min; 0: the board's own
+    ("laser_id", TEXT),      # Kerfly only: the laser profile's own id (its material library)
+    ("materials_shared", BOOL),  # Kerfly only: the laser uses another laser's material library
+    ("materials_from", TEXT),    # Kerfly only: ... that laser's id
     ("gcode_origin", TEXT),  # Kerfly only: G-code for GRBL: X0 Y0 at "lower_left" of the bed or the "design"
     ("gcode_s_max", TEXT),   # Kerfly only: G-code: the S value of full power (GRBL's $30)
     ("gcode_overscan", TEXT),  # Kerfly only: G-code: raster overscan in mm
@@ -108,7 +112,8 @@ DEFAULT_VALUES = {
     "designfile": "", "inkscape_path": "", "batch_path": "",
     "pre_exec": "0", "pre_batch_path": "", "theme": "light", "dither": "floyd", "usb_port": "",
     "gcode_origin": "lower_left", "gcode_s_max": "1000", "gcode_overscan": "2",
-    "machine": "k40", "grbl_port": "", "grbl_baud": "115200", "grbl_home": "lower_left", "grbl_jog": "3000",
+    "machine": "k40", "grbl_port": "", "grbl_baud": "115200", "grbl_home": "lower_left", "grbl_jog": "3000", "grbl_home_speed": "0",
+    "laser_id": "", "materials_shared": "0", "materials_from": "",
     "language": "",          # "" = system language
     "grid_mm": "0",
     "snap_objects": "1",

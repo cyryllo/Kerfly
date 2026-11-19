@@ -45,6 +45,14 @@ oknie.
   i Stop (reset). Potrzebuje biblioteki pyserial (jest w paczkach). Przy
   maszynie GRBL prędkości są pokazywane i wpisywane w mm/min (warstwy, test
   materiału, Ustawienia, biblioteka materiałów); K40 zostaje w mm/s.
+- **Baza materiałów dla każdego lasera**: Ustawienia → Lasery… → Baza
+  materiałów: własna albo wspólna z innym laserem tego samego rodzaju (laser
+  zrobiony przez Powiel dzieli bazę z oryginałem). Dotychczasowa wspólna baza
+  zostaje przy pierwszym laserze, pozostałe z niej korzystają, więc nic się nie
+  zmienia, dopóki sam tego nie wybierzesz.
+- **Prędkość bazowania GRBL** (Ustawienia → Lasery… → Ruch głowicy, obok
+  prędkości przesuwu strzałkami): zapisywana w płycie (`$25`) przy łączeniu,
+  gdy się różni.
 - **Uchwyty boków**: środki boków zaznaczonego elementu zmieniają samą
   szerokość albo samą wysokość, przeciwległy bok zostaje na miejscu (także dla
   obróconego elementu; jeden krok cofania).
@@ -78,6 +86,13 @@ oknie.
   Zapisz zapisuje zmiany wszystkich zmienionych laserów. Ustawienia →
   Ustawienia… mają już tylko ustawienia programu (raster, kolejność cięcia,
   widok z jednostkami, język, aktualizacje, Inkscape).
+- **Do głowicy** kładzie przy głowicy róg projektu odpowiadający rogowi bazy
+  maszyny: lewy dolny dla lasera GRBL, który tam bazuje (wcześniej lewy górny:
+  projekt lądował pod stołem).
+- **Laser GRBL ma moc dla każdej warstwy** (i moc objazdu konturu), niezależnie
+  od ustawienia płyty K40.
+- **Nazwę lasera** zmienia się w polu nad jego ustawieniami (wpisz, Enter), a
+  nie na liście.
 - **Pasek stanu**: miejsce kursora myszy, rozmiar stołu, powiększenie i stan
   lasera.
 - **Okna**: najpierw Anuluj, potem przycisk nazwany czynnością (**Zapisz**,

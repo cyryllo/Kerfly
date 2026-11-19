@@ -81,12 +81,26 @@ def example_materials():
     ]
 
 
-def library_path():
+def library_path(laser_id=None):
+    """The material library file: a laser's own (materials-<id>.json), or the old common one (no id)."""
     if sys.platform.startswith("win"):
         base = os.environ.get("APPDATA") or os.path.expanduser("~")
-        return os.path.join(base, "Kerfly", FILE_NAME)
-    base = os.environ.get("XDG_CONFIG_HOME") or os.path.join(os.path.expanduser("~"), ".config")
-    return os.path.join(base, "kerfly", FILE_NAME)
+        folder = os.path.join(base, "Kerfly")
+    else:
+        base = os.environ.get("XDG_CONFIG_HOME") or os.path.join(os.path.expanduser("~"), ".config")
+        folder = os.path.join(base, "kerfly")
+    return os.path.join(folder, "materials-%s.json" % laser_id if laser_id else FILE_NAME)
+
+
+def adopt_common_library(laser_id):
+    """The old common library becomes this laser's own (a copy; the old file stays as it was)."""
+    common, own = library_path(), library_path(laser_id)
+    if os.path.isfile(common) and not os.path.isfile(own):
+        with open(common, encoding="utf-8") as f:
+            text = f.read()
+        os.makedirs(os.path.dirname(own), exist_ok=True)
+        with open(own, "w", encoding="utf-8") as f:
+            f.write(text)
 
 
 def to_json(materials):

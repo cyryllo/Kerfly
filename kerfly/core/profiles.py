@@ -12,6 +12,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 import json
 import os
+import uuid
 
 from kerfly.core import config
 
@@ -25,7 +26,9 @@ MACHINE_KEYS = (
     "show_power", "max_power", "rotary", "LaserRscale", "rapid_feed", "trace_w_laser", "trace_rect", "trace_gap",
     "trace_speed", "Trace_power", "test_time", "test_power", "t_timeout", "n_timeouts", "pre_pr_crc", "wait",
     "usb_port", "gcode_origin", "gcode_s_max", "gcode_overscan", "machine", "grbl_port", "grbl_baud", "grbl_home",
-    "grbl_jog",
+    "grbl_jog", "grbl_home_speed",
+    # the laser's own id (its material library's file) and whether it shares another laser's library
+    "laser_id", "materials_shared", "materials_from",
 )
 
 
@@ -82,9 +85,52 @@ class Profiles:
         self.items.append((name, dict(settings)))
 
     def add(self, name, settings):
+        """A new laser (a copy or an imported one gets an id of its own)."""
         name = self.free_name(name)
-        self.items.append((name, dict(settings)))
+        settings = dict(settings)
+        if not settings.get("laser_id") or settings["laser_id"] in self.ids():
+            settings["laser_id"] = new_id()
+        self.items.append((name, settings))
         return name
+
+    def ids(self):
+        return [s.get("laser_id", "") for _n, s in self.items]
+
+    def name_of(self, laser_id):
+        return next((n for n, s in self.items if s.get("laser_id") == laser_id), None)
+
+    def library_owner(self, name):
+        """The id of the laser whose material library this laser uses: its own, or the one it shares (a
+        laser with a library of its own; else its own)."""
+        try:
+            s = self.get(name)
+        except KeyError:
+            return ""
+        own = s.get("laser_id", "")
+        if config.is_true(s.get("materials_shared", "0")):
+            other = next((t for _n, t in self.items if t.get("laser_id") == s.get("materials_from")
+                          and t.get("laser_id") != own), None)
+            if other is not None and not config.is_true(other.get("materials_shared", "0")):
+                return other["laser_id"]
+        return own
+
+    def ensure_ids(self):
+        """Lasers saved before the per-laser material libraries get their ids; then, as before, they all use
+        one library: the first laser's (the old common one), the others share it. True when changed."""
+        missing = [n for n, s in self.items if not s.get("laser_id")]
+        if not missing:
+            return False
+        old_file = len(missing) == len(self.items)
+        first = None
+        for i, (n, s) in enumerate(self.items):
+            if not s.get("laser_id"):
+                s = dict(s, laser_id=new_id())
+                self.items[i] = (n, s)
+            if first is None:
+                first = s["laser_id"]
+            elif old_file:
+                self.items[i] = (n, dict(s, materials_shared="1", materials_from=first))
+        return True
 
     def rename(self, old, new):
         new = new.strip()
@@ -146,11 +192,23 @@ def save(profiles):
     os.replace(tmp, p)
 
 
+def new_id():
+    return uuid.uuid4().hex[:12]
+
+
 def load_or_create(values, first_name):
-    """The saved profiles; the first time one profile made of the current settings."""
+    """The saved profiles; the first time one profile made of the current settings. Lasers without an id
+    (saved before the per-laser material libraries) get one, the first laser takes the old common library."""
     profiles = load()
+    changed = False
     if profiles is None or not profiles.items:
         profiles = Profiles([(first_name, from_values(values))], first_name)
+        changed = True
+    if profiles.ensure_ids():
+        from kerfly.core import materials
+        materials.adopt_common_library(profiles.items[0][1]["laser_id"])
+        changed = True
+    if changed:
         try:
             save(profiles)
         except OSError:

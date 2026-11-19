@@ -24,8 +24,10 @@ TABS = [
         ("grbl_baud", N_("GRBL: serial speed (baud)"), "choice", ["115200", "250000", "57600", "38400", "9600"]),
         ("grbl_home", N_("GRBL: corner the head homes to ($H)"), "pairs",
          [("lower_left", N_("lower left (most GRBL lasers)")), ("upper_left", N_("upper left"))]),
-        ("grbl_jog", N_("GRBL: jog speed (mm/min)"), "float", (100, 30000, 0, None)),
         ("gcode_s_max", N_("GRBL: full power S ($30)"), "int", (1, 100000)),
+        ("grbl_jog", N_("GRBL: jog speed, arrows (mm/min)"), "float", (100, 30000, 0, None)),
+        ("grbl_home_speed", N_("GRBL: homing speed ($25, mm/min; 0: the board's own)"), "float",
+         (0, 30000, 0, None)),
         ("units", N_("Units"), "choice", ["mm", "in"]),
         ("LaserXsize", N_("Bed width"), "float", (1, 5000, 1, "len")),
         ("LaserYsize", N_("Bed height"), "float", (1, 5000, 1, "len")),
@@ -45,6 +47,9 @@ TABS = [
         ("LaserYscale", N_("Y scale factor"), "float", (0.5, 2, 4, None)),
         ("show_power", N_("M3 board: set power per operation"), "bool", None),
         ("max_power", N_("M3 board: maximum power (%)"), "float", (0, 100, 1, None)),
+        ("materials_shared", N_("Share the material library of another laser (e.g. one of the same kind)"),
+         "bool", None),
+        ("materials_from", N_("The laser whose material library it uses"), "laser_choice", None),
     ]),
     (N_("Raster"), [
         ("halftone", N_("Halftone (dither) grayscale images"), "bool", None),
@@ -110,11 +115,11 @@ PAGE_ICONS = {"Machine": "laser", "Raster": "grid-dots", "Vector": "vector", "Vi
               "Rotary": "rotate-clockwise-2", "Advanced": "settings-2"}
 
 M3_BOARD = "LASER-M3"           # the only board with power control
-GRBL_KEYS = ("grbl_port", "grbl_baud", "grbl_home", "grbl_jog", "gcode_s_max")    # only for a GRBL machine
+GRBL_KEYS = ("grbl_port", "grbl_baud", "grbl_home", "grbl_jog", "grbl_home_speed", "gcode_s_max")    # only for a GRBL machine
 K40_KEYS = ("board_name", "usb_port", "HomeUR")                                  # only for a K40
 
 # field -> the tick it depends on
-DEPENDS = {"dither": "halftone", "Trace_power": "trace_w_laser", "batch_path": "post_exec", "pre_batch_path": "pre_exec", "LaserRscale": "rotary",
+DEPENDS = {"materials_from": "materials_shared", "dither": "halftone", "Trace_power": "trace_w_laser", "batch_path": "post_exec", "pre_batch_path": "pre_exec", "LaserRscale": "rotary",
            "rapid_feed": "rotary"}
 
 # settings whose change invalidates the computed raster lines / path order
@@ -146,7 +151,8 @@ def form_pages(machine):
 
 # a section's title where the two forms differ from SECTIONS (the program's units, a laser's work area, ...)
 PROGRAM_SECTIONS = {"units": N_("Units"), "reduced_mem": N_("Memory")}
-MACHINE_SECTIONS = {"LaserXsize": N_("Work area"), "pre_pr_crc": N_("USB connection")}
+MACHINE_SECTIONS = {"LaserXsize": N_("Work area"), "pre_pr_crc": N_("USB connection"),
+                    "grbl_jog": N_("Head movement"), "materials_shared": N_("Material library")}
 
 
 class SettingsForm(QWidget):
@@ -230,7 +236,12 @@ class SettingsForm(QWidget):
         else:
             self.categories.hide()
         row.addWidget(self.pages, 1)
-        tips = {"Trace_power": _("Laser power during the boundary trace, in per cent of the laser's maximum "
+        tips = {"grbl_jog": _("How fast the head moves with the arrows and the corner buttons (a GRBL laser; a "
+                              "K40's board moves at its own speed)"),
+                "grbl_home_speed": _("How fast the head looks for its home switches: written into the GRBL board "
+                                     "($25, kept in its memory) when Kerfly connects; 0 leaves the board's own. A "
+                                     "K40 homes at its board's own speed"),
+                "Trace_power": _("Laser power during the boundary trace, in per cent of the laser's maximum "
                                  "power. Used by M3 boards with power per operation; on other boards the power "
                                  "knob of the laser sets it"),
                 "batch_path": _("Started after every finished job, for example to switch off "
@@ -271,7 +282,7 @@ class SettingsForm(QWidget):
                 wanted[key] = not grbl
             wanted["show_power"] = m3
             wanted["max_power"] = m3 and self._widgets["show_power"].isChecked()
-            wanted["Trace_power"] = wanted["Trace_power"] and m3
+            wanted["Trace_power"] = wanted["Trace_power"] and (m3 or grbl)     # GRBL: S, always
         else:
             m3 = True
         for key, on in wanted.items():
@@ -318,6 +329,20 @@ class SettingsForm(QWidget):
             row.addWidget(again)
             self.serial_port_box = combo
             return box, lambda: combo.currentData() or ""
+        if kind == "laser_choice":
+            # the other lasers with a material library of their own (no chains of shared libraries)
+            w = QComboBox()
+            profiles = getattr(self.window_, "profiles", None)
+            own = self.values.get("laser_id", "")
+            for name, s in (profiles.items if profiles is not None else []):
+                if s.get("laser_id") and s.get("laser_id") != own and not is_true(s.get("materials_shared", "0")):
+                    w.addItem(name, s["laser_id"])
+            if not w.count():
+                w.addItem(_("(no other laser with a library of its own)"), "")
+            w.setCurrentIndex(max(0, w.findData(value)))
+            w.setToolTip(_("Lasers of the same kind can use one material library: changes to it count for "
+                           "all of them"))
+            return w, lambda: w.currentData() or ""
         if kind == "bool":
             w = QCheckBox()
             w.setChecked(is_true(value))

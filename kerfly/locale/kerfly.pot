@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-19 19:41+0100\n"
+"POT-Creation-Date: 2026-11-19 19:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,6 +216,9 @@ msgid "&View"
 msgstr ""
 
 msgid "(libUSB driver not installed)"
+msgstr ""
+
+msgid "(no other laser with a library of its own)"
 msgstr ""
 
 msgid "(own settings)"
@@ -536,9 +539,6 @@ msgid "Centre the lines"
 msgstr ""
 
 msgid "Centre the selected element, or the whole design, on the bed"
-msgstr ""
-
-msgid "Change the name of the selected laser"
 msgstr ""
 
 msgid "Check for &updates"
@@ -1294,7 +1294,10 @@ msgstr ""
 msgid "GRBL: full power S ($30)"
 msgstr ""
 
-msgid "GRBL: jog speed (mm/min)"
+msgid "GRBL: homing speed ($25, mm/min; 0: the board's own)"
+msgstr ""
+
+msgid "GRBL: jog speed, arrows (mm/min)"
 msgstr ""
 
 msgid "GRBL: serial port"
@@ -1472,6 +1475,17 @@ msgid ""
 "one (default). Atkinson: more contrast, clean light areas (wood). Jarvis,"
 " Stucki, Burkes, Sierra: smoother gradients. Ordered (Bayer): an even, "
 "regular texture. Threshold: black and white only"
+msgstr ""
+
+msgid ""
+"How fast the head looks for its home switches: written into the GRBL "
+"board ($25, kept in its memory) when Kerfly connects; 0 leaves the "
+"board's own. A K40 homes at its board's own speed"
+msgstr ""
+
+msgid ""
+"How fast the head moves with the arrows and the corner buttons (a GRBL "
+"laser; a K40's board moves at its own speed)"
 msgstr ""
 
 msgid "How many different powers or passes"
@@ -1731,6 +1745,11 @@ msgstr ""
 
 #, python-format
 msgid "Lasers added: %s"
+msgstr ""
+
+msgid ""
+"Lasers of the same kind can use one material library: changes to it count"
+" for all of them"
 msgstr ""
 
 msgid "Later"
@@ -2668,9 +2687,6 @@ msgstr ""
 msgid "Remove this layer from the material"
 msgstr ""
 
-msgid "Rename"
-msgstr ""
-
 msgid "Report a &problem on GitHub…"
 msgstr ""
 
@@ -3025,6 +3041,9 @@ msgstr ""
 
 msgctxt "toolbar group"
 msgid "Shapes"
+msgstr ""
+
+msgid "Share the material library of another laser (e.g. one of the same kind)"
 msgstr ""
 
 msgid "Sharp"
@@ -3500,6 +3519,12 @@ msgid "The laser stopped responding after the job was complete."
 msgstr ""
 
 msgid "The laser was found, but this user may not use its USB port."
+msgstr ""
+
+msgid "The laser whose material library it uses"
+msgstr ""
+
+msgid "The laser's name: type a new one and press Enter"
 msgstr ""
 
 msgid "The lasers' settings were saved"
@@ -4047,6 +4072,9 @@ msgstr ""
 msgid "You have the newest version (%s)."
 msgstr ""
 
+msgid "Your lasers"
+msgstr ""
+
 msgid ""
 "Your lasers and each one's settings (board, bed, homing, power, trace, "
 "rotary, USB): use one, add, duplicate, rename, delete, export, import"
@@ -4055,9 +4083,6 @@ msgstr ""
 msgid ""
 "Your lasers and their settings (board, bed, homing, power, trace, rotary,"
 " USB)"
-msgstr ""
-
-msgid "Your lasers. Double-click a name to change it"
 msgstr ""
 
 msgid "Zigzag"

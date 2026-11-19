@@ -129,8 +129,8 @@ przenoszony od jednego do drugiego) wybierasz ten, z którym pracujesz, i jego
 ustawienia (płyta, rozmiar stołu, pozycja bazowa, skala, moc, oś obrotowa,
 objazd konturu, programy przed zadaniem i po nim) trafiają do okna. Zębatka
 obok listy (albo **Ustawienia → Lasery…**) otwiera **Twoje lasery i ich
-ustawienia**: lista po lewej (Nowy, Powiel, Importuj; dwuklik zmienia nazwę),
-ustawienia zaznaczonego lasera po prawej, pod nimi Eksportuj i Usuń. Możesz tam
+ustawienia**: lista po lewej (Nowy, Powiel, Importuj), nazwa zaznaczonego lasera
+(wpisz nową i naciśnij Enter) i jego ustawienia po prawej, pod nimi Eksportuj i Usuń. Możesz tam
 zmienić każdy laser, także ten, który nie jest w użyciu: zmiany zostają przy
 przechodzeniu między laserami, **Zapisz** je zapisuje (lasera w użyciu od razu
 trafiają do okna), **Anuluj** je porzuca, **Użyj tego lasera** przełącza na
@@ -161,7 +161,9 @@ LightBurnie czy MeerK40t): na początku zadania głowica najpierw podjeżdża do
 projektu. Jeśli wolisz, żeby projekt zaczynał się przy głowicy:
 
 - **Edycja → Ustaw projekt przy głowicy** (Ctrl+H, **Do głowicy** w grupie Układ)
-  jednorazowo przesuwa projekt do głowicy.
+  jednorazowo przesuwa projekt do głowicy: do głowicy trafia róg projektu
+  odpowiadający rogowi bazy maszyny (lewy górny dla K40, lewy dolny dla lasera
+  GRBL, który tam bazuje).
 - **Projekt podąża za głowicą** (przycisk z łańcuchem, wciśnięty po
   włączeniu) trzyma projekt przy głowicy: strzałki, Idź do X/Y i Bazowanie
   przesuwają głowicę razem z projektem, a strzałki nie wypchną projektu poza
@@ -508,7 +510,9 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
   podstawowych także dodatkowe (drugie cięcie, kolejny grawer…), widoczne w
   części **Inne warstwy** pod swoimi nazwami; zastosowanie materiału ustawia je
   z powrotem albo dodaje. Bazę można eksportować i importować, żeby się nią
-  dzielić.
+  dzielić. **Każdy laser ma własną bazę**; lasery tego samego rodzaju mogą mieć
+  wspólną: Ustawienia → Lasery…, **Baza materiałów** (kopia zrobiona przez
+  Powiel na początku dzieli bazę z oryginałem).
 
 <a id="s7"></a>
 
@@ -603,10 +607,12 @@ zmiany, **Anuluj** je porzuca.
 
 | Sekcja | Ustawienia |
 |---|---|
-| Sterownik | maszyna (K40 albo płyta GRBL), płyta sterująca, port USB; dla płyty GRBL jej port szeregowy, prędkość, róg bazowania, prędkość przesuwu i pełna moc S |
+| Sterownik | maszyna (K40 albo płyta GRBL), płyta sterująca, port USB; dla płyty GRBL jej port szeregowy, prędkość, róg bazowania i pełna moc S |
+| Ruch głowicy (GRBL) | prędkość przesuwu strzałkami i przyciskami narożników, prędkość bazowania (zapisywana w płycie, `$25`, przy łączeniu; 0 zostawia ustawienie płyty); płyta K40 jeździ i bazuje z własną prędkością |
 | Stół roboczy, bazowanie i koniec zadania | rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, bazowanie głowicy po zadaniu (powrót do 0, 0 przed kolejną sztuką), odblokowanie osi i sygnał po zadaniu, raport po zadaniu (czas zadania, domyślnie włączony; małe okno, które czeka, aż wrócisz) |
 | Programy uruchamiane przy zadaniu | program uruchamiany przed każdym zadaniem wysyłanym do lasera (np. żeby włączyć wyciąg; zadanie czeka, aż się skończy, najwyżej minutę, a gdy nie zadziała, pyta), program uruchamiany po każdym skończonym zadaniu (np. żeby wyłączyć wyciąg albo wysłać wiadomość; jego wynik i błędy trafiają do raportu) |
-| Skala, moc | współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 (wyszarzone przy innych płytach: tam moc ustawia się pokrętłem lasera) |
+| Skala, moc | współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 (wyszarzone przy innych płytach: tam moc ustawia się pokrętłem lasera; laser GRBL zawsze ma moc dla każdej warstwy) |
+| Baza materiałów | własna albo wspólna z innym laserem tego samego rodzaju |
 | Objazd konturu | z włączonym laserem i jego moc (w procentach mocy maksymalnej; płyta M3), jako prostokąt albo wzdłuż obwiedni, odstęp i prędkość objazdu |
 | Oś obrotowa | oś obrotowa, jej współczynnik skali i prędkość szybkich ruchów (wyszarzone, gdy oś jest wyłączona) |
 | Połączenie USB | przygotowanie danych USB, czekanie na laser, limit czasu i ponowienia USB |

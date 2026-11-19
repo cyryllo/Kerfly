@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-19 19:41+0100\n"
+"POT-Creation-Date: 2026-11-19 19:50+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -227,6 +227,9 @@ msgstr "&Ver"
 
 msgid "(libUSB driver not installed)"
 msgstr "(controlador libUSB no instalado)"
+
+msgid "(no other laser with a library of its own)"
+msgstr "(ningún otro láser con biblioteca propia)"
 
 msgid "(own settings)"
 msgstr "(ajustes propios)"
@@ -569,9 +572,6 @@ msgstr "Centrar las líneas"
 
 msgid "Centre the selected element, or the whole design, on the bed"
 msgstr "Centrar el elemento seleccionado o todo el diseño en el área de trabajo"
-
-msgid "Change the name of the selected laser"
-msgstr "Cambiar el nombre del láser seleccionado"
 
 msgid "Check for &updates"
 msgstr "Buscar &actualizaciones"
@@ -1397,8 +1397,11 @@ msgstr "GRBL: esquina de home del cabezal ($H)"
 msgid "GRBL: full power S ($30)"
 msgstr "GRBL: potencia máxima S ($30)"
 
-msgid "GRBL: jog speed (mm/min)"
-msgstr "GRBL: velocidad de desplazamiento (mm/min)"
+msgid "GRBL: homing speed ($25, mm/min; 0: the board's own)"
+msgstr "GRBL: velocidad de origen ($25, mm/min; 0: la de la placa)"
+
+msgid "GRBL: jog speed, arrows (mm/min)"
+msgstr "GRBL: velocidad de desplazamiento, flechas (mm/min)"
 
 msgid "GRBL: serial port"
 msgstr "GRBL: puerto serie"
@@ -1591,6 +1594,22 @@ msgstr ""
 "zonas claras limpias (madera). Jarvis, Stucki, Burkes, Sierra: degradados"
 " más suaves. Ordenado (Bayer): una textura regular y uniforme. Umbral: "
 "solo blanco y negro"
+
+msgid ""
+"How fast the head looks for its home switches: written into the GRBL "
+"board ($25, kept in its memory) when Kerfly connects; 0 leaves the "
+"board's own. A K40 homes at its board's own speed"
+msgstr ""
+"Qué tan rápido busca el cabezal sus finales de carrera: se escribe en la "
+"placa GRBL ($25, en su memoria) al conectar; 0 deja la de la placa. Un "
+"K40 va al origen a la velocidad de su placa"
+
+msgid ""
+"How fast the head moves with the arrows and the corner buttons (a GRBL "
+"laser; a K40's board moves at its own speed)"
+msgstr ""
+"Qué tan rápido se mueve el cabezal con las flechas y las esquinas (láser "
+"GRBL; la placa de un K40 va a su propia velocidad)"
 
 msgid "How many different powers or passes"
 msgstr "Cuántas potencias o pasadas distintas"
@@ -1886,6 +1905,13 @@ msgstr "Láseres"
 #, python-format
 msgid "Lasers added: %s"
 msgstr "Láseres añadidos: %s"
+
+msgid ""
+"Lasers of the same kind can use one material library: changes to it count"
+" for all of them"
+msgstr ""
+"Láseres del mismo tipo pueden usar una biblioteca de materiales: sus "
+"cambios valen para todos"
 
 msgid "Later"
 msgstr "Más tarde"
@@ -2897,9 +2923,6 @@ msgstr "Quitar los nodos seleccionados"
 msgid "Remove this layer from the material"
 msgstr "Quitar esta capa del material"
 
-msgid "Rename"
-msgstr "Renombrar"
-
 msgid "Report a &problem on GitHub…"
 msgstr "Informar de un &problema en GitHub…"
 
@@ -3291,6 +3314,11 @@ msgstr ""
 msgctxt "toolbar group"
 msgid "Shapes"
 msgstr "Formas"
+
+msgid "Share the material library of another laser (e.g. one of the same kind)"
+msgstr ""
+"Compartir la biblioteca de materiales de otro láser (p. ej. uno del mismo"
+" tipo)"
 
 msgid "Sharp"
 msgstr "Vivas"
@@ -3838,6 +3866,12 @@ msgstr "El láser dejó de responder al terminar el trabajo."
 
 msgid "The laser was found, but this user may not use its USB port."
 msgstr "Se encontró el láser, pero este usuario no puede usar su puerto USB."
+
+msgid "The laser whose material library it uses"
+msgstr "El láser cuya biblioteca de materiales usa"
+
+msgid "The laser's name: type a new one and press Enter"
+msgstr "Nombre del láser: escribe uno nuevo y pulsa Intro"
 
 msgid "The lasers' settings were saved"
 msgstr "Se guardaron los ajustes de los láseres"
@@ -4453,6 +4487,9 @@ msgstr "NOMBRE DE SU EMPRESA"
 msgid "You have the newest version (%s)."
 msgstr "Tiene la versión más reciente (%s)."
 
+msgid "Your lasers"
+msgstr "Tus láseres"
+
 msgid ""
 "Your lasers and each one's settings (board, bed, homing, power, trace, "
 "rotary, USB): use one, add, duplicate, rename, delete, export, import"
@@ -4467,9 +4504,6 @@ msgid ""
 msgstr ""
 "Tus láseres y sus ajustes (placa, mesa, origen, potencia, contorno, eje "
 "rotatorio, USB)"
-
-msgid "Your lasers. Double-click a name to change it"
-msgstr "Sus láseres. Doble clic en un nombre para cambiarlo"
 
 msgid "Zigzag"
 msgstr "Zigzag"
@@ -5252,4 +5286,16 @@ msgstr "versión %s"
 #~ "Guardar G-code para un láser con "
 #~ "placa GRBL (beta): las capas marcadas"
 #~ " con su velocidad, potencia y pasadas"
+
+#~ msgid "Change the name of the selected laser"
+#~ msgstr "Cambiar el nombre del láser seleccionado"
+
+#~ msgid "GRBL: jog speed (mm/min)"
+#~ msgstr "GRBL: velocidad de desplazamiento (mm/min)"
+
+#~ msgid "Rename"
+#~ msgstr "Renombrar"
+
+#~ msgid "Your lasers. Double-click a name to change it"
+#~ msgstr "Sus láseres. Doble clic en un nombre para cambiarlo"
 

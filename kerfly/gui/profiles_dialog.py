@@ -16,8 +16,8 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 import os
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QFileDialog, QHBoxLayout, QListWidget, QListWidgetItem,
-                               QMessageBox, QPushButton, QVBoxLayout)
+from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QFileDialog, QHBoxLayout, QLineEdit, QListWidget,
+                               QListWidgetItem, QMessageBox, QPushButton, QVBoxLayout)
 
 from kerfly.core import config
 from kerfly.core import profiles as profiles_core
@@ -36,11 +36,14 @@ class ProfilesDialog(QDialog):
         self.form = None                 # the selected laser's settings
         self._form_name = None
         self.list = QListWidget()
-        self.list.setToolTip(_("Your lasers. Double-click a name to change it"))
+        self.list.setToolTip(_("Your lasers"))
         self.list.currentRowChanged.connect(self._show)
-        self.list.itemChanged.connect(self._renamed)
-        self.list.itemDoubleClicked.connect(lambda item: self.list.editItem(item))
-        self.title = widgets.section_title("")
+        self.list.itemDoubleClicked.connect(lambda _item: self._rename())
+        # the selected laser's name: an ordinary field (Enter or leaving it renames the laser)
+        self.name_edit = QLineEdit()
+        self.name_edit.setToolTip(_("The laser's name: type a new one and press Enter"))
+        self.name_edit.editingFinished.connect(self._rename_to_field)
+        self.in_use = widgets.hint("", wrap=False)
         self.buttons = {}
         for key, text, icon, tip, slot in (
                 ("use", _("Use this laser"), "player-play", _("Work with this laser: its settings go into the window"),
@@ -48,7 +51,6 @@ class ProfilesDialog(QDialog):
                 ("new", _("New"), "plus", _("A new laser with Kerfly's default settings"), self._new),
                 ("duplicate", _("Duplicate"), "copy", _("A copy of the selected laser, to change a few settings"),
                  self._duplicate),
-                ("rename", _("Rename"), "typography", _("Change the name of the selected laser"), self._rename),
                 ("delete", _("Delete"), "trash", _("Delete the selected laser (the last one stays)"), self._delete),
                 ("export", _("Export…"), "file-export", _("Save the selected laser to a file, for another computer"),
                  self._export),
@@ -74,8 +76,10 @@ class ProfilesDialog(QDialog):
         right = QVBoxLayout()
         right.setSpacing(theme.SPACE_M)
         row = QHBoxLayout()
-        row.addWidget(self.title, 1)
-        row.addWidget(self.buttons["rename"])
+        row.setSpacing(theme.SPACE_M)
+        row.addWidget(widgets.icon_pixmap_label("typography", self.name_edit.toolTip()))
+        row.addWidget(self.name_edit, 1)
+        row.addWidget(self.in_use)
         right.addLayout(row)
         self.form_box = QVBoxLayout()
         right.addLayout(self.form_box, 1)
@@ -97,8 +101,17 @@ class ProfilesDialog(QDialog):
         footer.layout().insertWidget(1, self.buttons["use"])
         self.count = footer.info
         widgets.dialog_layout(self, body, footer)
+
         self.resize(theme.DIALOG_LARGE + 240, theme.DIALOG_LARGE - 60)
         self._fill(self.profiles.current)
+
+    def keyPressEvent(self, event):
+        """Enter confirms the field it is typed in (the name: a rename), it never presses Save and closes the
+        window (the field has had it first)."""
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):
+            event.accept()
+            return
+        super().keyPressEvent(event)
 
     # ---------------------------------------------------------------- list
     def _fill(self, select):
@@ -108,7 +121,6 @@ class ProfilesDialog(QDialog):
         for name in self.profiles.names():
             item = QListWidgetItem(icons.tabler("laser"), name)
             item.setData(Qt.UserRole, name)
-            item.setFlags(item.flags() | Qt.ItemIsEditable)
             if name == self.profiles.current:
                 font = item.font()
                 font.setBold(True)
@@ -157,9 +169,13 @@ class ProfilesDialog(QDialog):
         n = len(self.profiles.items)
         self.count.setText(ngettext("%d laser", "%d lasers", n) % n)
         if name is None:
-            self.title.setText("")
+            self.name_edit.setText("")
+            self.in_use.setText("")
             return
-        self.title.setText(name + (" (%s)" % _("in use") if name == self.profiles.current else ""))
+        self.name_edit.blockSignals(True)
+        self.name_edit.setText(name)
+        self.name_edit.blockSignals(False)
+        self.in_use.setText("(%s)" % _("in use") if name == self.profiles.current else "")
         self.form = SettingsForm(self._values_of(name), machine=True, window=self.window)
         self.form_box.addWidget(self.form)
         self.buttons["use"].setEnabled(name != self.profiles.current)
@@ -183,6 +199,7 @@ class ProfilesDialog(QDialog):
             profiles_core.save(self.profiles)
         except OSError as e:
             self.window.status(_("Could not save the lasers: %s") % e, error=True)
+        self.window._load_materials()                    # (a library shared or not any more)
         self._form_name = None
 
     def _save_and_close(self):
@@ -207,25 +224,31 @@ class ProfilesDialog(QDialog):
     def _new(self):
         name = self.profiles.add(_("New laser"), profiles_core.from_values(config.DEFAULT_VALUES))
         self._changed(name)
-        self.list.editItem(self.list.currentItem())
+        self._rename()
 
     def _duplicate(self):
         name = self.selected()
         if name is None:
             return
-        copy = self.profiles.add(name, self.profiles.get(name))
+        # a copy is usually a laser of the same kind: it shares the original's material library
+        source = self.profiles.get(name)
+        owner = self.profiles.library_owner(name)
+        copy = self.profiles.add(name, dict(source, materials_shared="1", materials_from=owner))
         self._changed(copy)
-        self.list.editItem(self.list.currentItem())
+        self._rename()
 
     def _rename(self):
-        item = self.list.currentItem()
-        if item is not None:
-            self.list.editItem(item)
+        """To the name field, its text selected (type the new name)."""
+        self.name_edit.setFocus()
+        self.name_edit.selectAll()
 
-    def _renamed(self, item):
-        old, new = item.data(Qt.UserRole), item.text().strip()
-        if new == old:
+    def _rename_to_field(self):
+        old, new = self.selected(), self.name_edit.text().strip()
+        if old is None or new == old:
             return
+        self._rename_to(old, new)
+
+    def _rename_to(self, old, new):
         self._stash()
         try:
             self.profiles.rename(old, new)

@@ -103,7 +103,7 @@ class MainWindow(QMainWindow):
         self.layers = []                # layers; the first of each kind is the default one
         self._default_layer = {}        # kind -> default layer
         self._layer_cache = {}          # layer id -> compiled design (kept until the layout changes)
-        self.materials = material_lib.load_library()
+        self.materials = []             # the material library of the laser in use (after the profiles)
         self._init_layers()
         self.project_file = ""          # current .kerfly file
         self._dirty = False             # unsaved changes
@@ -118,6 +118,13 @@ class MainWindow(QMainWindow):
         from kerfly.core import profiles as profiles_core
         # the lasers (one in use); the app puts the profile in use into values before the window
         self.profiles = profiles_core.load_or_create(self.values, _("My laser"))
+        # the laser in use's id and library choice in the window's values (the app puts the whole profile in;
+        # without it, saving the profile would lose the id of its material library)
+        current = self.profiles.get(self.profiles.current)
+        for key in ("laser_id", "materials_shared", "materials_from"):
+            if key in current and self.values.get(key) != current[key]:
+                self.values[key] = current[key]
+        self._load_materials()
 
         self._update_title()
         self.resize(1200, 780)                  # replaced by the saved / screen-based size in show()
@@ -2085,8 +2092,10 @@ class MainWindow(QMainWindow):
         self.profile_box.activated.connect(lambda _i: self.switch_profile(self.profile_box.currentText()))
         profile_row.addWidget(widgets.icon_pixmap_label("laser", _("The laser in use")))
         profile_row.addWidget(self.profile_box, 1)
+        # the cog: the action's own icon (a button's icon would give way to the action's empty one, showing
+        # its text cut to "L…y" instead)
+        self.act_profiles.setIcon(icons.tabler("settings"))
         manage = widgets.icon_button(action=self.act_profiles)
-        manage.setIcon(icons.tabler("settings"))
         manage.setToolTip(_("Your lasers and their settings (board, bed, homing, power, trace, rotary, USB)"))
         self.btn_profiles = manage
         profile_row.addWidget(manage)
@@ -3471,9 +3480,14 @@ class MainWindow(QMainWindow):
         self._design_to_head(checkpoint=True)
 
     def _design_to_head(self, checkpoint):
+        """The design's corner at the machine's home corner goes to the head: its upper left (from home) for
+        a K40, its lower left for a GRBL laser that homes to the lower left."""
         if not self.elements or self.worker is not None:
             return
         ox, oy = self.origin
+        if self.is_grbl() and self.values.get("grbl_home", "lower_left") == "lower_left":
+            oy = min(e.bounds[2] for e in self.elements if e.visible) if any(e.visible for e in self.elements) \
+                else min(e.bounds[2] for e in self.elements)
         if (ox, oy) == self.head:
             return
         if checkpoint:
@@ -3703,7 +3717,7 @@ class MainWindow(QMainWindow):
             return
         self.materials = dlg.materials
         try:
-            path = material_lib.save_library(self.materials)
+            path = material_lib.save_library(self.materials, self._materials_path())
             self.status(_("Material library saved to %s") % path)
         except OSError as e:
             self.status(_("Could not save the material library: %s") % e, error=True)
@@ -3737,7 +3751,7 @@ class MainWindow(QMainWindow):
             return
         self.materials, added, replaced = material_lib.merge_materials(self.materials, imported)
         try:
-            material_lib.save_library(self.materials)
+            material_lib.save_library(self.materials, self._materials_path())
         except OSError as e:
             self.status(_("Could not save the material library: %s") % e, error=True)
         self.layers_panel.set_materials([m.name for m in self.materials])
@@ -3880,6 +3894,9 @@ class MainWindow(QMainWindow):
             self.layers_panel.total_label.setText("")
 
     def power_per_stage(self):
+        """A power per layer: the K40's M3 board with power control, and every GRBL board (S)."""
+        if self.is_grbl():
+            return True
         return (self.values.get("board_name") == "LASER-M3"
                 and is_true(self.values.get("show_power", "1")))
 
@@ -3909,40 +3926,6 @@ class MainWindow(QMainWindow):
                                       and is_true(self.values.get("show_test", "1")))
         self._rebuild_layers_panel()
         self._fit_panel_width()
-
-    def _fit_panel_width(self):
-        """Make the job panel as wide as its contents need, and the window tall
-        enough to show the whole panel. Once the window is shown the panel only
-        grows, so it does not jump while working (e.g. when a time appears)."""
-        scroll = getattr(self, "panel_scroll", None)
-        if scroll is None:
-            return
-        panel = scroll.widget()
-        for w in [panel] + panel.findChildren(QWidget):
-            if w.layout() is not None:
-                w.layout().activate()           # new rows must be measured, not the old layout
-        panel.adjustSize()
-        width = max(300, panel.sizeHint().width() + scroll.verticalScrollBar().sizeHint().width() + 4)
-        if not getattr(self, "_fit_again_pending", False) and self.isVisible():
-            # measure once more after Qt has finished laying out the new widgets
-            self._fit_again_pending = True
-
-            def again():
-                self._fit_again_pending = False
-                self._fit_panel_width()
-            QTimer.singleShot(0, self, again)
-        if getattr(self, "_shown_once", False) and getattr(self, "_panel_width", 0) > 0:
-            if width <= self._panel_width:
-                return
-        if self.isVisible():
-            self._panel_width = width
-        if scroll.width() != width or scroll.minimumWidth() != width:
-            scroll.setFixedWidth(width)
-            self.update()                    # repaint everything: no leftovers of the old border
-            if self.centralWidget() is not None:
-                self.centralWidget().update()
-        if self.isVisible():
-            QTimer.singleShot(0, self, self._fit_window_height)
 
     def _fit_window_height(self):
         """Grow the window so the whole job panel fits without scrolling
@@ -4455,9 +4438,26 @@ class MainWindow(QMainWindow):
         else:
             self.status(_("Settings changed (use File → Save settings as default to keep them)"))
 
+    def _materials_path(self):
+        """The material library of the laser in use: its own, or the one it shares."""
+        return material_lib.library_path(self.profiles.library_owner(self.profiles.current) or None)
+
+    def _load_materials(self):
+        """The material library of the laser in use (the examples for a laser without one yet)."""
+        try:
+            self.materials = material_lib.load_library(self._materials_path())
+        except (OSError, ValueError) as e:
+            self.materials = material_lib.example_materials()
+            diag_log.warning("material library not read: %s", e)
+        if hasattr(self, "layers_panel"):
+            self.layers_panel.set_materials([m.name for m in self.materials])
+
     def _store_profile(self):
         from kerfly.core import profiles as profiles_core
-        self.profiles.set(self.profiles.current, profiles_core.from_values(self.values))
+        settings = profiles_core.from_values(self.values)
+        if not settings.get("laser_id"):                  # never lose the id of its material library
+            settings["laser_id"] = self.profiles.get(self.profiles.current).get("laser_id", "")
+        self.profiles.set(self.profiles.current, settings)
         try:
             profiles_core.save(self.profiles)
         except OSError as e:
@@ -4492,6 +4492,7 @@ class MainWindow(QMainWindow):
             self.status(_("Could not save the lasers: %s") % e, error=True)
         if changed:
             self._apply_settings(new, changed)
+        self._load_materials()                       # this laser's material library
         released = False
         if self.laser.connected and not self.is_grbl() and "usb_port" in changed and self.values.get("usb_port") \
                 and self.values.get("usb_port") != self.laser.port_key:
@@ -4514,10 +4515,7 @@ class MainWindow(QMainWindow):
         """The controller of this machine: a K40 (USB) or a GRBL board (serial port)."""
         if self.values.get("machine") == "grbl":
             laser = GrblController()
-            try:
-                laser.jog_feed = float(self.values.get("grbl_jog", 3000) or 3000)
-            except ValueError:
-                pass
+            self._grbl_speeds(laser)
             return laser
         return LaserController()
 
@@ -4535,8 +4533,16 @@ class MainWindow(QMainWindow):
                     pass
             self.laser = self._make_laser()
             self._update_laser_state()
-        elif want_grbl and "grbl_jog" in changed:
-            self.laser.jog_feed = float(self.values.get("grbl_jog", 3000) or 3000)
+        elif want_grbl and changed & {"grbl_jog", "grbl_home_speed"}:
+            self._grbl_speeds(self.laser)
+
+    def _grbl_speeds(self, laser):
+        """The laser's jog and homing speeds into a GRBL controller (homing: written to the board on connect)."""
+        try:
+            laser.jog_feed = float(self.values.get("grbl_jog", 3000) or 3000)
+            laser.home_speed = float(self.values.get("grbl_home_speed", 0) or 0)
+        except ValueError:
+            pass
 
     def _home_head(self):
         """Where the head is after homing (bed inches: x from home, y <= 0 from the top): a GRBL board may home
@@ -4554,6 +4560,8 @@ class MainWindow(QMainWindow):
         self.values.clear()
         self.values.update(new)
         self._machine_changed(changed)
+        if changed & {"materials_shared", "materials_from"}:
+            self._load_materials()                   # another material library
         self._reload_spin_values()
         self._update_unit_suffixes()
         self._update_power_visibility()

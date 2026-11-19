@@ -58,7 +58,7 @@ class FakeGrbl:
     (Idle), or after `busy_reports` status reports (Run) when set."""
 
     def __init__(self, homing=True, busy_reports=0):
-        self.settings = {"$22": "1" if homing else "0", "$30": "1000", "$32": "1", "$130": "400", "$131": "300"}
+        self.settings = {"$22": "1" if homing else "0", "$25": "500", "$30": "1000", "$32": "1", "$130": "400", "$131": "300"}
         self.out = b""
         self.lines = []             # every line taken in
         self.jogs = []              # (dx, dy) mm
@@ -123,6 +123,9 @@ class FakeGrbl:
             self.pos[0] += words.get("X", 0.0)
             self.pos[1] += words.get("Y", 0.0)
             self._move()
+        elif line[:1] == "$" and "=" in line and line[1:line.index("=")].isdigit():
+            key, value = line.split("=", 1)                 # a setting written ($25=1500)
+            self.settings[key] = value
         elif line == "$H":
             self.pos = [0.0, 0.0]
             self._move()

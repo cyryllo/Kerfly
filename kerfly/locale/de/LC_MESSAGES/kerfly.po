@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-19 19:41+0100\n"
+"POT-Creation-Date: 2026-11-19 19:50+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -226,6 +226,9 @@ msgstr "&Ansicht"
 
 msgid "(libUSB driver not installed)"
 msgstr "(libUSB-Treiber nicht installiert)"
+
+msgid "(no other laser with a library of its own)"
+msgstr "(kein anderer Laser mit eigener Bibliothek)"
 
 msgid "(own settings)"
 msgstr "(eigene Einstellungen)"
@@ -570,9 +573,6 @@ msgid "Centre the selected element, or the whole design, on the bed"
 msgstr ""
 "Ausgewähltes Element oder den ganzen Entwurf auf der Arbeitsfläche "
 "zentrieren"
-
-msgid "Change the name of the selected laser"
-msgstr "Den Namen des gewählten Lasers ändern"
 
 msgid "Check for &updates"
 msgstr "Nach &Updates suchen"
@@ -1402,8 +1402,11 @@ msgstr "GRBL: Ecke, zu der der Kopf referenziert ($H)"
 msgid "GRBL: full power S ($30)"
 msgstr "GRBL: volle Leistung S ($30)"
 
-msgid "GRBL: jog speed (mm/min)"
-msgstr "GRBL: Verfahrgeschwindigkeit (mm/min)"
+msgid "GRBL: homing speed ($25, mm/min; 0: the board's own)"
+msgstr "GRBL: Referenzfahrt-Geschwindigkeit ($25, mm/min; 0: die der Platine)"
+
+msgid "GRBL: jog speed, arrows (mm/min)"
+msgstr "GRBL: Verfahrgeschwindigkeit, Pfeile (mm/min)"
 
 msgid "GRBL: serial port"
 msgstr "GRBL: serielle Schnittstelle"
@@ -1597,6 +1600,22 @@ msgstr ""
 "(Holz). Jarvis, Stucki, Burkes, Sierra: weichere Übergänge. Geordnet "
 "(Bayer): eine gleichmäßige, regelmäßige Struktur. Schwellwert: nur "
 "Schwarz und Weiß"
+
+msgid ""
+"How fast the head looks for its home switches: written into the GRBL "
+"board ($25, kept in its memory) when Kerfly connects; 0 leaves the "
+"board's own. A K40 homes at its board's own speed"
+msgstr ""
+"Wie schnell der Kopf seine Endschalter sucht: beim Verbinden in die GRBL-"
+"Platine geschrieben ($25, in ihrem Speicher); 0 lässt die der Platine. "
+"Ein K40 fährt mit der Geschwindigkeit seiner Platine"
+
+msgid ""
+"How fast the head moves with the arrows and the corner buttons (a GRBL "
+"laser; a K40's board moves at its own speed)"
+msgstr ""
+"Wie schnell sich der Kopf mit den Pfeilen und Eckknöpfen bewegt (GRBL-"
+"Laser; die Platine eines K40 fährt mit eigener Geschwindigkeit)"
 
 msgid "How many different powers or passes"
 msgstr "Wie viele verschiedene Leistungen oder Durchgänge"
@@ -1896,6 +1915,13 @@ msgstr "Laser"
 #, python-format
 msgid "Lasers added: %s"
 msgstr "Hinzugefügte Laser: %s"
+
+msgid ""
+"Lasers of the same kind can use one material library: changes to it count"
+" for all of them"
+msgstr ""
+"Laser gleicher Art können eine Materialbibliothek nutzen: Änderungen "
+"gelten für alle"
 
 msgid "Later"
 msgstr "Später"
@@ -2920,9 +2946,6 @@ msgstr "Ausgewählte Knoten entfernen"
 msgid "Remove this layer from the material"
 msgstr "Diese Ebene aus dem Material entfernen"
 
-msgid "Rename"
-msgstr "Umbenennen"
-
 msgid "Report a &problem on GitHub…"
 msgstr "&Problem auf GitHub melden…"
 
@@ -3310,6 +3333,11 @@ msgstr "Form der Zähne (20° ist üblich; kämmende Räder brauchen denselben W
 msgctxt "toolbar group"
 msgid "Shapes"
 msgstr "Formen"
+
+msgid "Share the material library of another laser (e.g. one of the same kind)"
+msgstr ""
+"Die Materialbibliothek eines anderen Lasers teilen (z. B. eines gleicher "
+"Art)"
 
 msgid "Sharp"
 msgstr "Spitz"
@@ -3857,6 +3885,12 @@ msgid "The laser was found, but this user may not use its USB port."
 msgstr ""
 "Der Laser wurde gefunden, aber dieser Benutzer darf seinen USB-Anschluss "
 "nicht verwenden."
+
+msgid "The laser whose material library it uses"
+msgstr "Der Laser, dessen Materialbibliothek er nutzt"
+
+msgid "The laser's name: type a new one and press Enter"
+msgstr "Name des Lasers: neuen eingeben und Enter drücken"
 
 msgid "The lasers' settings were saved"
 msgstr "Die Einstellungen der Laser wurden gespeichert"
@@ -4486,6 +4520,9 @@ msgstr "NAME IHRER FIRMA"
 msgid "You have the newest version (%s)."
 msgstr "Sie haben die neueste Version (%s)."
 
+msgid "Your lasers"
+msgstr "Ihre Laser"
+
 msgid ""
 "Your lasers and each one's settings (board, bed, homing, power, trace, "
 "rotary, USB): use one, add, duplicate, rename, delete, export, import"
@@ -4500,9 +4537,6 @@ msgid ""
 msgstr ""
 "Ihre Laser und ihre Einstellungen (Platine, Bett, Referenzfahrt, "
 "Leistung, Umfahren, Drehachse, USB)"
-
-msgid "Your lasers. Double-click a name to change it"
-msgstr "Ihre Laser. Doppelklick auf einen Namen ändert ihn"
 
 msgid "Zigzag"
 msgstr "Zickzack"
@@ -5283,4 +5317,16 @@ msgstr "Version %s"
 #~ "Platine speichern (beta): die angehakten "
 #~ "Ebenen mit Geschwindigkeit, Leistung und "
 #~ "Durchgängen"
+
+#~ msgid "Change the name of the selected laser"
+#~ msgstr "Den Namen des gewählten Lasers ändern"
+
+#~ msgid "GRBL: jog speed (mm/min)"
+#~ msgstr "GRBL: Verfahrgeschwindigkeit (mm/min)"
+
+#~ msgid "Rename"
+#~ msgstr "Umbenennen"
+
+#~ msgid "Your lasers. Double-click a name to change it"
+#~ msgstr "Ihre Laser. Doppelklick auf einen Namen ändert ihn"
 

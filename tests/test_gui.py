@@ -427,6 +427,39 @@ def main():
     ld.reject()
     cancelled = float(pw.values["LaserXsize"]) == 500 and abs(float(_pc.load().get("Workshop M3")["LaserXsize"]) - 500) < 1e-6
     machine_kept = machine_kept and still and other_saved and cancelled
+    # a material library for each laser: one added to the second laser's is not in the first's; shared, the
+    # second laser uses the first's; a copy shares the original's; an old common library is kept by migration
+    import copy as _copy
+    from kerfly.core import materials as _mat
+    first_names = [m.name for m in pw.materials]
+    pw.switch_profile("Workshop M3")
+    extra = _copy.deepcopy(pw.materials[0])
+    extra.name = "Only on M3"
+    pw.materials.append(extra)
+    _mat.save_library(pw.materials, pw._materials_path())
+    pw.switch_profile(first)
+    separate = "Only on M3" not in [m.name for m in pw.materials] and [m.name for m in pw.materials] == first_names
+    ld = _PD(pw)
+    ld.list.setCurrentRow(pw.profiles.names().index("Workshop M3"))
+    ld.form._widgets["materials_shared"].setChecked(True)
+    combo = ld.form._widgets["materials_from"]
+    combo.setCurrentIndex(combo.findData(pw.profiles.get(first)["laser_id"]))
+    ld._save_and_close()
+    pw.switch_profile("Workshop M3")
+    shared_lib = [m.name for m in pw.materials] == first_names
+    pw.switch_profile(first)
+    ld = _PD(pw)
+    ld.list.setCurrentRow(pw.profiles.names().index(first))
+    ld._duplicate()
+    copy_name = ld.selected()
+    copy_shares = pw.profiles.library_owner(copy_name) == pw.profiles.get(first)["laser_id"]
+    ld.reject()
+    old_style = _pc.Profiles([("A", {"board_name": "LASER-M2"}), ("B", {"board_name": "LASER-M2"})], "A")
+    old_style.ensure_ids()
+    migrated = (old_style.library_owner("B") == old_style.get("A")["laser_id"] != ""
+                and old_style.library_owner("A") == old_style.get("A")["laser_id"])
+    libraries = [separate, shared_lib, copy_shares, migrated]
+    machine_kept = machine_kept and all(libraries)
     pw.switch_profile(first)
     back = pw.values["board_name"] == "LASER-M2" and float(pw.values["LaserXsize"]) == 325
     pw.worker = object()
@@ -437,7 +470,8 @@ def main():
     n0 = len(pw.profiles.items)
     dlg._new()
     new_name = dlg.selected()
-    dlg.list.currentItem().setText("Laptop K40")
+    dlg.name_edit.setText("Laptop K40")                   # the name field (Enter / leaving it renames)
+    dlg.name_edit.editingFinished.emit()
     renamed = "Laptop K40" in pw.profiles.names() and new_name not in pw.profiles.names()
     dlg._duplicate()
     duplicated = len(pw.profiles.items) == n0 + 2
@@ -467,11 +501,12 @@ def main():
     pw.close()
     check("laser profiles: kept in mm, chosen in the Laser tab, machine settings go into the profile in use (not "
           "the grid), back to the first, no switch during a job, the manager (new, rename, duplicate, export, import, "
-          "delete, use), the profile in use at start",
+          "delete, use), the profile in use at start; a material library for each laser (own, shared, a copy "
+          "shares, the old common one kept)",
           mm_kept and back_in and switched and machine_kept and back and refused and renamed and duplicated
           and imported and deleted and used and in_box and at_start,
           "(%s)" % [mm_kept, back_in, switched, machine_kept, back, refused, renamed, duplicated, imported, deleted,
-                    used, in_box, at_start, pw.profiles.names()])
+                    used, in_box, at_start, pw.profiles.names(), libraries])
 
     # 3e4. Trace picture: the dark areas of a picture become a path element exactly over them (also with the
     # picture turned, and with home in the upper right corner); the picture's options bar has the button
@@ -1026,7 +1061,7 @@ def main():
     QMessageBox.information = staticmethod(lambda *a, **k: None)
     w.import_materials()
     names = [m.name for m in w.materials]
-    saved = os.path.isfile(_ml.library_path())
+    saved = os.path.isfile(w._materials_path())          # the library of the laser in use
     check("materials: import adds to the library and saves it", len(w.materials) == n_before + 1
           and "Test board 2 mm" in names and saved, "(%d materials)" % len(w.materials))
     os.remove(lib_file)
@@ -1476,6 +1511,48 @@ def main():
     nw.close()
     check("node tool: a click on the shape keeps it, a click on the empty bed goes back to Select",
           kept_on_shape and left_nodes, "(%s)" % [kept_on_shape, left_nodes])
+
+    # 28c5. a GRBL laser homing to the lower left: To head puts the design's lower left corner at the head (the
+    # home corner); its layers have a power each and its trace power counts; a K40 keeps the upper left
+    from kerfly.gui.settings_dialog import SettingsForm as _GLF
+    corners = {}
+    for machine in ("grbl", "k40"):
+        gw = make_window(grid_mm="0", machine=machine, grbl_home="lower_left")
+        gw._preview_drawn("rectangle", QPointF(40, 40), QPointF(80, 70), False)
+        bed_h_in = config.bed_size_inches(gw.values)[1]
+        gw.head = gw._home_head() if machine == "grbl" else (0.0, 0.0)
+        gw.place_at_head()
+        e = gw.elements[-1]
+        corners[machine] = (round(e.bounds[0] * 25.4, 2), round(e.bounds[2 if machine == "grbl" else 3] * 25.4, 2),
+                            round(gw.head[1] * 25.4, 2))
+        if machine == "grbl":
+            grbl_power = gw.power_per_stage() and all("power" in row for row in gw.layers_panel.rows.values())
+            form = _GLF(dict(gw.values, trace_w_laser="1"), machine=True, window=gw)
+            trace_power_on = form._widgets["Trace_power"].isEnabled()
+            form.close()
+        gw._dirty = False
+        gw.close()
+    # the homing speed of the laser's settings goes into the board ($25) on connect, only when it differs
+    from kerfly.core import grbl as _grbl_hs
+    hb = FakeGrbl()
+    hc = _grbl_hs.GrblController(opener=lambda port, baud: hb)
+    hc.home_speed = 1500
+    hc.connect(port="/dev/ttyFAKE")
+    hc.release()
+    hb2 = FakeGrbl()
+    hc2 = _grbl_hs.GrblController(opener=lambda port, baud: hb2)
+    hc2.home_speed = 500                                  # the board's own already
+    hc2.connect(port="/dev/ttyFAKE")
+    hc2.release()
+    home_speed_ok = hb.settings["$25"] == "1500" and "$25=1500" in hb.lines and \
+        not any(l.startswith("$25=") for l in hb2.lines)
+    trace_power_on = trace_power_on and home_speed_ok
+    corner_ok = corners["grbl"][0] == 0 and corners["grbl"][1] == corners["grbl"][2] == round(-bed_h_in * 25.4, 2) \
+        and corners["k40"][:2] == (0, 0)
+    check("To head: a GRBL laser homing to the lower left gets the design's lower left corner at the head, a K40 "
+          "its upper left; a GRBL laser has a power for each layer and its trace power; its homing speed ($25) "
+          "written on connect when it differs",
+          corner_ok and grbl_power and trace_power_on, "(%s)" % [corners, grbl_power, trace_power_on])
 
     # 28d. Nest on the bed (Ctrl+Shift+N): the selected parts laid out inside the bed with the gap between them,
     # nothing over another; what does not fit on more sheets (groups Sheet N, sheets 2 and on unticked); a group

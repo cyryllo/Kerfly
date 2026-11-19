@@ -48,6 +48,13 @@ a window of its own.
   pyserial library (in the packages). With a GRBL machine speeds are shown
   and typed in mm/min (layers, material test, Settings, material library);
   the K40 stays in mm/s.
+- **A material library for each laser**: Settings → Lasers… → Material
+  library: its own, or shared with another laser of the same kind (a laser made
+  with Duplicate shares the original's). The old common library stays with the
+  first laser, the others share it, so nothing changes until you choose.
+- **GRBL homing speed** (Settings → Lasers… → Head movement, next to the jog
+  speed of the arrows): written into the board (`$25`) when Kerfly connects,
+  when it differs.
 - **Side handles**: the middles of a selected element's sides stretch its
   width or height alone, the opposite side staying where it is (also for a
   turned element; one undo step).
@@ -81,6 +88,13 @@ a window of its own.
   changes of every laser changed. Settings → Settings… keeps only the
   program's own (raster, cutting order, view with the units, language,
   updates, Inkscape).
+- **To head** puts the design's corner at the machine's home corner at the
+  head: the lower left for a GRBL laser homing there (the upper left before:
+  the design ended below the bed).
+- **A GRBL laser has a power for each layer** (and its boundary trace power),
+  whatever the K40 board setting says.
+- **A laser's name** is changed in a field over its settings (type it, Enter),
+  no longer in the list.
 - **Status bar**: where the mouse pointer is, the bed's size, the zoom and
   the laser's state.
 - **Dialogs**: Cancel first, then the action named for what it does

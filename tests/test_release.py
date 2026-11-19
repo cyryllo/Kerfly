@@ -1955,11 +1955,10 @@ def part_files_and_help(s):
         if not isinstance(dlg, ProfilesDialog):
             raise RuntimeError("not the lasers window: %s" % dlg)
         s.click(dlg.buttons["new"])
-        editor = dlg.list.focusWidget() if dlg.list.focusWidget() is not dlg.list else None
-        from PySide6.QtWidgets import QLineEdit
-        editor = next((e for e in dlg.list.findChildren(QLineEdit) if e.isVisible()), editor)
-        if editor is None:
-            raise RuntimeError("no name editor after New")
+        editor = dlg.name_edit                             # New: the name field, its text selected
+        if editor.selectedText() != editor.text():
+            raise RuntimeError("New did not select the name in the name field")
+        s.click(editor)
         QTest.keyClick(editor, Qt.Key_A, Qt.ControlModifier)
         QTest.keyClicks(editor, "Laptop laser")
         QTest.keyClick(editor, Qt.Key_Return)
