@@ -9,6 +9,7 @@ Usage:
 """
 import hashlib
 import json
+import math
 import os
 import shutil
 import sys
@@ -1761,6 +1762,97 @@ def test_snap():
     return errors
 
 
+def test_nest_outlines():
+    """Nesting by the real outlines (sparrow): parts inside the bed area, no two closer than the gap (their real
+    outlines), a part in the hole cut in another, nothing turned when turning is off, what does not fit on more
+    sheets, a part larger than the bed alone."""
+    from kerfly.core import nesting
+    from kerfly.core.layout import Element
+    from kerfly.core.shapes import ShapeSpec, build_design
+    errors = 0
+
+    def check(name, ok, detail=""):
+        nonlocal errors
+        print("%-5s nest by outlines: %s %s" % ("OK" if ok else "FAIL", name, detail))
+        errors += 0 if ok else 1
+    if not nesting.outlines_available():
+        print("SKIP  nest by outlines: spyrrow or pyclipper not installed")
+        return 0
+    import pyclipper
+
+    def shape(kind, w, h, x, y, group=""):
+        spec = ShapeSpec(kind=kind, width=w, height=h, operation="cut")
+        e = Element(build_design(spec), shape=spec, group=group)
+        e.x, e.y = x / 25.4, -y / 25.4
+        return e
+
+    def make():
+        els = [shape("rectangle", 100, 100, 10, 10, "frame"), shape("rectangle", 70, 70, 25, 25, "frame")]
+        els += [shape("ellipse", 30, 30, 150, 10 + 3 * i) for i in range(4)]
+        els += [shape("rectangle", 25, 18, 200, 10 + 3 * i) for i in range(4)]
+        els += [shape("rectangle", 15, 15, 250, 10, "pair"), shape("ellipse", 15, 15, 280, 10, "pair")]   # apart
+        return els
+
+    def material(part, grow_mm):
+        areas, lines = nesting._part_paths(part)
+        pco = pyclipper.PyclipperOffset()
+        pco.AddPaths(areas, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
+        for line in lines:
+            pco.AddPath(line, pyclipper.JT_ROUND, pyclipper.ET_OPENROUND)
+        return pco.Execute(grow_mm * nesting.CLIP)
+
+    def clashes(placed, gap):
+        """Pairs on one sheet closer than the gap (less 0.05 mm): their outlines grown by half of it overlap."""
+        grown = [(sheet, material(part, gap / 2.0 - 0.05)) for part, sheet in placed]
+        bad = 0
+        for i in range(len(grown)):
+            for j in range(i + 1, len(grown)):
+                if grown[i][0] != grown[j][0]:
+                    continue
+                pc = pyclipper.Pyclipper()
+                pc.AddPaths(grown[i][1], pyclipper.PT_SUBJECT, True)
+                pc.AddPaths(grown[j][1], pyclipper.PT_CLIP, True)
+                if sum(abs(pyclipper.Area(q)) for q in pc.Execute(pyclipper.CT_INTERSECTION)) > 1.0:
+                    bad += 1
+        return bad
+
+    def inside(els, bw, bh):
+        return all(e.bounds[0] >= -1e-6 and e.bounds[1] <= bw + 1e-6 and e.bounds[2] >= -bh - 1e-6
+                   and e.bounds[3] <= 1e-6 for e in els)
+
+    bw, bh = 200 / 25.4, 140 / 25.4
+    els = make()
+    placed, sheets = nesting.nest_outlines(els, bw, bh, 2.0, True, seconds=3)
+    frame = placed[0][0]
+    fx0, fx1, fy0, fy1 = frame[0].bounds
+    hx0, hx1, hy0, hy1 = frame[1].bounds                       # the hole (the inner cut)
+    in_hole = [part for part, _s in placed[1:] if all(hx0 <= e.bounds[0] and e.bounds[1] <= hx1 and
+                                                      hy0 <= e.bounds[2] and e.bounds[3] <= hy1 for e in part)]
+    check("on one sheet, inside the bed, no two parts closer than the gap of 2 mm",
+          sheets == 1 and inside(els, bw, bh) and clashes(placed, 2.0) == 0, "(%d sheets, %d clashes)"
+          % (sheets, clashes(placed, 2.0)))
+    check("parts in the hole cut in the frame", len(in_hole) >= 2, "(%d)" % len(in_hole))
+    pair = placed[-1][0]
+    check("a group of separate pieces moves as one (their distance kept)", len(pair) == 2 and abs(
+        math.dist(pair[0].centre, pair[1].centre) * 25.4 - 30.0) < 0.01)
+    els = make()
+    turns = [e.rotation for e in els]
+    placed, sheets = nesting.nest_outlines(els, bw, bh, 3.0, False, seconds=2)
+    check("turning off: nothing turned; gap 3 mm kept", [e.rotation for e in els] == turns
+          and clashes(placed, 3.0) == 0 and inside(els, bw, bh))
+    many = [shape("ellipse", 45, 45, 10 * i, 10) for i in range(14)]
+    placed, sheets = nesting.nest_outlines(many, 120 / 25.4, 100 / 25.4, 2.0, True, seconds=2)
+    check("what does not fit goes on more sheets, each inside the bed, none crowded",
+          sheets >= 2 and inside(many, 120 / 25.4, 100 / 25.4) and clashes(placed, 2.0) == 0,
+          "(%d sheets)" % sheets)
+    big = [shape("rectangle", 300, 50, 0, 0), shape("rectangle", 20, 20, 10, 80)]
+    placed, sheets = nesting.nest_outlines(big, bw, bh, 2.0, True, seconds=2)
+    check("a part larger than the bed on a sheet of its own", sheets == 2 and placed[0][1] != placed[1][1])
+    stopped = nesting.nest_outlines(make(), bw, bh, 2.0, True, seconds=2, stop=lambda: True)
+    check("stopped: nothing planned", stopped is None)
+    return errors
+
+
 def main():
     with open(MANIFEST) as f:
         baseline = json.load(f)["cases"]
@@ -1810,6 +1902,7 @@ def main():
     failures += test_job_cache()
     failures += test_home_upper_right_layout()
     failures += test_updates()
+    failures += test_nest_outlines()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

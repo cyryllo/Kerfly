@@ -58,7 +58,7 @@ a = Analysis(
     pathex=[ROOT],
     binaries=binaries,
     datas=datas,
-    hiddenimports=["PySide6.QtSvg", "usb.backend.libusb1", "usb.backend.libusb0", "kerfly.releasecheck", "segno", "serial", "serial.tools.list_ports"],
+    hiddenimports=["PySide6.QtSvg", "usb.backend.libusb1", "usb.backend.libusb0", "kerfly.releasecheck", "segno", "serial", "serial.tools.list_ports", "spyrrow"],
     excludes=[
         "tkinter", "_tkinter",                 # only the original K40 Whisperer window uses Tk
         "PySide6.QtWebEngineCore", "PySide6.QtWebEngineWidgets", "PySide6.QtQml", "PySide6.QtQuick",

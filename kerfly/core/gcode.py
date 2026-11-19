@@ -11,6 +11,8 @@ each layer with its speed, power and passes), written as G-code that GRBL
 - Speed as F in mm/min.
 - Raster: line by line, back and forth, the laser on only over the dark
   runs, an overscan before and after each line so the head is at speed.
+- Air assist (a laser's setting): M8 after the start, M9 at the end (none
+  without it: the G-code as before).
 - Origin: "lower_left" (X right, Y up from the bed's lower left corner, as
   most GRBL lasers home) or "design" (the design's upper left corner is
   X0 Y0, Y going down negative: set the work origin there on the machine).
@@ -30,6 +32,7 @@ class GcodeOptions:
     origin: str = "lower_left"
     s_max: int = 1000
     overscan_mm: float = 2.0
+    air: bool = False            # air assist: M8 during the job, M9 at its end
 
 
 def bed_elements(elements, bed_w, home_upper_right):
@@ -145,7 +148,7 @@ def build(elements, layers, settings, values, options=None, version="", progress
     w.comment("origin: %s; power S 0..%d; units mm" % (
         "the bed's lower left corner" if options.origin != "design" else "the design's upper left corner",
         s_max))
-    w.lines += ["G21", "G90", "M4 S0"]
+    w.lines += ["G21", "G90", "M4 S0"] + (["M8"] if options.air else [])
     lasered = False
     for layer in run_order(layers):
         if not layer.enabled:
@@ -185,7 +188,7 @@ def build(elements, layers, settings, values, options=None, version="", progress
                         w.cut(*to_bed(*pt), power, feed)
     if not lasered:
         raise ValueError("Nothing to laser: no ticked layer has anything on it.")
-    w.lines += ["M5 S0", "G0 X0 Y0", "M2", ""]
+    w.lines += ["M5 S0"] + (["M9"] if options.air else []) + ["G0 X0 Y0", "M2", ""]
     return "\n".join(w.lines)
 
 
@@ -242,7 +245,8 @@ def trace(elements, settings, values, options=None, with_laser=False, power=0.0,
             return x * 25.4, (bed_h + y) * 25.4
     w = _Writer(to_xy)
     w.comment("Kerfly: boundary trace")
-    w.lines += ["G21", "G90", "M4 S0"]
+    air = options.air and with_laser                 # air assist only when the laser burns along it
+    w.lines += ["G21", "G90", "M4 S0"] + (["M8"] if air else [])
     corners = [(x0, y1), (x1, y1), (x1, y0), (x0, y0), (x0, y1)]
     w.rapid(*corners[0])
     s = int(round(max(0.0, min(1.0, power)) * max(1, int(options.s_max))))
@@ -252,6 +256,6 @@ def trace(elements, settings, values, options=None, with_laser=False, power=0.0,
         else:
             X, Y = to_xy(*c)
             w.lines.append("G1 X%s Y%s S0 F%s" % (_fmt(X), _fmt(Y), _fmt(feed)))
-    w.lines += ["M5 S0", "G0 X0 Y0" if options.origin == "design" else "G0 X%s Y%s" % tuple(
-        _fmt(v) for v in to_xy(left, top))]
+    back = "G0 X0 Y0" if options.origin == "design" else "G0 X%s Y%s" % tuple(_fmt(v) for v in to_xy(left, top))
+    w.lines += ["M5 S0"] + (["M9"] if air else []) + [back]
     return "\n".join(w.lines) + "\n"

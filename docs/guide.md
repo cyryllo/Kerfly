@@ -254,9 +254,14 @@ they are. An opened file: Ungroup it first.
 
 **Nest on the bed** (Ctrl+Shift+N, **Nest** in the Arrange group of the
 ribbon, Edit menu, right-click menu): the selected parts (nothing selected:
-all of them; a group as one part) are laid out on the laser's bed as tightly
-as the rectangles around their outlines allow, a set **gap** apart, turned by
-90° where that fits better (switch **Turn by 90°** off for wood grain). What
+all of them; a group as one part) are laid out on the laser's bed, a set
+**gap** apart, turned by 90° where that fits better (switch **Turn by 90°**
+off for wood grain). **Method**: **Rectangles** packs the rectangles around
+the parts (fast); **Outlines** (beta) packs their real outlines, so parts go
+into each other's gaps and into the holes cut in them (only cut lines make a
+hole: an engraving inside a part stays the part's), with the sparrow
+library; it searches for a tighter layout for the **search time** you set
+(for each sheet; a window shows it, Cancel leaves everything as it was). What
 does not fit goes on a next sheet (a sheet is always the bed): each sheet is
 a group in the element list, sheets 2 and on unticked; cut sheet 1, then
 untick it and tick the next one. Nesting again lays the parts out anew.
@@ -555,8 +560,14 @@ laser profile.
 **Machine: GRBL board, serial port**, then its **serial port** (or the first
 board that answers; ↻ looks again after plugging it in), its speed (115200
 on most boards), the **home corner** (in the Work area section: a picture of
-the bed, click the corner; lower left on most GRBL lasers), the **jog speed** and **full power S** (`$30`). These are kept in the
-laser profile, so a K40 and a GRBL laser can each have their own. With a GRBL
+the bed, click the corner; lower left on most GRBL lasers), the **jog speed**,
+**full power S** (`$30`) and **air assist** (tick it when the air pump or
+valve is wired to the board's coolant output: `M8` at the start of a job,
+`M9` at its end; also in a saved G-code file). These are kept in the
+laser profile, so a K40 and a GRBL laser can each have their own; a laser's
+settings show only what its machine has (no K40 board, USB or power settings
+for a GRBL laser, no GRBL fields for a K40), and the window hides the K40's
+test fire and EGV files for a GRBL laser. With a GRBL
 machine speeds are shown and typed in **mm/min**, as GRBL lasers are used
 (the K40 stays in mm/s). Then the
 usual buttons work on it: **Connect** opens the port and reads the board's

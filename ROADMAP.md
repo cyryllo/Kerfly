@@ -177,7 +177,7 @@ the right mouse button only pans the view. K40 Whisperer had no menu there
 | ~~Path offset (kerf compensation)~~ (done: Offset tool in the drawing tools on the right, kerf column of cut layers and in the material library, concentric fill pattern; pyclipper) | `core/elements/offset_clpr.py`, `offset_mk.py` |
 | ~~Boolean operations on shapes~~ (done: union, difference, intersection, exclusion) | `tools/polybool.py`, `extra/cag.py` |
 | ~~Kerf test and material test generators~~ (done, Generators group; also finger-joint box, gear, puzzle, ruler, QR code, rubber stamp, laser test card) | `tools/kerftest.py`, `gui/materialtest.py` |
-| Nesting (planned 2026-11-16 for **version 2.0**, with GRBL): the selected elements laid out on the material as tightly as possible, turned where that helps, kept a gap apart, on as many sheets as needed (each sheet a group, as a box's sheets). ~~Step 1: by their bounding rectangles (the MaxRects packing the box generators already use) for any elements~~ (done 2026-11-16 on the 2.0 branch: Edit → Nest on the bed…, Ctrl+Shift+N, Nest in the Layout group; gap, turning; `kerfly/core/nesting.py`). Step 2: by their real outlines (parts in each other's gaps and holes), with **sparrow** (chosen with the user 2026-11-16: state of the art, Rust, MPL-2.0, Python wrapper spyrrow on pip; to check first: the licences in the official repositories, ready wheels for Windows / Linux / macOS, and sheets of a fixed size, as sparrow packs a strip of fixed width as short as it can; a sheet is always the laser's bed, user 2026-11-16, as for the boxes); libnest2d (C++, LGPL-3.0, Cura's arrange; pip python-libnest2d) as the fallback; Deepnest (the user's suggestion; Electron app, the licence depends on the fork, deepnest-next is MIT) as a reference for the results | Deepnest, SVGnest; not in MeerK40t |
+| Nesting (planned 2026-11-16 for **version 2.0**, with GRBL): the selected elements laid out on the material as tightly as possible, turned where that helps, kept a gap apart, on as many sheets as needed (each sheet a group, as a box's sheets). ~~Step 1: by their bounding rectangles (the MaxRects packing the box generators already use) for any elements~~ (done 2026-11-16 on the 2.0 branch: Edit → Nest on the bed…, Ctrl+Shift+N, Nest in the Layout group; gap, turning; `kerfly/core/nesting.py`). ~~Step 2: by their real outlines (parts in each other's gaps and holes), with **sparrow**~~ (done 2026-11-19, beta: Method Outlines in the same dialog, search time per sheet; spyrrow 0.9 on pip, MIT, with sparrow MIT and jagua-rs MPL-2.0 compiled in, wheels for Windows, Linux and macOS; sparrow packs a strip of the bed's height, what lies within the bed's width is a sheet, the rest is packed again; it knows no holes, so each hole is opened to the outside by a 0.05 mm slit; only cut lines make a hole). libnest2d (C++, LGPL-3.0) stays the fallback if sparrow lets us down; Deepnest as a reference for the results | Deepnest, SVGnest; not in MeerK40t |
 | More generators: ~~round stamps with text around the circle~~ (done), ~~living-hinge boxes~~ (beta, 2026-11-15: rounded box), more box types (~~sliding lid~~ beta, ~~dividers~~ beta, 2026-11-15; rails with tabs: see Maybe some day); ~~3D preview of the boxes~~ (done, 2026-11-15: 3D tab, turn, pulled apart, lid slid out) | `boxes.py` (not in MeerK40t) |
 
 ### Pattern fills
@@ -305,11 +305,13 @@ checked byte for byte.
   shown as messages. GRBL reports the real head position, so the "position
   unknown after Stop" problem of the K40 goes away. Tests: a fake GRBL board,
   like the fake USB device for the K40.
-- [ ] **Step 3: machine profiles.** The laser profiles exist (2026-11-14: Settings →
+- [x] **Step 3: machine profiles.** The laser profiles exist (2026-11-14: Settings →
   Lasers…, the list at the top of the Laser tab; board, bed, power, rotary, trace,
   programs before / after a job per laser, one in use at a time). For GRBL a profile
   gets its machine type, K40 (Lihuiyu) or GRBL, with its own power range, speeds and
-  options (air assist `M8`); the window shows only what the chosen machine can do.
+  options (done 2026-11-19: air assist `M8` / `M9`, a tick in the laser's settings; the
+  laser's settings and the window show only what the chosen machine can do; four home
+  corners for every laser).
 - [x] **Step 4: test on a real GRBL machine** (done 2026-11-19: tested on the user's LED (diode) laser with a
   GRBL board: engraves and cuts well). Windows: the boards usually use a CH340 USB chip; its driver
   goes into the installation guide.

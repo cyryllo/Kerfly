@@ -251,7 +251,8 @@ class GrblJobWorker(TaskWorker):
         from kerfly.core import gcode
         s_max = int(float(self.values.get("gcode_s_max", 1000) or 1000))
         options = gcode.GcodeOptions(origin="design", s_max=s_max,
-                                     overscan_mm=float(self.values.get("gcode_overscan", 2) or 0))
+                                     overscan_mm=float(self.values.get("gcode_overscan", 2) or 0),
+                                     air=self.values.get("grbl_air", "0") in ("1", "true", "True"))
         if self.trace:
             units = self.values.get("units", "mm")
             text = gcode.trace(self.elements, self.settings, self.values, options,

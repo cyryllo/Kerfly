@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-19 20:18+0100\n"
+"POT-Creation-Date: 2026-11-19 20:37+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -544,6 +544,24 @@ msgid ""
 msgstr ""
 "Brûler le fond pour que le texte reste en relief (désactivé : brûler le "
 "texte lui-même)"
+
+msgid ""
+"By outlines: how long to look for a tighter layout, for each sheet "
+"(longer: tighter)"
+msgstr ""
+"Contours : combien de temps chercher une disposition plus serrée, pour "
+"chaque feuille (plus long : plus serré)"
+
+msgid ""
+"By the parts' real outlines: parts go into each other's gaps and the "
+"holes cut in them; takes the search time for each sheet"
+msgstr ""
+"Selon les vrais contours des pièces : les pièces vont dans les creux des "
+"autres et dans les trous découpés dedans ; prend le temps de recherche "
+"pour chaque feuille"
+
+msgid "By the parts' rectangles: fast"
+msgstr "Selon les rectangles des pièces : rapide"
 
 msgid "CITY"
 msgstr "VILLE"
@@ -1395,6 +1413,9 @@ msgstr "GRBL termine la tâche…"
 msgid "GRBL is in alarm: unlock or home the machine."
 msgstr "GRBL est en alarme : déverrouillez la machine ou faites son origine."
 
+msgid "GRBL: air assist during a job (M8 on, M9 off)"
+msgstr "GRBL : soufflage d'air pendant une tâche (M8 marche, M9 arrêt)"
+
 msgid "GRBL: full power S ($30)"
 msgstr "GRBL : pleine puissance S ($30)"
 
@@ -1628,6 +1649,13 @@ msgid ""
 msgstr ""
 "Quelle part du code peut être abîmée tout en restant lisible ; plus rend "
 "le code plus dense"
+
+msgid ""
+"How the parts are laid out: by their rectangles (fast) or by their real "
+"outlines (parts in each other's gaps and holes)"
+msgstr ""
+"Comment les pièces sont disposées : selon leurs rectangles (rapide) ou "
+"selon leurs vrais contours (pièces dans les creux et trous des autres)"
 
 msgid ""
 "I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / "
@@ -2050,6 +2078,13 @@ msgstr "Apparence"
 msgid "Look for serial ports again (after plugging the laser in)"
 msgstr "Chercher de nouveau les ports série (après avoir branché le laser)"
 
+#, python-format
+msgid "Looking for a tight layout: sheet %d…"
+msgstr "Recherche d'une disposition serrée : feuille %d…"
+
+msgid "Looking for a tight layout…"
+msgstr "Recherche d'une disposition serrée…"
+
 msgid "Low (7 %)"
 msgstr "Basse (7 %)"
 
@@ -2156,6 +2191,9 @@ msgstr "Mémoire"
 
 msgid "Memory and USB"
 msgstr "Mémoire et USB"
+
+msgid "Method"
+msgstr "Méthode"
 
 msgid "Mirror"
 msgstr "Miroir"
@@ -2265,6 +2303,9 @@ msgstr "Mon laser"
 msgid "Name"
 msgstr "Nom"
 
+msgid "Needs the spyrrow and pyclipper libraries (installed with Kerfly)"
+msgstr "Nécessite les bibliothèques spyrrow et pyclipper (installées avec Kerfly)"
+
 msgid "Nest"
 msgstr "Imbriquer"
 
@@ -2292,6 +2333,13 @@ msgstr ""
 #, python-format
 msgid "Nested %d parts on the bed."
 msgstr "%d pièces imbriquées sur le plateau."
+
+#, python-format
+msgid "Nesting by outlines failed: %s"
+msgstr "L'imbrication par contours a échoué : %s"
+
+msgid "Nesting cancelled: nothing moved."
+msgstr "Imbrication annulée : rien n'a bougé."
 
 msgid "New"
 msgstr "Nouveau"
@@ -2599,6 +2647,9 @@ msgstr "Contour seul"
 
 msgid "Outline shape"
 msgstr "Forme du contour"
+
+msgid "Outlines"
+msgstr "Contours"
 
 msgid "Outside the laser bed!"
 msgstr "Hors du plateau !"
@@ -2917,6 +2968,9 @@ msgstr "Dessins prêts à partir de quelques nombres : boîtes, pièces, tests"
 msgid "Rectangle"
 msgstr "Rectangle"
 
+msgid "Rectangles"
+msgstr "Rectangles"
+
 msgctxt "toolbar"
 msgid "Redo"
 msgstr "Rétablir"
@@ -3198,6 +3252,9 @@ msgstr "Pas entre les lignes (po)"
 
 msgid "Scan lines and levels"
 msgstr "Lignes de balayage et niveaux"
+
+msgid "Search time"
+msgstr "Temps de recherche"
 
 msgid "See the release"
 msgstr "Voir la version"
@@ -3604,6 +3661,9 @@ msgstr ""
 "Arrêté par l'utilisateur. GRBL a été réinitialisé : déverrouillez la "
 "machine ou faites son origine avant la tâche suivante."
 
+msgid "Stopping after the sheet being searched…"
+msgstr "Arrêt après la feuille en cours de recherche…"
+
 msgid "Stopping…"
 msgstr "Arrêt en cours…"
 
@@ -3734,15 +3794,14 @@ msgstr "Cette forme n'a pas de ligne pour y placer le texte."
 #, python-format
 msgid ""
 "The %(n)d selected parts (a group as one part) are laid out on the "
-"laser's bed (%(w).0f × %(h).0f mm) as tightly as their outlines' "
-"rectangles allow. What does not fit goes on a next sheet: each sheet is a"
-" group in the element list, sheets 2 and on unticked."
+"laser's bed (%(w).0f × %(h).0f mm). What does not fit goes on a next "
+"sheet: each sheet is a group in the element list, sheets 2 and on "
+"unticked."
 msgstr ""
 "Les %(n)d pièces sélectionnées (un groupe comme une pièce) sont disposées"
-" sur le plateau du laser (%(w).0f × %(h).0f mm) aussi serrées que le "
-"permettent les rectangles de leurs contours. Ce qui ne tient pas va sur "
-"une feuille suivante : chaque feuille est un groupe dans la liste des "
-"éléments, les feuilles à partir de la 2 décochées."
+" sur le plateau du laser (%(w).0f × %(h).0f mm). Ce qui ne tient pas va "
+"sur une feuille suivante : chaque feuille est un groupe dans la liste des"
+" éléments, les feuilles à partir de la 2 décochées."
 
 msgid ""
 "The DXF file does not say which units it uses.\n"
@@ -5362,4 +5421,25 @@ msgstr "version %s"
 #~ "same corner of the design to the"
 #~ " head"
 #~ msgstr ""
+
+#~ msgid ""
+#~ "The %(n)d selected parts (a group "
+#~ "as one part) are laid out on "
+#~ "the laser's bed (%(w).0f × %(h).0f "
+#~ "mm) as tightly as their outlines' "
+#~ "rectangles allow. What does not fit "
+#~ "goes on a next sheet: each sheet"
+#~ " is a group in the element "
+#~ "list, sheets 2 and on unticked."
+#~ msgstr ""
+#~ "Les %(n)d pièces sélectionnées (un "
+#~ "groupe comme une pièce) sont disposées"
+#~ " sur le plateau du laser (%(w).0f "
+#~ "× %(h).0f mm) aussi serrées que le"
+#~ " permettent les rectangles de leurs "
+#~ "contours. Ce qui ne tient pas va"
+#~ " sur une feuille suivante : chaque"
+#~ " feuille est un groupe dans la "
+#~ "liste des éléments, les feuilles à "
+#~ "partir de la 2 décochées."
 

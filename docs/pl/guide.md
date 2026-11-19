@@ -263,9 +263,14 @@ najpierw go rozgrupuj.
 **Ułóż na stole** (Ctrl+Shift+N, przycisk **Ułóż** w grupie Układ na wstążce,
 menu Edycja, menu pod prawym przyciskiem): zaznaczone części (nic nie
 zaznaczone: wszystkie; grupa jako jedna część) są rozkładane na stole lasera
-tak ciasno, jak pozwalają prostokąty wokół ich obrysów, z zadanym
-**odstępem**, obracane o 90°, gdy tak lepiej się mieszczą (wyłącz **Obracaj
-o 90°** np. ze względu na słoje drewna). Co się nie zmieści, trafia na
+z zadanym **odstępem**, obracane o 90°, gdy tak lepiej się mieszczą (wyłącz
+**Obracaj o 90°** np. ze względu na słoje drewna). **Metoda**: **Prostokąty**
+układa prostokąty wokół części (szybko); **Obrysy** (beta) układa ich
+prawdziwe obrysy, więc części trafiają we wnęki innych i w wycięte w nich
+otwory (otwór robią tylko linie cięcia: grawer wewnątrz części należy do
+niej), biblioteką sparrow; szuka ciaśniejszego układu przez zadany **czas
+szukania** (dla każdego arkusza; okienko pokazuje postęp, Anuluj zostawia
+wszystko jak było). Co się nie zmieści, trafia na
 kolejny arkusz (arkusz to zawsze pole robocze lasera): każdy arkusz jest
 grupą na liście elementów, arkusze od 2. są odhaczone; wytnij arkusz 1, potem
 go odhacz i zaznacz kolejny. Ponowne układanie rozkłada części od nowa.
@@ -564,15 +569,20 @@ albo lewy górny róg projektu, gdzie ustawiasz na maszynie punkt zerowy
 pracy), **pełną moc S** (ustawienie `$30` maszyny, 1000 na większości płyt;
 moc warstwy to taka jej część) i **najazd przy rastrze** (głowica rusza i
 staje tyle poza każdą linią rastra, żeby tam, gdzie wypala, miała pełną
-prędkość). Te ustawienia są zapamiętywane w profilu lasera. Jeszcze nie
-sprawdzone na maszynie GRBL.
+prędkość). Te ustawienia są zapamiętywane w profilu lasera.
 
 **Laser GRBL podłączony do Kerfly.** W **Ustawienia → Lasery…** wybierz
 **Maszyna: płyta GRBL, port szeregowy**, potem jej **port szeregowy** (albo
 pierwszą płytę, która odpowie; ↻ szuka ponownie po podłączeniu), prędkość
 portu (115200 na większości płyt), **róg bazowania** (w sekcji Stół roboczy:
-obrazek stołu, kliknij róg; lewy dolny w większości laserów GRBL), **prędkość przesuwu** i **pełną moc S** (`$30`).
-Zapamiętuje je profil lasera, więc K40 i laser GRBL mogą mieć każdy swoje.
+obrazek stołu, kliknij róg; lewy dolny w większości laserów GRBL), **prędkość
+przesuwu**, **pełną moc S** (`$30`) i **nadmuch powietrza** (zaznacz, gdy
+pompka albo zawór powietrza jest podłączony do wyjścia chłodzenia płyty: `M8`
+na początku zadania, `M9` na końcu; także w zapisanym pliku G-code).
+Zapamiętuje je profil lasera, więc K40 i laser GRBL mogą mieć każdy swoje;
+ustawienia lasera pokazują tylko to, co ma jego maszyna (laser GRBL nie ma
+pól płyty K40, USB ani mocy, K40 nie ma pól GRBL), a okno dla lasera GRBL
+ukrywa strzał testowy i pliki EGV, właściwe K40.
 Przy maszynie GRBL prędkości są pokazywane i wpisywane w **mm/min**, jak
 zwykle w laserach GRBL (K40 zostaje w mm/s).
 Potem działają zwykłe przyciski: **Połącz** otwiera port i czyta ustawienia

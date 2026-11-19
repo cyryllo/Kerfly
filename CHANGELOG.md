@@ -32,6 +32,10 @@ a window of its own.
   with a gap, turned by 90° where that fits better (can be switched off);
   what does not fit goes on next sheets, each a group in the element list,
   sheets 2 and on unticked. The box generators use the same packing.
+  **Method: Outlines** (beta) packs the parts' real outlines instead of their
+  rectangles, with the sparrow library: parts go into each other's gaps and
+  into the holes cut in them (only cut lines make a hole), searching for the
+  search time set (for each sheet, in a window with Cancel).
 - **G-code for GRBL lasers**: File → Save G-code… (Ctrl+Shift+K,
   **G-code** in the File group of the ribbon) writes the ticked layers
   (raster line by line with an overscan, engrave, cut) with their speed,
@@ -95,6 +99,13 @@ a window of its own.
   **To head** and **Design follows the head** bring the design's same corner
   to the head (before: always its upper left, so with a lower home the design
   ended below the bed). A K40's upper corners send the same data as before.
+- **Air assist for a GRBL laser** (Settings → Lasers… → Controller): `M8`
+  at the start of a job, `M9` at its end (also in Save G-code); off by
+  default, the G-code as before.
+- **A laser's settings show only what its machine has**: a GRBL laser no K40
+  board, USB, power setting or rail unlocking (their sections hidden), a K40
+  no GRBL fields (they were greyed out); the window hides the test fire and
+  the EGV files for a GRBL laser and says "Connected (GRBL)".
 - **A GRBL laser has a power for each layer** (and its boundary trace power),
   whatever the K40 board setting says.
 - **A laser's name** is changed in a field over its settings (type it, Enter),

@@ -28,7 +28,10 @@ oknie.
   prostokąty, z odstępem, obracane o 90°, gdy tak lepiej się mieszczą (można
   wyłączyć); co się nie zmieści, trafia na kolejne arkusze, każdy jako grupa
   na liście elementów, arkusze od 2. odhaczone. Generatory pudełek używają
-  tego samego układania.
+  tego samego układania. **Metoda: Obrysy** (beta) układa prawdziwe obrysy
+  części zamiast ich prostokątów, biblioteką sparrow: części trafiają we wnęki
+  innych i w wycięte w nich otwory (otwór robią tylko linie cięcia), szukając
+  przez zadany czas (dla każdego arkusza, w okienku z Anuluj).
 - **G-code dla laserów GRBL**: Plik → Zapisz G-code… (Ctrl+Shift+K,
   przycisk **G-code** w grupie Plik na wstążce) zapisuje zaznaczone warstwy
   (raster linia po linii z najazdem, grawer, cięcie) z ich prędkością, mocą i
@@ -93,6 +96,13 @@ oknie.
   **Do głowicy** i **Projekt podąża za głowicą** przysuwają do głowicy ten sam
   róg projektu (wcześniej zawsze lewy górny, więc przy bazie na dole projekt
   lądował pod stołem). Górne rogi K40 wysyłają te same dane co dotąd.
+- **Nadmuch powietrza dla lasera GRBL** (Ustawienia → Lasery → Sterownik):
+  `M8` na początku zadania, `M9` na końcu (także w Zapisz G-code); domyślnie
+  wyłączony, G-code jak dotąd.
+- **Ustawienia lasera pokazują tylko to, co ma jego maszyna**: laser GRBL nie
+  ma pól płyty K40, USB, ustawienia mocy ani odblokowania osi (ich sekcje są
+  ukryte), K40 nie ma pól GRBL (wcześniej były wyszarzone); okno dla lasera
+  GRBL ukrywa strzał testowy i pliki EGV i pokazuje „Połączono (GRBL)”.
 - **Laser GRBL ma moc dla każdej warstwy** (i moc objazdu konturu), niezależnie
   od ustawienia płyty K40.
 - **Nazwę lasera** zmienia się w polu nad jego ustawieniami (wpisz, Enter), a

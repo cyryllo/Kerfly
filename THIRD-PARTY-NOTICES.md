@@ -118,6 +118,7 @@ borrowed file keeps its MIT header, and the file is listed here.
 | pyusb | BSD-3-Clause |
 | pyclipper / Clipper | MIT / Boost Software License |
 | segno | BSD-3-Clause |
+| spyrrow (with sparrow and jagua-rs, compiled in) | MIT (spyrrow, sparrow); MPL-2.0 (jagua-rs) |
 | Inkscape (external program, called as a subprocess) | GPL-2.0-or-later |
 | PySide6 / Qt | LGPL-3.0, GPL-2.0 or GPL-3.0 (Kerfly uses them under the GPL-3.0) |
 
@@ -166,3 +167,4 @@ this repository.
 | svgelements | MIT | reading SVG curves for node editing |
 | pyclipper (optional) | MIT | offset of the boundary trace |
 | segno | BSD-3-Clause | QR codes (Generators → QR code) |
+| spyrrow (optional) | MIT; it contains sparrow (MIT, Jeroen Gardeyn, KU Leuven) and jagua-rs (MPL-2.0; source: <https://github.com/JeroenGar/jagua-rs>) | Nest on the bed by outlines |

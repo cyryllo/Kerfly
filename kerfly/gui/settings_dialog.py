@@ -23,6 +23,7 @@ TABS = [
         ("grbl_port", N_("GRBL: serial port"), "serial_port", None),
         ("grbl_baud", N_("GRBL: serial speed (baud)"), "choice", ["115200", "250000", "57600", "38400", "9600"]),
         ("gcode_s_max", N_("GRBL: full power S ($30)"), "int", (1, 100000)),
+        ("grbl_air", N_("GRBL: air assist during a job (M8 on, M9 off)"), "bool", None),
         ("grbl_jog", N_("GRBL: jog speed, arrows (mm/min)"), "float", (100, 30000, 0, None)),
         ("grbl_home_speed", N_("GRBL: homing speed ($25, mm/min; 0: the board's own)"), "float",
          (0, 30000, 0, None)),
@@ -115,10 +116,12 @@ PAGE_ICONS = {"Machine": "laser", "Raster": "grid-dots", "Vector": "vector", "Vi
               "Rotary": "rotate-clockwise-2", "Advanced": "settings-2"}
 
 M3_BOARD = "LASER-M3"           # the only board with power control
-GRBL_KEYS = ("grbl_port", "grbl_baud", "grbl_home", "grbl_jog", "grbl_home_speed", "gcode_s_max")    # only for a GRBL machine
+GRBL_KEYS = ("grbl_port", "grbl_baud", "grbl_home", "grbl_jog", "grbl_home_speed", "gcode_s_max", "grbl_air")
+# only for a K40: its board, USB, power setting and rail; hidden for a GRBL laser (as the GRBL ones for a K40)
+K40_ONLY = ("board_name", "usb_port", "HomeUR", "show_power", "max_power", "post_home", "pre_pr_crc", "wait",
+            "t_timeout", "n_timeouts")
 # a GRBL laser's home corner: its setting -> the corner (of CornerPicker)
 GRBL_CORNERS = {"lower_left": "LL", "upper_left": "UL", "upper_right": "UR", "lower_right": "LR"}
-K40_KEYS = ("board_name", "usb_port", "HomeUR")                                  # only for a K40
 
 # field -> the tick it depends on
 DEPENDS = {"materials_from": "materials_shared", "dither": "halftone", "Trace_power": "trace_w_laser", "batch_path": "post_exec", "pre_batch_path": "pre_exec", "LaserRscale": "rotary",
@@ -169,6 +172,7 @@ class SettingsForm(QWidget):
         self._getters = {}
         self._widgets = {}
         self._labels = {}
+        self._sections = []                              # [(section, its keys)]
         units = self.values.get("units", "mm")
         len_unit = units
         from kerfly.core.config import speed_factor, speed_unit as _speed_unit
@@ -197,6 +201,7 @@ class SettingsForm(QWidget):
             for key, label, kind, opt in fields:
                 if section is None or key in sections:
                     section = widgets.Section(_(sections[key]) if key in sections else None)
+                    self._sections.append((section, []))
                     section.grid.setColumnStretch(0, 0)
                     section.grid.setColumnMinimumWidth(0, label_width)
                     section.grid.setColumnStretch(2, 1)
@@ -215,6 +220,7 @@ class SettingsForm(QWidget):
                     grid.addWidget(widget, row, 1, 1, span)
                 self._getters[key] = getter
                 self._widgets[key] = widget
+                self._sections[-1][1].append(key)
                 row += 1
             v.addStretch(1)
             scroll = QScrollArea()
@@ -272,16 +278,17 @@ class SettingsForm(QWidget):
 
     def _update_enabled(self, *_args):
         """Fields that count only with a tick, and the power settings only with the M3 board (the other
-        boards have no power control: the knob of the laser sets it): greyed out otherwise."""
+        boards have no power control: the knob of the laser sets it): greyed out otherwise. A laser's settings
+        show only what its machine has: a GRBL laser's fields for GRBL, a K40's (board, USB, power setting,
+        rail) for a K40; a section left empty is hidden too."""
         wanted = {key: self._widgets[switch].isChecked() for key, switch in DEPENDS.items()
                   if key in self._widgets and switch in self._widgets}
         if "machine" in self._widgets:                    # a laser's settings
             grbl = self._widgets["machine"].currentData() == "grbl"
             m3 = self._widgets["board_name"].currentText() == M3_BOARD and not grbl
-            for key in GRBL_KEYS:
-                wanted[key] = grbl
-            for key in K40_KEYS:
-                wanted[key] = not grbl
+            shown = {key: grbl for key in GRBL_KEYS if key in self._widgets}
+            shown.update({key: not grbl for key in K40_ONLY if key in self._widgets})
+            shown["show_power"] = shown["max_power"] = m3     # only the M3 board sets the power
             wanted["show_power"] = m3
             wanted["max_power"] = m3 and self._widgets["show_power"].isChecked()
             wanted["Trace_power"] = wanted["Trace_power"] and (m3 or grbl)     # GRBL: S, always
@@ -290,10 +297,12 @@ class SettingsForm(QWidget):
         for key, on in wanted.items():
             for part in [self._widgets[key]] + ([self._labels[key]] if key in self._labels else []):
                 part.setEnabled(on)
-        if "machine" in self._widgets:                    # one home corner shown: the chosen machine's
-            for key, on in (("HomeUR", not grbl), ("grbl_home", grbl)):
-                for part in (self._widgets[key], self._labels[key]):
+        if "machine" in self._widgets:                    # only what the chosen machine has
+            for key, on in shown.items():
+                for part in [self._widgets[key]] + ([self._labels[key]] if key in self._labels else []):
                     part.setVisible(on)
+            for section, keys in self._sections:
+                section.setVisible(any(shown.get(k, True) for k in keys))
         if "show_power" in self._widgets:
             tip = "" if m3 else _("Only the M3 board sets the power; on other boards the power knob of the laser "
                                   "does")

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-19 20:18+0100\n"
+"POT-Creation-Date: 2026-11-19 20:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -513,6 +513,19 @@ msgstr ""
 msgid ""
 "Burn the background away so the text stays raised (off: burn the text "
 "itself)"
+msgstr ""
+
+msgid ""
+"By outlines: how long to look for a tighter layout, for each sheet "
+"(longer: tighter)"
+msgstr ""
+
+msgid ""
+"By the parts' real outlines: parts go into each other's gaps and the "
+"holes cut in them; takes the search time for each sheet"
+msgstr ""
+
+msgid "By the parts' rectangles: fast"
 msgstr ""
 
 msgid "CITY"
@@ -1288,6 +1301,9 @@ msgstr ""
 msgid "GRBL is in alarm: unlock or home the machine."
 msgstr ""
 
+msgid "GRBL: air assist during a job (M8 on, M9 off)"
+msgstr ""
+
 msgid "GRBL: full power S ($30)"
 msgstr ""
 
@@ -1497,6 +1513,11 @@ msgstr ""
 msgid ""
 "How much of the code can be damaged and still read; more makes the code "
 "denser"
+msgstr ""
+
+msgid ""
+"How the parts are laid out: by their rectangles (fast) or by their real "
+"outlines (parts in each other's gaps and holes)"
 msgstr ""
 
 msgid ""
@@ -1867,6 +1888,13 @@ msgstr ""
 msgid "Look for serial ports again (after plugging the laser in)"
 msgstr ""
 
+#, python-format
+msgid "Looking for a tight layout: sheet %d…"
+msgstr ""
+
+msgid "Looking for a tight layout…"
+msgstr ""
+
 msgid "Low (7 %)"
 msgstr ""
 
@@ -1966,6 +1994,9 @@ msgid "Memory"
 msgstr ""
 
 msgid "Memory and USB"
+msgstr ""
+
+msgid "Method"
 msgstr ""
 
 msgid "Mirror"
@@ -2068,6 +2099,9 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
+msgid "Needs the spyrrow and pyclipper libraries (installed with Kerfly)"
+msgstr ""
+
 msgid "Nest"
 msgstr ""
 
@@ -2088,6 +2122,13 @@ msgstr ""
 
 #, python-format
 msgid "Nested %d parts on the bed."
+msgstr ""
+
+#, python-format
+msgid "Nesting by outlines failed: %s"
+msgstr ""
+
+msgid "Nesting cancelled: nothing moved."
 msgstr ""
 
 msgid "New"
@@ -2367,6 +2408,9 @@ msgid "Outline only"
 msgstr ""
 
 msgid "Outline shape"
+msgstr ""
+
+msgid "Outlines"
 msgstr ""
 
 msgid "Outside the laser bed!"
@@ -2668,6 +2712,9 @@ msgstr ""
 msgid "Rectangle"
 msgstr ""
 
+msgid "Rectangles"
+msgstr ""
+
 msgctxt "toolbar"
 msgid "Redo"
 msgstr ""
@@ -2923,6 +2970,9 @@ msgid "Scan line step (in)"
 msgstr ""
 
 msgid "Scan lines and levels"
+msgstr ""
+
+msgid "Search time"
 msgstr ""
 
 msgid "See the release"
@@ -3283,6 +3333,9 @@ msgid ""
 "next job."
 msgstr ""
 
+msgid "Stopping after the sheet being searched…"
+msgstr ""
+
 msgid "Stopping…"
 msgstr ""
 
@@ -3399,9 +3452,9 @@ msgstr ""
 #, python-format
 msgid ""
 "The %(n)d selected parts (a group as one part) are laid out on the "
-"laser's bed (%(w).0f × %(h).0f mm) as tightly as their outlines' "
-"rectangles allow. What does not fit goes on a next sheet: each sheet is a"
-" group in the element list, sheets 2 and on unticked."
+"laser's bed (%(w).0f × %(h).0f mm). What does not fit goes on a next "
+"sheet: each sheet is a group in the element list, sheets 2 and on "
+"unticked."
 msgstr ""
 
 msgid ""

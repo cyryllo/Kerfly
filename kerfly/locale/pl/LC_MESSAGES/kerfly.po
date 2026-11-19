@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-19 20:18+0100\n"
+"POT-Creation-Date: 2026-11-19 20:37+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -541,6 +541,23 @@ msgid ""
 "Burn the background away so the text stays raised (off: burn the text "
 "itself)"
 msgstr "Wypal tło, żeby tekst został wypukły (wyłączone: wypala się sam tekst)"
+
+msgid ""
+"By outlines: how long to look for a tighter layout, for each sheet "
+"(longer: tighter)"
+msgstr ""
+"Obrysy: jak długo szukać ciaśniejszego układu, dla każdego arkusza "
+"(dłużej: ciaśniej)"
+
+msgid ""
+"By the parts' real outlines: parts go into each other's gaps and the "
+"holes cut in them; takes the search time for each sheet"
+msgstr ""
+"Po prawdziwych obrysach części: części trafiają we wnęki innych i w "
+"wycięte w nich otwory; trwa tyle, ile czas szukania, dla każdego arkusza"
+
+msgid "By the parts' rectangles: fast"
+msgstr "Po prostokątach części: szybko"
 
 msgid "CITY"
 msgstr "MIASTO"
@@ -1374,6 +1391,9 @@ msgstr "GRBL kończy zadanie…"
 msgid "GRBL is in alarm: unlock or home the machine."
 msgstr "GRBL jest w alarmie: odblokuj albo zbazuj maszynę."
 
+msgid "GRBL: air assist during a job (M8 on, M9 off)"
+msgstr "GRBL: nadmuch powietrza podczas zadania (M8 włącza, M9 wyłącza)"
+
 msgid "GRBL: full power S ($30)"
 msgstr "GRBL: pełna moc S ($30)"
 
@@ -1603,6 +1623,13 @@ msgid ""
 msgstr ""
 "Jaka część kodu może być uszkodzona, a kod nadal się odczyta; więcej daje"
 " gęstszy kod"
+
+msgid ""
+"How the parts are laid out: by their rectangles (fast) or by their real "
+"outlines (parts in each other's gaps and holes)"
+msgstr ""
+"Jak układać części: po ich prostokątach (szybko) albo po prawdziwych "
+"obrysach (części we wnękach i otworach innych)"
 
 msgid ""
 "I insert, D delete, L line, C curve, O smooth, S symmetric, Z close / "
@@ -2017,6 +2044,13 @@ msgstr "Wygląd"
 msgid "Look for serial ports again (after plugging the laser in)"
 msgstr "Szukaj portów szeregowych ponownie (po podłączeniu lasera)"
 
+#, python-format
+msgid "Looking for a tight layout: sheet %d…"
+msgstr "Szukam ciasnego układu: arkusz %d…"
+
+msgid "Looking for a tight layout…"
+msgstr "Szukam ciasnego układu…"
+
 msgid "Low (7 %)"
 msgstr "Niska (7 %)"
 
@@ -2127,6 +2161,9 @@ msgstr "Pamięć"
 msgid "Memory and USB"
 msgstr "Pamięć i USB"
 
+msgid "Method"
+msgstr "Metoda"
+
 msgid "Mirror"
 msgstr "Odbij"
 
@@ -2233,6 +2270,9 @@ msgstr "Mój laser"
 msgid "Name"
 msgstr "Nazwa"
 
+msgid "Needs the spyrrow and pyclipper libraries (installed with Kerfly)"
+msgstr "Wymaga bibliotek spyrrow i pyclipper (instalowanych razem z Kerfly)"
+
 msgid "Nest"
 msgstr "Ułóż"
 
@@ -2259,6 +2299,13 @@ msgstr ""
 #, python-format
 msgid "Nested %d parts on the bed."
 msgstr "Ułożono części na stole: %d."
+
+#, python-format
+msgid "Nesting by outlines failed: %s"
+msgstr "Układanie po obrysach nie powiodło się: %s"
+
+msgid "Nesting cancelled: nothing moved."
+msgstr "Układanie przerwane: nic się nie przesunęło."
 
 msgid "New"
 msgstr "Nowy"
@@ -2560,6 +2607,9 @@ msgstr "Tylko obrys"
 
 msgid "Outline shape"
 msgstr "Kształt konturu"
+
+msgid "Outlines"
+msgstr "Obrysy"
 
 msgid "Outside the laser bed!"
 msgstr "Poza stołem lasera!"
@@ -2877,6 +2927,9 @@ msgstr "Gotowe projekty z kilku liczb: pudełka, elementy, testy"
 msgid "Rectangle"
 msgstr "Prostokąt"
 
+msgid "Rectangles"
+msgstr "Prostokąty"
+
 msgctxt "toolbar"
 msgid "Redo"
 msgstr "Ponów"
@@ -3154,6 +3207,9 @@ msgstr "Odstęp linii skanowania (cale)"
 
 msgid "Scan lines and levels"
 msgstr "Linie skanowania i poziomy"
+
+msgid "Search time"
+msgstr "Czas szukania"
 
 msgid "See the release"
 msgstr "Zobacz wydanie"
@@ -3546,6 +3602,9 @@ msgstr ""
 "Zatrzymane przez użytkownika. GRBL został zresetowany: przed kolejnym "
 "zadaniem odblokuj albo zbazuj maszynę."
 
+msgid "Stopping after the sheet being searched…"
+msgstr "Kończę po arkuszu, którego szukam…"
+
 msgid "Stopping…"
 msgstr "Zatrzymywanie…"
 
@@ -3672,14 +3731,14 @@ msgstr "Ten kształt nie ma linii, na której mógłby stanąć tekst."
 #, python-format
 msgid ""
 "The %(n)d selected parts (a group as one part) are laid out on the "
-"laser's bed (%(w).0f × %(h).0f mm) as tightly as their outlines' "
-"rectangles allow. What does not fit goes on a next sheet: each sheet is a"
-" group in the element list, sheets 2 and on unticked."
+"laser's bed (%(w).0f × %(h).0f mm). What does not fit goes on a next "
+"sheet: each sheet is a group in the element list, sheets 2 and on "
+"unticked."
 msgstr ""
 "Zaznaczone części (%(n)d, grupa jako jedna część) zostaną ułożone na "
-"stole lasera (%(w).0f × %(h).0f mm) tak ciasno, jak pozwalają prostokąty "
-"wokół ich obrysów. Co się nie zmieści, trafia na kolejny arkusz: każdy "
-"arkusz to grupa na liście elementów, arkusze od 2. są odhaczone."
+"stole lasera (%(w).0f × %(h).0f mm). Co się nie zmieści, trafia na "
+"kolejny arkusz: każdy arkusz to grupa na liście elementów, arkusze od 2. "
+"są odhaczone."
 
 msgid ""
 "The DXF file does not say which units it uses.\n"
@@ -5265,4 +5324,23 @@ msgstr "wersja %s"
 #~ "same corner of the design to the"
 #~ " head"
 #~ msgstr ""
+
+#~ msgid ""
+#~ "The %(n)d selected parts (a group "
+#~ "as one part) are laid out on "
+#~ "the laser's bed (%(w).0f × %(h).0f "
+#~ "mm) as tightly as their outlines' "
+#~ "rectangles allow. What does not fit "
+#~ "goes on a next sheet: each sheet"
+#~ " is a group in the element "
+#~ "list, sheets 2 and on unticked."
+#~ msgstr ""
+#~ "Zaznaczone części (%(n)d, grupa jako "
+#~ "jedna część) zostaną ułożone na stole"
+#~ " lasera (%(w).0f × %(h).0f mm) tak"
+#~ " ciasno, jak pozwalają prostokąty wokół "
+#~ "ich obrysów. Co się nie zmieści, "
+#~ "trafia na kolejny arkusz: każdy arkusz"
+#~ " to grupa na liście elementów, "
+#~ "arkusze od 2. są odhaczone."
 

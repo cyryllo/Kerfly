@@ -219,7 +219,7 @@ class MainWindow(QMainWindow):
         self.hinge_defaults = ShapeSpec(kind="rectangle", hinge_pattern="straight")
         # the Offset tool: what a click on a shape (or "Offset selected") does
         self.offset_defaults = {"offset_distance": 2.0, "offset_join": "round", "offset_keep": True}
-        self.nest_defaults = {"gap": 2.0, "turn": True}
+        self.nest_defaults = {"method": "rectangles", "gap": 2.0, "turn": True, "seconds": 10}
         self.crop_defaults = {"crop_shape": "rect"}
         self.preview.node_points_provider = self._node_points
         self.preview.signals.moved.connect(self._preview_moved)
@@ -1454,7 +1454,8 @@ class MainWindow(QMainWindow):
 
     def nest_selected(self):
         """Nest on the bed: the selected parts (nothing selected: all; a group as one part) laid out on the
-        laser's bed by their rectangles, turned where that fits better; what does not fit goes on next sheets,
+        laser's bed by their rectangles or by their real outlines (in each other's gaps and holes, sparrow, in a
+        thread with a progress window), turned where that fits better; what does not fit goes on next sheets,
         each a group named Sheet N, sheets 2 and on unticked (a sheet is always the bed). The sheets of an
         earlier nesting are undone first, so their parts are laid out again. One undo step."""
         import re
@@ -1488,7 +1489,24 @@ class MainWindow(QMainWindow):
             if e.group and is_sheet.match(self.group_names.get(top(e.group), "")):
                 e.group = without(e.group, top(e.group))
                 e.visible = True
-        placed, sheets = nest(chosen, bed_w, bed_h, self.nest_defaults["gap"], self.nest_defaults["turn"])
+        d = self.nest_defaults
+        if d.get("method") == "outlines":
+            from kerfly.core.nesting import apply_outline_plan
+            from kerfly.gui.nest_dialog import plan_with_progress
+            try:
+                planned = plan_with_progress(self, chosen, bed_w, bed_h, d["gap"], d["turn"], d.get("seconds", 10))
+            except RuntimeError as e:
+                planned = str(e)
+            if not isinstance(planned, tuple):       # cancelled or failed: nothing changed
+                self._restore(self._undo.pop())
+                if planned:
+                    self.status(_("Nesting by outlines failed: %s") % planned, error=True)
+                else:
+                    self.status(_("Nesting cancelled: nothing moved."))
+                return
+            placed, sheets = apply_outline_plan(planned[0], planned[1], bed_h)
+        else:
+            placed, sheets = nest(chosen, bed_w, bed_h, d["gap"], d["turn"])
         if sheets > 1:
             for n in range(1, sheets + 1):
                 gid = self._new_group_id()
@@ -3934,8 +3952,11 @@ class MainWindow(QMainWindow):
 
     def _update_power_visibility(self):
         """Layer rows for the loaded design; power column for M3 boards with power control."""
-        self.test_fire_row.setVisible(self.values.get("board_name") == "LASER-M3"
+        grbl = self.values.get("machine") == "grbl"
+        self.test_fire_row.setVisible(self.values.get("board_name") == "LASER-M3" and not grbl
                                       and is_true(self.values.get("show_test", "1")))
+        for action in (self.act_save_egv, self.act_send_egv):   # EGV: a K40's data only
+            action.setVisible(not grbl)
         self._rebuild_layers_panel()
         self._fit_panel_width()
 
@@ -4029,7 +4050,8 @@ class MainWindow(QMainWindow):
         # the state: a dot (green: connected) and its words, in the Laser tab and in the status bar
         connected = bool(self.laser.connected)
         if connected:
-            self.laser_label.setText(_("Connected (%s)") % self.values.get("board_name"))
+            board = "GRBL" if self.is_grbl() else self.values.get("board_name")
+            self.laser_label.setText(_("Connected (%s)") % board)
             self.btn_connect.setToolTip(_("Connected. Click to connect again (re-initialize)."))
         else:
             self.laser_label.setText(_("Not connected"))
@@ -5023,7 +5045,8 @@ class MainWindow(QMainWindow):
         if not name:
             return
         options = gcode.GcodeOptions(origin=self.values["gcode_origin"], s_max=int(self.values["gcode_s_max"]),
-                                     overscan_mm=float(self.values["gcode_overscan"]))
+                                     overscan_mm=float(self.values["gcode_overscan"]),
+                                     air=is_true(self.values.get("grbl_air", "0")))
         QApplication.setOverrideCursor(Qt.WaitCursor)
         try:
             text = gcode.build(self.elements, self.layers, self.job_settings(), self.values, options, __version__)

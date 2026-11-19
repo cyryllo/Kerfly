@@ -26,7 +26,7 @@ MACHINE_KEYS = (
     "show_power", "max_power", "rotary", "LaserRscale", "rapid_feed", "trace_w_laser", "trace_rect", "trace_gap",
     "trace_speed", "Trace_power", "test_time", "test_power", "t_timeout", "n_timeouts", "pre_pr_crc", "wait",
     "usb_port", "gcode_origin", "gcode_s_max", "gcode_overscan", "machine", "grbl_port", "grbl_baud", "grbl_home",
-    "grbl_jog", "grbl_home_speed", "home_lower",
+    "grbl_jog", "grbl_home_speed", "home_lower", "grbl_air",
     # the laser's own id (its material library's file) and whether it shares another laser's library
     "laser_id", "materials_shared", "materials_from",
 )

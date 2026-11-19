@@ -9,6 +9,7 @@ Usage:
 """
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -1436,9 +1437,10 @@ def main():
     app.processEvents()
     mb_order = mb.button(_QMB.No).x() < mb.button(_QMB.Yes).x()
     mb.close()
-    check("dialog pattern: Cancel first, the named action (role primary, default, 32 px, no icon) last; no beta "
-          "badge (GRBL confirmed on a laser); a message box's buttons in the same order",
-          [p[0] for p in pattern] == [True, True] and [p[1] for p in pattern] == [0, 0] and mb_order
+    check("dialog pattern: Cancel first, the named action (role primary, default, 32 px, no icon) last; a beta "
+          "badge by the nesting method (by outlines is new), none on G-code (GRBL confirmed on a laser); a message "
+          "box's buttons in the same order",
+          [p[0] for p in pattern] == [True, True] and [p[1] for p in pattern] == [1, 0] and mb_order
           and app.style().styleHint(_QS.SH_DialogButtonBox_ButtonsHaveIcons) == 0,
           "(%s, message box %s)" % (pattern, mb_order))
 
@@ -1614,11 +1616,15 @@ def main():
         for i in range(len(els)):
             for j in range(i + 1, len(els)):
                 (x0, x1, y0, y1), (X0, X1, Y0, Y1) = _box(els[i]), _box(els[j])
-                if x0 < X1 + gap - 0.05 and X0 < x1 + gap - 0.05 and y0 < Y1 + gap - 0.05 and Y0 < y1 + gap - 0.05:
+                # rectangles (all the shapes here): closer than the gap (corner to corner too)
+                if math.hypot(max(0.0, X0 - x1, x0 - X1), max(0.0, Y0 - y1, y0 - Y1)) < gap - 0.05:
                     return True
         return False
     nests = []
-    for home_ur, count, turn in (("0", 30, True), ("1", 12, True), ("0", 12, False)):
+    from kerfly.core.nesting import outlines_available as _outl
+    for home_ur, count, turn, method in (("0", 30, True, "rectangles"), ("1", 12, True, "rectangles"),
+                                         ("0", 12, False, "rectangles")) + \
+            ((("0", 12, True, "outlines"), ("1", 30, False, "outlines")) if _outl() else ()):
         nw = make_window(grid_mm="0", HomeUR=home_ur)
         r = _rnd.Random(3)
         for _k in range(count):
@@ -1630,9 +1636,10 @@ def main():
         nw.group_selected()                                 # two rectangles as one part
         rel = (round((pair[1].x - pair[0].x) * 25.4, 3), round((pair[1].y - pair[0].y) * 25.4, 3))
         rotations = [e.rotation for e in nw.elements]
+        pair_centres = (pair[0].centre, pair[1].centre)
         nw.preview.scope = ""
         nw.preview.select_element(list(nw.elements))
-        nw.nest_defaults = {"gap": 2.0, "turn": turn}
+        nw.nest_defaults = {"method": method, "gap": 2.0, "turn": turn, "seconds": 2}
         undo_before = len(nw._undo)
         nw.nest_selected()
         bw, bh = config.bed_size_inches(nw.values)
@@ -1642,12 +1649,17 @@ def main():
             sheets.setdefault(name if name.startswith("Sheet ") else "Sheet 1", []).append(e)
         ok = all(_on_bed(e, bw, bh) for e in nw.elements) and not any(_clash(v, 2.0) for v in sheets.values()) \
             and len(nw._undo) == undo_before + 1 and not _truth_n.check_window(nw)
-        ok = ok and (round((pair[1].x - pair[0].x) * 25.4, 3), round((pair[1].y - pair[0].y) * 25.4, 3)) == rel \
-            and len({e.group.split("/")[-1] for e in pair}) == 1
+        # a group moves as one part: its members keep their distance (and their places, when not turned)
+        moved = (round((pair[1].x - pair[0].x) * 25.4, 3), round((pair[1].y - pair[0].y) * 25.4, 3))
+        ok_pair = moved == rel if pair[0].rotation == rotations[0] else \
+            abs(math.dist(pair[0].centre, pair[1].centre) - math.dist(*pair_centres)) * 25.4 < 0.02
+        diag = [all(_on_bed(e, bw, bh) for e in nw.elements), not any(_clash(v, 2.0) for v in sheets.values()),
+                len(nw._undo) == undo_before + 1, not _truth_n.check_window(nw), ok_pair]
+        ok = ok and ok_pair and len({e.group.split("/")[-1] for e in pair}) == 1
         ok = ok and all(e.visible == (n == "Sheet 1") for n, v in sheets.items() for e in v)
         if not turn:
             ok = ok and [e.rotation for e in nw.elements] == rotations
-        if count == 30:
+        if count == 30 and method == "rectangles":
             ok = ok and len(sheets) >= 2 and all(len(e.group.split("/")) <= 2 for e in nw.elements)
             nw.preview.select_element(list(nw.elements))
             nw.nest_selected()                              # again: laid out again, still a sheet a level deep
@@ -1656,13 +1668,14 @@ def main():
             nw.undo()
         nw.undo()
         ok = ok and all(not e.group or "/" not in e.group for e in nw.elements) and all(e.visible for e in nw.elements)
-        nests.append(ok)
+        nests.append(ok if ok else (method, home_ur, diag))
         nw._dirty = False
         nw.close()
     _nd.NestDialog.exec = _nd_exec
     check("Nest on the bed: inside the bed with the gap, nothing over another, more sheets as groups (2 and on "
-          "unticked), a group as one part, no turning when off, nested again, one undo step (both homes)",
-          all(nests), "(%s)" % nests)
+          "unticked), a group as one part, no turning when off, nested again, one undo step (both homes); by "
+          "rectangles and by outlines",
+          all(n is True for n in nests), "(%s)" % nests)
 
     # 28e. G-code for GRBL (File → Save G-code): a cut rectangle, an engraved ellipse (2 passes) and a 10 x 5 mm
     # picture come out as the reference file (tests/fixtures/gcode/basic.nc), and where they belong: the
@@ -1795,10 +1808,13 @@ def main():
     _open = _grbl.open_serial
     _grbl.serial_ports = lambda: [("/dev/ttyFAKE", "stand-in")]
     _grbl.open_serial = lambda port, baud: nb
-    mw = make_window(grid_mm="0", machine="grbl", post_disp="0")
+    mw = make_window(grid_mm="0", machine="grbl", post_disp="0", grbl_air="1", board_name="LASER-M3")
     is_grbl = mw.is_grbl()
     mw.connect_laser()
     laser_mode = "$32=1" in mw.statusBar().currentMessage()
+    # only what a GRBL laser has: no test fire (a K40 M3 board's), no EGV files; "Connected (GRBL)"
+    k40_things_hidden = not mw.test_fire_row.isVisibleTo(mw) and not mw.act_save_egv.isVisible() \
+        and not mw.act_send_egv.isVisible() and "GRBL" in mw.laser_label.text()
     mw._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 50), False)
     mw.start_job()
     gt0 = _gtime.time()
@@ -1807,15 +1823,52 @@ def main():
         _gtime.sleep(0.02)
     job_ok = "G92 X0 Y0" in nb.lines and nb.lines.index("G92 X0 Y0") < nb.lines.index("M4 S0") and \
         any(l.startswith("$J=") for l in nb.lines)
+    # air assist (the laser's setting): M8 right after the start, M9 after the laser goes off
+    air_ok = "M8" in nb.lines and nb.lines.index("M8") == nb.lines.index("M4 S0") + 1 and "M9" in nb.lines \
+        and nb.lines.index("M9") == nb.lines.index("M5 S0") + 1
     mw._apply_settings(dict(mw.values, machine="k40"), {"machine"})
-    back = not mw.is_grbl() and not mw.laser.connected
+    back = not mw.is_grbl() and not mw.laser.connected and mw.act_save_egv.isVisible()
     mw._dirty = False
     mw.close()
     _grbl.serial_ports, _grbl.open_serial = _ports, _open
     check("GRBL laser (stand-in board): stream within the buffer, waits for Idle; error / alarm stop it with their "
-          "meaning; no homing and laser mode off are said; Settings picks the controller; a job: G92, G-code",
-          stream_ok and errors_ok and no_home and is_grbl and laser_mode and job_ok and back,
-          "(%s)" % [stream_ok, errors, no_home, is_grbl, laser_mode, job_ok, back])
+          "meaning; no homing and laser mode off are said; Settings picks the controller; a job: G92, G-code, "
+          "air assist M8 / M9; no K40 things shown (test fire, EGV)",
+          stream_ok and errors_ok and no_home and is_grbl and laser_mode and job_ok and back and air_ok
+          and k40_things_hidden,
+          "(%s)" % [stream_ok, errors, no_home, is_grbl, laser_mode, job_ok, back, air_ok, k40_things_hidden])
+
+    # 28f2. a laser's settings show only what its machine has: a GRBL laser no K40 board, USB, power setting
+    # or rail (their sections hidden), a K40 no GRBL fields; air assist is a GRBL laser's tick, saved with it
+    from kerfly.gui.settings_dialog import SettingsForm as _SF2
+    shown_ok = []
+    for machine in ("grbl", "k40"):
+        sw = make_window(grid_mm="0", machine=machine, board_name="LASER-M3")
+        form = _SF2(dict(sw.values), machine=True, window=sw)
+        form.resize(900, 900)
+        form.show()
+        app.processEvents()
+        vis = {k: form._widgets[k].isVisible() for k in ("board_name", "usb_port", "show_power", "post_home",
+                                                         "pre_pr_crc", "t_timeout", "grbl_port", "grbl_air",
+                                                         "grbl_jog", "LaserXsize")}
+        sections = {s.title.text(): s.isVisible() for s, _keys in form._sections if s.title is not None}
+        if machine == "grbl":
+            form._widgets["grbl_air"].setChecked(True)
+            shown_ok.append(vis["grbl_air"] and vis["grbl_port"] and vis["grbl_jog"] and vis["LaserXsize"]
+                            and not any(vis[k] for k in ("board_name", "usb_port", "show_power", "post_home",
+                                                         "pre_pr_crc", "t_timeout"))
+                            and not sections.get(_("USB connection"), True)
+                            and not sections.get(_("Power (M3 board)"), True)
+                            and form.result_values()[0]["grbl_air"] == "1")
+        else:
+            shown_ok.append(vis["board_name"] and vis["usb_port"] and vis["show_power"] and vis["pre_pr_crc"]
+                            and not vis["grbl_air"] and not vis["grbl_port"] and not vis["grbl_jog"]
+                            and not sections.get(_("Head movement"), True))
+        form.close()
+        sw._dirty = False
+        sw.close()
+    check("a laser's settings show only what its machine has (GRBL: no K40 board, USB, power, rail; K40: no "
+          "GRBL fields; empty sections hidden); air assist is a GRBL laser's tick", all(shown_ok), "(%s)" % shown_ok)
 
     # 28g. speeds in mm/min for a GRBL machine only (the K40 stays in mm/s): the layers, the material test (its
     # fields and the speeds engraved on it), Settings and the material library show and take mm/min; what is

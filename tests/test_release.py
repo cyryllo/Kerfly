@@ -960,6 +960,55 @@ def part_edit(s):
            lambda: (s.trigger(w.act_select_all, via="key"), s.trigger(w.act_nest, via="button")),
            check=nested_apart)
     s.trigger(w.act_undo)                        # back to the shapes before the nesting
+
+    # the same by the real outlines (sparrow): the Outlines button of Method, 2 s of search typed, Nest; a window
+    # shows the search; then back to rectangles for the next time
+    from kerfly.core.nesting import outlines_available
+
+    def nest_outlines_answer(dlg):
+        s.click(dlg.method.buttons["outlines"])
+        s.type_number(dlg.seconds, 2)
+        from PySide6.QtWidgets import QDialogButtonBox
+        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+
+    def nested_by_outlines():
+        # no two shapes closer than the gap of 3 mm by their real outlines: each grown by 1.45 mm, none overlap
+        import pyclipper
+        from kerfly.core import nesting
+
+        def grown(e):
+            areas, lines = nesting._part_paths([e])
+            pco = pyclipper.PyclipperOffset()
+            pco.AddPaths(areas, pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
+            for line in lines:
+                pco.AddPath(line, pyclipper.JT_ROUND, pyclipper.ET_OPENROUND)
+            return pco.Execute(1.45 * nesting.CLIP)
+        shapes = [grown(e) for e in w.elements]
+        clash = []
+        for i in range(len(shapes)):
+            for j in range(i + 1, len(shapes)):
+                pc = pyclipper.Pyclipper()
+                pc.AddPaths(shapes[i], pyclipper.PT_SUBJECT, True)
+                pc.AddPaths(shapes[j], pyclipper.PT_CLIP, True)
+                if sum(abs(pyclipper.Area(q)) for q in pc.Execute(pyclipper.CT_INTERSECTION)) > 1.0:
+                    clash.append((i, j))
+        d = w.nest_defaults
+        return not clash and d["method"] == "outlines" and d["seconds"] == 2, "over each other: %s, %s, %s" % (
+            clash, d, w.statusBar().currentMessage())
+    def search_window(dlg):
+        """The window of the search: it closes by itself when the layout is found (Cancel is not pressed)."""
+        t0 = time.time()
+        while dlg.isVisible() and time.time() - t0 < 60:
+            QApplication.processEvents()
+            time.sleep(0.02)
+    if outlines_available():
+        s.expect_dialog("nest by outlines", nest_outlines_answer)
+        s.expect_dialog("nest by outlines: the search window", search_window)
+        s.step("Nest on the bed (toolbar button): Method Outlines, search time 2 s, Nest",
+               lambda: (s.trigger(w.act_select_all, via="key"), s.trigger(w.act_nest, via="button")),
+               check=nested_by_outlines)
+        s.trigger(w.act_undo)                    # back to the shapes before the nesting
+        w.nest_defaults["method"] = "rectangles"
     for _i in range(3):
         s.trigger(w.act_undo)                    # and the three rectangles away
 
@@ -1628,8 +1677,9 @@ def part_grbl(s):
             s.pick(box, index=box.findData(code))
             board = next(c for c in dlg.findChildren(_C) if c.property("setting_key") == "board_name")
             port = next(c for c in dlg.findChildren(_C) if c.property("setting_key") == "grbl_baud")
-            if board.isEnabled() == (code == "grbl") or port.isEnabled() != (code == "grbl"):
-                raise RuntimeError("the K40 / GRBL fields are not greyed out to match the machine")
+            # only the chosen machine's fields are shown (a K40's board, a GRBL laser's serial speed)
+            if board.isVisible() == (code == "grbl") or port.isVisible() != (code == "grbl"):
+                raise RuntimeError("the K40 / GRBL fields are not shown / hidden to match the machine")
             QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
         return answer
     s.expect_dialog("settings: GRBL machine", machine_to("grbl"))
