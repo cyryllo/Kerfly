@@ -119,6 +119,13 @@ oknie.
   wypalana warstwa; startuje z tempem 5× (dłuższe zadanie szybciej). Otwarta podczas zmian projektu przelicza zadanie i zostaje
   w tym samym miejscu; Nowy i Otwórz ją zamykają.
 
+### Poprawione
+
+- **Uruchamianie ze źródeł** (`start_kerfly.sh`, `start_kerfly.bat`):
+  dodatkowe biblioteki dodane w aktualizacji też są instalowane przy
+  następnym starcie (kto uruchamiał 2.0.0b1 ze źródeł, nie miał spyrrow i
+  Ułóż po obrysach był wyszarzony).
+
 ## 1.8.0 (2026-11-16)
 
 Podgląd 3D pudełek z generatora, grupy w grupach (arkusze i części pudełka na

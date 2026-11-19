@@ -122,6 +122,12 @@ a window of its own.
   layer being lasered; it starts at 5× (faster for a long job). Left open while the design changes, it works the job
   out again and stays at its place in time; New and Open close it.
 
+### Fixed
+
+- **Running from source** (`start_kerfly.sh`, `start_kerfly.bat`): optional
+  libraries added in an update are installed at the next start too (with
+  2.0.0b1 from source, spyrrow was missing and Nest by outlines greyed out).
+
 ## 1.8.0 (2026-11-16)
 
 3D preview of the generated boxes, groups in groups (a box's sheets and parts

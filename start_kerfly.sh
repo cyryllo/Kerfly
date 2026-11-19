@@ -14,9 +14,7 @@ if [ ! -x .venv/bin/python ]; then
         rm -rf .venv
         exit 1
     fi
-    # optional: offset of the boundary trace; Kerfly works without it
-    .venv/bin/python -m pip install -r requirements-optional.txt || \
-        echo "Optional library pyclipper was not installed; Kerfly works without it."
+    cp requirements.txt .venv/kerfly-requirements.txt
 fi
 # after an update: install libraries that were added since the last start
 if ! cmp -s requirements.txt .venv/kerfly-requirements.txt; then
@@ -26,5 +24,13 @@ if ! cmp -s requirements.txt .venv/kerfly-requirements.txt; then
     else
         echo "Updating the libraries failed; Kerfly starts anyway."
     fi
+fi
+# the optional libraries (pyclipper: offsets and the boundary trace; spyrrow: nesting by outlines), also
+# those added in an update; tried once for each change of the list: Kerfly works without them
+if ! cmp -s requirements-optional.txt .venv/kerfly-requirements-optional.txt; then
+    echo "Installing the optional libraries ..."
+    .venv/bin/python -m pip install -r requirements-optional.txt || \
+        echo "Some optional libraries were not installed; Kerfly works without them (fewer functions)."
+    cp requirements-optional.txt .venv/kerfly-requirements-optional.txt
 fi
 exec .venv/bin/python kerfly.py "$@"
