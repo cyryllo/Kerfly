@@ -1554,6 +1554,48 @@ def main():
           "written on connect when it differs",
           corner_ok and grbl_power and trace_power_on, "(%s)" % [corners, grbl_power, trace_power_on])
 
+    # 28c6. four home corners for every laser (a picture of the bed with a radio button in each corner, in the
+    # laser's settings): Home puts the head in that corner, To head brings the design's same corner to it; a
+    # K40's upper corners keep HomeUR (its data), a lower one is home_lower
+    from kerfly.gui.settings_dialog import GRBL_CORNERS as _GC
+    four = {}
+    for machine in ("k40", "grbl"):
+        for corner in ("UL", "UR", "LL", "LR"):
+            values = {"HomeUR": "1" if corner[1] == "R" else "0", "home_lower": "1" if corner[0] == "L" else "0",
+                      "grbl_home": {c: n for n, c in _GC.items()}[corner]}
+            cw4 = make_window(grid_mm="0", follow_head="0", machine=machine, **values)
+            form = _GLF(dict(cw4.values), machine=True, window=cw4)
+            picker = form._widgets["HomeUR" if machine == "k40" else "grbl_home"]
+            shown = picker.isVisibleTo(form) or not form.isVisible()
+            other = form._widgets["grbl_home" if machine == "k40" else "HomeUR"]
+            picked = picker.current() == corner and all(b.isEnabled() for b in picker.buttons.values()) \
+                and not other.isVisibleTo(form)
+            # choosing another corner in the picture changes the laser's setting
+            flip = {"UL": "LR", "UR": "LL", "LL": "UR", "LR": "UL"}[corner]
+            picker.buttons[flip].setChecked(True)
+            got = form.result_values()[0]
+            saved = (got["HomeUR"] == ("1" if flip[1] == "R" else "0")
+                     and got["home_lower"] == ("1" if flip[0] == "L" else "0")) if machine == "k40" else \
+                got["grbl_home"] == {c: n for n, c in _GC.items()}[flip]
+            form.close()
+            cw4._preview_drawn("rectangle", QPointF(40, 40), QPointF(80, 70), False)
+            cw4.home()
+            cw4.place_at_head()
+            e = cw4.elements[-1]
+            bw4, bh4 = config.bed_size_inches(cw4.values)
+            # the head (bed inches from the left / top for GRBL; a K40's x from home), the design's corner
+            hx = (bw4 if corner[1] == "R" and machine == "grbl" else 0.0)
+            hy = -bh4 if corner[0] == "L" else 0.0
+            ex = e.bounds[1] if corner[1] == "R" and machine == "grbl" else e.bounds[0]
+            ey = e.bounds[2] if corner[0] == "L" else e.bounds[3]
+            four[(machine, corner)] = (picked and shown and saved, abs(cw4.head[0] - hx) < 1e-3
+                                       and abs(cw4.head[1] - hy) < 1e-3, abs(ex - hx) < 1e-3 and abs(ey - hy) < 1e-3)
+            cw4._dirty = False
+            cw4.close()
+    check("home corner: four corners for a K40 and a GRBL laser (a picture with radio buttons); Home puts the head "
+          "there, To head brings the design's same corner to it",
+          all(all(v) for v in four.values()), "(%s)" % {k: v for k, v in four.items() if not all(v)})
+
     # 28d. Nest on the bed (Ctrl+Shift+N): the selected parts laid out inside the bed with the gap between them,
     # nothing over another; what does not fit on more sheets (groups Sheet N, sheets 2 and on unticked); a group
     # moves as one part (its members keep their places to each other); without turning nothing is turned; a

@@ -162,8 +162,8 @@ projektu. Jeśli wolisz, żeby projekt zaczynał się przy głowicy:
 
 - **Edycja → Ustaw projekt przy głowicy** (Ctrl+H, **Do głowicy** w grupie Układ)
   jednorazowo przesuwa projekt do głowicy: do głowicy trafia róg projektu
-  odpowiadający rogowi bazy maszyny (lewy górny dla K40, lewy dolny dla lasera
-  GRBL, który tam bazuje).
+  odpowiadający rogowi bazowania lasera (lewy dolny dla lasera bazującego w
+  lewym dolnym rogu; Ustawienia → Lasery… → Róg bazowania).
 - **Projekt podąża za głowicą** (przycisk z łańcuchem, wciśnięty po
   włączeniu) trzyma projekt przy głowicy: strzałki, Idź do X/Y i Bazowanie
   przesuwają głowicę razem z projektem, a strzałki nie wypchną projektu poza
@@ -570,8 +570,8 @@ sprawdzone na maszynie GRBL.
 **Laser GRBL podłączony do Kerfly.** W **Ustawienia → Lasery…** wybierz
 **Maszyna: płyta GRBL, port szeregowy**, potem jej **port szeregowy** (albo
 pierwszą płytę, która odpowie; ↻ szuka ponownie po podłączeniu), prędkość
-portu (115200 na większości płyt), **róg bazowania głowicy** (lewy dolny w
-większości laserów GRBL), **prędkość przesuwu** i **pełną moc S** (`$30`).
+portu (115200 na większości płyt), **róg bazowania** (w sekcji Stół roboczy:
+obrazek stołu, kliknij róg; lewy dolny w większości laserów GRBL), **prędkość przesuwu** i **pełną moc S** (`$30`).
 Zapamiętuje je profil lasera, więc K40 i laser GRBL mogą mieć każdy swoje.
 Przy maszynie GRBL prędkości są pokazywane i wpisywane w **mm/min**, jak
 zwykle w laserach GRBL (K40 zostaje w mm/s).
@@ -607,9 +607,9 @@ zmiany, **Anuluj** je porzuca.
 
 | Sekcja | Ustawienia |
 |---|---|
-| Sterownik | maszyna (K40 albo płyta GRBL), płyta sterująca, port USB; dla płyty GRBL jej port szeregowy, prędkość, róg bazowania i pełna moc S |
+| Sterownik | maszyna (K40 albo płyta GRBL), płyta sterująca, port USB; dla płyty GRBL jej port szeregowy, prędkość i pełna moc S |
 | Ruch głowicy (GRBL) | prędkość przesuwu strzałkami i przyciskami narożników, prędkość bazowania (zapisywana w płycie, `$25`, przy łączeniu; 0 zostawia ustawienie płyty); płyta K40 jeździ i bazuje z własną prędkością |
-| Stół roboczy, bazowanie i koniec zadania | rozmiar stołu, pozycja bazowa w prawym górnym rogu, bazowanie przy łączeniu, bazowanie głowicy po zadaniu (powrót do 0, 0 przed kolejną sztuką), odblokowanie osi i sygnał po zadaniu, raport po zadaniu (czas zadania, domyślnie włączony; małe okno, które czeka, aż wrócisz) |
+| Stół roboczy, bazowanie i koniec zadania | rozmiar stołu, **róg bazowania** (obrazek stołu z przyciskiem wyboru w każdym rogu: ten, do którego bazuje głowica; Ustaw projekt przy głowicy i Projekt podąża za głowicą przysuwają do głowicy ten sam róg projektu), bazowanie przy łączeniu, bazowanie głowicy po zadaniu (powrót do 0, 0 przed kolejną sztuką), odblokowanie osi i sygnał po zadaniu, raport po zadaniu (czas zadania, domyślnie włączony; małe okno, które czeka, aż wrócisz) |
 | Programy uruchamiane przy zadaniu | program uruchamiany przed każdym zadaniem wysyłanym do lasera (np. żeby włączyć wyciąg; zadanie czeka, aż się skończy, najwyżej minutę, a gdy nie zadziała, pyta), program uruchamiany po każdym skończonym zadaniu (np. żeby wyłączyć wyciąg albo wysłać wiadomość; jego wynik i błędy trafiają do raportu) |
 | Skala, moc | współczynniki skali X/Y, moc dla każdej operacji i moc maksymalna na M3 (wyszarzone przy innych płytach: tam moc ustawia się pokrętłem lasera; laser GRBL zawsze ma moc dla każdej warstwy) |
 | Baza materiałów | własna albo wspólna z innym laserem tego samego rodzaju |

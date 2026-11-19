@@ -75,7 +75,8 @@ SETTINGS_KEYS = [
     ("machine", TEXT),       # Kerfly only: "k40" (Lihuiyu board over USB) or "grbl" (GRBL board, serial port)
     ("grbl_port", TEXT),     # Kerfly only: GRBL: serial port ("" = the first board that answers)
     ("grbl_baud", TEXT),     # Kerfly only: GRBL: serial speed
-    ("grbl_home", TEXT),     # Kerfly only: GRBL: the corner $H homes to ("lower_left" or "upper_left")
+    ("grbl_home", TEXT),     # Kerfly only: GRBL: the corner $H homes to (lower_left, upper_left, upper_right, lower_right)
+    ("home_lower", BOOL),    # Kerfly only: a K40 homes to a lower corner (the head starts at the bottom of the bed)
     ("grbl_jog", TEXT),      # Kerfly only: GRBL: jog speed, mm/min
     ("grbl_home_speed", TEXT),  # Kerfly only: GRBL: homing speed ($25), mm/min; 0: the board's own
     ("laser_id", TEXT),      # Kerfly only: the laser profile's own id (its material library)
@@ -112,7 +113,7 @@ DEFAULT_VALUES = {
     "designfile": "", "inkscape_path": "", "batch_path": "",
     "pre_exec": "0", "pre_batch_path": "", "theme": "light", "dither": "floyd", "usb_port": "",
     "gcode_origin": "lower_left", "gcode_s_max": "1000", "gcode_overscan": "2",
-    "machine": "k40", "grbl_port": "", "grbl_baud": "115200", "grbl_home": "lower_left", "grbl_jog": "3000", "grbl_home_speed": "0",
+    "machine": "k40", "grbl_port": "", "grbl_baud": "115200", "grbl_home": "lower_left", "home_lower": "0", "grbl_jog": "3000", "grbl_home_speed": "0",
     "laser_id": "", "materials_shared": "0", "materials_from": "",
     "language": "",          # "" = system language
     "grid_mm": "0",

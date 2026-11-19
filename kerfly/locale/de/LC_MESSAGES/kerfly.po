@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-19 19:50+0100\n"
+"POT-Creation-Date: 2026-11-19 20:18+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -1396,9 +1396,6 @@ msgstr "GRBL beendet den Auftrag…"
 msgid "GRBL is in alarm: unlock or home the machine."
 msgstr "GRBL ist im Alarm: Maschine entsperren oder referenzieren."
 
-msgid "GRBL: corner the head homes to ($H)"
-msgstr "GRBL: Ecke, zu der der Kopf referenziert ($H)"
-
 msgid "GRBL: full power S ($30)"
 msgstr "GRBL: volle Leistung S ($30)"
 
@@ -1556,8 +1553,8 @@ msgstr "Beim Zeichnen Umschalt halten"
 msgid "Hole 20 mm"
 msgstr "Loch 20 mm"
 
-msgid "Home is in the upper right corner"
-msgstr "Referenzpunkt oben rechts"
+msgid "Home corner"
+msgstr "Referenzecke"
 
 msgid "Home the head after a job (back to 0, 0)"
 msgstr "Kopf nach dem Auftrag referenzieren (zurück zu 0, 0)"
@@ -2059,11 +2056,17 @@ msgstr ""
 msgid "Low (7 %)"
 msgstr "Niedrig (7 %)"
 
+msgid "Lower left"
+msgstr "Unten links"
+
 msgid "Lower left corner"
 msgstr "Untere linke Ecke"
 
 msgid "Lower rail"
 msgstr "Untere Leiste"
+
+msgid "Lower right"
+msgstr "Unten rechts"
 
 msgid "Lower right corner"
 msgstr "Untere rechte Ecke"
@@ -3777,6 +3780,15 @@ msgstr ""
 msgid "The box put together from its parts (drag to turn it)"
 msgstr "Die Schachtel aus ihren Teilen zusammengesetzt (ziehen zum Drehen)"
 
+msgid ""
+"The corner of the bed the head goes to on Home. Place design at the head "
+"and Design follows the head bring the same corner of the design to the "
+"head"
+msgstr ""
+"Die Ecke des Arbeitsbereichs, in die der Laserkopf bei der Referenzfahrt "
+"fährt. Entwurf am Laserkopf platzieren und Entwurf folgt dem Laserkopf "
+"bringen dieselbe Ecke des Entwurfs zum Laserkopf"
+
 msgid "The design changed: the simulation was worked out again"
 msgstr "Der Entwurf hat sich geändert: die Simulation wurde neu berechnet"
 
@@ -4295,11 +4307,17 @@ msgstr "Haken entfernen, um ein Element aus dem Auftrag auszulassen"
 msgid "Untitled"
 msgstr "Unbenannt"
 
+msgid "Upper left"
+msgstr "Oben links"
+
 msgid "Upper left corner"
 msgstr "Obere linke Ecke"
 
 msgid "Upper rail"
 msgstr "Obere Leiste"
+
+msgid "Upper right"
+msgstr "Oben rechts"
 
 msgid "Upper right corner"
 msgstr "Obere rechte Ecke"
@@ -4591,9 +4609,6 @@ msgstr "in Gebrauch"
 msgid "kerf = (%s mm - measured) / %d"
 msgstr "Schnittbreite = (%s mm - gemessen) / %d"
 
-msgid "lower left (most GRBL lasers)"
-msgstr "unten links (die meisten GRBL-Laser)"
-
 msgid "middle"
 msgstr "Seitenmitte"
 
@@ -4617,9 +4632,6 @@ msgstr "mehrere Elemente: zueinander; ein Element: zum Arbeitsbett"
 
 msgid "to do"
 msgstr "noch zu tun"
-
-msgid "upper left"
-msgstr "oben links"
 
 msgid "vector cut"
 msgstr "Vektorschnitt"
@@ -5329,4 +5341,24 @@ msgstr "Version %s"
 
 #~ msgid "Your lasers. Double-click a name to change it"
 #~ msgstr "Ihre Laser. Doppelklick auf einen Namen ändert ihn"
+
+#~ msgid "GRBL: corner the head homes to ($H)"
+#~ msgstr "GRBL: Ecke, zu der der Kopf referenziert ($H)"
+
+#~ msgid "Home is in the upper right corner"
+#~ msgstr "Referenzpunkt oben rechts"
+
+#~ msgid "lower left (most GRBL lasers)"
+#~ msgstr "unten links (die meisten GRBL-Laser)"
+
+#~ msgid "upper left"
+#~ msgstr "oben links"
+
+#~ msgid ""
+#~ "The corner of the bed the head "
+#~ "goes to on Home. To head and "
+#~ "Design follows the head bring the "
+#~ "same corner of the design to the"
+#~ " head"
+#~ msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-19 19:50+0100\n"
+"POT-Creation-Date: 2026-11-19 20:18+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -1395,9 +1395,6 @@ msgstr "GRBL termine la tâche…"
 msgid "GRBL is in alarm: unlock or home the machine."
 msgstr "GRBL est en alarme : déverrouillez la machine ou faites son origine."
 
-msgid "GRBL: corner the head homes to ($H)"
-msgstr "GRBL : coin d'origine de la tête ($H)"
-
 msgid "GRBL: full power S ($30)"
 msgstr "GRBL : pleine puissance S ($30)"
 
@@ -1555,8 +1552,8 @@ msgstr "Maintenir Maj en dessinant"
 msgid "Hole 20 mm"
 msgstr "Trou de 20 mm"
 
-msgid "Home is in the upper right corner"
-msgstr "L'origine est dans le coin supérieur droit"
+msgid "Home corner"
+msgstr "Coin d'origine"
 
 msgid "Home the head after a job (back to 0, 0)"
 msgstr "Ramener la tête à l'origine après la tâche (retour à 0, 0)"
@@ -2056,11 +2053,17 @@ msgstr "Chercher de nouveau les ports série (après avoir branché le laser)"
 msgid "Low (7 %)"
 msgstr "Basse (7 %)"
 
+msgid "Lower left"
+msgstr "En bas à gauche"
+
 msgid "Lower left corner"
 msgstr "Coin inférieur gauche"
 
 msgid "Lower rail"
 msgstr "Rail inférieur"
+
+msgid "Lower right"
+msgstr "En bas à droite"
 
 msgid "Lower right corner"
 msgstr "Coin inférieur droit"
@@ -3778,6 +3781,15 @@ msgstr ""
 msgid "The box put together from its parts (drag to turn it)"
 msgstr "La boîte assemblée à partir de ses pièces (faites glisser pour la tourner)"
 
+msgid ""
+"The corner of the bed the head goes to on Home. Place design at the head "
+"and Design follows the head bring the same corner of the design to the "
+"head"
+msgstr ""
+"Le coin de la zone de travail où va la tête lors de la prise d'origine. "
+"Placer le dessin à la tête et Le dessin suit la tête amènent le même coin"
+" du dessin à la tête"
+
 msgid "The design changed: the simulation was worked out again"
 msgstr "Le dessin a changé : la simulation a été recalculée"
 
@@ -4289,11 +4301,17 @@ msgstr "Décochez un élément pour l'exclure de la tâche"
 msgid "Untitled"
 msgstr "Sans titre"
 
+msgid "Upper left"
+msgstr "En haut à gauche"
+
 msgid "Upper left corner"
 msgstr "Coin supérieur gauche"
 
 msgid "Upper rail"
 msgstr "Rail supérieur"
+
+msgid "Upper right"
+msgstr "En haut à droite"
 
 msgid "Upper right corner"
 msgstr "Coin supérieur droit"
@@ -4587,9 +4605,6 @@ msgstr "en service"
 msgid "kerf = (%s mm - measured) / %d"
 msgstr "saignée = (%s mm - mesuré) / %d"
 
-msgid "lower left (most GRBL lasers)"
-msgstr "en bas à gauche (la plupart des lasers GRBL)"
-
 msgid "middle"
 msgstr "milieu"
 
@@ -4613,9 +4628,6 @@ msgstr "plusieurs éléments : entre eux ; un élément : par rapport au plateau
 
 msgid "to do"
 msgstr "à faire"
-
-msgid "upper left"
-msgstr "en haut à gauche"
 
 msgid "vector cut"
 msgstr "découpe vectorielle"
@@ -5330,4 +5342,24 @@ msgstr "version %s"
 
 #~ msgid "Your lasers. Double-click a name to change it"
 #~ msgstr "Vos lasers. Double-cliquez sur un nom pour le changer"
+
+#~ msgid "GRBL: corner the head homes to ($H)"
+#~ msgstr "GRBL : coin d'origine de la tête ($H)"
+
+#~ msgid "Home is in the upper right corner"
+#~ msgstr "L'origine est dans le coin supérieur droit"
+
+#~ msgid "lower left (most GRBL lasers)"
+#~ msgstr "en bas à gauche (la plupart des lasers GRBL)"
+
+#~ msgid "upper left"
+#~ msgstr "en haut à gauche"
+
+#~ msgid ""
+#~ "The corner of the bed the head "
+#~ "goes to on Home. To head and "
+#~ "Design follows the head bring the "
+#~ "same corner of the design to the"
+#~ " head"
+#~ msgstr ""
 

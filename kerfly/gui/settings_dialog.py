@@ -22,8 +22,6 @@ TABS = [
         ("usb_port", N_("USB port (beta)"), "usb_port", None),
         ("grbl_port", N_("GRBL: serial port"), "serial_port", None),
         ("grbl_baud", N_("GRBL: serial speed (baud)"), "choice", ["115200", "250000", "57600", "38400", "9600"]),
-        ("grbl_home", N_("GRBL: corner the head homes to ($H)"), "pairs",
-         [("lower_left", N_("lower left (most GRBL lasers)")), ("upper_left", N_("upper left"))]),
         ("gcode_s_max", N_("GRBL: full power S ($30)"), "int", (1, 100000)),
         ("grbl_jog", N_("GRBL: jog speed, arrows (mm/min)"), "float", (100, 30000, 0, None)),
         ("grbl_home_speed", N_("GRBL: homing speed ($25, mm/min; 0: the board's own)"), "float",
@@ -31,7 +29,9 @@ TABS = [
         ("units", N_("Units"), "choice", ["mm", "in"]),
         ("LaserXsize", N_("Bed width"), "float", (1, 5000, 1, "len")),
         ("LaserYsize", N_("Bed height"), "float", (1, 5000, 1, "len")),
-        ("HomeUR", N_("Home is in the upper right corner"), "bool", None),
+        # the corner the head homes to (one of them shown: a K40's or a GRBL laser's)
+        ("HomeUR", N_("Home corner"), "corner_k40", None),
+        ("grbl_home", N_("Home corner"), "corner_grbl", None),
         ("init_home", N_("Home the head when initializing"), "bool", None),
         ("post_home_xy", N_("Home the head after a job (back to 0, 0)"), "bool", None),
         ("post_home", N_("Unlock rail after a job"), "bool", None),
@@ -116,6 +116,8 @@ PAGE_ICONS = {"Machine": "laser", "Raster": "grid-dots", "Vector": "vector", "Vi
 
 M3_BOARD = "LASER-M3"           # the only board with power control
 GRBL_KEYS = ("grbl_port", "grbl_baud", "grbl_home", "grbl_jog", "grbl_home_speed", "gcode_s_max")    # only for a GRBL machine
+# a GRBL laser's home corner: its setting -> the corner (of CornerPicker)
+GRBL_CORNERS = {"lower_left": "LL", "upper_left": "UL", "upper_right": "UR", "lower_right": "LR"}
 K40_KEYS = ("board_name", "usb_port", "HomeUR")                                  # only for a K40
 
 # field -> the tick it depends on
@@ -288,6 +290,10 @@ class SettingsForm(QWidget):
         for key, on in wanted.items():
             for part in [self._widgets[key]] + ([self._labels[key]] if key in self._labels else []):
                 part.setEnabled(on)
+        if "machine" in self._widgets:                    # one home corner shown: the chosen machine's
+            for key, on in (("HomeUR", not grbl), ("grbl_home", grbl)):
+                for part in (self._widgets[key], self._labels[key]):
+                    part.setVisible(on)
         if "show_power" in self._widgets:
             tip = "" if m3 else _("Only the M3 board sets the power; on other boards the power knob of the laser "
                                   "does")
@@ -296,6 +302,19 @@ class SettingsForm(QWidget):
 
     def _make_field(self, key, kind, opt, len_unit, speed_unit):
         value = self.values.get(key, "")
+        if kind in ("corner_k40", "corner_grbl"):
+            tips = {"UL": _("Upper left"), "UR": _("Upper right"), "LL": _("Lower left"), "LR": _("Lower right")}
+            if kind == "corner_k40":                # a K40: HomeUR (the right side, mirrors the data) and home_lower
+                lower = is_true(self.values.get("home_lower", "0"))
+                w = widgets.CornerPicker(("L" if lower else "U") + ("R" if is_true(value) else "L"), None, tips)
+                getter = lambda: "1" if w.current()[1] == "R" else "0"     # noqa: E731
+                self._getters["home_lower"] = lambda: "1" if w.current()[0] == "L" else "0"
+            else:
+                w = widgets.CornerPicker(GRBL_CORNERS.get(value or "lower_left", "LL"), None, tips)
+                getter = lambda: {c: n for n, c in GRBL_CORNERS.items()}[w.current()]     # noqa: E731
+            w.setToolTip(_("The corner of the bed the head goes to on Home. Place design at the head and Design "
+                           "follows the head bring the same corner of the design to the head"))
+            return w, getter
         if kind == "pairs":
             w = QComboBox()
             for code, name in opt:

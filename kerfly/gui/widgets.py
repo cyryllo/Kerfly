@@ -23,7 +23,7 @@ Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
 from PySide6.QtCore import QSize, Qt, Signal
 from PySide6.QtWidgets import (QButtonGroup, QDialogButtonBox, QFrame, QGridLayout, QHBoxLayout, QLabel,
-                               QToolButton, QVBoxLayout, QWidget)
+                               QRadioButton, QToolButton, QVBoxLayout, QWidget)
 
 from kerfly.gui import icons, theme
 from kerfly.i18n import _
@@ -269,6 +269,40 @@ class Segmented(QWidget):
 
     def set_current(self, key):
         self.buttons[key].setChecked(True)
+
+
+class CornerPicker(QFrame):
+    """A picture of the laser's bed with a radio button in each corner (the home corner of a laser); one is
+    chosen. changed(key) when another is chosen. Keys: "UL", "UR", "LL", "LR"; corners not in `allowed` are
+    greyed out with `blocked_tip` as their tooltip."""
+    changed = Signal(str)
+    CORNERS = (("UL", 0, 0, Qt.AlignLeft | Qt.AlignTop), ("UR", 0, 1, Qt.AlignRight | Qt.AlignTop),
+               ("LL", 1, 0, Qt.AlignLeft | Qt.AlignBottom), ("LR", 1, 1, Qt.AlignRight | Qt.AlignBottom))
+
+    def __init__(self, current="UL", allowed=None, tips=None, blocked_tip="", parent=None):
+        super().__init__(parent)
+        set_role(self, "corner_picker")
+        self.setFixedSize(*theme.CORNER_PICKER)
+        grid = QGridLayout(self)
+        grid.setContentsMargins(theme.SPACE_S, theme.SPACE_S, theme.SPACE_S, theme.SPACE_S)
+        self.group = QButtonGroup(self)
+        self.buttons = {}
+        for key, r, c, align in self.CORNERS:
+            b = QRadioButton()
+            on = allowed is None or key in allowed
+            b.setEnabled(on)
+            b.setToolTip((tips or {}).get(key, "") if on else blocked_tip)
+            self.group.addButton(b)
+            self.buttons[key] = b
+            grid.addWidget(b, r, c, align)
+            b.toggled.connect(lambda checked, k=key: checked and self.changed.emit(k))
+        self.set_current(current)
+
+    def current(self):
+        return next((k for k, b in self.buttons.items() if b.isChecked()), "UL")
+
+    def set_current(self, key):
+        self.buttons.get(key, self.buttons["UL"]).setChecked(True)
 
 
 class DialogFooter(QFrame):

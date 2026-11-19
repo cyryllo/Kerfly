@@ -1306,6 +1306,38 @@ def part_view_and_laser(s):
     s.step("Settings → Lasers… (the laser's settings): Home after a job off again", lambda: s.trigger(w.act_profiles, via="menu"),
            change=False, undo=False, check=lambda: (w.values.get("post_home_xy") == "0", w.values.get("post_home_xy")))
 
+    # the laser's home corner: a picture of the bed with a radio button in each corner; the lower left: Home
+    # puts the head there, Place design at the head brings the design's lower left corner to it; then back
+    def home_corner(corner):
+        def answer(dlg):
+            from PySide6.QtWidgets import QDialogButtonBox
+            from kerfly.gui.widgets import CornerPicker
+            picker = next(c for c in dlg.findChildren(CornerPicker) if c.property("setting_key") == "HomeUR")
+            s.settings_page(dlg, widget=picker)
+            s.click(picker.buttons[corner])
+            QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+        return answer
+    s.expect_dialog("settings: home corner lower left", home_corner("LL"))
+    s.step("Settings → Lasers… (the laser's settings): Home corner, the lower left in the picture",
+           lambda: s.trigger(w.act_profiles, via="menu"), change=False, undo=False,
+           check=lambda: (w.values.get("home_lower") == "1" and w.values.get("HomeUR") == "0",
+                          (w.values.get("home_lower"), w.values.get("HomeUR"))))
+    s.step("Home (button): the head in the lower left corner", lambda: s.click(w.btn_home), change=False,
+           check=lambda: (abs(w.head[1] + config.bed_size_inches(w.values)[1]) < 1e-3 and w.head[0] == 0.0, w.head))
+
+    def lower_left_at_head():
+        shown = [e for e in w.elements if e.visible]
+        x0, y0 = min(e.bounds[0] for e in shown), min(e.bounds[2] for e in shown)
+        return abs(x0 - w.head[0]) < 1e-3 and abs(y0 - w.head[1]) < 1e-3, ((x0, y0), w.head)
+    s.step("Edit → Place design at the head: its lower left corner at the head",
+           lambda: s.trigger(w.act_place_head, via="menu"), change=None, check=lower_left_at_head)
+    s.expect_dialog("settings: home corner upper left", home_corner("UL"))
+    s.step("Settings → Lasers… (the laser's settings): Home corner, the upper left again",
+           lambda: s.trigger(w.act_profiles, via="menu"), change=False, undo=False,
+           check=lambda: (w.values.get("home_lower") == "0", w.values.get("home_lower")))
+    s.step("Home (button): the head in the upper left corner again", lambda: s.click(w.btn_home), change=False,
+           check=lambda: (w.head == (0.0, 0.0), w.head))
+
     # Settings → Raster → Dithering method: Atkinson, a job goes to the laser with it; back to Floyd-Steinberg
     def dither_to(code):
         def answer(dlg):

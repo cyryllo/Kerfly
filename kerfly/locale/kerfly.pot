@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-19 19:50+0100\n"
+"POT-Creation-Date: 2026-11-19 20:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1288,9 +1288,6 @@ msgstr ""
 msgid "GRBL is in alarm: unlock or home the machine."
 msgstr ""
 
-msgid "GRBL: corner the head homes to ($H)"
-msgstr ""
-
 msgid "GRBL: full power S ($30)"
 msgstr ""
 
@@ -1440,7 +1437,7 @@ msgstr ""
 msgid "Hole 20 mm"
 msgstr ""
 
-msgid "Home is in the upper right corner"
+msgid "Home corner"
 msgstr ""
 
 msgid "Home the head after a job (back to 0, 0)"
@@ -1873,10 +1870,16 @@ msgstr ""
 msgid "Low (7 %)"
 msgstr ""
 
+msgid "Lower left"
+msgstr ""
+
 msgid "Lower left corner"
 msgstr ""
 
 msgid "Lower rail"
+msgstr ""
+
+msgid "Lower right"
 msgstr ""
 
 msgid "Lower right corner"
@@ -3428,6 +3431,12 @@ msgstr ""
 msgid "The box put together from its parts (drag to turn it)"
 msgstr ""
 
+msgid ""
+"The corner of the bed the head goes to on Home. Place design at the head "
+"and Design follows the head bring the same corner of the design to the "
+"head"
+msgstr ""
+
 msgid "The design changed: the simulation was worked out again"
 msgstr ""
 
@@ -3869,10 +3878,16 @@ msgstr ""
 msgid "Untitled"
 msgstr ""
 
+msgid "Upper left"
+msgstr ""
+
 msgid "Upper left corner"
 msgstr ""
 
 msgid "Upper rail"
+msgstr ""
+
+msgid "Upper right"
 msgstr ""
 
 msgid "Upper right corner"
@@ -4138,9 +4153,6 @@ msgstr ""
 msgid "kerf = (%s mm - measured) / %d"
 msgstr ""
 
-msgid "lower left (most GRBL lasers)"
-msgstr ""
-
 msgid "middle"
 msgstr ""
 
@@ -4163,9 +4175,6 @@ msgid "several elements: to each other; one element: to the bed"
 msgstr ""
 
 msgid "to do"
-msgstr ""
-
-msgid "upper left"
 msgstr ""
 
 msgid "vector cut"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-19 19:50+0100\n"
+"POT-Creation-Date: 2026-11-19 20:18+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -1374,9 +1374,6 @@ msgstr "GRBL kończy zadanie…"
 msgid "GRBL is in alarm: unlock or home the machine."
 msgstr "GRBL jest w alarmie: odblokuj albo zbazuj maszynę."
 
-msgid "GRBL: corner the head homes to ($H)"
-msgstr "GRBL: róg bazowania głowicy ($H)"
-
 msgid "GRBL: full power S ($30)"
 msgstr "GRBL: pełna moc S ($30)"
 
@@ -1532,8 +1529,8 @@ msgstr "Przytrzymaj Shift podczas rysowania"
 msgid "Hole 20 mm"
 msgstr "Otwór 20 mm"
 
-msgid "Home is in the upper right corner"
-msgstr "Pozycja bazowa w prawym górnym rogu"
+msgid "Home corner"
+msgstr "Róg bazowania"
 
 msgid "Home the head after a job (back to 0, 0)"
 msgstr "Bazuj głowicę po zadaniu (powrót do 0, 0)"
@@ -2023,11 +2020,17 @@ msgstr "Szukaj portów szeregowych ponownie (po podłączeniu lasera)"
 msgid "Low (7 %)"
 msgstr "Niska (7 %)"
 
+msgid "Lower left"
+msgstr "Lewy dolny"
+
 msgid "Lower left corner"
 msgstr "Lewy dolny róg"
 
 msgid "Lower rail"
 msgstr "Dolna listwa"
+
+msgid "Lower right"
+msgstr "Prawy dolny"
 
 msgid "Lower right corner"
 msgstr "Prawy dolny róg"
@@ -3713,6 +3716,15 @@ msgstr "Lewy dolny róg stołu (X w prawo, Y w górę; większość laserów GRB
 msgid "The box put together from its parts (drag to turn it)"
 msgstr "Pudełko złożone z jego części (przeciągnij, aby je obrócić)"
 
+msgid ""
+"The corner of the bed the head goes to on Home. Place design at the head "
+"and Design follows the head bring the same corner of the design to the "
+"head"
+msgstr ""
+"Róg stołu, do którego głowica jedzie przy bazowaniu. Ustaw projekt przy "
+"głowicy i Projekt podąża za głowicą przysuwają do głowicy ten sam róg "
+"projektu"
+
 msgid "The design changed: the simulation was worked out again"
 msgstr "Projekt się zmienił – symulacja odświeżona"
 
@@ -4211,11 +4223,17 @@ msgstr "Odznacz element, aby pominąć go w zadaniu"
 msgid "Untitled"
 msgstr "Bez nazwy"
 
+msgid "Upper left"
+msgstr "Lewy górny"
+
 msgid "Upper left corner"
 msgstr "Lewy górny róg"
 
 msgid "Upper rail"
 msgstr "Górna listwa"
+
+msgid "Upper right"
+msgstr "Prawy górny"
 
 msgid "Upper right corner"
 msgstr "Prawy górny róg"
@@ -4505,9 +4523,6 @@ msgstr "w użyciu"
 msgid "kerf = (%s mm - measured) / %d"
 msgstr "kerf = (%s mm - zmierzone) / %d"
 
-msgid "lower left (most GRBL lasers)"
-msgstr "lewy dolny (większość laserów GRBL)"
-
 msgid "middle"
 msgstr "połowa"
 
@@ -4531,9 +4546,6 @@ msgstr "kilka elementów: względem siebie; jeden element: względem stołu"
 
 msgid "to do"
 msgstr "do zrobienia"
-
-msgid "upper left"
-msgstr "lewy górny"
 
 msgid "vector cut"
 msgstr "cięcie"
@@ -5233,4 +5245,24 @@ msgstr "wersja %s"
 
 #~ msgid "Your lasers. Double-click a name to change it"
 #~ msgstr "Twoje lasery. Kliknij dwukrotnie nazwę, aby ją zmienić"
+
+#~ msgid "GRBL: corner the head homes to ($H)"
+#~ msgstr "GRBL: róg bazowania głowicy ($H)"
+
+#~ msgid "Home is in the upper right corner"
+#~ msgstr "Pozycja bazowa w prawym górnym rogu"
+
+#~ msgid "lower left (most GRBL lasers)"
+#~ msgstr "lewy dolny (większość laserów GRBL)"
+
+#~ msgid "upper left"
+#~ msgstr "lewy górny"
+
+#~ msgid ""
+#~ "The corner of the bed the head "
+#~ "goes to on Home. To head and "
+#~ "Design follows the head bring the "
+#~ "same corner of the design to the"
+#~ " head"
+#~ msgstr ""
 

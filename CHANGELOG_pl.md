@@ -86,9 +86,13 @@ oknie.
   Zapisz zapisuje zmiany wszystkich zmienionych laserów. Ustawienia →
   Ustawienia… mają już tylko ustawienia programu (raster, kolejność cięcia,
   widok z jednostkami, język, aktualizacje, Inkscape).
-- **Do głowicy** kładzie przy głowicy róg projektu odpowiadający rogowi bazy
-  maszyny: lewy dolny dla lasera GRBL, który tam bazuje (wcześniej lewy górny:
-  projekt lądował pod stołem).
+- **Cztery rogi bazowania dla każdego lasera** (Ustawienia → Lasery… → Stół
+  roboczy → Róg bazowania: obrazek stołu z przyciskiem wyboru w każdym rogu,
+  tak samo dla K40 i lasera GRBL; zastępuje pole „pozycja bazowa w prawym
+  górnym rogu” i listę rogów GRBL). Bazowanie stawia głowicę w tym rogu, a
+  **Do głowicy** i **Projekt podąża za głowicą** przysuwają do głowicy ten sam
+  róg projektu (wcześniej zawsze lewy górny, więc przy bazie na dole projekt
+  lądował pod stołem). Górne rogi K40 wysyłają te same dane co dotąd.
 - **Laser GRBL ma moc dla każdej warstwy** (i moc objazdu konturu), niezależnie
   od ustawienia płyty K40.
 - **Nazwę lasera** zmienia się w polu nad jego ustawieniami (wpisz, Enter), a

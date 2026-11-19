@@ -88,9 +88,13 @@ a window of its own.
   changes of every laser changed. Settings → Settings… keeps only the
   program's own (raster, cutting order, view with the units, language,
   updates, Inkscape).
-- **To head** puts the design's corner at the machine's home corner at the
-  head: the lower left for a GRBL laser homing there (the upper left before:
-  the design ended below the bed).
+- **Four home corners for every laser** (Settings → Lasers… → Work area →
+  Home corner: a picture of the bed with a radio button in each corner, for a
+  K40 and a GRBL laser alike; it replaces the "home in the upper right corner"
+  tick and the GRBL corner list). Home puts the head in that corner, and
+  **To head** and **Design follows the head** bring the design's same corner
+  to the head (before: always its upper left, so with a lower home the design
+  ended below the bed). A K40's upper corners send the same data as before.
 - **A GRBL laser has a power for each layer** (and its boundary trace power),
   whatever the K40 board setting says.
 - **A laser's name** is changed in a field over its settings (type it, Enter),

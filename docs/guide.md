@@ -157,8 +157,8 @@ LightBurn or MeerK40t): when a job starts, the head first drives to the
 design. To start the design where the head is instead:
 
 - **Edit → Place design at the head** (Ctrl+H, **To head** in the Arrange group of the ribbon) moves the
-  design to the head once: its corner at the machine's home corner goes to the head (the upper left for a
-  K40, the lower left for a GRBL laser that homes there).
+  design to the head once: its corner at the laser's home corner goes to the head (the lower left for a
+  laser homing to the lower left; Settings → Lasers… → Home corner).
 - **Design follows the head** (the button with the chain link, pressed
   when on) keeps the design at the head: the arrows, Go to X/Y and Home move the
   head and the design together, and the arrows do not push the design off
@@ -554,8 +554,8 @@ laser profile.
 **A GRBL laser connected to Kerfly.** In **Settings → Lasers…** choose
 **Machine: GRBL board, serial port**, then its **serial port** (or the first
 board that answers; ↻ looks again after plugging it in), its speed (115200
-on most boards), the **corner the head homes to** (lower left on most GRBL
-lasers), the **jog speed** and **full power S** (`$30`). These are kept in the
+on most boards), the **home corner** (in the Work area section: a picture of
+the bed, click the corner; lower left on most GRBL lasers), the **jog speed** and **full power S** (`$30`). These are kept in the
 laser profile, so a K40 and a GRBL laser can each have their own. With a GRBL
 machine speeds are shown and typed in **mm/min**, as GRBL lasers are used
 (the K40 stays in mm/s). Then the
@@ -591,9 +591,9 @@ leaves them.
 
 | Section | Settings |
 |---|---|
-| Controller | the machine (K40 or a GRBL board), controller board, USB port; for a GRBL board its serial port, speed, home corner and full power S |
+| Controller | the machine (K40 or a GRBL board), controller board, USB port; for a GRBL board its serial port, speed and full power S |
 | Head movement (GRBL) | the jog speed of the arrows and the corner buttons, the homing speed (written into the board, `$25`, when connecting; 0 leaves the board's own); a K40's board moves and homes at its own speed |
-| Work area, homing and the end of a job | bed size, home in the upper right corner, home when connecting, home the head after a job (back to 0, 0, for the next piece), unlock the rail and beep after a job, a report after a job (its time, on by default; a small window that waits until you are back) |
+| Work area, homing and the end of a job | bed size, the **home corner** (a picture of the bed with a radio button in each corner: the one the head homes to; Place design at the head and Design follows the head bring the design's same corner to the head), home when connecting, home the head after a job (back to 0, 0, for the next piece), unlock the rail and beep after a job, a report after a job (its time, on by default; a small window that waits until you are back) |
 | Programs run with a job | a program run before every job sent to the laser (for example to switch on the exhaust; the job waits until it ends, at most a minute, and asks when it fails), a program run after every finished job (for example to switch off the exhaust or send a message; its output and errors go to the report) |
 | Scale, power | X/Y scale factors, M3 power per operation and maximum power (greyed out with other boards: their power is set with the knob of the laser; a GRBL laser always has a power for each layer) |
 | Material library | its own, or shared with another laser of the same kind |

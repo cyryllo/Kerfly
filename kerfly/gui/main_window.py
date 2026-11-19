@@ -3479,15 +3479,27 @@ class MainWindow(QMainWindow):
         """Move all elements together so the design's top-left is at the laser head."""
         self._design_to_head(checkpoint=True)
 
+    def home_corner(self):
+        """The corner of the bed the head homes to (a laser's settings): "UL", "UR", "LL" or "LR"."""
+        if self.is_grbl():
+            from kerfly.gui.settings_dialog import GRBL_CORNERS
+            return GRBL_CORNERS.get(self.values.get("grbl_home", "lower_left"), "LL")
+        return ("L" if is_true(self.values.get("home_lower", "0")) else "U") + \
+            ("R" if is_true(self.values.get("HomeUR", "0")) else "L")
+
     def _design_to_head(self, checkpoint):
-        """The design's corner at the machine's home corner goes to the head: its upper left (from home) for
-        a K40, its lower left for a GRBL laser that homes to the lower left."""
+        """The design's corner at the machine's home corner goes to the head (e.g. its lower left for a laser
+        homing to the lower left). A K40's x runs from home (also from an upper right one): its origin is
+        already on the home side."""
         if not self.elements or self.worker is not None:
             return
         ox, oy = self.origin
-        if self.is_grbl() and self.values.get("grbl_home", "lower_left") == "lower_left":
-            oy = min(e.bounds[2] for e in self.elements if e.visible) if any(e.visible for e in self.elements) \
-                else min(e.bounds[2] for e in self.elements)
+        corner = self.home_corner()
+        shown = [e for e in self.elements if e.visible] or self.elements
+        if corner[0] == "L":
+            oy = min(e.bounds[2] for e in shown)
+        if corner[1] == "R" and self.is_grbl():
+            ox = max(e.bounds[1] for e in shown)
         if (ox, oy) == self.head:
             return
         if checkpoint:
@@ -4545,11 +4557,11 @@ class MainWindow(QMainWindow):
             pass
 
     def _home_head(self):
-        """Where the head is after homing (bed inches: x from home, y <= 0 from the top): a GRBL board may home
-        to the lower left corner."""
-        if self.is_grbl() and self.values.get("grbl_home", "lower_left") == "lower_left":
-            return (0.0, -config.bed_size_inches(self.values)[1])
-        return (0.0, 0.0)
+        """Where the head is after homing (bed inches: x from home for a K40, from the left for GRBL; y <= 0
+        from the top): the laser's home corner."""
+        corner = self.home_corner()
+        bed_w, bed_h = config.bed_size_inches(self.values)
+        return (bed_w if corner[1] == "R" and self.is_grbl() else 0.0, -bed_h if corner[0] == "L" else 0.0)
 
     def _apply_settings(self, new, changed):
         """New settings into the window (Settings dialog, another laser)."""
@@ -4581,6 +4593,10 @@ class MainWindow(QMainWindow):
         self._layers_from_values()
         if changed & {"grid_mm", "snap_objects", "follow_head"}:
             self._sync_view_actions()
+        if changed & {"HomeUR", "home_lower", "grbl_home", "machine"} and not self.laser.connected:
+            self.head = self._home_head()            # another home corner: the head shown there (as after Home)
+            if self.follow_head():
+                self._design_to_head(checkpoint=False)
         if "kind_buttons" in changed:
             self.kind_row.setVisible(is_true(self.values.get("kind_buttons", "0")))
         if changed & RASTER_KEYS:
@@ -4633,7 +4649,7 @@ class MainWindow(QMainWindow):
         try:
             self.laser.connect(init_home=is_true(self.values.get("init_home", "1")),
                                port=self.values.get("usb_port", ""), choose=self._choose_laser)
-            self.head = (0.0, 0.0)
+            self.head = self._home_head()
             self.status(_("Laser initialized"))
             if self._port_chosen and self.laser.port_key:
                 # remembered in this laser's profile: next time no question
@@ -4841,8 +4857,9 @@ class MainWindow(QMainWindow):
         if self.laser.connected and not self._laser_call(self.laser.home, _("Homed")):
             return
         self.head = self._home_head()
-        # from home: Y down from an upper corner, up from a GRBL laser's lower left corner
-        self.move_by(x, y if self.head[1] < 0 else -y)
+        # from home: Y down from an upper corner, up from a lower one; X left from a GRBL laser's right corner
+        # (a K40's x runs from home anyway)
+        self.move_by(-x if self.head[0] > 0 else x, y if self.head[1] < 0 else -y)
 
     def test_fire(self):
         if not self.laser.connected:

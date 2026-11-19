@@ -45,6 +45,7 @@ RADIUS = 4               # rounded corners of buttons, fields and frames
 BUTTON_MIN_WIDTH = 88    # a dialog's footer buttons
 DIALOG_SMALL = 440       # the width of a small dialog (a question, a few fields)
 DIALOG_LARGE = 760       # the width of a large dialog (lists, settings, a preview)
+CORNER_PICKER = (112, 72)  # the picture of the bed with a radio button in each corner (a laser's home corner)
 
 TOKENS = {
     "light": {
@@ -170,6 +171,7 @@ QLabel[role="hint"] { color: $hint; }
 QLabel[role="caption"] { color: $caption; font-size: 10px; }
 QLabel[role="error"] { color: $error; }
 QLabel[role="section"] { font-weight: 600; }
+QFrame[role="corner_picker"] { background: $bar_light; border: 2px solid $field_border; border-radius: $radius; }
 QLabel[role="beta"] { color: $caption; font-size: 10px; border: 1px solid $separator; border-radius: 3px;
                       padding: 0px 4px; }
 QFrame[role="warning"] { background: $warn_bg; border: 1px solid $warn_border; border-radius: ${radius}px; }
