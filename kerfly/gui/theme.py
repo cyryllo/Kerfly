@@ -165,6 +165,12 @@ QTabWidget#preview_tabs QTabBar::tab { background: $panel; border: 1px solid $fi
                                        margin: 6px 0px; }
 QTabWidget#preview_tabs QTabBar::tab:selected { background: $on_bg; color: $on_ink; font-weight: 600; }
 QToolButton[role="segment"]:checked { background: $on_bg; color: $on_ink; font-weight: 600; }
+/* the tiles of a tool's window (Fill, Living hinge, Offset): a picture over its name, one on */
+QToolButton[role="tile"] { background: $panel; border: 1px solid $divider; border-radius: ${radius}px;
+                           padding: 6px 4px; }
+QToolButton[role="tile"]:hover { background: $hover; }
+QToolButton[role="tile"]:checked { background: $on_bg; color: $on_ink; border: 1px solid $accent; font-weight: 600; }
+QFrame#tool_dialog_fields { background: $bar_light; border: 1px solid $divider; border-radius: ${radius}px; }
 
 /* roles (kerfly/gui/widgets.py) */
 QLabel[role="hint"] { color: $hint; }

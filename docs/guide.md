@@ -220,11 +220,11 @@ before or after drawing.
 | Pen (curves) | B | Click for a corner, press and drag for a smooth curve. Click the first point to close; double-click or Enter to finish |
 | Freehand | F | Draw with the button held; end near the start to close the shape |
 | Measure | M | Drag between two points: distance, width, height and angle |
-| Text | T | Click, then type in the **Content** field; choose the font, size, bold and italic. At the top of the font list: **single-line fonts** built into Kerfly (Hershey, EMS), whose letters are lines the laser runs along once: fast, fine engraving, nothing to fill |
-| Text on a path | Shift+T | Type the text in the options bar, then click a line, curve or shape (see below) |
-| Fill with a pattern | Shift+F | Choose a pattern in the options bar, then click closed shapes to fill them (see below) |
-| Living hinge | Shift+H | Choose the cuts in the options bar, then click closed shapes to cut a hinge into them (see below) |
-| Offset | Shift+O | Set the distance in the options bar, then click closed shapes to draw a new outline around them (see below) |
+| Text | T | Click where the text goes: the **Text** window opens (the text, font, size, bold, italic, letter spacing, with a preview); **Insert the text**. At the top of the font list: **single-line fonts** built into Kerfly (Hershey, EMS), whose letters are lines the laser runs along once: fast, fine engraving, nothing to fill. Double-click a text (or **Edit text…** in the options bar) to change it |
+| Text on a path | Shift+T | Click a line, curve or shape: the text goes on it and its window opens (see below) |
+| Fill with a pattern | Shift+F | Click a closed shape (or choose the tool with shapes selected): the **Fill** window opens (see below) |
+| Living hinge | Shift+H | Click a closed shape (or choose the tool with shapes selected): the **Living hinge** window opens (see below) |
+| Offset | Shift+O | Click a closed shape (or choose the tool with shapes selected): the **Offset** window opens (see below) |
 | Cut out of a picture | Shift+C | Drag a rectangle or an ellipse (options bar) over a picture: the piece inside stays where it is, the rest of the picture goes (Undo brings it back) |
 
 **Snapping.** Drawing and moving snap to the corners, centres and edges of
@@ -273,13 +273,25 @@ does not fit goes on a next sheet (a sheet is always the bed): each sheet is
 a group in the element list, sheets 2 and on unticked; cut sheet 1, then
 untick it and tick the next one. Nesting again lays the parts out anew.
 
+**The tools' windows.** Fill, Living hinge, Offset, Text and Text on a path
+are set up in a window: on the left a **preview of your shape** that follows
+every change, on the right the kinds as tiles with pictures and the fields
+(each with an icon and a tooltip), at the bottom **Cancel** and the action
+named for what it does (**Fill it**, **Cut the hinge**, **Offset**, **Insert
+the text**), and on the left a **Remove** button where there is something to
+remove. Nothing changes on the bed before the action is clicked; it is one
+undo step. The options bar keeps the quick things (position, size, rotation,
+layer, corners, bridges) and has buttons for the windows of the shape shown.
+
 **Offset.** The **Offset** tool (Shift+O, also Edit → Offset) draws a new
-outline a set distance around a shape. In the options bar set the
-**distance** (positive outside, holes get smaller; negative inside), round
-or sharp **corners** and **Keep the original** (off: the new outline replaces
-the shape), then click closed shapes on the bed. Shapes you selected before
-choosing the tool get it with **Offset selected**. Use it for a border
-around a text, a frame around a part, or a smaller copy inside.
+outline a set distance around a shape. Click a closed shape (or choose the
+tool with shapes selected): in the **Offset** window choose round or sharp
+**corners** (tiles), the **distance** (positive outside, holes get smaller;
+negative inside) and **Keep the shape** (off: the new outline replaces it);
+the preview shows the shape dashed and the new outline in red. Use it for a
+border around a text, a frame around a part, or a smaller copy inside.
+
+![The Offset window](img/en/offset-window.png)
 
 **Order.** The element list is the order of the job: within each layer the
 laser does the element at the top of the list first. (The layers themselves
@@ -316,51 +328,54 @@ Truchet tiles or a Hilbert curve.
 
 ![Shapes filled with patterns](img/en/fill.png)
 
-1. Choose the tool and a pattern in the **Fill** field of the options bar.
-   Set its size (the distance between its lines), its angle and a margin
-   kept free inside the outline.
-2. Click a closed shape on a cut or outline layer. Click more shapes to fill
-   them too; shapes that are selected get the pattern you choose at once.
-   With shapes selected, the options bar shows what they have now (**No
-   pattern** for shapes without one); the **Living hinge** tool works the
-   same way.
+1. Choose the tool and click a closed shape on a cut or outline layer (or
+   choose the tool with shapes selected: they all get the pattern). The
+   **Fill** window opens.
+2. Click a pattern among the tiles; set its **spacing** (the distance between
+   its lines), its **angle** and a **margin** kept free inside the outline.
+   The preview follows. **Fill it**.
 3. The outline stays on its layer: a cut shape is still cut, and the pattern
    is engraved on an outline layer (for a cut shape a second **Layer** list
-   chooses which). The **Outline** button next to the pattern's fields leaves the
-   outline out, so only the pattern is engraved: **Lines** or
-   **Cross-hatch** without the outline fill an area with engraved lines (this
-   was the separate Hatch section before 0.17; older projects open this way).
+   chooses which). Untick **Outline** to engrave only the pattern: **Lines**
+   or **Cross-hatch** without the outline fill an area with engraved lines
+   (this was the separate Hatch section before 0.17; older projects open this
+   way).
 
-A selected shape shows the same **Fill** fields with the select tool: change
-the pattern there, or choose **No pattern** to remove it. Holes in the shape
+![The Fill window](img/en/fill-window.png)
+
+A selected shape has a **Fill** button in the options bar: it opens the same
+window, where **Remove the fill** takes the pattern off. Holes in the shape
 (for example in letters) stay empty. An opened SVG or DXF file must be
 ungrouped first (Edit → Ungroup), so that its lines become shapes.
 
 **Text on a path.** Choose the **Text on a
-path** tool (Shift+T, the arc with letters on the right), type the text and
-choose its font in the options bar, then click a line, curve or shape: the
-text is put on it, every letter standing on the line and turned along it. On
-an open line the text is centred, on a closed shape it is centred at the top.
-If a text is selected when you click, that text is moved onto the shape (for
-example one written with the Text tool), so no copy stays behind.
-**Drag the text to slide it along the line**; on a circle it goes round. The
-options bar of a text on a path has its **Start** (the position along the
-path), **From line** (the distance from the line; below zero the letters cross
-the line), the **Other side** button and **Straight text**; the **Letter
-spacing** field adds space between the letters, also for ordinary text. Hold the mouse over a
-field to see what it does. The shape
+path** tool (Shift+T, the arc with letters on the right), then click a line,
+curve or shape: the text is put on it, every letter standing on the line and
+turned along it, and the **Text on a path** window opens with a preview: the
+text, its font and size, its **Start** (the position along the path),
+**From line** (the distance from the line; below zero the letters cross the
+line) and **Other side**; **Straight text** takes it off the path, Cancel
+leaves everything as it was. On an open line the text is centred, on a
+closed shape it is centred at the top. If a text is selected when you click,
+that text is moved onto the shape, so no copy stays behind.
+**Drag the text to slide it along the line**; on a circle it goes round.
+Double-click it (or **Edit text…** in the options bar) to change it again;
+**Letter spacing** adds space between the letters, also for ordinary text. The shape
 stays; delete it if it should not be cut. An existing text is put on a shape
 with **Edit → Put text on path** (select both). The arrow keys and the X/Y
 fields move the text together with its path.
+
+![The Text window](img/en/text-window.png)
 
 ![Text on a circle and on a curve](img/en/textpath.png)
 
 **Living hinges.** A living hinge is a field of
 cuts that lets a sheet of plywood or MDF bend, for example round the corners
-of a box. Choose the **Living hinge** tool (Shift+H, the sheet with cuts),
-choose the cuts in the options bar (straight, wavy or zigzag), then click a
-closed shape: the cuts are cut inside it, before its outline. The hinge's
-fields in the options bar, each with an icon, a caption and a tooltip, set the length
+of a box. Choose the **Living hinge** tool (Shift+H, the sheet with cuts) and
+click a closed shape (or choose it with shapes selected): the **Living
+hinge** window opens, with straight, wavy and zigzag cuts as tiles and a
+preview counting the cuts; **Cut the hinge** cuts them inside the shape,
+before its outline. Its fields, each with an icon, a caption and a tooltip, set the length
 of one cut, the **bridge** of uncut material between two cuts, the distance
 between the rows (smaller bends more), the direction of the cuts (90°: up and
 down, the sheet bends across them), the **margin** of solid material at the
@@ -369,11 +384,14 @@ middle is, measured from the middle of the shape (minus: left / up, plus:
 right / down), for a hinge only where the sheet bends. The rows take turns:
 one has only long cuts with a bridge at both ends, the next a short cut from
 the outline at each end and long ones between; the cuts reach the outline, as
-a solid border along it would keep the sheet from bending. Selected shapes get the hinge you choose at once; a shape with a
-hinge shows its fields with the select tool too, where **No hinge** removes
-it. Try a small piece first: how far the sheet bends depends on the material.
+a solid border along it would keep the sheet from bending. A selected shape
+has a **Living hinge** button in the options bar that opens the window again,
+where **Remove the hinge** takes it off. Try a small piece first: how far
+the sheet bends depends on the material.
 
 ![Living hinges: straight, wavy and zigzag cuts](img/en/hinge.png)
+
+![The Living hinge window](img/en/hinge-window.png)
 
 **Bridges (tabs).** A closed shape on a cut layer can keep small uncut
 bridges that hold the part in the sheet: set their number (**Bridges**) and

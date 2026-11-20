@@ -170,8 +170,10 @@ def take(lang):
     gn._dirty = False
     gn.close()
 
-    # pattern fills, with the Fill tool in use
+    # pattern fills, with the Fill tool in use (its window answered with the pattern set below)
     from PySide6.QtCore import QPointF
+    import kerfly.gui.tool_dialogs as td
+    td.answer = lambda dlg: True
     f = MainWindow(values)
     f.resize(*WINDOW)
     f.show()
@@ -190,6 +192,24 @@ def take(lang):
     f._update_tool_options(force=True)
     settle()
     f.grab().save(os.path.join(out, "fill.png"))
+
+    # the tools' windows (a preview of the shape, the kinds as tiles, the fields)
+    def window_shot(dlg, name):
+        dlg.show()
+        dlg.refresh()
+        settle()
+        dlg.grab().save(os.path.join(out, name))
+        dlg.close()
+    window_shot(td.fill_dialog(f, ShapeSpec(kind="ellipse", width=70, height=50, operation="cut",
+                                            fill_pattern="honeycomb", fill_spacing=4), show=False), "fill-window.png")
+    window_shot(td.hinge_dialog(f, ShapeSpec(kind="rectangle", width=90, height=40, corner_radius=3, operation="cut",
+                                             hinge_pattern="straight", hinge_cut=15, hinge_spacing=2), show=False),
+                "hinge-window.png")
+    window_shot(td.text_dialog(f, ShapeSpec(kind="text", text="Kerfly", font_size=12, bold=True, operation="fill"),
+                               i18n._("Text"), i18n._("Insert the text"), show=False), "text-window.png")
+    window_shot(td.offset_dialog(f, [[[(0, 0), (60, 0), (60, 40), (30, 55), (0, 40), (0, 0)]]],
+                                 {"offset_distance": 4.0, "offset_join": "round", "offset_keep": True}, show=False),
+                "offset-window.png")
     zoom_to(f, f.elements)
     crop(f, [f.top_bar, f.preview], os.path.join(out, "site-fill.png"))
     f._dirty = False

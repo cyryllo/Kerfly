@@ -118,6 +118,18 @@ oknie.
   szare, wypalone na czerwono): Odtwórz, czas, tempo, Następna warstwa,
   wypalana warstwa; startuje z tempem 5× (dłuższe zadanie szybciej). Otwarta podczas zmian projektu przelicza zadanie i zostaje
   w tym samym miejscu; Nowy i Otwórz ją zamykają.
+- **Okna narzędzi** (wybór użytkownika, jak w jego programie Vintyl):
+  Wypełnienie, Zawias giętki, Odsunięcie, Tekst i Tekst na ścieżce ustawia się
+  w oknie z podglądem kształtu, który pokazuje każdą zmianę, rodzajami jako
+  kafelki z obrazkami (19 wzorów wypełnienia, 3 rodzaje nacięć zawiasu,
+  okrągłe / ostre narożniki), polami z ikonami, przyciskiem Anuluj i
+  przyciskiem nazwanym czynnością oraz przyciskiem Usuń, gdy jest co usunąć;
+  na stole nic się nie zmienia przed kliknięciem czynności (jeden krok
+  cofania). Narzędzie otwiera okno po kliknięciu kształtu albo od razu dla
+  zaznaczonych kształtów; Tekst po kliknięciu stołu; dwuklik na tekście
+  otwiera je znowu. Pasek opcji zostaje do szybkich rzeczy (pozycja,
+  rozmiar, obrót, warstwa, narożniki, mostki) i ma przyciski do okien
+  pokazanego kształtu.
 - **Zatwierdź / Anuluj na pasku opcji** (wybór użytkownika: ustawienia
   zawiasu, wypełnienia i innych narzędzi są teraz na pasku, bez okienek):
   zmiany widać od razu; Anuluj cofa wszystkie zmiany od chwili, gdy pasek

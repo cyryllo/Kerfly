@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 17:58+0100\n"
+"POT-Creation-Date: 2026-11-20 19:07+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -42,6 +42,12 @@ msgstr "%(version)s an %(port)s: verbunden%(homed)s"
 #, python-format
 msgid "%(w).1f × %(h).1f mm, %(n)d shapes, %(l)d layers"
 msgstr "%(w).1f × %(h).1f mm, %(n)d Formen, %(l)d Ebenen"
+
+#, python-format
+msgid "%d cut"
+msgid_plural "%d cuts"
+msgstr[0] "%d Schnitt"
+msgstr[1] "%d Schnitte"
 
 #, python-format
 msgid "%d element"
@@ -483,6 +489,9 @@ msgstr "Fett"
 msgid "Bold (Ctrl+B)"
 msgstr "Fett (Strg+B)"
 
+msgid "Bold and italic letters"
+msgstr "Fette und kursive Buchstaben"
+
 msgid "Bold letters stamp more clearly"
 msgstr "Fette Buchstaben stempeln deutlicher"
 
@@ -585,6 +594,10 @@ msgstr ""
 msgid "Cancel"
 msgstr "Abbrechen"
 
+#, python-format
+msgid "Cannot work it out: %s"
+msgstr "Lässt sich nicht berechnen: %s"
+
 msgid "Cardboard 2 mm"
 msgstr "Karton 2 mm"
 
@@ -653,12 +666,30 @@ msgstr "Spiel des letzten Schlitzes"
 msgid "Clearance to"
 msgstr "Spiel bis"
 
+msgid "Click a closed shape (cut or outline): the Fill window opens."
+msgstr ""
+"Klicke eine geschlossene Form (Schnitt oder Umriss): das Fenster Füllung "
+"öffnet sich."
+
+msgid "Click a closed shape: the Living hinge window opens."
+msgstr "Klicke eine geschlossene Form: das Fenster Biegescharnier öffnet sich."
+
+msgid "Click a closed shape: the Offset window opens."
+msgstr "Klicke eine geschlossene Form: das Fenster Versatz öffnet sich."
+
 msgid ""
 "Click a line, curve or shape to put the text on. Opened files must be "
 "ungrouped first (Edit → Ungroup)."
 msgstr ""
 "Eine Linie, Kurve oder Form anklicken, auf die der Text soll. Geöffnete "
 "Dateien zuerst aufheben (Bearbeiten → Gruppierung aufheben)."
+
+msgid ""
+"Click a line, curve or shape: the selected text (or a new one) goes on "
+"it, then the Text window opens."
+msgstr ""
+"Klicke eine Linie, Kurve oder Form: der ausgewählte Text (oder ein neuer)"
+" kommt darauf, dann öffnet sich das Fenster Text."
 
 msgid ""
 "Click a node (small square) to select it; Shift+click for more. Then use "
@@ -681,6 +712,9 @@ msgstr "Klicken Sie in eine geschlossene Form, um sie zu versetzen."
 
 msgid "Click inside a shape to fill it."
 msgstr "Zum Füllen in eine Form klicken."
+
+msgid "Click the bed where the text goes: the Text window opens."
+msgstr "Klicke auf dem Bett, wo der Text hin soll: das Fenster Text öffnet sich."
 
 msgid ""
 "Click the first point to close; double-click or Enter for an open line; "
@@ -876,6 +910,9 @@ msgstr "Nur schneiden"
 msgid "Cut open"
 msgstr "Auftrennen"
 
+msgid "Cut or engrave the outline too"
+msgstr "Den Umriss auch schneiden oder gravieren"
+
 msgid "Cut or engrave the outline too (off: only the pattern)"
 msgstr "Auch die Kontur schneiden oder gravieren (aus: nur das Muster)"
 
@@ -889,6 +926,9 @@ msgstr ""
 "Aus einem Bild ausschneiden: ein Rechteck oder eine Ellipse "
 "(Optionsleiste) über ein Bild ziehen; das Stück darin bleibt, der Rest "
 "verschwindet. Rückgängig holt es zurück."
+
+msgid "Cut the hinge"
+msgstr "Scharnier schneiden"
 
 msgid "Cut the outline"
 msgstr "Umriss schneiden"
@@ -1185,6 +1225,9 @@ msgstr ""
 "Doppelklick auf eine Seite fügt einen Knoten hinzu, auf einen Knoten "
 "entfernt ihn. Schaltflächen oben oder Tasten I D L C O S Z B."
 
+msgid "Edit text…"
+msgstr "Text bearbeiten…"
+
 msgid "Edit the nodes of an element"
 msgstr "Knoten eines Elements bearbeiten"
 
@@ -1286,6 +1329,9 @@ msgstr "Füllung"
 msgid "Fill (raster)"
 msgstr "Füllen (Raster)"
 
+msgid "Fill it"
+msgstr "Füllen"
+
 msgid ""
 "Fill the shape with engraved lines in a pattern; the outline keeps its "
 "own layer"
@@ -1305,8 +1351,8 @@ msgstr ""
 " Kontur) anklicken. Ausgewählte Formen erhalten das gewählte Muster. Die "
 "Kontur bleibt auf ihrer Ebene; das Muster wird graviert."
 
-msgid "Filled. Click another shape, or change the pattern above."
-msgstr "Gefüllt. Eine weitere Form anklicken oder oben das Muster ändern."
+msgid "Filled."
+msgstr "Gefüllt."
 
 msgid "Find a command or a key"
 msgstr "Befehl oder Taste suchen"
@@ -1527,6 +1573,9 @@ msgstr ""
 "Höhe der Großbuchstaben rund um den Stempel (0: etwa ein Achtel des "
 "Durchmessers)"
 
+msgid "Height of the letters"
+msgstr "Höhe der Buchstaben"
+
 msgid "Height of the letters in the middle (0: as large as fits)"
 msgstr "Höhe der Buchstaben in der Mitte (0: so groß wie es passt)"
 
@@ -1568,10 +1617,8 @@ msgstr "Scharnier"
 msgid "Hinge bridge"
 msgstr "Steg des Scharniers"
 
-msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
-msgstr ""
-"Scharnier in die Form geschnitten. Eine weitere Form anklicken oder oben "
-"die Schnitte ändern."
+msgid "Hinge cut into the shape."
+msgstr "Scharnier in die Form geschnitten."
 
 msgid "Hinge cut length"
 msgstr "Schnittlänge des Scharniers"
@@ -1635,6 +1682,9 @@ msgstr ""
 "(Holz). Jarvis, Stucki, Burkes, Sierra: weichere Übergänge. Geordnet "
 "(Bayer): eine gleichmäßige, regelmäßige Struktur. Schwellwert: nur "
 "Schwarz und Weiß"
+
+msgid "How far the new outline lies from the shape (minus: inside it)"
+msgstr "Wie weit der neue Umriss von der Form liegt (minus: innen)"
 
 msgid ""
 "How fast the head moves with the arrows and the corner buttons (a GRBL "
@@ -1740,6 +1790,9 @@ msgstr "Einfügen"
 msgid "Insert picture"
 msgstr "Bild einfügen"
 
+msgid "Insert the text"
+msgstr "Text einfügen"
+
 msgid "Inside sizes"
 msgstr "Innenmaße"
 
@@ -1818,6 +1871,12 @@ msgstr "Die Änderungen in dieser Leiste behalten"
 
 msgid "Keep the original"
 msgstr "Original behalten"
+
+msgid "Keep the shape (off: replace it)"
+msgstr "Form behalten (aus: ersetzen)"
+
+msgid "Keep the shape and add the new outline, or replace the shape with it"
+msgstr "Form behalten und den neuen Umriss hinzufügen oder die Form damit ersetzen"
 
 msgid "Kerf"
 msgstr "Schnittbreite"
@@ -2522,6 +2581,9 @@ msgstr "Zahlen"
 msgid "Numbers in"
 msgstr "Zahlen in"
 
+msgid "Off: only the pattern"
+msgstr "Aus: nur das Muster"
+
 msgid "Offset"
 msgstr "Versatz"
 
@@ -2643,11 +2705,17 @@ msgstr "Geordnet (Bayer)"
 msgid "Origin X0 Y0"
 msgstr "Nullpunkt X0 Y0"
 
+msgid "Original"
+msgstr "Original"
+
 msgid "Other layers"
 msgstr "Weitere Ebenen"
 
 msgid "Other side"
 msgstr "Andere Seite"
+
+msgid "Other side (the text runs the other way)"
+msgstr "Andere Seite (der Text läuft andersherum)"
 
 msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr ""
@@ -2828,6 +2896,9 @@ msgstr ""
 "schließen; Doppelklick oder Enter beendet eine offene Linie. Rücktaste "
 "entfernt die letzte Ecke, Umschalt hält 45°-Winkel, Esc bricht ab."
 
+msgid "Position along the path: where the text starts"
+msgstr "Position entlang des Pfads: wo der Text beginnt"
+
 msgid ""
 "Position along the path: where the text starts (you can also drag the "
 "text with the mouse)"
@@ -2879,6 +2950,9 @@ msgstr "Rasterdaten werden vorverarbeitet: %s%%"
 msgid "Pressure angle"
 msgstr "Eingriffswinkel"
 
+msgid "Preview of your shape"
+msgstr "Vorschau der Form"
+
 msgid "Program"
 msgstr "Programm"
 
@@ -2927,6 +3001,9 @@ msgstr "Auseinandergezogen"
 
 msgid "Put text on &path"
 msgstr "Text auf &Pfad setzen"
+
+msgid "Put the text on the path"
+msgstr "Text auf den Pfad setzen"
 
 msgid "Puzzle"
 msgstr "Puzzle"
@@ -3011,6 +3088,12 @@ msgstr "Neu geladen"
 msgid "Remove"
 msgstr "Entfernen"
 
+msgid "Remove the fill"
+msgstr "Füllung entfernen"
+
+msgid "Remove the hinge"
+msgstr "Scharnier entfernen"
+
 msgid "Remove the selected nodes"
 msgstr "Ausgewählte Knoten entfernen"
 
@@ -3087,6 +3170,9 @@ msgstr ""
 
 msgid "Round"
 msgstr "Abgerundet"
+
+msgid "Round corners"
+msgstr "Runde Ecken"
 
 msgid "Round stamp"
 msgstr "Runder Stempel"
@@ -3366,6 +3452,9 @@ msgstr "Senden an GRBL: %d %%"
 msgid "Set a distance other than 0 first."
 msgstr "Stellen Sie zuerst einen Abstand ungleich 0 ein."
 
+msgid "Set a distance other than 0."
+msgstr "Einen Abstand ungleich 0 einstellen."
+
 msgid ""
 "Set the selected text along the selected shape (line, curve, circle, "
 "...); the shape stays"
@@ -3419,6 +3508,9 @@ msgstr ""
 
 msgid "Sharp"
 msgstr "Spitz"
+
+msgid "Sharp corners"
+msgstr "Spitze Ecken"
 
 #, python-format
 msgid "Sheet %d"
@@ -3527,6 +3619,9 @@ msgstr ""
 "Einige Elemente ragen über das Bett hinaus (rot gezeichnet): zuerst auf "
 "das Bett verschieben."
 
+msgid "Space added between the letters (0: as the font sets it)"
+msgstr "Abstand zwischen den Buchstaben (0: wie die Schrift)"
+
 msgid "Space between the fields"
 msgstr "Abstand zwischen den Feldern"
 
@@ -3630,6 +3725,10 @@ msgstr ""
 msgid "Start"
 msgstr "Start"
 
+msgctxt "text path"
+msgid "Start"
+msgstr "Anfang"
+
 msgid "Start an empty project: clears the bed (asks to save changes first)"
 msgstr ""
 "Ein leeres Projekt beginnen: leert das Bett (fragt vorher nach dem "
@@ -3699,6 +3798,9 @@ msgstr "Gerader Text"
 
 msgid "Street 1, 00-000 City"
 msgstr "Musterstraße 1, 12345 Stadt"
+
+msgid "Style"
+msgstr "Stil"
 
 msgid "Sunburst"
 msgstr "Strahlen"
@@ -3794,12 +3896,11 @@ msgid "Text or address"
 msgstr "Text oder Adresse"
 
 msgid ""
-"Text put on the path. Drag it to slide it along the line; the bar above "
-"changes the text, the spacing, the distance from the line and the side."
+"Text put on the path. Drag it to slide it along the line; Edit text in "
+"the bar above changes it."
 msgstr ""
-"Der Text steht auf dem Pfad. Ziehen verschiebt ihn entlang der Linie; "
-"oben lassen sich Text, Buchstabenabstand, Abstand zur Linie und Seite "
-"ändern."
+"Text auf den Pfad gesetzt. Ziehe ihn, um ihn entlang der Linie zu "
+"verschieben; Text bearbeiten in der Leiste oben ändert ihn."
 
 msgid ""
 "Text put on the path. The path stays: delete it if it should not be cut. "
@@ -3825,6 +3926,16 @@ msgstr ""
 "Die DXF-Datei gibt ihre Einheiten nicht an.\n"
 "Einheiten:"
 
+msgid "The Fill window: a pattern engraved inside the shape, with a preview"
+msgstr "Fenster Füllung: ein in die Form graviertes Muster, mit Vorschau"
+
+msgid ""
+"The Living hinge window: rows of cuts that let the sheet bend, with a "
+"preview"
+msgstr ""
+"Fenster Biegescharnier: Schnittreihen, mit denen sich die Platte biegt, "
+"mit Vorschau"
+
 msgid ""
 "The S value of full power: the machine's $30 setting (1000 on most GRBL "
 "boards); a layer's power is that part of it"
@@ -3844,6 +3955,15 @@ msgstr ""
 "72).\n"
 "Bei %g px/Zoll ist der Entwurf %.1f x %.1f mm groß."
 
+msgid ""
+"The Text window: the text, its font, size and letter spacing (on a path: "
+"where it starts, its distance from the line, its side), with a preview. "
+"Double-click the text on the bed opens it too."
+msgstr ""
+"Fenster Text: der Text, seine Schrift, Größe und Laufweite (auf einem "
+"Pfad: wo er beginnt, sein Abstand zur Linie, seine Seite), mit Vorschau. "
+"Ein Doppelklick auf den Text auf dem Bett öffnet es auch."
+
 msgid "The USB ports with a K40 laser on them"
 msgstr "Die USB-Anschlüsse mit einem K40-Laser"
 
@@ -3855,6 +3975,11 @@ msgstr ""
 msgid "The box put together from its parts (drag to turn it)"
 msgstr "Die Schachtel aus ihren Teilen zusammengesetzt (ziehen zum Drehen)"
 
+msgid "The closed outlines are joined first, so a hole moves the other way."
+msgstr ""
+"Die geschlossenen Umrisse werden zuerst vereinigt, ein Loch verschiebt "
+"sich also andersherum."
+
 msgid ""
 "The corner of the bed the head goes to on Home. Place design at the head "
 "and Design follows the head bring the same corner of the design to the "
@@ -3863,6 +3988,15 @@ msgstr ""
 "Die Ecke des Arbeitsbereichs, in die der Laserkopf bei der Referenzfahrt "
 "fährt. Entwurf am Laserkopf platzieren und Entwurf folgt dem Laserkopf "
 "bringen dieselbe Ecke des Entwurfs zum Laserkopf"
+
+msgid ""
+"The cuts reach the outline at the ends of every second row; the sheet "
+"bends across them. Try a small piece first: how far it bends depends on "
+"the material."
+msgstr ""
+"Die Schnitte reichen an den Enden jeder zweiten Reihe bis zum Umriss; die"
+" Platte biegt sich quer dazu. Probiere zuerst ein kleines Stück: wie weit"
+" sie sich biegt, hängt vom Material ab."
 
 msgid "The design changed: the simulation was worked out again"
 msgstr "Der Entwurf hat sich geändert: die Simulation wurde neu berechnet"
@@ -4048,6 +4182,11 @@ msgstr ""
 "Die Pfade kommen als neues Element über das Bild; das Bild bleibt "
 "(löschen oder aus dem Auftrag nehmen)."
 
+msgid "The pattern is engraved; the outline keeps its own layer (cut or outline)."
+msgstr ""
+"Das Muster wird graviert; der Umriss behält seine Ebene (Schnitt oder "
+"Umriss)."
+
 msgid "The picture's size in pixels, as in the file"
 msgstr "Die Größe des Bildes in Pixeln, wie in der Datei"
 
@@ -4143,6 +4282,9 @@ msgstr ""
 "Text des Stempels: einen Teil markieren und fett, kursiv, unterstrichen, "
 "größer oder kleiner machen oder die Zeilen ausrichten (zum Beispiel den "
 "Namen größer als die Adresse)"
+
+msgid "The text on the other side of the line"
+msgstr "Der Text auf der anderen Seite der Linie"
 
 msgid "Theme"
 msgstr "Design"
@@ -4289,8 +4431,8 @@ msgstr "Truchet"
 msgid "Turn by 90°"
 msgstr "Um 90° drehen"
 
-msgid "Type the text in the bar above first."
-msgstr "Zuerst oben den Text eingeben."
+msgid "Type the text."
+msgstr "Gib den Text ein."
 
 msgid "U&ngroup"
 msgstr "Gruppierung auf&heben"
@@ -5516,4 +5658,34 @@ msgstr ""
 #~ " kommt auf einen weiteren Bogen: "
 #~ "jeder Bogen ist eine Gruppe in der"
 #~ " Elementliste, Bögen ab 2 abgehakt."
+
+#~ msgid "Filled. Click another shape, or change the pattern above."
+#~ msgstr "Gefüllt. Eine weitere Form anklicken oder oben das Muster ändern."
+
+#~ msgid ""
+#~ "Hinge cut into the shape. Click "
+#~ "another shape, or change the cuts "
+#~ "above."
+#~ msgstr ""
+#~ "Scharnier in die Form geschnitten. Eine"
+#~ " weitere Form anklicken oder oben die"
+#~ " Schnitte ändern."
+
+#~ msgid ""
+#~ "Text put on the path. Drag it "
+#~ "to slide it along the line; the"
+#~ " bar above changes the text, the "
+#~ "spacing, the distance from the line "
+#~ "and the side."
+#~ msgstr ""
+#~ "Der Text steht auf dem Pfad. "
+#~ "Ziehen verschiebt ihn entlang der Linie;"
+#~ " oben lassen sich Text, Buchstabenabstand,"
+#~ " Abstand zur Linie und Seite ändern."
+
+#~ msgid "Type the text in the bar above first."
+#~ msgstr "Zuerst oben den Text eingeben."
+
+#~ msgid "text"
+#~ msgstr ""
 

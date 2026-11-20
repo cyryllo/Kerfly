@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 17:58+0100\n"
+"POT-Creation-Date: 2026-11-20 19:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,6 +37,12 @@ msgstr ""
 #, python-format
 msgid "%(w).1f × %(h).1f mm, %(n)d shapes, %(l)d layers"
 msgstr ""
+
+#, python-format
+msgid "%d cut"
+msgid_plural "%d cuts"
+msgstr[0] ""
+msgstr[1] ""
 
 #, python-format
 msgid "%d element"
@@ -458,6 +464,9 @@ msgstr ""
 msgid "Bold (Ctrl+B)"
 msgstr ""
 
+msgid "Bold and italic letters"
+msgstr ""
+
 msgid "Bold letters stamp more clearly"
 msgstr ""
 
@@ -549,6 +558,10 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+#, python-format
+msgid "Cannot work it out: %s"
+msgstr ""
+
 msgid "Cardboard 2 mm"
 msgstr ""
 
@@ -611,9 +624,23 @@ msgstr ""
 msgid "Clearance to"
 msgstr ""
 
+msgid "Click a closed shape (cut or outline): the Fill window opens."
+msgstr ""
+
+msgid "Click a closed shape: the Living hinge window opens."
+msgstr ""
+
+msgid "Click a closed shape: the Offset window opens."
+msgstr ""
+
 msgid ""
 "Click a line, curve or shape to put the text on. Opened files must be "
 "ungrouped first (Edit → Ungroup)."
+msgstr ""
+
+msgid ""
+"Click a line, curve or shape: the selected text (or a new one) goes on "
+"it, then the Text window opens."
 msgstr ""
 
 msgid ""
@@ -634,6 +661,9 @@ msgid "Click inside a closed shape to offset it."
 msgstr ""
 
 msgid "Click inside a shape to fill it."
+msgstr ""
+
+msgid "Click the bed where the text goes: the Text window opens."
 msgstr ""
 
 msgid ""
@@ -820,6 +850,9 @@ msgstr ""
 msgid "Cut open"
 msgstr ""
 
+msgid "Cut or engrave the outline too"
+msgstr ""
+
 msgid "Cut or engrave the outline too (off: only the pattern)"
 msgstr ""
 
@@ -829,6 +862,9 @@ msgstr ""
 msgid ""
 "Cut out of a picture: drag a rectangle or an ellipse (options bar) over a"
 " picture; the piece inside stays, the rest goes. Undo brings it back."
+msgstr ""
+
+msgid "Cut the hinge"
 msgstr ""
 
 msgid "Cut the outline"
@@ -1098,6 +1134,9 @@ msgid ""
 " S Z B."
 msgstr ""
 
+msgid "Edit text…"
+msgstr ""
+
 msgid "Edit the nodes of an element"
 msgstr ""
 
@@ -1190,6 +1229,9 @@ msgstr ""
 msgid "Fill (raster)"
 msgstr ""
 
+msgid "Fill it"
+msgstr ""
+
 msgid ""
 "Fill the shape with engraved lines in a pattern; the outline keeps its "
 "own layer"
@@ -1204,7 +1246,7 @@ msgid ""
 " on its layer; the pattern is engraved."
 msgstr ""
 
-msgid "Filled. Click another shape, or change the pattern above."
+msgid "Filled."
 msgstr ""
 
 msgid "Find a command or a key"
@@ -1410,6 +1452,9 @@ msgid ""
 " diameter)"
 msgstr ""
 
+msgid "Height of the letters"
+msgstr ""
+
 msgid "Height of the letters in the middle (0: as large as fits)"
 msgstr ""
 
@@ -1449,7 +1494,7 @@ msgstr ""
 msgid "Hinge bridge"
 msgstr ""
 
-msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
+msgid "Hinge cut into the shape."
 msgstr ""
 
 msgid "Hinge cut length"
@@ -1505,6 +1550,9 @@ msgid ""
 "one (default). Atkinson: more contrast, clean light areas (wood). Jarvis,"
 " Stucki, Burkes, Sierra: smoother gradients. Ordered (Bayer): an even, "
 "regular texture. Threshold: black and white only"
+msgstr ""
+
+msgid "How far the new outline lies from the shape (minus: inside it)"
 msgstr ""
 
 msgid ""
@@ -1595,6 +1643,9 @@ msgstr ""
 msgid "Insert picture"
 msgstr ""
 
+msgid "Insert the text"
+msgstr ""
+
 msgid "Inside sizes"
 msgstr ""
 
@@ -1665,6 +1716,12 @@ msgid "Keep the changes made in this bar"
 msgstr ""
 
 msgid "Keep the original"
+msgstr ""
+
+msgid "Keep the shape (off: replace it)"
+msgstr ""
+
+msgid "Keep the shape and add the new outline, or replace the shape with it"
 msgstr ""
 
 msgid "Kerf"
@@ -2301,6 +2358,9 @@ msgstr ""
 msgid "Numbers in"
 msgstr ""
 
+msgid "Off: only the pattern"
+msgstr ""
+
 msgid "Offset"
 msgstr ""
 
@@ -2403,10 +2463,16 @@ msgstr ""
 msgid "Origin X0 Y0"
 msgstr ""
 
+msgid "Original"
+msgstr ""
+
 msgid "Other layers"
 msgstr ""
 
 msgid "Other side"
+msgstr ""
+
+msgid "Other side (the text runs the other way)"
 msgstr ""
 
 msgid "Other side: the text runs the other way, on the other side of the line"
@@ -2573,6 +2639,9 @@ msgid ""
 " last corner, Shift keeps 45° angles, Esc cancels."
 msgstr ""
 
+msgid "Position along the path: where the text starts"
+msgstr ""
+
 msgid ""
 "Position along the path: where the text starts (you can also drag the "
 "text with the mouse)"
@@ -2622,6 +2691,9 @@ msgstr ""
 msgid "Pressure angle"
 msgstr ""
 
+msgid "Preview of your shape"
+msgstr ""
+
 msgid "Program"
 msgstr ""
 
@@ -2667,6 +2739,9 @@ msgid "Pulled apart"
 msgstr ""
 
 msgid "Put text on &path"
+msgstr ""
+
+msgid "Put the text on the path"
 msgstr ""
 
 msgid "Puzzle"
@@ -2748,6 +2823,12 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+msgid "Remove the fill"
+msgstr ""
+
+msgid "Remove the hinge"
+msgstr ""
+
 msgid "Remove the selected nodes"
 msgstr ""
 
@@ -2821,6 +2902,9 @@ msgid ""
 msgstr ""
 
 msgid "Round"
+msgstr ""
+
+msgid "Round corners"
 msgstr ""
 
 msgid "Round stamp"
@@ -3079,6 +3163,9 @@ msgstr ""
 msgid "Set a distance other than 0 first."
 msgstr ""
 
+msgid "Set a distance other than 0."
+msgstr ""
+
 msgid ""
 "Set the selected text along the selected shape (line, curve, circle, "
 "...); the shape stays"
@@ -3121,6 +3208,9 @@ msgid "Share the material library of another laser (e.g. one of the same kind)"
 msgstr ""
 
 msgid "Sharp"
+msgstr ""
+
+msgid "Sharp corners"
 msgstr ""
 
 #, python-format
@@ -3220,6 +3310,9 @@ msgid ""
 "first."
 msgstr ""
 
+msgid "Space added between the letters (0: as the font sets it)"
+msgstr ""
+
 msgid "Space between the fields"
 msgstr ""
 
@@ -3314,6 +3407,10 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
+msgctxt "text path"
+msgid "Start"
+msgstr ""
+
 msgid "Start an empty project: clears the bed (asks to save changes first)"
 msgstr ""
 
@@ -3372,6 +3469,9 @@ msgid "Straight text"
 msgstr ""
 
 msgid "Street 1, 00-000 City"
+msgstr ""
+
+msgid "Style"
 msgstr ""
 
 msgid "Sunburst"
@@ -3457,8 +3557,8 @@ msgid "Text or address"
 msgstr ""
 
 msgid ""
-"Text put on the path. Drag it to slide it along the line; the bar above "
-"changes the text, the spacing, the distance from the line and the side."
+"Text put on the path. Drag it to slide it along the line; Edit text in "
+"the bar above changes it."
 msgstr ""
 
 msgid ""
@@ -3480,6 +3580,14 @@ msgid ""
 "Units:"
 msgstr ""
 
+msgid "The Fill window: a pattern engraved inside the shape, with a preview"
+msgstr ""
+
+msgid ""
+"The Living hinge window: rows of cuts that let the sheet bend, with a "
+"preview"
+msgstr ""
+
 msgid ""
 "The S value of full power: the machine's $30 setting (1000 on most GRBL "
 "boards); a layer's power is that part of it"
@@ -3493,6 +3601,12 @@ msgid ""
 "At %g px/in the design is %.1f x %.1f mm."
 msgstr ""
 
+msgid ""
+"The Text window: the text, its font, size and letter spacing (on a path: "
+"where it starts, its distance from the line, its side), with a preview. "
+"Double-click the text on the bed opens it too."
+msgstr ""
+
 msgid "The USB ports with a K40 laser on them"
 msgstr ""
 
@@ -3502,10 +3616,19 @@ msgstr ""
 msgid "The box put together from its parts (drag to turn it)"
 msgstr ""
 
+msgid "The closed outlines are joined first, so a hole moves the other way."
+msgstr ""
+
 msgid ""
 "The corner of the bed the head goes to on Home. Place design at the head "
 "and Design follows the head bring the same corner of the design to the "
 "head"
+msgstr ""
+
+msgid ""
+"The cuts reach the outline at the ends of every second row; the sheet "
+"bends across them. Try a small piece first: how far it bends depends on "
+"the material."
 msgstr ""
 
 msgid "The design changed: the simulation was worked out again"
@@ -3660,6 +3783,9 @@ msgid ""
 "(delete it or leave it out of the job)."
 msgstr ""
 
+msgid "The pattern is engraved; the outline keeps its own layer (cut or outline)."
+msgstr ""
+
 msgid "The picture's size in pixels, as in the file"
 msgstr ""
 
@@ -3733,6 +3859,9 @@ msgid ""
 "The text of the stamp: select a part and make it bold, italic, "
 "underlined, bigger or smaller, or align the lines (for example the name "
 "bigger than the address)"
+msgstr ""
+
+msgid "The text on the other side of the line"
 msgstr ""
 
 msgid "Theme"
@@ -3858,7 +3987,7 @@ msgstr ""
 msgid "Turn by 90°"
 msgstr ""
 
-msgid "Type the text in the bar above first."
+msgid "Type the text."
 msgstr ""
 
 msgid "U&ngroup"

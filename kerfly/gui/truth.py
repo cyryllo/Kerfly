@@ -114,20 +114,13 @@ def expected_bar(w):
     or (None, set()) when the bar must be empty. Worked out from the window's
     data and the tool in use."""
     tool = w.preview.tool
-    if tool in ("fill", "hinge"):
-        return _fill_like(w, tool)
-    if tool == "offset":
-        values = dict(w.offset_defaults)
-        return values, set(values)
-    if tool in ("crop", "nodes"):
-        return None, set()                       # their own bar: the piece's shape, or the node buttons alone
+    if tool in ("fill", "hinge", "offset", "textpath", "crop", "nodes"):
+        # tools with a window: the bar says what to click; the crop and node tools: their own bar
+        return None, set()
     e = w.selected
-    if tool == "textpath":
-        if e is not None and e.shape is not None and e.shape.kind == "text":
-            spec = e.shape
-        else:
-            spec = w.shape_defaults["textpath"]
-    elif e is not None and e.shape is not None:
+    if tool == "text" and (e is None or e.shape is None):
+        return None, set()                       # the Text window opens on a click
+    if e is not None and e.shape is not None:
         spec = e.shape
     elif tool in w.shape_defaults and tool != "nodes":
         spec = w.shape_defaults[tool]
@@ -138,20 +131,11 @@ def expected_bar(w):
     must = set()
     if spec.operation == "cut" and spec.closed:
         must |= {"tabs", "tab_width"}
-    if spec.operation in ("cut", "engrave") and spec.closed:
-        must.add("fill_pattern")
-        if spec.fill_pattern:
-            must |= set(FILL_ATTRS)
-        if spec.hinge_pattern:
-            must |= set(HINGE_ATTRS)
+    # a fill, a hinge and a text are set in their windows (the bar has buttons for them)
     if spec.kind == "rectangle":
         must.add("corner_radius")
     elif spec.kind == "polygon":
         must.add("sides")
-    elif spec.kind == "text":
-        must |= set(TEXT_ATTRS)
-        if spec.text_path:
-            must |= set(TEXT_PATH_ATTRS)
     return values, must
 
 

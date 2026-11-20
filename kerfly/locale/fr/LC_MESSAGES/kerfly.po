@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 17:58+0100\n"
+"POT-Creation-Date: 2026-11-20 19:07+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -43,6 +43,12 @@ msgstr "%(version)s sur %(port)s : connecté%(homed)s"
 #, python-format
 msgid "%(w).1f × %(h).1f mm, %(n)d shapes, %(l)d layers"
 msgstr "%(w).1f × %(h).1f mm, %(n)d formes, %(l)d calques"
+
+#, python-format
+msgid "%d cut"
+msgid_plural "%d cuts"
+msgstr[0] "%d découpe"
+msgstr[1] "%d découpes"
 
 #, python-format
 msgid "%d element"
@@ -482,6 +488,9 @@ msgstr "Gras"
 msgid "Bold (Ctrl+B)"
 msgstr "Gras (Ctrl+B)"
 
+msgid "Bold and italic letters"
+msgstr "Lettres grasses et italiques"
+
 msgid "Bold letters stamp more clearly"
 msgstr "Les lettres grasses s'impriment plus nettement"
 
@@ -586,6 +595,10 @@ msgstr ""
 msgid "Cancel"
 msgstr "Annuler"
 
+#, python-format
+msgid "Cannot work it out: %s"
+msgstr "Impossible à calculer : %s"
+
 msgid "Cardboard 2 mm"
 msgstr "Carton 2 mm"
 
@@ -652,12 +665,30 @@ msgstr "Jeu de la dernière fente"
 msgid "Clearance to"
 msgstr "Jeu à"
 
+msgid "Click a closed shape (cut or outline): the Fill window opens."
+msgstr ""
+"Cliquez sur une forme fermée (découpe ou contour) : la fenêtre "
+"Remplissage s'ouvre."
+
+msgid "Click a closed shape: the Living hinge window opens."
+msgstr "Cliquez sur une forme fermée : la fenêtre Charnière flexible s'ouvre."
+
+msgid "Click a closed shape: the Offset window opens."
+msgstr "Cliquez sur une forme fermée : la fenêtre Décalage s'ouvre."
+
 msgid ""
 "Click a line, curve or shape to put the text on. Opened files must be "
 "ungrouped first (Edit → Ungroup)."
 msgstr ""
 "Cliquez sur une ligne, une courbe ou une forme où placer le texte. Les "
 "fichiers ouverts doivent d'abord être dégroupés (Édition → Dégrouper)."
+
+msgid ""
+"Click a line, curve or shape: the selected text (or a new one) goes on "
+"it, then the Text window opens."
+msgstr ""
+"Cliquez sur une ligne, une courbe ou une forme : le texte sélectionné (ou"
+" un nouveau) s'y place, puis la fenêtre Texte s'ouvre."
 
 msgid ""
 "Click a node (small square) to select it; Shift+click for more. Then use "
@@ -680,6 +711,9 @@ msgstr "Cliquez à l'intérieur d'une forme fermée pour la décaler."
 
 msgid "Click inside a shape to fill it."
 msgstr "Cliquez à l'intérieur d'une forme pour la remplir."
+
+msgid "Click the bed where the text goes: the Text window opens."
+msgstr "Cliquez sur le plateau là où va le texte : la fenêtre Texte s'ouvre."
 
 msgid ""
 "Click the first point to close; double-click or Enter for an open line; "
@@ -875,6 +909,9 @@ msgstr "Découpe seule"
 msgid "Cut open"
 msgstr "Ouvrir"
 
+msgid "Cut or engrave the outline too"
+msgstr "Découper ou graver aussi le contour"
+
 msgid "Cut or engrave the outline too (off: only the pattern)"
 msgstr "Découper ou graver aussi le contour (désactivé : seulement le motif)"
 
@@ -888,6 +925,9 @@ msgstr ""
 "Découper dans une image : faites glisser un rectangle ou une ellipse "
 "(barre d'options) sur une image ; le morceau à l'intérieur reste, le "
 "reste disparaît. Annuler le rend."
+
+msgid "Cut the hinge"
+msgstr "Découper la charnière"
 
 msgid "Cut the outline"
 msgstr "Découper le contour"
@@ -1182,6 +1222,9 @@ msgstr ""
 "sélectionne d'autres nœuds. Double-clic sur un côté ajoute un nœud, sur "
 "un nœud le supprime. Boutons en haut ou touches I D L C O S Z B."
 
+msgid "Edit text…"
+msgstr "Modifier le texte…"
+
 msgid "Edit the nodes of an element"
 msgstr "Modifier les nœuds d'un élément"
 
@@ -1283,6 +1326,9 @@ msgstr "Remplissage"
 msgid "Fill (raster)"
 msgstr "Remplissage (raster)"
 
+msgid "Fill it"
+msgstr "Remplir"
+
 msgid ""
 "Fill the shape with engraved lines in a pattern; the outline keeps its "
 "own layer"
@@ -1302,8 +1348,8 @@ msgstr ""
 "fermée (découpe ou contour). Les formes sélectionnées reçoivent le motif "
 "choisi. Le contour reste sur son calque ; le motif est gravé."
 
-msgid "Filled. Click another shape, or change the pattern above."
-msgstr "Rempli. Cliquez sur une autre forme ou changez le motif ci-dessus."
+msgid "Filled."
+msgstr "Rempli."
 
 msgid "Find a command or a key"
 msgstr "Chercher une commande ou une touche"
@@ -1526,6 +1572,9 @@ msgstr ""
 "Hauteur des majuscules autour du tampon (0 : environ un huitième du "
 "diamètre)"
 
+msgid "Height of the letters"
+msgstr "Hauteur des lettres"
+
 msgid "Height of the letters in the middle (0: as large as fits)"
 msgstr "Hauteur des lettres au centre (0 : aussi grandes que possible)"
 
@@ -1567,10 +1616,8 @@ msgstr "Charnière"
 msgid "Hinge bridge"
 msgstr "Pont de la charnière"
 
-msgid "Hinge cut into the shape. Click another shape, or change the cuts above."
-msgstr ""
-"Charnière découpée dans la forme. Cliquez sur une autre forme ou changez "
-"les coupes ci-dessus."
+msgid "Hinge cut into the shape."
+msgstr "Charnière découpée dans la forme."
 
 msgid "Hinge cut length"
 msgstr "Longueur de coupe de la charnière"
@@ -1634,6 +1681,11 @@ msgstr ""
 "zones claires nettes (bois). Jarvis, Stucki, Burkes, Sierra : dégradés "
 "plus doux. Ordonné (Bayer) : une texture régulière et uniforme. Seuil : "
 "noir et blanc seulement"
+
+msgid "How far the new outline lies from the shape (minus: inside it)"
+msgstr ""
+"À quelle distance de la forme se trouve le nouveau contour (moins : à "
+"l'intérieur)"
 
 msgid ""
 "How fast the head moves with the arrows and the corner buttons (a GRBL "
@@ -1739,6 +1791,9 @@ msgstr "Insérer"
 msgid "Insert picture"
 msgstr "Insérer l'image"
 
+msgid "Insert the text"
+msgstr "Insérer le texte"
+
 msgid "Inside sizes"
 msgstr "Dimensions intérieures"
 
@@ -1815,6 +1870,14 @@ msgstr "Garder les modifications faites dans cette barre"
 
 msgid "Keep the original"
 msgstr "Garder l'original"
+
+msgid "Keep the shape (off: replace it)"
+msgstr "Garder la forme (désactivé : la remplacer)"
+
+msgid "Keep the shape and add the new outline, or replace the shape with it"
+msgstr ""
+"Garder la forme et ajouter le nouveau contour, ou remplacer la forme par "
+"lui"
 
 msgid "Kerf"
 msgstr "Saignée"
@@ -2517,6 +2580,9 @@ msgstr "Nombres"
 msgid "Numbers in"
 msgstr "Nombres en"
 
+msgid "Off: only the pattern"
+msgstr "Désactivé : seulement le motif"
+
 msgid "Offset"
 msgstr "Décalage"
 
@@ -2638,11 +2704,17 @@ msgstr "Ordonné (Bayer)"
 msgid "Origin X0 Y0"
 msgstr "Origine X0 Y0"
 
+msgid "Original"
+msgstr "Original"
+
 msgid "Other layers"
 msgstr "Autres calques"
 
 msgid "Other side"
 msgstr "Autre côté"
+
+msgid "Other side (the text runs the other way)"
+msgstr "Autre côté (le texte va dans l'autre sens)"
 
 msgid "Other side: the text runs the other way, on the other side of the line"
 msgstr "Autre côté : le texte va dans l'autre sens, de l'autre côté de la ligne"
@@ -2820,6 +2892,9 @@ msgstr ""
 " arrière supprime le dernier coin, Maj garde des angles de 45°, Échap "
 "annule."
 
+msgid "Position along the path: where the text starts"
+msgstr "Position le long du chemin : où commence le texte"
+
 msgid ""
 "Position along the path: where the text starts (you can also drag the "
 "text with the mouse)"
@@ -2871,6 +2946,9 @@ msgstr "Prétraitement des données raster : %s%%"
 msgid "Pressure angle"
 msgstr "Angle de pression"
 
+msgid "Preview of your shape"
+msgstr "Aperçu de la forme"
+
 msgid "Program"
 msgstr "Programme"
 
@@ -2919,6 +2997,9 @@ msgstr "Écartées"
 
 msgid "Put text on &path"
 msgstr "Mettre le texte sur un &chemin"
+
+msgid "Put the text on the path"
+msgstr "Placer le texte sur le chemin"
 
 msgid "Puzzle"
 msgstr "Puzzle"
@@ -3001,6 +3082,12 @@ msgstr "Rechargé"
 msgid "Remove"
 msgstr "Retirer"
 
+msgid "Remove the fill"
+msgstr "Supprimer le remplissage"
+
+msgid "Remove the hinge"
+msgstr "Supprimer la charnière"
+
 msgid "Remove the selected nodes"
 msgstr "Retirer les nœuds sélectionnés"
 
@@ -3079,6 +3166,9 @@ msgstr ""
 
 msgid "Round"
 msgstr "Arrondis"
+
+msgid "Round corners"
+msgstr "Coins arrondis"
 
 msgid "Round stamp"
 msgstr "Tampon rond"
@@ -3366,6 +3456,9 @@ msgstr "Envoi à GRBL : %d %%"
 msgid "Set a distance other than 0 first."
 msgstr "Réglez d'abord une distance différente de 0."
 
+msgid "Set a distance other than 0."
+msgstr "Indiquez une distance autre que 0."
+
 msgid ""
 "Set the selected text along the selected shape (line, curve, circle, "
 "...); the shape stays"
@@ -3419,6 +3512,9 @@ msgstr ""
 
 msgid "Sharp"
 msgstr "Vifs"
+
+msgid "Sharp corners"
+msgstr "Coins vifs"
 
 #, python-format
 msgid "Sheet %d"
@@ -3528,6 +3624,9 @@ msgstr ""
 "Certains éléments dépassent du plateau (en rouge) : déplacez-les d'abord "
 "dessus."
 
+msgid "Space added between the letters (0: as the font sets it)"
+msgstr "Espace ajouté entre les lettres (0 : comme la police)"
+
 msgid "Space between the fields"
 msgstr "Espace entre les cases"
 
@@ -3632,6 +3731,10 @@ msgstr ""
 msgid "Start"
 msgstr "Démarrer"
 
+msgctxt "text path"
+msgid "Start"
+msgstr "Début"
+
 msgid "Start an empty project: clears the bed (asks to save changes first)"
 msgstr ""
 "Commencer un projet vide : vide le plateau (demande d'abord d'enregistrer"
@@ -3700,6 +3803,9 @@ msgstr "Texte droit"
 
 msgid "Street 1, 00-000 City"
 msgstr "1 rue Exemple, 00000 Ville"
+
+msgid "Style"
+msgstr "Style"
 
 msgid "Sunburst"
 msgstr "Rayons"
@@ -3794,12 +3900,11 @@ msgid "Text or address"
 msgstr "Texte ou adresse"
 
 msgid ""
-"Text put on the path. Drag it to slide it along the line; the bar above "
-"changes the text, the spacing, the distance from the line and the side."
+"Text put on the path. Drag it to slide it along the line; Edit text in "
+"the bar above changes it."
 msgstr ""
-"Le texte est sur le chemin. Faites-le glisser pour le déplacer le long de"
-" la ligne ; la barre ci-dessus change le texte, l'espacement, la distance"
-" à la ligne et le côté."
+"Texte placé sur le chemin. Faites-le glisser le long de la ligne ; "
+"Modifier le texte dans la barre ci-dessus le change."
 
 msgid ""
 "Text put on the path. The path stays: delete it if it should not be cut. "
@@ -3825,6 +3930,16 @@ msgstr ""
 "Le fichier DXF n'indique pas ses unités.\n"
 "Unités :"
 
+msgid "The Fill window: a pattern engraved inside the shape, with a preview"
+msgstr "Fenêtre Remplissage : un motif gravé dans la forme, avec aperçu"
+
+msgid ""
+"The Living hinge window: rows of cuts that let the sheet bend, with a "
+"preview"
+msgstr ""
+"Fenêtre Charnière flexible : des rangées de découpes qui laissent plier "
+"la plaque, avec aperçu"
+
 msgid ""
 "The S value of full power: the machine's $30 setting (1000 on most GRBL "
 "boards); a layer's power is that part of it"
@@ -3844,6 +3959,15 @@ msgstr ""
 "Illustrator : 72).\n"
 "À %g px/po, le dessin mesure %.1f x %.1f mm."
 
+msgid ""
+"The Text window: the text, its font, size and letter spacing (on a path: "
+"where it starts, its distance from the line, its side), with a preview. "
+"Double-click the text on the bed opens it too."
+msgstr ""
+"Fenêtre Texte : le texte, sa police, sa taille et son interlettrage (sur "
+"un chemin : où il commence, sa distance à la ligne, son côté), avec "
+"aperçu. Un double-clic sur le texte du plateau l'ouvre aussi."
+
 msgid "The USB ports with a K40 laser on them"
 msgstr "Les ports USB avec un laser K40"
 
@@ -3855,6 +3979,11 @@ msgstr ""
 msgid "The box put together from its parts (drag to turn it)"
 msgstr "La boîte assemblée à partir de ses pièces (faites glisser pour la tourner)"
 
+msgid "The closed outlines are joined first, so a hole moves the other way."
+msgstr ""
+"Les contours fermés sont d'abord réunis, donc un trou se déplace dans "
+"l'autre sens."
+
 msgid ""
 "The corner of the bed the head goes to on Home. Place design at the head "
 "and Design follows the head bring the same corner of the design to the "
@@ -3863,6 +3992,15 @@ msgstr ""
 "Le coin de la zone de travail où va la tête lors de la prise d'origine. "
 "Placer le dessin à la tête et Le dessin suit la tête amènent le même coin"
 " du dessin à la tête"
+
+msgid ""
+"The cuts reach the outline at the ends of every second row; the sheet "
+"bends across them. Try a small piece first: how far it bends depends on "
+"the material."
+msgstr ""
+"Les découpes atteignent le contour aux extrémités d'une rangée sur deux ;"
+" la plaque plie en travers. Essayez d'abord sur un petit morceau : la "
+"flexion dépend du matériau."
 
 msgid "The design changed: the simulation was worked out again"
 msgstr "Le dessin a changé : la simulation a été recalculée"
@@ -4048,6 +4186,9 @@ msgstr ""
 "Les tracés sont posés sur l'image comme un nouvel élément ; l'image reste"
 " (supprimez-la ou laissez-la hors du travail)."
 
+msgid "The pattern is engraved; the outline keeps its own layer (cut or outline)."
+msgstr "Le motif est gravé ; le contour garde son calque (découpe ou contour)."
+
 msgid "The picture's size in pixels, as in the file"
 msgstr "La taille de l'image en pixels, comme dans le fichier"
 
@@ -4138,6 +4279,9 @@ msgstr ""
 "Texte du tampon : sélectionnez une partie et mettez-la en gras, italique,"
 " soulignée, plus grande ou plus petite, ou alignez les lignes (par "
 "exemple le nom plus grand que l'adresse)"
+
+msgid "The text on the other side of the line"
+msgstr "Le texte de l'autre côté de la ligne"
 
 msgid "Theme"
 msgstr "Thème"
@@ -4284,8 +4428,8 @@ msgstr "Truchet"
 msgid "Turn by 90°"
 msgstr "Tourner de 90°"
 
-msgid "Type the text in the bar above first."
-msgstr "Tapez d'abord le texte ci-dessus."
+msgid "Type the text."
+msgstr "Saisissez le texte."
 
 msgid "U&ngroup"
 msgstr "Dé&grouper"
@@ -5519,4 +5663,36 @@ msgstr ""
 #~ " chaque feuille est un groupe dans"
 #~ " la liste des éléments, les feuilles"
 #~ " à partir de la 2 décochées."
+
+#~ msgid "Filled. Click another shape, or change the pattern above."
+#~ msgstr "Rempli. Cliquez sur une autre forme ou changez le motif ci-dessus."
+
+#~ msgid ""
+#~ "Hinge cut into the shape. Click "
+#~ "another shape, or change the cuts "
+#~ "above."
+#~ msgstr ""
+#~ "Charnière découpée dans la forme. "
+#~ "Cliquez sur une autre forme ou "
+#~ "changez les coupes ci-dessus."
+
+#~ msgid ""
+#~ "Text put on the path. Drag it "
+#~ "to slide it along the line; the"
+#~ " bar above changes the text, the "
+#~ "spacing, the distance from the line "
+#~ "and the side."
+#~ msgstr ""
+#~ "Le texte est sur le chemin. "
+#~ "Faites-le glisser pour le déplacer le"
+#~ " long de la ligne ; la barre"
+#~ " ci-dessus change le texte, "
+#~ "l'espacement, la distance à la ligne "
+#~ "et le côté."
+
+#~ msgid "Type the text in the bar above first."
+#~ msgstr "Tapez d'abord le texte ci-dessus."
+
+#~ msgid "text"
+#~ msgstr ""
 

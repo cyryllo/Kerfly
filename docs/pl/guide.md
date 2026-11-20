@@ -226,11 +226,11 @@ narysowaniem i po nim.
 | Pióro (krzywe) | B | Klik daje narożnik, wciśnięcie i przeciągnięcie gładką krzywą. Klik w pierwszy punkt zamyka; dwuklik albo Enter kończy |
 | Odręcznie | F | Rysuj z wciśniętym przyciskiem; skończ blisko początku, żeby zamknąć kształt |
 | Miarka | M | Przeciągnij między dwoma punktami: odległość, szerokość, wysokość i kąt |
-| Tekst | T | Kliknij i wpisz tekst w polu **Treść**; wybierz czcionkę, rozmiar, pogrubienie i kursywę. Na górze listy czcionek: **czcionki jednokreskowe** wbudowane w Kerfly (Hershey, EMS), których litery to linie, po których laser przejeżdża raz: szybki, cienki grawer, bez wypełniania |
-| Tekst na ścieżce | Shift+T | Wpisz tekst na pasku opcji, potem kliknij linię, krzywą albo kształt (opis niżej) |
-| Wypełnij wzorem | Shift+F | Wybierz wzór na pasku opcji i klikaj zamknięte kształty, żeby je wypełnić (opis niżej) |
-| Zawias giętki | Shift+H | Wybierz nacięcia na pasku opcji i klikaj zamknięte kształty, żeby naciąć w nich zawias (opis niżej) |
-| Odsunięcie | Shift+O | Ustaw odległość na pasku opcji i klikaj zamknięte kształty, żeby narysować wokół nich nowy obrys (opis niżej) |
+| Tekst | T | Kliknij miejsce na tekst: otworzy się okno **Tekst** (treść, czcionka, rozmiar, pogrubienie, kursywa, odstęp liter, z podglądem); **Wstaw tekst**. Na górze listy czcionek: **czcionki jednokreskowe** wbudowane w Kerfly (Hershey, EMS), których litery to linie, po których laser przejeżdża raz: szybki, cienki grawer, bez wypełniania. Dwuklik na tekście (albo **Edytuj tekst…** na pasku opcji) go zmienia |
+| Tekst na ścieżce | Shift+T | Kliknij linię, krzywą albo kształt: tekst stanie na nim i otworzy się jego okno (opis niżej) |
+| Wypełnij wzorem | Shift+F | Kliknij zamknięty kształt (albo wybierz narzędzie przy zaznaczonych kształtach): otworzy się okno **Wypełnienie** (opis niżej) |
+| Zawias giętki | Shift+H | Kliknij zamknięty kształt (albo wybierz narzędzie przy zaznaczonych kształtach): otworzy się okno **Zawias giętki** (opis niżej) |
+| Odsunięcie | Shift+O | Kliknij zamknięty kształt (albo wybierz narzędzie przy zaznaczonych kształtach): otworzy się okno **Odsunięcie** (opis niżej) |
 | Wytnij fragment obrazka | Shift+C | Przeciągnij prostokąt albo elipsę (pasek opcji) po obrazku: fragment w środku zostaje na swoim miejscu, reszta obrazka znika (Cofnij przywraca całość) |
 
 **Przyciąganie.** Rysowanie i przesuwanie przyciąga do narożników, środków i
@@ -282,14 +282,26 @@ kolejny arkusz (arkusz to zawsze pole robocze lasera): każdy arkusz jest
 grupą na liście elementów, arkusze od 2. są odhaczone; wytnij arkusz 1, potem
 go odhacz i zaznacz kolejny. Ponowne układanie rozkłada części od nowa.
 
+**Okna narzędzi.** Wypełnienie, Zawias giętki, Odsunięcie, Tekst i Tekst
+na ścieżce ustawia się w oknie: po lewej **podgląd kształtu**, który
+pokazuje każdą zmianę, po prawej rodzaje jako kafelki z obrazkami i pola
+(każde z ikoną i opisem po najechaniu), na dole **Anuluj** i przycisk
+nazwany czynnością (**Wypełnij**, **Natnij zawias**, **Odsunięcie**,
+**Wstaw tekst**), a po lewej przycisk **Usuń**, gdy jest co usunąć. Na
+stole nic się nie zmienia, zanim klikniesz czynność; to jeden krok
+cofania. Pasek opcji zostaje do szybkich rzeczy (pozycja, rozmiar, obrót,
+warstwa, narożniki, mostki) i ma przyciski do okien pokazanego kształtu.
+
 **Odsunięcie.** Narzędzie **Odsunięcie** (Shift+O, także Edycja →
-Odsunięcie) rysuje nowy obrys w zadanej odległości wokół kształtu. Na pasku
-opcji ustaw **odległość** (dodatnia na zewnątrz, otwory się zmniejszają;
-ujemna do środka), zaokrąglone albo ostre **narożniki** i **Zachowaj
-oryginał** (wyłączone: nowy obrys zastępuje kształt), potem klikaj
-zamknięte kształty na stole. Kształty zaznaczone przed wybraniem narzędzia
-odsuwa przycisk **Odsuń zaznaczone**. Przydaje się do obwódki wokół
-napisu, ramki wokół części albo mniejszej kopii w środku.
+Odsunięcie) rysuje nowy obrys w zadanej odległości wokół kształtu. Kliknij
+zamknięty kształt (albo wybierz narzędzie przy zaznaczonych kształtach): w
+oknie **Odsunięcie** wybierz zaokrąglone albo ostre **narożniki** (kafelki),
+**odległość** (dodatnia na zewnątrz, otwory się zmniejszają; ujemna do
+środka) i **Zostaw kształt** (wyłączone: nowy obrys go zastępuje); podgląd
+pokazuje kształt przerywaną linią, a nowy obrys na czerwono. Przydaje się do
+obwódki wokół napisu, ramki wokół części albo mniejszej kopii w środku.
+
+![Okno Odsunięcie](../img/pl/offset-window.png)
 
 **Kolejność.** Lista elementów to kolejność zadania: w każdej warstwie laser
 najpierw wykonuje element z góry listy. (Same warstwy zawsze idą w kolejności:
@@ -325,52 +337,57 @@ kropki, krzyżyki, kafelki Truchet albo krzywa Hilberta.
 
 ![Kształty wypełnione wzorami](../img/pl/fill.png)
 
-1. Wybierz narzędzie i wzór w polu **Wypełnienie** na pasku opcji. Ustaw
-   jego rozmiar (odstęp między liniami), kąt i margines, czyli wolne miejsce
-   wewnątrz obrysu.
-2. Kliknij zamknięty kształt na warstwie cięcia albo obrysu. Klikaj kolejne,
-   żeby też je wypełnić; zaznaczone kształty od razu dostają wybrany wzór.
-   Gdy kształty są zaznaczone, pasek opcji pokazuje, co mają teraz (**Bez
-   wzoru** dla kształtów bez wzoru); narzędzie **Zawias giętki** działa
-   tak samo.
+1. Wybierz narzędzie i kliknij zamknięty kształt na warstwie cięcia albo
+   obrysu (albo wybierz narzędzie przy zaznaczonych kształtach: wszystkie
+   dostaną wzór). Otworzy się okno **Wypełnienie**.
+2. Kliknij wzór wśród kafelków; ustaw jego **odstęp** (między liniami),
+   **kąt** i **margines**, czyli wolne miejsce wewnątrz obrysu. Podgląd to
+   pokazuje. **Wypełnij**.
 3. Obrys zostaje na swojej warstwie: kształt do cięcia dalej jest cięty, a wzór
    jest grawerowany na warstwie obrysu (dla kształtu do cięcia druga lista
-   **Warstwa** wybiera, na której). Przycisk **Obrys** obok pól wzoru
-   wyłącza obrys, wtedy graweruje się sam wzór: **Linie** albo **Krzyżowe**
-   bez obrysu wypełniają obszar grawerowanymi liniami (przed wersją 0.17 była
-   to osobna sekcja Kreskowanie; starsze projekty otwierają się właśnie tak).
+   **Warstwa** wybiera, na której). Odznacz **Obrys**, żeby grawerować sam
+   wzór: **Linie** albo **Krzyżowe** bez obrysu wypełniają obszar
+   grawerowanymi liniami (przed wersją 0.17 była to osobna sekcja
+   Kreskowanie; starsze projekty otwierają się właśnie tak).
 
-Zaznaczony kształt pokazuje te same pola **Wypełnienia** także przy
-narzędziu zaznaczania: tam zmienisz wzór albo wybierzesz **Bez wzoru**, żeby go
-usunąć. Dziury w kształcie (np. w literach) zostają puste. Otwarty plik SVG
+![Okno Wypełnienie](../img/pl/fill-window.png)
+
+Zaznaczony kształt ma na pasku opcji przycisk **Wypełnienie**: otwiera to
+samo okno, w którym **Usuń wypełnienie** zdejmuje wzór. Dziury w kształcie
+(np. w literach) zostają puste. Otwarty plik SVG
 albo DXF trzeba najpierw rozgrupować (Edycja → Rozgrupuj), żeby jego linie
 stały się kształtami.
 
 **Tekst na ścieżce.** Wybierz narzędzie
-**Tekst na ścieżce** (Shift+T, łuk z literami po prawej), wpisz tekst i
-wybierz czcionkę na pasku opcji, potem kliknij linię, krzywą albo kształt:
-tekst stanie na nim, każda litera na linii i obrócona wzdłuż niej. Na otwartej
-linii tekst jest wyśrodkowany, na zamkniętym kształcie wyśrodkowany na górze.
-Jeśli przy kliknięciu zaznaczony jest jakiś tekst (np. napisany narzędziem
-Tekst), to właśnie on przechodzi na kształt i nie zostaje żadna kopia.
+**Tekst na ścieżce** (Shift+T, łuk z literami po prawej), potem kliknij
+linię, krzywą albo kształt: tekst stanie na nim, każda litera na linii i
+obrócona wzdłuż niej, i otworzy się okno **Tekst na ścieżce** z podglądem:
+treść, czcionka i rozmiar, **Początek** (położenie na ścieżce), **Od linii**
+(odległość od linii; poniżej zera litery przecinają linię) i **Druga
+strona**; **Prosty tekst** zdejmuje go ze ścieżki, Anuluj zostawia wszystko
+jak było. Na otwartej linii tekst jest wyśrodkowany, na zamkniętym kształcie
+wyśrodkowany na górze. Jeśli przy kliknięciu zaznaczony jest jakiś tekst, to
+właśnie on przechodzi na kształt i nie zostaje żadna kopia.
 **Przeciągnij tekst, żeby przesunąć go wzdłuż linii**; na okręgu jedzie
-dookoła. Pasek opcji tekstu na ścieżce ma **Początek** (położenie na
-ścieżce), **Od linii** (odległość od linii; poniżej zera litery przecinają
-linię), przycisk **Druga strona** i **Prosty tekst**; pole **Odstęp liter**
-dodaje odstęp między literami, także w zwykłym tekście. Po najechaniu myszą na pole widać, co
-robi. Kształt
+dookoła. Dwuklik na nim (albo **Edytuj tekst…** na pasku opcji) znów go
+zmienia; **Odstęp liter** dodaje odstęp między literami, także w zwykłym
+tekście. Kształt
 zostaje; usuń go, jeśli nie ma być cięty. Istniejący tekst ustawisz na
 kształcie przez **Edycja → Umieść tekst na ścieżce** (zaznacz oba). Strzałki i
 pola X/Y przesuwają tekst razem z jego ścieżką.
+
+![Okno Tekst](../img/pl/text-window.png)
 
 ![Tekst na okręgu i na krzywej](../img/pl/textpath.png)
 
 **Zawiasy giętkie.** Zawias giętki to
 pole nacięć, dzięki którym sklejka albo MDF się wygina, np. na zaokrąglonych
 rogach pudełka. Wybierz narzędzie **Zawias giętki** (Shift+H, arkusz z
-nacięciami), wybierz nacięcia na pasku opcji (proste, faliste albo zygzakiem)
-i kliknij zamknięty kształt: nacięcia zostaną wycięte w jego środku, przed
-obrysem. Pola zawiasu na pasku opcji, każde z ikoną, podpisem i opisem po najechaniu,
+nacięciami) i kliknij zamknięty kształt (albo wybierz je przy zaznaczonych
+kształtach): otworzy się okno **Zawias giętki** z nacięciami prostymi,
+falistymi i zygzakiem jako kafelkami i podglądem, który liczy nacięcia;
+**Natnij zawias** wycina je w środku kształtu, przed obrysem. Pola okna,
+każde z ikoną, podpisem i opisem po najechaniu,
 ustawiają długość jednego nacięcia, **mostek** nieprzeciętego materiału między
 dwoma nacięciami, odstęp rzędów (mniejszy bardziej się wygina), kierunek
 nacięć (90°: góra–dół, arkusz wygina się w poprzek nich), **margines**
@@ -381,12 +398,13 @@ dół), gdy zawias ma być tylko tam, gdzie arkusz się wygina. Rzędy idą na
 zmianę: w jednym same długie nacięcia z mostkiem na obu końcach, w następnym
 krótkie nacięcie od obrysu na każdym końcu i długie pomiędzy; nacięcia
 dochodzą do obrysu, bo pełny brzeg wzdłuż niego nie pozwoliłby arkuszowi się
-wygiąć. Zaznaczone kształty od razu dostają wybrany zawias; kształt z
-zawiasem pokazuje te pola także przy narzędziu zaznaczania, gdzie **Bez
-zawiasu** go usuwa. Najpierw spróbuj na małym kawałku: to, jak bardzo arkusz
-się wygina, zależy od materiału.
+wygiąć. Zaznaczony kształt ma na pasku opcji przycisk **Zawias giętki**,
+który znów otwiera okno; **Usuń zawias** go zdejmuje. Najpierw spróbuj na
+małym kawałku: to, jak bardzo arkusz się wygina, zależy od materiału.
 
 ![Zawiasy giętkie: nacięcia proste, faliste i zygzakiem](../img/pl/hinge.png)
+
+![Okno Zawias giętki](../img/pl/hinge-window.png)
 
 **Mostki.** Zamknięty kształt na warstwie cięcia może mieć małe nieprzecięte
 mostki, które trzymają element w arkuszu: ustaw ich liczbę (**Mostki**) i

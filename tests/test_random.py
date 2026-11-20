@@ -44,6 +44,24 @@ class RandomSession:
         self.w = s.w
         self.rnd = rnd
         self.log = []
+        # the tools' windows (Fill, Living hinge, Offset, Text, Text on a path): a random tile, then the
+        # action (mostly), Cancel or Remove
+        import kerfly.gui.tool_dialogs as td
+
+        def answer(dlg):
+            tiles = getattr(dlg, "tiles", None)
+            if tiles is None:
+                return True                  # the Text window: drawing a text puts one in (a step must change)
+            if rnd.random() < 0.5:
+                tiles.buttons[rnd.choice(sorted(tiles.buttons))].click()
+            dlg.refresh()
+            roll = rnd.random()
+            if roll < 0.15:
+                return False
+            if roll < 0.25 and dlg.remove_button is not None:
+                dlg.removed = True
+            return True
+        td.answer = answer
 
     def point(self):
         return self.rnd.uniform(15, 300), self.rnd.uniform(15, 200)

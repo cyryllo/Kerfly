@@ -142,6 +142,7 @@ class MainWindow(QMainWindow):
         self.tool_options.offset_changed.connect(self._offset_values_changed)
         self.tool_options.crop_changed.connect(self._crop_values_changed)
         self.tool_options.offset_apply.connect(self.offset_selected)
+        self.tool_options.tool_requested.connect(self._bar_tool_requested)
         central = QWidget()
         central_layout = QVBoxLayout(central)
         central_layout.setContentsMargins(0, 0, 0, 0)
@@ -797,13 +798,20 @@ class MainWindow(QMainWindow):
         if tool != "select":
             self.preview.setFocus()
         self._update_tool_options()
+        if tool in ("fill", "hinge", "offset"):
+            # shapes selected: the tool's window for them at once (otherwise a click on a shape opens it)
+            fits = {"fill": self._fillable, "hinge": self._hingeable,
+                    "offset": lambda e: e.shape is not None or e.design is not None}[tool]
+            chosen = [e for e in self._selection() if fits(e)]
+            if chosen:
+                QTimer.singleShot(0, self, lambda t=tool, c=chosen: self._open_tool_window(t, c))
 
     def _update_tool_options(self, force=False):
         self._update_tool_options_rows(force)
         self._bar_follow()
 
     # ---- Apply / Cancel of the options bar --------------------------------------
-    BAR_EDITS = ("selected", "fill", "hinge", "offset", "crop", "textpath")
+    BAR_EDITS = ("selected", "crop")
 
     def _bar_defaults(self):
         import copy
@@ -879,40 +887,23 @@ class MainWindow(QMainWindow):
             ed = self.preview.node_editor
             self.tool_options.set_node_selection(len(ed.selected) if ed.path is not None else 0)
             return
-        if self.preview.tool in ("fill", "hinge"):
+        if self.preview.tool in ("fill", "hinge", "offset", "textpath"):
+            # these tools have a window: the bar says what to click
             tool = self.preview.tool
-            spec, key = self._pattern_tool_spec(tool)
-            if force or getattr(self, "_options_target", None) != tool \
-                    or getattr(self, "_options_element", None) != key:
-                self._options_target, self._options_element = tool, key
-                self._tool_shown = spec.copy()
-                if tool == "fill":
-                    self.tool_options.show_fill_tool(spec)
-                else:
-                    self.tool_options.show_hinge_tool(spec)
+            if force or getattr(self, "_options_target", None) != tool:
+                self._options_target, self._options_element = tool, None
+                title, text = {
+                    "fill": (_("Fill"), _("Click a closed shape (cut or outline): the Fill window opens.")),
+                    "hinge": (_("Living hinge"), _("Click a closed shape: the Living hinge window opens.")),
+                    "offset": (_("Offset"), _("Click a closed shape: the Offset window opens.")),
+                    "textpath": (_("Text on a path"), _("Click a line, curve or shape: the selected text (or a new "
+                                                        "one) goes on it, then the Text window opens."))}[tool]
+                self.tool_options.show_tool_hint(title, text)
             return
         if self.preview.tool == "crop":
             if force or getattr(self, "_options_target", None) != "crop":
                 self._options_target, self._options_element = "crop", None
                 self.tool_options.show_crop_tool(self.crop_defaults)
-            return
-        if self.preview.tool == "offset":
-            if force or getattr(self, "_options_target", None) != "offset":
-                self._options_target, self._options_element = "offset", None
-                self.tool_options.show_offset_tool(self.offset_defaults)
-            return
-        if self.preview.tool == "textpath":
-            e = self.selected
-            if e is not None and e.shape is not None and e.shape.kind == "text":
-                # a selected text is the one the tool puts on the clicked shape: show it
-                if force or getattr(self, "_options_target", None) != "selected" \
-                        or getattr(self, "_options_element", None) is not e:
-                    self._options_target, self._options_element = "selected", e
-                    self.tool_options.show_spec(e.shape, e.name)
-            elif force or getattr(self, "_options_target", None) != "textpath":
-                self._options_target, self._options_element = "textpath", None
-                title = NEW_KIND_TITLES["textpath"]
-                self.tool_options.show_spec(self.shape_defaults["textpath"], _(title))
             return
         e = self.selected
         if e is not None and e.shape is not None:
@@ -926,10 +917,14 @@ class MainWindow(QMainWindow):
                     or getattr(self, "_options_element", None) is not e:
                 self._options_target, self._options_element = "picture", e
                 self.tool_options.show_picture([self.act_trace_image])
+        elif self.preview.tool == "text":
+            self._options_target, self._options_element = "text", None
+            self.tool_options.show_tool_hint(_("Text"), _("Click the bed where the text goes: the Text window "
+                                                          "opens."))
         elif self.preview.tool in self.shape_defaults:
             self._options_target, self._options_element = self.preview.tool, None
             self.tool_options.show_spec(self.shape_defaults[self.preview.tool],
-                                        _(NEW_KIND_TITLES[self.preview.tool]))
+                                        _(NEW_KIND_TITLES[self.preview.tool]), windows=False)
         else:
             self._options_target, self._options_element = None, None
             self.tool_options.show_hint()
@@ -1102,42 +1097,49 @@ class MainWindow(QMainWindow):
         return best
 
     def _text_path_clicked(self, point):
-        """Text on a path tool: put the selected text on the clicked shape, or a new text
-        (from the options bar) when no text is selected."""
+        """Text on a path tool: the clicked line, curve or shape gets the selected text, or a new one; then the
+        Text window (its content, font, where it starts, its distance from the line, its side) with a
+        preview; Cancel takes the text off again. One undo step."""
         guide = self._line_at(point)
         if guide is None:
             self.status(_("Click a line, curve or shape to put the text on. Opened files must be ungrouped first "
                           "(Edit → Ungroup)."), error=True)
             return
+        from kerfly.gui import tool_dialogs
         chosen = self.selected
-        if chosen is not None and chosen.shape is not None and chosen.shape.kind == "text":
-            self._checkpoint()                          # move the selected text onto the shape (no copy)
-            if not self._place_on_path(chosen, guide):
-                self._undo.pop()
-                return
-            self.set_tool("select")
-            self.preview.select_element(chosen)
-            self.selected = chosen
-            self._update_tool_options(force=True)
-            self.status(_("Text put on the path. Drag it to slide it along the line; the bar above changes the "
-                          "text, the spacing, the distance from the line and the side."))
-            return
-        spec = self.shape_defaults["textpath"].copy()
-        if not (spec.text or "").strip():
-            self.status(_("Type the text in the bar above first."), error=True)
-            return
-        update_text_spec(spec)
-        name = KIND_NAMES["text"]
-        text = Element(build_design(spec), name=_(name), shape=spec)
         self._checkpoint()
-        self.elements.append(text)
-        self._place_on_path(text, guide)
+        if chosen is not None and chosen.shape is not None and chosen.shape.kind == "text":
+            text = chosen                               # the selected text goes onto the shape (no copy)
+        else:
+            spec = self.shape_defaults["textpath"].copy()
+            if not (spec.text or "").strip():
+                spec.text = _("Text")
+            update_text_spec(spec)
+            name = KIND_NAMES["text"]
+            text = Element(build_design(spec), name=_(name), shape=spec)
+            self.elements.append(text)
+        if not self._place_on_path(text, guide):
+            self._restore(self._undo.pop())
+            return
         self.set_tool("select")
         self.preview.select_element(text)
         self.selected = text
+        result = tool_dialogs.text_dialog(self, text.shape, _("Text on a path"), _("Put the text on the path"),
+                                          path_fields=True)
+        if result is None or (result != "straight" and not result.text.strip()):
+            self._restore(self._undo.pop())             # Cancel: as it was before the click
+            self._update_tool_options(force=True)
+            return
+        if result == "straight":
+            result = text.shape.copy()
+            result.text_path = []
+        else:
+            self.shape_defaults["textpath"] = result.copy()
+        self._apply_shape(text, result, checkpoint=False)
+        self._keep_selection([text])
         self._update_tool_options(force=True)
-        self.status(_("Text put on the path. Drag it to slide it along the line; the bar above changes the text, "
-                      "the spacing, the distance from the line and the side."))
+        self.status(_("Text put on the path. Drag it to slide it along the line; Edit text in the bar above "
+                      "changes it."))
 
     def _element_inside(self, point):
         """The element whose area holds the clicked point (scene mm): inside its closed
@@ -1187,15 +1189,7 @@ class MainWindow(QMainWindow):
         if not self._hingeable(e):
             self.status(_("A living hinge needs a closed shape (not a text) on a cut or outline layer."), error=True)
             return
-        self._hinge_element(e)
-        self.preview.select_element(e)
-        self.selected = e
-        # the bar shows what the shape has now (it may have been selected already: no new selection)
-        self._update_tool_options(force=True)
-        if self.hinge_defaults.hinge_pattern:
-            self.status(_("Hinge cut into the shape. Click another shape, or change the cuts above."))
-        else:
-            self.status(_("Hinge removed."))
+        self._open_tool_window("hinge", [e])
 
     def _fill_clicked(self, point):
         """The Fill tool was clicked at a point of the bed view (scene mm)."""
@@ -1210,15 +1204,7 @@ class MainWindow(QMainWindow):
         if not self._fillable(e):
             self.status(_("Only closed shapes on a cut or outline layer can be filled with a pattern."), error=True)
             return
-        self._fill_element(e)
-        self.preview.select_element(e)
-        self.selected = e
-        # the bar shows what the shape has now (it may have been selected already: no new selection)
-        self._update_tool_options(force=True)
-        if self.fill_defaults.fill_pattern:
-            self.status(_("Filled. Click another shape, or change the pattern above."))
-        else:
-            self.status(_("Pattern removed."))
+        self._open_tool_window("fill", [e])
 
     def _apply_shape(self, element, spec, checkpoint=True):
         """Rebuild a drawn element from a changed spec, keeping its top-left corner
@@ -1307,6 +1293,13 @@ class MainWindow(QMainWindow):
         dx, dy = end.x() - start.x(), end.y() - start.y()
         clicked = abs(dx) < 0.5 and abs(dy) < 0.5
         if tool == "text":
+            # the Text window: the text, its font and size, with a preview; Insert the text puts it here
+            from kerfly.gui import tool_dialogs
+            got = tool_dialogs.text_dialog(self, spec, _("Text"), _("Insert the text"))
+            if got is None or not got.text.strip():
+                return
+            spec = got
+            self.shape_defaults["text"] = got.copy()
             update_text_spec(spec)
             left, top = start.x(), start.y()
         elif tool == "line":
@@ -1709,11 +1702,121 @@ class MainWindow(QMainWindow):
         if e is None:
             self.status(_("Click inside a closed shape to offset it."), error=True)
             return
-        self._offset_elements([e])
+        self._open_tool_window("offset", [e])
 
     def offset_selected(self):
-        """The Offset tool's button: offset the shapes selected now."""
-        self._offset_elements(self._selection())
+        """Offset the shapes selected now (the Offset window)."""
+        self._open_tool_window("offset", self._selection())
+
+    # ---- the tools' windows (tool_dialogs: preview, tiles, fields; the user's choice 2026-11-20) ------------
+    def _open_tool_window(self, tool, chosen):
+        """The window of Fill, Living hinge or Offset for these shapes; its action changes them (one undo
+        step), Cancel leaves them. Then back to Select."""
+        from kerfly.gui import tool_dialogs
+        if self.worker is not None or not chosen:
+            return
+        chosen = [e for e in chosen if e in self.elements]
+        if tool == "offset":
+            parts = self._closed_parts(chosen)
+            if not parts:
+                self.status(_("Select one or more shapes with closed outlines."), error=True)
+                return
+            values = tool_dialogs.offset_dialog(self, [polys for _e, polys in parts], self.offset_defaults)
+            if values is not None:
+                self.offset_defaults = dict(values)
+                self._offset_elements([e for e, _p in parts])
+            self.set_tool("select")
+            return
+        fill = tool == "fill"
+        fits = self._fillable if fill else self._hingeable
+        chosen = [e for e in chosen if fits(e)]
+        if not chosen:
+            return
+        attrs = self.FILL_ATTRS if fill else self.HINGE_ATTRS
+        defaults = self.fill_defaults if fill else self.hinge_defaults
+        e0 = self.selected if self.selected in chosen else chosen[0]
+        start = e0.shape.copy()
+        had = bool(getattr(start, attrs[0]))
+        if not had:                                      # no pattern yet: the one chosen last
+            for attr in attrs:
+                setattr(start, attr, getattr(defaults, attr))
+        result = (tool_dialogs.fill_dialog if fill else tool_dialogs.hinge_dialog)(self, start, had=had)
+        self.set_tool("select")
+        if result is None:
+            return
+        self._checkpoint()
+        for e in chosen:
+            spec = e.shape.copy()
+            if result == "remove":
+                setattr(spec, attrs[0], "")
+            else:
+                for attr in attrs:
+                    setattr(spec, attr, getattr(result, attr))
+                if fill and spec.operation == "hatch":
+                    spec.operation = "engrave"
+            self._apply_shape(e, spec, checkpoint=False)
+        if result != "remove":
+            keep = defaults.copy()
+            for attr in attrs:
+                setattr(keep, attr, getattr(result, attr))
+            if fill:
+                self.fill_defaults = keep
+            else:
+                self.hinge_defaults = keep
+        self._keep_selection(chosen)
+        self._update_tool_options(force=True)
+        if result == "remove":
+            self.status(_("Pattern removed.") if fill else _("Hinge removed."))
+        else:
+            self.status(_("Filled.") if fill else _("Hinge cut into the shape."))
+
+    def _closed_parts(self, chosen):
+        """[(element, [closed outlines in scene mm])] of the chosen shapes, as the bed view draws them."""
+        items = {id(i.element): i for i in self.preview._items}
+        parts = []
+        for e in chosen:
+            item = items.get(id(e))
+            if item is None:
+                continue
+            t = item.sceneTransform()
+            polys = []
+            for poly in item.local_polys:
+                if len(poly) >= 4 and abs(poly[0][0] - poly[-1][0]) < 1e-6 and abs(poly[0][1] - poly[-1][1]) < 1e-6:
+                    pts = [t.map(x, y) for x, y in poly]
+                    polys.append([(q.x(), q.y()) if hasattr(q, "x") else q for q in pts])
+            if polys:
+                parts.append((e, polys))
+        return parts
+
+    def _bar_tool_requested(self, tool):
+        """A button of the options bar opens a tool's window for the shape shown (Fill, Living hinge, Text)."""
+        if tool == "text":
+            self.edit_text()
+        else:
+            self._open_tool_window(tool, self._selection() or ([self.selected] if self.selected else []))
+
+    def edit_text(self, element=None):
+        """The Text window for a text on the bed (also on a path: where it starts, its distance from the line,
+        its side; Straight text takes it off the path). One undo step."""
+        from kerfly.gui import tool_dialogs
+        e = element or self.selected
+        if e is None or e.shape is None or e.shape.kind != "text" or self.worker is not None:
+            return
+        result = tool_dialogs.text_dialog(self, e.shape, _("Text"), _("Apply"),
+                                          path_fields=bool(e.shape.text_path))
+        if result is None:
+            return
+        spec = e.shape.copy()
+        if result == "straight":
+            spec.text_path = []
+        else:
+            spec = result
+            if not spec.text.strip():
+                self.status(_("Type the text."), error=True)
+                return
+        self._apply_shape(e, spec)
+        self._keep_selection([e])
+        self._update_tool_options(force=True)
 
     def _offset_elements(self, chosen):
         """A new outline around each shape (or inside it), the Offset tool's
@@ -1795,6 +1898,11 @@ class MainWindow(QMainWindow):
         if element.shape is None and has_vectors(element.design):
             self.status(_("This is an opened file: click Ungroup first, then every line is its own shape you "
                           "can move or double-click to edit."), error=True)
+            return
+        if element.shape is not None and element.shape.kind == "text":
+            self.preview.select_element(element)        # a text: its window (content, font, size)
+            self.selected = element
+            QTimer.singleShot(0, self, lambda: self.edit_text(element))
             return
         self.set_tool("nodes")
         self.preview.select_element(element)

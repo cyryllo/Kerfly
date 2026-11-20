@@ -561,6 +561,38 @@ class Session:
             return value
         raise TypeError(widget)
 
+    def window_answer(self, values=(), press="action", tile=None, text=None):
+        """A tool's window (Fill, Living hinge, Offset, Text) answered with real input: a tile clicked, the text
+        typed, numbers typed, boxes ticked; then its action button (press "remove": its Remove button,
+        "cancel": Cancel)."""
+        def answer(dlg):
+            from PySide6.QtWidgets import QCheckBox, QDialogButtonBox
+            if tile is not None:
+                self.click(dlg.tiles.buttons[tile])
+            if text is not None:
+                field = dlg.fields["text"]
+                self.touched.add(id(field))
+                QTest.mouseClick(field.viewport(), Qt.LeftButton)
+                QTest.keyClick(field, Qt.Key_A, Qt.ControlModifier)
+                self.type_chars(field, text)
+            for attr, value in values:
+                widget = dlg.fields[attr]
+                if isinstance(widget, QCheckBox):
+                    if widget.isChecked() != bool(value):
+                        self.tick(widget)
+                elif hasattr(widget, "set_family"):
+                    widget.set_family(value)
+                else:
+                    self.type_number(widget, value)
+            self.settle(4, 0.05)
+            if press == "remove":
+                self.click(dlg.remove_button)
+            else:
+                box = dlg.findChild(QDialogButtonBox)
+                QTest.mouseClick(box.button(QDialogButtonBox.Cancel if press == "cancel" else QDialogButtonBox.Ok),
+                                 Qt.LeftButton)
+        return answer
+
     def set_field(self, attr, value):
         """Change a field of the options bar with real input."""
         widget = truth.bar_fields(self.w.tool_options)[attr]
@@ -659,20 +691,29 @@ def session(s):
     def text():
         tool("text")
         s.click_bed(100, 140)
-    s.step("text tool: click", text, check=lambda: (w.elements[-1].shape.kind == "text", "no text"))
-    s.step("text: type into the options bar",
-           lambda: s.type_text(truth.bar_fields(w.tool_options)["text"], "Kerfly 1.0 źdźbło"),
+    # the Text window (its preview, the text, font, size): Insert the text
+    s.expect_dialog("the Text window: a text typed, Insert the text", s.window_answer(text="Kerfly"))
+    s.step("text tool: click, the Text window, type, Insert the text", text,
+           check=lambda: (w.elements[-1].shape.kind == "text" and w.elements[-1].shape.text == "Kerfly",
+                          w.elements[-1].shape.text if w.elements[-1].shape else "no text"))
+
+    def edit_text_button():
+        s.click(w.tool_options.findChild(QToolButton, "edit_text"))
+    s.expect_dialog("the Text window: another text, Apply", s.window_answer(text="Kerfly 1.0 źdźbło"))
+    s.step("text: Edit text (options bar), type in the Text window, Apply", edit_text_button,
            check=lambda: (w.elements[-1].shape.text == "Kerfly 1.0 źdźbło", w.elements[-1].shape.text))
     # a single-line font (built in): open strokes engraved once; then the font it had
     from kerfly.core.layers import part_present as _present
     font_before = w.elements[-1].shape.font_family
     op_before = w.elements[-1].shape.operation
-    s.step("text: the single-line font Hershey Sans 1-stroke from the font list",
-           lambda: s.set_field("font_family", "Hershey Sans 1-stroke"),
+    s.expect_dialog("the Text window: Hershey Sans 1-stroke", s.window_answer(
+        values=[("font_family", "Hershey Sans 1-stroke")]))
+    s.step("text: the single-line font Hershey Sans 1-stroke from the Text window's font list", edit_text_button,
            check=lambda: (w.elements[-1].shape.single_line and not w.elements[-1].shape.closed
                           and _present(w.elements[-1].design, "engrave") and not _present(w.elements[-1].design, "raster"),
                           "%s, %s" % (w.elements[-1].shape.font_family, w.elements[-1].shape.operation)))
-    s.step("text: back to its system font", lambda: s.set_field("font_family", font_before),
+    s.expect_dialog("the Text window: its system font", s.window_answer(values=[("font_family", font_before)]))
+    s.step("text: back to its system font (Text window)", edit_text_button,
            check=lambda: (w.elements[-1].shape.font_family == font_before, w.elements[-1].shape.font_family))
     if w.elements[-1].shape.operation != op_before:
         # its layer back with the Layer list above the bed (a raster layer is offered again: closed letters)
@@ -1040,18 +1081,18 @@ def part_edit(s):
     for _i in range(3):
         s.trigger(w.act_undo)                    # and the three rectangles away
 
-    # Offset tool (right strip): its settings in the options bar, then a click on the combined shape
+    # Offset: with a shape selected, Edit → Offset opens the Offset window (Cancel: nothing); the tool with
+    # nothing selected: a click on the shape opens it (3 mm, sharp corners, keep: Offset)
     n = len(w.elements)
     base = w.elements[-1]
-    s.step("Edit → Offset (chooses the Offset tool)", lambda: s.trigger(w.act_offset, via="menu"), change=False,
-           check=lambda: (w.preview.tool == "offset", "tool %s" % w.preview.tool))
-    s.trigger(w.tool_actions["select"])
-    s.step("Offset tool (right strip)", lambda: s.trigger(w.tool_actions["offset"]), change=False,
-           check=lambda: (w.preview.tool == "offset", "tool %s" % w.preview.tool))
-    s.every_field("offset tool", change=False)
-    for attr, value in (("offset_distance", 3.0), ("offset_join", "miter"), ("offset_keep", True)):
-        s.step("offset tool: %s %r" % (attr, value), lambda a=attr, v=value: s.set_field(a, v), change=None)
-    s.step("Offset tool: click the shape (3 mm around it, kept)", lambda: s.click_bed(*s.element_at(base)),
+    s.expect_dialog("the Offset window: Cancel", s.window_answer(press="cancel"))
+    s.step("Edit → Offset with a shape selected: the Offset window, Cancel",
+           lambda: (select_one(base), s.trigger(w.act_offset, via="menu")), change=False,
+           check=lambda: (len(w.elements) == n and w.preview.tool == "select", "tool %s" % w.preview.tool))
+    s.expect_dialog("the Offset window: 3 mm, sharp corners, keep, Offset",
+                    s.window_answer(values=[("offset_distance", 3.0), ("offset_keep", True)], tile="miter"))
+    s.step("Offset tool (right strip), nothing selected: click the shape, the Offset window, Offset",
+           lambda: (s.click_bed(1, 1), s.trigger(w.tool_actions["offset"]), s.click_bed(*s.element_at(base))),
            check=lambda: (len(w.elements) == n + 1 and abs((w.elements[-1].size[0] - base.size[0]) * 25.4 - 6.0) < 0.05,
                           "%d elements, %.2f mm wider" % (len(w.elements), (w.elements[-1].size[0] - base.size[0]) * 25.4)))
     s.trigger(w.tool_actions["select"])
@@ -1062,9 +1103,9 @@ def part_edit(s):
         s.drag((150, 120), (240, 120), mods=Qt.ShiftModifier)
         s.trigger(w.tool_actions["text"])
         s.click_bed(160, 170)
-        s.type_text(truth.bar_fields(w.tool_options)["text"], "ON A LINE")
         s.trigger(w.tool_actions["select"])
-    s.step("draw a line and a text", line_and_text, undo_steps=3)
+    s.expect_dialog("the Text window: ON A LINE", s.window_answer(text="ON A LINE"))
+    s.step("draw a line and a text", line_and_text, undo_steps=2)
     line, text = w.elements[-2], w.elements[-1]
     s.step("Edit → Put text on path", lambda: (select_one(line), pick_el(text, Qt.ControlModifier),
                                                s.trigger(w.act_text_path, via="menu")),
@@ -1075,22 +1116,41 @@ def part_edit(s):
         s.drag((1, 1), (2, 2))
         s.trigger(w.tool_actions[name])
         s.click_bed(x, y)
-    s.step("Text on a path tool: click the line", lambda: tool_click("textpath", 200, 121),
+    s.expect_dialog("the Text on a path window: Put the text on the path",
+                    s.window_answer(values=[("text_path_distance", 1.0)]))
+    s.step("Text on a path tool: click the line, the Text on a path window", lambda: tool_click("textpath", 200, 121),
            check=lambda: (bool(w.elements[-1].shape.text_path), "no text on the line"))
     # fill and hinge tools on a rectangle of their own (the middle of the bed is busy now)
     s.step("draw a rectangle for the fill and the hinge", lambda: put("rectangle", 250, 150, 310, 200))
     b = w.elements[-1]
     s.trigger(w.tool_actions["select"])
     x, y = s.element_at(b)
-    s.step("Fill tool: click a rectangle", lambda: tool_click("fill", x, y),
-           check=lambda: (bool(b.shape.fill_pattern), "not filled"))
-    s.every_field("fill tool")
-    s.step("Living hinge tool: click a rectangle", lambda: tool_click("hinge", x, y),
-           check=lambda: (bool(b.shape.hinge_pattern), "no hinge"))
-    s.every_field("hinge tool")
+    s.expect_dialog("the Fill window: Honeycomb, 3 mm, Fill it",
+                    s.window_answer(values=[("fill_spacing", 3.0), ("fill_angle", 15.0), ("fill_margin", 1.0)],
+                                    tile="honeycomb"))
+    s.step("Fill tool: click a rectangle, the Fill window (Honeycomb tile, spacing, angle, margin), Fill it",
+           lambda: tool_click("fill", x, y),
+           check=lambda: (b.shape.fill_pattern == "honeycomb" and b.shape.fill_spacing == 3.0,
+                          "%s %s" % (b.shape.fill_pattern, b.shape.fill_spacing)))
+    s.expect_dialog("the Living hinge window: wavy cuts, Cut the hinge",
+                    s.window_answer(values=[("hinge_cut", 15.0), ("hinge_gap", 2.0), ("hinge_spacing", 2.0),
+                                            ("hinge_margin", 3.0)], tile="wave"))
+    s.step("Living hinge tool: click a rectangle, the Living hinge window (Wavy tile, fields), Cut the hinge",
+           lambda: tool_click("hinge", x, y),
+           check=lambda: (b.shape.hinge_pattern == "wave" and b.shape.hinge_cut == 15.0,
+                          "%s %s" % (b.shape.hinge_pattern, b.shape.hinge_cut)))
     s.trigger(w.tool_actions["select"])
     s.step("select the rectangle with the hinge", lambda: select_one(b), change=False)
     s.every_field("rectangle with a hinge")
+    # the bar's buttons open the windows of the shape shown: Remove the fill there
+    s.expect_dialog("the Fill window: Remove the fill", s.window_answer(press="remove"))
+    s.step("options bar: the Fill button, the Fill window, Remove the fill",
+           lambda: (select_one(b), s.click(w.tool_options.findChild(QToolButton, "open_fill"))),
+           check=lambda: (not b.shape.fill_pattern, b.shape.fill_pattern))
+    s.expect_dialog("the Living hinge window: zigzag", s.window_answer(tile="zigzag"))
+    s.step("options bar: the Living hinge button, the window, zigzag cuts",
+           lambda: (select_one(b), s.click(w.tool_options.findChild(QToolButton, "open_hinge"))),
+           check=lambda: (b.shape.hinge_pattern == "zigzag", b.shape.hinge_pattern))
     # measure: a drag that changes nothing
     s.step("Measure tool: drag", lambda: (s.trigger(w.tool_actions["measure"]), s.drag((10, 180), (60, 200))),
            change=False, check=lambda: ("mm" in w.statusBar().currentMessage(), w.statusBar().currentMessage()))

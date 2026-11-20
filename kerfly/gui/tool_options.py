@@ -121,6 +121,7 @@ class ToolOptionsBar(QWidget):
     crop_changed = Signal(dict)         # the Cut out of picture tool's settings
     offset_apply = Signal()             # the Offset tool's "Offset selected" button
     rebuilt = Signal()                  # its fields changed (the window fits the bar's width)
+    tool_requested = Signal(str)        # a tool's window for the shape shown: "fill", "hinge", "text"
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -234,8 +235,9 @@ class ToolOptionsBar(QWidget):
             self._add(b)
         self._end()
 
-    def show_spec(self, spec, title):
-        """Show the options of spec (a ShapeSpec); title names what is edited."""
+    def show_spec(self, spec, title, windows=True):
+        """Show the options of spec (a ShapeSpec); title names what is edited. windows: the buttons of the
+        Fill / Living hinge / Text windows (a shape on the bed; not the settings of a drawing tool)."""
         self.spec = spec.copy()
         self._clear(title)
         # what the laser does with the shape is chosen with its layer (the first row, Layer)
@@ -254,7 +256,17 @@ class ToolOptionsBar(QWidget):
             sides.setProperty("spec_attr", "sides")
             self._add(option_field("hexagon", _("Sides"), sides))
         elif kind == "text":
-            self._add_text_fields()
+            # the text, its font and size (on a path: its place on it) in the Text window, with a preview
+            content = (self.spec.text or "").replace("\n", " ")
+            edit = text_button("typography", _("Edit text\u2026"),
+                               _("The Text window: the text, its font, size and letter spacing (on a path: where "
+                                 "it starts, its distance from the line, its side), with a preview. Double-click "
+                                 "the text on the bed opens it too."))
+            edit.setObjectName("edit_text")
+            edit.clicked.connect(lambda: self.tool_requested.emit("text"))
+            shown = QLabel(content if len(content) <= 30 else content[:29] + "\u2026")
+            widgets.set_role(shown, "hint")
+            self._add(edit, shown)
 
         if self.spec.operation == "cut" and self.spec.closed:
             count = QSpinBox()
@@ -270,10 +282,26 @@ class ToolOptionsBar(QWidget):
             self._add(option_field("hash", _("Bridges"), count),
                       option_field("arrows-horizontal", _("Bridge width"), width))
 
-        if self.spec.operation in ("cut", "engrave") and self.spec.closed:
-            self._add_fill_section()
-            if self.spec.hinge_pattern:                  # added with the Living hinge tool
-                self._add_hinge_section()
+        if windows and self.spec.operation in ("cut", "engrave") and self.spec.closed:
+            # the Fill and Living hinge windows (a preview, the kinds as tiles, the fields)
+            names = dict(PATTERN_NAMES)
+            fill = text_button(icons.pattern_icon(self.spec.fill_pattern or "lines"),
+                               "%s: %s\u2026" % (_("Fill"), _(names[self.spec.fill_pattern])
+                                                 if self.spec.fill_pattern in names else _("No pattern")),
+                               _("The Fill window: a pattern engraved inside the shape, with a preview"))
+            fill.setObjectName("open_fill")
+            fill.clicked.connect(lambda: self.tool_requested.emit("fill"))
+            items = [fill]
+            if self.spec.kind != "text":
+                hnames = dict(HINGE_NAMES)
+                hinge = text_button(icons.hinge_icon(), "%s: %s\u2026" % (
+                    _("Living hinge"), _(hnames[self.spec.hinge_pattern]) if self.spec.hinge_pattern in hnames
+                    else _("No hinge")), _("The Living hinge window: rows of cuts that let the sheet bend, with "
+                                           "a preview"))
+                hinge.setObjectName("open_hinge")
+                hinge.clicked.connect(lambda: self.tool_requested.emit("hinge"))
+                items.append(hinge)
+            self._add(*items)
         self._end()
 
     def _add_text_fields(self):
@@ -330,6 +358,15 @@ class ToolOptionsBar(QWidget):
             straight.clicked.connect(lambda: self._set("text_path", []))
             self._add(option_field("route", _("Start"), offset), option_field("line-height", _("From line"), distance),
                       flip, straight)
+
+    def show_tool_hint(self, title, text):
+        """A tool with a window (Fill, Living hinge, Offset, Text on a path): what to click."""
+        self.spec = None
+        self._clear(title)
+        hint = QLabel(text)
+        widgets.set_role(hint, "hint")
+        self._add(hint)
+        self._end()
 
     def show_fill_tool(self, spec):
         """Options of the Fill tool: the pattern given to the shapes it is clicked on."""

@@ -32,7 +32,7 @@ from PySide6.QtWidgets import QApplication, QComboBox, QWidget, QFileDialog, QIn
 from kerfly.core import config  # noqa: E402
 from kerfly.gui.main_window import MainWindow  # noqa: E402
 from fakes import FakeGrbl, FakeK40, run_until_idle  # noqa: E402
-from uidriver import bar_set, choose_layer, click_bar_button, select  # noqa: E402
+from uidriver import window_answers, bar_set, choose_layer, click_bar_button, select  # noqa: E402
 
 FIX = os.path.join(TESTS_DIR, "fixtures")
 BASE = os.path.join(TESTS_DIR, "baseline")
@@ -91,6 +91,10 @@ def make_window(**overrides):
 
 def main():
     app = QApplication([])
+    # the tools' windows (Fill, Living hinge, Offset, Text, Text on a path) are answered here without running
+    # them: their action with the values they show (a test sets its own answer where it changes them)
+    import kerfly.gui.tool_dialogs as _tool_dialogs
+    _tool_dialogs.answer = lambda dlg: True
     # "save changes first?" when replacing a design: discard in tests
     QMessageBox.question = staticmethod(lambda *a, **k: QMessageBox.Discard)
     # the window's questions (kerfly.gui.widgets.ask, with named buttons) answered like QMessageBox.question,
@@ -1340,24 +1344,23 @@ def main():
         QTest.mouseClick(vp, Qt.LeftButton, Qt.NoModifier, w.preview.mapFromScene(QPointF(x, y)))
         app.processEvents()
     w._preview_drawn("rectangle", QPointF(20, 20), QPointF(60, 60), False)      # 40 x 40
+    w.preview.select_element([])
     w.tool_actions["offset"].trigger()
     from kerfly.gui import truth as _otruth
-    in_strip = w.preview.tool == "offset" and set(_otruth.bar_fields(w.tool_options)) == {
-        "offset_distance", "offset_join", "offset_keep"}
-    bar_set(w, "offset_distance", 2.0)
-    bar_set(w, "offset_join", "miter")
-    bar_set(w, "offset_keep", True)
-    click_scene(40, 40)
+    # the Offset window (its preview, Round / Sharp corners as tiles, distance, keep): the bar only says what
+    # to click
+    in_strip = w.preview.tool == "offset" and not _otruth.bar_fields(w.tool_options)
+    with window_answers(offset_distance=2.0, offset_join="miter", offset_keep=True) as seen:
+        click_scene(40, 40)
+    in_strip = in_strip and len(seen) == 1 and w.preview.tool == "select"
     grown = w.elements[-1]
     out_ok = (len(w.elements) == 2 and grown.shape.kind == "path"
               and (round(grown.size[0] * 25.4, 2), round(grown.size[1] * 25.4, 2)) == (44.0, 44.0)
               and abs(grown.bounds[0] * 25.4 - 18.0) < 0.01)
-    bar_set(w, "offset_distance", -5.0)
-    bar_set(w, "offset_join", "round")
-    bar_set(w, "offset_keep", False)
     w.preview.select_element([w.elements[0]])
     app.processEvents()
-    click_bar_button(w, "Offset selected")
+    with window_answers(offset_distance=-5.0, offset_join="round", offset_keep=False):
+        w.offset_selected()                             # shapes selected: the window for them
     inner = w.elements[0]
     in_ok = len(w.elements) == 2 and (round(inner.size[0] * 25.4, 2), round(inner.size[1] * 25.4, 2)) == (30.0, 30.0)
     w.undo()
@@ -1370,10 +1373,10 @@ def main():
     w._preview_drawn("rectangle", QPointF(30, 30), QPointF(50, 50), False)
     w.preview.select_element(w.elements[-2:])
     w.boolean_selected("difference")
+    w.preview.select_element([])
     w.set_tool("offset")
-    bar_set(w, "offset_distance", 1.0)
-    bar_set(w, "offset_join", "miter")
-    click_scene(25, 40)                                  # on the frame, not in its hole
+    with window_answers(offset_distance=1.0, offset_join="miter", offset_keep=False):
+        click_scene(25, 40)                              # on the frame, not in its hole
     frame = w.elements[-1]
     holes = sorted(round(max(n[0] for n in sp["nodes"]) - min(n[0] for n in sp["nodes"]), 2)
                    for sp in frame.shape.subpaths)
@@ -2019,8 +2022,10 @@ def main():
     labels = [l.text() for l in w.tool_options.findChildren(QLabel)]
     e = w.selected
     lines_ok = e.design.vector_engrave.ecoords and not e.design.vector_cut.ecoords
-    check("fill with lines, no outline (former hatch): settings shown, engraved lines only, no Hatch section",
-          lines_ok and "Fill" in labels and "Hatch" not in labels, "(%s)" % labels)
+    fill_button = w.tool_options.findChild(QToolButton, "open_fill")     # the Fill window's button on the bar
+    check("fill with lines, no outline (former hatch): the Fill window's button on the bar, engraved lines only, "
+          "no Hatch section", lines_ok and fill_button is not None and "Lines" in fill_button.text()
+          and "Hatch" not in labels, "(%s)" % labels)
     bar_set(w, "fill_outline", True)                     # back to a plain cut shape for the bridges
     bar_set(w, "fill_pattern", "")
     bar_set(w, "tabs", 2)
@@ -2365,14 +2370,19 @@ def main():
     w3._add_drawn_element(_Spec(kind="ellipse", width=60, height=40, operation="cut"), "ellipse", 20, 20)
     w3._add_drawn_element(_Spec(kind="rectangle", width=30, height=30, operation="cut"), "rectangle", 120, 20)
     shape, square = w3.elements[0], w3.elements[1]       # the square is selected (just drawn)
+    # the Fill tool with a shape selected: the Fill window for it (honeycomb chosen among the tiles)
+    with window_answers(fill_pattern="honeycomb") as seen:
+        w3.set_tool("fill")
+        for _i in range(3):
+            app.processEvents()
+    combos = [d.tiles for d in seen if len(d.tiles.buttons) >= 19]
+    selected_got_it = square.shape.fill_pattern == "honeycomb" and shape.shape.fill_pattern == "" \
+        and w3.preview.tool == "select"
+    w3.preview.select_element([])
     w3.set_tool("fill")
-    combos = [c for c in w3.tool_options.findChildren(QComboBox) if c.findData("honeycomb") >= 0]
-    if combos:
-        combos[0].setCurrentIndex(combos[0].findData("honeycomb"))
-        combos[0].activated.emit(combos[0].currentIndex())          # as a mouse choice does
-    selected_got_it = square.shape.fill_pattern == "honeycomb" and shape.shape.fill_pattern == ""
     undo0 = len(w3._undo)
-    w3._fill_clicked(_QPointF(50, 40))                    # inside the ellipse
+    with window_answers(fill_pattern="honeycomb"):
+        w3._fill_clicked(_QPointF(50, 40))                # inside the ellipse: its window
     filled = shape.shape.fill_pattern == "honeycomb" and bool(shape.design.vector_cut.ecoords) \
         and len(shape.design.vector_engrave.ecoords) > 50 and len(w3._undo) == undo0 + 1
     w3.undo()
@@ -2434,7 +2444,7 @@ def main():
     sw2._add_drawn_element(tt, "text", 10, 30)
     te = sw2.elements[-1]
     select(sw2, te)
-    box = next(wd for wd in sw2.tool_options.findChildren(_FB))
+    box = _FB()                                          # the Text window's font list
     on_top = [box.itemText(i) for i in range(len(fams))] == fams
     bar_set(sw2, "font_family", "Hershey Sans 1-stroke")
     te = sw2.elements[-1]
@@ -2482,7 +2492,8 @@ def main():
     below = text.bounds[3] * 25.4 <= -60.0 + 0.6
     saved = _project._shape_from_dict(_project._shape_to_dict(text.shape))
     in_project = saved.text_path_flip and len(saved.text_path) == len(text.shape.text_path)
-    click_bar_button(w5, _("Straight text"))
+    with window_answers(remove=True):                    # the Text window's Straight text button
+        w5.edit_text(text)
     # height of a 10 mm text in whatever font the system has (Windows has no DejaVu Sans)
     straight = not text.shape.text_path and 4.0 < text.size[1] * 25.4 < 14.0
     # the Text on a path tool: click near the line -> a new text on it; dragging slides it
@@ -2513,7 +2524,7 @@ def main():
     plain_text = w5.elements[-1]
     n1 = len(w5.elements)
     w5.set_tool("textpath")
-    shows_it = w5._options_element is plain_text
+    shows_it = w5._options_target == "textpath"          # the bar says what to click (the window follows)
     w5._shape_picked("textpath", _QPointF(30, 60))
     moved_on = len(w5.elements) == n1 and bool(plain_text.shape.text_path) \
         and abs(plain_text.bounds[2] * 25.4 + 60.0) < 0.6
@@ -2525,10 +2536,10 @@ def main():
     from PySide6.QtGui import QFont as _QFont
     from PySide6.QtWidgets import QDoubleSpinBox as _QDSB
     select(w5, t2)
-    off = [sp for sp in w5.tool_options.findChildren(_QDSB) if sp.toolTip().startswith(_("Position along the path"))]
+    off = [True]                                          # its Start field, in the Text window
     lefts = []
     for _i in range(3):
-        off[0].setValue(off[0].value() + 10.0)
+        bar_set(w5, "text_path_offset", t2.shape.text_path_offset + 10.0)
         lefts.append(t2.bounds[0] * 25.4)
     steps_ok = all(abs((b - a) - 10.0) < 0.3 for a, b in zip(lefts, lefts[1:]))
     width0, left0 = t2.size[0], t2.bounds[0]
@@ -2571,7 +2582,8 @@ def main():
         and len(w6._undo) == u0 + 1
     w6.set_tool("select")
     select(w6, box)
-    section = any(c.findData("zigzag") >= 0 for c in w6.tool_options.findChildren(QComboBox))
+    hinge_button = w6.tool_options.findChild(QToolButton, "open_hinge")      # the Living hinge window's button
+    section = hinge_button is not None and _("Straight cuts") in hinge_button.text()
     w6.undo()
     undone = not w6.elements[0].shape.hinge_pattern
     check("living hinge tool: click cuts a hinge (one undo step), its section on the shape, undo",
@@ -2588,34 +2600,81 @@ def main():
                               10 + 40 * i, 10)
     boxes = list(w7.elements)
     select(w7, *boxes[:3])
-    w7.set_tool("fill")
-    combo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("waves") >= 0][0]
-    shows_none = combo.currentData() == ""
-    bar_set(w7, "fill_spacing", 3.0)                       # under "no pattern": nothing is filled
-    none_kept = all(not e.shape.fill_pattern for e in w7.elements) and w7.fill_defaults.fill_pattern == "lines"
+    # the Fill window for three selected shapes without a pattern: no Remove button; Cancel fills nothing;
+    # each choice reaches all three; a click on the fourth shape later starts from the last choice
+    import kerfly.gui.tool_dialogs as _tdw
+    shown_dialogs = []
+    _tdw.answer = lambda d: shown_dialogs.append(d) or False       # Cancel
+    w7._open_tool_window("fill", boxes[:3])
+    _tdw.answer = lambda d: True
+    shows_none = bool(shown_dialogs) and shown_dialogs[0].remove_button is None
+    none_kept = all(not e.shape.fill_pattern for e in w7.elements)
     seen = []
     for code in ("lines", "waves", "honeycomb"):
-        bar_set(w7, "fill_pattern", code)
+        select(w7, *boxes[:3])
+        with window_answers(fill_pattern=code, fill_spacing=3.0):
+            w7._open_tool_window("fill", boxes[:3])
         seen.append([e.shape.fill_pattern for e in w7.elements[:3]])
     multi_ok = seen == [["lines"] * 3, ["waves"] * 3, ["honeycomb"] * 3]
-    w7._fill_clicked(QPointF(10 + 120 + 15, 25))           # a click on the fourth gives the last choice
+    w7.preview.select_element([])
+    w7.set_tool("fill")
+    w7._fill_clicked(QPointF(10 + 120 + 15, 25))           # the fourth: the window starts from the last choice
     clicked_ok = w7.elements[3].shape.fill_pattern == "honeycomb" and w7.elements[3].shape.fill_spacing == 3.0
-    select(w7, *boxes[:3])
-    w7.set_tool("hinge")
-    hcombo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("wave") >= 0][0]
-    hinge_none = hcombo.currentData() == ""
-    # a selected shape clicked with the tool: the bar shows what it got (it stayed "no hinge")
-    w7.set_tool("select")
+    # the Living hinge window for a shape without one starts at straight cuts, no Remove button
+    shown_dialogs.clear()
+    _tdw.answer = lambda d: shown_dialogs.append(d) or True
     select(w7, boxes[0])
     w7.set_tool("hinge")
-    w7._hinge_clicked(QPointF(25, 25))
-    hcombo = [c for c in w7.tool_options.findChildren(QComboBox) if c.findData("wave") >= 0][0]
-    hinge_none = hinge_none and boxes[0].shape.hinge_pattern == "straight" and hcombo.currentData() == "straight"
+    for _i in range(3):
+        app.processEvents()
+    _tdw.answer = lambda d: True
+    hinge_none = bool(shown_dialogs) and shown_dialogs[0].remove_button is None \
+        and boxes[0].shape.hinge_pattern == "straight"
     check("fill tool with several shapes: shows \"no pattern\", each choice reaches all of them",
           shows_none and none_kept and multi_ok and clicked_ok and hinge_none,
           "(none %s, kept %s, %s, click %s, hinge %s)" % (shows_none, none_kept, seen, clicked_ok, hinge_none))
     w7._dirty = False
     w7.close()
+
+    # 48b. the tools' windows (the user's choice 2026-11-20, as in Vintyl): a preview of the shape that follows
+    # the tiles and the fields; the Text tool opens its window on a click and inserts the text typed there;
+    # a double-click on a text opens its window; the bar has buttons for the Fill / Hinge / Text windows
+    import kerfly.gui.tool_dialogs as _tdx
+    from kerfly.gui.tool_dialogs import design_lines as _dl
+    fd = _tdx.fill_dialog(None, _Spec(kind="ellipse", width=60, height=40, operation="cut"), show=False)
+    fd.refresh()
+    n_lines = len(fd.preview.lines)
+    fd.tiles.buttons["honeycomb"].click()
+    fd.refresh()
+    preview_follows = n_lines > 10 and len(fd.preview.lines) != n_lines and fd.values().fill_pattern == "honeycomb"
+    fd.close()
+    hd = _tdx.hinge_dialog(None, _Spec(kind="rectangle", width=80, height=30, operation="cut"), show=False)
+    hd.refresh()
+    hinge_preview = sum(1 for k, _l in hd.preview.lines if k == "cut") > 20 and "cut" in hd.status.text()
+    hd.close()
+    tw = make_window(grid_mm="0")
+    tw.set_tool("text")
+    with window_answers(text="Hello Kerfly", font_size=12.0) as seen_t:
+        tw._preview_drawn("text", QPointF(30, 30), QPointF(30, 30), False)
+    inserted = len(tw.elements) == 1 and tw.elements[0].shape.text == "Hello Kerfly" \
+        and tw.elements[0].shape.font_size == 12.0 and len(seen_t) == 1
+    _tdx.answer = lambda d: False                          # Cancel: no text
+    tw._preview_drawn("text", QPointF(60, 60), QPointF(60, 60), False)
+    _tdx.answer = lambda d: True
+    cancelled = len(tw.elements) == 1
+    select(tw, tw.elements[0])
+    on_bar = tw.tool_options.findChild(QToolButton, "edit_text") is not None
+    with window_answers(text="Changed") as seen_d:
+        tw.preview.signals.edit_nodes.emit(tw.elements[0])   # a double-click on the text
+        for _i in range(3):
+            app.processEvents()
+    double = len(seen_d) == 1 and tw.elements[0].shape.text == "Changed" and tw.preview.tool != "nodes"
+    tw._dirty = False
+    tw.close()
+    check("tool windows: the preview follows the tiles, hinge preview counts the cuts, the Text tool inserts "
+          "the text typed in its window (Cancel: none), the bar's Edit text button, a double-click opens it",
+          preview_follows and hinge_preview and inserted and cancelled and on_bar and double,
+          "(%s)" % [preview_follows, hinge_preview, inserted, cancelled, on_bar, double])
 
     # 51. the "window tells the truth" checks find what they should: a field not refreshed, an element
     # drawn elsewhere, a stale list row, a wrong layer list, a missing field; and a saved and reopened
