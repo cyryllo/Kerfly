@@ -72,7 +72,7 @@ the [user guide](https://cyryllo.github.io/Kerfly/guide.html).
   (Settings → Advanced → Language); a light or dark theme (Settings → View).
   Help → Keyboard shortcuts lists every key.
 
-**Kerfly 1.7 is stable and ready for everyday work.** Changes are in [CHANGELOG.md](CHANGELOG.md), plans in
+**Kerfly 1.8 is stable and ready for everyday work.** Changes are in [CHANGELOG.md](CHANGELOG.md), plans in
 [ROADMAP.md](ROADMAP.md).
 
 ## Drawing and editing: mouse and keys
