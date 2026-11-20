@@ -127,6 +127,11 @@ oknie.
   program kończy pracę bez sprzątania Qt przy wyjściu, a awaria zapisuje,
   gdzie się zdarzyła: następny start wpisuje to do logu (Pomoc → Zgłoś
   problem go wysyła).
+- **Wspólna baza materiałów**: laser, który zaczyna korzystać z bazy innego,
+  dopisuje do niej swoje materiały (wyglądało, że znikały: wspólna baza
+  pokazywała same przykłady, gdy jej laser nie miał jeszcze własnego pliku);
+  nazwy, które wspólna baza już ma, zostają bez zmian, a własny plik lasera
+  zostaje na wypadek wyłączenia współdzielenia.
 - **Prędkość bazowania GRBL** usunięta z ustawień lasera: płyta zostaje przy
   swojej (`$25`); Kerfly nie zapisuje jej już przy łączeniu (Beta 2 i 3
   zapisywały ją, gdy była ustawiona: sprawdź `$25` w LaserGRBL, jeśli płyta

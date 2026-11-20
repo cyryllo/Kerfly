@@ -150,6 +150,23 @@ def save_library(materials, path=None):
     return path
 
 
+def join_library(own_path, shared_path):
+    """A laser that starts sharing another laser's library brings its own materials along: those whose names
+    (ignoring case) the shared library does not have yet are added to it (the shared library's own stay as
+    they are; the laser's own file is kept, for when it stops sharing). The shared library of a laser that
+    has none yet starts from the examples. Returns the number added."""
+    if not own_path or not os.path.isfile(own_path):
+        return 0
+    with open(own_path, encoding="utf-8") as f:
+        own = from_json(f.read())
+    shared = load_library(shared_path)
+    names = {m.name.strip().lower() for m in shared}
+    new = [m for m in own if m.name.strip().lower() not in names]
+    if new or not os.path.isfile(shared_path):
+        save_library(shared + new, shared_path)
+    return len(new)
+
+
 def merge_materials(existing, imported):
     """Add imported materials; a material with the same name (ignoring case)
     is replaced. Returns (merged list, number added, number replaced)."""

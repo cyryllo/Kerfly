@@ -431,6 +431,7 @@ def main():
     # a material library for each laser: one added to the second laser's is not in the first's; shared, the
     # second laser uses the first's; a copy shares the original's; an old common library is kept by migration
     import copy as _copy
+    import os as _os_t
     from kerfly.core import materials as _mat
     first_names = [m.name for m in pw.materials]
     pw.switch_profile("Workshop M3")
@@ -445,10 +446,14 @@ def main():
     ld.form._widgets["materials_shared"].setChecked(True)
     combo = ld.form._widgets["materials_from"]
     combo.setCurrentIndex(combo.findData(pw.profiles.get(first)["laser_id"]))
+    m3_own = _mat.library_path(pw.profiles.get("Workshop M3")["laser_id"])
     ld._save_and_close()
     pw.switch_profile("Workshop M3")
-    shared_lib = [m.name for m in pw.materials] == first_names
+    # sharing brings the laser's own materials into the shared library (the user's choice 2026-11-20: they
+    # were gone, the shared one showing only the examples), its own file kept for when it stops sharing
+    shared_lib = [m.name for m in pw.materials] == first_names + ["Only on M3"] and _os_t.path.isfile(m3_own)
     pw.switch_profile(first)
+    shared_lib = shared_lib and "Only on M3" in [m.name for m in pw.materials]
     ld = _PD(pw)
     ld.list.setCurrentRow(pw.profiles.names().index(first))
     ld._duplicate()

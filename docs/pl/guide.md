@@ -525,7 +525,9 @@ regulacją mocy) i kolor. Odznaczona warstwa nie wchodzi do zadania.
   z powrotem albo dodaje. Bazę można eksportować i importować, żeby się nią
   dzielić. **Każdy laser ma własną bazę**; lasery tego samego rodzaju mogą mieć
   wspólną: Ustawienia → Lasery…, **Baza materiałów** (kopia zrobiona przez
-  Powiel na początku dzieli bazę z oryginałem).
+  Powiel na początku dzieli bazę z oryginałem). Laser, który zaczyna korzystać
+  ze wspólnej bazy, dopisuje do niej swoje materiały (nazwy, które już w niej
+  są, zostają bez zmian).
 
 <a id="s7"></a>
 

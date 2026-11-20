@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 17:44+0100\n"
+"POT-Creation-Date: 2026-11-20 17:47+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -766,6 +766,10 @@ msgstr "Narożniki nowego obrysu: zaokrąglone albo ostre jak w kształcie"
 #, python-format
 msgid "Could not check for a new version: %s"
 msgstr "Nie udało się sprawdzić, czy jest nowa wersja: %s"
+
+#, python-format
+msgid "Could not join the material libraries: %s"
+msgstr "Nie udało się połączyć baz materiałów: %s"
 
 #, python-format
 msgid "Could not open %s"
@@ -4607,6 +4611,14 @@ msgstr "obrys"
 #, python-format
 msgid "version %s"
 msgstr "wersja %s"
+
+#, python-format
+msgid ""
+"“%(laser)s” now uses the material library of “%(other)s”; its own "
+"materials added to it: %(n)d"
+msgstr ""
+"„%(laser)s” używa teraz bazy materiałów lasera „%(other)s”; dopisano do "
+"niej jego materiały: %(n)d"
 
 #~ msgid ""
 #~ "Choose a drawing tool on the "

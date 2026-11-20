@@ -129,6 +129,11 @@ a window of its own.
   nesting). Panel and bar fields are now removed the safe way, the program
   ends without Qt's clean-up at exit, and a crash writes where it happened:
   the next start puts it into the log (Help → Report a problem sends it).
+- **Shared material library**: a laser that starts sharing another one's
+  library brings its own materials into it (they seemed lost: the shared
+  library showed only the examples when its laser had no file of its own
+  yet); names the shared library already has stay as they are, and the
+  laser's own file is kept for when it stops sharing.
 - **GRBL homing speed** removed from the laser's settings: the board keeps
   its own (`$25`); Kerfly no longer writes it on connect (beta 2 and 3 did when
   it was set: check `$25` in LaserGRBL if your board homes at another speed

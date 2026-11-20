@@ -182,8 +182,11 @@ class ProfilesDialog(QDialog):
         self.buttons["delete"].setEnabled(len(self.profiles.items) > 1)
 
     def _save_edits(self):
-        """Write the changed settings of every laser; the laser in use's go into the window."""
+        """Write the changed settings of every laser; the laser in use's go into the window. A laser that
+        starts sharing another one's material library brings its own materials into it (the user's choice
+        2026-11-20: always joined)."""
         self._stash()
+        owners = {n: self.profiles.library_owner(n) for n in self.profiles.names()}
         for name, new in list(self.edits.items()):
             if name not in self.profiles.names():
                 continue
@@ -199,7 +202,24 @@ class ProfilesDialog(QDialog):
             profiles_core.save(self.profiles)
         except OSError as e:
             self.window.status(_("Could not save the lasers: %s") % e, error=True)
+        from kerfly.core import materials as material_lib
+        joined = []
+        for name in self.profiles.names():
+            own = self.profiles.get(name).get("laser_id", "")
+            owner = self.profiles.library_owner(name)
+            if own and owner and owner != own and owner != owners.get(name):
+                try:
+                    added = material_lib.join_library(material_lib.library_path(own),
+                                                      material_lib.library_path(owner))
+                except (OSError, ValueError) as e:
+                    self.window.status(_("Could not join the material libraries: %s") % e, error=True)
+                    continue
+                joined.append((name, self.profiles.name_of(owner), added))
         self.window._load_materials()                    # (a library shared or not any more)
+        for name, other, added in joined:
+            self.window.status(_("\u201c%(laser)s\u201d now uses the material library of \u201c%(other)s\u201d; "
+                                 "its own materials added to it: %(n)d") % {"laser": name, "other": other,
+                                                                           "n": added})
         self._form_name = None
 
     def _save_and_close(self):

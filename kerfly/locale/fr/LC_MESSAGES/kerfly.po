@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 17:44+0100\n"
+"POT-Creation-Date: 2026-11-20 17:47+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -774,6 +774,10 @@ msgstr "Coins du nouveau contour : arrondis, ou vifs comme ceux de la forme"
 #, python-format
 msgid "Could not check for a new version: %s"
 msgstr "Impossible de rechercher une nouvelle version : %s"
+
+#, python-format
+msgid "Could not join the material libraries: %s"
+msgstr "Impossible de réunir les bibliothèques de matériaux : %s"
 
 #, python-format
 msgid "Could not open %s"
@@ -4689,6 +4693,14 @@ msgstr "gravure vectorielle"
 #, python-format
 msgid "version %s"
 msgstr "version %s"
+
+#, python-format
+msgid ""
+"“%(laser)s” now uses the material library of “%(other)s”; its own "
+"materials added to it: %(n)d"
+msgstr ""
+"« %(laser)s » utilise maintenant la bibliothèque de matériaux de « "
+"%(other)s » ; ses matériaux y sont ajoutés : %(n)d"
 
 #~ msgid ""
 #~ "Choose a drawing tool on the "

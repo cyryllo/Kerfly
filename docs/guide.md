@@ -509,7 +509,8 @@ out of the job.
   or adds them. The library can be exported and imported to share it. **Each
   laser has a library of its own**; lasers of the same kind can use one:
   Settings → Lasers…, **Material library** (a copy made with Duplicate shares
-  the original's at first).
+  the original's at first). A laser that starts sharing brings its own
+  materials into the shared library (names it already has stay as they are).
 
 <a id="s7"></a>
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 17:44+0100\n"
+"POT-Creation-Date: 2026-11-20 17:47+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -774,6 +774,10 @@ msgstr "Esquinas del nuevo contorno: redondeadas, o vivas como las de la forma"
 #, python-format
 msgid "Could not check for a new version: %s"
 msgstr "No se pudo buscar una versión nueva: %s"
+
+#, python-format
+msgid "Could not join the material libraries: %s"
+msgstr "No se pudieron unir las bibliotecas de materiales: %s"
 
 #, python-format
 msgid "Could not open %s"
@@ -4660,6 +4664,14 @@ msgstr "grabado vectorial"
 #, python-format
 msgid "version %s"
 msgstr "versión %s"
+
+#, python-format
+msgid ""
+"“%(laser)s” now uses the material library of “%(other)s”; its own "
+"materials added to it: %(n)d"
+msgstr ""
+"«%(laser)s» usa ahora la biblioteca de materiales de «%(other)s»; sus "
+"materiales añadidos: %(n)d"
 
 #~ msgid ""
 #~ "Choose a drawing tool on the "
