@@ -752,16 +752,34 @@ def test_pattern_fill():
           and (old.operation, old.fill_pattern, old.fill_spacing, old.fill_angle, old.fill_outline)
           == ("engrave", "cross", 0.4, 15.0, False))
 
-    # living hinges: cuts stay inside with a solid border, are cut before the outline (the part must
-    # not fall out first), are cut even when the outline is engraved; open lines get none
+    # living hinges (the user's test 2026-11-20): the cuts reach the outline along their direction (a solid
+    # border there kept the sheet from bending), the margin only at the hinge's ends; at the outline only
+    # the short cuts (halves), the long ones keep a bridge at both ends; no cut from outline to outline;
+    # neighbouring rows' bridges not in line; are cut before the outline (the part must not fall out
+    # first), are cut even when the outline is engraved; open lines get none
     rect = [(0, 0), (120, 0), (120, 60), (0, 60), (0, 0)]
     for code in patterns.HINGE_CODES:
         cuts = patterns.hinge_lines(code, [rect], 20.0, 3.0, 1.5, 90.0, 4.0)
         pts = [p for line in cuts for p in line]
-        inside = all(4.0 - 0.02 <= x <= 116.0 + 0.02 and 4.0 - 0.02 <= y <= 56.0 + 0.02 for x, y in pts)
-        lengths = [sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(l, l[1:])) for l in cuts]
-        check("hinge %s: cuts inside, solid border" % code, len(cuts) > 100 and inside and max(lengths) >= 19.9,
+        ends_solid = all(4.0 - 0.02 <= x <= 116.0 + 0.02 and -0.02 <= y <= 60.02 for x, y in pts)
+        lengths = [math.hypot(l[-1][0] - l[0][0], l[-1][1] - l[0][1]) for l in cuts]
+        at_edge = [abs(min(l[0][1], l[-1][1])) < 0.02 or abs(max(l[0][1], l[-1][1]) - 60) < 0.02 for l in cuts]
+        through = any(abs(min(l[0][1], l[-1][1])) < 0.02 and abs(max(l[0][1], l[-1][1]) - 60) < 0.02
+                      for l in cuts)
+        short_at_edge = all(ln < 15.0 for ln, e in zip(lengths, at_edge) if e) and any(at_edge)
+        long_inside = any(ln > 15.0 for ln in lengths) and all(not e for ln, e in zip(lengths, at_edge) if ln > 15)
+        check("hinge %s: cuts reach the outline (short ones), long ones inside, margin at the ends only, none "
+              "through" % code, len(cuts) > 100 and ends_solid and short_at_edge and long_inside and not through,
               "(%d cuts)" % len(cuts))
+    # bridges of neighbouring rows: those of one row lie halfway along the other's cuts
+    cuts = patterns.hinge_lines("straight", [rect], 20.0, 3.0, 1.5, 90.0, 0.0)
+    rows = {}
+    for l in cuts:
+        rows.setdefault(round(l[0][0], 3), []).append(sorted((l[0][1], l[-1][1])))
+    xs = sorted(rows)
+    gaps = [sorted(round((a[1] + b[0]) / 2.0, 1) for a, b in zip(sorted(rows[x]), sorted(rows[x])[1:])) for x in xs]
+    apart = all(not set(g0) & set(g1) for g0, g1 in zip(gaps, gaps[1:]))
+    check("hinge: neighbouring rows' bridges not in line (the sheet bends)", apart and len(xs) > 50)
     hspec = ShapeSpec(kind="rectangle", width=120, height=60, operation="cut", hinge_pattern="straight")
     hd = build_design(hspec)
     plain_cut = build_design(ShapeSpec(kind="rectangle", width=120, height=60, operation="cut"))
@@ -846,10 +864,10 @@ def test_cut_order():
     group = [Element(build_design(sq), x=10 / 25.4, y=-10 / 25.4, shape=sq, group="g"),
              Element(build_design(ci), x=25 / 25.4, y=-25 / 25.4, shape=ci, group="g"),
              Element(build_design(side), x=80 / 25.4, y=-10 / 25.4, shape=side)]
-    layers = default_layers()
-    cache = {}
-    build_layers_job(group, layers, JobSettings(), cache=cache)
-    rows = cache[[l for l in layers if l.kind == CUT][0].id][1].vector_cut.ecoords
+    g_layers = default_layers()
+    g_cache = {}
+    build_layers_job(group, g_layers, JobSettings(), cache=g_cache)
+    rows = g_cache[[l for l in g_layers if l.kind == CUT][0].id][1].vector_cut.ecoords
     order = []
     for r in rows:
         if not order or order[-1][0] != r[2]:

@@ -416,7 +416,8 @@ class ToolOptionsBar(QWidget):
                       ("hinge_angle", -180.0, 180.0, "\u00b0", "rotate-2", _("Angle"),
                        N_("Direction of the cuts (90\u00b0: up and down; the sheet bends across them)")),
                       ("hinge_margin", 0.0, 100.0, " mm", "circle-dashed", _("Margin"),
-                       N_("Solid border: no cuts this close to the outline")),
+                       N_("Solid material at the ends of the hinge, across the rows (the cuts themselves "
+                          "reach the outline, or the sheet would not bend)")),
                       ("hinge_band", 0.0, 2000.0, " mm", "arrows-horizontal", _("Band width"),
                        N_("Width of the hinge band, across the cuts (0: the whole shape)")),
                       ("hinge_band_offset", -2000.0, 2000.0, " mm", "focus-centered", _("Band offset"),

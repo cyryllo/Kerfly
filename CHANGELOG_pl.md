@@ -127,6 +127,12 @@ oknie.
   program kończy pracę bez sprzątania Qt przy wyjściu, a awaria zapisuje,
   gdzie się zdarzyła: następny start wpisuje to do logu (Pomoc → Zgłoś
   problem go wysyła).
+- **Zawias giętki** (narzędzie, karta testowa, okrągłe pudełko): sklejka się
+  nie wyginała, bo wzdłuż obrysu biegł pełny brzeg. Teraz krótkie nacięcia
+  dochodzą do obrysu na końcach co drugiego rzędu, długie mają mostek na obu
+  końcach, mostki sąsiednich rzędów nigdy nie są w jednej linii, każdy rząd
+  jest rozkładany na swoją długość (bez ścinków), a margines zostaje tylko na
+  końcach zawiasu (domyślnie 0).
 - **Kolejność cięcia**: kształt leżący w środku cięcia innego elementu jest
   cięty pierwszy (kółko narysowane po kwadracie, w którym leży, zgrupowane
   czy nie, było cięte po kwadracie, który mógł wcześniej wypaść); poza tym

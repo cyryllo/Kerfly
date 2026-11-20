@@ -57,7 +57,7 @@ class ShapeSpec:
     hinge_gap: float = 3.0        # mm: uncut material between two cuts in a row
     hinge_spacing: float = 1.5    # mm between the rows of cuts
     hinge_angle: float = 90.0     # degrees: direction of the cuts (90: up and down)
-    hinge_margin: float = 4.0     # mm of solid material along the outline
+    hinge_margin: float = 0.0     # mm of solid material at the ends of the hinge (across the rows)
     hinge_band: float = 0.0       # mm: width of the band with cuts (0: the whole shape)
     hinge_band_offset: float = 0.0  # mm: middle of the band from the middle of the shape
     tabs: int = 0                 # cut: bridges per closed outline that hold the part in the sheet

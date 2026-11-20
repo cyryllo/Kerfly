@@ -129,6 +129,12 @@ a window of its own.
   nesting). Panel and bar fields are now removed the safe way, the program
   ends without Qt's clean-up at exit, and a crash writes where it happened:
   the next start puts it into the log (Help → Report a problem sends it).
+- **Living hinge** (the hinge tool, the test card, the rounded box): the
+  plywood did not bend, as a solid border ran along the outline. Now the
+  short cuts reach the outline at the ends of every second row, the long ones
+  keep a bridge at both ends, neighbouring rows' bridges never line up, each
+  row is laid out on its own length (no slivers), and the margin is left only
+  at the hinge's ends (0 by default).
 - **Cut order**: a shape lying inside another element's cut is cut first
   (a circle drawn after the square it sits in, grouped or not, was cut after
   the square, which could drop out first); otherwise the element list's order

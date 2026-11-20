@@ -503,25 +503,29 @@ HINGES = (("straight", "Straight cuts"), ("wave", "Wavy cuts"), ("zigzag", "Zigz
 HINGE_CODES = tuple(code for code, _name in HINGES)
 
 
-def hinge_lines(pattern, polygons, cut, gap, spacing, angle_deg=90.0, margin=3.0,
+def hinge_lines(pattern, polygons, cut, gap, spacing, angle_deg=90.0, margin=0.0,
                 band_width=0.0, band_offset=0.0):
-    """Cut lines of a living hinge inside the closed polygons: rows of cuts
-    `cut` long with `gap` of uncut material between them (the bridges that hold
-    the sheet together), rows `spacing` apart, every second row shifted by half
-    a cut, so the sheet bends across the cuts. The cuts run at angle_deg
-    (90: up and down, so the sheet bends round an upright axis) and stay
-    `margin` away from the outline, which leaves a solid border.
-    band_width > 0 keeps the cuts in a band that wide (across the cuts), its
-    middle `band_offset` from the middle of the shape (plus: right for upright
-    cuts, down for level ones); 0: the whole shape.
+    """Cut lines of a living hinge inside the closed polygons: rows `spacing` apart, the cuts in each row
+    about `cut` long with `gap` of uncut material between them (the bridges that hold the sheet together),
+    the rows taking turns: one row has only long cuts, with a bridge at both ends; the next is shifted by
+    half, its bridges in the middle of those cuts: a short cut runs from the outline at each end, long ones
+    between (the user's choice 2026-11-20). Each row is laid out on its own length inside the shape (the
+    cuts a little longer or shorter than `cut`, no slivers at the outline). The short cuts reaching the
+    outline matter: a solid border along it would keep the sheet from bending. The cuts run at angle_deg (90: up and down, so the sheet bends
+    round an upright axis); `margin` of solid material is left only at the ends of the hinge, across the rows
+    (the first and last rows at least half a row gap in from the outline). The rows are in a snake's order
+    (every second one the other way), for short moves.
+    band_width > 0 keeps the cuts in a band that wide (across the cuts), its middle `band_offset` from the
+    middle of the shape (plus: right for upright cuts, down for level ones); 0: the whole shape.
     Raises ValueError for an unknown pattern or non-positive sizes."""
     if cut <= 0 or gap <= 0 or spacing <= 0:
         raise ValueError("hinge sizes must be positive")
+    if pattern not in ("straight", "wave", "zigzag"):
+        raise ValueError("unknown hinge pattern: %r" % (pattern,))
     rings = _closed_rings(polygons)
     if not rings:
         return []
     half, to_world = _frame(rings, angle_deg)
-    period = cut + gap
     amp = 0.3 * spacing                                  # waves and zigzags stay apart from the next row
     # the band across the rows: +v goes (sin a, cos a) on the page (y down); "plus" means right
     # for upright cuts and down for level ones
@@ -529,23 +533,62 @@ def hinge_lines(pattern, polygons, cut, gap, spacing, angle_deg=90.0, margin=3.0
     sx, sy = math.sin(a), math.cos(a)
     sign = 1.0 if ((abs(sx) > abs(sy) and sx > 0) or (abs(sy) >= abs(sx) and sy > 0)) else -1.0
     band_mid = sign * band_offset
-    local = []
-    for k, v in enumerate(_rows(half, spacing)):
+    cx, cy = to_world(0.0, 0.0)
+    vs = [(x - cx) * sx + (y - cy) * sy for ring in rings for x, y in ring]     # across the rows
+    end_in = max(max(0.0, margin), spacing / 2.0)
+    region = _Region(rings)
+    shortest = min(0.5, cut)                             # no cut shorter than this
+    out = []
+    kept = 0
+    for v in _rows(half, spacing):
+        if v < min(vs) + end_in - 1e-9 or v > max(vs) - end_in + 1e-9:
+            continue
         if band_width > 0 and abs(v - band_mid) > band_width / 2.0:
             continue
-        start = -half - period - ((k % 2) * period / 2.0)
-        n = int((2 * half + 2 * period) / period) + 2
-        for j in range(n):
-            u0 = start + j * period
-            if pattern == "straight":
-                local.append([(u0, v), (u0 + cut, v)])
-            elif pattern == "wave":
-                steps = max(8, int(cut / max(spacing / 2.0, 0.5)))
-                local.append([(u0 + cut * i / steps, v + amp * math.sin(2 * math.pi * i / steps))
-                              for i in range(steps + 1)])
-            elif pattern == "zigzag":
-                local.append([(u0, v), (u0 + cut * 0.25, v + amp), (u0 + cut * 0.75, v - amp), (u0 + cut, v)])
+        # where the row lies inside the shape: the outline's crossings along it
+        p0, p1 = to_world(-half - 1.0, v), to_world(half + 1.0, v)
+        length = 2.0 * half + 2.0
+        ts = sorted(region.crossings(p0, p1))
+        spans = []
+        for t0, t1 in zip(ts, ts[1:]):
+            mid = to_world(-half - 1.0 + length * (t0 + t1) / 2.0, v)
+            if region.inside(mid[0], mid[1]):
+                spans.append((-half - 1.0 + length * t0, -half - 1.0 + length * t1))
+        cuts = []
+        for ua, ub in spans:
+            chord = ub - ua
+            # row B: n long cuts, none touching the outline: a bridge at both ends and between them
+            n = max(1, int(round((chord - gap) / (cut + gap))))
+            c = (chord - (n + 1) * gap) / n
+            if c < shortest:
+                continue
+            bridges = [ua + gap / 2.0 + i * (c + gap) for i in range(n + 1)]          # their middles
+            if kept % 2 == 0:
+                # row A, shifted by half: its bridges in the middle of row B's cuts, so a short cut runs from
+                # the outline at each end and long ones between (no two bridges of neighbouring rows line up:
+                # a solid band across the rows would not bend)
+                bridges = [(b0 + b1) / 2.0 for b0, b1 in zip(bridges, bridges[1:])]
+                edges = [ua - gap / 2.0] + bridges + [ub + gap / 2.0]
             else:
-                raise ValueError("unknown hinge pattern: %r" % (pattern,))
-    world = [[to_world(u, w) for u, w in line] for line in local]
-    return clip_polylines(world, rings, max(0.0, margin))
+                edges = bridges
+            for b0, b1 in zip(edges, edges[1:]):
+                u0, u1 = max(ua, b0 + gap / 2.0), min(ub, b1 - gap / 2.0)
+                if u1 - u0 >= shortest:
+                    cuts.append((u0, u1))
+        lines = []
+        for u0, u1 in cuts:
+            if pattern == "straight":
+                pts = [(u0, v), (u1, v)]
+            elif pattern == "wave":
+                steps = max(8, int((u1 - u0) / max(spacing / 2.0, 0.5)))
+                pts = [(u0 + (u1 - u0) * i / steps, v + amp * math.sin(2 * math.pi * i / steps))
+                       for i in range(steps + 1)]
+            else:
+                pts = [(u0, v), (u0 + (u1 - u0) * 0.25, v + amp), (u0 + (u1 - u0) * 0.75, v - amp), (u1, v)]
+            lines.append([to_world(u, w) for u, w in pts])
+        if kept % 2:                                     # the snake: every second row the other way
+            lines = [line[::-1] for line in reversed(lines)]
+        out.extend(lines)
+        if cuts:
+            kept += 1
+    return out

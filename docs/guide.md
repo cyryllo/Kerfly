@@ -358,10 +358,13 @@ closed shape: the cuts are cut inside it, before its outline. The hinge's
 fields in the options bar, each with an icon, a caption and a tooltip, set the length
 of one cut, the **bridge** of uncut material between two cuts, the distance
 between the rows (smaller bends more), the direction of the cuts (90°: up and
-down, the sheet bends across them), the **solid border** kept along the
-outline, and the **band**: its width (0: the whole shape) and where its
+down, the sheet bends across them), the **margin** of solid material at the
+ends of the hinge (across the rows; 0 by default), and the **band**: its width (0: the whole shape) and where its
 middle is, measured from the middle of the shape (minus: left / up, plus:
-right / down), for a hinge only where the sheet bends. Selected shapes get the hinge you choose at once; a shape with a
+right / down), for a hinge only where the sheet bends. The rows take turns:
+one has only long cuts with a bridge at both ends, the next a short cut from
+the outline at each end and long ones between; the cuts reach the outline, as
+a solid border along it would keep the sheet from bending. Selected shapes get the hinge you choose at once; a shape with a
 hinge shows its fields with the select tool too, where **No hinge** removes
 it. Try a small piece first: how far the sheet bends depends on the material.
 
