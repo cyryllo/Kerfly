@@ -121,6 +121,12 @@ oknie.
 
 ### Poprawione
 
+- **Zamykanie się programu**: na Linuksie spakowany program potrafił się
+  wysypać przy zamykaniu (już po zniknięciu okna), a czasem w trakcie pracy
+  (wklejanie, układanie). Pola panelu i paska są teraz usuwane bezpiecznie,
+  program kończy pracę bez sprzątania Qt przy wyjściu, a awaria zapisuje,
+  gdzie się zdarzyła: następny start wpisuje to do logu (Pomoc → Zgłoś
+  problem go wysyła).
 - **Ułóż na stole po obrysach** rozrzucał części wzdłuż lewej krawędzi stołu
   (2.0.0b2): części arkusza są teraz układane drugi raz w poprzek, razem w
   jego lewym górnym rogu.

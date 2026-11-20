@@ -97,7 +97,54 @@ def setup(version=""):
     sys.excepthook = excepthook
     threading.excepthook = thread_excepthook
     log.info("==== Kerfly %s started: Python %s, %s", version, platform.python_version(), platform.platform())
+    _watch_crashes(path)
     return path
+
+
+CRASH_NAME = "kerfly-crash.txt"
+_crash_file = None
+
+
+def _watch_crashes(path):
+    """A hard crash (a fault in Qt or a library: the program just disappears, nothing in the log) writes the
+    Python lines it happened in to kerfly-crash.txt next to the log (faulthandler). At the next start that text
+    goes into the log (so into Help → Report a problem) and the file is emptied."""
+    global _crash_file
+    import faulthandler
+    crash = os.path.join(os.path.dirname(path), CRASH_NAME)
+    try:
+        with open(crash, encoding="utf-8", errors="replace") as f:
+            last = f.read().strip()
+    except OSError:
+        last = ""
+    if last:
+        log.error("The previous run of Kerfly crashed (no error message was possible then); where:\n%s", last)
+    try:
+        _crash_file = open(crash, "w", encoding="utf-8")       # kept open: faulthandler writes into it on a crash
+        faulthandler.enable(file=_crash_file, all_threads=True)
+    except (OSError, RuntimeError, ValueError):
+        pass
+
+
+def finish(rc):
+    """The end of the program: the log written out, no crash file left, then the process ends at once —
+    without Python's and Qt's clean-up of the window's objects, which crashed some packaged builds on Linux
+    after the window had closed (QObject's destructor, at exit)."""
+    import faulthandler
+    try:
+        faulthandler.disable()
+        if _crash_file is not None:
+            _crash_file.close()
+            os.remove(_crash_file.name)
+    except OSError:
+        pass
+    logging.shutdown()
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.flush()
+        except Exception:
+            pass
+    os._exit(int(rc or 0))
 
 
 def read_log(max_bytes=400_000):

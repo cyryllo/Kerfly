@@ -3795,9 +3795,7 @@ class MainWindow(QMainWindow):
         while grid.count():
             w = grid.takeAt(0).widget()
             if w is not None:
-                w.hide()
-                w.setParent(None)
-                w.deleteLater()
+                widgets.retire(w)          # hidden now, deleted by Qt later
         e = self.selected
         if e is not None and e.shape is not None:
             self._shape_layer_choice(e, grid)

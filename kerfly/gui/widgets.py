@@ -29,6 +29,23 @@ from kerfly.gui import icons, theme
 from kerfly.i18n import _
 
 
+_GRAVEYARD = None
+
+
+def retire(widget):
+    """Take a widget out of the window for good: hidden at once, moved under a hidden holder outside the
+    window (so the window's findChildren no longer sees it) and deleted by Qt when the event loop is back.
+    Never setParent(None): that hands the widget to Python, which deletes it at once, maybe while Qt is still
+    in one of its events (a shortcut, a click) — a crash in QObject's destructor."""
+    global _GRAVEYARD
+    if _GRAVEYARD is None:
+        _GRAVEYARD = QWidget()
+        _GRAVEYARD.setObjectName("retired_widgets")
+    widget.hide()
+    widget.setParent(_GRAVEYARD)
+    widget.deleteLater()
+
+
 def set_role(widget, role):
     """Give a widget a role of the style sheet (hint, error, caption, section, beta, warning, icon, …)
     and let the style sheet look at it again."""

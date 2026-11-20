@@ -124,6 +124,11 @@ a window of its own.
 
 ### Fixed
 
+- **Crashes**: on Linux the packaged program could crash when it closed
+  (after the window was gone) and sometimes while working (pasting,
+  nesting). Panel and bar fields are now removed the safe way, the program
+  ends without Qt's clean-up at exit, and a crash writes where it happened:
+  the next start puts it into the log (Help → Report a problem sends it).
 - **Nest on the bed by outlines** spread the parts down the bed's left edge
   (2.0.0b2): a sheet's parts are now packed again across, together into its
   upper left corner.

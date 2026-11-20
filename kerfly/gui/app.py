@@ -177,6 +177,7 @@ def main(argv=None):
     QTimer.singleShot(1500, window.check_updates_on_start)     # new version? (once a day, in the background)
     rc = app.exec()
     diag.log.info("==== Kerfly closed (exit code %s)", rc)
+    diag.finish(rc)                            # ends the process here (no clean-up crash at exit)
     return rc
 
 

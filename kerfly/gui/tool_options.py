@@ -145,9 +145,7 @@ class ToolOptionsBar(QWidget):
             item = self.row.takeAt(0)
             w = item.widget()
             if w is not None:
-                w.hide()                 # gone now, not only when Qt deletes it later
-                w.setParent(None)
-                w.deleteLater()
+                widgets.retire(w)          # hidden now, deleted by Qt later
         self._groups = 0
         if title:
             self.row.addWidget(option_title(title))

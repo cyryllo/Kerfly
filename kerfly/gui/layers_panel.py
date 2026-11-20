@@ -129,9 +129,7 @@ class LayersPanel(QWidget):
         while self.grid.count():
             w = self.grid.takeAt(0).widget()
             if w is not None:
-                w.hide()
-                w.setParent(None)
-                w.deleteLater()
+                widgets.retire(w)          # hidden now, deleted by Qt later
         # the units are in the header, so the fields are narrow (the panel is about PANEL_WIDTH wide)
         headers = ["", _("Name"), _("Speed (%s)") % speed_unit, _("Passes"), _("Power (%)") if show_power else "",
                    _("Kerf (mm)"), _("Time"), ""]

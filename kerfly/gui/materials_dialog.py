@@ -271,9 +271,7 @@ class MaterialsDialog(QDialog):
         while self.extra_grid.count():
             w = self.extra_grid.takeAt(0).widget()
             if w is not None:
-                w.hide()
-                w.setParent(None)
-                w.deleteLater()
+                widgets.retire(w)          # hidden now, deleted by Qt later
         extra = m.extra_layers or []
         self.extra_box.setVisible(bool(extra))
         self.extra_rows = []
@@ -291,7 +289,7 @@ class MaterialsDialog(QDialog):
             power.setDecimals(0)
             power.setValue(x.power * 100)
             kerf = None
-            widgets = [name, speed, passes, power]
+            cells = [name, speed, passes, power]
             if x.kind == "cut":
                 kerf = QDoubleSpinBox()
                 kerf.setRange(0, 2)
@@ -299,11 +297,11 @@ class MaterialsDialog(QDialog):
                 kerf.setSingleStep(0.05)
                 kerf.setValue(x.kerf)
                 kerf.setToolTip(_("Kerf:"))
-                widgets.append(kerf)
+                cells.append(kerf)
             remove = QPushButton(_("Remove"))
             remove.setToolTip(_("Remove this layer from the material"))
             remove.clicked.connect(lambda _c=False, r=row: self._remove_extra(r))
-            for col, w in enumerate(widgets):
+            for col, w in enumerate(cells):
                 self.extra_grid.addWidget(w, row, col)
             self.extra_grid.addWidget(remove, row, 5)
             for w in (speed, passes, power, kerf):
