@@ -127,6 +127,10 @@ oknie.
   program kończy pracę bez sprzątania Qt przy wyjściu, a awaria zapisuje,
   gdzie się zdarzyła: następny start wpisuje to do logu (Pomoc → Zgłoś
   problem go wysyła).
+- **„Poza polem roboczym” dla obróconego kształtu**: kształt obrócony o kąt
+  inny niż wielokrotność 90° był „poza stołem”, gdy wystawał prostokąt wokół
+  niego, choć same linie były na stole; teraz liczą się linie, a zadanie
+  zaczyna się w ich rogu.
 - **Wspólna baza materiałów**: laser, który zaczyna korzystać z bazy innego,
   dopisuje do niej swoje materiały (wyglądało, że znikały: wspólna baza
   pokazywała same przykłady, gdy jej laser nie miał jeszcze własnego pliku);

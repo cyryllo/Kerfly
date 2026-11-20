@@ -323,10 +323,45 @@ def distribute(elements, horizontal=True):
 BED_TOLERANCE = 0.002       # inches; rounding of positions typed in mm
 
 
+_geometry_cache = {}
+
+
+def geometry_bounds(element):
+    """(xmin, xmax, ymin, ymax) on the bed of what the element really lasers. Turned by an angle that is not
+    a multiple of 90 degrees, its bounds are those of the turned design rectangle, which stick out past the
+    lines (a wavy shape turned by 10 degrees was "off the bed" while its lines were on it: the user's test
+    2026-11-20); then its vector lines' points count (a picture still by its turned rectangle). Otherwise the
+    element's bounds (the laser data stay as they were)."""
+    if element.rotation % 90 == 0:
+        return element.bounds
+    d = element.design
+    key = (id(d), element.placement()[:5], len(d.vector_cut.ecoords), len(d.vector_engrave.ecoords),
+           len(d.gcode.ecoords))
+    hit = _geometry_cache.get(key)
+    if hit is not None:
+        return hit
+    f = element.transform()
+    xs, ys = [], []
+    for part in (d.vector_cut, d.vector_engrave, d.gcode):
+        for row in part.ecoords:
+            x, y = f(row[0], row[1])
+            xs.append(x)
+            ys.append(y)
+    if d.raster.image is not None or not xs:
+        x0, x1, y0, y1 = element.bounds
+        xs += [x0, x1]
+        ys += [y0, y1]
+    out = (min(xs), max(xs), min(ys), max(ys))
+    if len(_geometry_cache) > 2000:
+        _geometry_cache.clear()
+    _geometry_cache[key] = out
+    return out
+
+
 def on_bed(element, bed_w, bed_h, tol=BED_TOLERANCE):
-    """True when the element's bounding box lies inside the bed (inches;
-    x from 0 to bed_w, y from 0 down to -bed_h)."""
-    xmin, xmax, ymin, ymax = element.bounds
+    """True when what the element lasers lies inside the bed (inches; x from 0 to bed_w, y from 0 down to
+    -bed_h): its bounds, or for an element turned by an odd angle its lines (geometry_bounds)."""
+    xmin, xmax, ymin, ymax = geometry_bounds(element)
     return xmin >= -tol and xmax <= bed_w + tol and ymax <= tol and ymin >= -bed_h - tol
 
 

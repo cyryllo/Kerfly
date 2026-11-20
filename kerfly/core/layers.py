@@ -114,10 +114,12 @@ def layout_frame(visible):
     if len(visible) == 1 and visible[0].is_identity:
         e = visible[0]
         return e.design.bounds, (e.x, e.y)
-    xmin = min(e.bounds[0] for e in visible)
-    xmax = max(e.bounds[1] for e in visible)
-    ymin = min(e.bounds[2] for e in visible)
-    ymax = max(e.bounds[3] for e in visible)
+    from .layout import geometry_bounds
+    boxes = [geometry_bounds(e) for e in visible]      # (an element turned by an odd angle: by its lines)
+    xmin = min(b[0] for b in boxes)
+    xmax = max(b[1] for b in boxes)
+    ymin = min(b[2] for b in boxes)
+    ymax = max(b[3] for b in boxes)
     return (xmin, xmax, ymin, ymax), (xmin, ymax)
 
 

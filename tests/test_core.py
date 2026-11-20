@@ -1903,6 +1903,33 @@ def test_nest_outlines():
     return errors
 
 
+def test_turned_on_bed():
+    """An element turned by an odd angle is on the bed when its lines are (its turned design rectangle may
+    stick out: the user's test 2026-11-20), and the job starts at its lines' corner."""
+    from kerfly.core.layers import layout_frame
+    from kerfly.core.layout import Element, geometry_bounds, on_bed
+    from kerfly.core.shapes import ShapeSpec, build_design
+    errors = 0
+    spec = ShapeSpec(kind="ellipse", width=80, height=30, operation="cut")
+    e = Element(build_design(spec), shape=spec)
+    e.rotation = 10.0
+    w, h = e.size
+    gx0, gx1, gy0, gy1 = geometry_bounds(e)
+    e.x += 0.2 / 25.4 - gx0                               # the lines 0.2 mm from the left edge
+    e.y += -0.2 / 25.4 - gy1                              # and from the top
+    gx0, gx1, gy0, gy1 = geometry_bounds(e)
+    box_out = e.bounds[0] < 0 or e.bounds[3] > 0
+    ok = box_out and on_bed(e, 300 / 25.4, 200 / 25.4) and abs(gx0 - 0.2 / 25.4) < 1e-6
+    frame, origin = layout_frame([e, Element(build_design(spec), x=1.0, y=-3.0, shape=spec)])
+    ok = ok and abs(origin[0] - gx0) < 1e-9 and abs(origin[1] - gy1) < 1e-9
+    e.rotation = 90.0
+    ok = ok and geometry_bounds(e) == e.bounds              # a quarter turn: the bounds as they were
+    print("%-5s turned element: on the bed by its lines (its turned rectangle sticks out), the job's corner at "
+          "its lines" % ("OK" if ok else "FAIL"))
+    errors += 0 if ok else 1
+    return errors
+
+
 def test_release_notes():
     """tools/release_notes.py: links to a version's files point at its real tag (v1.8.0; a development version
     without "v" and without the last ".0": 2.0b2)."""
@@ -1992,6 +2019,7 @@ def main():
     failures += test_updates()
     failures += test_nest_outlines()
     failures += test_release_notes()
+    failures += test_turned_on_bed()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

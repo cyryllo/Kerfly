@@ -129,6 +129,10 @@ a window of its own.
   nesting). Panel and bar fields are now removed the safe way, the program
   ends without Qt's clean-up at exit, and a crash writes where it happened:
   the next start puts it into the log (Help → Report a problem sends it).
+- **"Off the bed" for a turned shape**: a shape turned by an odd angle
+  (not a quarter turn) was off the bed when the rectangle round it stuck out,
+  though its lines were on the bed; now its lines count, and the job starts
+  at their corner.
 - **Shared material library**: a laser that starts sharing another one's
   library brings its own materials into it (they seemed lost: the shared
   library showed only the examples when its laser had no file of its own

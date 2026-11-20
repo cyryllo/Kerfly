@@ -237,8 +237,8 @@
   ],
   "burn_mm": 714.3,
   "burn_moves": 176,
-  "egv_bytes": 15682,
-  "egv_sha256": "c6039e3723535cf83438eebbf0b63260ff0c782f18cc1983fcb9b103eae74b34",
+  "egv_bytes": 15675,
+  "egv_sha256": "0c0a12ec3a5c9f74f1a5700da4482f233c5cf555a6edeea2b6af314c457213ff",
   "fingerprint": "d27c28fbe91155c0c7bd572b7e32796bc05e4838f84101dc2a496eaba9d6f6be",
   "first_cuts": [
    [
