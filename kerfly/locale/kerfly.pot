@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 19:07+0100\n"
+"POT-Creation-Date: 2026-11-20 20:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -572,12 +572,6 @@ msgid "Centre the lines"
 msgstr ""
 
 msgid "Centre the selected element, or the whole design, on the bed"
-msgstr ""
-
-msgid "Changes applied."
-msgstr ""
-
-msgid "Changes in the bar taken back."
 msgstr ""
 
 msgid "Check for &updates"
@@ -1710,9 +1704,6 @@ msgid "Jump to the next layer"
 msgstr ""
 
 msgid "K40 (Lihuiyu board, USB)"
-msgstr ""
-
-msgid "Keep the changes made in this bar"
 msgstr ""
 
 msgid "Keep the original"
@@ -3487,9 +3478,6 @@ msgid "Tab size (%)"
 msgstr ""
 
 msgid "Tab width"
-msgstr ""
-
-msgid "Take back every change made in this bar since it showed this shape or tool"
 msgstr ""
 
 msgid "Take the text off the path: back to a straight line of text"

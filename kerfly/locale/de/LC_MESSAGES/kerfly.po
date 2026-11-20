@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 19:07+0100\n"
+"POT-Creation-Date: 2026-11-20 20:59+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -611,12 +611,6 @@ msgid "Centre the selected element, or the whole design, on the bed"
 msgstr ""
 "Ausgewähltes Element oder den ganzen Entwurf auf der Arbeitsfläche "
 "zentrieren"
-
-msgid "Changes applied."
-msgstr "Änderungen übernommen."
-
-msgid "Changes in the bar taken back."
-msgstr "Änderungen der Leiste zurückgenommen."
 
 msgid "Check for &updates"
 msgstr "Nach &Updates suchen"
@@ -1865,9 +1859,6 @@ msgstr "Zur nächsten Ebene springen"
 
 msgid "K40 (Lihuiyu board, USB)"
 msgstr "K40 (Lihuiyu-Platine, USB)"
-
-msgid "Keep the changes made in this bar"
-msgstr "Die Änderungen in dieser Leiste behalten"
 
 msgid "Keep the original"
 msgstr "Original behalten"
@@ -3817,11 +3808,6 @@ msgstr "Nasengröße (%)"
 msgid "Tab width"
 msgstr "Laschenbreite"
 
-msgid "Take back every change made in this bar since it showed this shape or tool"
-msgstr ""
-"Alle Änderungen in dieser Leiste zurücknehmen, seit sie diese Form oder "
-"dieses Werkzeug zeigt"
-
 msgid "Take the text off the path: back to a straight line of text"
 msgstr "Den Text vom Pfad nehmen: wieder eine gerade Textzeile"
 
@@ -5688,4 +5674,22 @@ msgstr ""
 
 #~ msgid "text"
 #~ msgstr ""
+
+#~ msgid "Changes applied."
+#~ msgstr "Änderungen übernommen."
+
+#~ msgid "Changes in the bar taken back."
+#~ msgstr "Änderungen der Leiste zurückgenommen."
+
+#~ msgid "Keep the changes made in this bar"
+#~ msgstr "Die Änderungen in dieser Leiste behalten"
+
+#~ msgid ""
+#~ "Take back every change made in "
+#~ "this bar since it showed this "
+#~ "shape or tool"
+#~ msgstr ""
+#~ "Alle Änderungen in dieser Leiste "
+#~ "zurücknehmen, seit sie diese Form oder"
+#~ " dieses Werkzeug zeigt"
 

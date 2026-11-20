@@ -118,7 +118,7 @@ oknie.
   szare, wypalone na czerwono): Odtwórz, czas, tempo, Następna warstwa,
   wypalana warstwa; startuje z tempem 5× (dłuższe zadanie szybciej). Otwarta podczas zmian projektu przelicza zadanie i zostaje
   w tym samym miejscu; Nowy i Otwórz ją zamykają.
-- **Okna narzędzi** (wybór użytkownika, jak w jego programie Vintyl):
+- **Okna narzędzi** (wybór użytkownika, jak w programie Vintyl):
   Wypełnienie, Zawias giętki, Odsunięcie, Tekst i Tekst na ścieżce ustawia się
   w oknie z podglądem kształtu, który pokazuje każdą zmianę, rodzajami jako
   kafelki z obrazkami (19 wzorów wypełnienia, 3 rodzaje nacięć zawiasu,
@@ -130,12 +130,6 @@ oknie.
   otwiera je znowu. Pasek opcji zostaje do szybkich rzeczy (pozycja,
   rozmiar, obrót, warstwa, narożniki, mostki) i ma przyciski do okien
   pokazanego kształtu.
-- **Zatwierdź / Anuluj na pasku opcji** (wybór użytkownika: ustawienia
-  zawiasu, wypełnienia i innych narzędzi są teraz na pasku, bez okienek):
-  zmiany widać od razu; Anuluj cofa wszystkie zmiany od chwili, gdy pasek
-  pokazał ten kształt albo narzędzie (także nadane przez narzędzie zawiasy i
-  wypełnienia, razem z ich krokami cofania), Zatwierdź je zostawia i kończy
-  narzędzie.
 - **Pasek opcji nigdy nie przewija się w bok**: w wąskim oknie jego pola
   przechodzą do kolejnych linii (za pogrubionym tytułem), a pasek jest tak
   wysoki, jak trzeba.

@@ -87,10 +87,8 @@ zapamiętują się od razu, bez zapisywania.
   łańcuch zachowuje proporcje), obrót i **Warstwę**; drugi opcje tego, co
   edytujesz, z nazwą pogrubioną po lewej (np. treść tekstu, czcionkę, rozmiar
   i odstęp liter). Każde pole ma ikonę, krótki podpis i podpowiedź. Zmiany
-  widać od razu; **Anuluj** na prawym końcu drugiego wiersza cofa wszystkie
-  zmiany od chwili, gdy pokazał ten kształt albo narzędzie (także pracę
-  narzędzia: nadane zawiasy czy wypełnienia), **Zatwierdź** je zostawia i
-  kończy narzędzie (powrót do zaznaczania). Gdy wiersz nie mieści się w oknie,
+  widać od razu, każda jest krokiem cofania (Ctrl+Z ją cofa); okna narzędzi
+  mają własne Anuluj. Gdy wiersz nie mieści się w oknie,
   jego pola przechodzą do następnej linii.
 
   ![Pasek opcji z zaznaczonym tekstem](../img/pl/options.png)

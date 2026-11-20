@@ -121,7 +121,7 @@ a window of its own.
   job grey, what is burnt red): Play, the time, the speed, Next layer, the
   layer being lasered; it starts at 5× (faster for a long job). Left open while the design changes, it works the job
   out again and stays at its place in time; New and Open close it.
-- **The tools' windows** (the user's choice, as in his Vintyl): Fill,
+- **The tools' windows** (the user's choice, as in Vintyl): Fill,
   Living hinge, Offset, Text and Text on a path are set up in a window with a
   preview of the shape that follows every change, the kinds as tiles with
   pictures (19 fill patterns, 3 kinds of hinge cuts, round / sharp corners),
@@ -132,11 +132,6 @@ a window of its own.
   bed; a double-click on a text opens it again. The options bar keeps the
   quick things (position, size, rotation, layer, corners, bridges) and has
   buttons for the windows of the shape shown.
-- **Apply / Cancel in the options bar** (the user's choice: the settings of
-  the hinge, fill and other tools live there now, no dialogs): changes show at
-  once; Cancel takes back every change since the bar showed this shape or tool
-  (a tool's hinges and fills too, and their undo steps), Apply keeps them and
-  ends a tool.
 - **The options bar never scrolls sideways**: in a narrow window its fields go
   on in more lines (after the bold title), the bar as tall as they need.
 - **Nest on the bed: Parts Selected (N) / All (M)** when only some parts are

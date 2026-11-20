@@ -1557,40 +1557,27 @@ def main():
           "($25) left as it is",
           corner_ok and grbl_power and trace_power_on, "(%s)" % [corners, grbl_power, trace_power_on])
 
-    # 28c7. Apply / Cancel of the options bar: a change to the selected shape shows at once; Cancel takes
-    # back every change since the bar showed it (and their undo steps); with the Living hinge tool, Cancel
-    # takes back the hinges it gave, Apply keeps them and goes back to Select
+    # 28c7. the options bar has no Apply / Cancel (the tools' windows have them; the user's choice 2026-11-20):
+    # a change to the selected shape shows at once, an undo step each, Undo takes it back
     aw = make_window(grid_mm="0")
     aw._preview_drawn("rectangle", QPointF(20, 20), QPointF(100, 60), False)
     ae = aw.elements[0]
     aw.preview.select_element([ae])
     app.processEvents()
     aw._update_tool_options(force=True)
-    greyed = not aw.btn_bar_apply.isHidden() and not aw.btn_bar_apply.isEnabled()
+    no_buttons = not hasattr(aw, "btn_bar_apply") and aw.top_bar.findChild(QWidget, "bar_apply") is None \
+        and aw.top_bar.findChild(QWidget, "bar_cancel") is None
     undo0 = len(aw._undo)
-    for attr, val in (("corner_radius", 8.0), ("tabs", 3)):
-        sp = ae.shape.copy()
-        setattr(sp, attr, val)
-        aw._tool_options_changed(sp)
-    live = ae.shape.corner_radius == 8.0 and aw.btn_bar_cancel.isEnabled()
-    aw.btn_bar_cancel.click()
-    taken_back = aw.elements[0].shape.corner_radius == 0.0 and aw.elements[0].shape.tabs == 0 \
-        and len(aw._undo) == undo0 and not aw.btn_bar_cancel.isEnabled()
-    aw.tool_actions["hinge"].trigger()
-    app.processEvents()
-    aw._hinge_clicked(QPointF(60, 40))
-    hinge_given = bool(aw.elements[0].shape.hinge_pattern)
-    aw.btn_bar_cancel.click()
-    hinge_back = not aw.elements[0].shape.hinge_pattern
-    aw._hinge_clicked(QPointF(60, 40))
-    aw.btn_bar_apply.click()
-    kept = bool(aw.elements[0].shape.hinge_pattern) and aw.preview.tool == "select"
+    sp = ae.shape.copy()
+    sp.corner_radius = 8.0
+    aw._tool_options_changed(sp)
+    live = aw.elements[0].shape.corner_radius == 8.0 and len(aw._undo) == undo0 + 1
+    aw.undo()
+    back = aw.elements[0].shape.corner_radius == 0.0
     aw._dirty = False
     aw.close()
-    check("options bar Apply / Cancel: greyed out until a change, live changes, Cancel takes back all (and their "
-          "undo steps), with a tool too; Apply keeps them and ends the tool",
-          greyed and live and taken_back and hinge_given and hinge_back and kept,
-          "(%s)" % [greyed, live, taken_back, hinge_given, hinge_back, kept])
+    check("options bar without Apply / Cancel: a change shows at once as an undo step, Undo takes it back",
+          no_buttons and live and back, "(%s)" % [no_buttons, live, back])
 
     # 28c6. four home corners for every laser (a picture of the bed with a radio button in each corner, in the
     # laser's settings): Home puts the head in that corner, To head brings the design's same corner to it; a

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 19:07+0100\n"
+"POT-Creation-Date: 2026-11-20 20:59+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: es\n"
@@ -610,12 +610,6 @@ msgstr "Centrar las líneas"
 
 msgid "Centre the selected element, or the whole design, on the bed"
 msgstr "Centrar el elemento seleccionado o todo el diseño en el área de trabajo"
-
-msgid "Changes applied."
-msgstr "Cambios aplicados."
-
-msgid "Changes in the bar taken back."
-msgstr "Cambios de la barra deshechos."
 
 msgid "Check for &updates"
 msgstr "Buscar &actualizaciones"
@@ -1856,9 +1850,6 @@ msgstr "Saltar a la capa siguiente"
 
 msgid "K40 (Lihuiyu board, USB)"
 msgstr "K40 (placa Lihuiyu, USB)"
-
-msgid "Keep the changes made in this bar"
-msgstr "Conservar los cambios hechos en esta barra"
 
 msgid "Keep the original"
 msgstr "Conservar el original"
@@ -3797,11 +3788,6 @@ msgstr "Tamaño de lengüetas (%)"
 msgid "Tab width"
 msgstr "Ancho de pestaña"
 
-msgid "Take back every change made in this bar since it showed this shape or tool"
-msgstr ""
-"Deshacer todos los cambios hechos en esta barra desde que muestra esta "
-"forma o herramienta"
-
 msgid "Take the text off the path: back to a straight line of text"
 msgstr "Quitar el texto del trazado: de nuevo una línea de texto recta"
 
@@ -5657,4 +5643,22 @@ msgstr ""
 
 #~ msgid "text"
 #~ msgstr ""
+
+#~ msgid "Changes applied."
+#~ msgstr "Cambios aplicados."
+
+#~ msgid "Changes in the bar taken back."
+#~ msgstr "Cambios de la barra deshechos."
+
+#~ msgid "Keep the changes made in this bar"
+#~ msgstr "Conservar los cambios hechos en esta barra"
+
+#~ msgid ""
+#~ "Take back every change made in "
+#~ "this bar since it showed this "
+#~ "shape or tool"
+#~ msgstr ""
+#~ "Deshacer todos los cambios hechos en "
+#~ "esta barra desde que muestra esta "
+#~ "forma o herramienta"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 19:07+0100\n"
+"POT-Creation-Date: 2026-11-20 20:59+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: pl\n"
@@ -607,12 +607,6 @@ msgstr "Wyśrodkuj wiersze"
 
 msgid "Centre the selected element, or the whole design, on the bed"
 msgstr "Wyśrodkuj zaznaczony element albo cały projekt na stole"
-
-msgid "Changes applied."
-msgstr "Zmiany zatwierdzone."
-
-msgid "Changes in the bar taken back."
-msgstr "Zmiany z paska cofnięte."
 
 msgid "Check for &updates"
 msgstr "Sprawdź &aktualizacje"
@@ -1832,9 +1826,6 @@ msgstr "Przeskocz do następnej warstwy"
 
 msgid "K40 (Lihuiyu board, USB)"
 msgstr "K40 (płyta Lihuiyu, USB)"
-
-msgid "Keep the changes made in this bar"
-msgstr "Zachowaj zmiany zrobione na tym pasku"
 
 msgid "Keep the original"
 msgstr "Zachowaj oryginał"
@@ -3760,11 +3751,6 @@ msgstr "Wielkość wypustek (%)"
 msgid "Tab width"
 msgstr "Szerokość wypustu"
 
-msgid "Take back every change made in this bar since it showed this shape or tool"
-msgstr ""
-"Cofnij wszystkie zmiany zrobione na tym pasku od chwili, gdy pokazał ten "
-"kształt albo narzędzie"
-
 msgid "Take the text off the path: back to a straight line of text"
 msgstr "Zdejmij tekst ze ścieżki: z powrotem prosta linia tekstu"
 
@@ -5590,4 +5576,22 @@ msgstr ""
 
 #~ msgid "text"
 #~ msgstr ""
+
+#~ msgid "Changes applied."
+#~ msgstr "Zmiany zatwierdzone."
+
+#~ msgid "Changes in the bar taken back."
+#~ msgstr "Zmiany z paska cofnięte."
+
+#~ msgid "Keep the changes made in this bar"
+#~ msgstr "Zachowaj zmiany zrobione na tym pasku"
+
+#~ msgid ""
+#~ "Take back every change made in "
+#~ "this bar since it showed this "
+#~ "shape or tool"
+#~ msgstr ""
+#~ "Cofnij wszystkie zmiany zrobione na tym"
+#~ " pasku od chwili, gdy pokazał ten "
+#~ "kształt albo narzędzie"
 

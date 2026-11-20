@@ -169,29 +169,6 @@ class MainWindow(QMainWindow):
             h.setSpacing(theme.SPACE_M)
             rows.addWidget(row)
         self.tools_row.layout().addWidget(self.tool_options, 1)
-        # Apply / Cancel of what the second row edits (the user's choice 2026-11-20): the changes show at
-        # once, Cancel takes back all of them since the row began showing this shape or tool, Apply ends it
-        from kerfly.gui.tool_options import text_button
-        self.btn_bar_apply = text_button("check", _("Apply"), _("Keep the changes made in this bar"))
-        self.btn_bar_cancel = text_button("x", _("Cancel"), _("Take back every change made in this bar since "
-                                                             "it showed this shape or tool"))
-        self.btn_bar_apply.setObjectName("bar_apply")
-        self.btn_bar_cancel.setObjectName("bar_cancel")
-        self.btn_bar_apply.clicked.connect(self._bar_apply)
-        self.btn_bar_cancel.clicked.connect(self._bar_cancel)
-        # at the right end of the second row (its first line), beside the fields that go on in more lines
-        self.bar_buttons = QWidget()
-        self.bar_buttons.setObjectName("bar_buttons")
-        self.bar_buttons.setFixedHeight(theme.HEIGHT_OPTION_ROW)
-        pair = QHBoxLayout(self.bar_buttons)
-        pair.setContentsMargins(0, 0, 0, 0)
-        pair.setSpacing(theme.SPACE_S)
-        for b in (self.btn_bar_cancel, self.btn_bar_apply):
-            pair.addWidget(b)
-            b.hide()
-        self.tools_row.layout().addWidget(self.bar_buttons, 0, Qt.AlignTop)
-        self._bar_session = None
-        self._undo_pushes = 0
         # "a new version is available" (hidden until a check finds one)
         from kerfly.gui.update_check import UpdateBar
         self.update_bar = UpdateBar()
@@ -808,75 +785,6 @@ class MainWindow(QMainWindow):
 
     def _update_tool_options(self, force=False):
         self._update_tool_options_rows(force)
-        self._bar_follow()
-
-    # ---- Apply / Cancel of the options bar --------------------------------------
-    BAR_EDITS = ("selected", "crop")
-
-    def _bar_defaults(self):
-        import copy
-        return copy.deepcopy((self.shape_defaults, self.fill_defaults, self.hinge_defaults, self.offset_defaults,
-                              self.crop_defaults))
-
-    def _bar_follow(self):
-        """A new edit begins when the bar shows another shape or tool: what Cancel goes back to."""
-        target = getattr(self, "_options_target", None)
-        tool = self.preview.tool
-        # a tool's edit lasts while the tool is chosen (its clicks on shapes are part of it); with Select,
-        # each shape shown is an edit of its own
-        key = (tool,) if tool in ("fill", "hinge", "offset", "crop", "textpath") else \
-            (target, id(getattr(self, "_options_element", None)), tool)
-        if target not in self.BAR_EDITS:
-            self._bar_session = None
-        elif self._bar_session is None or self._bar_session[0] != key:
-            self._bar_session = (key, self._undo_pushes, self._snapshot(), self._bar_defaults())
-        self._bar_buttons()
-
-    def _bar_changed(self):
-        """Something was changed since the bar began showing this shape or tool."""
-        if self._bar_session is None:
-            return False
-        _key, pushes, _snap, defaults = self._bar_session
-        return self._undo_pushes != pushes or self._bar_defaults() != defaults
-
-    def _bar_buttons(self):
-        shown = self._bar_session is not None
-        changed = shown and self._bar_changed()
-        for b in (self.btn_bar_apply, self.btn_bar_cancel):
-            b.setVisible(shown)
-            b.setEnabled(changed)
-
-    def _bar_apply(self):
-        """Keep the changes; a tool (Fill, Living hinge, Offset, ...) ends: back to Select."""
-        if self._bar_session is None:
-            return
-        tool = self.preview.tool
-        self._bar_session = None
-        if tool in ("fill", "hinge", "offset", "crop", "textpath"):
-            self.tool_actions["select"].trigger()
-        self._bar_follow()
-        self.status(_("Changes applied."))
-
-    def _bar_cancel(self):
-        """Take back every change made since the bar began showing this shape or tool (also the tool's own
-        settings); its undo steps go too."""
-        if self._bar_session is None or not self._bar_changed():
-            return
-        key, pushes, snap, defaults = self._bar_session
-        made = self._undo_pushes - pushes
-        if made > 0:
-            del self._undo[max(0, len(self._undo) - made):]
-            self._redo.clear()
-            self._restore(snap)
-        self.shape_defaults, self.fill_defaults, self.hinge_defaults, self.offset_defaults, \
-            self.crop_defaults = defaults
-        self._bar_session = None
-        self._undo_pushes = pushes
-        if snap[2] is not None and snap[2] in self.elements:
-            self.preview.select_element(snap[2])
-            self.selected = snap[2]
-        self._update_tool_options(force=True)
-        self.status(_("Changes in the bar taken back."))
 
     def _update_tool_options_rows(self, force=False):
         if self.preview.tool == "nodes":                 # the node buttons alone (docs/ui-mockups/OptionBars)
@@ -986,12 +894,6 @@ class MainWindow(QMainWindow):
             self._keep_selection(chosen)
 
     def _tool_options_changed(self, spec):
-        try:
-            self._tool_options_apply(spec)
-        finally:
-            self._bar_buttons()
-
-    def _tool_options_apply(self, spec):
         target = getattr(self, "_options_target", None)
         if target in ("fill", "hinge"):
             self._pattern_tool_changed(target, spec)
@@ -1694,7 +1596,6 @@ class MainWindow(QMainWindow):
 
     def _offset_values_changed(self, values):
         self.offset_defaults = dict(values)
-        self._bar_buttons()
 
     def _offset_clicked(self, point):
         """The Offset tool was clicked at a point of the bed view (scene mm)."""
@@ -2665,8 +2566,6 @@ class MainWindow(QMainWindow):
         return self._compiled[1]
 
     def _layout_changed(self):
-        if hasattr(self, "btn_bar_apply"):
-            self._bar_buttons()                       # (a shape filled, a hinge added: Apply / Cancel)
         self._compiled = None
         self._layer_cache.clear()
         self._update_design_label()
@@ -2725,7 +2624,6 @@ class MainWindow(QMainWindow):
     def _checkpoint(self):
         """Call before changing the layout."""
         self._set_dirty(True)
-        self._undo_pushes = getattr(self, "_undo_pushes", 0) + 1     # (Cancel of the options bar counts them)
         self._undo.append(self._snapshot())
         del self._undo[:-100]
         self._redo.clear()
@@ -5599,7 +5497,6 @@ class MainWindow(QMainWindow):
     def _crop_values_changed(self, values):
         self.crop_defaults = dict(values)
         self.preview.crop_shape = values.get("crop_shape", "rect")
-        self._bar_buttons()
 
     def crop_picture(self, start, end):
         """Cut out of a picture tool: the piece of the picture inside the dragged rectangle or ellipse

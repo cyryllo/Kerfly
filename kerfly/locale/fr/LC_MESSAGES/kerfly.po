@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 19:07+0100\n"
+"POT-Creation-Date: 2026-11-20 20:59+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -610,12 +610,6 @@ msgstr "Centrer les lignes"
 
 msgid "Centre the selected element, or the whole design, on the bed"
 msgstr "Centrer l'élément sélectionné ou tout le dessin sur le plateau"
-
-msgid "Changes applied."
-msgstr "Modifications validées."
-
-msgid "Changes in the bar taken back."
-msgstr "Modifications de la barre annulées."
 
 msgid "Check for &updates"
 msgstr "Rechercher des &mises à jour"
@@ -1864,9 +1858,6 @@ msgstr "Passer au calque suivant"
 
 msgid "K40 (Lihuiyu board, USB)"
 msgstr "K40 (carte Lihuiyu, USB)"
-
-msgid "Keep the changes made in this bar"
-msgstr "Garder les modifications faites dans cette barre"
 
 msgid "Keep the original"
 msgstr "Garder l'original"
@@ -3822,11 +3813,6 @@ msgstr "Taille des tenons (%)"
 msgid "Tab width"
 msgstr "Largeur de languette"
 
-msgid "Take back every change made in this bar since it showed this shape or tool"
-msgstr ""
-"Annuler toutes les modifications faites dans cette barre depuis qu'elle "
-"montre cette forme ou cet outil"
-
 msgid "Take the text off the path: back to a straight line of text"
 msgstr "Retirer le texte du chemin : de nouveau une ligne de texte droite"
 
@@ -5695,4 +5681,22 @@ msgstr ""
 
 #~ msgid "text"
 #~ msgstr ""
+
+#~ msgid "Changes applied."
+#~ msgstr "Modifications validées."
+
+#~ msgid "Changes in the bar taken back."
+#~ msgstr "Modifications de la barre annulées."
+
+#~ msgid "Keep the changes made in this bar"
+#~ msgstr "Garder les modifications faites dans cette barre"
+
+#~ msgid ""
+#~ "Take back every change made in "
+#~ "this bar since it showed this "
+#~ "shape or tool"
+#~ msgstr ""
+#~ "Annuler toutes les modifications faites "
+#~ "dans cette barre depuis qu'elle montre"
+#~ " cette forme ou cet outil"
 

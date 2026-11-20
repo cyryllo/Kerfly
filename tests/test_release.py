@@ -985,21 +985,15 @@ def part_edit(s):
         s.trigger(w.tool_actions["select"])
     s.step("draw three rectangles over each other", three_rects, undo_steps=3)
 
-    # Apply / Cancel of the options bar (the user's choice 2026-11-20): a rectangle selected, its corner radius
-    # typed, Cancel: as it was (no undo step left); typed again, Apply: kept, the buttons greyed out
-    def radius_then(button):
-        def run():
-            w.preview.select_element([w.elements[-1]])
-            s.settle()
-            s.set_field("corner_radius", 4.0)
-            s.click(button)
-        return run
-    s.step("options bar: corner radius typed, Cancel (as it was)", radius_then(w.btn_bar_cancel), change=False,
-           check=lambda: (w.elements[-1].shape.corner_radius == 0.0 and not w.btn_bar_cancel.isEnabled(),
-                          (w.elements[-1].shape.corner_radius, w.btn_bar_cancel.isEnabled())))
-    s.step("options bar: corner radius typed, Apply (kept)", radius_then(w.btn_bar_apply),
-           check=lambda: (w.elements[-1].shape.corner_radius == 4.0 and not w.btn_bar_apply.isEnabled(),
-                          (w.elements[-1].shape.corner_radius, w.btn_bar_apply.isEnabled())))
+    # the options bar has no Apply / Cancel (the user's choice 2026-11-20): a rectangle selected, its corner
+    # radius typed shows at once
+    def radius_typed():
+        w.preview.select_element([w.elements[-1]])
+        s.settle()
+        s.set_field("corner_radius", 4.0)
+    s.step("options bar: corner radius typed (shows at once)", radius_typed,
+           check=lambda: (w.elements[-1].shape.corner_radius == 4.0 and w.findChild(QAbstractButton, "bar_apply") is None,
+                          w.elements[-1].shape.corner_radius))
     s.trigger(w.act_undo)                        # the radius back to 0 for the nesting below
 
     def nest_answer(dlg):
