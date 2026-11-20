@@ -86,8 +86,12 @@ zapamiętują się od razu, bez zapisywania.
   zawsze pokazuje **zaznaczenie**: pozycję (X, Y), rozmiar (Szer., Wys.;
   łańcuch zachowuje proporcje), obrót i **Warstwę**; drugi opcje tego, co
   edytujesz, z nazwą pogrubioną po lewej (np. treść tekstu, czcionkę, rozmiar
-  i odstęp liter). Każde pole ma ikonę, krótki podpis i podpowiedź. Gdy
-  wiersz nie mieści się w oknie, wiersze przewijają się w bok.
+  i odstęp liter). Każde pole ma ikonę, krótki podpis i podpowiedź. Zmiany
+  widać od razu; **Anuluj** na prawym końcu drugiego wiersza cofa wszystkie
+  zmiany od chwili, gdy pokazał ten kształt albo narzędzie (także pracę
+  narzędzia: nadane zawiasy czy wypełnienia), **Zatwierdź** je zostawia i
+  kończy narzędzie (powrót do zaznaczania). Gdy wiersz nie mieści się w oknie,
+  wiersze przewijają się w bok.
 
   ![Pasek opcji z zaznaczonym tekstem](../img/pl/options.png)
 
@@ -262,7 +266,9 @@ najpierw go rozgrupuj.
 
 **Ułóż na stole** (Ctrl+Shift+N, przycisk **Ułóż** w grupie Układ na wstążce,
 menu Edycja, menu pod prawym przyciskiem): zaznaczone części (nic nie
-zaznaczone: wszystkie; grupa jako jedna część) są rozkładane na stole lasera
+zaznaczone: wszystkie; grupa jako jedna część; gdy zaznaczona jest tylko
+część z nich, w oknie **Części: Zaznaczone / Wszystkie** — Wszystkie, gdy
+zaznaczona jest jedna) są rozkładane na stole lasera
 z zadanym **odstępem**, obracane o 90°, gdy tak lepiej się mieszczą (wyłącz
 **Obracaj o 90°** np. ze względu na słoje drewna). **Metoda**: **Prostokąty**
 układa prostokąty wokół części (szybko); **Obrysy** (beta) układa ich

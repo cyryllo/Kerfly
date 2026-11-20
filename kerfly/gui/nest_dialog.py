@@ -20,13 +20,21 @@ METHODS = ("rectangles", "outlines")
 
 
 class NestDialog(QDialog):
-    def __init__(self, values, bed_mm, count, parent=None):
+    def __init__(self, values, bed_mm, count, parent=None, selected=0):
+        """count: the parts on the bed (a group as one part); selected: how many of them are selected, when
+        some but not all are (then the choice Selected / All, so a part left selected by chance does not make
+        the rest stay where they are: the user's test 2026-11-20)."""
         super().__init__(parent)
         self.setWindowTitle(_("Nest on the bed"))
-        text = widgets.hint(_("The %(n)d selected parts (a group as one part) are laid out on the laser's bed "
-                        "(%(w).0f × %(h).0f mm). What does not fit goes on a next sheet: each sheet is a group "
-                        "in the element list, sheets 2 and on unticked.")
-                            % {"n": count, "w": bed_mm[0], "h": bed_mm[1]})
+        text = widgets.hint(_("The parts (a group as one part) are laid out on the laser's bed (%(w).0f × "
+                              "%(h).0f mm). What does not fit goes on a next sheet: each sheet is a group in the "
+                              "element list, sheets 2 and on unticked.") % {"w": bed_mm[0], "h": bed_mm[1]})
+        self.which = None
+        if 0 < selected < count:
+            self.which = widgets.Segmented(
+                [("selected", _("Selected (%d)") % selected, _("Only the selected parts are laid out")),
+                 ("all", _("All (%d)") % count, _("Every part on the bed is laid out"))],
+                "selected" if selected > 1 else "all")
         can_outline = outlines_available()
         self.method = widgets.Segmented(
             [("rectangles", _("Rectangles"), _("By the parts' rectangles: fast")),
@@ -59,6 +67,9 @@ class NestDialog(QDialog):
         self.seconds.setToolTip(seconds_tip)
         # the dialog pattern: the explanation, the fields, the footer with the named action
         section = widgets.Section()
+        if self.which is not None:
+            section.add_row("squares-selected", _("Parts"), _("Which parts are laid out: the selected ones or all"),
+                            self.which)
         section.add_row("squares", _("Method"), method_tip, self.method, beta=True)
         section.add_row("box-padding", _("Gap"), gap_tip, self.gap)
         section.add_row("rotate-clockwise-2", _("Turn by 90°"), turn_tip, self.turn)
@@ -80,6 +91,10 @@ class NestDialog(QDialog):
     def values(self):
         return {"method": self.method.current(), "gap": self.gap.value(), "turn": self.turn.isChecked(),
                 "seconds": self.seconds.value()}
+
+    def only_selected(self):
+        """True when only the selected parts are to be laid out."""
+        return self.which is not None and self.which.current() == "selected"
 
 
 class NestWorker(QThread):

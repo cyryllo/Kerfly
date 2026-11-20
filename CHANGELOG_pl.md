@@ -118,6 +118,15 @@ oknie.
   szare, wypalone na czerwono): Odtwórz, czas, tempo, Następna warstwa,
   wypalana warstwa; startuje z tempem 5× (dłuższe zadanie szybciej). Otwarta podczas zmian projektu przelicza zadanie i zostaje
   w tym samym miejscu; Nowy i Otwórz ją zamykają.
+- **Zatwierdź / Anuluj na pasku opcji** (wybór użytkownika: ustawienia
+  zawiasu, wypełnienia i innych narzędzi są teraz na pasku, bez okienek):
+  zmiany widać od razu; Anuluj cofa wszystkie zmiany od chwili, gdy pasek
+  pokazał ten kształt albo narzędzie (także nadane przez narzędzie zawiasy i
+  wypełnienia, razem z ich krokami cofania), Zatwierdź je zostawia i kończy
+  narzędzie.
+- **Ułóż na stole: Części Zaznaczone (N) / Wszystkie (M)**, gdy zaznaczona jest
+  tylko część elementów (jeden przypadkiem zaznaczony sprawiał, że reszta
+  zostawała na miejscu); gdy zaznaczony jest jeden, domyślnie Wszystkie.
 
 ### Poprawione
 

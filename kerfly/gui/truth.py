@@ -349,10 +349,12 @@ def check_job(w):
         return []
     w._compiled = None                          # compile now, as Start would
     design = w.design
-    x0 = min(e.bounds[0] for e in visible)
-    x1 = max(e.bounds[1] for e in visible)
-    y0 = min(e.bounds[2] for e in visible)
-    y1 = max(e.bounds[3] for e in visible)
+    from kerfly.core.layout import geometry_bounds
+    boxes = [geometry_bounds(e) for e in visible]         # (turned by an odd angle: by its lines)
+    x0 = min(b[0] for b in boxes)
+    x1 = max(b[1] for b in boxes)
+    y0 = min(b[2] for b in boxes)
+    y1 = max(b[3] for b in boxes)
     ox, oy = w.origin
     bx0, bx1, by0, by1 = design.bounds
     tol = 0.3 / MM + 0.002 * max(x1 - x0, y1 - y0)

@@ -121,6 +121,14 @@ a window of its own.
   job grey, what is burnt red): Play, the time, the speed, Next layer, the
   layer being lasered; it starts at 5× (faster for a long job). Left open while the design changes, it works the job
   out again and stays at its place in time; New and Open close it.
+- **Apply / Cancel in the options bar** (the user's choice: the settings of
+  the hinge, fill and other tools live there now, no dialogs): changes show at
+  once; Cancel takes back every change since the bar showed this shape or tool
+  (a tool's hinges and fills too, and their undo steps), Apply keeps them and
+  ends a tool.
+- **Nest on the bed: Parts Selected (N) / All (M)** when only some parts are
+  selected (one part left selected by chance made the rest stay where they
+  were); All by default when a single part is selected.
 
 ### Fixed
 

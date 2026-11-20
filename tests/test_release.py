@@ -944,6 +944,23 @@ def part_edit(s):
         s.trigger(w.tool_actions["select"])
     s.step("draw three rectangles over each other", three_rects, undo_steps=3)
 
+    # Apply / Cancel of the options bar (the user's choice 2026-11-20): a rectangle selected, its corner radius
+    # typed, Cancel: as it was (no undo step left); typed again, Apply: kept, the buttons greyed out
+    def radius_then(button):
+        def run():
+            w.preview.select_element([w.elements[-1]])
+            s.settle()
+            s.set_field("corner_radius", 4.0)
+            s.click(button)
+        return run
+    s.step("options bar: corner radius typed, Cancel (as it was)", radius_then(w.btn_bar_cancel), change=False,
+           check=lambda: (w.elements[-1].shape.corner_radius == 0.0 and not w.btn_bar_cancel.isEnabled(),
+                          (w.elements[-1].shape.corner_radius, w.btn_bar_cancel.isEnabled())))
+    s.step("options bar: corner radius typed, Apply (kept)", radius_then(w.btn_bar_apply),
+           check=lambda: (w.elements[-1].shape.corner_radius == 4.0 and not w.btn_bar_apply.isEnabled(),
+                          (w.elements[-1].shape.corner_radius, w.btn_bar_apply.isEnabled())))
+    s.trigger(w.act_undo)                        # the radius back to 0 for the nesting below
+
     def nest_answer(dlg):
         s.type_number(dlg.gap, 3)
         from PySide6.QtWidgets import QDialogButtonBox
@@ -959,6 +976,17 @@ def part_edit(s):
     s.step("Edit → Select all (Ctrl+A), Nest on the bed (toolbar button), gap 3 mm, Nest",
            lambda: (s.trigger(w.act_select_all, via="key"), s.trigger(w.act_nest, via="button")),
            check=nested_apart)
+    s.trigger(w.act_undo)                        # back to the shapes before the nesting
+
+    # one shape selected of three: the dialog asks Selected (1) / All (3); All clicked: all three nested
+    def nest_all_answer(dlg):
+        s.click(dlg.which.buttons["all"])
+        from PySide6.QtWidgets import QDialogButtonBox
+        QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+    s.expect_dialog("nest: all parts", nest_all_answer)
+    s.step("one shape selected, Nest on the bed (toolbar button): Parts All (3), Nest",
+           lambda: (w.preview.select_element(w.elements[-1:]), s.trigger(w.act_nest, via="button")),
+           check=lambda: nested_apart() if w.nest_defaults.get("method") == "rectangles" else (False, "method"))
     s.trigger(w.act_undo)                        # back to the shapes before the nesting
 
     # the same by the real outlines (sparrow): the Outlines button of Method, 2 s of search typed, Nest; a window

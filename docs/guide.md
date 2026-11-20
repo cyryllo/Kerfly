@@ -84,7 +84,11 @@ saving.
   keeps the proportions), rotation and **Layer**; the second the options of
   what is edited, its name in bold on the left (for example the text, its
   font, size and letter spacing). Every field has an icon, a short caption and
-  a tooltip. When a row does not fit the window, the rows scroll sideways.
+  a tooltip. Changes show at once; **Cancel** at the right end of the second
+  row takes back every change made since it showed this shape or tool (a
+  tool's work too: the hinges or fills it gave), **Apply** keeps them and ends
+  a tool (back to Select). When a row does not fit the window, the rows scroll
+  sideways.
 
   ![Options bar with a text selected](img/en/options.png)
 
@@ -254,7 +258,8 @@ they are. An opened file: Ungroup it first.
 
 **Nest on the bed** (Ctrl+Shift+N, **Nest** in the Arrange group of the
 ribbon, Edit menu, right-click menu): the selected parts (nothing selected:
-all of them; a group as one part) are laid out on the laser's bed, a set
+all of them; a group as one part; with only some selected, **Parts:
+Selected / All** in the dialog — All when a single part is selected) are laid out on the laser's bed, a set
 **gap** apart, turned by 90° where that fits better (switch **Turn by 90°**
 off for wood grain). **Method**: **Rectangles** packs the rectangles around
 the parts (fast); **Outlines** (beta) packs their real outlines, so parts go

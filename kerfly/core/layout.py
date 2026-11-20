@@ -430,10 +430,11 @@ def compile_layout(elements, passthrough=True, frame=None):
     out = Design()
     out.input_dpi = max(e.design.input_dpi for e in elements)
     if frame is None:
-        xmin = min(e.bounds[0] for e in elements)
-        xmax = max(e.bounds[1] for e in elements)
-        ymin = min(e.bounds[2] for e in elements)
-        ymax = max(e.bounds[3] for e in elements)
+        boxes = [geometry_bounds(e) for e in elements]      # (turned by an odd angle: by its lines)
+        xmin = min(b[0] for b in boxes)
+        xmax = max(b[1] for b in boxes)
+        ymin = min(b[2] for b in boxes)
+        ymax = max(b[3] for b in boxes)
     else:
         xmin, xmax, ymin, ymax = frame
     out.bounds = (0.0, xmax - xmin, 0.0, ymax - ymin)

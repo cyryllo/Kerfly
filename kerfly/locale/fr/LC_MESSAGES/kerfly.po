@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 17:47+0100\n"
+"POT-Creation-Date: 2026-11-20 17:58+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: fr\n"
@@ -396,6 +396,10 @@ msgstr "Aligner les lignes à droite"
 msgid "Align top"
 msgstr "Aligner en haut"
 
+#, python-format
+msgid "All (%d)"
+msgstr "Toutes (%d)"
+
 msgid "All files"
 msgstr "Tous les fichiers"
 
@@ -422,6 +426,9 @@ msgstr "Un autre problème"
 
 msgid "Applications menu"
 msgstr "Menu des applications"
+
+msgid "Apply"
+msgstr "Valider"
 
 msgctxt "toolbar group"
 msgid "Arrange"
@@ -590,6 +597,12 @@ msgstr "Centrer les lignes"
 
 msgid "Centre the selected element, or the whole design, on the bed"
 msgstr "Centrer l'élément sélectionné ou tout le dessin sur le plateau"
+
+msgid "Changes applied."
+msgstr "Modifications validées."
+
+msgid "Changes in the bar taken back."
+msgstr "Modifications de la barre annulées."
 
 msgid "Check for &updates"
 msgstr "Rechercher des &mises à jour"
@@ -1226,6 +1239,9 @@ msgstr ""
 " Les pièces qui ne tiennent pas sur le plateau vont de toute façon sur "
 "une feuille suivante (calque décoché)"
 
+msgid "Every part on the bed is laid out"
+msgstr "Toutes les pièces du plateau sont disposées"
+
 msgid ""
 "Example starting values for a typical 40 W K40; test on a scrap piece "
 "first."
@@ -1793,6 +1809,9 @@ msgstr "Passer au calque suivant"
 
 msgid "K40 (Lihuiyu board, USB)"
 msgstr "K40 (carte Lihuiyu, USB)"
+
+msgid "Keep the changes made in this bar"
+msgstr "Garder les modifications faites dans cette barre"
 
 msgid "Keep the original"
 msgstr "Garder l'original"
@@ -2559,6 +2578,9 @@ msgstr ""
 "Seule la carte M3 règle la puissance ; sur les autres cartes, c'est le "
 "bouton de puissance du laser"
 
+msgid "Only the selected parts are laid out"
+msgstr "Seules les pièces sélectionnées sont disposées"
+
 msgctxt "toolbar"
 msgid "Open"
 msgstr "Ouvrir"
@@ -3308,6 +3330,10 @@ msgid "Select two or more shapes with closed outlines."
 msgstr "Sélectionnez au moins deux formes aux contours fermés."
 
 #, python-format
+msgid "Selected (%d)"
+msgstr "Sélectionnées (%d)"
+
+#, python-format
 msgid "Selected nodes: %d. Drag them, or use the buttons above."
 msgstr ""
 "Nœuds sélectionnés : %d. Faites-les glisser ou utilisez les boutons en "
@@ -3690,6 +3716,11 @@ msgstr "Taille des tenons (%)"
 msgid "Tab width"
 msgstr "Largeur de languette"
 
+msgid "Take back every change made in this bar since it showed this shape or tool"
+msgstr ""
+"Annuler toutes les modifications faites dans cette barre depuis qu'elle "
+"montre cette forme ou cet outil"
+
 msgid "Take the text off the path: back to a straight line of text"
 msgstr "Retirer le texte du chemin : de nouveau une ligne de texte droite"
 
@@ -3786,18 +3817,6 @@ msgstr "Ce coin du dessin est en dehors du plateau du laser."
 
 msgid "That shape has no line to put the text on."
 msgstr "Cette forme n'a pas de ligne pour y placer le texte."
-
-#, python-format
-msgid ""
-"The %(n)d selected parts (a group as one part) are laid out on the "
-"laser's bed (%(w).0f × %(h).0f mm). What does not fit goes on a next "
-"sheet: each sheet is a group in the element list, sheets 2 and on "
-"unticked."
-msgstr ""
-"Les %(n)d pièces sélectionnées (un groupe comme une pièce) sont disposées"
-" sur le plateau du laser (%(w).0f × %(h).0f mm). Ce qui ne tient pas va "
-"sur une feuille suivante : chaque feuille est un groupe dans la liste des"
-" éléments, les feuilles à partir de la 2 décochées."
 
 msgid ""
 "The DXF file does not say which units it uses.\n"
@@ -3992,6 +4011,17 @@ msgstr "Le nouveau thème sera utilisé après le redémarrage de Kerfly."
 
 msgid "The numbers count centimetres or millimetres"
 msgstr "Les nombres comptent des centimètres ou des millimètres"
+
+#, python-format
+msgid ""
+"The parts (a group as one part) are laid out on the laser's bed (%(w).0f "
+"× %(h).0f mm). What does not fit goes on a next sheet: each sheet is a "
+"group in the element list, sheets 2 and on unticked."
+msgstr ""
+"Les pièces (un groupe comme une pièce) sont disposées sur le plateau du "
+"laser (%(w).0f × %(h).0f mm). Ce qui ne tient pas va sur une feuille "
+"suivante : chaque feuille est un groupe dans la liste des éléments, les "
+"feuilles à partir de la 2 décochées."
 
 #, python-format
 msgid ""
@@ -4475,6 +4505,9 @@ msgstr "Quel laser ?"
 
 msgid "Which one?"
 msgstr "Lequel ?"
+
+msgid "Which parts are laid out: the selected ones or all"
+msgstr "Quelles pièces disposer : les sélectionnées ou toutes"
 
 msgid "Width"
 msgstr "Largeur"
@@ -5468,4 +5501,22 @@ msgstr ""
 #~ " celle de la carte. Un K40 "
 #~ "prend l'origine à la vitesse de sa"
 #~ " carte"
+
+#~ msgid ""
+#~ "The %(n)d selected parts (a group "
+#~ "as one part) are laid out on "
+#~ "the laser's bed (%(w).0f × %(h).0f "
+#~ "mm). What does not fit goes on "
+#~ "a next sheet: each sheet is a "
+#~ "group in the element list, sheets "
+#~ "2 and on unticked."
+#~ msgstr ""
+#~ "Les %(n)d pièces sélectionnées (un "
+#~ "groupe comme une pièce) sont disposées"
+#~ " sur le plateau du laser (%(w).0f "
+#~ "× %(h).0f mm). Ce qui ne tient "
+#~ "pas va sur une feuille suivante :"
+#~ " chaque feuille est un groupe dans"
+#~ " la liste des éléments, les feuilles"
+#~ " à partir de la 2 décochées."
 

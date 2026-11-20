@@ -1554,6 +1554,41 @@ def main():
           "($25) left as it is",
           corner_ok and grbl_power and trace_power_on, "(%s)" % [corners, grbl_power, trace_power_on])
 
+    # 28c7. Apply / Cancel of the options bar: a change to the selected shape shows at once; Cancel takes
+    # back every change since the bar showed it (and their undo steps); with the Living hinge tool, Cancel
+    # takes back the hinges it gave, Apply keeps them and goes back to Select
+    aw = make_window(grid_mm="0")
+    aw._preview_drawn("rectangle", QPointF(20, 20), QPointF(100, 60), False)
+    ae = aw.elements[0]
+    aw.preview.select_element([ae])
+    app.processEvents()
+    aw._update_tool_options(force=True)
+    greyed = not aw.btn_bar_apply.isHidden() and not aw.btn_bar_apply.isEnabled()
+    undo0 = len(aw._undo)
+    for attr, val in (("corner_radius", 8.0), ("tabs", 3)):
+        sp = ae.shape.copy()
+        setattr(sp, attr, val)
+        aw._tool_options_changed(sp)
+    live = ae.shape.corner_radius == 8.0 and aw.btn_bar_cancel.isEnabled()
+    aw.btn_bar_cancel.click()
+    taken_back = aw.elements[0].shape.corner_radius == 0.0 and aw.elements[0].shape.tabs == 0 \
+        and len(aw._undo) == undo0 and not aw.btn_bar_cancel.isEnabled()
+    aw.tool_actions["hinge"].trigger()
+    app.processEvents()
+    aw._hinge_clicked(QPointF(60, 40))
+    hinge_given = bool(aw.elements[0].shape.hinge_pattern)
+    aw.btn_bar_cancel.click()
+    hinge_back = not aw.elements[0].shape.hinge_pattern
+    aw._hinge_clicked(QPointF(60, 40))
+    aw.btn_bar_apply.click()
+    kept = bool(aw.elements[0].shape.hinge_pattern) and aw.preview.tool == "select"
+    aw._dirty = False
+    aw.close()
+    check("options bar Apply / Cancel: greyed out until a change, live changes, Cancel takes back all (and their "
+          "undo steps), with a tool too; Apply keeps them and ends the tool",
+          greyed and live and taken_back and hinge_given and hinge_back and kept,
+          "(%s)" % [greyed, live, taken_back, hinge_given, hinge_back, kept])
+
     # 28c6. four home corners for every laser (a picture of the bed with a radio button in each corner, in the
     # laser's settings): Home puts the head in that corner, To head brings the design's same corner to it; a
     # K40's upper corners keep HomeUR (its data), a lower one is home_lower
@@ -1669,10 +1704,35 @@ def main():
         nests.append(ok if ok else (method, home_ur, diag))
         nw._dirty = False
         nw.close()
+    # some parts selected, not all: the dialog asks Selected (N) / All (M); one part left selected by chance:
+    # All by default (the rest stayed where it was: the user's test 2026-11-20); two or more: Selected
+    sw_ = make_window(grid_mm="0")
+    for _k in range(6):
+        sw_._preview_drawn("rectangle", QPointF(10 + 35 * _k, 150), QPointF(40 + 35 * _k, 180), False)
+    asked = []
+    _nd_init = _nd.NestDialog.__init__
+
+    def _spy(self, *a, **k):
+        _nd_init(self, *a, **k)
+        asked.append(self.which.current() if self.which is not None else None)
+    _nd.NestDialog.__init__ = _spy
+    before = [(e.x, e.y) for e in sw_.elements]
+    sw_.nest_defaults = {"method": "rectangles", "gap": 2.0, "turn": True, "seconds": 2}
+    sw_.preview.select_element(sw_.elements[:1])
+    sw_.nest_selected()
+    all_moved = sum((e.x, e.y) != b for e, b in zip(sw_.elements, before)) >= 5
+    sw_.undo()
+    sw_.preview.select_element(sw_.elements[:2])
+    sw_.nest_selected()
+    only_two = all((e.x, e.y) == b for e, b in zip(sw_.elements[2:], before[2:]))
+    _nd.NestDialog.__init__ = _nd_init
+    nests.append(asked == ["all", "selected"] and all_moved and only_two or ("which", asked, all_moved, only_two))
+    sw_._dirty = False
+    sw_.close()
     _nd.NestDialog.exec = _nd_exec
     check("Nest on the bed: inside the bed with the gap, nothing over another, more sheets as groups (2 and on "
           "unticked), a group as one part, no turning when off, nested again, one undo step (both homes); by "
-          "rectangles and by outlines",
+          "rectangles and by outlines; Selected / All when only some parts are selected",
           all(n is True for n in nests), "(%s)" % nests)
 
     # 28e. G-code for GRBL (File → Save G-code): a cut rectangle, an engraved ellipse (2 passes) and a 10 x 5 mm

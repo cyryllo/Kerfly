@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 17:47+0100\n"
+"POT-Creation-Date: 2026-11-20 17:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -374,6 +374,10 @@ msgstr ""
 msgid "Align top"
 msgstr ""
 
+#, python-format
+msgid "All (%d)"
+msgstr ""
+
 msgid "All files"
 msgstr ""
 
@@ -399,6 +403,9 @@ msgid "Another problem"
 msgstr ""
 
 msgid "Applications menu"
+msgstr ""
+
+msgid "Apply"
 msgstr ""
 
 msgctxt "toolbar group"
@@ -552,6 +559,12 @@ msgid "Centre the lines"
 msgstr ""
 
 msgid "Centre the selected element, or the whole design, on the bed"
+msgstr ""
+
+msgid "Changes applied."
+msgstr ""
+
+msgid "Changes in the bar taken back."
 msgstr ""
 
 msgid "Check for &updates"
@@ -1135,6 +1148,9 @@ msgid ""
 "not fit the bed go on a next sheet anyway (its layer unticked)"
 msgstr ""
 
+msgid "Every part on the bed is laid out"
+msgstr ""
+
 msgid ""
 "Example starting values for a typical 40 W K40; test on a scrap piece "
 "first."
@@ -1643,6 +1659,9 @@ msgid "Jump to the next layer"
 msgstr ""
 
 msgid "K40 (Lihuiyu board, USB)"
+msgstr ""
+
+msgid "Keep the changes made in this bar"
 msgstr ""
 
 msgid "Keep the original"
@@ -2326,6 +2345,9 @@ msgstr ""
 msgid ""
 "Only the M3 board sets the power; on other boards the power knob of the "
 "laser does"
+msgstr ""
+
+msgid "Only the selected parts are laid out"
 msgstr ""
 
 msgctxt "toolbar"
@@ -3023,6 +3045,10 @@ msgid "Select two or more shapes with closed outlines."
 msgstr ""
 
 #, python-format
+msgid "Selected (%d)"
+msgstr ""
+
+#, python-format
 msgid "Selected nodes: %d. Drag them, or use the buttons above."
 msgstr ""
 
@@ -3363,6 +3389,9 @@ msgstr ""
 msgid "Tab width"
 msgstr ""
 
+msgid "Take back every change made in this bar since it showed this shape or tool"
+msgstr ""
+
 msgid "Take the text off the path: back to a straight line of text"
 msgstr ""
 
@@ -3444,14 +3473,6 @@ msgid "That corner of the design is outside the laser bed."
 msgstr ""
 
 msgid "That shape has no line to put the text on."
-msgstr ""
-
-#, python-format
-msgid ""
-"The %(n)d selected parts (a group as one part) are laid out on the "
-"laser's bed (%(w).0f × %(h).0f mm). What does not fit goes on a next "
-"sheet: each sheet is a group in the element list, sheets 2 and on "
-"unticked."
 msgstr ""
 
 msgid ""
@@ -3614,6 +3635,13 @@ msgid "The new theme will be used after restarting Kerfly."
 msgstr ""
 
 msgid "The numbers count centimetres or millimetres"
+msgstr ""
+
+#, python-format
+msgid ""
+"The parts (a group as one part) are laid out on the laser's bed (%(w).0f "
+"× %(h).0f mm). What does not fit goes on a next sheet: each sheet is a "
+"group in the element list, sheets 2 and on unticked."
 msgstr ""
 
 #, python-format
@@ -4037,6 +4065,9 @@ msgid "Which laser?"
 msgstr ""
 
 msgid "Which one?"
+msgstr ""
+
+msgid "Which parts are laid out: the selected ones or all"
 msgstr ""
 
 msgid "Width"
