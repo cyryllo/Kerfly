@@ -182,15 +182,28 @@ class MainWindow(QMainWindow):
         self.btn_bar_cancel.setObjectName("bar_cancel")
         self.btn_bar_apply.clicked.connect(self._bar_apply)
         self.btn_bar_cancel.clicked.connect(self._bar_cancel)
+        # outside the sideways-scrolling rows, at the right end of the second row: always in sight
+        self.bar_buttons = QWidget()
+        self.bar_buttons.setObjectName("bar_buttons")
+        column = QVBoxLayout(self.bar_buttons)
+        column.setContentsMargins(0, 0, theme.SPACE_L, 0)
+        column.setSpacing(0)
+        column.addSpacing(theme.HEIGHT_OPTION_ROW)
+        pair = QHBoxLayout()
+        pair.setSpacing(theme.SPACE_S)
+        column.addLayout(pair)
         for b in (self.btn_bar_cancel, self.btn_bar_apply):
-            self.tools_row.layout().addWidget(b)
+            pair.addWidget(b)
             b.hide()
+        pair.setAlignment(Qt.AlignVCenter)
+        self.bar_buttons.setFixedHeight(2 * theme.HEIGHT_OPTION_ROW)
         self._bar_session = None
         self._undo_pushes = 0
         bar_scroll.setWidget(inner)
         outer = QHBoxLayout(self.top_bar)
         outer.setContentsMargins(0, 0, 0, 1)            # the bottom line of the bar
         outer.addWidget(bar_scroll)
+        outer.addWidget(self.bar_buttons, 0, Qt.AlignTop)
         self.top_bar_scroll = bar_scroll
         # as tall as the two rows, and the sideways scroll bar only while it is shown
         scroll_bar = bar_scroll.horizontalScrollBar()
