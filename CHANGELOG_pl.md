@@ -124,6 +124,9 @@ oknie.
   pokazał ten kształt albo narzędzie (także nadane przez narzędzie zawiasy i
   wypełnienia, razem z ich krokami cofania), Zatwierdź je zostawia i kończy
   narzędzie.
+- **Pasek opcji nigdy nie przewija się w bok**: w wąskim oknie jego pola
+  przechodzą do kolejnych linii (za pogrubionym tytułem), a pasek jest tak
+  wysoki, jak trzeba.
 - **Ułóż na stole: Części Zaznaczone (N) / Wszystkie (M)**, gdy zaznaczona jest
   tylko część elementów (jeden przypadkiem zaznaczony sprawiał, że reszta
   zostawała na miejscu); gdy zaznaczony jest jeden, domyślnie Wszystkie.

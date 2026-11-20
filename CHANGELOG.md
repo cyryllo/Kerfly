@@ -126,6 +126,8 @@ a window of its own.
   once; Cancel takes back every change since the bar showed this shape or tool
   (a tool's hinges and fills too, and their undo steps), Apply keeps them and
   ends a tool.
+- **The options bar never scrolls sideways**: in a narrow window its fields go
+  on in more lines (after the bold title), the bar as tall as they need.
 - **Nest on the bed: Parts Selected (N) / All (M)** when only some parts are
   selected (one part left selected by chance made the rest stay where they
   were); All by default when a single part is selected.

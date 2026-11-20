@@ -125,9 +125,8 @@ class ToolOptionsBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("tool_options")
-        self.row = QHBoxLayout(self)
-        self.row.setContentsMargins(0, 0, 0, 0)
-        self.row.setSpacing(theme.SPACE_M)
+        # the fields go on in the next line when the window is too narrow (no sideways scrolling)
+        self.row = widgets.FlowLayout(self, theme.SPACE_M, theme.HEIGHT_OPTION_ROW, indent=True)
         self.spec = None
         self._groups = 0
         self._text_timer = QTimer(self)

@@ -153,20 +153,16 @@ class MainWindow(QMainWindow):
         self.top_bar = QWidget()
         self.top_bar.setObjectName("top_bar")
         self.top_bar.setAttribute(Qt.WA_StyledBackground, True)
-        bar_scroll = QScrollArea()
-        bar_scroll.setObjectName("top_bar_scroll")
-        bar_scroll.setFrameShape(QFrame.NoFrame)
-        bar_scroll.setWidgetResizable(True)
-        bar_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        bar_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        inner = QWidget()
+        # the rows' fields go on in more lines when the window is too narrow (FlowLayout): no sideways
+        # scrolling (the user's choice 2026-11-20); the bar is as tall as its lines
+        inner = self.top_bar
         rows = QVBoxLayout(inner)
-        rows.setContentsMargins(0, 0, 0, 0)
+        rows.setContentsMargins(0, 0, 0, 1)            # the bottom line of the bar
         rows.setSpacing(0)
         self.selection_row = QWidget()
         self.tools_row = QWidget()
         for row in (self.selection_row, self.tools_row):
-            row.setFixedHeight(theme.HEIGHT_OPTION_ROW)
+            row.setMinimumHeight(theme.HEIGHT_OPTION_ROW)
             h = QHBoxLayout(row)
             h.setContentsMargins(theme.SPACE_L, 0, theme.SPACE_L, 0)
             h.setSpacing(theme.SPACE_M)
@@ -182,40 +178,19 @@ class MainWindow(QMainWindow):
         self.btn_bar_cancel.setObjectName("bar_cancel")
         self.btn_bar_apply.clicked.connect(self._bar_apply)
         self.btn_bar_cancel.clicked.connect(self._bar_cancel)
-        # outside the sideways-scrolling rows, at the right end of the second row: always in sight
+        # at the right end of the second row (its first line), beside the fields that go on in more lines
         self.bar_buttons = QWidget()
         self.bar_buttons.setObjectName("bar_buttons")
-        column = QVBoxLayout(self.bar_buttons)
-        column.setContentsMargins(0, 0, theme.SPACE_L, 0)
-        column.setSpacing(0)
-        column.addSpacing(theme.HEIGHT_OPTION_ROW)
-        pair = QHBoxLayout()
+        self.bar_buttons.setFixedHeight(theme.HEIGHT_OPTION_ROW)
+        pair = QHBoxLayout(self.bar_buttons)
+        pair.setContentsMargins(0, 0, 0, 0)
         pair.setSpacing(theme.SPACE_S)
-        column.addLayout(pair)
         for b in (self.btn_bar_cancel, self.btn_bar_apply):
             pair.addWidget(b)
             b.hide()
-        pair.setAlignment(Qt.AlignVCenter)
-        self.bar_buttons.setFixedHeight(2 * theme.HEIGHT_OPTION_ROW)
+        self.tools_row.layout().addWidget(self.bar_buttons, 0, Qt.AlignTop)
         self._bar_session = None
         self._undo_pushes = 0
-        bar_scroll.setWidget(inner)
-        outer = QHBoxLayout(self.top_bar)
-        outer.setContentsMargins(0, 0, 0, 1)            # the bottom line of the bar
-        outer.addWidget(bar_scroll)
-        outer.addWidget(self.bar_buttons, 0, Qt.AlignTop)
-        self.top_bar_scroll = bar_scroll
-        # as tall as the two rows, and the sideways scroll bar only while it is shown
-        scroll_bar = bar_scroll.horizontalScrollBar()
-
-        def fit_height(_lo=0, hi=0):
-            try:
-                extra = scroll_bar.sizeHint().height() if hi > 0 else 0
-                self.top_bar.setFixedHeight(2 * theme.HEIGHT_OPTION_ROW + 1 + extra)
-            except RuntimeError:
-                pass                                 # the window is being closed
-        scroll_bar.rangeChanged.connect(fit_height)
-        fit_height(0, 0)
         # "a new version is available" (hidden until a check finds one)
         from kerfly.gui.update_check import UpdateBar
         self.update_bar = UpdateBar()
@@ -266,6 +241,7 @@ class MainWindow(QMainWindow):
         options.setFloatable(False)
         self.top_bar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         options.addWidget(self.top_bar)
+        self.top_bar.installEventFilter(self)            # its height follows its lines (_fit_bar_height)
         self.addToolBar(Qt.TopToolBarArea, options)
         self.options_toolbar = options
         self._build_tool_strip()
@@ -2149,9 +2125,7 @@ class MainWindow(QMainWindow):
 
         # --- the options bar's first row, always the same: the selection's position and size, rotation, layer
         self.selection_box = QWidget()
-        sb = QHBoxLayout(self.selection_box)
-        sb.setContentsMargins(0, 0, 0, 0)
-        sb.setSpacing(theme.SPACE_M)
+        sb = widgets.FlowLayout(self.selection_box, theme.SPACE_M, theme.HEIGHT_OPTION_ROW, indent=True)
         sb.addWidget(option_title(_("Selection")))
         sb.addWidget(widgets.separator())
         self.sel_fields = {}
@@ -2762,8 +2736,21 @@ class MainWindow(QMainWindow):
         self.path_label.setText(self.path_label.fontMetrics().elidedText(short, Qt.ElideMiddle, width))
         self.path_label.setToolTip(path)
 
+    def _fit_bar_height(self):
+        """The options bar as tall as its rows' lines at its width (its fields go on in more lines in a narrow
+        window; the toolbar it sits in does not ask for the height by itself)."""
+        bar = self.top_bar
+        layout = bar.layout()
+        if layout is None or bar.width() <= 0:
+            return
+        h = max(2 * theme.HEIGHT_OPTION_ROW + 1, layout.heightForWidth(bar.width()))
+        if h != bar.height() or bar.minimumHeight() != h:
+            bar.setFixedHeight(h)
+
     def eventFilter(self, obj, event):
         from PySide6.QtCore import QEvent
+        if obj is getattr(self, "top_bar", None) and event.type() in (QEvent.Resize, QEvent.LayoutRequest):
+            self._fit_bar_height()
         if event.type() == QEvent.Leave and hasattr(self, "element_list") and obj is self.element_list.viewport():
             self._show_path(None)                        # left the list: back to the selected design
         return super().eventFilter(obj, event)

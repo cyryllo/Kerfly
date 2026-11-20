@@ -21,12 +21,107 @@ style sheet through the widget's "role" property (no colour is set here).
 Copyright (C) 2026 Kerfly contributors
 Licensed under the GNU General Public License v3 or later. See LICENSE.
 """
-from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import (QButtonGroup, QDialogButtonBox, QFrame, QGridLayout, QHBoxLayout, QLabel,
+from PySide6.QtCore import QPoint, QRect, QSize, Qt, Signal
+from PySide6.QtWidgets import (QButtonGroup, QDialogButtonBox, QFrame, QGridLayout, QHBoxLayout, QLabel, QLayout,
                                QRadioButton, QToolButton, QVBoxLayout, QWidget)
 
 from kerfly.gui import icons, theme
 from kerfly.i18n import _
+
+
+class FlowLayout(QLayout):
+    """Widgets in a row that goes on in the next line when the width ends (the options bar: no sideways
+    scrolling, the user's choice 2026-11-20). Each line is at least `line_height` tall, its widgets in the
+    middle; with `indent`, the lines after the first start where the first widget (the bold title) ends. A
+    separator (separator()) at the start of a line is left out. addStretch does nothing (the widgets stay
+    on the left)."""
+
+    def __init__(self, parent=None, spacing=0, line_height=0, indent=False):
+        super().__init__(parent)
+        self._items = []
+        self._gap = spacing
+        self.line_height = line_height
+        self.indent = indent
+        self.setContentsMargins(0, 0, 0, 0)
+
+    # the QLayout interface
+    def addItem(self, item):
+        self._items.append(item)
+
+    def addStretch(self, _stretch=0):
+        pass
+
+    def count(self):
+        return len(self._items)
+
+    def itemAt(self, index):
+        return self._items[index] if 0 <= index < len(self._items) else None
+
+    def takeAt(self, index):
+        return self._items.pop(index) if 0 <= index < len(self._items) else None
+
+    def expandingDirections(self):
+        return Qt.Orientation(0)
+
+    def hasHeightForWidth(self):
+        return True
+
+    def heightForWidth(self, width):
+        return self._place(QRect(0, 0, width, 0), True)
+
+    def setGeometry(self, rect):
+        super().setGeometry(rect)
+        self._place(rect, False)
+
+    def sizeHint(self):
+        return self.minimumSize()
+
+    def minimumSize(self):
+        size = QSize(0, self.line_height)
+        for item in self._items:
+            if not self._hidden(item):
+                size = size.expandedTo(item.minimumSize())
+        m = self.contentsMargins()
+        return size + QSize(m.left() + m.right(), m.top() + m.bottom())
+
+    @staticmethod
+    def _hidden(item):
+        w = item.widget()
+        return w is not None and w.isHidden()
+
+    def _place(self, rect, test):
+        m = self.contentsMargins()
+        area = rect.adjusted(m.left(), m.top(), -m.right(), -m.bottom())
+        lines, line, x = [], [], area.x()
+        start = area.x()
+        items = [i for i in self._items if not self._hidden(i)]
+        for n, item in enumerate(items):
+            w = item.sizeHint().width()
+            sep = item.widget() is not None and item.widget().property("role") == "divider"
+            if line and x + w > area.right() + 1:          # does not fit: a new line
+                lines.append(line)
+                line, x = [], start
+            if sep and not line:                           # no separator at the start of a line
+                line.append((item, None))
+                continue
+            line.append((item, x))
+            x += w + self._gap
+            if n == 0 and self.indent:
+                start = x                                   # the next lines start after the title
+        if line:
+            lines.append(line)
+        y = area.y()
+        for line in lines:
+            h = max([self.line_height] + [i.sizeHint().height() for i, px in line if px is not None])
+            if not test:
+                for item, px in line:
+                    if px is None:
+                        item.setGeometry(QRect(QPoint(area.x(), y), QSize(0, 0)))
+                        continue
+                    hint = item.sizeHint()
+                    item.setGeometry(QRect(QPoint(px, y + (h - hint.height()) // 2), hint))
+            y += h
+        return y - area.y() + m.top() + m.bottom()
 
 
 _GRAVEYARD = None

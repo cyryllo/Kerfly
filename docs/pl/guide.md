@@ -91,7 +91,7 @@ zapamiętują się od razu, bez zapisywania.
   zmiany od chwili, gdy pokazał ten kształt albo narzędzie (także pracę
   narzędzia: nadane zawiasy czy wypełnienia), **Zatwierdź** je zostawia i
   kończy narzędzie (powrót do zaznaczania). Gdy wiersz nie mieści się w oknie,
-  wiersze przewijają się w bok.
+  jego pola przechodzą do następnej linii.
 
   ![Pasek opcji z zaznaczonym tekstem](../img/pl/options.png)
 

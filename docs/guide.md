@@ -87,8 +87,8 @@ saving.
   a tooltip. Changes show at once; **Cancel** at the right end of the second
   row takes back every change made since it showed this shape or tool (a
   tool's work too: the hinges or fills it gave), **Apply** keeps them and ends
-  a tool (back to Select). When a row does not fit the window, the rows scroll
-  sideways.
+  a tool (back to Select). When a row does not fit the window, its fields go on
+  in the next line.
 
   ![Options bar with a text selected](img/en/options.png)
 

@@ -136,7 +136,7 @@ QFrame#update_bar { background: $update_bg; border-bottom: 1px solid $update_bor
 QLabel#node_hint { color: $hint; }
 QWidget#top_bar { background: $bar_light; border-bottom: 1px solid $top_border; }
 QToolBar#options_toolbar { padding: 0px; spacing: 0px; border: 0px; }
-QScrollArea#top_bar_scroll, QScrollArea#top_bar_scroll > QWidget > QWidget { background: transparent; }
+
 QLabel#tool_options_title { font-weight: bold; }
 QLabel#ribbon_caption { color: $caption; font-size: 10px; padding-bottom: 1px; }
 QFrame#ribbon_separator { color: $separator; margin: 4px 0px; }
