@@ -838,6 +838,29 @@ def test_cut_order():
           % ("OK" if ok else "FAIL", names))
     errors += 0 if ok else 1
 
+    # a square drawn first and a circle drawn after it inside the square, grouped (the user's test on
+    # 2026-11-20): the circle is cut first; a shape beside them keeps its place in the list's order
+    sq = ShapeSpec(kind="rectangle", width=50, height=50)
+    ci = ShapeSpec(kind="ellipse", width=20, height=20)
+    side = ShapeSpec(kind="polygon", width=15, height=15, sides=3)
+    group = [Element(build_design(sq), x=10 / 25.4, y=-10 / 25.4, shape=sq, group="g"),
+             Element(build_design(ci), x=25 / 25.4, y=-25 / 25.4, shape=ci, group="g"),
+             Element(build_design(side), x=80 / 25.4, y=-10 / 25.4, shape=side)]
+    layers = default_layers()
+    cache = {}
+    build_layers_job(group, layers, JobSettings(), cache=cache)
+    rows = cache[[l for l in layers if l.kind == CUT][0].id][1].vector_cut.ecoords
+    order = []
+    for r in rows:
+        if not order or order[-1][0] != r[2]:
+            order.append((r[2], []))
+        order[-1][1].append(r)
+    widths = [round((max(p[0] for p in pts) - min(p[0] for p in pts)) * 25.4) for _l, pts in order]
+    ok = widths == [20, 50, 15]
+    print("%-5s cut order: a shape inside another element's cut goes first (circle in a square drawn before "
+          "it), the rest as listed %s" % ("OK" if ok else "FAIL", widths))
+    errors += 0 if ok else 1
+
     # an open line drawn from right to left is cut from its left end, the one nearer to where
     # the head starts (the design's top-left corner), not after a run to its right end
     line = ShapeSpec(kind="polyline", points=[(80, 0), (40, 15), (0, 5)], closed_path=False)

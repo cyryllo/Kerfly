@@ -278,9 +278,10 @@ around a text, a frame around a part, or a smaller copy inside.
 
 **Order.** The element list is the order of the job: within each layer the
 laser does the element at the top of the list first. (The layers themselves
-always run in the order raster engraving, outline engraving, cutting.) Inside
-one element, inner shapes are still cut before the outer ones, so a part
-does not fall out before its holes are cut. The arrow buttons beside the
+always run in the order raster engraving, outline engraving, cutting.) Inner
+shapes are always cut before the outer ones, so a part does not fall out
+before its holes are cut: inside one element, and also when a shape lies
+inside another element's cut (a circle drawn after the square it sits in). The arrow buttons beside the
 element list (Design tab) move the selected elements: **Move up (earlier)**
 and **Move down (later)** one place (PgUp, PgDown while the bed view has the
 focus), **To the start** and **To the end** to the top or the bottom of the

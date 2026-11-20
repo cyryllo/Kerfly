@@ -127,6 +127,10 @@ oknie.
   program kończy pracę bez sprzątania Qt przy wyjściu, a awaria zapisuje,
   gdzie się zdarzyła: następny start wpisuje to do logu (Pomoc → Zgłoś
   problem go wysyła).
+- **Kolejność cięcia**: kształt leżący w środku cięcia innego elementu jest
+  cięty pierwszy (kółko narysowane po kwadracie, w którym leży, zgrupowane
+  czy nie, było cięte po kwadracie, który mógł wcześniej wypaść); poza tym
+  zostaje kolejność z listy elementów.
 - **Ułóż na stole po obrysach** rozrzucał części wzdłuż lewej krawędzi stołu
   (2.0.0b2): części arkusza są teraz układane drugi raz w poprzek, razem w
   jego lewym górnym rogu.

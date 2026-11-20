@@ -190,8 +190,11 @@ def element_order(ecoord, inside_check, start=None):
     rows = ecoord.ecoords
     if not starts or not rows:
         return None
+    spans = [(a, b) for a, b in zip(starts, starts[1:] + [len(rows)]) if b > a]
+    if inside_check:
+        spans = _inside_first(rows, spans)
     out = []
-    for a, b in zip(starts, starts[1:] + [len(rows)]):
+    for a, b in spans:
         part = copy.deepcopy(rows[a:b])
         if not part:
             continue
@@ -203,6 +206,64 @@ def element_order(ecoord, inside_check, start=None):
     if start is not None:
         out = _open_lines_from_near_end(out, start)
     return out
+
+
+def _inside_first(rows, spans):
+    """The elements' row spans in the element list's order, except that an element lying inside a closed cut
+    of another one comes before it (a circle drawn after the square it sits in, both grouped: the hole first,
+    or the square drops out and the hole is cut in the air)."""
+    def loops(a, b):
+        out, cur = [], []
+        for r in rows[a:b]:
+            if cur and cur[-1][2] != r[2]:
+                out.append(cur)
+                cur = []
+            cur.append(r)
+        if cur:
+            out.append(cur)
+        return [[(r[0], r[1]) for r in lp] for lp in out]
+
+    def closed(pts):
+        return len(pts) >= 4 and abs(pts[0][0] - pts[-1][0]) < 1e-6 and abs(pts[0][1] - pts[-1][1]) < 1e-6
+
+    def inside(pt, poly):
+        x, y = pt
+        hit = False
+        for (x0, y0), (x1, y1) in zip(poly, poly[1:] + poly[:1]):
+            if (y0 > y) != (y1 > y) and x < x0 + (y - y0) * (x1 - x0) / (y1 - y0):
+                hit = not hit
+        return hit
+
+    info = []
+    for a, b in spans:
+        lps = loops(a, b)
+        pts = [p for lp in lps for p in lp]
+        box = (min(p[0] for p in pts), min(p[1] for p in pts), max(p[0] for p in pts), max(p[1] for p in pts))
+        info.append((box, [lp for lp in lps if closed(lp)], pts[0]))
+
+    def within(i, j):                       # element i inside a closed cut of element j
+        (bx0, by0, bx1, by1), _l, pt = info[i]
+        (ax0, ay0, ax1, ay1), outer, _p = info[j]
+        if not outer or not (ax0 <= bx0 and ay0 <= by0 and bx1 <= ax1 and by1 <= ay1) or \
+                (bx0, by0, bx1, by1) == (ax0, ay0, ax1, ay1):
+            return False
+        return any(inside(pt, lp) for lp in outer)
+    n = len(spans)
+    if n < 2 or n > 2000:                   # (a very long list: as it is, no n² search)
+        return spans
+    inner = [[i for i in range(n) if i != j and within(i, j)] for j in range(n)]
+    done, order = set(), []
+
+    def emit(j, path=()):
+        if j in done or j in path:
+            return
+        for i in inner[j]:
+            emit(i, path + (j,))
+        done.add(j)
+        order.append(spans[j])
+    for j in range(n):
+        emit(j)
+    return order
 
 
 def _open_lines_from_near_end(rows, start):

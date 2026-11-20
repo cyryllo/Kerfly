@@ -129,6 +129,10 @@ a window of its own.
   nesting). Panel and bar fields are now removed the safe way, the program
   ends without Qt's clean-up at exit, and a crash writes where it happened:
   the next start puts it into the log (Help → Report a problem sends it).
+- **Cut order**: a shape lying inside another element's cut is cut first
+  (a circle drawn after the square it sits in, grouped or not, was cut after
+  the square, which could drop out first); otherwise the element list's order
+  stays.
 - **Nest on the bed by outlines** spread the parts down the bed's left edge
   (2.0.0b2): a sheet's parts are now packed again across, together into its
   upper left corner.

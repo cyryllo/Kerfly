@@ -237,9 +237,9 @@
   ],
   "burn_mm": 714.3,
   "burn_moves": 176,
-  "egv_bytes": 15667,
-  "egv_sha256": "8079ee3cbf499d1a346041ac8d45853250c68c90bf6c40d1a63202d626c6f1fc",
-  "fingerprint": "7fcbffdcb83ba38663f2d2034cb210c5724d8b3b75e8f86298fb970b2276fb11",
+  "egv_bytes": 15682,
+  "egv_sha256": "c6039e3723535cf83438eebbf0b63260ff0c782f18cc1983fcb9b103eae74b34",
+  "fingerprint": "d27c28fbe91155c0c7bd572b7e32796bc05e4838f84101dc2a496eaba9d6f6be",
   "first_cuts": [
    [
     95.0,
@@ -284,6 +284,6 @@
   ],
   "moves": 184,
   "seconds": 64.9,
-  "travel_mm": 594.7
+  "travel_mm": 593.5
  }
 }

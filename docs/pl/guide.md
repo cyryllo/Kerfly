@@ -287,8 +287,10 @@ napisu, ramki wokół części albo mniejszej kopii w środku.
 
 **Kolejność.** Lista elementów to kolejność zadania: w każdej warstwie laser
 najpierw wykonuje element z góry listy. (Same warstwy zawsze idą w kolejności:
-grawer, obrys, cięcie.) Wewnątrz jednego elementu kształty wewnętrzne nadal są
-cięte przed zewnętrznymi, żeby element nie wypadł przed wycięciem otworów.
+grawer, obrys, cięcie.) Kształty wewnętrzne zawsze są cięte przed
+zewnętrznymi, żeby część nie wypadła przed wycięciem otworów: wewnątrz
+jednego elementu, a także gdy kształt leży w środku cięcia innego elementu
+(kółko narysowane po kwadracie, w którym leży).
 Przyciski ze strzałkami obok listy elementów (zakładka Projekt) przesuwają
 zaznaczone elementy: **Wyżej (wcześniej)** i **Niżej (później)** o jedno
 miejsce (PgUp, PgDown, gdy aktywny jest stół), **Na początek** i **Na koniec**
