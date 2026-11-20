@@ -25,8 +25,6 @@ TABS = [
         ("gcode_s_max", N_("GRBL: full power S ($30)"), "int", (1, 100000)),
         ("grbl_air", N_("GRBL: air assist during a job (M8 on, M9 off)"), "bool", None),
         ("grbl_jog", N_("GRBL: jog speed, arrows (mm/min)"), "float", (100, 30000, 0, None)),
-        ("grbl_home_speed", N_("GRBL: homing speed ($25, mm/min; 0: the board's own)"), "float",
-         (0, 30000, 0, None)),
         ("units", N_("Units"), "choice", ["mm", "in"]),
         ("LaserXsize", N_("Bed width"), "float", (1, 5000, 1, "len")),
         ("LaserYsize", N_("Bed height"), "float", (1, 5000, 1, "len")),
@@ -116,7 +114,7 @@ PAGE_ICONS = {"Machine": "laser", "Raster": "grid-dots", "Vector": "vector", "Vi
               "Rotary": "rotate-clockwise-2", "Advanced": "settings-2"}
 
 M3_BOARD = "LASER-M3"           # the only board with power control
-GRBL_KEYS = ("grbl_port", "grbl_baud", "grbl_home", "grbl_jog", "grbl_home_speed", "gcode_s_max", "grbl_air")
+GRBL_KEYS = ("grbl_port", "grbl_baud", "grbl_home", "grbl_jog", "gcode_s_max", "grbl_air")
 # only for a K40: its board, USB, power setting and rail; hidden for a GRBL laser (as the GRBL ones for a K40)
 K40_ONLY = ("board_name", "usb_port", "HomeUR", "show_power", "max_power", "post_home", "pre_pr_crc", "wait",
             "t_timeout", "n_timeouts")
@@ -246,9 +244,6 @@ class SettingsForm(QWidget):
         row.addWidget(self.pages, 1)
         tips = {"grbl_jog": _("How fast the head moves with the arrows and the corner buttons (a GRBL laser; a "
                               "K40's board moves at its own speed)"),
-                "grbl_home_speed": _("How fast the head looks for its home switches: written into the GRBL board "
-                                     "($25, kept in its memory) when Kerfly connects; 0 leaves the board's own. A "
-                                     "K40 homes at its board's own speed"),
                 "Trace_power": _("Laser power during the boundary trace, in per cent of the laser's maximum "
                                  "power. Used by M3 boards with power per operation; on other boards the power "
                                  "knob of the laser sets it"),

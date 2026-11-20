@@ -4565,14 +4565,14 @@ class MainWindow(QMainWindow):
                     pass
             self.laser = self._make_laser()
             self._update_laser_state()
-        elif want_grbl and changed & {"grbl_jog", "grbl_home_speed"}:
+        elif want_grbl and "grbl_jog" in changed:
             self._grbl_speeds(self.laser)
 
     def _grbl_speeds(self, laser):
-        """The laser's jog and homing speeds into a GRBL controller (homing: written to the board on connect)."""
+        """The laser's jog speed into a GRBL controller (the homing speed is the board's own, $25: Kerfly
+        does not change it, user 2026-11-20)."""
         try:
             laser.jog_feed = float(self.values.get("grbl_jog", 3000) or 3000)
-            laser.home_speed = float(self.values.get("grbl_home_speed", 0) or 0)
         except ValueError:
             pass
 

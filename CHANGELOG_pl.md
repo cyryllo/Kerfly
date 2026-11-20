@@ -127,6 +127,10 @@ oknie.
   program kończy pracę bez sprzątania Qt przy wyjściu, a awaria zapisuje,
   gdzie się zdarzyła: następny start wpisuje to do logu (Pomoc → Zgłoś
   problem go wysyła).
+- **Prędkość bazowania GRBL** usunięta z ustawień lasera: płyta zostaje przy
+  swojej (`$25`); Kerfly nie zapisuje jej już przy łączeniu (Beta 2 i 3
+  zapisywały ją, gdy była ustawiona: sprawdź `$25` w LaserGRBL, jeśli płyta
+  bazuje teraz z inną prędkością niż wcześniej).
 - **Zawias giętki** (narzędzie, karta testowa, okrągłe pudełko): sklejka się
   nie wyginała, bo wzdłuż obrysu biegł pełny brzeg. Teraz krótkie nacięcia
   dochodzą do obrysu na końcach co drugiego rzędu, długie mają mostek na obu

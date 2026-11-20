@@ -84,7 +84,6 @@ class GrblController:
         self._held = False
         self._buffer = b""
         self.jog_feed = 3000.0           # mm/min
-        self.home_speed = 0.0            # mm/min, the board's $25 written when it differs; 0: the board's own
         self.log = []                    # the last lines exchanged (diagnostics)
 
     # ---- connection -------------------------------------------------------
@@ -111,22 +110,8 @@ class GrblController:
             raise last or LaserError(_("No GRBL board answered."))
         log.info("grbl: connected on %s (%s), settings %s", self.port_key, self.version,
                  {k: self.settings.get(k) for k in ("$22", "$25", "$30", "$32", "$130", "$131")})
-        self._set_home_speed()
         if init_home and self.settings.get("$22", "0") not in ("0", ""):
             self.home()
-
-    def _set_home_speed(self):
-        """The homing speed of the laser's settings into the board ($25, kept in its memory) when it differs."""
-        if self.home_speed <= 0:
-            return
-        try:
-            same = abs(float(self.settings.get("$25", "nan")) - self.home_speed) < 0.5
-        except ValueError:
-            same = False
-        if not same:
-            self.command("$25=%.0f" % self.home_speed)
-            self.settings["$25"] = "%.0f" % self.home_speed
-            log.info("grbl: homing speed $25 set to %.0f mm/min", self.home_speed)
 
     def _open(self, device, baud):
         self.ser = self.opener(device, baud)

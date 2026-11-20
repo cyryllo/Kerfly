@@ -1534,26 +1534,19 @@ def main():
             form.close()
         gw._dirty = False
         gw.close()
-    # the homing speed of the laser's settings goes into the board ($25) on connect, only when it differs
+    # Kerfly never changes the board's homing speed ($25: the board's own; user 2026-11-20)
     from kerfly.core import grbl as _grbl_hs
     hb = FakeGrbl()
     hc = _grbl_hs.GrblController(opener=lambda port, baud: hb)
-    hc.home_speed = 1500
     hc.connect(port="/dev/ttyFAKE")
     hc.release()
-    hb2 = FakeGrbl()
-    hc2 = _grbl_hs.GrblController(opener=lambda port, baud: hb2)
-    hc2.home_speed = 500                                  # the board's own already
-    hc2.connect(port="/dev/ttyFAKE")
-    hc2.release()
-    home_speed_ok = hb.settings["$25"] == "1500" and "$25=1500" in hb.lines and \
-        not any(l.startswith("$25=") for l in hb2.lines)
+    home_speed_ok = not any(l.startswith("$25=") for l in hb.lines)
     trace_power_on = trace_power_on and home_speed_ok
     corner_ok = corners["grbl"][0] == 0 and corners["grbl"][1] == corners["grbl"][2] == round(-bed_h_in * 25.4, 2) \
         and corners["k40"][:2] == (0, 0)
     check("To head: a GRBL laser homing to the lower left gets the design's lower left corner at the head, a K40 "
-          "its upper left; a GRBL laser has a power for each layer and its trace power; its homing speed ($25) "
-          "written on connect when it differs",
+          "its upper left; a GRBL laser has a power for each layer and its trace power; the board's homing speed "
+          "($25) left as it is",
           corner_ok and grbl_power and trace_power_on, "(%s)" % [corners, grbl_power, trace_power_on])
 
     # 28c6. four home corners for every laser (a picture of the bed with a radio button in each corner, in the

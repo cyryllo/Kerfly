@@ -609,7 +609,7 @@ leaves them.
 | Section | Settings |
 |---|---|
 | Controller | the machine (K40 or a GRBL board), controller board, USB port; for a GRBL board its serial port, speed and full power S |
-| Head movement (GRBL) | the jog speed of the arrows and the corner buttons, the homing speed (written into the board, `$25`, when connecting; 0 leaves the board's own); a K40's board moves and homes at its own speed |
+| Head movement (GRBL) | the jog speed of the arrows and the corner buttons (the homing speed is the board's own, `$25`); a K40's board moves and homes at its own speed |
 | Work area, homing and the end of a job | bed size, the **home corner** (a picture of the bed with a radio button in each corner: the one the head homes to; Place design at the head and Design follows the head bring the design's same corner to the head), home when connecting, home the head after a job (back to 0, 0, for the next piece), unlock the rail and beep after a job, a report after a job (its time, on by default; a small window that waits until you are back) |
 | Programs run with a job | a program run before every job sent to the laser (for example to switch on the exhaust; the job waits until it ends, at most a minute, and asks when it fails), a program run after every finished job (for example to switch off the exhaust or send a message; its output and errors go to the report) |
 | Scale, power | X/Y scale factors, M3 power per operation and maximum power (greyed out with other boards: their power is set with the knob of the laser; a GRBL laser always has a power for each layer) |

@@ -129,6 +129,10 @@ a window of its own.
   nesting). Panel and bar fields are now removed the safe way, the program
   ends without Qt's clean-up at exit, and a crash writes where it happened:
   the next start puts it into the log (Help → Report a problem sends it).
+- **GRBL homing speed** removed from the laser's settings: the board keeps
+  its own (`$25`); Kerfly no longer writes it on connect (beta 2 and 3 did when
+  it was set: check `$25` in LaserGRBL if your board homes at another speed
+  than before).
 - **Living hinge** (the hinge tool, the test card, the rounded box): the
   plywood did not bend, as a solid border ran along the outline. Now the
   short cuts reach the outline at the ends of every second row, the long ones
