@@ -199,6 +199,20 @@ a window of its own.
   libraries added in an update are installed at the next start too (with
   2.0.0b1 from source, spyrrow was missing and Nest by outlines greyed out).
 
+## 1.8.1 (2026-11-21)
+
+### Fixed
+
+- **A shape with a living hinge or a fill pattern resized** (corner handles,
+  W / H in the bar) had its cuts or pattern stretched with it (the hinge's
+  rows far apart). Now the shape takes the new size and its hinge or pattern
+  is made again, keeping its own lengths and gaps.
+- **Ctrl+Z while drawing with the pen or a polyline** took back the step
+  before the drawing (a shape drawn earlier went), and after it nothing could
+  be drawn any more (the unfinished line, deleted with the redrawn bed, broke
+  every mouse move and tool change). Now Ctrl+Z takes back the last node, as
+  Backspace, and a redraw of the bed while drawing leaves the tools working.
+
 ## 1.8.0 (2026-11-16)
 
 3D preview of the generated boxes, groups in groups (a box's sheets and parts

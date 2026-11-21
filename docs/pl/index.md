@@ -231,10 +231,10 @@ Kerfly steruje prawdziwą maszyną z laserem, więc „chyba działa” to za ma
 
 ## Stan projektu
 
-**Kerfly 1.7 jest wersją stabilną, gotową do codziennej pracy** z laserem.
-Następne w planach: grawer każdego projektu na warstwie rastrowej osobno,
-własne kafelki wypełnień, lasery GRBL
-oraz paczka dla Debiana z własnym repozytorium APT.
+**Kerfly 1.8 jest wersją stabilną, gotową do codziennej pracy** z laserem.
+Następna będzie wersja 2.0: lasery GRBL, układanie części na stole i nowy
+wygląd, teraz testowana jako kandydat do wydania (pre-release na GitHubie).
+Później paczka dla Debiana z własnym repozytorium APT.
 Zobacz [plan]({{ site.repo }}/blob/main/ROADMAP.md) (po angielsku) i
 [listę zmian]({{ site.repo }}/blob/main/CHANGELOG_pl.md).
 

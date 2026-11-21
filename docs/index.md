@@ -229,9 +229,10 @@ Kerfly drives a real machine with a laser, so "it seems to work" is not enough:
 
 ## Status
 
-**Kerfly 1.7 is stable and ready for everyday work** with your laser.
-Planned next: engraving each design on a raster layer separately, your own
-fill tiles, GRBL lasers, and a Debian package with its own APT repository. See the
+**Kerfly 1.8 is stable and ready for everyday work** with your laser.
+Coming next, version 2.0: GRBL lasers, parts nested on the bed and a new
+look, now tested as a release candidate (a pre-release on GitHub). Later: a
+Debian package with its own APT repository. See the
 [roadmap]({{ site.repo }}/blob/main/ROADMAP.md) and the
 [changes]({{ site.repo }}/blob/main/CHANGELOG.md).
 

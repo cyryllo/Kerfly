@@ -202,6 +202,21 @@ oknie.
   następnym starcie (kto uruchamiał 2.0.0b1 ze źródeł, nie miał spyrrow i
   Ułóż po obrysach był wyszarzony).
 
+## 1.8.1 (2026-11-21)
+
+### Poprawione
+
+- **Zmiana rozmiaru kształtu z zawiasem giętkim albo wypełnieniem**
+  (uchwyty narożne, Szer. / Wys. na pasku) rozciągała razem z nim nacięcia
+  albo wzór (rzędy zawiasu daleko od siebie). Teraz kształt dostaje nowy
+  rozmiar, a zawias albo wzór jest robiony od nowa, z własnymi długościami i
+  odstępami.
+- **Ctrl+Z w trakcie rysowania piórem albo łamaną** cofało krok sprzed
+  rysowania (znikał wcześniej narysowany kształt), a potem nie dało się już
+  nic narysować (niedokończona linia, skasowana z odświeżonym stołem, psuła
+  każdy ruch myszy i zmianę narzędzia). Teraz Ctrl+Z cofa ostatni węzeł, jak
+  Backspace, a odświeżenie stołu w trakcie rysowania nie psuje narzędzi.
+
 ## 1.8.0 (2026-11-16)
 
 Podgląd 3D pudełek z generatora, grupy w grupach (arkusze i części pudełka na
