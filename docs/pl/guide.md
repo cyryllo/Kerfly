@@ -198,8 +198,8 @@ narysowaniem i po nim.
 | Elipsa | E | Przeciągnij. Shift: koło |
 | Wielokąt | P | Przeciągnij. Opcja: liczba boków |
 | Linia | L | Przeciągnij. Shift: co 45° |
-| Łamana | Shift+L | Klikaj narożniki. Klik w pierwszy punkt zamyka; dwuklik albo Enter kończy otwartą linię; Backspace usuwa ostatni narożnik; Esc anuluje |
-| Pióro (krzywe) | B | Klik daje narożnik, wciśnięcie i przeciągnięcie gładką krzywą. Klik w pierwszy punkt zamyka; dwuklik albo Enter kończy |
+| Łamana | Shift+L | Klikaj narożniki. Klik w pierwszy punkt zamyka; dwuklik albo Enter kończy otwartą linię; Backspace albo Ctrl+Z usuwa ostatni narożnik; Esc anuluje |
+| Pióro (krzywe) | B | Klik daje narożnik, wciśnięcie i przeciągnięcie gładką krzywą. Klik w pierwszy punkt zamyka; dwuklik albo Enter kończy; Backspace albo Ctrl+Z usuwa ostatni węzeł; Esc anuluje |
 | Odręcznie | F | Rysuj z wciśniętym przyciskiem; skończ blisko początku, żeby zamknąć kształt |
 | Miarka | M | Przeciągnij między dwoma punktami: odległość, szerokość, wysokość i kąt |
 | Tekst | T | Kliknij i wpisz tekst w polu **Treść**; wybierz czcionkę, rozmiar, pogrubienie i kursywę. Na górze listy czcionek: **czcionki jednokreskowe** wbudowane w Kerfly (Hershey, EMS), których litery to linie, po których laser przejeżdża raz: szybki, cienki grawer, bez wypełniania |

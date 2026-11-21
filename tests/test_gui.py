@@ -1943,6 +1943,71 @@ def main():
     w7._dirty = False
     w7.close()
 
+    # 50z. a user's report 2026-11-21: a circle, then a pen path being drawn, Ctrl+Z: the circle went (Undo
+    # took back the step before the drawing) and the pen's line, deleted with the redrawn bed, broke every
+    # later mouse move and tool change. Now Ctrl+Z takes back the pen's last node, and a redraw of the bed
+    # while drawing leaves the tools working
+    from PySide6.QtTest import QTest as _QT
+    from PySide6.QtCore import QPointF
+    uw = make_window(grid_mm="0")
+    uw.resize(1200, 800)
+    uw.show()
+    app.processEvents()
+    uw.preview.fit_all()
+    app.processEvents()
+    uw._preview_drawn("ellipse", QPointF(150, 100), QPointF(200, 140), False)
+    n0 = len(uw.elements)
+    uv = uw.preview
+    uvp = uv.viewport()
+    uw.set_tool("pen")
+    for x, y in ((40, 40), (80, 40), (80, 80)):
+        _QT.mouseClick(uvp, Qt.LeftButton, Qt.NoModifier, uv.mapFromScene(QPointF(x, y)))
+    uv._draw_pen(QPointF(60, 90))
+    uw.act_undo.trigger()
+    app.processEvents()
+    kept = len(uw.elements) == n0 and len(uv._pen["nodes"]) == 2
+    uw.refresh_preview()                                  # the bed redrawn while the pen path is being drawn
+    broken = False
+    try:
+        uv._draw_pen(QPointF(70, 95))                    # what a mouse move does (Qt would only print the error)
+        uw.set_tool("rectangle")
+        app.processEvents()
+    except RuntimeError:
+        broken = True
+    uw._preview_drawn("rectangle", QPointF(20, 120), QPointF(60, 150), False)
+    drawn = len(uw.elements) == n0 + 1 and not broken
+    uw._dirty = False
+    uw.close()
+    check("Ctrl+Z while drawing with the pen takes back its last node (the circle drawn before stays); a redraw "
+          "of the bed while drawing leaves the tools working",
+          kept and drawn, "(%s)" % [kept, broken, drawn])
+
+    # 50y. a user's report 2026-11-21: a small rectangle with a living hinge made bigger with the handles: its
+    # cuts were stretched with it (rows far apart). Now the shape takes the new size and the hinge is made again:
+    # the rows stay as far apart as set
+    from PySide6.QtCore import QPointF
+    sw = make_window(grid_mm="0")
+    sw._preview_drawn("rectangle", QPointF(20, 20), QPointF(44, 30), False)
+    se = sw.elements[0]
+    ssp = se.shape.copy()
+    ssp.hinge_pattern = "straight"
+    sw._apply_shape(se, ssp)
+
+    def row_gaps(el):
+        xs = sorted(set(round(r[0] * 25.4, 2) for r in el.design.vector_cut.ecoords))
+        return min(b - a for a, b in zip(xs, xs[1:]))
+    gap0 = row_gaps(se)
+    sw._preview_scaled(se, 2.0)
+    grown = abs(se.size[0] * 25.4 - 48.0) < 0.01 and se.scale_x == 1.0 and abs(se.shape.width - 48.0) < 1e-6
+    same_gap = abs(row_gaps(se) - gap0) < 0.01
+    sw.undo()
+    undone = abs(sw.elements[0].size[0] * 25.4 - 24.0) < 0.01
+    sw._dirty = False
+    sw.close()
+    check("a shape with a living hinge made bigger with the handles: the shape takes the new size, the hinge's "
+          "rows keep their gap (not stretched), Undo", grown and same_gap and undone,
+          "(%s)" % [grown, same_gap, undone, gap0])
+
     # 51. the "window tells the truth" checks find what they should: a field not refreshed, an element
     # drawn elsewhere, a stale list row, a wrong layer list, a missing field; and a saved and reopened
     # project has the same state

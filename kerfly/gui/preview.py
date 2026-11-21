@@ -591,6 +591,26 @@ class PreviewView(QGraphicsView):
             nodes.append(curves.node(cursor.x(), cursor.y()))
         return [{"closed": False, "nodes": nodes}]
 
+    def undo_drawing_step(self):
+        """Ctrl+Z while a pen path or a polyline is being drawn: its last node goes, as with Backspace (Undo
+        took back the step before the drawing: a circle drawn earlier went, a user's report 2026-11-21).
+        True when there was a node to take back."""
+        if self.tool == "pen" and self._pen and self._pen["nodes"]:
+            self._pen["nodes"].pop()
+            if not self._pen["nodes"]:
+                self._clear_pen()
+            else:
+                self._draw_pen()
+            return True
+        if self.tool == "polyline" and self._poly_points:
+            self._poly_points.pop()
+            if not self._poly_points:
+                self._clear_polyline()
+            else:
+                self._draw_polyline_item()
+            return True
+        return False
+
     def _draw_pen(self, cursor=None):
         from kerfly.core import curves
         if self._draw_item is not None and self._draw_item.scene() is not None:
@@ -1116,6 +1136,10 @@ class PreviewView(QGraphicsView):
         self.node_editor.forget_graphics()
         self._guides = None
         scene.clear()
+        # the line of a pen path or polyline being drawn went with the scene: forgotten here (kept, it broke
+        # every later mouse move and tool change after an undo while drawing: a user's report 2026-11-21);
+        # the next mouse move draws it again
+        self._draw_item = None
         self._items, self._handles = [], []
         bed_w, bed_h = bed_size_inches(values)
         self.units = values.get("units", "mm")

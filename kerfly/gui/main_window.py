@@ -2272,6 +2272,8 @@ class MainWindow(QMainWindow):
         self._update_tool_options(force=True)
 
     def undo(self):
+        if self.preview.undo_drawing_step():           # a pen path or polyline being drawn: its last node
+            return
         if self._undo and self.worker is None:
             self._redo.append(self._snapshot())
             self._restore(self._undo.pop())
@@ -2601,12 +2603,41 @@ class MainWindow(QMainWindow):
             self._keep_on_bed(element)
         self._arranged(chosen)
 
+    def _keep_pattern_size(self, element):
+        """A shape with a living hinge or a fill pattern resized (the corner handles, the bar's W / H): the new size goes
+        into the shape and its hinge or pattern is made again at the new size, so the cuts and lines keep their
+        own lengths and gaps (scaled with the element they grew apart: a user's report 2026-11-21). Texts and
+        other elements keep being scaled."""
+        sp = element.shape
+        if sp is None or not (sp.hinge_pattern or sp.fill_pattern) or \
+                sp.kind not in ("rectangle", "ellipse", "polygon", "polyline", "path"):
+            return
+        sx, sy = abs(element.scale_x), abs(element.scale_y)
+        if abs(sx - 1.0) < 1e-9 and abs(sy - 1.0) < 1e-9:
+            return
+        new = sp.copy()
+        if sp.kind in ("rectangle", "ellipse", "polygon"):
+            new.width, new.height = sp.width * sx, sp.height * sy
+        elif sp.kind == "polyline":
+            new.points = [(x * sx, y * sy) for x, y in sp.points]
+        else:
+            new.subpaths = [dict(sub, nodes=[[None if v is None else v * (sx if i % 2 == 0 else sy)
+                                              for i, v in enumerate(n)] for n in sub["nodes"]])
+                            for sub in sp.subpaths]
+        cx, cy = element.centre
+        element.scale_x = math.copysign(1.0, element.scale_x)
+        element.scale_y = math.copysign(1.0, element.scale_y)
+        element.shape = new
+        element.design = build_design(new)
+        element.set_centre(cx, cy)
+
     def _preview_scaled(self, element, factor):
         self._checkpoint()
         cx, cy = element.centre
         element.scale_x *= factor
         element.scale_y *= factor
         element.set_centre(cx, cy)
+        self._keep_pattern_size(element)
         self._keep_on_bed(element)
         self._layout_changed()
 
@@ -3277,6 +3308,7 @@ class MainWindow(QMainWindow):
                 new_w, new_h = w * factor, h * factor
             x, y = e.x, e.y                      # keep the top-left corner
             e.set_size(new_w, new_h)
+            self._keep_pattern_size(e)
             e.x, e.y = x, y
             self._keep_on_bed(e)
         elif key == "rotation":
