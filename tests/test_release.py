@@ -1469,6 +1469,28 @@ def part_view_and_laser(s):
     s.step("Home (button): the head in the upper left corner again", lambda: s.click(w.btn_home), change=False,
            check=lambda: (w.head == (0.0, 0.0), w.head))
 
+    # K40: short moves between cuts without stopping (beta; the user's test 2026-11-21): typed in the laser's
+    # settings, the job's settings have it; then back to 0 (the laser data as before)
+    def setting_number(key, value):
+        def answer(dlg):
+            from PySide6.QtWidgets import QAbstractSpinBox, QDialogButtonBox
+            box = next(c for c in dlg.findChildren(QAbstractSpinBox) if c.property("setting_key") == key)
+            s.settings_page(dlg, widget=box)
+            s.settle()
+            s.type_number(box, value)
+            QTest.mouseClick(dlg.findChild(QDialogButtonBox).button(QDialogButtonBox.Ok), Qt.LeftButton)
+        return answer
+    s.expect_dialog("settings: short moves 5 mm", setting_number("short_moves", 5.0))
+    s.step("Settings → Lasers… (the laser's settings): Moves between cuts, short moves up to 5 mm",
+           lambda: s.trigger(w.act_profiles, via="menu"), change=False, undo=False,
+           check=lambda: (float(w.values.get("short_moves", 0)) == 5.0
+                          and config.job_settings_from_values(w.values).short_moves_mm == 5.0,
+                          w.values.get("short_moves")))
+    s.expect_dialog("settings: short moves off", setting_number("short_moves", 0.0))
+    s.step("Settings → Lasers… (the laser's settings): short moves off again",
+           lambda: s.trigger(w.act_profiles, via="menu"), change=False, undo=False,
+           check=lambda: (float(w.values.get("short_moves", 0)) == 0.0, w.values.get("short_moves")))
+
     # Settings → Raster → Dithering method: Atkinson, a job goes to the laser with it; back to Floyd-Steinberg
     def dither_to(code):
         def answer(dlg):

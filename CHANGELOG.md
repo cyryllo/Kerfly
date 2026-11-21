@@ -56,14 +56,18 @@ a window of its own.
   library: its own, or shared with another laser of the same kind (a laser made
   with Duplicate shares the original's). The old common library stays with the
   first laser, the others share it, so nothing changes until you choose.
-- **GRBL homing speed** (Settings → Lasers… → Head movement, next to the jog
-  speed of the arrows): written into the board (`$25`) when Kerfly connects,
-  when it differs.
 - **Side handles**: the middles of a selected element's sides stretch its
   width or height alone, the opposite side staying where it is (also for a
   turned element; one undo step).
 - **About Kerfly** in a window of its own: version, licence, origin, the
   project's page, **Report a problem** and **Check for updates**.
+
+- **Short moves between cuts without stopping (K40, beta)**: Settings →
+  Lasers… → Moves between cuts. A K40 makes every move between two cuts as a
+  fast move, stopping and leaving the cutting mode (at each bridge of a living
+  hinge the head seemed to jump off: the user's test 2026-11-21); moves up to
+  the length set are made at the cutting speed with the laser off. 0 (the
+  default): the laser data as before.
 
 ### Changed
 
@@ -154,6 +158,11 @@ a window of its own.
   library showed only the examples when its laser had no file of its own
   yet); names the shared library already has stay as they are, and the
   laser's own file is kept for when it stops sharing.
+- **Text on a path window**: its preview drew the path a text's height away
+  from the text (on the bed it was right).
+- **A turned shape drawn red** on the bed when the rectangle round it stuck
+  out though its lines were on the bed (the job's check already counted its
+  lines).
 - **GRBL homing speed** removed from the laser's settings: the board keeps
   its own (`$25`); Kerfly no longer writes it on connect (beta 2 and 3 did when
   it was set: check `$25` in LaserGRBL if your board homes at another speed

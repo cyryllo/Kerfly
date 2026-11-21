@@ -34,6 +34,7 @@ class JobSettings:
     rotary: bool = False
     rotary_scale: float = 1.0         # LaserRscale
     rapid_feed: float = 0.0           # used only with rotary
+    short_moves_mm: float = 0.0       # Kerfly: moves between cuts up to this long without the K40's fast move
 
     # ordering
     inside_first: bool = True

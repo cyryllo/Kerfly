@@ -1930,6 +1930,31 @@ def test_turned_on_bed():
     return errors
 
 
+def test_short_moves():
+    """K40: moves between cuts up to short_moves (mm) are made in the cutting mode with the laser off, without
+    the board's stop and fast move (a living hinge's bridges: the head "went off" at each one, the user's test
+    2026-11-21); 0 (the default) gives the same data as before."""
+    from kerfly.core.shapes import ShapeSpec, build_design
+    spec = ShapeSpec(kind="rectangle", width=60, height=30, operation="cut")
+    spec.hinge_pattern = "straight"
+
+    def egv(mm):
+        s = config.job_settings_from_values(dict(config.DEFAULT_VALUES, short_moves=str(mm)))
+        data = job.build_job(build_design(spec), s, "Vector_Cut")[0].data
+        return job.egv_file_bytes(data), s
+    old = {k: v for k, v in config.DEFAULT_VALUES.items() if k != "short_moves"}     # settings from before it
+    plain = job.egv_file_bytes(job.build_job(build_design(spec), config.job_settings_from_values(old),
+                                             "Vector_Cut")[0].data)
+    off, s0 = egv(0)
+    on, s5 = egv(5)
+    fast_off, fast_on = off.count(b"N"), on.count(b"N")
+    ok = s0.short_moves_mm == 0.0 and s5.short_moves_mm == 5.0 and fast_on < fast_off / 5 and on != off
+    same = plain == off
+    print("%-5s short moves (K40): a hinge's bridges crossed without fast moves at 5 mm (%d -> %d), 0 = as "
+          "before" % ("OK" if ok and same else "FAIL", fast_off, fast_on))
+    return 0 if ok and same else 1
+
+
 def test_release_notes():
     """tools/release_notes.py: links to a version's files point at its real tag (v1.8.0; a development version
     without "v" and without the last ".0": 2.0b2)."""
@@ -2020,6 +2045,7 @@ def main():
     failures += test_nest_outlines()
     failures += test_release_notes()
     failures += test_turned_on_bed()
+    failures += test_short_moves()
 
     gui_modules = sorted(m for m in sys.modules if m.split(".")[0] in ("tkinter", "_tkinter", "PySide6", "PyQt6"))
     if gui_modules:

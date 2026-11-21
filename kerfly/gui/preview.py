@@ -169,7 +169,31 @@ class ElementItem(QGraphicsItem):
         if bed is None or not self.element.visible:
             return False
         tol = 0.05                                   # mm
-        return not bed.adjusted(-tol, -tol, tol, tol).contains(self.sceneBoundingRect())
+        return not bed.adjusted(-tol, -tol, tol, tol).contains(self.lasered_rect())
+
+    def lasered_rect(self):
+        """What the element lasers on the scene, as the job's check counts it (layout.geometry_bounds): turned
+        by an angle that is not a multiple of 90 degrees, its lines (the rectangle round the turned shape
+        stuck out of the bed and was marked red while its lines were on it: the user's test 2026-11-21);
+        otherwise, or for a picture, its bounding rectangle."""
+        rect = self.sceneBoundingRect()
+        if self.element.rotation % 90 == 0 or not any(self.local_polys):
+            return rect
+        t = self.sceneTransform()
+        key = (t.m11(), t.m12(), t.m21(), t.m22(), t.dx(), t.dy())
+        cached = getattr(self, "_lasered_cache", None)
+        if cached is None or cached[0] != key:
+            xs, ys = [], []
+            for poly in self.local_polys:
+                for x, y in poly:
+                    p = t.map(QPointF(x, y))
+                    xs.append(p.x())
+                    ys.append(p.y())
+            lines = QRectF(min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys))
+            if self.pixmap is not None:
+                lines = lines.united(rect)
+            self._lasered_cache = cached = (key, lines)
+        return cached[1]
 
     def snap_shape(self):
         """Snap targets of this element in scene coordinates (cached until it moves)."""

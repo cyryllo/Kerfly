@@ -46,6 +46,8 @@ TABS = [
         ("LaserYscale", N_("Y scale factor"), "float", (0.5, 2, 4, None)),
         ("show_power", N_("M3 board: set power per operation"), "bool", None),
         ("max_power", N_("M3 board: maximum power (%)"), "float", (0, 100, 1, None)),
+        ("short_moves", N_("Short moves between cuts without stopping, up to (mm, 0 = off) (beta)"),
+         "float", (0, 20, 1, None)),
         ("materials_shared", N_("Share the material library of another laser (e.g. one of the same kind)"),
          "bool", None),
         ("materials_from", N_("The laser whose material library it uses"), "laser_choice", None),
@@ -103,6 +105,7 @@ TABS = [
 SECTIONS = {
     "machine": N_("Controller"), "units": N_("Work area"), "init_home": N_("Homing and the end of a job"),
     "pre_exec": N_("Programs run with a job"), "LaserXscale": N_("Scale"), "show_power": N_("Power (M3 board)"),
+    "short_moves": N_("Moves between cuts (K40)"),
     "halftone": N_("Halftone"), "negate": N_("Picture"), "rast_step": N_("Scan lines and levels"),
     "inside_first": N_("Cutting"), "trace_w_laser": N_("Boundary trace"),
     "grid_mm": N_("Bed view"), "theme": N_("Look"),
@@ -117,7 +120,7 @@ M3_BOARD = "LASER-M3"           # the only board with power control
 GRBL_KEYS = ("grbl_port", "grbl_baud", "grbl_home", "grbl_jog", "gcode_s_max", "grbl_air")
 # only for a K40: its board, USB, power setting and rail; hidden for a GRBL laser (as the GRBL ones for a K40)
 K40_ONLY = ("board_name", "usb_port", "HomeUR", "show_power", "max_power", "post_home", "pre_pr_crc", "wait",
-            "t_timeout", "n_timeouts")
+            "t_timeout", "n_timeouts", "short_moves")
 # a GRBL laser's home corner: its setting -> the corner (of CornerPicker)
 GRBL_CORNERS = {"lower_left": "LL", "upper_left": "UL", "upper_right": "UR", "lower_right": "LR"}
 

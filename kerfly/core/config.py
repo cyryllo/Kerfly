@@ -79,6 +79,7 @@ SETTINGS_KEYS = [
     ("home_lower", BOOL),
     ("grbl_air", BOOL),      # Kerfly only: GRBL: air assist (M8) during a job    # Kerfly only: a K40 homes to a lower corner (the head starts at the bottom of the bed)
     ("grbl_jog", TEXT),      # Kerfly only: GRBL: jog speed, mm/min
+    ("short_moves", TEXT),   # Kerfly only: K40: moves between cuts up to this long (mm) made slowly, laser off
     ("laser_id", TEXT),      # Kerfly only: the laser profile's own id (its material library)
     ("materials_shared", BOOL),  # Kerfly only: the laser uses another laser's material library
     ("materials_from", TEXT),    # Kerfly only: ... that laser's id
@@ -113,7 +114,7 @@ DEFAULT_VALUES = {
     "designfile": "", "inkscape_path": "", "batch_path": "",
     "pre_exec": "0", "pre_batch_path": "", "theme": "light", "dither": "floyd", "usb_port": "",
     "gcode_origin": "lower_left", "gcode_s_max": "1000", "gcode_overscan": "2",
-    "machine": "k40", "grbl_port": "", "grbl_baud": "115200", "grbl_home": "lower_left", "home_lower": "0", "grbl_air": "0", "grbl_jog": "3000",
+    "machine": "k40", "grbl_port": "", "grbl_baud": "115200", "grbl_home": "lower_left", "home_lower": "0", "grbl_air": "0", "grbl_jog": "3000", "short_moves": "0.0",
     "laser_id": "", "materials_shared": "0", "materials_from": "",
     "language": "",          # "" = system language
     "grid_mm": "0",
@@ -281,7 +282,7 @@ def job_settings_from_values(values, power_per_stage=False):
                       ("vcut_feed", "Vcut_feed"), ("vcut_power", "Vcut_power"),
                       ("gcode_power", "Gcode_power"),
                       ("trace_feed", "trace_speed"), ("trace_gap", "trace_gap"),
-                      ("trace_power", "Trace_power")]:
+                      ("trace_power", "Trace_power"), ("short_moves_mm", "short_moves")]:
         put(attr, key, num)
     for attr, key in [("raster_passes", "Reng_passes"), ("vengrave_passes", "Veng_passes"),
                       ("vcut_passes", "Vcut_passes"), ("gcode_passes", "Gcde_passes")]:

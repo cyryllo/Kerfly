@@ -53,14 +53,19 @@ oknie.
   zrobiony przez Powiel dzieli bazę z oryginałem). Dotychczasowa wspólna baza
   zostaje przy pierwszym laserze, pozostałe z niej korzystają, więc nic się nie
   zmienia, dopóki sam tego nie wybierzesz.
-- **Prędkość bazowania GRBL** (Ustawienia → Lasery… → Ruch głowicy, obok
-  prędkości przesuwu strzałkami): zapisywana w płycie (`$25`) przy łączeniu,
-  gdy się różni.
 - **Uchwyty boków**: środki boków zaznaczonego elementu zmieniają samą
   szerokość albo samą wysokość, przeciwległy bok zostaje na miejscu (także dla
   obróconego elementu; jeden krok cofania).
 - **O programie** w osobnym oknie: wersja, licencja, pochodzenie, strona
   projektu, **Zgłoś problem** i **Sprawdź aktualizacje**.
+
+- **Krótkie przejazdy między cięciami bez zatrzymania (K40, beta)**:
+  Ustawienia → Lasery… → Przejazdy między cięciami. K40 robi każdy przejazd
+  między dwoma cięciami jako szybki przejazd, z zatrzymaniem i wyjściem z
+  trybu cięcia (przy każdym mostku zawiasu giętkiego głowica „odjeżdżała”:
+  test użytkownika 2026-11-21); przejazdy do ustawionej długości jadą z
+  prędkością cięcia przy wyłączonym laserze. 0 (domyślnie): dane dla lasera
+  jak dotąd.
 
 ### Zmienione
 
@@ -154,6 +159,11 @@ oknie.
   pokazywała same przykłady, gdy jej laser nie miał jeszcze własnego pliku);
   nazwy, które wspólna baza już ma, zostają bez zmian, a własny plik lasera
   zostaje na wypadek wyłączenia współdzielenia.
+- **Okno Tekst na ścieżce**: podgląd rysował ścieżkę o wysokość tekstu
+  obok tekstu (na stole było dobrze).
+- **Obrócony kształt na czerwono** na stole, gdy prostokąt wokół niego
+  wystawał, choć jego linie były na stole (sprawdzenie zadania już liczyło
+  linie).
 - **Prędkość bazowania GRBL** usunięta z ustawień lasera: płyta zostaje przy
   swojej (`$25`); Kerfly nie zapisuje jej już przy łączeniu (Beta 2 i 3
   zapisywały ją, gdy była ustawiona: sprawdź `$25` w LaserGRBL, jeśli płyta

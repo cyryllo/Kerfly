@@ -2663,6 +2663,44 @@ def main():
           preview_follows and hinge_preview and inserted and cancelled and on_bar and double,
           "(%s)" % [preview_follows, hinge_preview, inserted, cancelled, on_bar, double])
 
+    # 48c. the user's test 2026-11-21: the Text on a path window's preview draws the path under the text (it
+    # was a text's height off); a shape turned by 10 degrees with its lines on the bed but its turned
+    # rectangle sticking out is not drawn red (only the job's check counted its lines)
+    import math as _m
+    ps = _Spec(kind="text", width=0, height=0, operation="engrave")
+    ps.text, ps.font_family, ps.font_size = "Kerfly test", "DejaVu Sans", 10.0
+    ps.text_path = [(100 + 100 * _m.cos(t * _m.pi / 100), 50 + 50 * _m.sin(t * _m.pi / 100)) for t in range(201)]
+    from kerfly.gui.text_shapes import update_text_spec as _uts
+    _uts(ps)
+    pd = _tdx.text_dialog(None, ps, "Text on a path", "Put the text on the path", show=False, path_fields=True)
+    pd.refresh()
+    _g = pd.preview.guides[0]
+    on_path = min(min(_m.hypot(p[0] - q[0], p[1] - q[1]) for q in _g)
+                  for _k, line in pd.preview.lines for p in line) < 0.5
+    pd.close()
+    rw = make_window(grid_mm="0")
+    rw._preview_drawn("ellipse", QPointF(20, 20), QPointF(100, 50), False)
+    re_ = rw.elements[0]
+    re_.rotation = 10.0
+    from kerfly.core.layout import geometry_bounds as _gb
+    gx0, _gx1, _gy0, gy1 = _gb(re_)
+    re_.x += 0.3 / 25.4 - gx0                             # its lines 0.3 mm from the left and top edges
+    re_.y += -0.3 / 25.4 - gy1
+    rw._layout_changed()
+    app.processEvents()
+    ritem = rw.preview._items[0]
+    box_out = ritem.sceneBoundingRect().left() < 0 or ritem.sceneBoundingRect().top() < 0
+    not_red = box_out and not ritem.off_bed() and rw.btn_start.isEnabled()
+    re_.x -= 2.0 / 25.4                                   # its lines 1.7 mm off the bed: red
+    rw._layout_changed()
+    app.processEvents()
+    red = rw.preview._items[0].off_bed() and not rw.btn_start.isEnabled()
+    rw._dirty = False
+    rw.close()
+    check("text on a path: the window's preview has the text on its path; a turned shape with its lines on the "
+          "bed is not red (its turned rectangle sticks out), off the bed it is",
+          on_path and not_red and red, "(%s)" % [on_path, box_out, not_red, red])
+
     # 51. the "window tells the truth" checks find what they should: a field not refreshed, an element
     # drawn elsewhere, a stale list row, a wrong layer list, a missing field; and a saved and reopened
     # project has the same state

@@ -271,7 +271,11 @@ class egv:
                             stop_calc=None,
                             FlipXoffset=None,
                             Rapid_Feed_Rate=0,
-                            use_laser=True):
+                            use_laser=True,
+                            Slow_Move_Max=0):
+        # Kerfly: Slow_Move_Max (mils) > 0: moves between cuts shorter than that are made in the cutting
+        # mode with the laser off (rapid_move_slow), without the stop and the fast move the board makes
+        # for each one (living hinges: hundreds of them). 0: as K40 Whisperer (the same data).
 
         #print("make_egv_data",Rapid_Feed_Rate,len(ecoords_in))
         #print("Rapid_Feed_Rate=",Rapid_Feed_Rate)
@@ -363,7 +367,8 @@ class egv:
                                 self.change_speed(Feed,board_name,laser_on=Spindle)
                         self.make_cut_line(dx,dy,Spindle)
                     else:
-                        if ((abs(dx) < min_rapid) and (abs(dy) < min_rapid)) or Rapid_Feed_Rate:
+                        slow_max = max(min_rapid, Slow_Move_Max)
+                        if ((abs(dx) < slow_max) and (abs(dy) < slow_max)) or Rapid_Feed_Rate:
                             self.rapid_move_slow(dx,dy,Rapid_Feed_Rate,Feed,board_name)
                         else:
                             self.rapid_move_fast(dx,dy)

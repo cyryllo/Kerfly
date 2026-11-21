@@ -254,6 +254,7 @@ def _make_egv(coords, startx, starty, feed, settings, raster_step, flip_x_offset
         FlipXoffset=flip_x_offset,
         Rapid_Feed_Rate=rapid_feed,
         use_laser=use_laser,
+        Slow_Move_Max=int(round(settings.short_moves_mm / 25.4 * 1000.0)) if raster_step == 0 else 0,
     )
     return out
 

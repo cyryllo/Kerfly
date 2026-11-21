@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kerfly VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/cyryllo/Kerfly/issues\n"
-"POT-Creation-Date: 2026-11-20 20:59+0100\n"
+"POT-Creation-Date: 2026-11-21 17:13+0100\n"
 "PO-Revision-Date: 2026-11-03 21:00+0000\n"
 "Last-Translator: Kerfly contributors\n"
 "Language: de\n"
@@ -2363,6 +2363,9 @@ msgstr ""
 msgid "Move the selection"
 msgstr "Auswahl verschieben"
 
+msgid "Moves between cuts (K40)"
+msgstr "Fahrten zwischen Schnitten (K40)"
+
 msgid "My laser"
 msgstr "Mein Laser"
 
@@ -3506,6 +3509,9 @@ msgstr "Spitze Ecken"
 #, python-format
 msgid "Sheet %d"
 msgstr "Bogen %d"
+
+msgid "Short moves between cuts without stopping, up to (mm, 0 = off) (beta)"
+msgstr "Kurze Fahrten zwischen Schnitten ohne Anhalten, bis (mm, 0 = aus) (Beta)"
 
 msgid "Show a report after a job (its time; the program's output)"
 msgstr "Nach einem Auftrag einen Bericht zeigen (Dauer; Ausgabe des Programms)"

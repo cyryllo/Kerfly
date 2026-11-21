@@ -501,9 +501,13 @@ def text_dialog(parent, spec, title, action, show=True, path_fields=False):
         if not s.text.strip():
             return None, (), _("Type the text.")
         d = _design_of(s)
-        guides = [[(x, y) for x, y in s.text_path]] if s.text_path else []
-        if guides:                                      # the path in the text's own frame (see update_text_spec)
-            guides = [[(x, y) for x, y in guides[0]]]
+        guides = []
+        if s.text_path:
+            # the path is in the outlines' frame (y down, top at 0: update_text_spec); the design's lines
+            # come with their top at -(its top) (design_lines): the path moved the same way, so the text
+            # sits on it as on the bed (it was drawn a text's height off: the user's test 2026-11-21)
+            top = d.bounds[3] * 25.4
+            guides = [[(x, y - top) for x, y in s.text_path]]
         return d, guides, ""
     dlg.render = render
     _watch(dlg, text, font, size, bold, italic, spacing, *path_widgets)
