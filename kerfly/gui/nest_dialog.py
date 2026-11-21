@@ -117,6 +117,12 @@ class NestWorker(QThread):
             self.done.emit(None, None, str(e))
 
 
+def _fit_label(box, longest):
+    """The progress window wide enough for its longest text: it took the width of its first text, and the
+    sheet's text was cut at the left ("…kam ciasnego układu": the user's report 2026-11-21)."""
+    box.setMinimumWidth(max(380, box.fontMetrics().horizontalAdvance(longest) + 80))
+
+
 def plan_with_progress(parent, elements, bed_w, bed_h, gap, turn, seconds):
     """Runs a NestWorker with a progress window (the search time of the sheet running; Cancel: nothing moves,
     after the sheet being searched). Returns (parts, plan) or None (cancelled), raises RuntimeError on an
@@ -126,6 +132,7 @@ def plan_with_progress(parent, elements, bed_w, bed_h, gap, turn, seconds):
     tenths = (int(seconds) + max(1, int(seconds) // 2)) * 10
     box = QProgressDialog(_("Looking for a tight layout…"), _("Cancel"), 0, tenths, parent)
     box.setWindowTitle(_("Nest on the bed"))
+    _fit_label(box, _("Looking for a tight layout: sheet %d…") % 88)
     box.setMinimumDuration(0)
     box.setAutoClose(False)
     box.setAutoReset(False)
@@ -152,6 +159,7 @@ def plan_with_progress(parent, elements, bed_w, bed_h, gap, turn, seconds):
     if state["result"] is None:                      # cancelled: wait for the sheet being searched
         box2 = QProgressDialog(_("Stopping after the sheet being searched…"), None, 0, 0, parent)
         box2.setWindowTitle(_("Nest on the bed"))
+        _fit_label(box2, _("Stopping after the sheet being searched…"))
         box2.setMinimumDuration(0)
         worker.done.connect(lambda *_a: box2.hide())
         if worker.isRunning():

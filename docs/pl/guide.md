@@ -220,8 +220,8 @@ narysowaniem i po nim.
 | Elipsa | E | Przeciągnij. Shift: koło |
 | Wielokąt | P | Przeciągnij. Opcja: liczba boków |
 | Linia | L | Przeciągnij. Shift: co 45° |
-| Łamana | Shift+L | Klikaj narożniki. Klik w pierwszy punkt zamyka; dwuklik albo Enter kończy otwartą linię; Backspace usuwa ostatni narożnik; Esc anuluje |
-| Pióro (krzywe) | B | Klik daje narożnik, wciśnięcie i przeciągnięcie gładką krzywą. Klik w pierwszy punkt zamyka; dwuklik albo Enter kończy |
+| Łamana | Shift+L | Klikaj narożniki. Klik w pierwszy punkt zamyka; dwuklik albo Enter kończy otwartą linię; Backspace albo Ctrl+Z usuwa ostatni narożnik; Esc anuluje |
+| Pióro (krzywe) | B | Klik daje narożnik, wciśnięcie i przeciągnięcie gładką krzywą. Klik w pierwszy punkt zamyka; dwuklik albo Enter kończy; Backspace albo Ctrl+Z usuwa ostatni węzeł; Esc anuluje |
 | Odręcznie | F | Rysuj z wciśniętym przyciskiem; skończ blisko początku, żeby zamknąć kształt |
 | Miarka | M | Przeciągnij między dwoma punktami: odległość, szerokość, wysokość i kąt |
 | Tekst | T | Kliknij miejsce na tekst: otworzy się okno **Tekst** (treść, czcionka, rozmiar, pogrubienie, kursywa, odstęp liter, z podglądem); **Wstaw tekst**. Na górze listy czcionek: **czcionki jednokreskowe** wbudowane w Kerfly (Hershey, EMS), których litery to linie, po których laser przejeżdża raz: szybki, cienki grawer, bez wypełniania. Dwuklik na tekście (albo **Edytuj tekst…** na pasku opcji) go zmienia |
@@ -322,7 +322,9 @@ elementu tylko ten element. **Rozgrupuj**
 (Ctrl+Shift+G) zdejmuje jeden poziom (grupy w środku zostają grupami), a
 także dzieli otwarty plik SVG albo DXF: każda jego linia staje się kształtem
 do edycji, a obrazy dzielą się na osobne części. Dwuklik na dowolnym
-elemencie otwiera edycję węzłów.
+elemencie otwiera edycję węzłów; na tekście okno Tekst, a na kształcie z
+zawiasem giętkim albo wypełnieniem okno Zawias giętki albo Wypełnienie (jego
+węzły: **Edytuj węzły** na wstążce).
 
 ![Pudełko na kilku arkuszach na liście elementów: grupa z osobną grupą dla każdego arkusza](../img/pl/groups.png)
 

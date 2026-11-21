@@ -158,6 +158,21 @@ a window of its own.
   library showed only the examples when its laser had no file of its own
   yet); names the shared library already has stay as they are, and the
   laser's own file is kept for when it stops sharing.
+- **Nest on the bed: the progress window** cut its text at the left
+  ("…king for a tight layout") with some system fonts: it is as wide as its
+  longest text now.
+- **A double-click on a shape with a living hinge or a fill** opens its
+  Living hinge or Fill window again (it opened its nodes; they stay under
+  Edit nodes).
+- **A shape with a living hinge or a fill pattern resized** (handles,
+  W / H in the bar) had its cuts or pattern stretched with it (the hinge's
+  rows far apart). Now the shape takes the new size and its hinge or pattern
+  is made again, keeping its own lengths and gaps.
+- **Ctrl+Z while drawing with the pen or a polyline** took back the step
+  before the drawing (a shape drawn earlier went), and after it nothing could
+  be drawn any more (the unfinished line, deleted with the redrawn bed, broke
+  every mouse move and tool change). Now Ctrl+Z takes back the last node, as
+  Backspace, and a redraw of the bed while drawing leaves the tools working.
 - **Text on a path window**: its preview drew the path a text's height away
   from the text (on the bed it was right).
 - **A turned shape drawn red** on the bed when the rectangle round it stuck

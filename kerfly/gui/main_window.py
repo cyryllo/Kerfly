@@ -1805,6 +1805,14 @@ class MainWindow(QMainWindow):
             self.selected = element
             QTimer.singleShot(0, self, lambda: self.edit_text(element))
             return
+        if element.shape is not None and (element.shape.hinge_pattern or element.shape.fill_pattern):
+            # a shape with a living hinge or a fill: that window again (the user's wish 2026-11-21: a
+            # double-click had opened its nodes, the window only from the tool's button)
+            tool = "hinge" if element.shape.hinge_pattern else "fill"
+            self.preview.select_element(element)
+            self.selected = element
+            QTimer.singleShot(0, self, lambda t=tool: self._open_tool_window(t, [element]))
+            return
         self.set_tool("nodes")
         self.preview.select_element(element)
 
@@ -2647,6 +2655,8 @@ class MainWindow(QMainWindow):
         self._update_tool_options(force=True)
 
     def undo(self):
+        if self.preview.undo_drawing_step():           # a pen path or polyline being drawn: its last node
+            return
         if self._undo and self.worker is None:
             self._redo.append(self._snapshot())
             self._restore(self._undo.pop())
@@ -2990,12 +3000,41 @@ class MainWindow(QMainWindow):
             self._keep_on_bed(element)
         self._arranged(chosen)
 
+    def _keep_pattern_size(self, element):
+        """A shape with a living hinge or a fill pattern resized (handles, the bar's W / H): the new size goes
+        into the shape and its hinge or pattern is made again at the new size, so the cuts and lines keep their
+        own lengths and gaps (scaled with the element they grew apart: the user's report 2026-11-21). Texts and
+        other elements keep being scaled."""
+        sp = element.shape
+        if sp is None or not (sp.hinge_pattern or sp.fill_pattern) or \
+                sp.kind not in ("rectangle", "ellipse", "polygon", "polyline", "path"):
+            return
+        sx, sy = abs(element.scale_x), abs(element.scale_y)
+        if abs(sx - 1.0) < 1e-9 and abs(sy - 1.0) < 1e-9:
+            return
+        new = sp.copy()
+        if sp.kind in ("rectangle", "ellipse", "polygon"):
+            new.width, new.height = sp.width * sx, sp.height * sy
+        elif sp.kind == "polyline":
+            new.points = [(x * sx, y * sy) for x, y in sp.points]
+        else:
+            new.subpaths = [dict(sub, nodes=[[None if v is None else v * (sx if i % 2 == 0 else sy)
+                                              for i, v in enumerate(n)] for n in sub["nodes"]])
+                            for sub in sp.subpaths]
+        cx, cy = element.centre
+        element.scale_x = math.copysign(1.0, element.scale_x)
+        element.scale_y = math.copysign(1.0, element.scale_y)
+        element.shape = new
+        element.design = build_design(new)
+        element.set_centre(cx, cy)
+
     def _preview_scaled(self, element, factor):
         self._checkpoint()
         cx, cy = element.centre
         element.scale_x *= factor
         element.scale_y *= factor
         element.set_centre(cx, cy)
+        self._keep_pattern_size(element)
         self._keep_on_bed(element)
         self._layout_changed()
 
@@ -3010,6 +3049,7 @@ class MainWindow(QMainWindow):
             element.scale_y *= factor
         dx = dx_mm / 25.4 * (-1 if self.job_settings().home_upper_right else 1)
         element.set_centre(cx + dx, cy - dy_mm / 25.4)
+        self._keep_pattern_size(element)
         self._keep_on_bed(element)
         self._layout_changed()
 
@@ -3699,6 +3739,7 @@ class MainWindow(QMainWindow):
                 new_w, new_h = w * factor, h * factor
             x, y = e.x, e.y                      # keep the top-left corner
             e.set_size(new_w, new_h)
+            self._keep_pattern_size(e)
             e.x, e.y = x, y
             self._keep_on_bed(e)
         elif key == "rotation":

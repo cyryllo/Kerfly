@@ -159,6 +159,22 @@ oknie.
   pokazywała same przykłady, gdy jej laser nie miał jeszcze własnego pliku);
   nazwy, które wspólna baza już ma, zostają bez zmian, a własny plik lasera
   zostaje na wypadek wyłączenia współdzielenia.
+- **Ułóż na stole: okienko postępu** ucinało napis z lewej („…kam
+  ciasnego układu”) przy niektórych czcionkach systemu: jest teraz tak
+  szerokie jak jego najdłuższy napis.
+- **Dwuklik na kształcie z zawiasem giętkim albo wypełnieniem** otwiera
+  znowu okno Zawias giętki albo Wypełnienie (otwierał węzły; są dalej pod
+  Edytuj węzły).
+- **Zmiana rozmiaru kształtu z zawiasem giętkim albo wypełnieniem**
+  (uchwyty, Szer. / Wys. na pasku) rozciągała razem z nim nacięcia
+  albo wzór (rzędy zawiasu daleko od siebie). Teraz kształt dostaje nowy
+  rozmiar, a zawias albo wzór jest robiony od nowa, z własnymi długościami i
+  odstępami.
+- **Ctrl+Z w trakcie rysowania piórem albo łamaną** cofało krok sprzed
+  rysowania (znikał wcześniej narysowany kształt), a potem nie dało się już
+  nic narysować (niedokończona linia, skasowana z odświeżonym stołem, psuła
+  każdy ruch myszy i zmianę narzędzia). Teraz Ctrl+Z cofa ostatni węzeł, jak
+  Backspace, a odświeżenie stołu w trakcie rysowania nie psuje narzędzi.
 - **Okno Tekst na ścieżce**: podgląd rysował ścieżkę o wysokość tekstu
   obok tekstu (na stole było dobrze).
 - **Obrócony kształt na czerwono** na stole, gdy prostokąt wokół niego

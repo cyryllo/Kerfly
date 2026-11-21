@@ -214,8 +214,8 @@ before or after drawing.
 | Ellipse | E | Drag. Shift: circle |
 | Polygon | P | Drag. Option: number of sides |
 | Line | L | Drag. Shift: steps of 45° |
-| Polyline | Shift+L | Click the corners. Click the first point to close; double-click or Enter for an open line; Backspace removes the last corner; Esc cancels |
-| Pen (curves) | B | Click for a corner, press and drag for a smooth curve. Click the first point to close; double-click or Enter to finish |
+| Polyline | Shift+L | Click the corners. Click the first point to close; double-click or Enter for an open line; Backspace or Ctrl+Z removes the last corner; Esc cancels |
+| Pen (curves) | B | Click for a corner, press and drag for a smooth curve. Click the first point to close; double-click or Enter to finish; Backspace or Ctrl+Z removes the last node; Esc cancels |
 | Freehand | F | Draw with the button held; end near the start to close the shape |
 | Measure | M | Drag between two points: distance, width, height and angle |
 | Text | T | Click where the text goes: the **Text** window opens (the text, font, size, bold, italic, letter spacing, with a preview); **Insert the text**. At the top of the font list: **single-line fonts** built into Kerfly (Hershey, EMS), whose letters are lines the laser runs along once: fast, fine engraving, nothing to fill. Double-click a text (or **Edit text…** in the options bar) to change it |
@@ -313,7 +313,8 @@ element alone. **Ungroup** (Ctrl+Shift+G)
 takes one level away (the groups inside stay groups), and also splits an opened
 SVG or DXF file: each of its lines becomes a shape you can edit, and its
 pictures split into their separate parts. Double-click any element to edit
-its nodes.
+its nodes; a text opens its Text window, a shape with a living hinge or a fill
+its Living hinge or Fill window (its nodes: **Edit nodes** on the ribbon).
 
 ![A box on several sheets in the element list: a group with a group for each sheet](img/en/groups.png)
 
